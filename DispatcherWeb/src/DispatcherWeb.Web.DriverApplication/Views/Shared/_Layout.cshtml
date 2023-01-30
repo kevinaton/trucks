@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dump Truck Dispatcher - Driver Application</title>
+    <meta name="description" content="Driver Application for Dump Truck Dispatcher">
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
+
+    <!-- Adress bar styling -->
+    <meta name="theme-color" content="#ffffff">
+    <meta name="msapplication-navbutton-color" content="#ffffff">
+
+    <!-- Reference manifest -->
+    <link rel="manifest" href="~/manifest.json">
+
+    <!-- iOS meta tags and icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Dump Truck Dispatcher">
+    <link rel="apple-touch-icon" href="~/images/apple-touch-icon-152x152.png">
+
+    <link rel="preload" as="script" href="~/bundles/allLibs.min.js" />
+    <link rel="preload" as="script" href="~/js/site.js" />
+    <link rel="preload" as="script" href="~/views/driverApplication/index.js" />
+    <link rel="preload" as="font" href="~/css/fonts/icomoon.ttf" type="font/ttf" crossorigin />
+    <style>
+        .dtd-loading { display: none }
+    </style>
+    <link rel="stylesheet" href="~/bundles/all.min.css" media="print" onload="this.media='all'" />
+</head>
+<body class="dtd-loading">
+    @*<partial name="_CookieConsentPartial" />*@
+    <div class="container body-content">
+        <div id="offlineIndicator" class="hideOfflineNotification">You are currently offline</div>
+        @RenderBody()
+
+        <div class="modal fade" id="confirmationPopup" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Are you sure?</h4>
+                    </div>
+                    <div class="modal-body">
+                        <span id="confirmationPopupMessage"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="confirmationPopupNoButton">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="confirmationPopupYesButton">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wait-popup">
+            <div class="wait-popup-inner">
+                <p class="icon-spinner"></p>
+                <p class="title">Please wait</p>
+                <p class="description"></p>
+            </div>
+        </div>
+
+        <div class="error-popup">
+            <div class="error-popup-inner">
+                <p class="icon icon-cancel-circle"></p>
+                <p class="title">An error occurred</p>
+                <p class="description"></p>
+                <p class="reload">Click here to reload</p>
+            </div>
+        </div>
+        @*<hr />
+        <footer>
+            <p>&copy; 2020 - DispatcherWeb.Web.DriverApplication</p>
+        </footer>*@
+    </div>
+    <script src="~/bundles/allLibs.min.js"></script>
+    <script src="~/js/site.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

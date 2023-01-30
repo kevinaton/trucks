@@ -1,0 +1,81 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Authorization
+@using DispatcherWeb.Infrastructure
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Trucks
+@using DispatcherWeb.LeaseHaulers
+@using DispatcherWeb.LeaseHaulers.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@model LeaseHaulerTruckEditDto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Truck: " + Model.TruckCode : "Create new truck"))
+
+<div class="modal-body">
+
+    <form role="form" novalidate class="form-validation">
+        <div class="m-portlet__body">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="LeaseHaulerId" />
+            <input type="hidden" asp-for="VehicleCategoryIsPowered" value="@Model.VehicleCategoryIsPowered?.ToLowerCaseString()" />
+            <input type="hidden" asp-for="VehicleCategoryAssetType" value="@((int?)Model.VehicleCategoryAssetType)" />
+            <input type="hidden" asp-for="HaulingCompanyTruckId" />
+            <div class="form-group">
+                <label class="required-label">@L("TruckCode")</label>
+                <input class="form-control" type="text" asp-for="TruckCode" required maxlength="@Truck.MaxTruckCodeLength">
+            </div>
+            <div class="form-group">
+                <label class="required-label">@L("Category")</label>
+                <select class="form-control" required asp-for="VehicleCategoryId">
+                    <option value="">Select an option</option>
+                    @if (Model.VehicleCategoryId > 0)
+                    {
+                        <option value="@Model.VehicleCategoryId">@Model.VehicleCategoryName</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>@L("DefaultDriver")</label>
+                <select class="form-control" asp-for="DefaultDriverId" disabled="@(Model.VehicleCategoryIsPowered != true)">
+                    <option value="">Select an option</option>
+                    @if (Model.DefaultDriverId.HasValue)
+                    {
+                        <option value="@Model.DefaultDriverId">@Model.DefaultDriverName</option>
+                    }
+                </select>
+            </div>
+            <div class="m-form__group form-group">
+                <label for="AlwaysShowOnSchedule" class="m-checkbox">
+                    <input id="AlwaysShowOnSchedule" type="checkbox" name="AlwaysShowOnSchedule" value="true" checked="@(Model.AlwaysShowOnSchedule ? "checked" : null)" />
+                    @L("AlwaysShowOnSchedule")?
+                    <span></span>
+                </label>
+            </div>
+            <div class="form-group" @Html.StyleDisplayNone(!await FeatureChecker.AllowMultiOfficeFeature() || !Model.AlwaysShowOnSchedule)>
+                <label class="required-label">@L("Office")</label>
+                <select class="form-control" asp-for="OfficeId">
+                    <option value="">Select an option</option>
+                    @if (Model.OfficeId > 0)
+                    {
+                        <option value="@Model.OfficeId">@Model.OfficeName</option>
+                    }
+                </select>
+            </div>
+            <div class="m-form__group form-group">
+                <label for="IsActive" class="m-checkbox">
+                    <input id="IsActive" type="checkbox" name="IsActive" value="true" checked="@(Model.IsActive ? "checked" : null)" />
+                    @L("Active")
+                    <span></span>
+                </label>
+            </div>
+            <div class="m-form__group form-group" @Html.StyleDisplayNone(Model.VehicleCategoryIsPowered != true)>
+                <label for="CanPullTrailer" class="m-checkbox">
+                    <input id="CanPullTrailer" type="checkbox" name="CanPullTrailer" value="true" checked="@(Model.CanPullTrailer ? "checked" : null)" />
+                    @L("CanPullTrailer")
+                    <span></span>
+                </label>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

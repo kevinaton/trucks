@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewData["Title"] = "LoggedOut";
+}
+
+<h2>You are logged out</h2>
+
+<button type="button" id="loginButton" class="btn btn-primary">Click here to log in again</button>
+
+@section Scripts{
+    <script>
+        $('#loginButton').click(function () {
+            window.location = '/';
+        });
+    </script>
+}
+

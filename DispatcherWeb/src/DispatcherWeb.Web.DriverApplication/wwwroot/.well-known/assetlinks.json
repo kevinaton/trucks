@@ -1,0 +1,5 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target" : { "namespace": "android_app", "package_name": "com.dumptruckdispatcher.pwa2",
+                   "sha256_cert_fingerprints": ["C3:92:2B:30:9A:4D:32:36:D4:FB:02:07:77:D5:C5:DC:E7:BC:06:0C:AB:7E:9B:23:4B:30:95:C1:40:5F:AB:FE"] }
+    }]

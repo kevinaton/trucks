@@ -1,0 +1,23 @@
+﻿@using System.Threading.Tasks
+@using Abp.Configuration
+@using Abp.Extensions
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Dto
+@using DispatcherWeb.Features
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Web.Areas.App.Startup
+@using DispatcherWeb.PreventiveMaintenanceSchedule.Dto
+@using DispatcherWeb.Web.Areas.App.Models.PreventiveMaintenanceSchedule
+@{
+    Layout = "../Imports/_ImportLayout";
+
+    ViewBag.CurrentPageName = AppPageNames.Tenant.ImportVehicleUsage;
+    ViewBag.ImportType = ImportType.VehicleUsage;
+}
+
+
+@section H1
+    {
+    Vehicle Usage Import
+}
+

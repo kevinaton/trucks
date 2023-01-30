@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common.props"></Import>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+    <AssemblyName>DispatcherWeb.Application</AssemblyName>
+    <PackageId>DispatcherWeb.Application</PackageId>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <RootNamespace>DispatcherWeb</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Dashboard\Dto\**" />
+    <EmbeddedResource Remove="Dashboard\Dto\**" />
+    <None Remove="Dashboard\Dto\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Abp.EntityFrameworkCore.EFPlus" Version="7.0.1" />
+    <PackageReference Include="CsvHelper" Version="27.2.1" />
+    <PackageReference Include="Geotab.Checkmate.ObjectModel" Version="7.0.0-preview1" />
+    <PackageReference Include="GlobalPayments.Api" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.2" />
+    <PackageReference Include="Microsoft.Azure.KeyVault.Core" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Azure.KeyVault.Cryptography" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="9.4.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.14" />
+    <PackageReference Include="Twilio" Version="5.70.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\PdfSharpMigraDoc\MigraDoc.Rendering\MigraDoc.Rendering.csproj" />
+    <ProjectReference Include="..\..\Quickbooks\Intuit.Ipp.Core\Intuit.Ipp.Core.csproj" />
+    <ProjectReference Include="..\..\Quickbooks\Intuit.Ipp.DataService\Intuit.Ipp.DataService.csproj" />
+    <ProjectReference Include="..\..\Quickbooks\Intuit.Ipp.OAuth2PlatformClient\Intuit.Ipp.OAuth2PlatformClient.csproj" />
+    <ProjectReference Include="..\..\Quickbooks\Intuit.Ipp.QueryFilter\Intuit.Ipp.QueryFilter.csproj" />
+    <ProjectReference Include="..\..\Quickbooks\Intuit.Ipp.Security\Intuit.Ipp.Security.csproj" />
+    <ProjectReference Include="..\DispatcherWeb.Application.Shared\DispatcherWeb.Application.Shared.csproj" />
+    <ProjectReference Include="..\DispatcherWeb.Core\DispatcherWeb.Core.csproj" />
+    <ProjectReference Include="..\DispatcherWeb.EntityFrameworkCore\DispatcherWeb.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CannedTexts\" />
+    <Folder Include="UnitsOfMeasure\" />
+    <Folder Include="ScheduledReports\" />
+    <Folder Include="WorkOrders\" />
+  </ItemGroup>
+</Project>

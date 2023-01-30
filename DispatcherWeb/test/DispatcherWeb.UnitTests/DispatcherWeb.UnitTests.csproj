@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="NSubstitute" Version="4.2.2" />
+    <PackageReference Include="Shouldly" Version="4.0.3" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DispatcherWeb.Application.Shared\DispatcherWeb.Application.Shared.csproj" />
+    <ProjectReference Include="..\..\src\DispatcherWeb.Application\DispatcherWeb.Application.csproj" />
+    <ProjectReference Include="..\..\src\DispatcherWeb.Core.Shared\DispatcherWeb.Core.Shared.csproj" />
+    <ProjectReference Include="..\..\src\DispatcherWeb.Core\DispatcherWeb.Core.csproj" />
+    <ProjectReference Include="..\..\src\DispatcherWeb.EntityFrameworkCore\DispatcherWeb.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Application\DriverAssignments\" />
+    <Folder Include="Application\Scheduling\" />
+  </ItemGroup>
+
+</Project>

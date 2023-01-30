@@ -1,0 +1,12 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using DispatcherWeb.Scheduling.Dto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Cycle times"))
+
+<div class="modal-body">
+    <img src="~/Common/Images/hourly_timesheet_graphic.png" style="max-width: 100%" />
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default close-button" data-dismiss="modal">Close</button>
+</div>

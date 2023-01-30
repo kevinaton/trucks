@@ -1,0 +1,16 @@
+{
+  "name": "dispatcherweb.web.driverapplication",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "idb": "^5.0.1",
+    "moment": "^2.24.0",
+    "oidc-client": "^1.10.1",
+    "signature_pad": "^3.0.0-beta.3",
+    "dayjs": "^1.8.36"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

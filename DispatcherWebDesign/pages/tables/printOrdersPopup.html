@@ -1,0 +1,94 @@
+@using System.Threading.Tasks
+@using DispatcherWeb
+@using DispatcherWeb.Web.Areas.app.Models.Common.Modals
+@using DispatcherWeb.Web.Areas.app.Models.Trucks
+@model CreateOrEditTruckModalViewModel
+@Html.Partial("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.IsEditMode ? "Edit Truck: " + Model.TruckCode : "Create new truck"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <div class="form-group">
+            <label class="control-label">Date:</label>
+            <input type="text" class="form-control filter" name="Date" id="DateFilter">
+        </div>
+        <div class="form-group">
+            <input type="radio" name="test" class="minimal" id="test1" />
+            <label for="test1">Print Daily Summary</label>
+        </div>
+        <div class="form-group">
+            <input type="radio" name="test" class="minimal" id="test2" />
+            <label for="test2">Order and Load Summary Report</label>
+        </div>
+        <div class="form-group">
+            <input type="radio" name="test" class="minimal" id="test3" />
+            <label for="test3">Print Daily Detail</label>
+        </div>
+        <div class="form-group">
+            <input type="radio" name="test" class="minimal" id="test4" />
+            <label for="test4">Print Orders for Truck</label>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" class="minimal" id="hide">
+            <label for="hide" class="cbx">Hide Prices</label>
+        </div>
+        <div class="form-group">
+            <label>Truck</label>
+            <select class="form-control" id="TruckId">
+                <option value="">Select a truck</option>
+                <option selected value="1">402</option>
+                <option value="2">500</option>
+            </select>
+
+        </div>
+    </form>
+</div>
+
+@Html.Partial("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+
+<script>
+    (function ($) {
+        app.modals.CreateOrEditTruckModal = function () {
+
+            var _modalManager;
+            var _truckService = abp.services.app.truck;
+            var _$form = null;
+
+            this.init = function (modalManager) {
+                _modalManager = modalManager;
+
+                _$form = _modalManager.getModal().find('form');
+                _$form.validate();
+
+                abp.helper.ui.initControls();
+
+                //here
+                $("#TruckId").select2Init({});
+                $("#DateFilter").datepicker();
+            };
+
+            this.save = function () {
+                if (!_$form.valid()) {
+                    return;
+                }
+
+                var truck = _$form.serializeFormToObject();
+
+                _modalManager.setBusy(true);
+                //_truckService.editTruck(truck).done(function () {
+                //    abp.notify.info('Saved successfully.');
+                //    _modalManager.close();
+                //    abp.event.trigger('app.createOrEditTruckModalSaved');
+                //}).always(function () {
+                //    _modalManager.setBusy(false);
+                //});
+            };
+        };
+    })(jQuery);
+
+    //var _createOrEditModal = new app.ModalManager({
+    //    viewUrl: abp.appPath + 'app/Trucks/CreateOrEditModal',
+    //    scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Trucks/_CreateOrEditModal.js',
+    //    modalClass: 'CreateOrEditTruckModal',
+    //    modalSize: 'sm'
+    //});
+</script>

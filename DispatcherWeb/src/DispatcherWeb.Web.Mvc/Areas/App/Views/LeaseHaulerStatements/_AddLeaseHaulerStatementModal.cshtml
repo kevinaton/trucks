@@ -1,0 +1,25 @@
+﻿@using System.Threading.Tasks
+@using Abp.Configuration
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.LeaseHaulerStatements.Dto
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using DispatcherWeb.Features
+@using Abp.Application.Features
+@model AddLeaseHaulerStatementInput
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("AddDriverPayStatement")))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <div class="form-group">
+            <label>@L("LeaseHauler")</label>
+            <select class="form-control" asp-for="LeaseHaulerIds" data-placeholder="All" multiple></select>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="DateRange">@L("DateRange")</label>
+            <input class="form-control m-input" id="DateRange" name="DateRange" type="text" autocomplete="off">
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

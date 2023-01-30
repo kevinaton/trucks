@@ -1,0 +1,173 @@
+@using System.Threading.Tasks
+@using DispatcherWeb;
+@using DispatcherWeb.Authorization
+@using DispatcherWeb.Projects.Dto
+@using DispatcherWeb.Web.Areas.App.Startup
+@{
+    ViewBag.CurrentPageName = Model.Id > 0 ? AppPageNames.Tenant.Projects : AppPageNames.Tenant.AddProject;
+}
+@model ProjectEditDto
+
+@section Scripts{
+    <environment names="Development">
+        <script src="~/view-resources/Areas/app/Views/Projects/_CreateOrEditProjectServiceModal.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Areas/app/Views/Projects/Details.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/app/Views/Projects/_CreateOrEditProjectServiceModal.min.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Areas/app/Views/Projects/Details.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+
+<div class="m-subheader ">
+    <div class="row align-items-center">
+        <div class="mr-auto col-sm-12 col-md-6">
+            <h3 class="m-subheader__title m-subheader__title--separator">
+                <span>@L("ProjectDetailHeader")</span>
+            </h3>
+            <span class="m-section__sub">
+                @L("ProjectDetailHeaderInfo")
+            </span>
+        </div>
+        <div class="col-sm-12 col-md-6 text-right">
+        </div>
+    </div>
+</div>
+
+<div class="m-content">
+    <div class="m-portlet m-portlet--tab">
+        <form class="m-form m-form--fit m-form--label-align-right" id="ProjectForm" asp-controller="Projects" asp-action="Details">
+            <div class="m-portlet__body">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group m-form__group row">
+                    <label for="Name" class="col-sm-12 col-md-2 col-form-label required-label">@L("Name"):</label>
+                    <div class="col-sm-12 col-md-10">
+                        <input type="text" class="form-control m-input" asp-for="Name">
+                    </div>
+                </div>
+                <div class="form-group m-form__group row">
+                    <label for="Description" class="col-sm-12 col-md-2 col-form-label">@L("Description"):</label>
+                    <div class="col-sm-12 col-md-10">
+                        <input type="text" class="form-control m-input" asp-for="Description">
+                    </div>
+                </div>
+                <div class="form-group m-form__group row">
+                    <label for="StartDate" class="ccol-sm-12 col-md-2 col-form-label">@L("StartDate"):</label>
+                    <div class="col-sm-12 col-md-2">
+                        <input type="text" class="form-control" asp-for="StartDate" autocomplete="off">
+                    </div>
+                    <label for="EndDate" class="col-sm-12 col-md-2 col-form-label">@L("EndDate"):</label>
+                    <div class="ccol-sm-12 col-md-2">
+                        <input type="text" class="form-control" asp-for="EndDate" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group m-form__group row">
+                    <label for="Status" class="col-sm-12 col-md-2 col-form-label">@L("Status"):</label>
+                    <div class="col-lg-2 col-sm-12 col-md-10">
+                        <select class="form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<ProjectStatus>()" data-inactive-status="@((int)ProjectStatus.Inactive)">
+                            <option value="">Select an option</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group m-form__group row">
+                    <label for="Location" class="col-sm-12 col-md-2 col-form-label">@L("Location"):</label>
+                    <div class="col-sm-12 col-md-10">
+                        <input type="text" class="form-control" asp-for="Location">
+                    </div>
+                </div>
+                <div class="form-group m-form__group row">
+                    <label for="PONumber" class="col-sm-12 col-md-2 col-form-label">@L("PONumber"):</label>
+                    <div class="col-sm-12 col-md-10">
+                        <input type="text" class="form-control" asp-for="PONumber">
+                    </div>
+                </div>
+
+
+                <div class="box-header-top clearfix">
+                    <div class="grid-caption pull-left">
+                        <label>@L("ProjectServices")</label>
+                    </div>
+                    <div class="box-actions pull-right mr-neg-10">
+                        <button type="button" class="btn btn-primary" id="CreateNewProjectServiceButton">
+                            <i class="fa fa-plus"></i>@L("AddNew")
+                        </button>
+                    </div>
+                </div>
+                <table class="table table-striped table-bordered table-hover dt-responsive" id="ProjectServicesTable"></table>
+
+
+                @if (Session.OfficeCopyChargeTo)
+                {
+                    <div class="form-group m-form__group row">
+                        <label for="ChargeTo" class="col-sm-12 col-md-2 col-form-label">@L("ChargeTo"):</label>
+                        <div class="col-sm-12 col-md-10">
+                            <input type="text" class="form-control" asp-for="ChargeTo">
+                        </div>
+                    </div>
+                }
+                <div class="form-group m-form__group row">
+                    <label for="Directions" class="col-sm-12 col-md-2 col-form-label">@L("Comments"):</label>
+                    <div class="col-sm-12 col-md-10">
+                        <textarea type="text" class="form-control" rows="5" asp-for="Directions"></textarea>
+                    </div>
+                </div>
+                <div class="form-group m-form__group row">
+                    <label class="col-sm-12 col-md-2 col-form-label"></label>
+                    <div class="col-sm-12 col-md-3">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @L("InsertCannedText") <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu insert-canned-text-list" data-target-id="Notes">
+                                <li data-id="loading" style="display: none;"><a href="#">Loading...</a></li>
+                                <li data-id="no-items" style="display: none;"><a href="#">No items</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group m-form__group row">
+                    <label for="Notes" class="col-2 col-form-label">@L("Notes"):</label>
+                    <div class="col-sm-12 col-md-10">
+                        <textarea type="text" class="form-control" rows="7" asp-for="Notes"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="m-portlet__foot m-portlet__foot--fit">
+                <div class="m-form__actions">
+                    <button id="SaveProjectButton" type="submit" class="btn btn-primary save-button"><i class="fa fa-save"></i> @L("Save")</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="m-portlet m-portlet--mobile">
+        <div class="m-portlet__head">
+            <div class="m-portlet__head-caption">
+                <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text">
+                        @L("Quotes")
+                    </h3>
+                </div>
+            </div>
+            <div class="m-portlet__head-tools">
+                <ul class="m-portlet__nav">
+                    <li class="m-portlet__nav-item">
+                        @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
+                        {
+                            <button type="button" class="btn btn-primary" id="CreateNewQuoteButton">
+                                <i class="fa fa-plus"></i>@L("AddQuote")
+                            </button>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="m-portlet__body">
+            <table class="table table-striped table-bordered table-hover dt-responsive" id="ProjectQuotesTable"></table>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewData["Title"] = "SignoutCallback";
+}
+
+<h2>Please wait...</h2>
+
+@section Scripts{
+    <script>
+        App.ui.setBusy("Authentication");
+        new Oidc.UserManager({
+            response_mode: "fragment",
+            userStore: new Oidc.WebStorageStateStore({ store: Oidc.Global.localStorage })
+        }).signoutCallback().then(function () { //"query" or "fragment"
+            App.ui.setBusy("Redirecting");
+            window.location = '/Authentication/LoggedOut';
+        }).catch(function (e) {
+            console.error(e);
+            //todo show fatal error, also 'click to reload' should redirect to /
+            //App.ui.setBusy("Redirecting to driver application");
+            //window.location = '/';
+        });
+    </script>
+}

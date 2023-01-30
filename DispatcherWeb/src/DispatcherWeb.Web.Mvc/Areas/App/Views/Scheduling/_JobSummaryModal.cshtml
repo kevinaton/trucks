@@ -1,0 +1,15 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using DispatcherWeb.Scheduling.Dto
+@using Newtonsoft.Json;
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Job Summary"))
+@model JobSummaryModalInput;
+
+<div class="modal-body JobSummaryModal">
+    <input type="hidden" asp-for="OrderLineId" />
+    <div id="trucks-timeline"></div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary close-button" data-dismiss="modal">Close</button>
+</div>

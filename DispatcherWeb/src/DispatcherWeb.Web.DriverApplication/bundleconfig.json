@@ -1,0 +1,54 @@
+[
+  {
+    "outputFileName": "wwwroot/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/dist/css/bootstrap-slim.min.css",
+    "inputFiles": [
+      "wwwroot/lib/bootstrap/dist/css/bootstrap-slim.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/bundles/all.min.css",
+    "inputFiles": [
+      "wwwroot/lib/bootstrap/dist/css/bootstrap-slim.css",
+      "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/bundles/allLibs.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery/dist/jquery.min.js",
+      "wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
+      "wwwroot/lib/signature_pad/signaturepad.min.js",
+      //"wwwroot/lib/oidc-client/oidc-client.min.js",
+      "wwwroot/lib/oidc-client/oidc-client.rsa256.slim.min.js",
+      "wwwroot/lib/idb/with-async-ittr-min.js",
+      "wwwroot/lib/dayjs/dayjs.min.js",
+      "wwwroot/lib/dayjs/plugin/customParseFormat.js",
+      "wwwroot/lib/dayjs/plugin/utc.js"
+      //"wwwroot/lib/dayjs/plugin/duration.js"
+      //"wwwroot/js/site.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/bundles/swLibs.min.js",
+    "inputFiles": [
+      "wwwroot/lib/idb/with-async-ittr-min.js",
+      "wwwroot/lib/dayjs/dayjs.min.js",
+      "wwwroot/lib/dayjs/plugin/customParseFormat.js",
+      "wwwroot/lib/dayjs/plugin/utc.js"
+      //"wwwroot/lib/dayjs/plugin/duration.js"
+      //"wwwroot/js/site.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  }
+]

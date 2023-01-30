@@ -1,0 +1,21 @@
+﻿using System.Threading.Tasks;
+using Abp.Application.Services;
+using Abp.Application.Services.Dto;
+using DispatcherWeb.Authorization.Roles.Dto;
+
+namespace DispatcherWeb.Authorization.Roles
+{
+    /// <summary>
+    /// Application service that is used by 'role management' page.
+    /// </summary>
+    public interface IRoleAppService : IApplicationService
+    {
+        Task<PagedResultDto<RoleListDto>> GetRoles(GetRolesInput input);
+        Task<ListResultDto<RoleListDto>> GetRolesForDropdown();
+        Task<GetRoleForEditOutput> GetRoleForEdit(NullableIdDto input);
+        Task CreateOrUpdateRole(CreateOrUpdateRoleInput input);
+        Task<bool> IsRoleHaveUsers(EntityDto input);
+        Task DeleteRole(EntityDto input);
+        Task RestoreDefaultPermissionsAsync(int roleId);
+    }
+}

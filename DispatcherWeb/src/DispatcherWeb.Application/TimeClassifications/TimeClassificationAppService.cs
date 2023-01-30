@@ -1,0 +1,189 @@
+﻿using Abp.Application.Features;
+using Abp.Application.Services.Dto;
+using Abp.Authorization;
+using Abp.Collections.Extensions;
+using Abp.Configuration;
+using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
+using Abp.UI;
+using DispatcherWeb.Authorization;
+using DispatcherWeb.Configuration;
+using DispatcherWeb.Drivers;
+using DispatcherWeb.Dto;
+using DispatcherWeb.Features;
+using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.TimeClassifications.Dto;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+
+namespace DispatcherWeb.TimeClassifications
+{
+    [AbpAuthorize]
+    public class TimeClassificationAppService : DispatcherWebAppServiceBase, ITimeClassificationAppService
+    {
+        private readonly IRepository<TimeClassification> _timeClassificationRepository;
+        private readonly IRepository<Drivers.EmployeeTime> _employeeTimeRepository;
+        private readonly IRepository<Driver> _driverRepository;
+
+        public TimeClassificationAppService(
+            IRepository<TimeClassification> timeClassificationRepository,
+            IRepository<Drivers.EmployeeTime> employeeTimeRepository,
+            IRepository<Driver> driverRepository
+            )
+        {
+            _timeClassificationRepository = timeClassificationRepository;
+            _employeeTimeRepository = employeeTimeRepository;
+            _driverRepository = driverRepository;
+        }
+
+        public async Task<ListResultDto<SelectListDto>> GetTimeClassificationsSelectList(GetTimeClassificationsSelectListInput input)
+        {
+            var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay) && await FeatureChecker.IsEnabledAsync(AppFeatures.DriverProductionPayFeature);
+
+            var driverId = input.EmployeeId == null ? (int?)null : await _driverRepository.GetDriverIdByUserIdOrDefault(input.EmployeeId.Value);
+            if (driverId == 0)
+            {
+                driverId = null;
+            }
+
+            var items = await _timeClassificationRepository.GetAll()
+                .WhereIf(!allowProductionPay || input.ExcludeProductionPay, x => !x.IsProductionBased)
+                .WhereIf(driverId.HasValue, 
+                    x => x.EmployeeTimeClassifications.Any(e => e.DriverId == driverId 
+                        && (!input.AllowForManualTime.HasValue || e.AllowForManualTime == input.AllowForManualTime)))
+                .Select(x => new SelectListDto<TimeClassificationSelectListInfo>
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                    Item = new TimeClassificationSelectListInfo
+                    {
+                        IsProductionPay = x.IsProductionBased
+                    }
+                })
+                .OrderBy(x => x.Name)
+                .ToListAsync();
+
+            return new ListResultDto<SelectListDto>(items);
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_TimeEntry_EditTimeClassifications)]
+        public async Task<PagedResultDto<TimeClassificationDto>> GetTimeClassifications(GetTimeClassificationsInput input)
+        {
+            var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay) && await FeatureChecker.IsEnabledAsync(AppFeatures.DriverProductionPayFeature);
+
+            var query = _timeClassificationRepository.GetAll()
+                .WhereIf(!allowProductionPay, x => !x.IsProductionBased);
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Select(x => new TimeClassificationDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    IsProductionBased = x.IsProductionBased,
+                    DefaultRate = x.DefaultRate
+                })
+                .OrderBy(input.Sorting)
+                .PageBy(input)
+                .ToListAsync();
+
+            return new PagedResultDto<TimeClassificationDto>(
+                totalCount,
+                items);
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_TimeEntry_EditTimeClassifications)]
+        public async Task<TimeClassificationEditDto> GetTimeClassificationForEdit(NullableIdDto input)
+        {
+            TimeClassificationEditDto timeClassificationEditDto;
+
+            if (input.Id.HasValue)
+            {
+                timeClassificationEditDto = await _timeClassificationRepository.GetAll()
+                    .Where(x => x.Id == input.Id.Value)
+                    .Select(x => new TimeClassificationEditDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        IsProductionBased = x.IsProductionBased,
+                        DefaultRate = x.DefaultRate,
+                        HasRecordsAssociated = x.EmployeeTimeClassifications.Any()
+                    }).FirstAsync();
+            }
+            else
+            {
+                timeClassificationEditDto = new TimeClassificationEditDto();
+            }
+
+            return timeClassificationEditDto;
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_TimeEntry_EditTimeClassifications)]
+        public async Task EditTimeClassification(TimeClassificationEditDto model)
+        {
+            var entity = model.Id.HasValue ? await _timeClassificationRepository.GetAsync(model.Id.Value) : new TimeClassification();
+
+            var hasRecordsAssociated = model.Id.HasValue
+                ? await _timeClassificationRepository.GetAll()
+                    .Where(x => x.Id == model.Id)
+                    .Select(x => x.EmployeeTimeClassifications.Any())
+                    .FirstAsync()
+                : false;
+
+            entity.Name = model.Name;
+            entity.DefaultRate = model.DefaultRate;
+            entity.TenantId = Session.TenantId ?? 0;
+
+            if (!hasRecordsAssociated)
+            {
+                entity.IsProductionBased = model.IsProductionBased;
+            }
+
+            if (await _timeClassificationRepository.GetAll()
+                .WhereIf(model.Id != 0, x => x.Id != model.Id)
+                .AnyAsync(x => x.Name == model.Name)
+            )
+            {
+                throw new UserFriendlyException($"TimeClassification with name '{model.Name}' already exists!");
+            }
+
+            await _timeClassificationRepository.InsertOrUpdateAndGetIdAsync(entity);
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_TimeEntry_EditTimeClassifications)]
+        public async Task DeleteTimeClassification(EntityDto input)
+        {
+            var hasEmployeeTimeRecords = await _employeeTimeRepository.GetAll()
+                .Where(x => x.TimeClassificationId == input.Id)
+                .AnyAsync();
+
+            if (hasEmployeeTimeRecords)
+            {
+                throw new UserFriendlyException(L("UnableToDeleteSelectedRowWithAssociatedData"));
+            }
+
+            var defaultTimeClassificationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.TimeTrackingDefaultTimeClassificationId);
+            if (defaultTimeClassificationId == input.Id)
+            {
+                throw new UserFriendlyException("You can't delete selected row because it is a default time tracking classification.");
+            }
+
+            var timeClassification = await _timeClassificationRepository.GetAll()
+                .Where(x => x.Id == input.Id)
+                .Select(x => new
+                {
+                    HasEmployeeTimeClassifications = x.EmployeeTimeClassifications.Any()
+                }).FirstAsync();
+
+            if (timeClassification.HasEmployeeTimeClassifications)
+            {
+                throw new UserFriendlyException(L("UnableToDeleteSelectedRowWithAssociatedData"));
+            }
+
+            await _timeClassificationRepository.DeleteAsync(input.Id);
+        }
+    }
+}

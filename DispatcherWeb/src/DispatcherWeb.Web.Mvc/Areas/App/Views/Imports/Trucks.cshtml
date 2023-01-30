@@ -1,0 +1,22 @@
+﻿@using System.Threading.Tasks
+@using Abp.Configuration
+@using Abp.Extensions
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Dto
+@using DispatcherWeb.Features
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Web.Areas.App.Startup
+@using DispatcherWeb.PreventiveMaintenanceSchedule.Dto
+@using DispatcherWeb.Web.Areas.App.Models.PreventiveMaintenanceSchedule
+@{
+    Layout = "../Imports/_ImportLayout";
+
+    ViewBag.CurrentPageName = AppPageNames.Tenant.ImportTrucks;
+    ViewBag.ImportType = ImportType.Trucks;
+}
+
+
+@section H1
+    {
+    Trucks Import
+}

@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common.props"></Import>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <RootNamespace>DispatcherWeb</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Emailing\Dto\**" />
+    <EmbeddedResource Remove="Emailing\Dto\**" />
+    <None Remove="Emailing\Dto\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="EmployeeTime\Dto\AddBulkTimeResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Emailing\Dto\EmailHistoryDto.cs" />
+    <Compile Include="Emailing\Dto\EmailHistoryEventDto.cs" />
+    <Compile Include="Emailing\Dto\GetEmailHistoryInput.cs" />
+    <Compile Include="Emailing\Dto\TrackEmailOpenInput.cs" />
+    <Compile Include="Emailing\Dto\TrackEventInput.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Abp.Web.Common" Version="7.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\PdfSharpMigraDoc\MigraDoc.DocumentObjectModel\MigraDoc.DocumentObjectModel.csproj" />
+    <ProjectReference Include="..\DispatcherWeb.Core.Shared\DispatcherWeb.Core.Shared.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="NETStandard.Library" Version="2.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Dashboard\TotalRevenueGraph\Dto\" />
+  </ItemGroup>
+</Project>

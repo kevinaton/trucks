@@ -1,0 +1,71 @@
+@using System.Threading.Tasks
+@using DispatcherWeb.Web.Areas.App.Startup
+@{
+    ViewBag.CurrentPageName = AppPageNames.Tenant.ProjectHistory;
+}
+
+@section Scripts{
+    <environment names="Development">
+        <script src="~/view-resources/Areas/app/Views/ProjectHistory/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/app/Views/ProjectHistory/Index.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+<div class="m-subheader ">
+    <div class="row align-items-center">
+        <div class="mr-auto col-sm-12 col-md-6">
+            <h3 class="m-subheader__title m-subheader__title--separator">
+                <span>@L("ProjectHistoryHeader")</span>
+            </h3>
+            <span class="m-section__sub">
+                @L("ProjectHistoryHeaderInfo")
+            </span>
+        </div>
+        <div class="col-sm-12 col-md-6 text-right">
+
+        </div>
+    </div>
+</div>
+
+<div class="m-content">
+    <div class="m-portlet m-portlet--mobile">
+        <div class="m-portlet__body">
+            <form class="m-form m-form--fit m--margin-bottom-20">
+                <div class="row m--margin-bottom-20">
+                    <div class="form-group col-lg-4 col-md-4 col-sm-6">
+                        <label class="control-label" for="DateFilter">@L("Date")</label>
+                        <input class="form-control" id="DateFilter" type="text" autocomplete="off">
+                        <input type="hidden" class="filter" name="StartDate" id="StartDateFilter" />
+                        <input type="hidden" class="filter" name="EndDate" id="EndDateFilter" />
+                    </div>
+                    <div class="form-group col-lg-4 col-md-4 col-sm-6">
+                        <label class="control-label" for="ProjectIdFilter">@L("Project")</label>
+                        <select class="form-control filter" name="ProjectId" id="ProjectIdFilter">
+                            <option value="">Select a project</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4 text-right margin-top-20">
+                        <button class="btn btn-primary btn-brand m-btn m-btn--icon" id="SearchButton">
+                            <span>
+                                <i class="la la-search"></i>
+                                <span>@L("Search")</span>
+                            </span>
+                        </button>
+                        <button class="btn btn-secondary m-btn m-btn--icon" id="ClearSearchButton">
+                            <span>
+                                <i class="la la-close"></i>
+                                <span>@L("Clear")</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="m-separator m-separator--md m-separator--dashed"></div>
+            <table class="table table-striped table-bordered table-hover dt-responsive" id="ProjectHistoryTable"></table>
+        </div>
+
+    </div>
+</div>

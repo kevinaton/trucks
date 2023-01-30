@@ -1,0 +1,60 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
+using DispatcherWeb.Services;
+using DispatcherWeb.Locations;
+using DispatcherWeb.UnitsOfMeasure;
+using DispatcherWeb.Infrastructure;
+
+namespace DispatcherWeb.Quotes
+{
+    [Table("QuoteService")]
+    public class QuoteService : FullAuditedEntity, IMustHaveTenant
+    {
+        public int TenantId { get; set; }
+
+        [Required(ErrorMessage = "Service/Product Item is a required field")]
+        public int ServiceId { get; set; }
+
+        public int QuoteId { get; set; }
+
+        public int? MaterialUomId { get; set; }
+
+        public int? FreightUomId { get; set; }
+
+        public DesignationEnum Designation { get; set; }
+
+        public int? LoadAtId { get; set; }
+
+        public int? DeliverToId { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? PricePerUnit { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? FreightRate { get; set; }
+
+        public decimal? LeaseHaulerRate { get; set; }
+
+        public decimal? MaterialQuantity { get; set; }
+
+        public decimal? FreightQuantity { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.Note)]
+        public string Note { get; set; }
+
+        public virtual UnitOfMeasure MaterialUom { get; set; }
+
+        public virtual UnitOfMeasure FreightUom { get; set; }
+
+        public virtual Quote Quote { get; set; }
+
+        public virtual Service Service { get; set; }
+
+        public virtual Location LoadAt { get; set; }
+
+        public virtual Location DeliverTo { get; set; }
+    }
+}

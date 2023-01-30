@@ -1,0 +1,138 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Authorization;
+@using DispatcherWeb.Features;
+@using DispatcherWeb.LeaseHaulers.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@model LeaseHaulerEditDto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Lease Hauler: " + Model.Name : "Create new lease hauler"))
+
+<div class="modal-body box-wrap">
+
+    <div id="LeaseHaulerTabPanel" class="tabbable-line">
+        <ul class="nav nav-tabs m-tabs-line" role="tablist">
+            <li class="nav-item m-tabs__item ">
+                <a href="#LeaseHaulerGeneralTab" aria-expanded="true" class="nav-link m-tabs__link active" data-toggle="tab" role="tab">
+                    @L("General")
+                </a>
+            </li>
+            <li class="nav-item m-tabs__item ">
+                <a href="#LeaseHaulerDriversTab" aria-expanded="true" class="nav-link m-tabs__link" data-toggle="tab" role="tab">
+                    @L("Drivers")
+                </a>
+            </li>
+            <li class="nav-item m-tabs__item ">
+                <a href="#LeaseHaulerTrucksTab" aria-expanded="true" class="nav-link m-tabs__link" data-toggle="tab" role="tab">
+                    @L("Trucks")
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="LeaseHaulerGeneralTab">
+                <form role="form" novalidate class="form-validation">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label class="required-label">@L("Name")</label>
+                        <input class="form-control" type="text" asp-for="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>@L("StreetAddress1")</label>
+                        <input class="form-control" type="text" asp-for="StreetAddress1">
+                    </div>
+                    <div class="form-group">
+                        <label>@L("StreetAddress2")</label>
+                        <input class="form-control" type="text" asp-for="StreetAddress2">
+                    </div>
+                    <div class="form-group">
+                        <label>@L("City")</label>
+                        <input class="form-control" type="text" asp-for="City">
+                    </div>
+                    <div class="form-group">
+                        <label>@L("State")</label>
+                        <input class="form-control" type="text" asp-for="State">
+                    </div>
+                    <div class="form-group">
+                        <label>@L("ZipCode")</label>
+                        <input class="form-control" type="text" asp-for="ZipCode">
+                    </div>
+                    <div class="form-group">
+                        <label>@L("CountryCode")</label>
+                        <input class="form-control" type="text" asp-for="CountryCode">
+                    </div>
+                    <div class="form-group">
+                        <label>@L("AccountNumber")</label>
+                        <input class="form-control" type="text" asp-for="AccountNumber">
+                    </div>
+                    <div class="form-group">
+                        <label>@L("PhoneNumber")</label>
+                        <input class="form-control" type="text" asp-for="PhoneNumber">
+                    </div>
+                    <div class="form-group">
+                        <label class="m-checkbox">
+                            <input type="checkbox" id="IsActive" name="IsActive" value="true" checked="@(Model.IsActive ? "checked" : null)">
+                            @L("Active")
+                            <span></span>
+                        </label>
+                    </div>
+                    @if (await FeatureChecker.IsEnabledAsync(AppFeatures.AllowSendingOrdersToDifferentTenant)
+                    && await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_LeaseHaulers_SetHaulingCompanyTenantId))
+                    {
+                        <div class="form-group">
+                            <label>@L("TenantId")</label>
+                            <input class="form-control" type="text" asp-for="HaulingCompanyTenantId">
+                        </div>
+                    }
+                </form>
+                <div class="box-border-top clearfix">
+                    <div class="grid-caption pull-left">
+                        <label>@L("Contacts")</label>
+                    </div>
+                    <div class="box-actions pull-right">
+                        <button type="button" class="btn btn-default" id="CreateNewLeaseHaulerContactButton"><i class="fa fa-plus"></i>@L("AddNewContact")</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-striped table-bordered table-hover dt-responsive" id="LeaseHaulerContactsTable"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="LeaseHaulerTrucksTab">
+                <div class="clearfix" style="padding-left: 10px">
+                    <div class="grid-caption pull-left">
+                        <label>@L("Trucks")</label>
+                    </div>
+                    <div class="box-actions pull-right">
+                        <button type="button" class="btn btn-default" id="CreateNewLeaseHaulerTruckButton"><i class="fa fa-plus"></i>@L("AddNewTruck")</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-striped table-bordered table-hover dt-responsive" id="LeaseHaulerTrucksTable"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="LeaseHaulerDriversTab">
+                <div class="clearfix" style="padding-left: 10px">
+                    <div class="grid-caption pull-left">
+                        <label>@L("Drivers")</label>
+                    </div>
+                    <div class="box-actions pull-right">
+                        <button type="button" class="btn btn-default" id="CreateNewLeaseHaulerDriverButton"><i class="fa fa-plus"></i>@L("AddNewDriver")</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-striped table-bordered table-hover dt-responsive" id="LeaseHaulerDriversTable"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

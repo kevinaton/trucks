@@ -1,0 +1,79 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Dispatching
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using DispatcherWeb.Web.Areas.App.Models.Scheduling
+@model SendDispatchMessageModalViewModel
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("SendDispatchMessage")))
+<style>
+    .msg-box {
+        display: none;
+    }
+
+    .show-sms-box {
+        position: absolute;
+        margin-left: 42%;
+        margin-top: -8px;
+    }
+</style>
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <input type="hidden" asp-for="OrderLineId" />
+        <div class="form-group msg-box">
+            <div class="d-flex justify-content-between">
+                <label class="required-label" for="Message">@L("MessageText")</label>
+                <label id="MessageLength">@L("{0}chars", Model.Message.Length)</label>
+            </div>
+            <textarea class="form-control" rows="6" asp-for="Message" required maxlength="@(Dispatch.MaxMessageLength - 100)"
+            style="min-height:84px;"></textarea>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-link pr-0" id="ClearMessageBtn">@L("ClearText")</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="required-label">Send to</label>
+            <select class="form-control" name="OrderLineTruckIds" id="OrderLineTruckIds" multiple="multiple" required>
+                @foreach (var orderLineTruck in Model.OrderLineTrucks)
+                {
+                    <option value="@orderLineTruck.Value"
+                        selected=@(orderLineTruck.Selected ? "selected" : null)
+                        data-hasphone="@orderLineTruck.HasPhone.ToLowerCaseString()">
+                        @orderLineTruck.Text
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group m-form__group row">
+            <label class="required-label col-form-label col-sm-9">How many dispatches to create for each truck?</label>
+            <div class="col-sm-3">
+                <input class="form-control" type="number" name="NumberOfDispatches" id="NumberOfDispatches"
+                       value="1" data-rule-number="true" data-rule-min="1" min="1"
+                       data-rule-max="@DispatchingAppService.MaxNumberOfDispatches" max="@DispatchingAppService.MaxNumberOfDispatches" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="IsMultipleLoads" class="m-checkbox">
+                <input id="IsMultipleLoads" type="checkbox" name="IsMultipleLoads" value="true" checked="@(Model.IsMultipleLoads ? "checked" : null)">
+                @L("RunUntilStopped")
+                <span></span>
+            </label>
+        </div>
+
+        <div class="form-group" @Html.StyleDisplayNone(!Model.CanAddDispatchBasedOnTime)>
+            <label for="AddDispatchBasedOnTime" class="m-checkbox">
+                <input id="AddDispatchBasedOnTime" type="checkbox" name="AddDispatchBasedOnTime" value="true" checked="@(Model.CanAddDispatchBasedOnTime ? "checked" : null)">
+                @L("AddDispatchBasedOnTimeOnJob")
+                <span></span>
+            </label>
+        </div>
+
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary close-button" data-dismiss="modal">@L("Cancel")</button>
+    <button type="button" class="btn btn-primary save-button"><i class="fa fa-save"></i> <span>@L("Send")</span></button>
+</div>

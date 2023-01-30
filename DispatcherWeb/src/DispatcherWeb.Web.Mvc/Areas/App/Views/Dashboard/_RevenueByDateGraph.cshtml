@@ -1,0 +1,55 @@
+﻿@using DispatcherWeb.Authorization
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Dashboard.RevenueGraph.Dto
+@{
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="m-portlet m-portlet--full-height">
+            <div class="row align-items-center pt-4">
+                <div class="m-portlet__head-caption col-md-4">
+                    <div class="m-portlet__head-title ml-4 mb-2 text-center text-md-left">
+                        <h3 class="m-portlet__head-text">
+                            @L("Revenue")
+                        </h3>
+                    </div>
+                </div>
+                <div class="m-portlet__head-tools col-md-4 text-center mb-2">
+                    <div class="ml-3 mr-3">
+                        <input class="form-control" name="RevenueDateRange" id="RevenueDateRange" type="text">
+                    </div>
+                </div>
+                <div class="m-portlet__head-tools col-md-4 justify-content-end text-center text-md-right mb-2">
+                    <div class="btn-group mr-4" data-toggle="buttons">
+                        <label class="btn m-btn--pill btn-secondary active">
+                            <input type="radio" name="RevenueDateInterval" autocomplete="off" checked="" value="@((int)RevenueGraphDatePeriod.Daily)">
+                            Daily
+                        </label>
+                        <label class="btn m-btn--pill btn-secondary">
+                            <input type="radio" name="RevenueDateInterval" autocomplete="off" value="@((int)RevenueGraphDatePeriod.Weekly)">
+                            Weekly
+                        </label>
+                        <label class="btn m-btn--pill btn-secondary">
+                            <input type="radio" name="RevenueDateInterval" autocomplete="off" value="@((int)RevenueGraphDatePeriod.Monthly)">
+                            Monthly
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="m-portlet__body">
+                <div id="revenueLoading" style="text-align: center; height: 260px;">
+                    <div class="m-blockui" style="display: inline-block; margin-top: 100px;">
+                        <span>Loading...</span><span>
+                            <span class="m-loader m-loader--brand "></span>
+                        </span>
+                    </div>
+                </div>
+                <div id="revenueContainer" class="portlet-body-morris-fit morris-chart" style="display: none">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

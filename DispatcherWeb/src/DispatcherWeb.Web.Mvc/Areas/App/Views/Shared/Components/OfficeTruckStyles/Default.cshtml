@@ -1,0 +1,46 @@
+﻿@using DispatcherWeb.Web.Areas.App.Models.Layout
+@model OfficeTruckStylesViewModel
+@{
+    Layout = null;
+}
+
+@foreach (var office in Model.Offices)
+{
+    if (string.IsNullOrEmpty(office.TruckColor))
+    {
+        continue;
+    }
+    if (office.TruckColor[0] != '#') { continue; };
+    if (!office.TruckColor.Skip(1).All(Uri.IsHexDigit))
+    {
+        continue;
+    }
+
+    <style>
+        .truck-tag.dump-truck.truck-office-@office.Id {
+            background-color: @office.TruckColor;
+            border-color: @office.TruckColor;
+        }
+
+        .truck-tag.leased-dump-truck.truck-office-@office.Id {
+            border-color: @office.TruckColor;
+        }
+
+        .truck-tag.tractor.truck-office-@office.Id {
+            border-color: @office.TruckColor;
+        }
+
+        .truck-tag.leased-tractor.truck-office-@office.Id {
+            border-color: @office.TruckColor;
+        }
+
+        .truck-tag.trailer.truck-office-@office.Id {
+            border-color: @office.TruckColor;
+        }
+
+        .schedule-truck-tiles .truck-tile.truck-office-@office.Id {
+            border: 3px solid @office.TruckColor;
+            padding: 7px 5px;
+        }
+    </style>
+}

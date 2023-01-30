@@ -1,0 +1,98 @@
+﻿@using System.Threading.Tasks
+@using Abp.Configuration
+@using Abp.Application.Features
+@using DispatcherWeb.Authorization
+@using DispatcherWeb.Features
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Dashboard
+@using DispatcherWeb.Dashboard.Dto
+@using DispatcherWeb.Dashboard.RevenueGraph.Dto
+@using DispatcherWeb.PreventiveMaintenanceSchedule.Dto
+@using DispatcherWeb.Web.Areas.App.Startup
+@using DispatcherWeb.Web.Areas.App.Models.Dashboard
+@addTagHelper DispatcherWeb.Web.Utils.ConditionalAnchorTagHelper, DispatcherWeb.Web
+@inject IDashboardSettingManager DashboardSettingManager
+@{
+    ViewBag.CurrentPageName = AppPageNames.Tenant.Dashboard;
+}
+
+@section Styles {
+<link rel="stylesheet" href="~/lib/morris.js/morris.css" asp-append-version="true" />
+}
+
+@section Scripts{
+<script src="~/view-resources/Areas/app/Views/Dashboard/Index.js" asp-append-version="true"></script>
+}
+<div class="m-subheader">
+    <div class="d-flex align-items-center">
+        <div class="mr-auto">
+            <h3 class="m-subheader__title m-subheader__title--separator">
+                <span>@L("Dashboard")</span>
+            </h3>
+            <span class="m-section__sub">
+                @L("DashboardHeaderInfo")
+            </span>
+        </div>
+        <div class="text-right">
+            <div class="dropdown">
+                <button class="btn btn-primary btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>
+                <ul class="dropdown-menu dropdown-menu-right dropdown-menu-lg-right">
+                    <li><a class="dropdown-item" style="cursor: pointer;" id="btnModifyDashboard"><i class="fa fa-wrench"></i>@L("ModifyDashboard")</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="m-content">
+    @{
+        bool showGettingStarted = await SettingManager.GetSettingValueAsync<bool>(AppSettings.GettingStarted.ShowGettingStarted);
+        bool isPaidFunctionality = await FeatureChecker.IsEnabledAsync(AppFeatures.PaidFunctionality);
+    }
+    @if (showGettingStarted && isPaidFunctionality)
+    {
+        <div id="gettingStartedContainer" style="display:none;"></div>
+    }
+
+    @if (await DashboardSettingManager.IsAnyEnabledAsync(DashboardSettings.ScheduledTruckCounters.All))
+    {
+        <div class="row align-items-stretch" id="scheduledTruckCountLoading">
+            <div class="col-md-12 col-sm-12">
+                <div class="card card-body">
+                    <div style="text-align: center;">
+                        <div class="m-blockui" style="display: inline-block; margin-top: 2px;">
+                            <span>Loading...</span><span>
+                                <span class="m-loader m-loader--brand"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div id="scheduledTruckCountContainer" style="display:none;"></div>
+    }
+
+    @await Html.PartialAsync("_DotRequirementCharts")
+
+    @if (await DashboardSettingManager.IsAnyEnabledAsync(DashboardSettings.RevenueCharts.All))
+    {
+        @await Html.PartialAsync("_RevenueChartsContainer")
+    }
+
+    @if (await DashboardSettingManager.IsEnabledAsync(DashboardSettings.RevenuePerTruckByDateGraph))
+    {
+        @await Html.PartialAsync("_RevenuePerTruckByDateGraph")
+    }
+
+    @if (await DashboardSettingManager.IsEnabledAsync(DashboardSettings.RevenueByDateGraph))
+    {
+        @await Html.PartialAsync("_RevenueByDateGraph")
+    }
+
+    @if (await DashboardSettingManager.IsEnabledAsync(DashboardSettings.TruckUtilizationGraph))
+    {
+        @await Html.PartialAsync("_TruckUtilizationGraph")
+    }
+</div>

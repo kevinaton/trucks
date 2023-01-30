@@ -1,0 +1,14 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Select quote"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <div class="form-group" id="QuoteInputContainer">
+            <label class="control-label">Quote</label>
+            
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

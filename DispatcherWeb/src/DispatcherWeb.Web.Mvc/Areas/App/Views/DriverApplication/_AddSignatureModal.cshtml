@@ -1,0 +1,49 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Dispatching.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Add Signature"))
+@model AddSignatureInput
+
+<style>
+    .signature-pad-wrapper {
+        /*width: 450px;*/
+        height: 250px;
+        border: 1px solid #f4f4f4;
+        position: relative;
+    }
+
+    .signature-pad-canvas {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.02) inset;
+    }
+
+    .signature-pad-description {
+        color: #C3C3C3;
+        text-align: center;
+        font-size: 1.2em;
+        margin-top: 8px;
+    }
+</style>
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <input type="hidden" asp-for="Guid" />
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" id="SignatureName" name="SignatureName">
+        </div>
+        <div class="form-group">
+            <div class="signature-pad-wrapper">
+                <canvas class="signature-pad-canvas"></canvas>
+            </div>
+            <div class="signature-pad-description">Sign above</div>
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

@@ -1,0 +1,137 @@
+@using Microsoft.AspNetCore.Http;
+@using System.Threading.Tasks
+@using Abp.Extensions
+@using Abp.Configuration
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Dto
+@using DispatcherWeb.Features
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Web.Areas.App.Startup
+@using DispatcherWeb.Web.Areas.App.Views.Shared.Components.OfficeTruckStyles
+@{
+    ViewBag.CurrentPageName = AppPageNames.Tenant.Schedule;
+}
+@section Styles
+{
+    <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-typeahead.css" asp-append-version="true" />
+    <link href="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.css" rel="stylesheet" />
+    <link href="~/lib/vis-timeline/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/view-resources/areas/app/views/scheduling/jobsummarymodal.css" rel="stylesheet" />
+    @await Component.InvokeAsync(typeof(OfficeTruckStylesViewComponent))
+}
+@section Scripts{
+    <environment names="Development">
+        <script src="~/lib/typeahead.js/dist/typeahead.bundle.js" asp-append-version="true"></script>
+        <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.js" asp-append-version="true"></script>
+        <script src="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.js" asp-append-version="true"></script>
+        <script src="~/lib/jQuery-contextMenu/dist/jquery.ui.position.min.js" asp-append-version="true"></script>
+        <script src="~/lib/jquery-ui/jquery-ui.js" asp-append-version="true"></script>
+        <script src="~/lib/vis-timeline/vis-timeline-graph2d.min.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Areas/app/Views/Scheduling/Index.js" asp-append-version="true"></script>        
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/lib/typeahead.js/dist/typeahead.bundle.js" asp-append-version="true"></script>
+        <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.js" asp-append-version="true"></script>
+        <script src="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.js" asp-append-version="true"></script>
+        <script src="~/lib/jQuery-contextMenu/dist/jquery.ui.position.min.js" asp-append-version="true"></script>
+        <script src="~/lib/jquery-ui/jquery-ui.min.js" asp-append-version="true"></script>
+        <script src="~/lib/vis-timeline/vis-timeline-graph2d.min.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Areas/app/Views/Scheduling/Index.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<div class="m-subheader ">
+    <div class="row align-items-center">
+        <div class="mr-auto col-4 col-md-6">
+            <h3 class="m-subheader__title m-subheader__title--separator">
+                <span>Schedule</span>
+            </h3>
+            <span class="m-section__sub">
+
+            </span>
+        </div>
+        <div class="col-8 col-md-6 text-right">
+            <button id="AddLeaseHaulersButton" class="btn btn-default" style="display: none">@L("AddLeaseHaulers")</button>
+            <div class="btn-group m-btn-group" role="group" aria-label="..." id="TruckTileChooseGroupingButton">
+                <button type="button" class="btn btn-default" data-category="false">All</button>
+                <button type="button" class="btn btn-default" data-category="true">By Category</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="m-content">
+    <div class="m-portlet m-portlet--mobile">
+        <div class="m-portlet__body">
+            <div class="m-form m-form--label-align-right">
+                <form>
+                    <div class="row m--margin-bottom-20">
+                        <label for="DateFilter" class="col-lg-1 col-md-1 col-form-label required-label mb-2">Date:</label>
+                        <div class="col-lg-2 col-sm-6 mb-3">
+                            <input type="text" class="form-control  m-input filter filter-date" autocomplete="off" name="Date" id="DateFilter">
+                        </div>
+                        @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.UseShifts))
+                        {
+                            <label for="ShiftFilter" class="col-lg-1 col-md-1 col-form-label required-label mb-2">@L("Shift"):</label>
+                            <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
+                                <select class="form-control filter" name="Shift" id="ShiftFilter" asp-items="@((await SettingManager.GetShiftSelectList()).Union(new List<SelectListDto> { new SelectListDto { Id = "", Name = "[No Shift]" } }).Select(x => new SelectListItem(x.Name, x.Id)))"></select>
+                            </div>
+                        }
+
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 mb-3" @Html.StyleDisplayNone(!await FeatureChecker.AllowMultiOfficeFeature())>
+                            <select class="form-control m-input filter" name="OfficeId" id="OfficeIdFilter" data-display-name="OfficeName"></select>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-4 col-md-4 mb-3">
+                            <div class="m-checkbox-inline">
+                                <label class="m-checkbox">
+                                    <input type="checkbox" class="filter" name="HideCompletedOrders" id="HideCompletedOrders"> Hide Completed Orders
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+                            <div class="row">
+                                <div class="col-lg-8 col-md-8 mb-3">
+                                    <div class="m-checkbox-inline">
+                                        <label class="m-checkbox" title="The progress bar may slow the display of the page. You can check this box to avoid that delay and hide the column.">
+                                            <input type="checkbox" class="filter" name="HideProgressBar" id="HideProgressBar"> Hide Progress Bar
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 mb-3 text-right">
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>
+                                        <ul class="dropdown-menu dropdown-menu-right dropdown-menu-lg-right">
+                                            <li><a class="dropdown-item" id="AddLeaseHaulerRequestButton"><i class="fa fa-truck"></i>@L("AddALeaseHauler")</a></li>
+                                            <li><a class="dropdown-item" id="MarkAllJobsCompletedButton"><i class="fa fa-tasks"></i>@L("MarkAllJobsCompleted")</a></li>
+                                            <li><a class="dropdown-item" id="AddDefaultDriverAssignmentsButton"><i class="fa fa-calendar-check"></i>@L("AddDefaultDriverAssignments")</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="schedule-truck-tiles" style="width:100%;" id="TruckTiles"></div>
+                    </div>
+
+                    <div class="row">
+                        <div id="TruckTilesByCategory" class="m-accordion m-accordion--bordered" style="display: none; margin-top: 10px;width:100%">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="row align-items-center schedule-table-container">
+                <table class="display table table-striped table-bordered table-hover dt-responsive schedule-table" id="ScheduleTable"></table>
+            </div>
+        </div>
+    </div>
+</div>

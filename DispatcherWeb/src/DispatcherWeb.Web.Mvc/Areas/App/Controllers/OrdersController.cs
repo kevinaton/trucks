@@ -1,0 +1,265 @@
+﻿using System;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
+using Abp.AspNetCore.Mvc.Authorization;
+using Abp.UI;
+using DispatcherWeb.Authorization;
+using DispatcherWeb.DriverAssignments.Dto;
+using DispatcherWeb.Exceptions;
+using DispatcherWeb.OrderPayments;
+using DispatcherWeb.Orders;
+using DispatcherWeb.Orders.Dto;
+using DispatcherWeb.Orders.SendOrdersToDrivers;
+using DispatcherWeb.Quotes.Dto;
+using DispatcherWeb.Web.Areas.App.Models.Orders;
+using DispatcherWeb.Web.Areas.App.Models.Shared;
+using DispatcherWeb.Web.Controllers;
+using DispatcherWeb.Web.Utils;
+using Microsoft.AspNetCore.Mvc;
+
+namespace DispatcherWeb.Web.Areas.app.Controllers
+{
+    [Area("App")]
+    [AbpMvcAuthorize]
+    public class OrdersController : DispatcherWebControllerBase
+    {
+        private readonly IOrderAppService _orderAppService;
+        private readonly IOrderPaymentAppService _orderPaymentAppService;
+        private readonly ISendOrdersToDriversAppService _sendOrdersToDriversAppService;
+
+        public OrdersController(
+            IOrderAppService orderAppService,
+            IOrderPaymentAppService orderPaymentAppService,
+            ISendOrdersToDriversAppService sendOrdersToDriversAppService
+        )
+        {
+            _orderAppService = orderAppService;
+            _orderPaymentAppService = orderPaymentAppService;
+            _sendOrdersToDriversAppService = sendOrdersToDriversAppService;
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<IActionResult> Details(int? id)
+        {
+            try
+            {
+                var model = await _orderAppService.GetOrderForEdit(new NullableIdDto(id));
+                return View(model);
+            }
+            catch (EntityDeletedException)
+            {
+                return RedirectToAction("Index");
+            }
+            catch (UserFriendlyException ex)
+            {
+                return View("UserFriendlyException", new UserFriendlyExceptionViewModel(ex));
+            }
+        }
+
+        [HttpPost]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<IActionResult> Details(OrderEditDto model)
+        {
+            var id = await _orderAppService.EditOrder(model);
+            return RedirectToAction("Details", new { id });
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_Reports_Receipts)]
+        public IActionResult Receipts()
+        {
+            return View();
+        }
+        
+        [AbpMvcAuthorize(AppPermissions.Pages_Reports_BillingReconciliation)]
+        public IActionResult BillingReconciliation()
+        {
+            return View();
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> CreateOrEditOrderLineModal(int? id, int? orderId)
+        {
+            var model = await _orderAppService.GetOrderLineForEdit(new GetOrderLineForEditInput(id, orderId));
+            return PartialView("_CreateOrEditOrderLineModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public PartialViewResult AddQuoteBasedOrderLinesModal()
+        {
+            return PartialView("_AddQuoteBasedOrderLinesModal");
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> CreateOrEditOrderLineOfficeAmountModal(int orderLineId)
+        {
+            var model = await _orderAppService.GetOrderLineOfficeAmountForEdit(new GetOrderLineOfficeAmountForEditInput(orderLineId));
+            return PartialView("_CreateOrEditOrderLineOfficeAmountModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> SetStaggeredTimesModal(int? orderLineId)
+        {
+            var model = await _orderAppService.GetStaggeredTimesForEdit(new NullableIdDto(orderLineId));
+            return PartialView("_SetStaggeredTimesModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> CreateOrEditTicketModal(int orderLineId)
+        {
+            var orderLine = await _orderAppService.GetOrderLineForEdit(new GetOrderLineForEditInput(orderLineId, null));
+            var model = new CreateOrEditTicketModalViewModel { OrderLineId = orderLineId, OrderLineDesignation = orderLine.Designation, OrderLineIsProductionPay = orderLine.ProductionPay };
+            return PartialView("_CreateOrEditTicketModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> CopyOrderModal(CopyOrderInput model)
+        {
+            var today = await GetToday();
+            model.DateBegin = today;
+            model.DateEnd = today;
+            return PartialView("_CopyOrderModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
+        public PartialViewResult CreateQuoteFromOrderModal(int orderId)
+        {
+            return PartialView("_CreateQuoteFromOrderModal", new CreateQuoteFromOrderInput { OrderId = orderId });
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> ShareOrderModal(int id)
+        {
+            var model = await _orderAppService.GetSharedOrders(new EntityDto(id));
+            return PartialView("_ShareOrderModal", model);
+        }
+        
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> ShareOrderLineModal(int id)
+        {
+            var model = await _orderAppService.GetSharedOrderLines(new EntityDto(id));
+            return PartialView("_ShareOrderLineModal", model);
+        }
+        
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
+        public PartialViewResult SetNoDriverForTruckModal(SetNoDriverForTruckInput model)
+        {
+            return PartialView("_SetNoDriverForTruckModal", model);
+        }
+        
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
+        public PartialViewResult SetDefaultDriverForTruckModal(SetDefaultDriverForTruckInput model)
+        {
+            return PartialView("_SetDefaultDriverForTruckModal", model);
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_PrintOrders)]
+        public async Task<FileContentResult> GetWorkOrderReport(GetWorkOrderReportInput input)
+        {
+            var report = await _orderAppService.GetWorkOrderReport(input);
+            return InlinePdfFile(report.SaveToBytesArray(), "WorkOrderReport.pdf");
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_PrintOrders)]
+        public async Task<FileContentResult> GetOrderSummaryReport(GetOrderSummaryReportInput input)
+        {
+            var report = await _orderAppService.GetOrderSummaryReport(input);
+            return InlinePdfFile(report, "OrderSummaryReport.pdf");
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_Reports_PaymentReconciliation)]
+        public async Task<FileContentResult> GetPaymentReconciliationReport(GetPaymentReconciliationReportInput input)
+        {
+            var report = await _orderAppService.GetPaymentReconciliationReport(input);
+            return InlinePdfFile(report, "PaymentReconciliationReport.pdf");
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_PrintOrders)]
+        public PartialViewResult PrintOrdersModal()
+        {
+            return PartialView("_PrintOrdersModal");
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_PrintOrders)]
+        public PartialViewResult PrintOrderWithDeliveryInfoModal(EntityDto model)
+        {
+            return PartialView("_PrintOrderWithDeliveryInfoModal", model);
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_SendOrdersToDrivers)]
+        public PartialViewResult SendOrdersToDriversModal()
+        {
+            return PartialView("_SendOrdersToDriversModal");
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_Reports_PaymentReconciliation)]
+        public async Task<PartialViewResult> PrintPaymentReconciliationReportModal()
+        {
+            var today = await GetToday();
+            return PartialView("_PrintPaymentReconciliationReportModal", new GetPaymentReconciliationReportInput
+            {
+                StartDate = today,
+                EndDate = today
+            });
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> CreateOrEditOrderInternalNotesModal(int id)
+        {
+            var model = await _orderAppService.GetOrderInternalNotes(new EntityDto(id));
+            return PartialView("_CreateOrEditOrderInternalNotesModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> AuthorizeOrderChargeModal(int id)
+        {
+            var model = await _orderPaymentAppService.GetAuthorizeOrderChargeModel(new EntityDto(id));
+            return PartialView("_AuthorizeOrderChargeModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<PartialViewResult> CaptureOrderAuthorizationModal(int id)
+        {
+            var model = await _orderPaymentAppService.GetCaptureOrderAuthorizationModel(new EntityDto(id));
+            return PartialView("_CaptureOrderAuthorizationModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
+        public async Task<PartialViewResult> EmailOrderReportModal(int id, bool useReceipts = false)
+        {
+            var model = useReceipts
+                ? await _orderAppService.GetEmailReceiptReportModel(new EntityDto(id))
+                : await _orderAppService.GetEmailOrderReportModel(new EntityDto(id));
+            return PartialView("_EmailOrderReportModal", model);
+        }
+
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
+        public PartialViewResult SelectOrderQuoteModal()
+        {
+            return PartialView("_SelectOrderQuoteModal");
+        }
+       
+    }
+}

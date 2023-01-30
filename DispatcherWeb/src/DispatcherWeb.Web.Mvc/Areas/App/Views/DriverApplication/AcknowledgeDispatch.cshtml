@@ -1,0 +1,33 @@
+﻿@using DispatcherWeb.Web.Areas.App.Models.DriverApplication
+@using DispatcherWeb.Web.Areas.App.Models.Acknowledge
+@model DriverApplicationDriverInfoViewModel<DriverLoadInfoViewModel>
+@{
+    Layout = "_LayoutWithClock";
+}
+@section Scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Areas/App/Views/DriverApplication/AcknowledgeDispatch.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/App/Views/DriverApplication/AcknowledgeDispatch.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<form role="form" novalidate>
+    @await Html.PartialAsync("_DispatchIdInputPartial", Model.DriverInfoViewModel)
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-4 margin-bottom-10"><button class="btn btn-primary col-sm-12" type="submit" id="AcknowledgeDispatchButton">Acknowledge Dispatch</button></div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-sm-12 col-md-8 col-lg-6 col-xl-4">
+        @await Html.PartialAsync("_DriverLoadInfoPartial", Model.DriverInfoViewModel)
+    </div>
+</div>

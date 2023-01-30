@@ -1,0 +1,54 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb
+@using DispatcherWeb.DriverMessages.Dto
+@using DispatcherWeb.Infrastructure
+@using DispatcherWeb.Dispatching.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@model ViewDispatchDto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("View Dispatch"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <div class="form-group">
+            <label>Truck</label>
+            <input class="form-control" type="text" asp-for="TruckCode" readonly="readonly">
+        </div>
+        <div class="form-group">
+            <label>Customer</label>
+            <input class="form-control" type="text" asp-for="CustomerName" readonly="readonly">
+        </div>
+        <div class="form-group">
+            <label>Item</label>
+            <input class="form-control" type="text" asp-for="Item" readonly="readonly">
+        </div>
+        <div class="form-group">
+            <label>Material Quantity</label>
+            <input class="form-control" type="text" asp-for="MaterialQuantity" readonly="readonly" data-rule-max="1000000">
+        </div>
+        <div class="form-group">
+            <label>Freight Quantity</label>
+            <input class="form-control" type="text" asp-for="FreightQuantity" readonly="readonly" data-rule-max="1000000">
+        </div>
+        <div class="form-group">
+            <label>Status</label>
+            <input class="form-control" type="text" value="@Model.Status.GetDisplayName()" readonly="readonly">
+        </div>
+        <div class="form-group">
+            <label>Time Sent</label>
+            <input class="form-control" type="text" asp-for="Sent" readonly="readonly">
+        </div>
+        <div class="form-group">
+            <label>Time Loaded</label>
+            <input class="form-control" type="text" asp-for="Loaded" readonly="readonly">
+        </div>
+        <div class="form-group">
+            <label>Time Delivered</label>
+            <input class="form-control" type="text" asp-for="Delivered" readonly="readonly">
+        </div>
+
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-default close-button" data-dismiss="modal">Close</button>
+</div>

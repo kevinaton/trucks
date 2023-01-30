@@ -1,0 +1,43 @@
+﻿@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Orders
+@using DispatcherWeb.Web.Areas.App.Models.Acknowledge
+@model DriverLoadInfoViewModel
+@{
+    Layout = "_Layout";
+    bool useShifts = await SettingManager.UseShifts();
+    var simplifiedSms = await SettingManager.DispatchViaSimplifiedSms(Model.TenantId);
+}
+
+@section Scripts {
+    <environment names="Development">
+        <script src="~/view-resources/Areas/App/Views/Acknowledge/DriverLoadInfo.js" asp-append-version="true"></script>
+        @if (!simplifiedSms)
+        {
+            <script src="~/view-resources/Areas/App/Views/DriverApplication/_LoadInfoInputPartial.js" asp-append-version="true"></script>
+        }
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/App/Views/Acknowledge/DriverLoadInfo.min.js" asp-append-version="true"></script>
+        @if (!simplifiedSms)
+        {
+            <script src="~/view-resources/Areas/App/Views/DriverApplication/_LoadInfoInputPartial.min.js" asp-append-version="true"></script>
+        }
+    </environment>
+}
+
+<form role="form" novalidate>
+    <input type="hidden" asp-for="Guid" />
+    <input type="hidden" asp-for="LoadId" />
+    @await Html.PartialAsync("../DriverApplication/_DriverLoadInfoPartial", Model)
+    @if (!simplifiedSms)
+    {
+        @await Html.PartialAsync("../DriverApplication/_LoadInfoInputPartial", Model)
+    }
+
+    <div class="row form-group">
+        <div class="col-12 text-right">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> <span>@L("LoadCompleted")</span></button>
+        </div>
+    </div>
+</form>

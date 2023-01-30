@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="MigratedTokenResponse.cs" />
+    <Compile Remove="OAuth1ToOAuth2TokenMigrationHelper.cs" />
+    <Compile Remove="OAuthRequestValidator.cs" />
+    <Compile Remove="SecurityConstants.cs" />
+    <None Remove="SecurityConstants.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Intuit.Ipp.Exception\Intuit.Ipp.Exception.csproj" />
+  </ItemGroup>
+</Project>
+
+

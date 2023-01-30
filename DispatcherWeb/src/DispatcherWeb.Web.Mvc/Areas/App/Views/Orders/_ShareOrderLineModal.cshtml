@@ -1,0 +1,30 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using DispatcherWeb.Orders.Dto
+@model SharedOrderLineListDto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Share Order Line"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <input type="hidden" asp-for="OrderLineId" />
+        <div class="form-group">
+            <label>Select Offices:</label>
+        </div>
+            <div class="form-group">
+                <div class="m-checkbox-list">
+                @foreach (var item in Model.SharedOrders)
+                {
+                    <label class="m-checkbox">
+                        <input type="checkbox" checked="@(item.Checked ? "checked" : null)" id="office-@item.OfficeId" data-id="@item.OfficeId"> @item.OfficeName
+                        <span></span>
+                    </label>
+                }
+                </div>
+            </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary close-button" data-dismiss="modal">@L("Cancel")</button>
+    <button type="button" class="btn btn-primary save-button"><i class="fa fa-save"></i> <span>@L("ShareButton")</span></button>
+</div>

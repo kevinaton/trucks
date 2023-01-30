@@ -1,0 +1,106 @@
+@using System.Threading.Tasks
+@using Abp.Extensions
+@using Abp.Application.Features
+@using DispatcherWeb.Features
+@using DispatcherWeb.Authorization
+@using DispatcherWeb.Web.Areas.App.Models.Trucks
+@using DispatcherWeb.Web.Areas.App.Startup
+@model TruckViewListModel
+@{
+    ViewBag.CurrentPageName = AppPageNames.Tenant.Trucks;
+}
+
+@section Scripts{
+    <environment names="Development">
+        <script src="~/view-resources/Areas/app/Views/Trucks/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/app/Views/Trucks/Index.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+
+<div class="m-subheader ">
+    <div class="row align-items-center">
+        <div class="mr-auto col-sm-12 col-md-6 text-center text-md-left mb-3">
+            <h3 class="m-subheader__title m-subheader__title--separator">
+                <span>@L("TrucksHeader")</span>
+            </h3>
+            <span class="m-section__sub">
+                @L("TrucksHeaderInfo")
+            </span>
+        </div>
+        <div class="col-sm-12 col-md-6 text-center text-md-right mb-3">
+            @if (await FeatureChecker.IsEnabledAsync(AppFeatures.QuickbooksImportFeature) && await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Imports_Trucks))
+            {
+                <a asp-controller="Imports" asp-action="Trucks" class="btn btn-primary mt-1"> @L("Import")</a>
+            }
+            @if (Model.IsGpsIntegrationConfigured)
+            {
+                <button id="UpdateMileageButton" class="btn btn-primary mt-1"><i class="fas fa-pen"></i> Update Mileage</button>
+            }
+            <button id="ExportTrucksToCsvButton" class="btn btn-primary mt-1"> Export</button>
+            <button id="CreateNewTruckButton" class="btn btn-primary mt-1"><i class="fa fa-plus"></i> @L("AddNew")</button>
+            @if (Model.IsDtdTrackerConfigured)
+            {
+                <button id="SyncWithWialonButton" class="btn btn-primary mt-1"><i class="fas fa-sync-alt"></i> @L("SyncWithWialon")</button>
+            }
+            @if (Model.IsIntelliShiftConfigured)
+            {
+                <button id="SyncWithIntelliShiftButton" class="btn btn-primary mt-1"><i class="fas fa-sync-alt"></i> @L("SyncWithIntelliShift")</button>
+            }
+        </div>
+    </div>
+</div>
+<div class="m-content">
+    <div class="m-portlet m-portlet--mobile">
+        <div class="m-portlet__body">
+            <form id="filterForm" novalidate>
+                <div class="m-form m-form--label-align-right">
+                    <div class="row">
+                        <input type="hidden" class="filter" name="IsOutOfService" asp-for="Filter.IsOutOfService" />
+                        <input type="hidden" class="filter" name="PlatesExpiringThisMonth" asp-for="Filter.PlatesExpiringThisMonth" />
+                        @if ((await FeatureChecker.GetValueAsync(AppFeatures.AllowMultiOfficeFeature)).To<bool>())
+                        {
+                            <div class="form-group col-lg-4 col-md-4 col-sm-6">
+                                <label class="control-label" for="OfficeIdFilter">@L("Office")</label>
+                                <select class="form-control filter" name="OfficeId" id="OfficeIdFilter" data-filter-office-id="@Model.Filter.OfficeId" data-filter-office-name="@Model.OfficeName">
+                                    <option value="">Select an office</option>
+                                </select>
+                            </div>
+                        }
+                        <div class="form-group col-lg-4 col-md-4 col-sm-6">
+                            <label class="control-label" for="VehicleCategoryIdFilter">@L("Category")</label>
+                            <select class="form-control filter" name="VehicleCategoryId" id="VehicleCategoryIdFilter">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-4 col-md-4 col-sm-6">
+                            <label class="control-label" for="StatusFilter">@L("Status")</label>
+                            <select class="form-control filter" name="Status" id="StatusFilter" asp-items="Html.GetEnumSelectList<FilterActiveStatus>()"></select>
+                        </div>
+                    </div>
+                    <div class="row m--margin-bottom-20">
+                        <div class="col-lg-12 text-right">
+                            <button type="button" id="SearchButton" class="btn btn-primary btn-brand m-btn m-btn--icon">
+                                <span><i class="fa fa-search"></i> <span>@L("Search")</span></span>
+                            </button>
+                            <button type="button" id="ClearSearchButton" class="btn btn-secondary m-btn m-btn--icon">
+                                <span><i class="fa fa-times"></i> <span>@L("Clear")</span></span>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="m-separator m-separator--md m-separator--dashed"></div>
+            <div class="row">
+                <table class="display table table-striped table-bordered table-hover dt-responsive nowrap" id="TrucksTable">
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+

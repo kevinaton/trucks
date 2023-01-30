@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewData["Title"] = "Please wait...";
+}
+
+<h2>Please wait...</h2>
+
+@section Scripts{
+    <script>
+        App.ui.setBusy("Authentication");
+        new Oidc.UserManager({
+            response_mode: "fragment",
+            userStore: new Oidc.WebStorageStateStore({ store: Oidc.Global.localStorage })
+        }).signinRedirectCallback().then(function () { //"query" or "fragment"
+            App.ui.setBusy("Redirecting");
+            window.location = '/';
+        }).catch(function(e) {
+            console.error(e);
+            App.ui.setBusy("Redirecting to driver application");
+            window.location = '/';
+        });
+    </script>
+}

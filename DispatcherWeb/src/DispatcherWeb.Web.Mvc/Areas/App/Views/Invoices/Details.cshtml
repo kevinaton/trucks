@@ -1,0 +1,207 @@
+@using System.Threading.Tasks
+@using DispatcherWeb;
+@using DispatcherWeb.Authorization
+@using DispatcherWeb.Configuration;
+@using Abp.Configuration;  
+@using DispatcherWeb.Infrastructure
+@using DispatcherWeb.Invoices
+@using DispatcherWeb.Invoices.Dto
+@using DispatcherWeb.Web.Areas.App.Startup
+@{
+    ViewBag.CurrentPageName = AppPageNames.Tenant.Invoices;
+    var currencyCulture = await SettingManager.GetCurrencyCultureAsync();
+}
+@model InvoiceEditDto
+
+@section Scripts{
+    <environment names="Development">
+        <script src="~/view-resources/Areas/app/Views/Invoices/Details.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/app/Views/Invoices/Details.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+
+<div class="m-subheader">
+    <div class="row align-items-center">
+        <div class="mr-auto col-sm-12 col-md-6">
+            <h3 class="m-subheader__title m-subheader__title--separator">
+                <span>@L("InvoiceDetailHeader")</span>
+            </h3>
+            <span class="m-section__sub">
+                @*@L("InvoiceDetailHeaderInfo")*@
+            </span>
+        </div>
+        <div class="col-sm-12 col-md-6 text-right">
+        </div>
+    </div>
+</div>
+
+<div class="m-content">
+    <div class="m-portlet m-portlet--tab">
+        <form class="m-form m-form--fit m-form--label-align-right" id="InvoiceForm" asp-controller="Invoices" asp-action="Details">
+            <div class="m-portlet__body">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Status" value="@((int)Model.Status)" />
+                <input type="hidden" asp-for="CustomerInvoicingMethod" value="@((int?)Model.CustomerInvoicingMethod)" />
+                <input type="hidden" asp-for="ShowFuelSurchargeOnInvoice" value="@((int)Model.ShowFuelSurchargeOnInvoice)" />
+                <input type="hidden" asp-for="FuelServiceId" />
+                <input type="hidden" asp-for="FuelServiceName" />
+                <input type="hidden" asp-for="FuelServiceIsTaxable" />
+                <input type="hidden" id="DirtyFormsField" value="0" />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>Invoice #@Model.Id</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 form-group">
+                        <label for="Name" class="col-form-label required-label">@L("Customer"):</label>
+                        <select class="form-control" asp-for="CustomerId">
+                            <option value="">Select a customer</option>
+                            @if (Model.CustomerId != 0)
+                            {
+                                <option selected value="@Model.CustomerId">@Model.CustomerName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-sm-12 col-md-4 form-group">
+                        <label for="EmailAddress" class="col-form-label">@L("CustomerEmail"):</label>
+                        <input type="text" class="form-control m-input" asp-for="EmailAddress">
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-sm-12 col-md-2 form-group">
+                        <label for="" class="col-form-label">@L("BalanceDue"):</label>
+                        <h3><span class="BalanceDue">@Model.BalanceDue.ToString("C2", currencyCulture)</span></h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 form-group">
+                        <label for="BillingAddress" class="col-form-label">@L("BillingAddress"):</label>
+                        <textarea type="text" class="form-control" rows="5" asp-for="BillingAddress"></textarea>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group">
+                            <label for="Status" class="col-form-label">@L("Terms"):</label>
+                            <select class="form-control" asp-for="Terms" asp-items="Html.GetBillingTermsSelectList()">
+                                <option value="">Select an option</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6 form-group">
+                                <label for="IssueDate" class="col-form-label">@L("IssueDate"):</label>
+                                <input type="text" class="form-control" asp-for="IssueDate" autocomplete="off">
+                            </div>
+                            <div class="col-sm-12 col-md-6 form-group">
+                                <label for="DueDate" class="col-form-label">@L("DueDate"):</label>
+                                <input type="text" class="form-control" asp-for="DueDate" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label for="TaxRate" class="col-form-label required-label">@L("TaxRate"):</label>
+                                <input type="text" class="form-control" asp-for="TaxRate" data-rule-number="true" data-rule-min="0" data-rule-max="1000000000" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-12 col-xl-6 form-group">
+                                <label for="IssueDate" class="col-form-label">@L("JobNumber"):</label>
+                                <input type="text" class="form-control" asp-for="JobNumber" maxlength="@EntityStringFieldLengths.Invoice.JobNumber">
+                            </div>
+                            <div class="col-lg-12 col-xl-6 form-group">
+                                <label for="DueDate" class="col-form-label">@L("PONumber"):</label>
+                                <input type="text" class="form-control" asp-for="PoNumber" maxlength="@EntityStringFieldLengths.Invoice.PoNumber">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-sm-12 col-md-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label for="" class="col-form-label">@L("Status"):</label>
+                                <h4>@Model.StatusName</h4>
+                            </div>
+                        </div>
+                        <div class="row pt-4" @Html.StyleDisplayNone(Model.BatchId == null)>
+                            <div class="col-sm-12">
+                                <h4>@L("CreatedInBatch") @Model.BatchId</h4>
+                            </div>
+                        </div>
+                        <div class="row pt-4" @Html.StyleDisplayNone(Model.UploadBatchId == null || (QuickbooksIntegrationKind)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.Quickbooks.IntegrationKind) == QuickbooksIntegrationKind.None)>
+                            <div class="col-sm-12">
+                                <h4>@L("ExportedInBatch") @Model.UploadBatchId</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-primary" id="AddUnbilledTicketsButton">
+                                <i class="fa fa-plus"></i>@L("AddUnbilledTickets")
+                            </button>
+                            <button type="button" class="btn btn-primary" id="AddInvoiceLineButton">
+                                <i class="fa fa-plus"></i>@L("AddNew")
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-striped table-bordered table-hover dt-responsive" id="InvoiceLinesTable"></table>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-4 form-group">
+                        <label for="Message" class="col-form-label">@L("MessageOnInvoice"):</label>
+                        <textarea type="text" class="form-control" rows="5" maxlength="@Invoice.MaxMessageLength" asp-for="Message"></textarea>
+                    </div>
+                    <div class="col-md-6"></div>
+                    <div class="col-sm-12 col-md-2">
+                        <div class="form-group">
+                            <label class="col-form-label">@L("Subtotal"):</label>
+                            <h5><span class="Subtotal">@Model.Subtotal.ToString("C2", currencyCulture)</span></h5>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">@L("Tax"):</label>
+                            <h5><span class="TaxAmount">@Model.TaxAmount.ToString("C2", currencyCulture)</span></h5>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">@L("BalanceDue"):</label>
+                            <h4><span class="BalanceDue">@Model.BalanceDue.ToString("C2", currencyCulture)</span></h4>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="pull-right">
+                            <div class="btn-group dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <span>
+                                        <i class="fa fa-save"></i>
+                                        <span>@L("Save")</span>
+                                    </span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item SaveInvoiceButton" href="#">@L("Save")</a>
+                                    <a class="dropdown-item" href="#" id="MarkReadyForQuickbooksButton">@L("SendToQuickbooks")</a>
+                                    <a class="dropdown-item" href="#" id="SaveAndPrintButton">@L("SaveAndPrint")</a>
+                                    <a class="dropdown-item" href="#" id="SaveAndSendButton">@L("SaveAndSend")</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+</div>

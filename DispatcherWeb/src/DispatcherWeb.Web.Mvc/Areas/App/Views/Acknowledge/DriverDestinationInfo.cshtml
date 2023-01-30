@@ -1,0 +1,54 @@
+﻿@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Web.Areas.App.Models.Acknowledge
+@model DriverDestinationInfoViewModel
+@{
+    Layout = "_Layout";
+}
+
+@section Scripts {
+    <environment names="Development">
+        <script src="~/view-resources/Areas/App/Views/Acknowledge/DriverDestinationInfo.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/App/Views/Acknowledge/DriverDestinationInfo.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+
+    <form role="form" novalidate data-url-completed="@Url.Action("Completed")" data-url-next="@Url.Action("Next")" id="driverDestinationForm">
+        <input type="hidden" asp-for="Guid" />
+        <input type="hidden" asp-for="IsMultipleLoads" />
+        @await Html.PartialAsync("../DriverApplication/_DriverDestinationInfoPartial", Model)
+        @await Html.PartialAsync("../DriverApplication/_DispatchIdInputPartial", Model)
+        
+        @if (!await SettingManager.DispatchViaSimplifiedSms(Model.TenantId))
+        {
+            <div class="form-group text-center">
+                <a class="btn btn-secondary" asp-action="Index" asp-route-editTicket="true">Edit Ticket</a>
+            </div>
+        }
+        <div class="form-group  text-center">
+            <h4><label class="col-form-label">@(Model.IsMultipleLoads ? L("ClickButtonToCompleteLoad") : L("ClickButtonToCompleteOrder"))</label></h4>
+        </div>
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary"><span>@L("Delivered")</span></button>
+        </div>
+    </form>
+    <div class="modal fade" id="continueMultiloadPopup" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <span id="confirmationPopupMessage">Do you want to continue delivering to this job?</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="continueMultiloadNoButton">No</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="continueMultiloadYesButton">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>

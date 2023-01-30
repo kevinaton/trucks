@@ -1,0 +1,87 @@
+﻿@using Abp.AspNetZeroCore.Timing
+@using Abp.Configuration.Startup
+@using Abp.Web.Security.AntiForgery
+@using DispatcherWeb.Url
+@using DispatcherWeb.Web.Resources
+@using CultureHelper = DispatcherWeb.Localization.CultureHelper
+@inject ScriptPaths ScriptPaths
+@inject AppTimes AppTimes
+@inject IAbpAntiForgeryManager AbpAntiForgeryManager
+@inject IMultiTenancyConfig MultiTenancyConfig
+@inject IWebResourceManager WebResourceManager
+@inject IWebUrlService WebUrlService
+@{
+    Layout = null;
+    AbpAntiForgeryManager.SetCookie(Context);
+}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <title>DispatcherWeb</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    @* Fill these meta tags upon your project specification *@
+    <meta content="DispatcherWeb" name="description" />
+    <meta content="DispatcherWeb" name="keywords">
+    <meta content="DispatcherWeb" name="author" />
+    <link rel="shortcut icon" href="~/favicon.ico" />
+    @await Html.PartialAsync("_CommonInlineStyles")
+    @await Html.PartialAsync("_ApplicationInsights")
+    @await Html.PartialAsync("_Favicons")
+    <link rel="stylesheet" abp-href="/view-resources/Areas/App/Views/_Bundles/vendors.bundle.css" asp-append-version="true" />
+    <link rel="stylesheet" href="@(ApplicationPath)metronic/dist/html/blue/assets/demo/blue/base/style.bundle.css" asp-append-version="true" />
+    <link rel="stylesheet" abp-href="/view-resources/Areas/App/Views/_Bundles/account-layout-libs.css" asp-append-version="true" />
+    <link rel="stylesheet" abp-href="/view-resources/Areas/App/Views/_Bundles/common-styles.css" asp-append-version="true" />
+    <link rel="stylesheet" abp-href="/view-resources/Views/TenantRegistration/_Layout.css" asp-append-version="true" />
+    @RenderSection("Styles", false)
+    <script type="text/javascript">
+        @* This is used to get the application's root path from javascript.
+        It's useful if you're running application in a virtual directory under IIS. *@
+        var abp = abp || {}; abp.appPath = '@ApplicationPath';
+    </script>
+</head>
+<body class="m--skin-">
+    <div class="m-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="m-login__wrapper">
+                    <div class="m-login__logo">
+                        <a href="#">
+                            <vc:account-logo></vc:account-logo>
+                        </a>
+                    </div>
+                    @RenderBody()
+                </div>
+                <div>
+                    <vc:account-languages></vc:account-languages>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--begin::Base Scripts -->
+    <script abp-src="/view-resources/Areas/App/Views/_Bundles/account-layout-libs.js" asp-append-version="true"></script>    
+    
+    <!-- Dynamic scripts of ABP system (They are created on runtime and can not be bundled) -->
+    <script src="~/AbpServiceProxies/GetAll?v=@(AppTimes.StartupTime.Ticks)" type="text/javascript"></script>
+    <script src="~/AbpScripts/GetScripts?v=@(AppTimes.StartupTime.Ticks)" type="text/javascript"></script>
+    
+    <script abp-src="/view-resources/Areas/App/Views/_Bundles/common-scripts.js" asp-append-version="true"></script>
+
+    @WebResourceManager.RenderScripts();
+
+    @RenderSection("Scripts", false)
+
+    <script>
+        jQuery(document).ready(function () {
+            if (window.CurrentPage) {
+                CurrentPage.init();
+            }
+        });
+    </script>
+
+    <partial name="_UserGuidingScript" />
+</body>
+</html>

@@ -1,0 +1,27 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using DispatcherWeb.DriverAssignments.Dto
+@model SetDriverForTruckInput
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Assign driver"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <input type="hidden" asp-for="TruckId" />
+        <input type="hidden" asp-for="TruckCode" />
+        <input type="hidden" asp-for="Date" />
+        <input type="hidden" asp-for="Shift" />
+        <input type="hidden" asp-for="OfficeId" />
+        <div class="form-group">
+            <label class="required-label">Driver</label>
+            <select class="form-control" asp-for="DriverId" required>
+                <option value="">Select a driver</option>
+                @if (Model.DriverId.HasValue)
+                {
+                    <option value="@Model.DriverId" selected>@Model.DriverName</option>
+                }
+            </select>
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

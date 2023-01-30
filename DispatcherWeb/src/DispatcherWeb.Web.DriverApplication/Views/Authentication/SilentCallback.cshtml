@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dump Truck Dispatcher - Driver Application</title>
+</head>
+<body>
+    <h2>(SilentCallback) Please wait...</h2>
+    <script src="~/lib/oidc-client/oidc-client.min.js"></script>
+    <script>
+        new Oidc.UserManager({
+            response_mode: "fragment",
+            userStore: new Oidc.WebStorageStateStore({ store: Oidc.Global.localStorage })
+        }).signinSilentCallback().then(function () { //"query" or "fragment"
+            //window.location = '/';
+            console.log('done silent callback');
+        }).catch(function (e) {
+            console.error(e);
+            //window.location = '/';
+        });
+    </script>
+</body>
+</html>
+
+
+

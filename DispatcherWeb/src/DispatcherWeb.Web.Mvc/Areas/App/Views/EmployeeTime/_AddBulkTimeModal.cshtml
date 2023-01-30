@@ -1,0 +1,75 @@
+﻿@using Abp.Configuration
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.EmployeeTime
+@using DispatcherWeb.EmployeeTime.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@model AddBulkTimeDto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Add Bulk Time"))
+
+<style>
+
+    #BulkUsersTimeTable {
+        margin-top: unset !important;
+    }
+
+    /* Fix table head */
+    .tableFixHead {
+        overflow-y: auto;
+        overflow-x: clip;
+        height: 300px;
+    }
+
+        .tableFixHead th {
+            position: sticky;
+            top: 0;
+            background: #e6e6e6;
+        }
+
+        .tableFixHead table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            .tableFixHead table#BulkUsersTimeTable > thead > tr > th:nth-child(1) {
+                z-index: 999 !important;
+            }
+
+        .tableFixHead .checkmark.checkbox-only-cell {
+            z-index: 999;
+        }
+</style>
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation" name="AddBulkEmployeeTimeForm">
+        <div class="form-group">
+            <label for="StartDateTime"><span class="required-label">@L("StartDateTime")</span></label>
+            <input class="form-control" type="text" asp-for="StartDateTime" required>
+        </div>
+        <div class="form-group">
+            <label for="EndDateTime"><span class="required-label">@L("EndDateTime")</span></label>
+            <input class="form-control" type="text" asp-for="EndDateTime">
+        </div>
+        <div class="form-group">
+            <label><span class="required-label">@L("TimeClassification")</span></label>
+            <select class="form-control" asp-for="TimeClassificationId" required>
+                <option value="">Select a time classification</option>
+                @if (Model.TimeClassificationId > 0)
+                {
+                    <option value="@Model.TimeClassificationId">@Model.TimeClassificationName</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Description"><span>@L("Description")</span></label>
+            <textarea class="form-control" type="text" asp-for="Description" maxlength="@DispatcherWeb.Infrastructure.EntityStringFieldLengths.EmployeeTime.Description"></textarea>
+        </div>
+        <div class="form-group">
+            <label><span class="required-label">@L("Drivers")</span></label>
+            <div class="tableFixHead">
+                <table class="display table table-striped table-bordered table-hover dt-responsive nowrap" id="BulkUsersTimeTable"></table>
+            </div>
+            @Html.ValidationSummary()
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

@@ -1,0 +1,27 @@
+﻿using Abp.Notifications;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace DispatcherWeb.Notifications
+{
+    public class SendNotificationInput
+    {
+        public SendNotificationInput(string notificationName, string message, NotificationSeverity severity)
+        {
+            NotificationName = notificationName;
+            Message = message;
+            Severity = severity;
+        }
+
+        public string NotificationName { get; set; }
+        public string Message { get; set; }
+        public NotificationSeverity Severity { get; set; }
+        public string[] RoleFilter { get; set; }
+        public int[] OfficeIdFilter { get; set; }
+        public bool IncludeHostUsers { get; set; }
+        public bool IncludeLocalUsers { get; set; }
+        public bool? OnlineFilter { get; set; }
+
+    }
+}

@@ -1,0 +1,68 @@
+﻿@using Abp.Extensions
+@using Abp.Configuration
+@using DispatcherWeb.Web.Areas.App.Startup
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Dispatching.Dto
+@using DispatcherWeb.Features
+@using DispatcherWeb.Configuration
+@{
+    ViewBag.CurrentPageName = AppPageNames.Tenant.TruckDispatchList;
+}
+
+@section Scripts
+{
+    <script src="~/lib/jquery-ui/jquery-sortable.js" asp-append-version="true"></script>
+    <environment names="Development">
+        <script src="~/view-resources/Areas/app/Views/Dispatches/TruckDispatchList.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/app/Views/Dispatches/TruckDispatchList.js" asp-append-version="true"></script>
+    </environment>
+
+}
+
+
+<div class="m-subheader ">
+    <div class="row align-items-center">
+        <div class="mr-auto col-8 col-md-6">
+            <h3 class="m-subheader__title m-subheader__title--separator">
+                <span>@L("TruckDispatchListHeader")</span>
+            </h3>
+            <span class="m-section__sub">
+            </span>
+        </div>
+        <div class="col-4 col-md-6 text-right">
+            <button id="RemoveDispatchesButton" class="btn btn-primary" title="@L("RemoveDispatchesHint")"> @L("RemoveDispatches")</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="m-content">
+    <div class="m-portlet m-portlet--mobile">
+        <div class="m-portlet__body">
+
+            <div class="m-form m-form--label-align-right">
+                <form>
+                    <div class="row align-items-center m--margin-bottom-20">
+                        <div class="form-group col-lg-4 col-md-4 col-sm-6" @Html.StyleDisplayNone(!await FeatureChecker.AllowMultiOfficeFeature())>
+                            <label class="control-label" for="OfficeIdFilter">@L("Office")</label>
+                            <select class="form-control filter" name="OfficeId" id="OfficeIdFilter">
+                                <option value="">Select an office</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-4 col-md-4 col-sm-6" @Html.StyleDisplayNone(!((DispatchVia)await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DispatchVia)).IsIn(DispatchVia.DriverApplication, DispatchVia.SimplifiedSms))>
+                            <label class="control-label" for="DispatchListViewFilter">@L("View")</label>
+                            <select class="form-control filter" name="DispatchListView" id="DispatchListViewFilter" asp-items="@Html.GetEnumSelectList(typeof(DispatchListViewEnum))"></select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="DispatchList"></div>
+
+        </div>
+    </div>
+</div>
+

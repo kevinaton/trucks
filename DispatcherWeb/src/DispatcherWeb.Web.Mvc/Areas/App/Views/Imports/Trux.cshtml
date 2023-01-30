@@ -1,0 +1,36 @@
+﻿@using System.Threading.Tasks
+@using Abp.Configuration
+@using Abp.Extensions
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Dto
+@using DispatcherWeb.Features
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Web.Areas.App.Startup
+@using DispatcherWeb.PreventiveMaintenanceSchedule.Dto
+@using DispatcherWeb.Web.Areas.App.Models.PreventiveMaintenanceSchedule
+@{
+    Layout = "../Imports/_ImportLayout";
+
+    ViewBag.CurrentPageName = AppPageNames.Tenant.ImportTrux;
+    ViewBag.ImportType = ImportType.Trux;
+}
+
+@section Scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Areas/app/Views/Imports/Trux.js" asp-append-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/app/Views/Imports/Trux.js" asp-append-version="true"></script>
+    </environment>
+
+}
+
+@section H1
+{
+    @L("ImportTruxEarnings")
+}
+@section AboveUpload
+{
+    <input type="hidden" id="NoMapping" name="NoMapping" value="true" />
+}

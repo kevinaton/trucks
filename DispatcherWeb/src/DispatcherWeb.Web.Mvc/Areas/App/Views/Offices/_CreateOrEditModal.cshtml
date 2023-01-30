@@ -1,0 +1,57 @@
+﻿@using Abp.Configuration
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Offices
+@using DispatcherWeb.Offices.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@model OfficeEditDto
+@{
+    var paymentProcessor = (PaymentProcessor)(await SettingManager.GetSettingValueAsync<int>(AppSettings.General.PaymentProcessor));
+}
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Office: " + Model.Name : "Create new office"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation" name="OfficeInformationsForm">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label><span class="required-label">@L("Name")</span></label>
+            <input class="form-control" type="text" asp-for="Name" required>
+        </div>
+        <div class="form-group">
+            <label><span class="required-label">@L("TruckColor")</span></label>
+            <div id="TruckColorContainer" class="input-group colorpicker-component">
+                <input class="form-control" type="text" asp-for="TruckColor" required autocomplete="off">
+                <span class="input-group-addon"><i></i></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label><span>@L("FuelIds")</span></label>
+            <i class="fas fa-info-circle text-info" title="If you have multiple FuelIds for this office, separate the items with a pipe &quot;|&quot; symbol."></i>
+            <input class="form-control" type="text" asp-for="FuelIds" maxlength="@Office.MaxFuelIdsLength">
+        </div>
+        <div class="form-group">
+            <div class="m-checkbox-list">
+                <label class="custom-checkbox">
+                    <input id="CopyChargeTo" type="checkbox" name="CopyChargeTo" value="true" @Html.Raw(Model.CopyChargeTo ? "checked=\"checked\"" : "")>
+                    @L("CopyChargeTo")
+                    <span></span>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>@L("DefaultStartTime"):</label>
+            <input type="text" class="form-control" asp-for="DefaultStartTime" autocomplete="off">
+        </div>
+        <div style="@(paymentProcessor == PaymentProcessor.HeartlandConnect ? "" : "display:none")">
+            <div class="form-group">
+                <label for="HeartlandPublicKey">@L("HeartlandPublicKey")</label>
+                <input type="text" asp-for="HeartlandPublicKey" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="HeartlandSecretKey">@L("HeartlandSecretKey")</label>
+                <input type="password" asp-for="HeartlandSecretKey" value="@Model.HeartlandSecretKey" class="form-control">
+            </div>
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

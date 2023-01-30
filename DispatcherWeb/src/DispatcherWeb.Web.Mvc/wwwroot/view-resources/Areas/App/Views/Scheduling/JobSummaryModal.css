@@ -1,0 +1,200 @@
+﻿#JobSummaryModal > .modal-dialog {
+    min-width: 75% !important;
+}
+
+.modal-body.JobSummaryModal {
+    padding-top: 9px !important;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table > tbody > tr > th:nth-child(1) {
+    width: 80px;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table > tbody > tr > th:nth-child(2) {
+    width: 60px;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table > tbody > tr > th:nth-child(3) {
+    width: 60px;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table > tbody > tr > th:nth-child(4) {
+    width: 80px;
+    border-right: unset !important;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table > tbody > tr > td:nth-child(1) {
+    width: 80px;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table > tbody > tr > td:nth-child(2) {
+    width: 60px;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table > tbody > tr > td:nth-child(3) {
+    width: 60px;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table > tbody > tr > td:nth-child(4) {
+    width: 80px;
+    border-right: unset !important;
+}
+
+.JobSummaryModal #trucks-timeline .vis-inner {
+    width: auto !important;
+    padding: unset !important;
+    margin: 0;
+    width: 25%;
+    height: 100%;
+}
+
+.JobSummaryModal #trucks-timeline div.vis-inner > table {
+    height: 100%;
+}
+
+.JobSummaryModal .trip-cycles {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.JobSummaryModal .trip-cycles-wrapper {
+    border: solid;
+    border-width: 1px;
+    border-color: gray;
+    margin: 0;
+    position: relative;
+    height: 35px;
+}
+
+.JobSummaryModal .trip-cycles-cell {
+    border-color: grey;
+    position: absolute;
+    top: 0px;
+    height: 100%;
+}
+
+.JobSummaryModal .vis-item.load-trip {
+    background-color: #a3e1aa;
+    border-color: forestgreen;
+}
+
+.JobSummaryModal .vis-item.delivery-trip {
+    background-color: #64b0e7;
+    border-color: darkslateblue;
+}
+
+.vis-panel.vis-background {
+    background: rgb(230, 231, 241);
+}
+
+.JobSummaryModal .vis-panel.vis-left {
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgb(0 0 0 / 30%), 0 0 40px rgb(0 0 0 / 10%) inset;
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 30%), 0 0 40px rgb(0 0 0 / 10%) inset;
+}
+
+.JobSummaryModal .vis-panel.vis-center {
+    background-size: 10px 10px !important;
+    background-image: linear-gradient(to right, rgb(239, 232, 232) 1px, transparent 1px), linear-gradient(rgb(239, 232, 232) 1px, transparent 1px) !important;
+}
+
+.JobSummaryModal .vis-panel.vis-left,
+.JobSummaryModal .vis-panel.vis-center {
+    background: white;
+}
+
+.JobSummaryModal .vis-panel.vis-top {
+    box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px, rgb(0 0 0 / 10%) 0px 0px 40px;
+}
+
+.JobSummaryModal .vis-panel.vis-bottom {
+    box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px, rgb(0 0 0 / 10%) 0px 0px 0px;
+}
+
+.JobSummaryModal .vis-text.vis-major {
+    font-weight: 500 !important;
+}
+
+.JobSummaryModal .jobsummarymodal-sidepanel {
+    border-right: 0.5px solid #b7afaf;
+    text-align: center;
+}
+
+.JobSummaryModal .vis-item-overflow {
+    text-align: center !important;
+}
+
+.JobSummaryModal .vis-inner {
+    min-height: 40px !important;
+}
+
+.JobSummaryModal .vis-label .vis-inner {
+    min-height: 40px !important;
+}
+
+#JobSummaryModal .load-site {
+    background: #a3e1aa;
+}
+
+#JobSummaryModal .delivery-site {
+    background: #64b0e7;
+}
+
+#JobSummaryModal .grid-header {
+    box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px, rgb(0 0 0 / 10%) 0px 0px 40px;
+    background: #e6e7f1;
+    border-right: 0.5px solid #b7afaf;
+    text-align: center;
+}
+
+#JobSummaryModal .grid-footer {
+    box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px, rgb(0 0 0 / 10%) 0px 0px 40px;
+    background: #e6e7f1;
+    border-right: 0.5px solid #b7afaf;
+    text-align: center;
+}
+
+#JobSummaryModal .legend-wrapper {
+    position: absolute;
+    top: 45px;
+    width: max-content;
+    height: max-content;
+    right: 35px;
+}
+
+#JobSummaryModal .legend {
+    list-style: none;
+    padding: 0;
+    display: none;
+    margin-bottom: 0;
+}
+
+    #JobSummaryModal .legend li {
+        padding-top: 1px;
+        padding-right: 1px;
+        width: fit-content;
+        display: inline-block;
+        margin-left: 3px;
+    }
+
+    #JobSummaryModal .legend span {
+        height: 12px;
+        background: white;
+        margin-left: 15px;
+        padding-left: 2px;
+        padding-right: 5px;
+    }
+
+#JobSummaryModal .refresh-view {
+    color: gray;
+    text-decoration: underline;
+    cursor: pointer;
+    width: auto;
+    margin-right: 8px;
+    margin-top: 3px;
+    font-weight: 400;
+    display: none;
+}

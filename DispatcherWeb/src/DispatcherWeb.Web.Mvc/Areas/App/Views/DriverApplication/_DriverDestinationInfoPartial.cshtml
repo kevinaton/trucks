@@ -1,0 +1,43 @@
+﻿@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Web.Areas.App.Models.Acknowledge
+@model DriverDestinationInfoViewModel
+
+@{
+    bool useShifts = await SettingManager.UseShifts(Model.TenantId);
+}
+
+<div class="row form-group ">
+    <div class="col-4">
+        <label class="col-form-label text-bold">@(L("Date") + (useShifts ? "/" + L("Shift") : "")):</label>
+    </div>
+    <div class="col-8 margin-top-10">
+        @Model.Date.ToString("d") @(useShifts ? await SettingManager.GetShiftName(Model.Shift, Model.TenantId) : "")
+    </div>
+</div>
+<div class="row form-group ">
+    <div class="col-4">
+        <label class="col-form-label text-bold">@L("Customer"):</label>
+    </div>
+    <div class="col-8 margin-top-10 text-wrap">
+        @Model.CustomerName
+    </div>
+</div>
+<div class="row form-group ">
+    <div class="col-4">
+        <label class="col-form-label text-bold">Deliver To:</label>
+    </div>
+    <div class="col-8 margin-top-10 text-wrap">
+        @Model.CustomerAddress
+    </div>
+</div>
+@if (await SettingManager.DispatchViaDriverApplication())
+{
+    <div class="row form-group ">
+        <div class="col-4">
+            <label class="col-form-label text-bold">Note:</label>
+        </div>
+        <div class="col-8 margin-top-10 text-wrap">
+            @Model.Note
+        </div>
+    </div>
+}

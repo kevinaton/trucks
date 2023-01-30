@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace DispatcherWeb.Common.Dto
+{
+    public class LocationNameDto
+    {
+        public string Name { get; set; }
+        public string StreetAddress { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+
+        public string FormattedAddress => Utilities.FormatAddress(Name, StreetAddress, City, State, null);
+    }
+}

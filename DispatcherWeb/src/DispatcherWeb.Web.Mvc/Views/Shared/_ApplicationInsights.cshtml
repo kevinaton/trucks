@@ -1,0 +1,7 @@
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@*<!--
+    Preferably, it should be the first script in your <head> section so that it can monitor any potential issues with all of your dependencies.
+    -->*@
+<script type="text/javascript">
+    @Html.Raw(JavaScriptSnippet.ScriptBody)
+</script>

@@ -1,0 +1,27 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using DispatcherWeb.Web.Areas.App.Models.Scheduling
+@model AddOrderTruckModalViewModel
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Title))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <input type="hidden" asp-for="Date" />
+        <input type="hidden" asp-for="Shift" />
+        <input type="hidden" asp-for="OfficeId" />
+        <input type="hidden" asp-for="OrderLineId" />
+        <input type="hidden" asp-for="OnlyTrailers" value="@Model.OnlyTrailers.ToString().ToLowerInvariant()" />
+        <input type="hidden" asp-for="IsPowered" value="@Model.IsPowered?.ToString().ToLowerInvariant()" />
+        <input type="hidden" asp-for="ParentId" />
+        <input type="hidden" asp-for="ParentTruckId" />
+        <input type="hidden" asp-for="DefaultTrailerId" />
+        <div class="form-group">
+            <label class="required-label">Select Trailer</label>
+            <select class="form-control" required asp-for="TruckId">
+                <option value="">Select an option</option>
+            </select>
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

@@ -1,0 +1,31 @@
+﻿<script> (function(g,u,i,d,e,s){g[e]=g[e]||[];var f=u.getElementsByTagName(i)[0];var k=u.createElement(i);k.async=true;k.src='https://static.userguiding.com/media/user-guiding-'+s+'-embedded.js';f.parentNode.insertBefore(k,f);if(g[d])return;var ug=g[d]={q:[]};ug.c=function(n){return function(){ug.q.push([n,arguments])};};var m=['previewGuide','finishPreview','track','identify','triggerNps','hideChecklist','launchChecklist'];for(var j=0;j<m.length;j+=1){ug[m[j]]=ug.c(m[j]);}})(window,document,'script','userGuiding','userGuidingLayer','114898389ID'); </script>
+
+<script>
+    if (app && app.session) {
+        console.log('calling userGuidingIdentification from app.session');
+        userGuidingIdentification();
+    } else if (abp && abp.event) {
+        abp.event.on('app.appSessionLoaded', function() {
+            console.log('calling userGuidingIdentification from abp.event');
+            userGuidingIdentification();
+        });
+    }
+    function userGuidingIdentification() {
+        if (app.session.user) {
+            try {
+                window.userGuiding.identify(app.session.user.id, {
+                    firstName: app.session.user.name,
+                    fullName: app.session.user.name + ' ' + app.session.user.surname,
+                    editionName: app.session.tenant && app.session.tenant.edition && app.session.tenant.edition.displayName || null,
+                    editionIsFree: app.session.tenant && app.session.tenant.edition && app.session.tenant.edition.isFree,
+                    creationDate: app.session.tenant && app.session.tenant.creationTime,
+                    isTenantCreator: app.session.tenant && app.session.user && (app.session.tenant.creatorUserId === app.session.user.id),
+                    numberOfTrucks: app.session.tenant && app.session.tenant.numberOfTrucks
+                });
+            }
+            catch (e) {
+                console.error(e);
+            }
+        }
+    }
+</script>

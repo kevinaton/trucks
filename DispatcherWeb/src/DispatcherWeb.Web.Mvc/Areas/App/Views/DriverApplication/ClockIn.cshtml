@@ -1,0 +1,23 @@
+﻿@model DateTime?
+@{
+    Layout = "_Layout";
+}
+@section Scripts {
+    <environment names="Development">
+        <script src="~/view-resources/Areas/App/Views/DriverApplication/ClockIn.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Areas/App/Views/DriverApplication/ClockIn.min.js" asp-append-version="true"></script>
+    </environment>
+
+}
+<button class="btn btn-primary col-sm-12 margin-bottom-10" data-acknowledge="@Url.Action("Acknowledge")">Clock In</button>
+@if (Model.HasValue)
+{
+    <h1>Scheduled Start Time: @Model.Value.ToString("g")</h1>
+}
+else
+{
+    <h1>You have no scheduled start time. Contact your dispatcher.</h1>
+}

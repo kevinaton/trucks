@@ -1,0 +1,89 @@
+﻿@using System.Threading.Tasks
+@using Abp.AspNetZeroCore.Timing
+@using Abp.Configuration.Startup
+@using Abp.Timing
+@using Abp.Web.Security.AntiForgery
+@using DispatcherWeb.Localization
+@using DispatcherWeb.Url
+@using DispatcherWeb.Web.Resources
+@inject ScriptPaths ScriptPaths
+@inject AppTimes AppTimes
+@inject IMultiTenancyConfig MultiTenancyConfig
+@inject IAbpAntiForgeryManager AbpAntiForgeryManager
+@inject IWebResourceManager WebResourceManager
+@inject IWebUrlService WebUrlService
+@{
+    Layout = null;
+    AbpAntiForgeryManager.SetCookie(Context);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>DispatcherWeb</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    @* Fill these meta tags upon your project specification *@
+    <meta content="DispatcherWeb" name="description" />
+    <meta content="DispatcherWeb" name="keywords">
+    <meta content="DispatcherWeb" name="author" />
+
+    @await Html.PartialAsync("_CommonInlineStyles")
+    @await Html.PartialAsync("_ApplicationInsights")
+    @await Html.PartialAsync("_Favicons")
+
+    <link rel="stylesheet" abp-href="/view-resources/Areas/App/Views/_Bundles/vendors.bundle.css" asp-append-version="true" />
+    <link rel="stylesheet" href="@(ApplicationPath)metronic/dist/html/blue/assets/demo/blue/base/style.bundle.css" asp-append-version="true" />
+
+    <link rel="stylesheet" abp-href="/view-resources/Areas/App/Views/_Bundles/account-layout-libs.css" asp-append-version="true" />
+
+    <link rel="stylesheet" abp-href="/view-resources/Areas/App/Views/_Bundles/common-styles.css" asp-append-version="true" />
+
+    <link rel="stylesheet" abp-href="/view-resources/Views/Account/_Layout.css" asp-append-version="true" />
+
+    @RenderSection("Styles", false)
+
+    <script type="text/javascript">
+        @* This is used to get the application's root path from javascript.
+        It's useful if you're running application in a virtual directory under IIS. *@
+        var abp = abp || {}; abp.appPath = '@ApplicationPath';
+    </script>
+</head>
+<body class="page-md login dispatch-driver d-md-flex align-items-md-center justify-content-md-center">
+    <div class="menu-toggler sidebar-toggler">
+    </div>
+    <div class="content">
+        <div class="dispatch_block">
+            <div class="logo">
+                <a href="~/">
+                    <img class="img-responsive" src="~/Common/Images/app-logo-on-light@(ScriptPaths.LogoPathSuffix).png" alt="" />
+                </a>
+            </div>
+            @RenderBody()
+        </div>
+        <div class="copyright">
+            @Clock.Now.Year © Dump Truck Dispatcher LLC.
+        </div>
+    </div>
+    <script abp-src="/view-resources/Areas/App/Views/_Bundles/account-layout-libs.js" asp-append-version="true"></script>
+    <script abp-src="/view-resources/Areas/App/Views/_Bundles/acknowledge-app-libs.js" asp-append-version="true"></script>
+
+    <!-- Dynamic scripts of ABP system (They are created on runtime and can not be bundled) -->
+    <script src="~/AbpServiceProxies/GetAll?v=@(AppTimes.StartupTime.Ticks)" type="text/javascript"></script>
+    <script src="~/AbpScripts/GetScripts?v=@(AppTimes.StartupTime.Ticks)" type="text/javascript"></script>
+
+    <script abp-src="/view-resources/Areas/App/Views/_Bundles/common-scripts.js" asp-append-version="true"></script>
+    <script src="~@ScriptPaths.JQuery_Validation_Localization" asp-append-version="true"></script>
+
+    <script abp-src="/view-resources/Areas/App/Views/_Bundles/common-scripts.js" asp-append-version="true"></script>
+    <script abp-src="/view-resources/Areas/App/Views/_Bundles/app-common-scripts.js" asp-append-version="true"></script>
+
+    @WebResourceManager.RenderScripts()
+
+    @RenderSection("Scripts", false)
+
+    <partial name="_UserGuidingScript" />
+</body>
+</html>

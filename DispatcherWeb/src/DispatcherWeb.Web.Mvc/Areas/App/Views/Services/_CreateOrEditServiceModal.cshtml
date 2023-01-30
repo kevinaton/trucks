@@ -1,0 +1,61 @@
+﻿@using Abp.Configuration
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Infrastructure
+@using DispatcherWeb.Services.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@model ServiceEditDto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Product/Service: " + Model.Service1 : "Create new product/service"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation" name="CustomerContactInformationsForm">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label class="required-label">@L("ProductService")</label>
+            <input class="form-control" type="text" asp-for="Service1" required
+                   maxlength="@(((QuickbooksIntegrationKind)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.Quickbooks.IntegrationKind)) == QuickbooksIntegrationKind.None
+                           ? EntityStringFieldLengths.Service.Service1
+                           : EntityStringFieldLengths.Service.ServiceInQuickBooks)">
+        </div>
+        <div class="form-group">
+            <label>@L("Description")</label>
+            <input type="text" class="form-control" asp-for="Description" maxlength="@EntityStringFieldLengths.Service.Description">
+        </div>
+        <div class="m-checkbox-list">
+            <label class="custom-checkbox">
+                <input id="IsActive" type="checkbox" name="IsActive" value="true" @Html.Raw(Model.IsActive ? "checked=\"checked\"" : "")>
+                @L("Active")
+                <span></span>
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="required-label">@L("Type")</label>
+            <select class="form-control" asp-for="Type" asp-items="@Html.GetServiceTypeSelectList(Model.Type)" required></select>
+        </div>
+        <div class="m-checkbox-list">
+            <label class="custom-checkbox">
+                <input id="IsTaxable" type="checkbox" name="IsTaxable" value="true" checked="@(Model.IsTaxable ? "checked" : null)">
+                @L("Taxable")
+                <span></span>
+            </label>
+        </div>
+        <div class="form-group">
+            <label>@L("IncomeAccount")</label>
+            <input class="form-control" type="text" asp-for="IncomeAccount" maxlength="@EntityStringFieldLengths.Service.IncomeAccount">
+        </div>
+    </form>
+    <div class="box-border-top clearfix">
+        <div class="grid-caption pull-left">
+            <label>@L("Rates")</label>
+        </div>
+        <div class="box-actions pull-right">
+            <button type="button" class="btn btn-default" id="CreateNewServicePriceButton"><i class="fa fa-plus"></i>@L("AddRate")</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="display table table-striped table-bordered table-hover dt-responsive" id="ServicePricesTable"></table>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

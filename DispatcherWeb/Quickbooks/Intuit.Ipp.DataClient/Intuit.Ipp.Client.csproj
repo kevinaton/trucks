@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="3.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tools\XsdExtension\Intuit.Ipp.Data\Intuit.Ipp.Data.csproj" />
+    <ProjectReference Include="..\Intuit.Ipp.Core\Intuit.Ipp.Core.csproj" />
+    <ProjectReference Include="..\Intuit.Ipp.Diagnostics\Intuit.Ipp.Diagnostics.csproj" />
+    <ProjectReference Include="..\Intuit.Ipp.Exception\Intuit.Ipp.Exception.csproj" />
+    <ProjectReference Include="..\Intuit.Ipp.Security\Intuit.Ipp.Security.csproj" />
+    <ProjectReference Include="..\Intuit.Ipp.Utility\Intuit.Ipp.Utility.csproj" />
+  </ItemGroup>
+
+</Project>
