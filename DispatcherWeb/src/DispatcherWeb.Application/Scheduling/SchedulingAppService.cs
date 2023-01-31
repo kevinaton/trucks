@@ -36,6 +36,7 @@ using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -2446,14 +2447,12 @@ namespace DispatcherWeb.Scheduling
                 throw new UserFriendlyException("Order line queried is not found.");
             }
 
-            var dispatches = orderLineTrucksQuery.SelectMany(p => p.Dispatches).ToList();
-            if (dispatches == null || !dispatches.Any())
+            if (!orderLineTrucksQuery.SelectMany(p => p.Dispatches).Any())
             {
                 throw new UserFriendlyException("No dispatch has yet been performed for this order.");
             }
 
-            var loads = orderLineTrucksQuery.SelectMany(p => p.Dispatches).SelectMany(d => d.Loads).ToList();
-            if (loads == null || !loads.Any() || loads.All(p => p.SourceDateTime == null && p.DestinationDateTime == null))
+            if (!orderLineTrucksQuery.SelectMany(p => p.Dispatches).SelectMany(d => d.Loads).Any())
             {
                 throw new UserFriendlyException("Driver is dispatched but no truck has yet been loaded.");
             }
@@ -2600,12 +2599,6 @@ namespace DispatcherWeb.Scheduling
                                     .OrderBy(p => p.Id)
                                     .ToListAsync();
 
-            if (allEmployeeTimes == null || allEmployeeTimes.Count <= 1)
-            {
-                orderTrucksDto.OrderTrucks = new List<OrderTruckDto>();
-                return orderTrucksDto;
-            }
-
             foreach (var orderTruck in orderTrucks)
             {
                 var orderTruckDto = new OrderTruckDto()
@@ -2626,28 +2619,11 @@ namespace DispatcherWeb.Scheduling
                                             .Where(p => orderTruckDriverIds.Contains(p.DriverId))
                                             .ToList();
 
-                if (employeeTimes == null || employeeTimes.Count <= 1)
-                {
-                    orderTruckDto.TripCycles = new List<TripCycleDto>();
-                    continue;
-                }
-
                 TrimTimeEntries(employeeTimes, orderTruck.Loads[0].SourceDateTime);
-                var timeEntriesQueue = new Queue<Drivers.EmployeeTime>(employeeTimes);
-                var checkTimeEntry = timeEntriesQueue.Dequeue();
 
                 for (var ctr = 0; ctr < orderTruck.Loads.Count; ctr++)
                 {
-                    var prevLoad = ctr == 0 ? null : orderTruck.Loads[ctr - 1];
                     var thisLoad = orderTruck.Loads[ctr];
-                    var nextLoad = ctr < (orderTruck.Loads.Count - 1) ? orderTruck.Loads[ctr + 1] : null;
-
-                    if (ctr > 0 && prevLoad != null &&
-                        checkTimeEntry.EndDateTime >= prevLoad.DestinationDateTime &&
-                        checkTimeEntry.EndDateTime <= thisLoad.SourceDateTime)
-                    {
-                        checkTimeEntry = null;
-                    }
 
                     // to Load site
                     try
@@ -2662,12 +2638,18 @@ namespace DispatcherWeb.Scheduling
                             Label = $"#{orderTruckDto.TripCycles.Count + 1}"
                         };
 
-                        if (ctr == 0 || checkTimeEntry == null)
+                        // defining trip to load timeline start
+                        var employeeTime = employeeTimes.FirstOrDefault(p => p.StartDateTime <= thisLoad.SourceDateTime);
+                        if (employeeTime != null)
                         {
-                            checkTimeEntry ??= timeEntriesQueue.Dequeue();
+                            tripCycleDto.StartDateTime = employeeTime.StartDateTime;
+                            employeeTimes.Remove(employeeTime);
 
-                            tripCycleDto.StartDateTime = checkTimeEntry.StartDateTime;
-                            checkTimeEntry = timeEntriesQueue.Dequeue();
+                            if (employeeTimes.Any())
+                            {
+                                // since next timeEntry is logged for the delivery, remove
+                                employeeTimes.Remove(employeeTimes[employeeTimes.Count == 1 ? 0 : ctr]);
+                            }
                         }
                         else
                         {
@@ -2693,21 +2675,10 @@ namespace DispatcherWeb.Scheduling
                             DriverId = thisLoad.DriverId,
                             SourceCoordinates = thisLoad.SourceCoordinates,
                             DestinationCoordinates = thisLoad.DestinationCoordinates,
+                            StartDateTime = thisLoad.SourceDateTime,
+                            EndDateTime = thisLoad.DestinationDateTime,
                             Label = $"#{orderTruckDto.TripCycles.Count + 1}"
                         };
-
-                        if (checkTimeEntry.EndDateTime >= thisLoad.SourceDateTime && checkTimeEntry.EndDateTime <= thisLoad.DestinationDateTime)
-                        {
-                            tripCycleDto.StartDateTime = checkTimeEntry.EndDateTime;
-                            checkTimeEntry = timeEntriesQueue.Dequeue();
-                        }
-                        else
-                        {
-                            tripCycleDto.StartDateTime = thisLoad.SourceDateTime;
-                        }
-
-                        tripCycleDto.EndDateTime = thisLoad.DestinationDateTime;
-
                         orderTruckDto.TripCycles.Add(tripCycleDto);
                     }
                     catch (Exception ex)
