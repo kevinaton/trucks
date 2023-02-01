@@ -133,7 +133,7 @@
             timeLine.setGroups(_visGroups);
             timeLine.setItems(_visItems);
 
-            function debounce(func, wait = 100) {
+            const debounce = (func, wait = 100) => {
                 let timeout;
                 return function (...args) {
                     clearTimeout(timeout);
@@ -182,7 +182,7 @@
             cell3.style.width = "60px";
             cell3.style.fontWeight = 500;
             var cell4 = gridRow.insertCell(3);
-            cell4.textContent = "UoM";
+            cell4.textContent = "UOM";
             cell4.style.width = "80px";
             cell4.style.fontWeight = 500;
             _modal.find("#trucks-timeline div.vis-timeline>div:nth-child(1)").prepend(headerGrid.outerHTML);

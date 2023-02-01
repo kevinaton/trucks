@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUglify;
+using System;
 using System.Collections.Generic;
 
 namespace DispatcherWeb.Scheduling.Dto
@@ -12,6 +13,9 @@ namespace DispatcherWeb.Scheduling.Dto
         public IList<OrderTruckLoadQueryResultDto> Loads { get; set; }
         public int TruckId { get; set; }
 
+        public override string ToString() =>
+            $"TruckId : {TruckId} TruckCode : {TruckCode} UnitOfMeasure : {UnitOfMeasure} LoadsCount : {LoadsCount} Qty : {Quantity} Loads : {Loads.Count}";
+
         public class OrderTruckLoadQueryResultDto
         {
             public double?[] SourceCoordinates { get; set; }
@@ -20,6 +24,13 @@ namespace DispatcherWeb.Scheduling.Dto
             public int? DriverId { get; set; }
             public DateTime? SourceDateTime { get; set; }
             public DateTime? DestinationDateTime { get; set; }
+
+            public override string ToString()
+            {
+                var sourceCoords = SourceCoordinates.Length > 1 ? $"{SourceCoordinates[0]}, {SourceCoordinates[1]}" : string.Empty;
+                var destCoords = DestinationCoordinates.Length > 1 ? $"{DestinationCoordinates[0]}, {DestinationCoordinates[1]}" : string.Empty;
+                return $"LoadId : {LoadId} DriverId : {DriverId} SourceDateTime : {SourceDateTime} DestDateTime : {DestinationDateTime} Source : [{sourceCoords}] Dest : [{destCoords}]";
+            }
         }
     }
 }
