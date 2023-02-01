@@ -133,7 +133,7 @@
             timeLine.setGroups(_visGroups);
             timeLine.setItems(_visItems);
 
-            function debounce(func, wait = 100) {
+            const debounce = (func, wait = 100) => {
                 let timeout;
                 return function (...args) {
                     clearTimeout(timeout);

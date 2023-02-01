@@ -85,8 +85,12 @@
     border-color: darkslateblue;
 }
 
-.vis-panel.vis-background {
+.JobSummaryModal .vis-panel.vis-background {
     background: rgb(230, 231, 241);
+}
+
+.JobSummaryModal .vis-item.vis-range {
+    border-radius: 5px!important;
 }
 
 .JobSummaryModal .vis-panel.vis-left {

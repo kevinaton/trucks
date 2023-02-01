@@ -2481,7 +2481,7 @@ namespace DispatcherWeb.Scheduling
                 timeEntries.RemoveAll(p => timeEntriesToRemove.Contains(p.Id));
         }
 
-        private async Task<IList<OrderTruckQueryResultDto>> GetOrderTrucksGroupedAsync(int orderLineId)
+        private async Task<IList<OrderTruckQueryResultDto>> GetOrderTrucksGroupedAsync_Old(int orderLineId)
         {
             var orderLineTrucksQuery = _orderLineRepository.GetAll()
                                             .Where(ol => ol.Id == orderLineId)
@@ -2548,6 +2548,70 @@ namespace DispatcherWeb.Scheduling
             return list;
         }
 
+        private async Task<IList<OrderTruckQueryResultDto>> GetOrderTrucksGroupedAsync(int orderLineId)
+        {
+            var orderLineTrucksQuery = _orderLineRepository.GetAll()
+                                            .Where(ol => ol.Id == orderLineId)
+                                            .SelectMany(ol => ol.OrderLineTrucks
+                                                .SelectMany(olt => olt.Dispatches
+                                                        .Where(d => d.Loads != null && d.Loads.Any())
+                                                        .SelectMany(dispatch => dispatch.Loads)
+                                                            .Where(load => load != null && load.SourceDateTime.HasValue)
+                                                            .Select(load => new
+                                                            {
+                                                                olt.TruckId,
+                                                                olt.Truck.TruckCode,
+                                                                olt.DriverId,
+
+                                                                DispatchId = load.Dispatch.Id,
+
+                                                                LoadId = load.Id,
+                                                                load.SourceDateTime,
+                                                                load.DestinationDateTime,
+                                                                load.SourceLatitude,
+                                                                load.SourceLongitude,
+                                                                load.DestinationLatitude,
+                                                                load.DestinationLongitude,
+
+                                                                TicketId = load.Tickets.Count > 0 ? load.Tickets.FirstOrDefault().Id : 0,
+                                                                Qty = load.Tickets.Count > 0 ? load.Tickets.FirstOrDefault().Quantity : 0,
+                                                                //UoMId = load.Tickets.FirstOrDefault().UnitOfMeasureId,
+                                                                //UoMName = load.Tickets.FirstOrDefault().UnitOfMeasure.Name
+                                                                UoMId = olt.OrderLine.FreightUomId,
+                                                                UoMName = olt.OrderLine.FreightUom.Name
+                                                            })));
+
+            var orderTrucks = await orderLineTrucksQuery.ToListAsync();
+            var list = orderTrucks
+                        .GroupBy(p => new
+                        {
+                            p.TruckId,
+                            p.UoMName
+                        })
+                        .Select(p => new OrderTruckQueryResultDto
+                        {
+                            TruckId = p.Key.TruckId,
+                            TruckCode = p.Select(t => t.TruckCode).FirstOrDefault(),
+                            UnitOfMeasure = p.Key.UoMName,
+                            LoadsCount = p.Count(),
+                            Quantity = p.Sum(x => x.Qty),
+                            Loads = p.Select(load => new OrderTruckQueryResultDto.OrderTruckLoadQueryResultDto
+                            {
+                                LoadId = load.LoadId,
+                                DriverId = load.DriverId,
+                                SourceDateTime = load.SourceDateTime,
+                                DestinationDateTime = load.DestinationDateTime,
+                                SourceCoordinates = new double?[] { load.SourceLatitude, load.SourceLongitude },
+                                DestinationCoordinates = new double?[] { load.DestinationLatitude, load.DestinationLongitude },
+                            })
+                            .OrderBy(p => p.SourceDateTime)
+                            .ThenBy(p => p.DestinationDateTime)
+                            .ToList()
+                        }).ToList();
+
+            return list;
+        }
+
         public async Task<OrderTrucksDto> GetOrderTrucksAndDetails(int orderLineId)
         {
             await TryGetOrderTrucksAndDetailsOrThrow(orderLineId);
@@ -2572,8 +2636,9 @@ namespace DispatcherWeb.Scheduling
 
             // it may be that latest of trip is not done yet so set latest
             // time to start of the last of the trips.
-            if (tryLatestFromSources.HasValue && allTripsLatest.HasValue &&
-                tryLatestFromSources.Value > allTripsLatest.Value)
+            if ((tryLatestFromSources.HasValue && allTripsLatest.HasValue &&
+                tryLatestFromSources.Value > allTripsLatest.Value) ||
+                !allTripsLatest.HasValue && tryLatestFromSources.HasValue)
             {
                 allTripsLatest = tryLatestFromSources;
             }
@@ -2710,7 +2775,9 @@ namespace DispatcherWeb.Scheduling
                             (checkTimeEntry.EndDateTime <= thisLoad.DestinationDateTime || nextLoad != null && checkTimeEntry.EndDateTime <= nextLoad.SourceDateTime))
                         {
                             tripCycleDto.StartDateTime = checkTimeEntry.EndDateTime;
-                            checkTimeEntry = timeEntriesQueue.Dequeue();
+
+                            if (timeEntriesQueue.Any())
+                                checkTimeEntry = timeEntriesQueue.Dequeue();
                         }
                         else
                         {
@@ -2727,7 +2794,7 @@ namespace DispatcherWeb.Scheduling
                     }
                 }
                 orderTrucksDto.OrderTrucks.Add(orderTruckDto);
-            };
+            }
 
             return orderTrucksDto;
         }

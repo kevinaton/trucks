@@ -2548,7 +2548,7 @@
                         menuFunctions.fn.activateClosedTrucks(this);
                     }
                 },
-                viewJobSummary: {
+                /*viewJobSummary: {
                     name: app.localize('Schedule_DataTable_MenuItems_JobSummary'),
                     visible: function () {
                         return menuFunctions.isVisible.viewJobSummary(_dtHelper.getRowData(this));
@@ -2556,7 +2556,7 @@
                     callback: function () {
                         menuFunctions.fn.viewJobSummary(this);
                     }
-                },
+                },*/
             }
         });
 
