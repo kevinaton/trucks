@@ -53,7 +53,6 @@
             });
             designationDropdown.select2Init({
                 showAll: true,
-                noSearch: true,
                 allowClear: false
                 //dropdownParent: $("#" + _modalManager.getModalId())
             });

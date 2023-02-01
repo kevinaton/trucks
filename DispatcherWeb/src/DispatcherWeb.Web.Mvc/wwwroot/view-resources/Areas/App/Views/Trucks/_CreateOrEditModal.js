@@ -63,7 +63,6 @@
             _$form.find("select#OfficeId").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
-                noSearch: true,
                 allowClear: false
             });
 
@@ -134,14 +133,12 @@
             vehicleCategoryDropdown.select2Init({
                 abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
                 showAll: true,
-                //noSearch: true,
                 allowClear: false
             });
 
             $("#FuelType").select2Init({
                 allowClear: true,
-                showAll: true,
-                noSearch: true
+                showAll: true
             });
 
 

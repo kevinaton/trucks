@@ -41,7 +41,7 @@
             dateInput.on('cancel.daterangepicker', function (ev, picker) {
 			});
 
-            _$form.find('#Shift').select2Init({ minimumResultsForSearch: 5, allowClear: false });
+            _$form.find('#Shift').select2Init({ allowClear: false });
         };
 
         this.save = function () {

@@ -169,7 +169,6 @@
                             },
                             showAll: true,
                             allowClear: false,
-                            noSearch: true,
                             selectOnClose: true
                         },
                         editCompleteCallback: function (editResult, rowData, cell) {

@@ -238,11 +238,10 @@
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
-            noSearch: true,
             allowClear: false
         });
         abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
-        $('#ShiftFilter').select2Init({ minimumResultsForSearch: 5, allowClear: false });
+        $('#ShiftFilter').select2Init({ allowClear: false });
 
         refreshHideProgressBarCheckboxVisibility();
         refreshDriverAssignmentButtonVisibility();

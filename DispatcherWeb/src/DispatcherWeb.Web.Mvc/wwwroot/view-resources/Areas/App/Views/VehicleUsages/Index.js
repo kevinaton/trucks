@@ -133,7 +133,6 @@
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 minimumInputLength: 0,
-                minimumResultsForSearch: Infinity,
                 allowClear: false
             });
             $("#ReadingDateTimeFilter").daterangepicker(drpOptions)
@@ -145,8 +144,7 @@
                 });
 
             $("#ReadingTypeFilter").select2Init({
-                allowClear: false,
-                noSearch: true
+                allowClear: false
             });
 
             initTruckFilter();

@@ -266,11 +266,10 @@
             minimumInputLength: 0,
             allowClear: true
         });
-        $('#ShiftFilter').select2Init({ minimumResultsForSearch: 5, allowClear: false });
+        $('#ShiftFilter').select2Init({ allowClear: false });
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             minimumInputLength: 0,
-            minimumResultsForSearch: Infinity,
             allowClear: false
         });
 

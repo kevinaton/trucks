@@ -31,8 +31,7 @@
             });
 
             _dropdown.select2Init({
-                showAll: true,
-                noSearch: true
+                showAll: true
             });
         };
 

@@ -53,7 +53,6 @@
             _$generalForm.find("#OfficeId").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
-                noSearch: true,
                 allowClear: false
             });
 
@@ -201,8 +200,7 @@
                                 reloadGrid();
                             });
                             editor.select2Init({
-                                allowClear: false,
-                                minimumResultsForSearch: -1 //no search
+                                allowClear: false
                             });
                         }
                     },

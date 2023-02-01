@@ -489,8 +489,8 @@
         });
         $('#Shifts').select2Init({ allowClear: false });
         //$('#BillingStatusFilter').select2Init({ allowClear: false }); //"All" is being hidden from options when select2 is initialized
-        $('#IsVerifiedFilter').select2Init({ allowClear: true, noSearch: true });
-        $('#IsImportedFilter').select2Init({ allowClear: true, noSearch: true });
+        $('#IsVerifiedFilter').select2Init({ allowClear: true });
+        $('#IsImportedFilter').select2Init({ allowClear: true });
         $('#DriverFilter').select2Init({
             abpServiceMethod: abp.services.app.driver.getDriversSelectList,
             minimumInputLength: 0,
@@ -498,8 +498,7 @@
         });
         $('#OfficeIdFilter').select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            showAll: true,
-            noSearch: true
+            showAll: true
         });
     }
 

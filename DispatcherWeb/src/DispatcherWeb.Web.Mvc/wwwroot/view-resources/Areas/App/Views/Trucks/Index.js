@@ -17,8 +17,7 @@
 
         var $officeIdFilterSelect = $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            showAll: true,
-            noSearch: true
+            showAll: true
         });
 
         if ($officeIdFilterSelect.data('filter-office-id')) {
@@ -33,14 +32,12 @@
                 isInUse: true
             },
             allowClear: true,
-            showAll: true,
-            noSearch: true
+            showAll: true
         });
 
         $("#StatusFilter").select2Init({
             allowClear: false,
-            showAll: true,
-            noSearch: true
+            showAll: true
         });
 
         var trucksTable = $('#TrucksTable');

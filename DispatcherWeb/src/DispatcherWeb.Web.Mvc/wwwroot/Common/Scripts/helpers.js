@@ -1441,7 +1441,6 @@
             showAll: true,
             //minimumInputLength: 0,
             //minimumResultsForSearch: Infinity,
-            noSearch: true,
             allowClear: false
         };
         options = $.extend(true, {}, options, additionalOptions);

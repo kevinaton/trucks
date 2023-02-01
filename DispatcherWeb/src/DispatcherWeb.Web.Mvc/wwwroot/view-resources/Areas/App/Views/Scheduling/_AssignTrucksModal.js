@@ -30,17 +30,14 @@
                 },
                 showAll: true,
                 placeholder: 'All'
-                //noSearch: true,
                 //allowClear: false
             });
             _$form.find("#BedConstructionFilter").select2Init({
                 showAll: true,
-                noSearch: true,
                 //allowClear: false
             });
             _$form.find("#IsApportionedFilter").select2Init({
                 showAll: true,
-                noSearch: true,
                 //allowClear: false
             });
 

@@ -25,8 +25,7 @@
 
             var readingTypeDropDown = _readingTypeDropDown = _$form.find("#ReadingType");
             readingTypeDropDown.select2Init({
-                allowClear: false,
-                noSearch: true
+                allowClear: false
             });
 
             readingTypeDropDown.change(function () {

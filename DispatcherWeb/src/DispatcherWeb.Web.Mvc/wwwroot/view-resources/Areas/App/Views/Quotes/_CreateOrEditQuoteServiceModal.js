@@ -67,7 +67,6 @@
             freightUomDropdown.select2Uom();
             designationDropdown.select2Init({
                 showAll: true,
-                noSearch: true,
                 allowClear: false
             });
 

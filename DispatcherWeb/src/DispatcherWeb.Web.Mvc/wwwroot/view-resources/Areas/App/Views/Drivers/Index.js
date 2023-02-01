@@ -14,8 +14,7 @@
 
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            showAll: true,
-            noSearch: true
+            showAll: true
         });
 
         var driversTable = $('#DriversTable');
