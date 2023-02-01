@@ -29701,7 +29701,7 @@ select.m-bootstrap-select {
   position: relative;
   padding: 0.85rem 1.15rem;
   line-height: 1.25; }
-  .select2-container--default .select2-selection--single .select2-selection__rendered .select2-selection__clear {
+  .select2-container--default .select2-selection--single .select2-selection__clear {
     border: 0;
     position: absolute;
     top: 50%;
@@ -29848,7 +29848,7 @@ select.m-select2 {
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
   color: #000000; }
-  .select2-container--default .select2-selection--single .select2-selection__rendered .select2-selection__clear {
+  .select2-container--default .select2-selection--single .select2-selection__clear {
     color: #000000; }
 
 .select2-container--default .select2-selection--multiple .select2-selection__rendered {
