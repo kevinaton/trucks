@@ -1892,7 +1892,7 @@ a.btn-default:hover {
     color: #444;
 }
 
-.select2-container--default .select2-search--dropdown {
+/*.select2-container--default .select2-search--dropdown {
     margin-top: -49px;
     margin-bottom: -9px;
     padding: 10px 0px;
@@ -1902,7 +1902,7 @@ a.btn-default:hover {
     width: calc(100% - 40px);
     border: none;
     height: 36px;
-}
+}*/
 
 /*.select2-container--default .select2-search--dropdown {
     width: calc(100% - 40px);

@@ -5846,10 +5846,32 @@ S2.define('select2/core',[
           self.open();
 
           evt.preventDefault();
+        } else {
+          if (isAlphanumericKey(key)) {
+            self.open();
+            self.dropdown.$search.val(String.fromCharCode(key));
+            setTimeout(() => self.dropdown.$search.trigger('input'), 0);
+
+            evt.preventDefault();
+          }
         }
       }
     });
   };
+
+  function isAlphanumericKey(key) {
+    if (key >= 48 && key <= 57) {
+      // Number
+      return true;
+    } else if (key >= 65 && key <= 90) {
+      // Alphabet upper case
+      return true;
+    } else if (key >= 97 && key <= 122) {
+      // Alphabet lower case
+      return true;
+    }
+    return false;
+  }
 
   Select2.prototype._syncAttributes = function () {
     this.options.set('disabled', this.$element.prop('disabled'));
