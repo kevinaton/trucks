@@ -1907,3 +1907,41 @@ a.btn-default:hover {
 /*.select2-container--default .select2-search--dropdown {
     width: calc(100% - 40px);
 }*/
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    position: static;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    height: 22px;
+    width: 22px;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear:hover {
+    background: #E3E6E9;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear span {
+    font-weight: 900;
+    font-size: 24px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 20%;
+    right: 0.7rem;
+    width: 22px;
+    height: 22px;
+    padding: 11px 5px;
+    margin-top: 1px;
+    border-radius: 50%;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow:hover {
+    background: #E3E6E9;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow:before {
+    font-weight: bold;
+}
