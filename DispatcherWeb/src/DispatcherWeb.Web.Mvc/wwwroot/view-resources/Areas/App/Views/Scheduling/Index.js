@@ -1420,7 +1420,7 @@
                     responsivePriority: getResponsivePriorityByName('time'),
                     width: "94px",
                     createdCell: handleTimepickerCellCreation("time", _schedulingService.setOrderLineTime, "isTimeEditable", "isTimeStaggered"),
-                    orderable: false
+                    orderable: true
                 },
                 {
                     data: "loadAtNamePlain",
