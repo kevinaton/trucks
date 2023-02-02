@@ -933,6 +933,15 @@ namespace DispatcherWeb
             }.SetLastUpdateDateTime(entity);
         }
 
-        
+        public static ChangedEmployeeTimeClassification ToChangedEntity(this EmployeeTimeClassification entity)
+        {
+            return new ChangedEmployeeTimeClassification
+            {
+                Id = entity.Id,
+                DriverId = entity.DriverId,
+                TimeClassificationId = entity.TimeClassificationId,
+                EntityReference = entity,
+            }.SetLastUpdateDateTime(entity);
+        }
     }
 }
