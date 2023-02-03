@@ -1045,8 +1045,9 @@ namespace DispatcherWeb.Dispatching
                         TimeOnJob = orderLineTruck.TruckTimeOnJobUtc ?? orderLine.TimeOnJobUtc
                     };
 
-                    newDispatch.TimeOnJob = newDispatch.TimeOnJob == null ? null
-                        : (orderLine.DeliveryDate ?? await GetToday()).Date.Add(newDispatch.TimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay).ConvertTimeZoneFrom(timezone);
+                    //commented out to keep Dispatch TimeOnJob matching exactly with OrderLineTruck or OrderLine's TimeOnJob
+                    //newDispatch.TimeOnJob = newDispatch.TimeOnJob == null ? null
+                    //    : (orderLine.DeliveryDate ?? await GetToday()).Date.Add(newDispatch.TimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay).ConvertTimeZoneFrom(timezone);
 
                     var orderedTruckDispatches = GetOrderedDispatchesForTruck(orderLineTruck.TruckId);
                     affectedDispatches.Add(AddDispatch(newDispatch));

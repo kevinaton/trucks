@@ -1530,7 +1530,13 @@ namespace DispatcherWeb.Scheduling
         public async Task SetOrderLineTime(SetOrderLineTimeInput input)
         {
             var orderLineUpdater = _orderLineUpdaterFactory.Create(input.OrderLineId);
-            await orderLineUpdater.UpdateFieldAsync(o => o.TimeOnJob, input.Time?.ConvertTimeZoneFrom(await GetTimezone()));
+            
+            var order = await orderLineUpdater.GetOrderAsync();
+            var date = order.DeliveryDate ?? await GetToday();
+            var timezone = await GetTimezone();
+
+            await orderLineUpdater.UpdateFieldAsync(o => o.TimeOnJob, date.AddTimeOrNull(input.Time)?.ConvertTimeZoneFrom(timezone));
+
             await orderLineUpdater.SaveChangesAsync();
         }
 
@@ -2484,8 +2490,8 @@ namespace DispatcherWeb.Scheduling
         private async Task<IList<OrderTruckQueryResultDto>> GetOrderTrucksGroupedAsync_Old(int orderLineId)
         {
             var orderLineTrucksQuery = _orderLineRepository.GetAll()
-                                            .Where(ol => ol.Id == orderLineId)
-                                            .SelectMany(ol => ol.OrderLineTrucks);
+                        .Where(ol => ol.Id == orderLineId)
+                        .SelectMany(ol => ol.OrderLineTrucks);
 
             var dispatchesQuery = orderLineTrucksQuery.SelectMany(olt => olt.Dispatches);
 
@@ -2494,20 +2500,20 @@ namespace DispatcherWeb.Scheduling
 
             var orderTrucksQuery = loadsQuery.Where(load => load != null && load.SourceDateTime.HasValue)
                                         .Select(load => new
-                                        {
+                                                {
                                             load.Dispatch.OrderLineTruck.TruckId,
                                             load.Dispatch.OrderLineTruck.Truck.TruckCode,
                                             load.Dispatch.OrderLineTruck.DriverId,
 
                                             DispatchId = load.Dispatch.Id,
 
-                                            LoadId = load.Id,
-                                            load.SourceDateTime,
-                                            load.DestinationDateTime,
-                                            load.SourceLatitude,
-                                            load.SourceLongitude,
-                                            load.DestinationLatitude,
-                                            load.DestinationLongitude,
+                                                    LoadId = load.Id,
+                                                    load.SourceDateTime,
+                                                    load.DestinationDateTime,
+                                                    load.SourceLatitude,
+                                                    load.SourceLongitude,
+                                                    load.DestinationLatitude,
+                                                    load.DestinationLongitude,
 
                                             TicketId = load.Tickets.Count > 0 ? load.Tickets.FirstOrDefault().Id : 0,
                                             Qty = load.Tickets.Count > 0 ? load.Tickets.FirstOrDefault().Quantity : 0,
@@ -2519,30 +2525,30 @@ namespace DispatcherWeb.Scheduling
 
             var orderTrucks = await orderTrucksQuery.ToListAsync();
             var list = orderTrucks
-                        .GroupBy(p => new
-                        {
-                            p.TruckId,
-                            p.UoMName
-                        })
-                        .Select(p => new OrderTruckQueryResultDto
-                        {
-                            TruckId = p.Key.TruckId,
-                            TruckCode = p.Select(t => t.TruckCode).FirstOrDefault(),
-                            UnitOfMeasure = p.Key.UoMName,
-                            LoadsCount = p.Count(),
-                            Quantity = p.Sum(x => x.Qty),
-                            Loads = p.Select(load => new OrderTruckQueryResultDto.OrderTruckLoadQueryResultDto
-                            {
-                                LoadId = load.LoadId,
-                                DriverId = load.DriverId,
-                                SourceDateTime = load.SourceDateTime,
-                                DestinationDateTime = load.DestinationDateTime,
-                                SourceCoordinates = new double?[] { load.SourceLatitude, load.SourceLongitude },
-                                DestinationCoordinates = new double?[] { load.DestinationLatitude, load.DestinationLongitude },
-                            })
-                            .OrderBy(p => p.SourceDateTime)
-                            .ThenBy(p => p.DestinationDateTime)
-                            .ToList()
+                .GroupBy(p => new
+                {
+                    p.TruckId,
+                    p.UoMName
+                })
+                .Select(p => new OrderTruckQueryResultDto
+                {
+                    TruckId = p.Key.TruckId,
+                    TruckCode = p.Select(t => t.TruckCode).FirstOrDefault(),
+                    UnitOfMeasure = p.Key.UoMName,
+                    LoadsCount = p.Count(),
+                    Quantity = p.Sum(x => x.Qty),
+                    Loads = p.Select(load => new OrderTruckQueryResultDto.OrderTruckLoadQueryResultDto
+                    {
+                        LoadId = load.LoadId,
+                        DriverId = load.DriverId,
+                        SourceDateTime = load.SourceDateTime,
+                        DestinationDateTime = load.DestinationDateTime,
+                        SourceCoordinates = new double?[] { load.SourceLatitude, load.SourceLongitude },
+                        DestinationCoordinates = new double?[] { load.DestinationLatitude, load.DestinationLongitude },
+                    })
+                    .OrderBy(p => p.SourceDateTime)
+                    .ThenBy(p => p.DestinationDateTime)
+                    .ToList()
                         }).ToList();
 
             return list;
@@ -2558,7 +2564,7 @@ namespace DispatcherWeb.Scheduling
                                                         .SelectMany(dispatch => dispatch.Loads)
                                                             .Where(load => load != null && load.SourceDateTime.HasValue)
                                                             .Select(load => new
-                                                            {
+        {
                                                                 olt.TruckId,
                                                                 olt.Truck.TruckCode,
                                                                 olt.DriverId,
@@ -2596,7 +2602,7 @@ namespace DispatcherWeb.Scheduling
                             LoadsCount = p.Count(),
                             Quantity = p.Sum(x => x.Qty),
                             Loads = p.Select(load => new OrderTruckQueryResultDto.OrderTruckLoadQueryResultDto
-                            {
+            {
                                 LoadId = load.LoadId,
                                 DriverId = load.DriverId,
                                 SourceDateTime = load.SourceDateTime,
