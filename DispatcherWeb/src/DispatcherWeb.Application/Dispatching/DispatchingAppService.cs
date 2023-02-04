@@ -79,7 +79,6 @@ namespace DispatcherWeb.Dispatching
         private readonly ITimeZoneConverter _timeZoneConverter;
         private readonly IDispatchListCsvExporter _dispatchListCsvExporter;
         private readonly IBinaryObjectManager _binaryObjectManager;
-        private readonly ITicketAppService _ticketAppService;
         private readonly OrderTaxCalculator _orderTaxCalculator;
         private readonly IWebPushSender _webPushSender;
         private readonly IDriverApplicationPushSender _driverApplicationPushSender;
@@ -110,7 +109,6 @@ namespace DispatcherWeb.Dispatching
             ITimeZoneConverter timeZoneConverter,
             IDispatchListCsvExporter dispatchListCsvExporter,
             IBinaryObjectManager binaryObjectManager,
-            ITicketAppService ticketAppService,
             OrderTaxCalculator orderTaxCalculator,
             IWebPushSender webPushSender,
             IDriverApplicationPushSender driverApplicationPushSender,
@@ -141,7 +139,6 @@ namespace DispatcherWeb.Dispatching
             _timeZoneConverter = timeZoneConverter;
             _dispatchListCsvExporter = dispatchListCsvExporter;
             _binaryObjectManager = binaryObjectManager;
-            _ticketAppService = ticketAppService;
             _orderTaxCalculator = orderTaxCalculator;
             _webPushSender = webPushSender;
             _driverApplicationPushSender = driverApplicationPushSender;
@@ -1724,8 +1721,6 @@ namespace DispatcherWeb.Dispatching
                 await _loadRepository.InsertOrUpdateAsync(loadEntity);
                 await CurrentUnitOfWork.SaveChangesAsync();
 
-                await _ticketAppService.RecalculateOfficeAmountsAsync(dispatchEntity.OrderLineId);
-                await CurrentUnitOfWork.SaveChangesAsync();
                 await _orderTaxCalculator.CalculateTotalsAsync(dispatchEntity.OrderLine.OrderId);
                 if (ticket != null)
                 {
@@ -1817,7 +1812,6 @@ namespace DispatcherWeb.Dispatching
                     ticket.TicketNumber = "G-" + (ticket.Id);
                 }
 
-                await _ticketAppService.RecalculateOfficeAmountsAsync(dispatchEntity.OrderLineId);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 await _orderTaxCalculator.CalculateTotalsAsync(dispatchEntity.OrderLine.OrderId);
                 if (ticket != null)

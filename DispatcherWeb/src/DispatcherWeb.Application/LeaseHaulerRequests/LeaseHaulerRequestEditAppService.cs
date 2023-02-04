@@ -430,15 +430,6 @@ namespace DispatcherWeb.LeaseHaulerRequests
 
                 await _availableLeaseHaulerTruckRepository.DeleteAsync(truckToDelete);
             }
-
-            //var orderLineTrucksToDelete = await _orderLineTruckRepository.GetAll()
-            //        .Where(olt => olt.OrderLine.Order.DeliveryDate == leaseHaulerRequest.Date
-            //                      && olt.OrderLine.Order.Shift == leaseHaulerRequest.Shift
-            //                      && olt.OrderLine.Order.LocationId == leaseHaulerRequest.OfficeId
-            //                      && trucksToDelete.Any(alht => alht.TruckId == olt.TruckId)
-            //        )
-            //        .ToListAsync();
-            //orderLineTrucksToDelete.ForEach(_orderLineTruckRepository.Delete);
         }
 
         private async Task NotifyDispatchersAboutChangedAvailableTrucksNumber(LeaseHaulerRequest leaseHaulerRequest, int newValue)

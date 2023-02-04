@@ -841,7 +841,7 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.DefaultMapLocation, input.General.DefaultMapLocation);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.CurrencySymbol, input.General.CurrencySymbol);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.UserDefinedField1, input.General.UserDefinedField1);
-            await UpdateAllowAddingTicketsSettings(input.General);
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.AllowAddingTickets, input.General.AllowAddingTickets.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ValidateDriverAndTruckOnTickets, (!input.General.DontValidateDriverAndTruckOnTickets).ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ShowDriverNamesOnPrintedOrder, input.General.ShowDriverNamesOnPrintedOrder.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.SplitBillingByOffices, input.General.SplitBillingByOffices.ToLowerCaseString());
@@ -920,25 +920,6 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs, input.TimeAndPay.PreventProductionPayOnHourlyJobs.ToLowerCaseString());
 
             await UpdateFuelSettingsAsync(input.Fuel);
-        }
-
-        private async Task UpdateAllowAddingTicketsSettings(GeneralSettingsEditDto input)
-        {
-            var oldValue = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-            var newValue = input.AllowAddingTickets;
-
-            if (oldValue != newValue)
-            {
-                var jobArgs = new RecalculateActualAmountsBackgroundJobArgs
-                {
-                    TenantId = AbpSession.GetTenantId(),
-                    RequestorUser = AbpSession.ToUserIdentifier()
-                };
-                await _backgroundJobManager.EnqueueAsync<RecalculateActualAmountsBackgroundJob, RecalculateActualAmountsBackgroundJobArgs>(jobArgs);
-                await _appNotifier.SendMessageAsync(jobArgs.RequestorUser, "Actual Quantity recalculation started");
-            }
-
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.AllowAddingTickets, newValue.ToLowerCaseString());
         }
 
         private async Task UpdateOtherSettingsAsync(TenantOtherSettingsEditDto input)

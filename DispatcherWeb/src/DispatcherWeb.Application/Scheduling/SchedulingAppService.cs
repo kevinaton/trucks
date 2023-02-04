@@ -854,6 +854,14 @@ namespace DispatcherWeb.Scheduling
             else
             {
                 await _orderLineTruckRepository.DeleteAsync(x => x.Id == input.OrderLineTruckId || x.ParentOrderLineTruckId == input.OrderLineTruckId);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                var orderLineUpdater = _orderLineUpdaterFactory.Create(input.OrderLineId);
+                var order = await orderLineUpdater.GetOrderAsync();
+                if (order.DeliveryDate >= await GetToday())
+                {
+                    orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                    await orderLineUpdater.SaveChangesAsync();
+                }
             }
             await SaveOrThrowConcurrencyErrorAsync();
             var orderLineUtilization = await _orderLineRepository.GetAll()
@@ -1569,12 +1577,15 @@ namespace DispatcherWeb.Scheduling
                 });
             }
 
-            var orderLine = await _orderLineRepository.GetAll()
-                .Include(ol => ol.OrderLineTrucks)
-                .SingleAsync(ol => ol.Id == input.OrderLineId);
+            var orderLineUpdater = _orderLineUpdaterFactory.Create(input.OrderLineId);
+            await orderLineUpdater.UpdateFieldAsync(x => x.IsComplete, input.IsComplete);
+            await orderLineUpdater.UpdateFieldAsync(x => x.IsCancelled, input.IsComplete && input.IsCancelled);
+            var order = await orderLineUpdater.GetOrderAsync();
+            var today = await GetToday();
 
-            orderLine.IsComplete = input.IsComplete;
-            orderLine.IsCancelled = input.IsComplete && input.IsCancelled;
+            var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                .Where(x => x.OrderLineId == input.OrderLineId)
+                .ToListAsync();
 
             if (input.IsComplete)
             {
@@ -1595,11 +1606,15 @@ namespace DispatcherWeb.Scheduling
                             x.Status
                         }).ToListAsync();
 
-                    foreach (var orderLineTruck in orderLine.OrderLineTrucks.ToList())
+                    foreach (var orderLineTruck in orderLineTrucks)
                     {
                         if (!tickets.Any(t => t.TruckId == orderLineTruck.TruckId) && !dispatches.Any(d => d.TruckId == orderLineTruck.TruckId))
                         {
                             await _orderLineTruckRepository.DeleteAsync(orderLineTruck);
+                            if (order.DeliveryDate >= today)
+                            {
+                                orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                            }
                         }
                         else
                         {
@@ -1610,13 +1625,16 @@ namespace DispatcherWeb.Scheduling
                 }
                 else
                 {
-                    foreach (var orderLineTruck in orderLine.OrderLineTrucks)
+                    foreach (var orderLineTruck in orderLineTrucks)
                     {
                         orderLineTruck.IsDone = true;
                         orderLineTruck.Utilization = 0;
                     }
                 }
             }
+
+            await CurrentUnitOfWork.SaveChangesAsync(); //save deleted OrderLineTrucks first
+            await orderLineUpdater.SaveChangesAsync();
         }
 
         public async Task<PagedResultDto<SelectListDto>> GetOrderLinesToAssignTrucksToSelectList(GetSelectListIdInput input)
@@ -2103,14 +2121,11 @@ namespace DispatcherWeb.Scheduling
 
             if (input.Utilization <= 0)
             {
-                await ThrowIfTruckHasDispatches(new DeleteOrderLineTruckInput { OrderLineTruckId = input.OrderLineTruckId });
-
-                await _dispatchingAppService.CancelOrEndAllDispatches(new CancelOrEndAllDispatchesInput
+                await DeleteOrderLineTruck(new DeleteOrderLineTruckInput
                 {
-                    OrderLineId = orderLineTruck.OrderLineId,
-                    TruckId = orderLineTruck.TruckId
+                    OrderLineTruckId = input.OrderLineTruckId,
+                    OrderLineId = orderLineTruck.OrderLineId
                 });
-                await _orderLineTruckRepository.DeleteAsync(input.OrderLineTruckId);
             }
             else
             {
@@ -2410,6 +2425,19 @@ namespace DispatcherWeb.Scheduling
                     )
                     .ToListAsync();
                 orderLineTrucksToDelete.ForEach(_orderLineTruckRepository.Delete);
+
+                await CurrentUnitOfWork.SaveChangesAsync();
+                var orderLineIds = orderLineTrucksToDelete.Select(x => x.OrderLineId).Distinct().ToList();
+                foreach (var orderLineId in orderLineIds)
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineId);
+                    var order = await orderLineUpdater.GetOrderAsync();
+                    if (order.DeliveryDate >= await GetToday())
+                    {
+                        orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                        await orderLineUpdater.SaveChangesAsync();
+                    }
+                }
             }
         }
 

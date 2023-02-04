@@ -39,29 +39,6 @@
 
             try {
                 _modalManager.setBusy(true);
-                //let setDriverResult = await _driverAssignmentService.setDriverForTruck(input);
-                //if (!setDriverResult.success && setDriverResult.orderLineTruckExists) {
-                //    if (!await abp.message.confirm(
-                //        'The previous driver has open dispatches for this date and shift. Would you like those dispatches to be canceled?'
-                //    )) {
-                //        _modalManager.close();
-                //        return;
-                //    }
-
-                //    _modalManager.setBusy(true);
-                //    await _schedulingService.deleteOrderLineTrucks({
-                //        truckId: input.TruckId,
-                //        date: input.Date,
-                //        shift: input.Shift
-                //    });
-
-                //    setDriverResult = await _driverAssignmentService.setDriverForTruck(input);
-                //}
-
-                //if (!setDriverResult.success) {
-                //    abp.message.error('Error detail not sent by server.', 'An error has occurred!');
-                //    return;
-                //}
 
                 if (_originalDriverId) {
                     var validationResult = await _driverAssignmentService.hasOrderLineTrucks({

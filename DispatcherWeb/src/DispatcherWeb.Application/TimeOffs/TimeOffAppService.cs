@@ -40,6 +40,7 @@ namespace DispatcherWeb.TimeOffs
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<DriverAssignment> _driverAssignmentRepository;
         private readonly IRepository<Truck> _truckRepository;
+        private readonly IOrderLineUpdaterFactory _orderLineUpdaterFactory;
         private readonly IDriverApplicationPushSender _driverApplicationPushSender;
         private readonly ISyncRequestSender _syncRequestSender;
 
@@ -51,6 +52,7 @@ namespace DispatcherWeb.TimeOffs
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<DriverAssignment> driverAssignmentRepository,
             IRepository<Truck> truckRepository,
+            IOrderLineUpdaterFactory orderLineUpdaterFactory,
             IDriverApplicationPushSender driverApplicationPushSender,
             ISyncRequestSender syncRequestSender)
         {
@@ -61,6 +63,7 @@ namespace DispatcherWeb.TimeOffs
             _orderLineTruckRepository = orderLineTruckRepository;
             _driverAssignmentRepository = driverAssignmentRepository;
             _truckRepository = truckRepository;
+            _orderLineUpdaterFactory = orderLineUpdaterFactory;
             _driverApplicationPushSender = driverApplicationPushSender;
             _syncRequestSender = syncRequestSender;
         }
@@ -254,6 +257,8 @@ namespace DispatcherWeb.TimeOffs
                 syncRequest.AddChange(EntityEnum.Dispatch, d.ToChangedEntity(), ChangeType.Removed);
             });
 
+            var orderLineIdsNeedingStaggeredTimeRecalculation = new List<int>();
+
             var allShifts = await SettingManager.GetShiftsAsync();
 
             var date = input.StartDate;
@@ -300,16 +305,33 @@ namespace DispatcherWeb.TimeOffs
                     {
                         var orderLineTrucksToDelete = await _orderLineTruckRepository.GetAll()
                             .Where(olt => olt.TruckId == updatedTruckId && olt.OrderLine.Order.DeliveryDate == date && olt.OrderLine.Order.Shift == shift)
-                            .Select(olt => olt.Id)
                             .ToListAsync();
+
                         if (orderLineTrucksToDelete.Count > 0)
                         {
                             result.TruckWasRemovedFromOrders = true;
                         }
-                        orderLineTrucksToDelete.ForEach(orderLineTruckId => _orderLineTruckRepository.DeleteAsync(orderLineTruckId));
+                        orderLineTrucksToDelete.ForEach(_orderLineTruckRepository.Delete);
+
+                        orderLineIdsNeedingStaggeredTimeRecalculation.AddRange(orderLineTrucksToDelete.Select(x => x.OrderLineId).Distinct());
                     }
                 }
                 date = date.AddDays(1);
+            }
+
+            if (orderLineIdsNeedingStaggeredTimeRecalculation.Any())
+            {
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var orderLineId in orderLineIdsNeedingStaggeredTimeRecalculation.Distinct().ToList())
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineId);
+                    var order = await orderLineUpdater.GetOrderAsync();
+                    if (order.DeliveryDate >= await GetToday())
+                    {
+                        orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                        await orderLineUpdater.SaveChangesAsync();
+                    }
+                }
             }
 
             await CurrentUnitOfWork.SaveChangesAsync();

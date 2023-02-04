@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
@@ -773,11 +774,6 @@ namespace DispatcherWeb.Orders
             }
         }
 
-        private async Task ClearOrderOrderLineTrucks(int orderId)
-        {
-            await _orderLineTruckRepository.DeleteAsync(olt => olt.OrderLine.OrderId == orderId);
-        }
-
         public async Task<OrderLastModifiedDatesDto> GetOrderLastModifiedDates(int orderId)
         {
             var result = await _orderRepository.GetAll()
@@ -826,17 +822,18 @@ namespace DispatcherWeb.Orders
                 return result;
             }
         }
+
         private async Task<SetOrderDateResult> SetOrderDateInternal(SetOrderDateInput input)
         {
             await CheckUseShiftSettingCorrespondsInput(input.Shift);
             SetOrderDateResult result = new SetOrderDateResult();
             var order = await _orderRepository.GetAsync(input.OrderId);
-            if(order.DeliveryDate == input.Date && order.Shift == input.Shift)
+            if (order.DeliveryDate == input.Date && order.Shift == input.Shift)
             {
                 result.Completed = true;
                 return result;
             }
-            if(input.OrderLineId == null)
+            if (input.OrderLineId == null)
             {
                 var hasCompletedOrderLines = await _orderLineRepository.GetAll()
                     .Where(x => x.OrderId == input.OrderId)
@@ -850,17 +847,20 @@ namespace DispatcherWeb.Orders
                 await CheckOpenDispatchesForOrder(input.OrderId);
                 await ThrowIfOrderLinesHaveTicketsOrActualAmounts(input.OrderId);
 
-                if(!input.KeepTrucks)
+                if (!input.KeepTrucks)
                 {
-                    await ClearOrderTrucks(new EntityDto(input.OrderId));
+                    await DeleteOrderLineTrucks(x => x.OrderLine.OrderId == input.OrderId);
                 }
                 else
                 {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLine.OrderId == input.OrderId && (!x.Truck.IsActive || x.Truck.IsOutOfService));
-                    await ClearLeaseHaulerTrucksFromOrder(input.OrderId);
+                    await DeleteOrderLineTrucks(x => x.OrderLine.OrderId == input.OrderId
+                        && (!x.Truck.IsActive
+                            || x.Truck.IsOutOfService
+                            || x.Truck.LocationId == null
+                            || x.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule), input.Date);
                     var notAvailableTrucks = await GetOrderTrucksNotAvailableForDateShift(input.OrderId, input.Date, input.Shift);
                     notAvailableTrucks.AddRange(await GetOrderTrucksWithoutDriverOnDateShift(input.OrderId, input.Date, input.Shift));
-                    if(await ShouldReturnResultOrDeleteNotAvailableTrucks(notAvailableTrucks, input.RemoveNotAvailableTrucks, result))
+                    if (await ShouldReturnResultOrDeleteNotAvailableTrucks(notAvailableTrucks, input.RemoveNotAvailableTrucks, result))
                     {
                         return result;
                     }
@@ -890,17 +890,20 @@ namespace DispatcherWeb.Orders
                 await CheckOpenDispatchesForOrderLine(input.OrderLineId.Value);
                 await ThrowIfOrderLineHasTicketsOrActualAmounts(input.OrderLineId.Value);
 
-                if(!input.KeepTrucks)
+                if (!input.KeepTrucks)
                 {
-                    await ClearOrderLineTrucks(new EntityDto(input.OrderLineId.Value));
+                    await DeleteOrderLineTrucks(x => x.OrderLineId == input.OrderLineId);
                 }
                 else
                 {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLineId == input.OrderLineId && (!x.Truck.IsActive || x.Truck.IsOutOfService));
-                    await ClearLeaseHaulerTrucksFromOrderLine(input.OrderLineId.Value);
+                    await DeleteOrderLineTrucks(x => x.OrderLineId == input.OrderLineId
+                        && (!x.Truck.IsActive
+                            || x.Truck.IsOutOfService
+                            || x.Truck.LocationId == null
+                            || x.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule), input.Date);
                     var notAvailableTrucks = await GetOrderLineTrucksNotAvailableForDateShift(input.OrderLineId.Value, input.Date, input.Shift);
                     notAvailableTrucks.AddRange(await GetOrderLineTrucksWithoutDriverOnDateShift(input.OrderLineId.Value, input.Date, input.Shift));
-                    if(await ShouldReturnResultOrDeleteNotAvailableTrucks(notAvailableTrucks, input.RemoveNotAvailableTrucks, result))
+                    if (await ShouldReturnResultOrDeleteNotAvailableTrucks(notAvailableTrucks, input.RemoveNotAvailableTrucks, result))
                     {
                         return result;
                     }
@@ -991,23 +994,36 @@ namespace DispatcherWeb.Orders
                     .Select(da => da)
                     .ToListAsync();
             }
+        }
 
-            async Task ClearLeaseHaulerTrucksFromOrder(int orderId)
-            {
-                if (await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature))
+        private async Task DeleteOrderLineTrucks(Expression<Func<OrderLineTruck, bool>> filter, DateTime? deliveryDate = null)
+        {
+            var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                .Where(filter)
+                .ToListAsync();
+
+            orderLineTrucks.ForEach(_orderLineTruckRepository.Delete);
+
+            var today = await GetToday();
+            var orderLineIds = orderLineTrucks.Select(x => x.OrderLineId).Distinct().ToList();
+            var orderLineDates = await _orderLineRepository.GetAll()
+                .Select(x => new
                 {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLine.OrderId == orderId && (x.Truck.LocationId == null || x.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule));
-                    await CurrentUnitOfWork.SaveChangesAsync();
+                    x.Id,
+                    x.Order.DeliveryDate
+                }).ToListAsync();
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+            foreach (var orderLineId in orderLineIds)
+            {
+                if ((deliveryDate ?? orderLineDates.FirstOrDefault(x => x.Id == orderLineId)?.DeliveryDate) >= today)
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineId);
+                    orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                    await orderLineUpdater.SaveChangesAsync();
                 }
             }
-            async Task ClearLeaseHaulerTrucksFromOrderLine(int orderLineId)
-            {
-                if (await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature))
-                {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLineId == orderLineId && (x.Truck.LocationId == null || x.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule));
-                    await CurrentUnitOfWork.SaveChangesAsync();
-                }
-            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
 
         public async Task UpdateOrderLineDatesIfNeeded(DateTime? deliveryDate, int? orderId)
@@ -1093,15 +1109,16 @@ namespace DispatcherWeb.Orders
             SetOrderDateResult result
         )
         {
-            if(notAvailableTrucks.Count > 0)
+            if (notAvailableTrucks.Count > 0)
             {
-                if(removeNotAvailableTrucks)
+                if (removeNotAvailableTrucks)
                 {
-                    foreach(var orderLineTruck in notAvailableTrucks.Select(x => new { x.TruckId, x.OrderLineId }))
+                    var truckIdsPerOrderLineId = notAvailableTrucks.GroupBy(x => x.OrderLineId);
+                    foreach (var truckIdGroup in truckIdsPerOrderLineId)
                     {
-                        await _orderLineTruckRepository.DeleteAsync(olt =>
-                            olt.TruckId == orderLineTruck.TruckId && olt.OrderLineId == orderLineTruck.OrderLineId
-                        );
+                        var orderLineId = truckIdGroup.Key;
+                        var truckIds = truckIdGroup.Select(x => x.TruckId).Distinct().ToList();
+                        await DeleteOrderLineTrucks(x => x.OrderLineId == orderLineId && truckIds.Contains(x.TruckId));
                     }
                 }
                 else
@@ -1218,10 +1235,6 @@ namespace DispatcherWeb.Orders
                 throw new UserFriendlyException("The Order cannot be transferred!");
             }
         }
-        private async Task ClearOrderLineTrucks(EntityDto input)
-        {
-            await _orderLineTruckRepository.DeleteAsync(x => x.OrderLineId == input.Id);
-        }
 
         private async Task<Order> CreateOrderCopyAndAssignOrderLineToIt(Order order, int orderLineId)
         {
@@ -1239,10 +1252,6 @@ namespace DispatcherWeb.Orders
             await _orderTaxCalculator.CalculateTotalsAsync(newOrder.Id);
 
             return newOrder;
-        }
-        private async Task ClearOrderTrucks(EntityDto input)
-        {
-            await _orderLineTruckRepository.DeleteAsync(x => x.OrderLine.OrderId == input.Id);
         }
 
 

@@ -40,7 +40,6 @@ namespace DispatcherWeb.Drivers
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<TimeClassification> _timeClassificationRepository;
         private readonly IRepository<EmployeeTimeClassification> _employeeTimeClassificationRepository;
-        private readonly ITruckAppService _truckAppService;
         private readonly IDriverListCsvExporter _driverListCsvExporter;
         private readonly IDriverUserLinkService _driverUserLinkService;
         private readonly ISingleOfficeAppService _singleOfficeService;
@@ -57,7 +56,6 @@ namespace DispatcherWeb.Drivers
             IRepository<Dispatch> dispatchRepository,
             IRepository<TimeClassification> timeClassificationRepository,
             IRepository<EmployeeTimeClassification> employeeTimeClassificationRepository,
-            ITruckAppService truckAppService,
             IDriverListCsvExporter driverListCsvExporter,
             IDriverUserLinkService driverUserLinkService,
             ISingleOfficeAppService singleOfficeService,
@@ -74,7 +72,6 @@ namespace DispatcherWeb.Drivers
             _dispatchRepository = dispatchRepository;
             _timeClassificationRepository = timeClassificationRepository;
             _employeeTimeClassificationRepository = employeeTimeClassificationRepository;
-            _truckAppService = truckAppService;
             _driverListCsvExporter = driverListCsvExporter;
             _driverUserLinkService = driverUserLinkService;
             _singleOfficeService = singleOfficeService;

@@ -283,8 +283,6 @@ namespace DispatcherWeb.Tickets
             model.Id = await _ticketRepository.InsertOrUpdateAndGetIdAsync(ticket);
             
             await CurrentUnitOfWork.SaveChangesAsync();
-            await RecalculateOfficeAmountsAsync(model.OrderLineId);
-            await CurrentUnitOfWork.SaveChangesAsync();
             var taxDetails = await _orderTaxCalculator.CalculateTotalsAsync(orderLineData.OrderId);
             if (quantityWasChanged)
             {
@@ -524,8 +522,6 @@ namespace DispatcherWeb.Tickets
             if (model.OrderLineId.HasValue)
             {
                 await CurrentUnitOfWork.SaveChangesAsync();
-                await RecalculateOfficeAmountsAsync(model.OrderLineId.Value);
-                await CurrentUnitOfWork.SaveChangesAsync();
                 await _orderTaxCalculator.CalculateTotalsForOrderLineAsync(model.OrderLineId.Value);
                 if (quantityWasChanged)
                 {
@@ -649,56 +645,6 @@ namespace DispatcherWeb.Tickets
                     Filename = $"TicketsForInvoice{invoiceId}.zip"
                 };
             }
-        }
-
-        [AbpAllowAnonymous]
-        [RemoteService(false)]
-        public async Task RecalculateAllOfficeAmountsAsync()
-        {
-            var orderLineIds = await _orderLineRepository.GetAll()
-                .Select(x => x.Id)
-                .ToListAsync();
-
-            foreach (var orderLineId in orderLineIds)
-            {
-                await RecalculateOfficeAmountsAsync(orderLineId);
-            }
-        }
-
-        [AbpAllowAnonymous]
-        [RemoteService(false)]
-        public Task RecalculateOfficeAmountsAsync(int orderLineId)
-        {
-            //var ticketGroups = await _ticketRepository.GetAll()
-            //    .Include(x => x.Truck)
-            //    .Where(x => x.OrderLineId == orderLineId)
-            //    .GroupBy(x => x.Truck.LocationId)
-            //    .ToListAsync();
-
-            //foreach (var ticketGroup in ticketGroups)
-            //{
-            //    var officeId = ticketGroup.Key;
-            //    var actualMaterialQuantity = ticketGroup.Select(x => x.MaterialQuantity).DefaultIfEmpty(0).Sum();
-            //    var actualFreightQuantity = ticketGroup.Select(x => x.FreightQuantity).DefaultIfEmpty(0).Sum();
-
-            //    if (officeId == null)
-            //    {
-            //        continue;
-            //    }
-
-            //    var receiptLine = await _receiptSeeder.SetOrderLineReceiptAmountsAsync(new SetOrderLineReceiptAmountsInput
-            //    {
-            //        MaterialQuantity = actualMaterialQuantity,
-            //        FreightQuantity = actualFreightQuantity,
-            //        OrderLineId = orderLineId
-            //    }, officeId.Value);
-
-            //    foreach (var ticket in ticketGroup)
-            //    {
-            //        ticket.ReceiptLineId = receiptLine.Id;
-            //    }
-            //}
-            return Task.CompletedTask;
         }
 
         public async Task<string> CheckTruckIsOutofServiceOrInactive(TicketEditDto model)
@@ -831,8 +777,6 @@ namespace DispatcherWeb.Tickets
 
             if (ticket.OrderLineId.HasValue)
             {
-                await CurrentUnitOfWork.SaveChangesAsync();
-                await RecalculateOfficeAmountsAsync(ticket.OrderLineId.Value);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 orderTaxDetails = await _orderTaxCalculator.CalculateTotalsForOrderLineAsync(ticket.OrderLineId.Value);
             }

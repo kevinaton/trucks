@@ -267,6 +267,11 @@ namespace DispatcherWeb.Orders
             }
         }
 
+        public void UpdateStaggeredTimeOnTrucksOnSave()
+        {
+            _needToUpdateStaggeredTimeOnTrucks = true;
+        }
+
         private bool _needToUpdateStaggeredTimeOnTrucks = false;
         private async Task UpdateStaggeredTimeOnTrucks()
         {
