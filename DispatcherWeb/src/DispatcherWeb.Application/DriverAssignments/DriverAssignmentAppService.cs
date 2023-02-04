@@ -41,6 +41,7 @@ namespace DispatcherWeb.DriverAssignments
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<TimeOff> _timeOffRepository;
+        private readonly IOrderLineUpdaterFactory _orderLineUpdaterFactory;
         private readonly IDriverApplicationPushSender _driverApplicationPushSender;
         private readonly IDriverApplicationLogger _driverApplicationLogger;
         private readonly ISyncRequestSender _syncRequestSender;
@@ -54,6 +55,7 @@ namespace DispatcherWeb.DriverAssignments
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<TimeOff> timeOffRepository,
+            IOrderLineUpdaterFactory orderLineUpdaterFactory,
             IDriverApplicationPushSender driverApplicationPushSender,
             IDriverApplicationLogger driverApplicationLogger,
             ISyncRequestSender syncRequestSender
@@ -70,6 +72,7 @@ namespace DispatcherWeb.DriverAssignments
             _driverApplicationLogger = driverApplicationLogger;
             _syncRequestSender = syncRequestSender;
             _timeOffRepository = timeOffRepository;
+            _orderLineUpdaterFactory = orderLineUpdaterFactory;
         }
 
         [AbpAuthorize(AppPermissions.Pages_DriverAssignment)]
@@ -147,11 +150,13 @@ namespace DispatcherWeb.DriverAssignments
                 .Where(da => da.Date >= input.StartDate && da.Date <= input.EndDate && da.Shift == input.Shift && da.TruckId == input.TruckId)
                 .ToListAsync();
 
+            var today = await GetToday();
             var syncRequest = new SyncRequest();
             var result = new SetNoDriverForTruckResult();
             await CancelUnacknowledgedDispatches(input.TruckId, input.StartDate, input.EndDate, input.Shift);
 
             var driverIdsToNotify = new List<int>();
+            var orderLineIdsNeedingStaggeredTimeRecalculation = new List<int>();
 
             var date = input.StartDate;
             while (date <= input.EndDate)
@@ -191,15 +196,32 @@ namespace DispatcherWeb.DriverAssignments
                 var orderLineTrucksToDelete = await _orderLineTruckRepository.GetAll()
                     // ReSharper disable once AccessToModifiedClosure
                     .Where(olt => olt.TruckId == input.TruckId && olt.OrderLine.Order.DeliveryDate == date && olt.OrderLine.Order.Shift == input.Shift)
-                    .Select(olt => olt.Id)
                     .ToListAsync();
                 if (orderLineTrucksToDelete.Count > 0)
                 {
                     result.TruckWasRemovedFromOrders = true;
                 }
-                orderLineTrucksToDelete.ForEach(orderLineTruckId => _orderLineTruckRepository.DeleteAsync(orderLineTruckId));
+                foreach (var orderLineTruck in orderLineTrucksToDelete)
+                {
+                    _orderLineTruckRepository.Delete(orderLineTruck);
+                    if (date >= today)
+                    {
+                        orderLineIdsNeedingStaggeredTimeRecalculation.Add(orderLineTruck.OrderLineId);
+                    }
+                }
 
                 date = date.AddDays(1);
+            }
+
+            if (orderLineIdsNeedingStaggeredTimeRecalculation.Any())
+            {
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var orderLineId in orderLineIdsNeedingStaggeredTimeRecalculation.Distinct().ToList())
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineId);
+                    orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                    await orderLineUpdater.SaveChangesAsync();
+                }
             }
 
             await CurrentUnitOfWork.SaveChangesAsync();

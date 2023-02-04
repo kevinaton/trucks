@@ -59,84 +59,38 @@ namespace DispatcherWeb.Orders
 
         public async Task DeleteOrderLineTrucks(DeleteOrderLineTrucksInput input)
         {
-            if (input.OrderLineId.HasValue)
+            var hasAcknowledgedOrLoadedDispatches = await _orderLineRepository.GetAll()
+                .AnyAsync(ol =>
+                    ol.Id == input.OrderLineId &&
+                    ol.Dispatches.Any(d => Dispatch.AcknowledgedOrLoadedStatuses.Contains(d.Status))
+                );
+            if (hasAcknowledgedOrLoadedDispatches)
             {
-                var hasAcknowledgedOrLoadedDispatches = await _orderLineRepository.GetAll()
-                    .AnyAsync(ol =>
-                        ol.Id == input.OrderLineId.Value &&
-                        ol.Dispatches.Any(d => Dispatch.AcknowledgedOrLoadedStatuses.Contains(d.Status))
-                    );
-                if (hasAcknowledgedOrLoadedDispatches)
-                {
-                    throw new UserFriendlyException("There is an acknowledged or loaded dispatch!");
-                }
-
-                await _dispatchingAppService.CancelDispatches(new CancelDispatchesInput
-                {
-                    OrderLineId = input.OrderLineId.Value,
-                    CancelDispatchStatuses = Dispatch.OutstandingDispatchStatuses
-                });
-
-                if (input.MarkAsDone)
-                {
-                    var orderLineTrucks = await _orderLineTruckRepository.GetAll().Where(x => x.OrderLineId == input.OrderLineId.Value).ToListAsync();
-                    foreach (var orderLineTruck in orderLineTrucks)
-                    {
-                        orderLineTruck.IsDone = true;
-                        orderLineTruck.Utilization = 0;
-                    }
-                }
-                else
-                {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLineId == input.OrderLineId.Value);
-                }
-
+                throw new UserFriendlyException("There is an acknowledged or loaded dispatch!");
             }
-            else if (input.TruckId.HasValue && input.Date.HasValue)
+
+            await _dispatchingAppService.CancelDispatches(new CancelDispatchesInput
             {
-                var orderLineTrucks = await _orderLineTruckRepository.GetAll()
-                    .Where(x => x.TruckId == input.TruckId && x.OrderLine.Order.DeliveryDate == input.Date && x.OrderLine.Order.Shift == input.Shift)
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.OrderLineId
-                    })
-                    .ToListAsync();
+                OrderLineId = input.OrderLineId,
+                CancelDispatchStatuses = Dispatch.OutstandingDispatchStatuses
+            });
 
-                if (!orderLineTrucks.Any())
+            var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                .Where(x => x.OrderLineId == input.OrderLineId)
+                .ToListAsync();
+
+            if (input.MarkAsDone)
+            {
+                foreach (var orderLineTruck in orderLineTrucks)
                 {
-                    return;
+                    orderLineTruck.IsDone = true;
+                    orderLineTruck.Utilization = 0;
                 }
-
-                var orderLineIds = orderLineTrucks.Select(x => x.OrderLineId).ToList();
-
-                var hasAcknowledgedOrLoadedDispatches = await _orderLineRepository.GetAll()
-                    .AnyAsync(ol =>
-                        orderLineIds.Contains(ol.Id) &&
-                        ol.Dispatches.Any(d => Dispatch.AcknowledgedOrLoadedStatuses.Contains(d.Status) && d.TruckId == input.TruckId)
-                    );
-                if (hasAcknowledgedOrLoadedDispatches)
-                {
-                    throw new UserFriendlyException("There is an acknowledged or loaded dispatch!");
-                }
-
-                await _dispatchingAppService.CancelDispatches(new CancelDispatchesInput
-                {
-                    TruckId = input.TruckId,
-                    Date = input.Date,
-                    Shift = input.Shift,
-                    CancelDispatchStatuses = Dispatch.OutstandingDispatchStatuses
-                });
-
-                var orderlineTruckIds = orderLineTrucks.Select(x => x.Id).ToList();
-                await _orderLineTruckRepository.DeleteAsync(x => orderlineTruckIds.Contains(x.Id));
             }
             else
             {
-                throw new ApplicationException("Either OrderLineId or (TruckId, Date) is required");
+                orderLineTrucks.ForEach(_orderLineTruckRepository.Delete);
             }
         }
-
-
     }
 }
