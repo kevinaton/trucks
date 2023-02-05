@@ -40,6 +40,16 @@ interface JQuery {
         return $(`<span>${safeResultHtml}</span>`);
     }
 
+    function getSelect2AddNewItemOption(text: string) {
+        return {
+            id: Select2ItemKind.addNewItem,
+            name: text,
+            text: text,
+            select2ItemKind: Select2ItemKind.addNewItem,
+            select2PreventHighlightingByDefault: true
+        };
+    }
+
     jQuery.fn.select2Init = function (userOptions) {
         userOptions = userOptions || {};
         var $element = $(this);
@@ -76,12 +86,7 @@ interface JQuery {
                         && params.term
                         && !data.items.some(i => (i.name || i.text || '').toLowerCase() === params.term?.toLowerCase())) {
                         data.items = [
-                            {
-                                id: Select2ItemKind.addNewItem,
-                                name: params.term,
-                                select2ItemKind: Select2ItemKind.addNewItem,
-                                select2PreventHighlightingByDefault: true
-                            },
+                            getSelect2AddNewItemOption(params.term),
                             ...data.items
                         ];
                     }
@@ -135,6 +140,12 @@ interface JQuery {
             //defaultOptions.templateResult = undefined;
             if (userOptions.showAll === undefined && userOptions.minimumInputLength === undefined) {
                 userOptions.showAll = true;
+            }
+            if (userOptions.addItemCallback) {
+                defaultOptions.tags = true;
+                defaultOptions.createTag = function (params) {
+                    return getSelect2AddNewItemOption(params.term) as any;
+                };
             }
         }
         if (userOptions.dropdownParent !== undefined) {
