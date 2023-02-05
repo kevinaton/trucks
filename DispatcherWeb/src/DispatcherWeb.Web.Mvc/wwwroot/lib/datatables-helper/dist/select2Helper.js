@@ -2,6 +2,28 @@
     abp = abp || {};
     abp.helper = abp.helper || {};
     abp.helper.ui = abp.helper.ui || {};
+    abp.enums = abp.enums || {};
+    let Select2ItemKind;
+    (function (Select2ItemKind) {
+        Select2ItemKind[Select2ItemKind["addNewItem"] = -1] = "addNewItem";
+    })(Select2ItemKind || (Select2ItemKind = {}));
+    ;
+    abp.enums.select2ItemKind = Select2ItemKind;
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }
+    function escapeRegExpReplacement(string) {
+        return string.replace(/\$/g, '$$$$');
+    }
+    function renderSelect2MatchedText(text, match) {
+        if (!match || !text) {
+            return $('<span>').text(text);
+        }
+        var safeTextHtml = $('<span>').text(text).html();
+        var safeMatchHtml = $('<span>').text(match).html();
+        var safeResultHtml = safeTextHtml.replace(new RegExp(escapeRegExp(safeMatchHtml), 'gi'), (safeCaseSensitiveMatchHtml) => `<span class="select2-rendered__match">${safeCaseSensitiveMatchHtml}</span>`);
+        return $(`<span>${safeResultHtml}</span>`);
+    }
     jQuery.fn.select2Init = function (userOptions) {
         userOptions = userOptions || {};
         var $element = $(this);
@@ -32,6 +54,20 @@
                 },
                 processResults: function (data, params) {
                     params.page = params.page || 1;
+                    if (userOptions.addItemCallback
+                        && params.page === 1
+                        && params.term
+                        && !data.items.some(i => (i.name || i.text || '').toLowerCase() === params.term?.toLowerCase())) {
+                        data.items = [
+                            {
+                                id: Select2ItemKind.addNewItem,
+                                name: params.term,
+                                select2ItemKind: Select2ItemKind.addNewItem,
+                                select2PreventHighlightingByDefault: true
+                            },
+                            ...data.items
+                        ];
+                    }
                     return {
                         results: data.items,
                         pagination: {
@@ -46,7 +82,17 @@
                     return placeholder;
                 }
                 data.text = data.name;
-                return data.name;
+                var select2 = $element.data('select2');
+                var term = select2?.results?.lastParams?.term;
+                if (data.select2ItemKind) {
+                    switch (data.select2ItemKind) {
+                        case Select2ItemKind.addNewItem:
+                            return $('<span>').append($('<span class="select2-results__add-new-icon">').append($('<i class="fa fa-plus">'))).append($('<span>').text('Add ')).append(
+                            //renderSelect2MatchedText(data.text, term)
+                            $('<span>').text(data.text));
+                    }
+                }
+                return renderSelect2MatchedText(data.text, term);
             }
         };
         if (!userOptions.abpServiceMethod) {
@@ -71,7 +117,25 @@
         $element.on("select2:close", function () { $(this).data("select2").$results.empty(); });
         //same, but for the case when a term is entered but popup is closed before an ajax call is complete
         $element.on("select2:opening", function () { $(this).data("select2").$results.empty(); });
-        $element.change(function () {
+        if (userOptions.addItemCallback) {
+            $element.on('select2:selecting', function (e) {
+                var selectedOption = e.params?.args?.data;
+                var select2 = $element.data('select2');
+                if (selectedOption?.select2ItemKind === Select2ItemKind.addNewItem) {
+                    e.preventDefault();
+                    select2?.close();
+                    abp.ui.setBusy(select2?.$container);
+                    userOptions.addItemCallback(selectedOption.text).then(result => {
+                        if (result) {
+                            abp.helper.ui.addAndSetDropdownValue($element, result.id, result.name);
+                        }
+                    }).finally(() => {
+                        abp.ui.clearBusy(select2?.$container);
+                    });
+                }
+            });
+        }
+        $element.change(async function () {
             if ($element.closest(".form-group").hasClass("has-danger")) {
                 $(this).closest("form").valid();
             }

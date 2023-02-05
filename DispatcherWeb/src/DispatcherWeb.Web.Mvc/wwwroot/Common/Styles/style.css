@@ -1892,22 +1892,6 @@ a.btn-default:hover {
     color: #444;
 }
 
-/*.select2-container--default .select2-search--dropdown {
-    margin-top: -49px;
-    margin-bottom: -9px;
-    padding: 10px 0px;
-}
-
-.select2-search--dropdown .select2-search__field {
-    width: calc(100% - 40px);
-    border: none;
-    height: 36px;
-}*/
-
-/*.select2-container--default .select2-search--dropdown {
-    width: calc(100% - 40px);
-}*/
-
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     position: static;
 }
@@ -1944,4 +1928,12 @@ a.btn-default:hover {
 
 .select2-container--default .select2-selection--single .select2-selection__arrow:before {
     font-weight: bold;
+}
+
+.select2-rendered__match {
+    font-weight: 800;
+}
+
+.select2-results__add-new-icon {
+    padding-right: 3px;
 }
