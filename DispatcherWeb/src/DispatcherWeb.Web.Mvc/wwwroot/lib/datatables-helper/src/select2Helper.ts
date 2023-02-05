@@ -100,12 +100,12 @@ interface JQuery {
                     return placeholder;
                 }
                 if (data.loading) {
-                    return 'Loading...';
+                    return data.text;
                 }
-                if (!data.text && !data.name && data.element && data.element.is('option')) {
-                    data.text = data.element.text();
+                if (!data.text && !data.name && data.element && $(data.element).is('option')) {
+                    data.text = $(data.element).text();
                 }
-                data.text = data.name;
+                data.text = data.text || data.name;
 
                 var select2 = $element.data('select2');
                 var term = select2?.results?.lastParams?.term || select2?.$dropdown.find("input").val();
