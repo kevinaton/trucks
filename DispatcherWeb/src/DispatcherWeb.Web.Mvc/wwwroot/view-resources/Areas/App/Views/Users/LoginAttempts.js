@@ -5,7 +5,6 @@
         
         $("#LoginResultFilter").select2Init({
             minimumInputLength: 0,
-            minimumResultsForSearch: Infinity,
             allowClear: false
         });
 

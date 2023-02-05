@@ -201,7 +201,6 @@
 
         $('#StatusFilter').select2Init({
             allowClear: false,
-            noSearch: true,
             showAll: true
         }).change(function () {
             var resetPaging = true;

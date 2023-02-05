@@ -1,6 +1,6 @@
 {
 	"name": "datatables-helper",
-	"version": "0.0.13",
+	"version": "0.0.18",
 	"dependencies": {
 		"moment": "2.3.1",
 		"moment-timezone": "^0.5.34"

@@ -6,8 +6,7 @@
 
         $("#StatusFilter").select2Init({
             allowClear: false,
-            showAll: true,
-            noSearch: true
+            showAll: true
         });
 
         $("#StartDateFilter").daterangepicker({

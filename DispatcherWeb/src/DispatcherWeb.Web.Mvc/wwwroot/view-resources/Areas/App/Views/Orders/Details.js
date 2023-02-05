@@ -468,14 +468,13 @@
 
         $("#DeliveryDate").datepickerInit();
 
-        $("#Shift").select2Init({ minimumResultsForSearch: 5, allowClear: false });
+        $("#Shift").select2Init({ allowClear: false });
         
         $("#Time").timepickerInit({ stepping: 1 });
 
         $("#LocationId").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             minimumInputLength: 0,
-            minimumResultsForSearch: Infinity,
             allowClear: false
         });
 

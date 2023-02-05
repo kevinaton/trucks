@@ -118,7 +118,7 @@
             minimumInputLength: 0,
             allowClear: false
         });
-        $("#Status").select2Init({ allowClear: false, noSearch: true });
+        $("#Status").select2Init({ allowClear: false });
         $("#ContactId").select2Init();
         $("#CustomerId").select2Init({
             abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList

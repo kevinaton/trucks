@@ -33,8 +33,7 @@
             });
 
             $quoteIdFilter.select2Init({
-                showAll: true,
-                noSearch: true
+                showAll: true
             });
 
             var emailHistoryTable = _modal.find('#EmailHistoryTable');

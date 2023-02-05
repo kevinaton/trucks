@@ -48,7 +48,6 @@
         $("#TimeTrackingDefaultTimeClassificationId").select2Init({
             abpServiceMethod: abp.services.app.timeClassification.getTimeClassificationsSelectList,
             showAll: true,
-            noSearch: true,
             allowClear: false
         });
 

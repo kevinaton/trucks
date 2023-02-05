@@ -17,8 +17,7 @@
 
         $("#StatusFilter").select2Init({
             allowClear: false,
-            showAll: true,
-            noSearch: true
+            showAll: true
         });
 
         $("#CustomerIdFilter").select2Init({
@@ -30,7 +29,6 @@
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             minimumInputLength: 0,
-            minimumResultsForSearch: Infinity,
             allowClear: false
         });
 

@@ -54,8 +54,7 @@
 
         $("#QuoteIdFilter").select2Init({
             allowClear: false,
-            showAll: true,
-            noSearch: true
+            showAll: true
         });
 
         var quoteHistoryTable = $('#QuoteHistoryTable');

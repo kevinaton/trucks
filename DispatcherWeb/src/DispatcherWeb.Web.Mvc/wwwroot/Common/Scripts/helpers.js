@@ -1430,7 +1430,9 @@
 })(jQuery);
 (function ($) {
 
-
+    $(document).on('select2:open', () => {
+        document.querySelector('.select2-container--open .select2-search__field').focus();
+    });
 
     jQuery.fn.select2Uom = function (additionalOptions) {
         additionalOptions = additionalOptions || {};
@@ -1439,7 +1441,6 @@
             showAll: true,
             //minimumInputLength: 0,
             //minimumResultsForSearch: Infinity,
-            noSearch: true,
             allowClear: false
         };
         options = $.extend(true, {}, options, additionalOptions);

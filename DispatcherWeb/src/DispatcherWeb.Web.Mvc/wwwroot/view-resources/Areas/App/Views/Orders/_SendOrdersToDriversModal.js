@@ -24,13 +24,12 @@
 			_dateInput = _$form.find("#DeliveryDate");
 			_dateInput.datepickerInit({ minDate: (new Date()).setHours(0,0,0,0) });
 
-			_$form.find('#Shift').select2Init({ minimumResultsForSearch: 5, allowClear: false });
+			_$form.find('#Shift').select2Init({ allowClear: false });
 
 			_officeIdsInput = _$form.find("#OfficeIds");
 			_officeIdsInput.select2Init({
 				abpServiceMethod: abp.services.app.office.getOfficesSelectList,
 				showAll: true,
-				noSearch: true,
 				allowClear: false
 			});
 			abp.helper.ui.addAndSetDropdownValue(_officeIdsInput, abp.session.officeId, abp.session.officeName);

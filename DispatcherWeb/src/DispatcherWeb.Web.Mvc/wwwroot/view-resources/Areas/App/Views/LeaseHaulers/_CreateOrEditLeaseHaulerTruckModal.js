@@ -85,14 +85,12 @@
                 abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
                 //abpServiceParams: { isPowered: true },
                 allowClear: true,
-                showAll: true,
-                noSearch: true
+                showAll: true
             });
 
             officeDropdown.select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
-                noSearch: true,
                 allowClear: false
             });
 

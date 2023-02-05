@@ -52,15 +52,13 @@
         $("#TimeClassificationIdFilter").select2Init({
             abpServiceMethod: abp.services.app.timeClassification.getTimeClassificationsSelectList,
             minimumInputLength: 0,
-            minimumResultsForSearch: Infinity
             //allowClear: true
         });
 
         $("#EmployeeIdFilter").select2Init({
             //abpServiceMethod: abp.services.app.user.getUsersSelectList,
             abpServiceMethod: _employeeTimeService.getUsersSelectList,
-            minimumInputLength: 0,
-            minimumResultsForSearch: Infinity
+            minimumInputLength: 0
         });
 
         $("#TimeClassificationIdFilter, #EmployeeIdFilter").change(function () {
