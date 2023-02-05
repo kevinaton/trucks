@@ -24,6 +24,15 @@
         var safeResultHtml = safeTextHtml.replace(new RegExp(escapeRegExp(safeMatchHtml), 'gi'), (safeCaseSensitiveMatchHtml) => `<span class="select2-rendered__match">${safeCaseSensitiveMatchHtml}</span>`);
         return $(`<span>${safeResultHtml}</span>`);
     }
+    function getSelect2AddNewItemOption(text) {
+        return {
+            id: Select2ItemKind.addNewItem,
+            name: text,
+            text: text,
+            select2ItemKind: Select2ItemKind.addNewItem,
+            select2PreventHighlightingByDefault: true
+        };
+    }
     jQuery.fn.select2Init = function (userOptions) {
         userOptions = userOptions || {};
         var $element = $(this);
@@ -59,12 +68,7 @@
                         && params.term
                         && !data.items.some(i => (i.name || i.text || '').toLowerCase() === params.term?.toLowerCase())) {
                         data.items = [
-                            {
-                                id: Select2ItemKind.addNewItem,
-                                name: params.term,
-                                select2ItemKind: Select2ItemKind.addNewItem,
-                                select2PreventHighlightingByDefault: true
-                            },
+                            getSelect2AddNewItemOption(params.term),
                             ...data.items
                         ];
                     }
@@ -107,6 +111,12 @@
             //defaultOptions.templateResult = undefined;
             if (userOptions.showAll === undefined && userOptions.minimumInputLength === undefined) {
                 userOptions.showAll = true;
+            }
+            if (userOptions.addItemCallback) {
+                defaultOptions.tags = true;
+                defaultOptions.createTag = function (params) {
+                    return getSelect2AddNewItemOption(params.term);
+                };
             }
         }
         if (userOptions.dropdownParent !== undefined) {
