@@ -99,10 +99,16 @@ interface JQuery {
                 if (data.id === '') {
                     return placeholder;
                 }
+                if (data.loading) {
+                    return 'Loading...';
+                }
+                if (!data.text && !data.name && data.element && data.element.is('option')) {
+                    data.text = data.element.text();
+                }
                 data.text = data.name;
 
                 var select2 = $element.data('select2');
-                var term = select2?.results?.lastParams?.term;
+                var term = select2?.results?.lastParams?.term || select2?.$dropdown.find("input").val();
 
                 if (data.select2ItemKind) {
                     switch (data.select2ItemKind) {
@@ -126,7 +132,7 @@ interface JQuery {
         if (!userOptions.abpServiceMethod) {
             //defaultOptions.ajax.transport = undefined;
             defaultOptions.ajax = undefined;
-            defaultOptions.templateResult = undefined;
+            //defaultOptions.templateResult = undefined;
             if (userOptions.showAll === undefined && userOptions.minimumInputLength === undefined) {
                 userOptions.showAll = true;
             }
