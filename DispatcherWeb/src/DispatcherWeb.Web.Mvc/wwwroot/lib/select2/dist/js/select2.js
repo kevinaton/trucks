@@ -961,7 +961,18 @@ S2.define('select2/results',[
     } else {
       // If there are no selected options, highlight the first option
       // in the dropdown
-      $options.first().trigger('mouseenter');
+      var $elementToFocusOn = $options.first();
+      if ($options.length > 1) {
+        for (var option of $options) {
+          var optionData = this.data.item($(option));
+          if (optionData.select2PreventHighlightingByDefault) {
+            continue;
+          }
+          $elementToFocusOn = $(option);
+          break;
+        }
+      }
+      $elementToFocusOn.trigger('mouseenter');
     }
 
     this.ensureHighlightVisible();
