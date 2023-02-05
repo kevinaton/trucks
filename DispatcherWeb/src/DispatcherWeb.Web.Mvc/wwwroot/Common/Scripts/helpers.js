@@ -1734,7 +1734,8 @@
                         childPlaceholder.text(placeholderText);
                         if (childDropdown.data("select2")) {
                             childDropdown.data("placeholder", placeholderText);
-                            childDropdown.select2({ allowClear: true });
+                            childDropdown.data("select2").selection.placeholder.text = placeholderText;
+                            childDropdown.trigger('change.select2');
                         }
                     };
                     childDropdown.empty();
