@@ -48,14 +48,18 @@
         $("#TimeTrackingDefaultTimeClassificationId").select2Init({
             abpServiceMethod: abp.services.app.timeClassification.getTimeClassificationsSelectList,
             showAll: true,
-            allowClear: false
+            allowClear: true
         });
 
         $("#ItemIdToUseForFuelSurchargeOnInvoice").select2Init({
             abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
             minimumInputLength: 0,
-            allowClear: false,
-            width: 'calc(100% - 45px)'
+            width: 'calc(100% - 45px)',
+            showAll: true, allowClear: true
+        });
+
+        $("#GeneralSettingsForm [name=Timezone]").select2Init({
+            showAll: true, allowClear: true
         });
 
         function toggleShowFuelSurcharge() {
@@ -729,6 +733,10 @@
 
         //Toggle Tax fields
         var $taxCalculationType = $("#TaxCalculationType");
+        $taxCalculationType.select2Init({
+            showAll: true, allowClear: true
+        });
+
         var $autopopulateDefaultTaxrate = $("#Setting_AutopopulateDefaultTaxRateCheckbox");
         var $defaultTaxRate = $("#Setting_DefaultTaxRate");
 
@@ -871,7 +879,15 @@
                 $('#AdditionalSettings').hide();            
         }
 
+        $('#InvoiceTemplate').select2Init({
+            showAll: true, allowClear: true
+        });
+
         $('#QuickbooksIntegrationKind').change(refreshQuickbooksControls);
+        $('#QuickbooksIntegrationKind').select2Init({
+            showAll: true, allowClear: true
+        });
+
         refreshQuickbooksControls();
         function refreshQuickbooksControls() {
             let quickbooksIntegrationKind = parseInt($('#QuickbooksIntegrationKind').val() || '0');
@@ -945,6 +961,10 @@
             }, function () {
                 abp.ui.clearBusy(button);
             });
+        });
+
+        $("#Platform").select2Init({
+            showAll: true, allowClear: true
         });
 
         $('#Platform').change(function () {
