@@ -161,7 +161,7 @@ namespace DispatcherWeb.Customers
         }
 
         [AbpAuthorize(AppPermissions.Pages_Customers)]
-        public async Task<CustomerEditDto> GetCustomerForEdit(NullableIdDto input)
+        public async Task<CustomerEditDto> GetCustomerForEdit(NullableIdNameDto input)
         {
             CustomerEditDto customerEditDto;
 
@@ -197,6 +197,7 @@ namespace DispatcherWeb.Customers
             {
                 customerEditDto = new CustomerEditDto
                 {
+                    Name = input.Name,
                     IsActive = true
                 };
             }
@@ -371,7 +372,7 @@ namespace DispatcherWeb.Customers
         }
 
         [AbpAuthorize(AppPermissions.Pages_Customers)]
-        public async Task<CustomerContactEditDto> GetCustomerContactForEdit(NullableIdDto input)
+        public async Task<CustomerContactEditDto> GetCustomerContactForEdit(GetCustomerContactForEditInput input)
         {
             CustomerContactEditDto customerContactEditDto;
 
@@ -394,7 +395,9 @@ namespace DispatcherWeb.Customers
             {
                 customerContactEditDto = new CustomerContactEditDto
                 {
-                    IsActive = true
+                    Name = input.Name,
+                    CustomerId = input.CustomerId ?? throw new UserFriendlyException("Please select a customer first"),
+                    IsActive = true,
                 };
             }
 

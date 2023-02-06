@@ -393,7 +393,6 @@
             $('input,select,textarea').not('#SalesTaxRate, #FuelSurchargeCalculationId, #BaseFuelCost').attr('disabled', true);
             $("#CreateNewOrderLineButton").hide();
             $("#EditInternalNotesButton").closest('.form-group').hide();
-            $("#AddNewCustomerButton, #AddNewContactButton").attr('disabled', true);
         }
 
         function disableOrderEdit() {
@@ -402,7 +401,6 @@
             $('#SaveOrderButton').hide();
             $("#CreateNewOrderLineButton").hide();
             $("#EditInternalNotesButton").closest('.form-group').hide();
-            $("#AddNewCustomerButton, #AddNewContactButton").attr('disabled', true);
             if (canEditAnyOrderDirections()) {
                 $("#SaveDirectionsButton").closest('.form-group').show();
                 $("#Directions").attr('disabled', false);
@@ -468,20 +466,52 @@
 
         $("#DeliveryDate").datepickerInit();
 
-        $("#Shift").select2Init({ allowClear: false });
+        $("#Shift").select2Init({
+            showAll: true,
+            allowClear: false
+        });
         
         $("#Time").timepickerInit({ stepping: 1 });
 
         $("#LocationId").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            minimumInputLength: 0,
+            showAll: true,
             allowClear: false
         });
 
         $("#CustomerId").select2Init({
             abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
+            showAll: false,
+            allowClear: true,
+            addItemCallback: async function (newItemName) {
+                _createOrEditCustomerModal.open({ name: newItemName });
+            },
+        });
+
+        $("#QuoteId").select2Init({
+            showAll: true,
+            allowClear: true,
+        });
+
+        $("#ContactId").select2Init({
+            showAll: true,
+            allowClear: true,
+            addItemCallback: async function (newItemName) {
+                var customerId = $("#CustomerId").val();
+                if (!customerId) {
+                    abp.notify.warn("Select a customer first");
+                    $("#CustomerId").focus();
+                    return;
+                }
+                _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId });
+            }
+        });
+
+        $("#Priority").select2Init({
+            showAll: true,
             allowClear: false
         });
+
         var quoteChildDropdown = abp.helper.ui.initChildDropdown({
             parentDropdown: $("#CustomerId"),
             childDropdown: $("#QuoteId"),
@@ -521,9 +551,8 @@
 
         $("#FuelSurchargeCalculationId").select2Init({
             abpServiceMethod: abp.services.app.fuelSurchargeCalculation.getFuelSurchargeCalculationsSelectList,
-            minimumInputLength: 0,
-            //showAll: true,
-            allowClear: false
+            showAll: true,
+            allowClear: true
         });
         $("#FuelSurchargeCalculationId").change(function () {
             if (_quoteId !== '') {
@@ -1400,11 +1429,6 @@
         }
 
         //Handle popup adding
-    
-        $("#AddNewCustomerButton").click(function (e) {
-            e.preventDefault();
-            _createOrEditCustomerModal.open();
-        });
 
         abp.event.on('app.customerNameExists', function(e) {
             selectCustomerInControl(e);
@@ -1424,17 +1448,6 @@
             });
             $("#CustomerId").append(option).trigger('change');
         }
-
-        $("#AddNewContactButton").click(function (e) {
-            e.preventDefault();
-            var customerId = $("#CustomerId").val();
-            if (!customerId) {
-                abp.notify.warn("Select a customer first");
-                $("#CustomerId").focus();
-                return;
-            }
-            _createOrEditCustomerContactModal.open({ customerId: customerId });
-        });
 
         abp.event.on('app.createOrEditCustomerContactModalSaved', function (e) {
             contactChildDropdown.updateChildDropdown(function () {

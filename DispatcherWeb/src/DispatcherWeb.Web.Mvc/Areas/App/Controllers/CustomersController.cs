@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Customers;
+using DispatcherWeb.Customers.Dto;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,19 +25,15 @@ namespace DispatcherWeb.Web.Mvc.Areas.App.Controllers
             return View();
         }
 
-        public async Task<PartialViewResult> CreateOrEditCustomerModal(int? id)
+        public async Task<PartialViewResult> CreateOrEditCustomerModal(NullableIdNameDto input)
         {
-            var model = await _customerAppService.GetCustomerForEdit(new NullableIdDto(id));
+            var model = await _customerAppService.GetCustomerForEdit(input);
             return PartialView("_CreateOrEditCustomerModal", model);
         }
 
-        public async Task<PartialViewResult> CreateOrEditCustomerContactModal(int? id, int? customerId)
+        public async Task<PartialViewResult> CreateOrEditCustomerContactModal(GetCustomerContactForEditInput input)
         {
-            var model = await _customerAppService.GetCustomerContactForEdit(new NullableIdDto(id));
-
-            if (model.CustomerId == 0 && customerId != null)
-                model.CustomerId = customerId.Value;
-
+            var model = await _customerAppService.GetCustomerContactForEdit(input);
             return PartialView("_CreateOrEditCustomerContactModal", model);
         }
     }
