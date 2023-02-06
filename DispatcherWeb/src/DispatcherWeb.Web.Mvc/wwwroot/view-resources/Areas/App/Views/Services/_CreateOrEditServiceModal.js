@@ -43,14 +43,11 @@
             _serviceId = _modalManager.getModal().find("#Id").val(); //_$form.find('input[name="Id"]').val();
 
             var type = _modalManager.getModal().find("#Type");
-            if (type) {
-                $(type).select2Init({
-                    abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
-                    allowClear: false,
-                    showAll: true
-                });
-            }
-            
+            $(type).select2Init({
+                allowClear: false,
+                showAll: true
+            });
+
             var _createOrEditServicePriceModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Services/CreateOrEditServicePriceModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Services/_CreateOrEditServicePriceModal.js',
@@ -112,7 +109,7 @@
                         data: "designationName",
                         title: "Designation",
                         orderable: false
-                    },                   
+                    },
                     {
                         targets: 5,
                         data: null,
@@ -123,7 +120,7 @@
                         width: '10px',
                         rowAction: {
                             items: [{
-                                text: '<i class="fa fa-edit"></i> ' +  app.localize('Edit'),
+                                text: '<i class="fa fa-edit"></i> ' + app.localize('Edit'),
                                 className: "btn btn-sm btn-default",
                                 action: function (data) {
                                     _createOrEditServicePriceModal.open({ id: data.record.id });
@@ -136,7 +133,7 @@
                                 }
                             }]
                         }
-                    }  
+                    }
                 ]
             });
 
@@ -165,7 +162,7 @@
                 }
             });
 
-            
+
             async function deleteServicePrice(record) {
                 if (await abp.message.confirm('Are you sure you want to delete the price?')) {
                     _serviceService.deleteServicePrice({

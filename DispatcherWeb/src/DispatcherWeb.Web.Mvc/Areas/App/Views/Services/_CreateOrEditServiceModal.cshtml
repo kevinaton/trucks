@@ -6,12 +6,6 @@
 @model ServiceEditDto
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Product/Service: " + Model.Service1 : "Create new product/service"))
 
-<style>
-    #select2-Type-container {
-        height: 35px;
-    }
-</style>
-
 <div class="modal-body">
     <form role="form" novalidate class="form-validation" name="CustomerContactInformationsForm">
         <input type="hidden" asp-for="Id" />

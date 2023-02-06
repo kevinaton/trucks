@@ -211,7 +211,7 @@ namespace DispatcherWeb.Services
         }
 
         [AbpAuthorize(AppPermissions.Pages_Services)]
-        public async Task<ServiceEditDto> GetServiceForEdit(NullableIdDto input)
+        public async Task<ServiceEditDto> GetServiceForEdit(NullableIdNameDto input)
         {
             ServiceEditDto serviceEditDto;
 
