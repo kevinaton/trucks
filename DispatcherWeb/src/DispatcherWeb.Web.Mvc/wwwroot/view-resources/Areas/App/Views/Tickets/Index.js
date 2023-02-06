@@ -480,20 +480,23 @@
         });
         $('#CarrierFilter').select2Init({
             abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
+            showAll: false,
             allowClear: true
         });
         $('#ServiceFilter').select2Init({
             abpServiceMethod: abp.services.app.service.getAllServicesSelectList,
             minimumInputLength: 0,
+            showAll: false,
             allowClear: true
         });
         $('#Shifts').select2Init({ allowClear: false });
         //$('#BillingStatusFilter').select2Init({ allowClear: false }); //"All" is being hidden from options when select2 is initialized
-        $('#IsVerifiedFilter').select2Init({ allowClear: true });
-        $('#IsImportedFilter').select2Init({ allowClear: true });
+        $('#IsVerifiedFilter').select2Init({ showAll: true, allowClear: true });
+        $('#IsImportedFilter').select2Init({ showAll: true, allowClear: true });
         $('#DriverFilter').select2Init({
             abpServiceMethod: abp.services.app.driver.getDriversSelectList,
             minimumInputLength: 0,
+            showAll: false,
             allowClear: true
         });
         $('#OfficeIdFilter').select2Init({
