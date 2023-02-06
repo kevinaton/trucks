@@ -794,12 +794,6 @@
                                                         <option value="@Model.Settings.Fuel.ItemIdToUseForFuelSurchargeOnInvoice" selected>@Model.Settings.Fuel.ItemNameToUseForFuelSurchargeOnInvoice</option>
                                                     }
                                                 </select>
-                                                @if (await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Services))
-                                                {
-                                                    <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default AddNewServiceButton" data-target-field="ItemIdToUseForFuelSurchargeOnInvoice"><span class="fa fa-plus"></span></button>
-                                                    </span>
-                                                }
                                             </div>
                                         </div>
                                     </div>

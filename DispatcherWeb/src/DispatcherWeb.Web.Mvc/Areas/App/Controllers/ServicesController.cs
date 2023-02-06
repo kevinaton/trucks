@@ -24,9 +24,13 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             return View();
         }
 
-        public async Task<PartialViewResult> CreateOrEditServiceModal(int? id)
+        public async Task<PartialViewResult> CreateOrEditServiceModal(int? id, string serviceOrProductName = null)
         {
             var model = await _serviceAppService.GetServiceForEdit(new NullableIdDto(id));
+            if (!model.Id.HasValue && !string.IsNullOrEmpty(serviceOrProductName))
+            {
+                model.Service1 = serviceOrProductName;
+            }
             return PartialView("_CreateOrEditServiceModal", model);
         }
 

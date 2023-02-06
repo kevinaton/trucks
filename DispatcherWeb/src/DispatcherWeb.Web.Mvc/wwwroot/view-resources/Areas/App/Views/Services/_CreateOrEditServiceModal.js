@@ -42,6 +42,15 @@
 
             _serviceId = _modalManager.getModal().find("#Id").val(); //_$form.find('input[name="Id"]').val();
 
+            var type = _modalManager.getModal().find("#Type");
+            if (type) {
+                $(type).select2Init({
+                    abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
+                    allowClear: false,
+                    showAll: true
+                });
+            }
+            
             var _createOrEditServicePriceModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Services/CreateOrEditServicePriceModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Services/_CreateOrEditServicePriceModal.js',
