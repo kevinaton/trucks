@@ -8,7 +8,6 @@
         var _orderLineId = null;
         var _addLocationTarget = null;
         var _validateTrucksAndDrivers = abp.setting.getBoolean('App.General.ValidateDriverAndTruckOnTickets');
-        var _appPermissions_Pages_Locations = true; //AppPermissions_Pages_Locations
 
         var _selectOrderLineModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Tickets/SelectOrderLineModal',
