@@ -1439,9 +1439,7 @@
         var options = {
             abpServiceMethod: abp.services.app.unitOfMeasure.getUnitsOfMeasureSelectList,
             showAll: true,
-            //minimumInputLength: 0,
-            //minimumResultsForSearch: Infinity,
-            allowClear: false
+            allowClear: true
         };
         options = $.extend(true, {}, options, additionalOptions);
         return $(this).select2Init(options);
