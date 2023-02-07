@@ -1170,7 +1170,8 @@
             block.ui.item.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
                 minimumInputLength: 0,
-                showAll: true, allowClear: false
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 if (_initializing) {
                     return;
@@ -1183,9 +1184,7 @@
         });
 
         replaceDropdownPlaceholderWithDropdownOnFocus(block, 'uom', dropdown => {
-            block.ui.uom.select2Uom({
-                showAll: true, allowClear: false
-            }).change(function () {
+            block.ui.uom.select2Uom().change(function () {
                 if (_initializing) {
                     return;
                 }
