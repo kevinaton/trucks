@@ -48,14 +48,23 @@
         $("#TimeTrackingDefaultTimeClassificationId").select2Init({
             abpServiceMethod: abp.services.app.timeClassification.getTimeClassificationsSelectList,
             showAll: true,
-            allowClear: false
+            allowClear: true
         });
 
         $("#ItemIdToUseForFuelSurchargeOnInvoice").select2Init({
             abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
-            minimumInputLength: 0,
-            allowClear: false,
-            width: 'calc(100% - 45px)'
+            
+            allowClear: true,
+            showAll: true,
+            addItemCallback: abp.auth.isGranted('Pages.Services') ? async function (newServiceOrProductName) {
+                _addServiceTarget = "ItemIdToUseForFuelSurchargeOnInvoice";
+                createOrEditServiceModal.open({ name: newServiceOrProductName });
+            } : null
+        });
+
+        $("#GeneralSettingsForm [name=Timezone]").select2Init({
+            showAll: true,
+            allowClear: true
         });
 
         function toggleShowFuelSurcharge() {
@@ -68,12 +77,6 @@
 
         $("#ShowFuelSurcharge").change(function () {
             toggleShowFuelSurcharge();
-        });
-
-        $(".AddNewServiceButton").click(function (e) {
-            e.preventDefault();
-            _addServiceTarget = $(this).data('target-field');
-            createOrEditServiceModal.open();
         });
 
         abp.event.on('app.createOrEditServiceModalSaved', function (e) {
@@ -340,7 +343,7 @@
             }
         });
 
-        $('#SettingsLogoUploadForm button[type=reset]').click(function() {
+        $('#SettingsLogoUploadForm button[type=reset]').click(function () {
             _tenantSettingsService.clearLogo().done(function () {
                 refreshLogo(abp.appPath + 'Common/Images/app-logo-dump-truck-130x35.gif');
                 abp.notify.info(app.localize('ClearedSuccessfully'));
@@ -385,7 +388,7 @@
             }
         });
 
-        $('#SettingsReportsLogoUploadForm button[type=reset]').click(function() {
+        $('#SettingsReportsLogoUploadForm button[type=reset]').click(function () {
             _tenantSettingsService.clearReportsLogo().done(function () {
                 abp.notify.info(app.localize('ClearedSuccessfully'));
             });
@@ -505,7 +508,7 @@
                 $('form#IntelliShiftSettingsForm').showValidateMessage();
                 rejectCallback && rejectCallback();
                 return;
-            }            
+            }
             if ($('form#DtdTrackerSettingsForm').length && !$('form#DtdTrackerSettingsForm').valid()) {
                 $('form#DtdTrackerSettingsForm').showValidateMessage();
                 rejectCallback && rejectCallback();
@@ -559,7 +562,7 @@
                 return;
             }
 
-            if ($('#ShowFuelSurcharge').is(':checked') && !$("#ItemIdToUseForFuelSurchargeOnInvoice").val()) {               
+            if ($('#ShowFuelSurcharge').is(':checked') && !$("#ItemIdToUseForFuelSurchargeOnInvoice").val()) {
                 abp.helper.formatAndShowValidationMessage('"' + app.localize('ItemToUseForFuelSurchargeOnInvoice') + '" - This field is required.');
                 return;
             }
@@ -706,7 +709,7 @@
 
         //Toggle User defined field 1
         var _$userDefinedField = $('#Setting_UserDefinedField1');
-        _$userDefinedField.on('change', function() {
+        _$userDefinedField.on('change', function () {
             _$userDefinedField.val($.trim(_$userDefinedField.val()));
         });
 
@@ -729,6 +732,11 @@
 
         //Toggle Tax fields
         var $taxCalculationType = $("#TaxCalculationType");
+        $taxCalculationType.select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
         var $autopopulateDefaultTaxrate = $("#Setting_AutopopulateDefaultTaxRateCheckbox");
         var $defaultTaxRate = $("#Setting_DefaultTaxRate");
 
@@ -776,7 +784,7 @@
         disableSubmitButton($('form#SettingsLogoUploadForm'));
         disableSubmitButton($('form#SettingsCustomCssUploadForm'));
         disableSubmitButton($('form#SettingsReportsLogoUploadForm'));
-        $('form#SettingsLogoUploadForm, form#SettingsCustomCssUploadForm, form#SettingsReportsLogoUploadForm').on('reset', function() {
+        $('form#SettingsLogoUploadForm, form#SettingsCustomCssUploadForm, form#SettingsReportsLogoUploadForm').on('reset', function () {
             disableSubmitButton($(this));
         });
         function updateSubmitButtonState(inputFile) {
@@ -791,7 +799,7 @@
 
         (function () {
             document.getElementById("ApplicationLogoImage").onchange = function () {
-                var filename = $(this).val().split('\\').pop();                
+                var filename = $(this).val().split('\\').pop();
                 document.getElementById("uploadApplicationLogoFile").value = filename;
                 updateSubmitButtonState(this);
             };
@@ -799,7 +807,7 @@
 
         (function () {
             document.getElementById("ReportsLogoImage").onchange = function () {
-                var filename = $(this).val().split('\\').pop();                
+                var filename = $(this).val().split('\\').pop();
                 document.getElementById("uploadReportsLogoFile").value = filename;
                 updateSubmitButtonState(this);
             };
@@ -817,7 +825,7 @@
         // Dispatching & Messaging
         $('#TestPhoneNumberButton, #SendTestMessageButton').click(function () {
             $('#SaveAllSettingsButton').click();
-            _testSmsNumberModal.open({testPurpose: $(this).data('test')});
+            _testSmsNumberModal.open({ testPurpose: $(this).data('test') });
         });
 
         var $driverDispatchSms = $('#DriverDispatchSms');
@@ -866,12 +874,27 @@
         refreshAdditionalSettings();
         function refreshAdditionalSettings() {
             if ($('#radioDriverApplication').is(':checked'))
-                $('#AdditionalSettings').show();                
-            else 
-                $('#AdditionalSettings').hide();            
+                $('#AdditionalSettings').show();
+            else
+                $('#AdditionalSettings').hide();
         }
 
+        $('#InvoiceTemplate').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
         $('#QuickbooksIntegrationKind').change(refreshQuickbooksControls);
+        $('#QuickbooksIntegrationKind').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
+        $("#QbdDefaultIncomeAccountType").select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
         refreshQuickbooksControls();
         function refreshQuickbooksControls() {
             let quickbooksIntegrationKind = parseInt($('#QuickbooksIntegrationKind').val() || '0');
@@ -947,6 +970,11 @@
             });
         });
 
+        $("#Platform").select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
         $('#Platform').change(function () {
             $('#SettingsDtdTrackerTab').hide();
             $('#SettingsGeotabTab').hide();
@@ -957,7 +985,7 @@
             $('label[for="MapBaseUrl"]').removeClass('required-label');
 
             if (Number($("#Platform").val()) === abp.enums.gpsPlatform.dtdTracker) {
-                $('#SettingsDtdTrackerTab').show();              
+                $('#SettingsDtdTrackerTab').show();
             }
             else if (Number($("#Platform").val()) === abp.enums.gpsPlatform.geotab) {
                 $('#SettingsGeotabTab').show();

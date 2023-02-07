@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Services;
 using DispatcherWeb.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +25,9 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             return View();
         }
 
-        public async Task<PartialViewResult> CreateOrEditServiceModal(int? id)
+        public async Task<PartialViewResult> CreateOrEditServiceModal(NullableIdNameDto input)
         {
-            var model = await _serviceAppService.GetServiceForEdit(new NullableIdDto(id));
+            var model = await _serviceAppService.GetServiceForEdit(input);
             return PartialView("_CreateOrEditServiceModal", model);
         }
 
