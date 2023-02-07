@@ -14,11 +14,16 @@
 
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            showAll: true
+            showAll: true,
+            allowClear: true
+        });
+
+        $("#StatusFilter").select2Init({
+            showAll: true,
+            allowClear: false
         });
 
         var driversTable = $('#DriversTable');
-
         var driversGrid = driversTable.DataTableInit({
             paging: true,
             serverSide: true,
@@ -119,6 +124,14 @@
                     }
                 }
             ]
+        });
+
+        driversTable.on("draw.dt", () => {
+            var driversTablePageSizeSelector = $("select.m-input");
+            driversTablePageSizeSelector.select2Init({
+                showAll: true,
+                allowClear: false
+            });
         });
 
         function reloadMainGrid(callback, resetPaging) {
