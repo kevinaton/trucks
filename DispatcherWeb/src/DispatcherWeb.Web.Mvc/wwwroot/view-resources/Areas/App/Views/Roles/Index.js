@@ -135,16 +135,6 @@
             ]
         });
 
-        dataTable.on("draw", () => {
-            var rolesTablePageSizeSelector = $("select.m-input");
-            if (!rolesTablePageSizeSelector.data('select2')) {
-                rolesTablePageSizeSelector.select2Init({
-                    showAll: true,
-                    allowClear: false
-                });
-            }
-        });
-
         function deleteRole(role) {
             _roleService.isRoleHaveUsers({
                 id: role.id
