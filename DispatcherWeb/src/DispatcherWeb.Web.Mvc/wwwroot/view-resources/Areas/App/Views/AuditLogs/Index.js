@@ -151,16 +151,6 @@
             ]
         });
 
-        auditLogDataTable.on("draw", () => {
-            var pageSizeSelector = $("select[name='AuditLogsTable_length']");
-            if (!pageSizeSelector.data('select2')) {
-                pageSizeSelector.select2Init({
-                    showAll: true,
-                    allowClear: false
-                });
-            }
-        });
-
         var entityChangeDataTable = _$entityChangesTable.DataTableInit({
             paging: true,
             serverSide: true,
@@ -224,16 +214,6 @@
                     }
                 }
             ]
-        });
-
-        entityChangeDataTable.on("draw", () => {
-            var pageSizeSelector = $("select[name='EntityChangesTable_length']");
-            if (!pageSizeSelector.data('select2')) {
-                pageSizeSelector.select2Init({
-                    showAll: true,
-                    allowClear: false
-                });
-            }
         });
 
         function createAuditLogRequestParams() {
