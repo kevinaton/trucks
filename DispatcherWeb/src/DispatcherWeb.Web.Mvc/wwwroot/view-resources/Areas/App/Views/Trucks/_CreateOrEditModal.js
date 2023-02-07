@@ -120,14 +120,14 @@
                 abpServiceParams: {
                     includeLeaseHaulerDrivers: abp.setting.getBoolean('App.LeaseHaulers.AllowSubcontractorsToDriveCompanyOwnedTrucks')
                 },
-                showAll: true,
-                //dropdownParent: $("#" + _modalManager.getModalId())
+                showAll: false,
+                allowClear: true
             });
 
             $defaultTrailerId.select2Init({
                 abpServiceMethod: abp.services.app.truck.getActiveTrailersSelectList,
                 showAll: true,
-                //dropdownParent: $("#" + _modalManager.getModalId())
+                allowClear: true
             });
 
             vehicleCategoryDropdown.select2Init({
@@ -137,8 +137,8 @@
             });
 
             $("#FuelType").select2Init({
-                allowClear: true,
-                showAll: true
+                showAll: true,
+                allowClear: true
             });
 
 
@@ -294,7 +294,9 @@
 
             var dtdTrackerDeviceTypeInput = _$form.find("#DtdTrackerDeviceTypeId");
             dtdTrackerDeviceTypeInput.select2Init({
-                abpServiceMethod: abp.services.app.truckTelematics.getWialonDeviceTypesSelectList
+                abpServiceMethod: abp.services.app.truckTelematics.getWialonDeviceTypesSelectList,
+                showAll: false,
+                allowClear: true
             });
             
             dtdTrackerDeviceTypeInput.change(function () {
