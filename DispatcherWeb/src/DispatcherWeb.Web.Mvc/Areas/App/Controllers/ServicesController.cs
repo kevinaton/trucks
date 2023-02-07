@@ -28,10 +28,6 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         public async Task<PartialViewResult> CreateOrEditServiceModal(NullableIdNameDto input)
         {
             var model = await _serviceAppService.GetServiceForEdit(input);
-            if (!model.Id.HasValue && !string.IsNullOrEmpty(input.Name))
-            {
-                model.Service1 = input.Name;
-            }
             return PartialView("_CreateOrEditServiceModal", model);
         }
 

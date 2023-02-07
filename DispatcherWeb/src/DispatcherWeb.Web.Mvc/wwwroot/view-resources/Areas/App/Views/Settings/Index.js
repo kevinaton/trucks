@@ -734,7 +734,7 @@
         var $taxCalculationType = $("#TaxCalculationType");
         $taxCalculationType.select2Init({
             showAll: true,
-            allowClear: true
+            allowClear: false
         });
 
         var $autopopulateDefaultTaxrate = $("#Setting_AutopopulateDefaultTaxRateCheckbox");
@@ -881,13 +881,18 @@
 
         $('#InvoiceTemplate').select2Init({
             showAll: true,
-            allowClear: true
+            allowClear: false
         });
 
         $('#QuickbooksIntegrationKind').change(refreshQuickbooksControls);
         $('#QuickbooksIntegrationKind').select2Init({
             showAll: true,
-            allowClear: true
+            allowClear: false
+        });
+
+        $("#QbdDefaultIncomeAccountType").select2Init({
+            showAll: true,
+            allowClear: false
         });
 
         refreshQuickbooksControls();
@@ -967,7 +972,7 @@
 
         $("#Platform").select2Init({
             showAll: true,
-            allowClear: true
+            allowClear: false
         });
 
         $('#Platform').change(function () {

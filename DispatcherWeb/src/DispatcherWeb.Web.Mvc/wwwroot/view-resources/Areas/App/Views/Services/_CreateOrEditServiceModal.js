@@ -42,8 +42,8 @@
 
             _serviceId = _modalManager.getModal().find("#Id").val(); //_$form.find('input[name="Id"]').val();
 
-            var type = _modalManager.getModal().find("#Type");
-            $(type).select2Init({
+            var typeDropdown = _modalManager.getModal().find("#Type");
+            typeDropdown.select2Init({
                 allowClear: false,
                 showAll: true
             });

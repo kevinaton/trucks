@@ -235,7 +235,8 @@ namespace DispatcherWeb.Services
             {
                 serviceEditDto = new ServiceEditDto
                 {
-                    IsActive = true
+                    IsActive = true,
+                    Service1 = input.Name
                 };
             }
 
