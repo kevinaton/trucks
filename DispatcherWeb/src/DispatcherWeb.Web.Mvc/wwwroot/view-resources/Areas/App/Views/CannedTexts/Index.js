@@ -11,7 +11,8 @@
 
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            showAll: true
+            showAll: true,
+            allowClear: false
         });
 
         var cannedTextsTable = $('#CannedTextsTable');
@@ -73,6 +74,16 @@
                     }
                 }
             ]
+        });
+
+        cannedTextsGrid.on("draw", () => {
+            var pageSizeSelector = $("select.m-input");
+            if (!pageSizeSelector.data('select2')) {
+                pageSizeSelector.select2Init({
+                    showAll: true,
+                    allowClear: false
+                });
+            }
         });
 
         var reloadMainGrid = function () {
