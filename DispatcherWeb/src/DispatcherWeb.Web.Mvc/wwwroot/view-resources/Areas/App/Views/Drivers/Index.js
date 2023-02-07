@@ -126,14 +126,6 @@
             ]
         });
 
-        driversTable.on("draw.dt", () => {
-            var driversTablePageSizeSelector = $("select.m-input");
-            driversTablePageSizeSelector.select2Init({
-                showAll: true,
-                allowClear: false
-            });
-        });
-
         function reloadMainGrid(callback, resetPaging) {
             resetPaging = resetPaging === undefined ? true : resetPaging;
             driversGrid.ajax.reload(callback, resetPaging);

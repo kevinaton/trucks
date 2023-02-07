@@ -52,7 +52,7 @@
 
             _$generalForm.find("#OrderNotifyPreferredFormat").select2Init({
                 showAll: true,
-                allowClear: true
+                allowClear: false
             });
 
             _$generalForm.find("#OfficeId").select2Init({
