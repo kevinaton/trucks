@@ -23,7 +23,7 @@
     });
 
     $('#AnalyzeBy').select2Init({
-        showAll: false,
+        showAll: true,
         allowClear: true
     });
 
