@@ -71,8 +71,6 @@
             ]
         });
 
-
-
         servicesTable.on('click', '.btnDeleteRow', function () {
             var record = _dtHelper.getRowData(this);
             deleteVehicleService(record);
@@ -81,6 +79,16 @@
         servicesTable.on('click', '.btnEditRow', function () {
             var serviceId = _dtHelper.getRowData(this).id;
             _createOrEditVehicleServiceModal.open({ id: serviceId });
+        });
+
+        servicesTable.on("draw.dt", () => {
+            var pageSizeSelector = $("select.m-input");
+            if (!pageSizeSelector.data('select2')) {
+                pageSizeSelector.select2Init({
+                    showAll: true,
+                    allowClear: false
+                });
+            }
         });
 
         var getServices = function () {
