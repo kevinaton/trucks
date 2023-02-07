@@ -5,13 +5,13 @@
 
     abp.helper.reports.setReportService(abp.services.app.revenueBreakdownReport);
 
-	abp.helper.reports.setFormDataHandler(function (formData) {
+    abp.helper.reports.setFormDataHandler(function (formData) {
         $.extend(formData, _dtHelper.getDateRangeObject(formData.DeliveryDate, 'DeliveryDateBegin', 'DeliveryDateEnd'));
         delete formData.DeliveryDateFilter;
 
-		if (formData.Shifts && !$.isArray(formData.Shifts)) {
-			formData.Shifts = [formData.Shifts];
-		}
+        if (formData.Shifts && !$.isArray(formData.Shifts)) {
+            formData.Shifts = [formData.Shifts];
+        }
 
     });
 
@@ -33,12 +33,12 @@
 
     $("#CustomerIdFilter").select2Init({
         abpServiceMethod: abp.services.app.customer.getCustomersSelectList,
-        showAll: true
+        showAll: false,
+        allowClear: true 
     });
 
     $("#OfficeIdFilter").select2Init({
         abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-        minimumInputLength: 0,
         allowClear: false
     });
     if (abp.session.officeId) {
@@ -46,18 +46,21 @@
     }
 
     $("#LoadAtIdFilter").select2Init({
-        abpServiceMethod: abp.services.app.location.getAllLocationsSelectList
+        abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
+        showAll: false,
+        allowClear: true
     });
     $("#DeliverToIdFilter").select2Init({
-        abpServiceMethod: abp.services.app.location.getAllLocationsSelectList
+        abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
+        showAll: false,
+        allowClear: true
     });
     $("#ServiceIdFilter").select2Init({
         abpServiceMethod: abp.services.app.service.getAllServicesSelectList,
-        minimumInputLength: 0
-	});
+        showAll: false,
+        allowClear: true
+    });
 
     $('#Shifts').select2Init({ allowClear: false });
-
-
 
 })();
