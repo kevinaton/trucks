@@ -44,6 +44,16 @@
                 });
             });
 
+        $("#HasException").select2Init({
+            showAll: true,
+            allowClear: true
+        });
+
+        $("#EntityTypeFullName").select2Init({
+            showAll: true,
+            allowClear: true
+        });
+
         var auditLogDataTable = _$auditLogsTable.DataTableInit({
             paging: true,
             serverSide: true,
@@ -141,6 +151,16 @@
             ]
         });
 
+        auditLogDataTable.on("draw", () => {
+            var pageSizeSelector = $("select[name='AuditLogsTable_length']");
+            if (!pageSizeSelector.data('select2')) {
+                pageSizeSelector.select2Init({
+                    showAll: true,
+                    allowClear: false
+                });
+            }
+        });
+
         var entityChangeDataTable = _$entityChangesTable.DataTableInit({
             paging: true,
             serverSide: true,
@@ -204,6 +224,16 @@
                     }
                 }
             ]
+        });
+
+        entityChangeDataTable.on("draw", () => {
+            var pageSizeSelector = $("select[name='EntityChangesTable_length']");
+            if (!pageSizeSelector.data('select2')) {
+                pageSizeSelector.select2Init({
+                    showAll: true,
+                    allowClear: false
+                });
+            }
         });
 
         function createAuditLogRequestParams() {
@@ -326,10 +356,10 @@
         });
 
 
-        $("#ClearSearchButton").click(function () {            
-            $(this).closest('form')[0].reset();          
+        $("#ClearSearchButton").click(function () {
+            $(this).closest('form')[0].reset();
             getAuditLogs();
-        });              
+        });
 
         _$auditLogFilterForm.keydown(function (e) {
             if (e.which === 13) {
