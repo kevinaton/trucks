@@ -5,7 +5,7 @@
         var _dtHelper = abp.helper.dataTables;
         var _isFilterReady = false;
         var _isGridInitialized = false;
-        
+
         abp.helper.ui.initControls();
 
         //init the filter controls
@@ -20,15 +20,15 @@
                     officeName: abp.session.officeName
                 };
             }
-            
+
             var dateFilterIsEmpty = false;
-            
+
             if (!cachedFilter.startDate || cachedFilter.startDate === 'Invalid date') {
                 dateFilterIsEmpty = true;
                 //still need to init the daterangepicker with real dates first and clear the inputs only after the init.
                 cachedFilter.startDate = moment().format("MM/DD/YYYY");
             }
-            
+
             if (!cachedFilter.endDate || cachedFilter.endDate === 'Invalid date') {
                 dateFilterIsEmpty = true;
                 cachedFilter.endDate = moment().add(1, 'days').format("MM/DD/YYYY");
@@ -43,10 +43,10 @@
                     cancelLabel: 'Clear'
                 }
             },
-            function (start, end, label) {
-                $("#DateStartFilter").val(start.format('MM/DD/YYYY'));
-                $("#DateEndFilter").val(end.format('MM/DD/YYYY'));
-            });
+                function (start, end, label) {
+                    $("#DateStartFilter").val(start.format('MM/DD/YYYY'));
+                    $("#DateEndFilter").val(end.format('MM/DD/YYYY'));
+                });
 
             $("#DateFilter").on('apply.daterangepicker', function (ev, picker) {
                 $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
@@ -71,6 +71,7 @@
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 minimumInputLength: 0,
+                showAll: true,
                 allowClear: false
             });
             if (cachedFilter.officeId) {
@@ -79,7 +80,8 @@
 
             $("#CustomerIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.customer.getCustomersSelectList,
-                showAll: true
+                showAll: false,
+                allowClear: true
             });
             if (cachedFilter.customerId) {
                 abp.helper.ui.addAndSetDropdownValue($("#CustomerIdFilter"), cachedFilter.customerId, cachedFilter.customerName);
@@ -158,13 +160,22 @@
                         + '<ul class="dropdown-menu">'
                         + '<li><a class="btnEditRow" title="Edit Order"><i class="fa fa-edit"></i> Edit</a></li>'
                         + '</ul>'
-                        + '</div>'          
+                        + '</div>'
                 }
             ],
             createdRow: function (row, data, index) {
                 //if (data.isShared) {
                 //    $(row).addClass('order-shared');
                 //}
+            }
+        });
+        billingReconciliationGrid.on("draw", () => {
+            var pageSizeSelector = $("select.m-input");
+            if (!pageSizeSelector.data('select2')) {
+                pageSizeSelector.select2Init({
+                    showAll: true,
+                    allowClear: false
+                });
             }
         });
 
