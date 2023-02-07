@@ -1439,7 +1439,7 @@
         var options = {
             abpServiceMethod: abp.services.app.unitOfMeasure.getUnitsOfMeasureSelectList,
             showAll: true,
-            allowClear: true
+            allowClear: false
         };
         options = $.extend(true, {}, options, additionalOptions);
         return $(this).select2Init(options);

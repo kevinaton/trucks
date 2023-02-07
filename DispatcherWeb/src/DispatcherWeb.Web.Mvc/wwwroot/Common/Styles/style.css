@@ -1937,3 +1937,11 @@ a.btn-default:hover {
 .select2-results__add-new-icon {
     padding-right: 3px;
 }
+
+.select2-selection__arrow {
+    transition: transform ease 0.2s;
+}
+
+.select2-container--open .select2-selection__arrow {
+    transform: rotate(180deg);
+}
