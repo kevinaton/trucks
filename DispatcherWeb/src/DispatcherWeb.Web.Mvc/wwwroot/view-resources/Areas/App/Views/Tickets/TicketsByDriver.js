@@ -104,7 +104,8 @@
         if (!_driverIdFilterInput) {
             _driverIdFilterInput = $("#DriverIdFilter");
             _driverIdFilterInput.select2Init({
-                showAll: true, allowClear: false
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 _driverIdFilter = Number(_driverIdFilterInput.val()) || null;
                 _orderLineBlocks.forEach(block => {
@@ -1090,7 +1091,8 @@
                     .reduce((prev, curr) => prev ? prev.add(curr) : curr, $())
                 //.forEach(d => block.ui.driver.append(d));
             ).select2Init({
-                showAll: true, allowClear: false
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 if (_initializing) {
                     return;
@@ -1135,7 +1137,8 @@
         replaceDropdownPlaceholderWithDropdownOnFocus(block, 'loadAt', dropdown => {
             block.ui.loadAt.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                showAll: true, allowClear: false
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 if (_initializing) {
                     return;
@@ -1150,7 +1153,8 @@
         replaceDropdownPlaceholderWithDropdownOnFocus(block, 'deliverTo', dropdown => {
             block.ui.deliverTo.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                showAll: true, allowClear: false
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 if (_initializing) {
                     return;

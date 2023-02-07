@@ -76,26 +76,21 @@
                 abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
                 showAll: false,
                 allowClear: true
-                //dropdownParent: $("#" + _modalManager.getModalId())
             });
 
             _$form.find('#ServiceId').select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
-                minimumInputLength: 0,
                 showAll: false,
                 allowClear: true
-                //dropdownParent: $("#" + _modalManager.getModalId())
             });
 
-            _$form.find('#UomId').select2Uom({
-                showAll: false, allowClear: true
-            });
+            _$form.find('#UomId').select2Uom();
 
             let carrierDropdown = _$form.find('#CarrierId');
             carrierDropdown.select2Init({
                 abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
-                //dropdownParent: $("#" + _modalManager.getModalId())
-                showAll: false, allowClear: true
+                showAll: false,
+                allowClear: true
             }).change(function () {
                 var newCarrierId = $(this).val();
                 _$form.find('label[for="TruckCode"],label[for="DriverId"]').toggleClass('required-label', !newCarrierId);
@@ -158,7 +153,8 @@
                 abpServiceParamsGetter: (params, rowData) => ({
                     truckCode: _lastTruckCode
                 }),
-                showAll: false, allowClear: true
+                showAll: false,
+                allowClear: true
             }).change(async function () {
                 var driverId = $(this).val();
                 if (!_validateTrucksAndDrivers) {
