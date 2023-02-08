@@ -17,7 +17,7 @@
         initFilterControls();
 
         var preventiveMaintenanceTable = $('#PreventiveMaintenanceTable');
-        
+
         var preventiveMaintenanceGrid = preventiveMaintenanceTable.DataTableInit({
             stateSave: true,
             stateDuration: 0,
@@ -48,11 +48,11 @@
                     });
                 });
             },
-            stateSaveCallback: function (settings, data) { 
+            stateSaveCallback: function (settings, data) {
                 delete data.columns;
                 delete data.search;
                 app.localStorage.setItem('preventivemaintenance_grid', JSON.stringify(data));
-                app.localStorage.setItem('preventivemaintenance_filter', _dtHelper.getFilterData());                
+                app.localStorage.setItem('preventivemaintenance_filter', _dtHelper.getFilterData());
             },
             ajax: function (data, callback, settings) {
                 var abpData = _dtHelper.toAbpData(data);
@@ -60,18 +60,17 @@
                 $.extend(abpData, _dtHelper.getDateRangeObject(abpData.dueDateFilter, 'dueDateBegin', 'dueDateEnd'));
                 if (abpData.dueDateFilter &&
                     (!moment.utc(abpData.dueDateBegin, 'YYYY-MM-DDT00:00:00').isValid() ||
-                    !moment.utc(abpData.dueDateEnd, 'YYYY-MM-DDT00:00:00').isValid())
-                )
-                {
+                        !moment.utc(abpData.dueDateEnd, 'YYYY-MM-DDT00:00:00').isValid())
+                ) {
                     abp.message.error('The Due Date is invalid!');
                     return;
                 }
                 _preventiveMaintenanceService.getPreventiveMaintenancePagedList(abpData).done(function (abpResult) {
                     callback(_dtHelper.fromAbpResult(abpResult));
                     //abp.helper.ui.initControls();
-                });   
-            },	
-          
+                });
+            },
+
             columns: [
                 {
                     width: '20px',
@@ -81,14 +80,14 @@
                         return '';
                     },
                     targets: 0
-                }, 
+                },
                 {
                     targets: 1,
                     data: null,
                     orderable: false,
                     name: "checkbox",
                     title: '<input name="select_all" style="margin: 0px 3px;" type="checkbox" value="1">',
-                    width: "10px",					
+                    width: "10px",
                     defaultContent: '<label><input name="select" type="checkbox" class="checkboxes icheckbox_minimal-blue" value="1"><span></span></label>'
                 },
                 {
@@ -138,7 +137,7 @@
                     }
                 },
                 {
-                    
+
                     targets: 8,
                     data: "milesUntilDue",
                     title: "Miles<br/> until due",
@@ -182,7 +181,7 @@
         });
 
         preventiveMaintenanceTable.on('click', '.btnEditRow', function () {
-            var  preventiveMaintenanceId = _dtHelper.getRowData(this).id;
+            var preventiveMaintenanceId = _dtHelper.getRowData(this).id;
             _createOrEditPreventiveMaintenanceModal.open({ id: preventiveMaintenanceId });
         });
 
@@ -206,7 +205,7 @@
                 var isAnyRowsChecked = false;
                 if ($(this).prop('checked')) {
                     isAnyRowsChecked = true;
-                    $(_this).find("input[name='select']").prop('checked', true);                 
+                    $(_this).find("input[name='select']").prop('checked', true);
                 } else {
                     isAnyRowsChecked = false;
                     $(_this).find("input[name='select']").prop('checked', false);
@@ -293,10 +292,15 @@
                     $(this).val('');
                 });
 
+            $("#StatusFilter").select2Init({
+                showAll: true,
+                allowClear: false
+            });
+
             $("#ServiceFilter").select2Init({
                 abpServiceMethod: abp.services.app.vehicleService.getSelectList,
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
         }
 
@@ -312,7 +316,7 @@
         $("#AddPreventiveMaintenance").click(function (e) {
             e.preventDefault();
             _createOrEditPreventiveMaintenanceModal.open();
-        });		
+        });
 
         async function deletePreventiveMaintenance(record) {
             if (await abp.message.confirm('Are you sure you want to delete the PM?')) {
@@ -339,12 +343,11 @@
             reloadMainGrid();
         });
 
-        $('#CreateWorkOrders').click(function (e)
-        {
+        $('#CreateWorkOrders').click(function (e) {
             e.preventDefault();
             console.log(getSelectedIds());
             _workOrderService.createWorkOrdersFromPreventiveMaintenance({ PreventiveMaintenanceIds: getSelectedIds() })
-                .done(function() {
+                .done(function () {
                     abp.notify.info('New work orders have been created.');
                 });
         });
