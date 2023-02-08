@@ -158,8 +158,8 @@
             $("#TruckFilter").select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                 abpServiceParams: { officeId: $('#OfficeIdFilter').val(), allOffices: true },
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
         }
 
