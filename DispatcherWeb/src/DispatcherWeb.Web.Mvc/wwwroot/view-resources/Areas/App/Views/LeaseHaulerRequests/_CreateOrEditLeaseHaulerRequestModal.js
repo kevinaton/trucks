@@ -25,8 +25,9 @@
             function initLeseHaulerDropdown() {
                 $leaseHaulerDropdown.select2Init({
                     abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
-                    showAll: true,
-                    dropdownParent: _modalManager.getModalContent()
+                    //dropdownParent: _modalManager.getModalContent()
+                    showAll: false,
+                    allowClear: true
                 });
             }
 
@@ -291,8 +292,9 @@
                     $(this).select2Init({
                         //abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulerTrucksSelectList,
                         //abpServiceParamsGetter: function () { return { leaseHaulerId: $('#LeaseHaulerId').val() }; },
-                        showAll: true,
-                        dropdownParent: _modalManager.getModalContent()
+                        //dropdownParent: _modalManager.getModalContent()
+                        showAll: false,
+                        allowClear: true
                     });
                 });
 
@@ -300,8 +302,9 @@
                     $(this).select2Init({
                         //abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulerDriversSelectList,
                         //abpServiceParams: { leaseHaulerId: $('#LeaseHaulerId').val() },
-                        showAll: true,
-                        dropdownParent: _modalManager.getModalContent()
+                        //dropdownParent: _modalManager.getModalContent()
+                        showAll: false,
+                        allowClear: true
                     });
                 });
                 return promise;

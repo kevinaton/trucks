@@ -263,8 +263,7 @@
             });
         $('#LeaseHaulerIdFilter').select2Init({
             abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
-            minimumInputLength: 0,
-            allowClear: true
+            showAll: false, allowClear: true
         });
         $('#ShiftFilter').select2Init({ allowClear: false });
         $("#OfficeIdFilter").select2Init({
