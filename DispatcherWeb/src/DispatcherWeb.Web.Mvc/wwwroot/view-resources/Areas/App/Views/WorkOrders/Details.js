@@ -156,19 +156,23 @@
         $('#TruckId').select2Init({
             abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
             abpServiceParams: { allOffices: true, inServiceOnly: true },
-            showAll: true,
-            allowClear: false
+            showAll: false,
+            allowClear: true
         });
         $('#AssignedToId').select2Init({
             abpServiceMethod: abp.services.app.user.getMaintenanceUsersSelectList,
-            showAll: true,
-            allowClear: false
+            showAll: false,
+            allowClear: true
         });
         $('#VehicleServiceTypeId').select2Init({
             abpServiceMethod: abp.services.app.vehicleServiceType.getSelectList,
             showAll: true,
             allowClear: false
-        })
+        });
+        $('#Status').select2Init({
+            showAll: true,
+            allowClear: false
+        });
 
         $('#Odometer').rules('add', { mileage: true });
 

@@ -13,8 +13,8 @@
 
             _$form.find("#VehicleServiceId").select2Init({
                 abpServiceMethod: abp.services.app.vehicleService.getSelectList,
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
 
             let $laborTime = _$form.find("#LaborTime");
