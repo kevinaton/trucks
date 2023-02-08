@@ -16,7 +16,8 @@
 
         $("#CategoryIdFilter").select2Init({
             abpServiceMethod: abp.services.app.location.getLocationCategorySelectList,
-            showAll: true
+            showAll: false,
+            allowClear: true
         });
 
         $("#StatusFilter").select2Init({

@@ -119,9 +119,9 @@
 
             _$form.find("#CategoryId").select2Init({
                 abpServiceMethod: abp.services.app.location.getLocationCategorySelectList,
-                showAll: true
+                showAll: true,
+                allowClear: false
             });
-                      
 
             var _createOrEditSupplierContactModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Locations/CreateOrEditSupplierContactModal',
