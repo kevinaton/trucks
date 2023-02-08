@@ -185,14 +185,14 @@
             $("#TruckFilter").select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                 abpServiceParams: { excludeTrailers: true, includeLeaseHaulerTrucks: true },
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
             $("#DriverFilter").select2Init({
                 abpServiceMethod: abp.services.app.driver.getDriversSelectList,
                 abpServiceParams: { includeLeaseHaulerDrivers: true },
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
             initCustomerIdFilter();
             initOfficeIdFilter();
@@ -202,14 +202,16 @@
             $("#CustomerIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.customer.getCustomersWithOrdersSelectList,
                 abpServiceParams: _dtHelper.getDateRangeObject($("#DateFilter").val(), 'dateBegin', 'dateEnd'),
-                showAll: true
+                showAll: false,
+                allowClear: true
             });
         }
 
         function initOfficeIdFilter() {
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getAllOfficesSelectList,
-                showAll: true
+                showAll: true,
+                allowClear: true
             });
         }
 
