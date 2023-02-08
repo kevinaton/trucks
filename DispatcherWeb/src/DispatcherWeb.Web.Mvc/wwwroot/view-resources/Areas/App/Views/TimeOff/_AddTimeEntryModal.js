@@ -27,8 +27,8 @@
                     employeeId: _modal.find("#EmployeeId").val(),
                     allowForManualTime: true
                 },
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             }).on("change", function (e) {
                 _timeClassificationId = $(this).val();
             });

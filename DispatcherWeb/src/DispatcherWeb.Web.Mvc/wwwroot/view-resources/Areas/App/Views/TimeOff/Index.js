@@ -42,7 +42,8 @@
 
         $("#DriverIdFilter").select2Init({
             abpServiceMethod: _timeOffService.getDriversSelectList,
-            minimumInputLength: 0
+            showAll: false,
+            allowClear: true
         });
 
         $("#DriverIdFilter").change(function () {
