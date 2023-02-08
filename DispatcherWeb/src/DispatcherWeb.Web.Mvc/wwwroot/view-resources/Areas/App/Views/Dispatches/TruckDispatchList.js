@@ -32,7 +32,8 @@
 
         var $officeIdFilterSelect = $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            showAll: true
+            showAll: true,
+            allowClear: true 
         });
 
         abp.helper.ui.addAndSetDropdownValue($officeIdFilterSelect, abp.session.officeId, abp.session.officeName);
