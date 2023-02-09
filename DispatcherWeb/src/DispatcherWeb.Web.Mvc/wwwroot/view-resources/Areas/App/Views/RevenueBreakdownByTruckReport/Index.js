@@ -38,21 +38,24 @@
 	$("#TruckFilter").select2Init({
 		abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
         abpServiceParams: { excludeTrailers: true, includeLeaseHaulerTrucks: true },
-		minimumInputLength: 0,
-		allowClear: false
+        showAll: false,
+		allowClear: true
 	});
 
     $("#OfficeIdFilter").select2Init({
         abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-        minimumInputLength: 0,
-        allowClear: false
+        showAll: true,
+        allowClear: true
     });
     if (abp.session.officeId) {
         abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
     }
 
 
-    $('#Shifts').select2Init({ allowClear: false });
+    $('#Shifts').select2Init({
+        showAll: true,
+        allowClear: false
+    });
 
 
 
