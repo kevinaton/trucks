@@ -29,7 +29,8 @@
 
         $("#DriverIdFilter").select2Init({
             abpServiceMethod: abp.services.app.driver.getDriversSelectList,
-            showAll: true
+            showAll: false,
+            allowClear: true 
         });
 
         $('#CreateReportPdf, #CreateReportCsv').off('click');
