@@ -169,11 +169,12 @@
                 .on('cancel.daterangepicker', function (ev, picker) {
                     $(this).val('');
                 });
+
             $("#TruckFilter").select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                 abpServiceParams: { allOffices: true, inServiceOnly: true },
-                showAll: true,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
             $('#AssignedToFilter').select2Init({
                 abpServiceMethod: abp.services.app.user.getMaintenanceUsersSelectList,
