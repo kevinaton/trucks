@@ -28,7 +28,7 @@ interface JQuery {
         if (!match || !text) {
             return $('<span>').text(text);
         }
-
+        console.log({ textToRender: text, matchToRender: match });
         var safeTextHtml = $('<span>').text(text).html();
         var safeMatchHtml = $('<span>').text(match).html();
 
@@ -66,6 +66,7 @@ interface JQuery {
                 data: function (params) {
                     params.page = params.page || 1;
                     return {
+                        page: params.page,
                         term: params.term,
                         skipCount: (params.page - 1) * select2PageSize,
                         maxResultCount: select2PageSize
@@ -81,22 +82,29 @@ interface JQuery {
                 processResults: function (data, params) {
                     params.page = params.page || 1;
 
+                    var result;
+                    if (data.results && data.pagination !== undefined) {
+                        result = data;
+                    } else {
+                        result = {
+                            results: data.items,
+                            pagination: {
+                                more: params.page * select2PageSize < data.totalCount
+                            }
+                        };
+                    }
+
                     if (userOptions.addItemCallback
                         && params.page === 1
                         && params.term
-                        && !data.items.some(i => (i.name || i.text || '').toLowerCase() === params.term?.toLowerCase())) {
-                        data.items = [
+                        && !result.results.some(i => (i.name || i.text || '').toLowerCase() === params.term?.toLowerCase())) {
+                        result.results = [
                             getSelect2AddNewItemOption(params.term),
-                            ...data.items
+                            ...result.results
                         ];
                     }
 
-                    return {
-                        results: data.items,
-                        pagination: {
-                            more: params.page * select2PageSize < data.totalCount
-                        }
-                    };
+                    return result;
                 },
                 cache: false
             },

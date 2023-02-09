@@ -178,7 +178,8 @@ namespace DispatcherWeb.Locations
             {
                 locationEditDto = new LocationEditDto
                 {
-                    IsActive = true
+                    IsActive = true,
+                    Name = input.Name,
                 };
 
                 if (input.Temporary)
