@@ -141,6 +141,10 @@
                 allowClear: true
             });
 
+            $("#BedConstruction").select2Init({
+                showAll: true,
+                allowClear: false
+            });
 
 
 
