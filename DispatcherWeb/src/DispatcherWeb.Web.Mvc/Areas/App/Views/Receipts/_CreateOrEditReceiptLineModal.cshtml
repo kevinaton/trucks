@@ -55,12 +55,6 @@
                         <option selected value="@Model.ServiceId">@Model.ServiceName</option>
                     }
                 </select>
-                @if (await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Services))
-                {
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" id="AddNewServiceButton"><span class="fa fa-plus"></span></button>
-                    </span>
-                }
             </div>
         </div>
         <div class="form-group">

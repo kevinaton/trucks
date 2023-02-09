@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditReceiptLineModal = function () {
 
         var _modalManager;
@@ -234,7 +234,7 @@
             _freightAmountInput.closest('.form-group').show();
         }
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             var _createOrEditServiceModal = new app.ModalManager({
@@ -277,9 +277,11 @@
             });
             _serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
-                minimumInputLength: 0,
-                allowClear: false,
-                width: 'calc(100% - 45px)'
+                showAll: false,
+                allowClear: true,
+                addItemCallback: abp.auth.isGranted('Pages.Services') ? async function (newServiceName) {
+                    _createOrEditServiceModal.open({ name: newServiceName });
+                } : null
             });
             _materialUomDropdown.select2Uom();
             _freightUomDropdown.select2Uom();
@@ -306,11 +308,6 @@
             _modalManager.on('app.createOrEditServiceModalSaved', function (e) {
                 abp.helper.ui.addAndSetDropdownValue(_serviceDropdown, e.item.Id, e.item.Service1);
                 _serviceDropdown.change();
-            });
-
-            _modalManager.getModal().find("#AddNewServiceButton").click(function (e) {
-                e.preventDefault();
-                _createOrEditServiceModal.open();
             });
 
             reloadPricing();
@@ -456,9 +453,9 @@
             }
 
             if (!isFreightUomValid
-                    || !isFreightQuantityValid
-                    || !isMaterialUomValid
-                    || !isMaterialQuantityValid) {
+                || !isFreightQuantityValid
+                || !isMaterialUomValid
+                || !isMaterialQuantityValid) {
                 abp.message.error('Please check the following: \n'
                     + (isMaterialUomValid ? '' : '"Material UOM" - This field is required.\n')
                     + (isMaterialQuantityValid ? '' : '"Material Quantity" - This field is required.\n')

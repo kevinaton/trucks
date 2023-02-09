@@ -1,6 +1,6 @@
 ﻿(function () {
     $(function () {
-        
+
         var _receiptService = abp.services.app.receipt;
         var _dtHelper = abp.helper.dataTables;
         var _receiptId = $("#Id").val();
@@ -185,7 +185,7 @@
 
         if (!_permissions.edit) {
             $("#SaveReceiptButton").hide();
-            
+
             if (!_permissions.createItems) {
                 $("#CreateNewReceiptLineButton").hide();
             }
@@ -197,10 +197,18 @@
         $("#LocationId").select2Init({
             abpServiceMethod: abp.services.app.location.getLocationsSelectList
         });
+
         $("#CustomerId").select2Init({
             abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
+            showAll: false,
+            allowClear: true
+        });
+
+        $("#Shift").select2Init({
+            showAll: true,
             allowClear: false
         });
+
         var quoteChildDropdown = abp.helper.ui.initChildDropdown({
             parentDropdown: $("#CustomerId"),
             childDropdown: $("#QuoteId"),
@@ -217,7 +225,7 @@
 
         $("#OfficeId").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            minimumInputLength: 0,
+            showAll: true,
             allowClear: false
         });
 
@@ -464,14 +472,14 @@
                     responsivePriority: 1,
                     render: function (data, type, full, meta) {
                         //if (!_isOrderReadonly) {
-                            return '<div class="dropdown">'
-                                + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
-                                + '<ul class="dropdown-menu dropdown-menu-right">'
-                                + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
-                                + ' <li> <a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li >'
-                                + '</ul>'
-                                + '</div>'
-                                ;
+                        return '<div class="dropdown">'
+                            + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
+                            + '<ul class="dropdown-menu dropdown-menu-right">'
+                            + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
+                            + ' <li> <a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li >'
+                            + '</ul>'
+                            + '</div>'
+                            ;
                         //} else {
                         //    return '';
                         //}
@@ -479,7 +487,7 @@
                 }
             ]
         });
-        
+
         var reloadReceiptLinesGrid = function (callback, resetPaging) {
             resetPaging = resetPaging === undefined ? true : resetPaging;
             receiptLinesGrid.ajax.reload(callback, resetPaging);
@@ -564,7 +572,7 @@
                 _createOrEditReceiptLineModal.open({ receiptId: _receiptId });
             }
         });
-        
+
         receiptLinesTable.on('click', '.btnEditRow', function (e) {
             e.preventDefault();
             var receiptLine = _dtHelper.getRowData(this);
