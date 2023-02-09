@@ -27,9 +27,9 @@ namespace DispatcherWeb.Web.Mvc.Areas.App.Controllers
         }
 
         [Modal]
-        public async Task<PartialViewResult> CreateOrEditLocationModal(int? id, bool temporary = false, bool mergeWithDuplicateSilently = false)
+        public async Task<PartialViewResult> CreateOrEditLocationModal(GetLocationForEditInput input)
         {
-            var model = await _locationAppService.GetLocationForEdit(new GetLocationForEditInput(id, temporary, mergeWithDuplicateSilently));
+            var model = await _locationAppService.GetLocationForEdit(input);
             return PartialView("_CreateOrEditLocationModal", model);
         }
 

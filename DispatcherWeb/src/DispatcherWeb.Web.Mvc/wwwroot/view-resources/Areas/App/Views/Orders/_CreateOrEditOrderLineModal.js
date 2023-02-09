@@ -135,17 +135,25 @@
 
             _loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                width: 'calc(100% - 45px)'
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
+                    _addLocationTarget = "LoadAtId";
+                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
+                } : undefined
             });
             _deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                width: 'calc(100% - 45px)'
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
+                    _addLocationTarget = "DeliverToId";
+                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
+                } : undefined
             });
             _serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
-                minimumInputLength: 0,
+                showAll: false,
                 allowClear: false,
-                width: 'calc(100% - 45px)'
+                addItemCallback: abp.auth.hasPermission('Pages.Services') ? async function (newItemName) {
+                    createOrEditServiceModal.open({ name: newItemName });
+                } : undefined
             });
             _materialUomDropdown.select2Uom();
             _freightUomDropdown.select2Uom();
@@ -181,17 +189,6 @@
                 var targetDropdown = _$form.find("#" + _addLocationTarget);
                 abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.id, e.item.displayName);
                 targetDropdown.change();
-            });
-
-            _modalManager.getModal().find("#AddNewServiceButton").click(function (e) {
-                e.preventDefault();
-                createOrEditServiceModal.open();
-            });
-
-            _modalManager.getModal().find(".AddNewLocationButton").click(function (e) {
-                e.preventDefault();
-                _addLocationTarget = $(this).data('target-field');
-                createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
             });
 
             reloadPricing();
