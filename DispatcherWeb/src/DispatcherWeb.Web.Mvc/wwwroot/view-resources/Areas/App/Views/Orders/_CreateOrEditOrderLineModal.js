@@ -256,7 +256,24 @@
             });
             initOverrideButtons();
             disableProductionPayIfNeeded(false);
+            disableQuoteRelatedFieldsIfNeeded();
         };
+
+        function disableQuoteRelatedFieldsIfNeeded() {
+            if (_quoteId) {
+                _designationDropdown
+                    .add(_loadAtDropdown)
+                    .add(_deliverToDropdown)
+                    .add(_serviceDropdown)
+                    .add(_freightUomDropdown)
+                    .add(_materialUomDropdown)
+                    .add(_freightPricePerUnitInput)
+                    .add(_materialPricePerUnitInput)
+                    //.add(_freightQuantityInput)
+                    //.add(_materialQuantityInput)
+                    .prop('disabled', true);
+            }
+        }
 
         function initOverrideButtons() {
             _unlockMaterialPriceButton = _$form.find("#UnlockMaterialTotalButton");
@@ -766,10 +783,13 @@
             _$form.find("#TimeOnJob").val(_orderLine.timeOnJob);
             _$form.find("#Note").val(_orderLine.note);
 
+            _quoteId = _$form.find("#QuoteId").val();
+
             updateStaggeredTimeControls();
             updateTimeOnJobInput();
             updateProductionPay();
             disableProductionPayIfNeeded(false);
+            disableQuoteRelatedFieldsIfNeeded();
 
             _modalManager.getModal().find('.modal-title').text(orderLine.isNew ? "Add new line" : "Edit line");
             _initializing = false;
