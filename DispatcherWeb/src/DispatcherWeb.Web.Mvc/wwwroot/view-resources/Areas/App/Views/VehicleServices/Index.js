@@ -71,8 +71,6 @@
             ]
         });
 
-
-
         servicesTable.on('click', '.btnDeleteRow', function () {
             var record = _dtHelper.getRowData(this);
             deleteVehicleService(record);
