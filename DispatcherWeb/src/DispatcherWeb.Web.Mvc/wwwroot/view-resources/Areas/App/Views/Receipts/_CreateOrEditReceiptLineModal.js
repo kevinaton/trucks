@@ -45,7 +45,8 @@
                 serviceId: _serviceDropdown.val(),
                 materialUomId: _materialUomDropdown.val(),
                 freightUomId: _freightUomDropdown.val(),
-                loadAtId: _loadAtDropdown.val()
+                loadAtId: _loadAtDropdown.val(),
+                deliverToId: _deliverToDropdown.val()
             }).done(function (pricing) {
                 _pricing = pricing;
                 refreshHighlighting();
@@ -57,11 +58,13 @@
         function refreshHighlighting() {
             if (_pricing && _pricing.quoteBasedPricing) {
                 _loadAtDropdown.addClass("quote-based-pricing");
+                _deliverToDropdown.addClass("quote-based-pricing");
                 _serviceDropdown.addClass("quote-based-pricing");
                 _materialUomDropdown.addClass("quote-based-pricing");
                 _freightUomDropdown.addClass("quote-based-pricing");
             } else {
                 _loadAtDropdown.removeClass("quote-based-pricing");
+                _deliverToDropdown.removeClass("quote-based-pricing");
                 _serviceDropdown.removeClass("quote-based-pricing");
                 _materialUomDropdown.removeClass("quote-based-pricing");
                 _freightUomDropdown.removeClass("quote-based-pricing");
@@ -124,6 +127,28 @@
             _isMaterialAmountOverriddenInput.val(val ? "True" : "False");
         }
 
+        function setFreightRateFromPricingIfNeeded(rate, sender) {
+            if (getIsFreightRateOverridden() || designationIsMaterialOnly()) {
+                return;
+            }
+            //when quantity changes, don't reset the rate from pricing unless the rate was empty
+            if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _freightRateInput.val()) {
+                return;
+            }
+            _freightRateInput.val(rate);
+        }
+
+        function setMaterialRateFromPricingIfNeeded(rate, sender) {
+            if (getIsMaterialRateOverridden() || !designationHasMaterial()) {
+                return;
+            }
+            //when quantity changes, don't reset the rate from pricing unless the rate was empty
+            if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _materialRateInput.val()) {
+                return;
+            }
+            _materialRateInput.val(rate);
+        }
+
         var _recalculating = false;
         function recalculate(sender) {
             if (_initializing || _recalculating) {
@@ -134,12 +159,11 @@
                 if (sender.is(_freightRateInput)) {
                     setIsFreightRateOverridden(_pricing.freightRate !== Number(_freightRateInput.val())); //_freightRateInput value used to be rouned
                 } else {
-                    if (!getIsFreightRateOverridden() && !designationIsMaterialOnly())
-                        _freightRateInput.val(_pricing.freightRate);
+                    setFreightRateFromPricingIfNeeded(_pricing.freightRate, sender);
                 }
             } else {
                 //no freight pricing
-                if (!getIsFreightRateOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown))) {
+                if (!getIsFreightRateOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
                     _freightRateInput.val('');
                 }
             }
@@ -147,12 +171,11 @@
                 if (sender.is(_materialRateInput)) {
                     setIsMaterialRateOverridden(_pricing.pricePerUnit !== Number(_materialRateInput.val())); //_materialRateInput used to be rounded
                 } else {
-                    if (!getIsMaterialRateOverridden() && designationHasMaterial())
-                        _materialRateInput.val(_pricing.pricePerUnit);
+                    setMaterialRateFromPricingIfNeeded(_pricing.pricePerUnit, sender);
                 }
             } else {
                 //no material pricing
-                if (!getIsMaterialRateOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown))) {
+                if (!getIsMaterialRateOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
                     _materialRateInput.val('');
                 }
             }
@@ -316,7 +339,7 @@
             reloadPricing();
             refreshHighlighting();
 
-            _loadAtDropdown.change(function () {
+            _loadAtDropdown.add(_deliverToDropdown).change(function () {
                 var sender = $(this);
                 reloadPricing(function () {
                     recalculate(sender);
