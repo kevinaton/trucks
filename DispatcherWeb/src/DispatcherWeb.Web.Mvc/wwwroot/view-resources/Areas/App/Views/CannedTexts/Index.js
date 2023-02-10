@@ -76,16 +76,6 @@
             ]
         });
 
-        cannedTextsGrid.on("draw", () => {
-            var pageSizeSelector = $("select.m-input");
-            if (!pageSizeSelector.data('select2')) {
-                pageSizeSelector.select2Init({
-                    showAll: true,
-                    allowClear: false
-                });
-            }
-        });
-
         var reloadMainGrid = function () {
             cannedTextsGrid.ajax.reload();
         };
