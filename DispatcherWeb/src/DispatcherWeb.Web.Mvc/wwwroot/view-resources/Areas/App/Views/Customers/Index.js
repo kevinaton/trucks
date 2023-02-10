@@ -13,6 +13,11 @@
             modalSize: 'lg'
         });
 
+        $("#StatusFilter").select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
         var customersTable = $('#CustomersTable');
         var customersGrid = customersTable.DataTableInit({
             paging: true,
@@ -106,7 +111,7 @@
                 }
             ]
         });
-
+        
         var reloadMainGrid = function () {
             customersGrid.ajax.reload();
         };
