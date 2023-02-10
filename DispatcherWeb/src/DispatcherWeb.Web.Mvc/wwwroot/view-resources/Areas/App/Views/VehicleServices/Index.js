@@ -81,16 +81,6 @@
             _createOrEditVehicleServiceModal.open({ id: serviceId });
         });
 
-        servicesTable.on("draw.dt", () => {
-            var pageSizeSelector = $("select.m-input");
-            if (!pageSizeSelector.data('select2')) {
-                pageSizeSelector.select2Init({
-                    showAll: true,
-                    allowClear: false
-                });
-            }
-        });
-
         var getServices = function () {
             servicesGrid.ajax.reload();
         };
