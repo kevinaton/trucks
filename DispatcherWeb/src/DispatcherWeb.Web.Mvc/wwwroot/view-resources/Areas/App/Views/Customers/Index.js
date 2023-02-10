@@ -111,14 +111,7 @@
                 }
             ]
         });
-        customersTable.on("draw.dt", () => {
-            var customersTablePageSizeSelector = $("select.m-input");
-            customersTablePageSizeSelector.select2Init({
-                showAll: true,
-                allowClear: false
-            });
-        });
-
+        
         var reloadMainGrid = function () {
             customersGrid.ajax.reload();
         };
