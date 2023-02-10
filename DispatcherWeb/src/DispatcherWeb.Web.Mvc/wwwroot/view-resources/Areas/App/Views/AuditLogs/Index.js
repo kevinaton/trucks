@@ -338,6 +338,7 @@
 
         $("#ClearSearchButton").click(function () {
             $(this).closest('form')[0].reset();
+            $('.filter').change();
             getAuditLogs();
         });
 
