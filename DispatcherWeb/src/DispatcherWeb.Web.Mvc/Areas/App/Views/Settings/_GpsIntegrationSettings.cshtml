@@ -6,7 +6,7 @@
             <h5>@L("GpsIntegration")</h5>
             <form id="GpsIntegrationSettingsForm" class="m-form">
                 <div class="form-group">
-                    <label for="Platform">@L("Platform")</label>
+                    <label for="Platform" class="required-label">@L("Platform")</label>
                     <select class="form-control" asp-for="Platform" asp-items="Html.GetEnumSelectList<GpsPlatform>()" value="@Model.Platform">
                         <option value="0">None</option>
                     </select>
