@@ -194,7 +194,7 @@
             reloadPricing();
             refreshHighlighting();
 
-            _loadAtDropdown.change(function () {
+            _loadAtDropdown.add(_deliverToDropdown).change(function () {
                 var sender = $(this);
                 var val = sender.val();
                 if (val && val.startsWith(abp.helper.googlePlacesHelper.googlePlaceIdPrefix)) {
@@ -339,6 +339,7 @@
                 materialUomId: _materialUomDropdown.val(),
                 freightUomId: _freightUomDropdown.val(),
                 loadAtId: _loadAtDropdown.val(),
+                deliverToId: _deliverToDropdown.val(),
                 quoteId: _quoteId
             }).done(function (pricing) {
                 _pricing = pricing;
@@ -351,11 +352,13 @@
         function refreshHighlighting() {
             if (_pricing && _pricing.quoteBasedPricing) {
                 _loadAtDropdown.addClass("quote-based-pricing");
+                _deliverToDropdown.addClass("quote-based-pricing");
                 _serviceDropdown.addClass("quote-based-pricing");
                 _materialUomDropdown.addClass("quote-based-pricing");
                 _freightUomDropdown.addClass("quote-based-pricing");
             } else {
                 _loadAtDropdown.removeClass("quote-based-pricing");
+                _deliverToDropdown.removeClass("quote-based-pricing");
                 _serviceDropdown.removeClass("quote-based-pricing");
                 _materialUomDropdown.removeClass("quote-based-pricing");
                 _freightUomDropdown.removeClass("quote-based-pricing");
@@ -488,55 +491,72 @@
             productionPayInput.closest('label').attr('title', '').tooltip('dispose');
         }
 
+        function setFreightRateFromPricingIfNeeded(rate, sender) {
+            if (getIsFreightPricePerUnitOverridden() || designationIsMaterialOnly()) {
+                return;
+            }
+            //when quantity changes, don't reset the rate from pricing unless the rate was empty
+            if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _freightPricePerUnitInput.val()) {
+                return;
+            }
+            _freightPricePerUnitInput.val(rate);
+        }
+
+        function setMaterialRateFromPricingIfNeeded(rate, sender) {
+            if (getIsMaterialPricePerUnitOverridden() || !designationHasMaterial()) {
+                return;
+            }
+            //when quantity changes, don't reset the rate from pricing unless the rate was empty
+            if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _materialPricePerUnitInput.val()) {
+                return;
+            }
+            _materialPricePerUnitInput.val(rate);
+        }
+
         function recalculate(sender) {
             if (_initializing || _recalculating) {
                 return;
             }
             _recalculating = true;
-            if (_pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.freightRate !== null) {
+
+            var freightRatePricing =
+                _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.freightRate !== null ? _pricing.quoteBasedPricing.freightRate
+                    : _pricing && _pricing.hasPricing && _pricing.freightRate !== null ? _pricing.freightRate
+                        : null;
+
+            var materialRatePricing =
+                _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null ? _pricing.quoteBasedPricing.pricePerUnit
+                : _pricing && _pricing.hasPricing && _pricing.pricePerUnit !== null ? _pricing.pricePerUnit
+                    : null;
+
+            if (freightRatePricing !== null) {
                 if (sender.is(_freightPricePerUnitInput)) {
-                    setIsFreightPricePerUnitOverridden(_pricing.quoteBasedPricing.freightRate !== Number(_freightPricePerUnitInput.val())); //freightPricePerUnitInput value used to be rounded
+                    setIsFreightPricePerUnitOverridden(freightRatePricing !== Number(_freightPricePerUnitInput.val()));
                 } else {
-                    if (!getIsFreightPricePerUnitOverridden() && !designationIsMaterialOnly())
-                        _freightPricePerUnitInput.val(_pricing.quoteBasedPricing.freightRate);
-                }
-            } else if (_pricing && _pricing.hasPricing && _pricing.freightRate !== null) {
-                if (sender.is(_freightPricePerUnitInput)) {
-                    setIsFreightPricePerUnitOverridden(_pricing.freightRate !== Number(_freightPricePerUnitInput.val())); //freightPricePerUnitInput value used to be rouned
-                } else {
-                    if (!getIsFreightPricePerUnitOverridden() && !designationIsMaterialOnly())
-                        _freightPricePerUnitInput.val(_pricing.freightRate);
+                    setFreightRateFromPricingIfNeeded(freightRatePricing, sender);
                 }
             } else {
                 //no freight pricing
-                if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown))) {
+                if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
                     _freightPricePerUnitInput.val('');
                 }
             }
-            if (_pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null) {
+
+            if (materialRatePricing !== null) {
                 if (sender.is(_materialPricePerUnitInput)) {
-                    setIsMaterialPricePerUnitOverridden(_pricing.quoteBasedPricing.pricePerUnit !== Number(_materialPricePerUnitInput.val())); //materialPricePerUnitInput value used to be rounded
-                }
-                else {
-                    if (!getIsMaterialPricePerUnitOverridden() && designationHasMaterial())
-                        _materialPricePerUnitInput.val(_pricing.quoteBasedPricing.pricePerUnit);
-                }
-            } else if (_pricing && _pricing.hasPricing && _pricing.pricePerUnit !== null) {
-                if (sender.is(_materialPricePerUnitInput)) {
-                    setIsMaterialPricePerUnitOverridden(_pricing.pricePerUnit !== Number(_materialPricePerUnitInput.val())); //materialPricePerUnitInput used to be rounded
+                    setIsMaterialPricePerUnitOverridden(materialRatePricing !== Number(_materialPricePerUnitInput.val()));
                 } else {
-                    if (!getIsMaterialPricePerUnitOverridden() && designationHasMaterial())
-                        _materialPricePerUnitInput.val(_pricing.pricePerUnit);
+                    setMaterialRateFromPricingIfNeeded(materialRatePricing, sender);
                 }
             } else {
                 //no material pricing
-                if (!getIsMaterialPricePerUnitOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown))) {
+                if (!getIsMaterialPricePerUnitOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
                     _materialPricePerUnitInput.val('');
                 }
             }
-            var materialPricePerUnit = _materialPricePerUnitInput.val(); //used to be rounded
-            var freightPricePerUnit = _freightPricePerUnitInput.val(); //used to be rounded
-            var materialQuantity = _materialQuantityInput.val(); //quantityInput value used to be rounded
+            var materialPricePerUnit = _materialPricePerUnitInput.val();
+            var freightPricePerUnit = _freightPricePerUnitInput.val();
+            var materialQuantity = _materialQuantityInput.val();
             var freightQuantity = _freightQuantityInput.val();
             var materialPrice = round(materialPricePerUnit * materialQuantity);
             var freightPrice = round(freightPricePerUnit * freightQuantity);
