@@ -104,7 +104,8 @@
         if (!_driverIdFilterInput) {
             _driverIdFilterInput = $("#DriverIdFilter");
             _driverIdFilterInput.select2Init({
-                allowClear: true
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 _driverIdFilter = Number(_driverIdFilterInput.val()) || null;
                 _orderLineBlocks.forEach(block => {
@@ -563,7 +564,7 @@
             lhBlock.ui && lhBlock.ui.updateVisibility();
             lhBlock.ui && lhBlock.ui.updateTicketCounters();
         });
-        
+
 
         renderView();
         //reload the grid of the existing or new panel
@@ -771,8 +772,7 @@
                 logTimeIfNeeded('(async) finished async rendering tasks');
             }, 0);
         }
-        else
-        {
+        else {
             renderOrderLineBlocks(_orderLineBlocks, mainContainer);
         }
 
@@ -1019,7 +1019,7 @@
         var ui = {
         };
         block.ui = ui;
-        
+
         ui.card = $('<div class="card card-collapsable card-collapse bg-light mb-4">').append(
             $('<div class="card-header bg-light">').append(
                 $('<div class="m-form m-form--label-align-right">').append(
@@ -1091,6 +1091,7 @@
                     .reduce((prev, curr) => prev ? prev.add(curr) : curr, $())
                 //.forEach(d => block.ui.driver.append(d));
             ).select2Init({
+                showAll: true,
                 allowClear: false
             }).change(function () {
                 if (_initializing) {
@@ -1135,7 +1136,9 @@
 
         replaceDropdownPlaceholderWithDropdownOnFocus(block, 'loadAt', dropdown => {
             block.ui.loadAt.select2Location({
-                predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite
+                predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 if (_initializing) {
                     return;
@@ -1149,7 +1152,9 @@
 
         replaceDropdownPlaceholderWithDropdownOnFocus(block, 'deliverTo', dropdown => {
             block.ui.deliverTo.select2Location({
-                predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite
+                predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 if (_initializing) {
                     return;
@@ -1165,7 +1170,8 @@
             block.ui.item.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
                 minimumInputLength: 0,
-                allowClear: false,
+                showAll: true,
+                allowClear: false
             }).change(function () {
                 if (_initializing) {
                     return;

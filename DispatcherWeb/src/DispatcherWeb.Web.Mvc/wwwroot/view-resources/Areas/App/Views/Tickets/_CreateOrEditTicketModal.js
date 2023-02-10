@@ -46,11 +46,22 @@
 
             loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                width: 'calc(100% - 45px)'
+                showAll: false,
+                allowClear: true,
+                addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
+                    _addLocationTarget = "LoadAtId";
+                    _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
+                } : null
             });
+
             deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                width: 'calc(100% - 45px)'
+                showAll: false,
+                allowClear: true,
+                addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
+                    _addLocationTarget = "DeliverToId";
+                    _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
+                } : null
             });
 
             _$form.find("select#OfficeId").select2Init({
@@ -61,15 +72,14 @@
 
             _$form.find('#CustomerId').select2Init({
                 abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
-                allowClear: false
-                //dropdownParent: $("#" + _modalManager.getModalId())
+                showAll: false,
+                allowClear: true
             });
 
             _$form.find('#ServiceId').select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
-                minimumInputLength: 0,
-                allowClear: false
-                //dropdownParent: $("#" + _modalManager.getModalId())
+                showAll: false,
+                allowClear: true
             });
 
             _$form.find('#UomId').select2Uom();
@@ -77,7 +87,8 @@
             let carrierDropdown = _$form.find('#CarrierId');
             carrierDropdown.select2Init({
                 abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
-                //dropdownParent: $("#" + _modalManager.getModalId())
+                showAll: false,
+                allowClear: true
             }).change(function () {
                 var newCarrierId = $(this).val();
                 _$form.find('label[for="TruckCode"],label[for="DriverId"]').toggleClass('required-label', !newCarrierId);
@@ -140,7 +151,8 @@
                 abpServiceParamsGetter: (params, rowData) => ({
                     truckCode: _lastTruckCode
                 }),
-                showAll: true,
+                showAll: false,
+                allowClear: true
             }).change(async function () {
                 var driverId = $(this).val();
                 if (!_validateTrucksAndDrivers) {
@@ -184,12 +196,6 @@
                 var targetDropdown = _$form.find("#" + _addLocationTarget);
                 abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.id, e.item.displayName);
                 targetDropdown.change();
-            });
-
-            modal.find(".AddNewLocationButton").click(function (e) {
-                e.preventDefault();
-                _addLocationTarget = $(this).data('target-field');
-                _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
             });
 
             if (modal.find("#ReadOnly").val() === "true") {
@@ -345,7 +351,7 @@
                 //    });
                 //}
 
-                
+
                 //if (ticket.ReceiptLineId) {
                 //    abp.message.confirm(
                 //        'This ticket is associated with a receipt. If you change this ticket, your ticket and receipt amounts will not match. Are you sure you want to do this?',
@@ -365,7 +371,7 @@
                 //        driverId: ticket.DriverId,
                 //        productionPay: true
                 //    });
-                    
+
                 //    if (!timeClassification.payRate) {
                 //        await abp.message.warn(app.localize('Driver{0}DoesntHaveProductionRateSet', timeClassification.driverName));
                 //    } else {
