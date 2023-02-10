@@ -16,20 +16,21 @@
         $('[data-toggle="tooltip"]').tooltip();
 
         $("#StatusFilter").select2Init({
-            allowClear: false,
-            showAll: true
+            showAll: true,
+            allowClear: true
         });
 
         $("#CustomerIdFilter").select2Init({
             abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
             abpServiceParams: { includeInactiveWithInvoices: true },
-            allowClear: false
+            showAll: false,
+            allowClear: true
         });
 
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            minimumInputLength: 0,
-            allowClear: false
+            showAll: true,
+            allowClear: true
         });
 
         $("#IssueDateFilter").daterangepicker({
