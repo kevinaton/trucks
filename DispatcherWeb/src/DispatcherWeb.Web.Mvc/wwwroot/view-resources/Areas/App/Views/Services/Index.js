@@ -13,6 +13,12 @@
             modalSize: 'lg'
         });
 
+        var statusFilter = $('#StatusFilter');
+        statusFilter.select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
         var servicesTable = $('#ServicesTable');
         var servicesGrid = servicesTable.DataTableInit({
             ajax: function (data, callback, settings) {
