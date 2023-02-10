@@ -22,7 +22,10 @@
         $(this).val('');
     });
 
-    $('#AnalyzeBy').select2Init({ allowClear: false });
+    $('#AnalyzeBy').select2Init({
+        showAll: true,
+        allowClear: false
+    });
 
     $("#ViewButton").click(function () {
         initRevenueChart();

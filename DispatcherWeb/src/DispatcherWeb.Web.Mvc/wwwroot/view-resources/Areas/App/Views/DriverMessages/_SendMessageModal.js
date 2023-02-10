@@ -20,11 +20,14 @@
             _$officesDropdown = _$form.find("#OfficeIds");
             var orderLineId = _$form.find('#OrderLineId').val();
             if (orderLineId) {
-                _$driversDropdown.select2Init({ allowClear: false });
+                _$driversDropdown.select2Init({
+                    showAll: true,
+                    allowClear: false
+                });
             } else {
                 _$driversDropdown.select2Init({
                     abpServiceMethod: abp.services.app.driver.getDriversToNotifySelectList,
-                    minimumInputLength: 0,
+                    showAll: true,
                     allowClear: false
                 });
             }

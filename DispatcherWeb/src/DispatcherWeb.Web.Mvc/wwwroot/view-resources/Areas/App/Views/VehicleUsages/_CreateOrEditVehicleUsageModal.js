@@ -19,12 +19,13 @@
             $truckSelect.select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                 abpServiceParams: { allOffices: true, officeId: _$form.find('#OfficeId').val() },
-                showAll: true,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
 
             var readingTypeDropDown = _readingTypeDropDown = _$form.find("#ReadingType");
             readingTypeDropDown.select2Init({
+                showAll: true,
                 allowClear: false
             });
 

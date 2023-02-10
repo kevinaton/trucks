@@ -50,6 +50,11 @@
                 }
             });
 
+            _$generalForm.find("#OrderNotifyPreferredFormat").select2Init({
+                showAll: true,
+                allowClear: false
+            });
+
             _$generalForm.find("#OfficeId").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
@@ -200,6 +205,7 @@
                                 reloadGrid();
                             });
                             editor.select2Init({
+                                showAll: true,
                                 allowClear: false
                             });
                         }

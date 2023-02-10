@@ -144,7 +144,8 @@
                 });
 
             $("#ReadingTypeFilter").select2Init({
-                allowClear: false
+                showAll: true,
+                allowClear: true 
             });
 
             initTruckFilter();
@@ -154,8 +155,8 @@
             $("#TruckFilter").select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                 abpServiceParams: { officeId: $('#OfficeIdFilter').val(), allOffices: true },
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
         }
 

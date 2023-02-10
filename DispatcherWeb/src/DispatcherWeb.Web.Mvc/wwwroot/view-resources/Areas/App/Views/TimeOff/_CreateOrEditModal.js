@@ -21,8 +21,8 @@
 
             modal.find("#DriverId").select2Init({
                 abpServiceMethod: _timeOffService.getDriversSelectList,
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
         };
 
