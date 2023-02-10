@@ -694,6 +694,7 @@
             _orderLine.isMultipleLoads = !!orderLine.IsMultipleLoads;
             _orderLine.productionPay = !!orderLine.ProductionPay;
             _orderLine.timeOnJob = orderLine.TimeOnJob;
+            _orderLine.jobNumber = orderLine.JobNumber;
             _orderLine.note = orderLine.Note;
 
             if (this.saveCallback) {
@@ -798,6 +799,7 @@
             _$form.find("#IsMultipleLoads").prop('checked', _orderLine.isMultipleLoads);
             _$form.find("#ProductionPay").prop('checked', _orderLine.productionPay);
             _$form.find("#TimeOnJob").val(_orderLine.timeOnJob);
+            _$form.find("#JobNumber").val(_orderLine.jobNumber);
             _$form.find("#Note").val(_orderLine.note);
 
             _quoteId = _$form.find("#QuoteId").val();

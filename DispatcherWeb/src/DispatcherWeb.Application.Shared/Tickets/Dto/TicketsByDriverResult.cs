@@ -1,7 +1,9 @@
 ﻿using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Infrastructure;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DispatcherWeb.Tickets.Dto
 {
@@ -24,7 +26,10 @@ namespace DispatcherWeb.Tickets.Dto
             public Shift? Shift { get; set; }
             public List<OrderLineTruckDto> OrderLineTrucks { get; set; }
             public int OrderId { get; set; }
+
+            [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
             public string JobNumber { get; set; }
+
             public int CustomerId { get; set; }
             public string CustomerName { get; set; }
             public DateTime? OrderDate { get; set; }

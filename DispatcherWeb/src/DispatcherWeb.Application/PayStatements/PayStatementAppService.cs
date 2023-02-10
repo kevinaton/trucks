@@ -600,7 +600,7 @@ namespace DispatcherWeb.PayStatements
                     },
                     FreightRate = t.FreightRate,
                     Item = t.Ticket.OrderLine.Service.Service1,
-                    JobNumber = t.Ticket.OrderLine.Order.JobNumber,
+                    JobNumber = t.Ticket.OrderLine.JobNumber,
                 }).ToListAsync();
 
             var timezone = await GetTimezone();
@@ -751,7 +751,7 @@ namespace DispatcherWeb.PayStatements
                             TimeClassificationName = t.TimeClassification.Name,
                             IsProductionPay = t.TimeClassification.IsProductionBased,
                             Item = t.Ticket.OrderLine.Service.Service1,
-                            JobNumber = t.Ticket.OrderLine.Order.JobNumber,
+                            JobNumber = t.Ticket.OrderLine.JobNumber,
                             Quantity = t.Quantity,
                             TicketDateTime = t.Ticket.TicketDateTime,
                             Total = t.Total,

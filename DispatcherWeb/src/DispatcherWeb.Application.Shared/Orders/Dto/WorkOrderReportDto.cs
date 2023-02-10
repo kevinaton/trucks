@@ -30,7 +30,6 @@ namespace DispatcherWeb.Orders.Dto
         public string ContactName { get; set; }
         public string ContactPhoneNumber { get; set; }
         public string ContactEmail { get; set; }
-        public string JobNumber { get; set; }
         public string PoNumber { get; set; }
         public string SpectrumNumber { get; set; }
         public string SpectrumNumberLabel { get; set; }

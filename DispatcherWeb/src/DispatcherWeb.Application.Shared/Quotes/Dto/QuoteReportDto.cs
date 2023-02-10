@@ -21,7 +21,6 @@ namespace DispatcherWeb.Quotes.Dto
         public int QuoteId { get; set; }
         public string QuoteName { get; set; }
         public string QuotePoNumber { get; set; }
-        public string QuoteJobNumber { get; set; }
         public DateTime? QuoteProposalDate { get; set; }
         public DateTime? QuoteProposalExpiryDate { get; set; }
         public string QuoteNotes { get; set; }

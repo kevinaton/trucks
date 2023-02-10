@@ -99,7 +99,7 @@ namespace DispatcherWeb.Quotes
             paragraph.AddTab();
             paragraph.AddText(model.UserFullName ?? "");
 
-            paragraph = document.LastSection.AddParagraph("Job Number: " + model.QuoteJobNumber);
+            paragraph = document.LastSection.AddParagraph(); 
             paragraph.Format.AddTabStop(Unit.FromCentimeter(10));
             paragraph.AddTab();
             paragraph.AddText(model.UserEmail ?? "");

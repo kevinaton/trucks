@@ -908,7 +908,7 @@ namespace DispatcherWeb.Tickets
                 .WhereIf(orderDateRangeEnd.HasValue, x => x.OrderLine.Order.DeliveryDate < orderDateRangeEnd)
                 .WhereIf(!string.IsNullOrEmpty(input.TicketNumber), x => x.TicketNumber.Contains(input.TicketNumber))
                 .WhereIf(!string.IsNullOrEmpty(input.TruckCode), x => x.TruckCode.Contains(input.TruckCode))
-                .WhereIf(!string.IsNullOrEmpty(input.JobNumber), x => x.OrderLine.Order.JobNumber == input.JobNumber)
+                .WhereIf(!string.IsNullOrEmpty(input.JobNumber), x => x.OrderLine.JobNumber == input.JobNumber)
                 .WhereIf(!input.Shifts.IsNullOrEmpty() && !input.Shifts.Contains(Shift.NoShift), t => t.Shift.HasValue && input.Shifts.Contains(t.Shift.Value) ||
                                                             t.OrderLine.Order.Shift.HasValue && input.Shifts.Contains(t.OrderLine.Order.Shift.Value))
                 .WhereIf(!input.Shifts.IsNullOrEmpty() && input.Shifts.Contains(Shift.NoShift), t => !t.Shift.HasValue && !t.OrderLineId.HasValue || input.Shifts.Contains(t.Shift.Value) ||
@@ -930,7 +930,7 @@ namespace DispatcherWeb.Tickets
                     ShiftRaw = t.OrderLineId.HasValue ? t.OrderLine.Order.Shift : t.Shift,
                     CustomerName = t.Customer != null ? t.Customer.Name : "",
                     QuoteName = t.OrderLine.Order.Quote.Name,
-                    JobNumber = t.OrderLine.Order.JobNumber,
+                    JobNumber = t.OrderLine.JobNumber,
                     Product = t.Service.Service1,
                     TicketNumber = t.TicketNumber,
                     Quantity = t.Quantity,
@@ -993,7 +993,7 @@ namespace DispatcherWeb.Tickets
                     Id = x.Id,
                     Shift = x.Order.Shift,
                     OrderId = x.OrderId,
-                    JobNumber = x.Order.JobNumber,
+                    JobNumber = x.JobNumber,
                     CustomerId = x.Order.CustomerId,
                     CustomerName = x.Order.Customer.Name,
                     OrderDate = x.Order.DeliveryDate,
@@ -1431,6 +1431,10 @@ namespace DispatcherWeb.Tickets
                     {
                         orderLine.ServiceId = orderLineModel.ServiceId;
                         orderLineTickets.ForEach(t => t.ServiceId = orderLineModel.ServiceId);
+                    }
+                    if (orderLine.JobNumber != orderLineModel.JobNumber)
+                    {
+                        orderLine.JobNumber = orderLineModel.JobNumber;
                     }
                     if (orderLine.Designation.FreightAndMaterial())
                     {

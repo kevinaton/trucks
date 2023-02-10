@@ -623,7 +623,6 @@
             }
             updateInputValue("#PONumber", option.data('poNumber'));
             updateInputValue("#SpectrumNumber", option.data('spectrumNumber'));
-            updateInputValue("#JobNumber", option.data('jobNumber'));
             updateInputValue("#Directions", option.data('directions'));
             if (abp.session.officeCopyChargeTo) {
                 updateInputValue("#ChargeTo", option.data('chargeTo'));

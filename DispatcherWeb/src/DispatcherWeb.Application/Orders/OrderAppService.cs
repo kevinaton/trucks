@@ -186,7 +186,7 @@ namespace DispatcherWeb.Orders
                 .WhereIf(input.ServiceId.HasValue,
                          x => x.OrderLines.Any(ol => ol.ServiceId == input.ServiceId))
                 .WhereIf(!string.IsNullOrEmpty(input.JobNumber),
-                        x => x.JobNumber == input.JobNumber)
+                        x => x.OrderLines.Any(ol => ol.JobNumber == input.JobNumber))
                 .WhereIf(!string.IsNullOrEmpty(input.Misc),
                          x => x.Quote.Name.Contains(input.Misc)
                          || x.ChargeTo.Contains(input.Misc))
@@ -207,14 +207,13 @@ namespace DispatcherWeb.Orders
                     OfficeName = x.Office.Name,
                     CustomerName = x.Customer.Name,
                     QuoteName = x.Quote.Name,
-                    JobNumber = x.JobNumber,
                     PONumber = x.PONumber,
                     ContactName = x.CustomerContact.Name,
                     ChargeTo = x.ChargeTo,
                     CODTotal = x.CODTotal,
                     NumberOfTrucks = x.OrderLines.Sum(ol => ol.NumberOfTrucks),
                     IsShared = false /*x.SharedOrders.Any(o => o.OfficeId != x.LocationId)*/,
-                    EmailDeliveryStatuses = x.OrderEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList()
+                    EmailDeliveryStatuses = x.OrderEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList(),
                 })
                 .OrderBy(input.Sorting)
                 .PageBy(input)
@@ -260,7 +259,6 @@ namespace DispatcherWeb.Orders
                         IsShared = order.SharedOrders.Any(o => o.OfficeId != order.LocationId),
                         //IsFreightTotalOverridden = order.IsFreightTotalOverridden,
                         //IsMaterialTotalOverridden = order.IsMaterialTotalOverridden,
-                        JobNumber = order.JobNumber,
                         LocationId = order.LocationId,
                         MaterialTotal = order.MaterialTotal,
                         OfficeName = order.Office.Name,
@@ -432,7 +430,7 @@ namespace DispatcherWeb.Orders
                     await ThrowIfOrderHasReceiptsForOwnerOfficeId(model.Id.Value);
                 }
 
-                if (order.CustomerId != model.CustomerId || order.MaterialCompanyOrderId.HasValue && order.JobNumber != model.JobNumber)
+                if (order.CustomerId != model.CustomerId)
                 {
                     if (await HasLoadedDispatchesForOrder(model.Id.Value) || await HasManualTicketsForOrder(model.Id.Value))
                     {
@@ -483,7 +481,6 @@ namespace DispatcherWeb.Orders
             order.IsClosed = model.IsClosed;
             //order.IsFreightTotalOverridden = model.IsFreightTotalOverridden;
             //order.IsMaterialTotalOverridden = model.IsMaterialTotalOverridden;
-            order.JobNumber = model.JobNumber;
             order.LocationId = model.LocationId;
             order.MaterialTotal = model.MaterialTotal;
             order.PONumber = model.PONumber;
@@ -593,7 +590,6 @@ namespace DispatcherWeb.Orders
                 {
                     x.HasLinkedHaulingCompanyOrders,
                     x.DeliveryDate,
-                    JobNumber = x.JobNumber, //x.Customer.Name,
                     x.Directions,
                     x.IsClosed,
                     x.IsPending,
@@ -624,7 +620,6 @@ namespace DispatcherWeb.Orders
                     {
                         var destinationOrderEditDto = await GetOrderForEdit(new NullableIdDto(destinationOrderId.Id));
                         destinationOrderEditDto.DeliveryDate = sourceOrder.DeliveryDate;
-                        destinationOrderEditDto.JobNumber = sourceOrder.JobNumber;
                         destinationOrderEditDto.Directions = sourceOrder.Directions;
                         destinationOrderEditDto.IsClosed = sourceOrder.IsClosed;
                         destinationOrderEditDto.IsPending = sourceOrder.IsPending;
@@ -1333,6 +1328,7 @@ namespace DispatcherWeb.Orders
                             FirstStaggeredTimeOnJob = x.FirstStaggeredTimeOnJob == null ? null : (currentDate.Date.Add(x.FirstStaggeredTimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
                             StaggeredTimeKind = x.StaggeredTimeKind,
                             StaggeredTimeInterval = x.StaggeredTimeInterval,
+                            JobNumber = x.JobNumber,
                             Note = x.Note,
                             IsMultipleLoads = x.IsMultipleLoads,
                             ProductionPay = allowProductionPay && x.ProductionPay,
@@ -1776,6 +1772,7 @@ namespace DispatcherWeb.Orders
                         IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        JobNumber = x.JobNumber,
                         Note = x.Note,
                         IsMultipleLoads = x.IsMultipleLoads,
                         NumberOfTrucks = x.NumberOfTrucks,
@@ -1851,6 +1848,7 @@ namespace DispatcherWeb.Orders
                         //Quantity = x.Quantity, //Do not default quantities. They will have to fill that in.
                         //MaterialQuantity = x.MaterialQuantity,
                         //FreightQuantity = x.FreightQuantity,
+                        JobNumber = x.JobNumber,
                         Note = x.Note,
                         CanOverrideTotals = true,
                         QuoteId = input.QuoteId.Value,
@@ -1930,6 +1928,7 @@ namespace DispatcherWeb.Orders
                         IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        JobNumber = x.JobNumber,
                         Note = x.Note,
                         NumberOfTrucks = x.NumberOfTrucks,
                         TimeOnJob = x.TimeOnJob,
@@ -2118,6 +2117,7 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.IsMaterialPriceOverridden, model.IsMaterialPriceOverridden);
             await orderLineUpdater.UpdateFieldAsync(o => o.IsFreightPriceOverridden, model.IsFreightPriceOverridden);
             await orderLineUpdater.UpdateFieldAsync(o => o.LeaseHaulerRate, model.LeaseHaulerRate);
+            await orderLineUpdater.UpdateFieldAsync(o => o.JobNumber, model.JobNumber);
             await orderLineUpdater.UpdateFieldAsync(o => o.Note, model.Note);
 
             await orderLineUpdater.UpdateFieldAsync(o => o.TimeOnJob, date.AddTimeOrNull(model.TimeOnJob)?.ConvertTimeZoneFrom(timezone));

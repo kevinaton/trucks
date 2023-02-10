@@ -22,7 +22,6 @@ namespace DispatcherWeb.Orders
                 Directions = order.Directions,
                 FreightTotal = order.FreightTotal,
                 IsClosed = order.IsClosed,
-                JobNumber = order.JobNumber,
                 LocationId = order.LocationId,
                 MaterialTotal = order.MaterialTotal,
                 PONumber = order.PONumber,

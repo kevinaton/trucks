@@ -215,7 +215,7 @@ namespace DispatcherWeb
         [Display(Name = "Sales Person")]
         SalesPerson = 32,
         [Display(Name = "Job Number")]
-        JobNumber = 33,
+        LineItemJobNumber = 33,
 
         [Display(Name = "Lease Hauler Rate")]
         LineItemLeaseHaulerRate = 34,

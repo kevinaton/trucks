@@ -2,6 +2,7 @@
 using Abp.Dependency;
 using Abp.Runtime.Session;
 using Abp.Web.Sessions;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Web.Utils;
 
@@ -39,6 +40,10 @@ namespace DispatcherWeb.Web.Session
                 var officeCopyChargeTo = session.OfficeCopyChargeTo;
                 script.AppendLine("    abp.session.officeCopyChargeTo = " + (officeCopyChargeTo ? "true" : "false") + ";");
             }
+
+            script.AppendLine("    abp.entityStringFieldLengths = abp.entityStringFieldLengths || {};");
+            script.AppendLine("    abp.entityStringFieldLengths.orderLine = abp.entityStringFieldLengths.orderLine || {};");
+            script.AppendLine("    abp.entityStringFieldLengths.orderLine.jobNumber = " + EntityStringFieldLengths.OrderLine.JobNumber + ";");
 
             script.AppendLine();
             script.Append("})();");
