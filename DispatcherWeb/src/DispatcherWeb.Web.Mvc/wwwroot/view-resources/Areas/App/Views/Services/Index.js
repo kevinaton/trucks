@@ -16,7 +16,7 @@
         var statusFilter = $('#StatusFilter');
         statusFilter.select2Init({
             showAll: true,
-            allowClear: true
+            allowClear: false
         });
 
         var servicesTable = $('#ServicesTable');
