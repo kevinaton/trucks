@@ -72,7 +72,7 @@
             _employeeIdDropdown = _modal.find("#EmployeeId");
             _employeeIdDropdown.select2Init({
                 abpServiceMethod: _employeeTimeService.getUsersSelectList,
-                minimumInputLength: 0,
+                showAll: false,
                 allowClear: false
             }).on("change", function (e) {
                 checkIfManualTimeIsAllowed();
@@ -86,7 +86,7 @@
                     allowForManualTime: getIsManualTime() ? true : null,
                     employeeId: _employeeIdDropdown.val()
                 }),
-                minimumInputLength: 0,
+                showAll: true,
                 allowClear: false
             }).on("change", function (e) {
                 checkIfManualTimeIsAllowed();
