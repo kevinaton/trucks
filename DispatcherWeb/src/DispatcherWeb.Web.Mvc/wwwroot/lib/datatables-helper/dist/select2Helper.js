@@ -19,11 +19,17 @@
         if (!match || !text) {
             return $('<span>').text(text);
         }
-        console.log({ textToRender: text, matchToRender: match });
-        var safeTextHtml = $('<span>').text(text).html();
-        var safeMatchHtml = $('<span>').text(match).html();
-        var safeResultHtml = safeTextHtml.replace(new RegExp(escapeRegExp(safeMatchHtml), 'gi'), (safeCaseSensitiveMatchHtml) => `<span class="select2-rendered__match">${safeCaseSensitiveMatchHtml}</span>`);
-        return $(`<span>${safeResultHtml}</span>`);
+        var matchRegex = new RegExp('(' + escapeRegExp(match) + ')', 'gi');
+        var parts = text.split(matchRegex);
+        var result = $('<span>');
+        for (var i = 0; i < parts.length; i++) {
+            var span = $('<span>').text(parts[i]);
+            if (i % 2 !== 0) {
+                span.addClass('select2-rendered__match');
+            }
+            result.append(span);
+        }
+        return result;
     }
     function getSelect2AddNewItemOption(text) {
         return {
