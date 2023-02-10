@@ -45,6 +45,7 @@
             var $defaultDriverId = _$form.find("#DefaultDriverId");
             var officeDropdown = _$form.find('#OfficeId');
             var vehicleCategoryDropdown = _$form.find("#VehicleCategoryId");
+            
             var canPullTrailerCheckbox = _$form.find('#CanPullTrailer');
             var alwaysShowOnScheduleCheckbox = _$form.find('#AlwaysShowOnSchedule');
 
@@ -77,15 +78,14 @@
             $defaultDriverId.select2Init({
                 abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulerDriversSelectList,
                 abpServiceParams: { leaseHaulerId: _$form.find('#LeaseHaulerId').val() },
-                showAll: true,
-                //dropdownParent: $("#" + _modalManager.getModalId())
+                showAll: false,
+                allowClear: true 
             });
 
             vehicleCategoryDropdown.select2Init({
                 abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
-                //abpServiceParams: { isPowered: true },
-                allowClear: true,
-                showAll: true
+                showAll: true,
+                allowClear: true 
             });
 
             officeDropdown.select2Init({

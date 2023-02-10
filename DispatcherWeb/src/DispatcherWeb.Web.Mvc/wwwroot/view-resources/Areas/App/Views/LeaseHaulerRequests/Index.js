@@ -16,9 +16,9 @@
         stateSave: true,
         stateDuration: 0,
 
-        stateLoadCallback: function(settings, callback) {
+        stateLoadCallback: function (settings, callback) {
             app.localStorage.getItem('leaseHaulerRequests_filter',
-                function(result) {
+                function (result) {
                     var filter = result || {};
 
                     if (filter.dateRangeFilter) {
@@ -43,19 +43,19 @@
                     }
 
                     app.localStorage.getItem('leaseHaulerRequests_grid',
-                        function(result) {
+                        function (result) {
                             callback(JSON.parse(result));
                         });
 
                 });
         },
-        stateSaveCallback: function(settings, data) {
+        stateSaveCallback: function (settings, data) {
             delete data.columns;
             delete data.search;
             app.localStorage.setItem('leaseHaulerRequests_grid', JSON.stringify(data));
             app.localStorage.setItem('leaseHaulerRequests_filter', _dtHelper.getFilterData());
         },
-        ajax: function(data, callback, settings) {
+        ajax: function (data, callback, settings) {
             var abpData = _dtHelper.toAbpData(data);
             $.extend(abpData, _dtHelper.getFilterData());
             $.extend(abpData, parseDate(abpData.dateRangeFilter));
@@ -63,10 +63,10 @@
             localStorage.setItem('leaseHaulerRequests_filter', JSON.stringify(abpData));
 
             abp.ui.setBusy();
-            _leaseHaulerRequestListService.getLeaseHaulerRequestPagedList(abpData).done(function(abpResult) {
-                    callback(_dtHelper.fromAbpResult(abpResult));
-                })
-                .always(function() {
+            _leaseHaulerRequestListService.getLeaseHaulerRequestPagedList(abpData).done(function (abpResult) {
+                callback(_dtHelper.fromAbpResult(abpResult));
+            })
+                .always(function () {
                     abp.ui.clearBusy();
                 });
         },
@@ -76,7 +76,7 @@
                 width: '20px',
                 className: 'control responsive',
                 orderable: false,
-                render: function() {
+                render: function () {
                     return '';
                 },
                 targets: 0
@@ -254,6 +254,7 @@
             },
             showDropDown: true
         };
+
         $("#DateRangeFilter").daterangepicker(drpOptions)
             .on('apply.daterangepicker', function (ev, picker) {
                 $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
@@ -261,18 +262,23 @@
             .on('cancel.daterangepicker', function (ev, picker) {
                 $(this).val('');
             });
+
         $('#LeaseHaulerIdFilter').select2Init({
             abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
-            minimumInputLength: 0,
+            showAll: false,
             allowClear: true
         });
-        $('#ShiftFilter').select2Init({ allowClear: false });
-        $("#OfficeIdFilter").select2Init({
-            abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            minimumInputLength: 0,
+
+        $('#ShiftFilter').select2Init({
+            showAll: true,
             allowClear: false
         });
 
+        $("#OfficeIdFilter").select2Init({
+            abpServiceMethod: abp.services.app.office.getOfficesSelectList,
+            showAll: true,
+            allowClear: false
+        });
     }
 
     function parseDate(dateRangeString) {
