@@ -1982,3 +1982,19 @@ a.btn-default:hover {
     display: inline-block;
     line-height: 23px;
 }
+
+.select2-preset {
+    padding: 0.85rem 1.15rem;
+    line-height: 1.25;
+    border: 1px solid #ebedf2;
+    outline: none !important;
+    border-radius: 0.25rem;
+    height: auto;
+    width: 100%;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 300;
+    font-family: Poppins;
+    -ms-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+}
