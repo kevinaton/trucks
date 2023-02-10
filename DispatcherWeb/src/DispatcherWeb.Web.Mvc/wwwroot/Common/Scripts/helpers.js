@@ -1455,8 +1455,6 @@
 
         var $element = $(this);
         const select2PageSize = 20;
-        var placeholder = $(this).data('placeholder') || $(this).find('option[value=""]').text() || '';
-        $element.attr('data-placeholder', placeholder);
 
         var googlePlacesContext = {
             sessionToken: null //new google.maps.places.AutocompleteSessionToken()
@@ -1476,19 +1474,9 @@
         var defaultOptions = {
             abpServiceMethod: abp.services.app.location.getLocationsSelectList,
             minimumInputLength: 1,
-            allowClear: false,
-            width: "100%",
+            allowClear: true,
             ajax: {
                 delay: 500,
-                data: function (params) {
-                    params.page = params.page || 1;
-                    return {
-                        page: params.page,
-                        term: params.term,
-                        skipCount: (params.page - 1) * select2PageSize,
-                        maxResultCount: select2PageSize
-                    };
-                },
                 transport: function (params, success, failure) {
                     var additionalParams = {};
                     if (userOptions.abpServiceParamsGetter) {
@@ -1534,51 +1522,27 @@
                         .fail(failure);
                 },
                 cache: false
-            },
-            templateResult: function (data) {
-                if (data.id === '') {
-                    return placeholder;
-                }
-                data.text = data.name;
-                return data.name;
             }
         };
-        if (userOptions.dropdownParent !== undefined) {
-            defaultOptions.dropdownParent = userOptions.dropdownParent;
-        }
-        if (userOptions.showAll) {
-            defaultOptions.minimumInputLength = 0;
-        }
-        if (userOptions.noSearch) {
-            defaultOptions.minimumResultsForSearch = Infinity;
-        }
 
         var options = $.extend(true, {}, defaultOptions, userOptions);
-
-        //clear the results before the next opening, so it would calculate the height of popup correctly.
-        $element.on("select2:close", function () { $(this).data("select2").$results.empty(); });
-        //same, but for the case when a term is entered but popup is closed before an ajax call is complete
-        $element.on("select2:opening", function () { $(this).data("select2").$results.empty(); });
-
 
         $element.on("select2:close", function () {
             //'close' is called after the 'change', so we can clear the session token
             googlePlacesContext.sessionToken = null;
         });
         $element.change(function () {
-            if ($element.closest(".form-group").hasClass("has-danger")) {
-                $(this).closest("form").valid();
-            }
-
             var val = $element.val();
+            var select2 = $element.data('select2');
             if (val && val.startsWith(_googlePlacesHelper.googlePlaceIdPrefix)) {
                 var onFail = function () {
                     $element.val(null).change();
-                    abp.ui.clearBusy($element);
+                    abp.ui.clearBusy(select2?.$container);
                 };
                 var placeId = val.substring(_googlePlacesHelper.googlePlaceIdPrefix.length);
                 if (!placeId) {
                     console.error('select2 had value ' + val + ' that can\'t be replaced');
+                    onFail();
                     return;
                 }
                 var sessionToken = googlePlacesContext.sessionToken;
@@ -1588,7 +1552,7 @@
                     return;
                 }
 
-                abp.ui.setBusy($element);
+                abp.ui.setBusy(select2?.$container);
                 googlePlacesContext.placesService.getDetails({
                     placeId,
                     sessionToken,
@@ -1622,7 +1586,7 @@
                         newLocation
                     ).then(createdLocation => {
                         abp.helper.ui.addAndSetDropdownValue($element, createdLocation.id, createdLocation.displayName);
-                        abp.ui.clearBusy($element);
+                        abp.ui.clearBusy(select2?.$container);
                     }).fail(function () {
                         onFail();
                     });
@@ -1630,7 +1594,7 @@
             }
         });
 
-        return $element.select2(options);
+        return $element.select2Init(options);
     };
 
     var _googlePlacesHelper = {

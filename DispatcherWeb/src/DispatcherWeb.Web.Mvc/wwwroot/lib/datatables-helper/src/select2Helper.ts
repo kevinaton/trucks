@@ -29,15 +29,19 @@ interface JQuery {
             return $('<span>').text(text);
         }
 
-        var safeTextHtml = $('<span>').text(text).html();
-        var safeMatchHtml = $('<span>').text(match).html();
+        var matchRegex = new RegExp('(' + escapeRegExp(match) + ')', 'gi');
+        var parts = text.split(matchRegex);
 
-        var safeResultHtml = safeTextHtml.replace(
-            new RegExp(escapeRegExp(safeMatchHtml), 'gi'),
-            (safeCaseSensitiveMatchHtml) => `<span class="select2-rendered__match">${safeCaseSensitiveMatchHtml}</span>`
-        );
+        var result = $('<span>');
+        for (var i = 0; i < parts.length; i++) {
+            var span = $('<span>').text(parts[i])
+            if (i % 2 !== 0) {
+                span.addClass('select2-rendered__match');
+            }
+            result.append(span);
+        }
 
-        return $(`<span>${safeResultHtml}</span>`);
+        return result;
     }
 
     function getSelect2AddNewItemOption(text: string) {
@@ -66,6 +70,7 @@ interface JQuery {
                 data: function (params) {
                     params.page = params.page || 1;
                     return {
+                        page: params.page,
                         term: params.term,
                         skipCount: (params.page - 1) * select2PageSize,
                         maxResultCount: select2PageSize
@@ -81,22 +86,29 @@ interface JQuery {
                 processResults: function (data, params) {
                     params.page = params.page || 1;
 
+                    var result;
+                    if (data.results && data.pagination !== undefined) {
+                        result = data;
+                    } else {
+                        result = {
+                            results: data.items,
+                            pagination: {
+                                more: params.page * select2PageSize < data.totalCount
+                            }
+                        };
+                    }
+
                     if (userOptions.addItemCallback
                         && params.page === 1
                         && params.term
-                        && !data.items.some(i => (i.name || i.text || '').toLowerCase() === params.term?.toLowerCase())) {
-                        data.items = [
+                        && !result.results.some(i => (i.name || i.text || '').toLowerCase() === params.term?.toLowerCase())) {
+                        result.results = [
                             getSelect2AddNewItemOption(params.term),
-                            ...data.items
+                            ...result.results
                         ];
                     }
 
-                    return {
-                        results: data.items,
-                        pagination: {
-                            more: params.page * select2PageSize < data.totalCount
-                        }
-                    };
+                    return result;
                 },
                 cache: false
             },

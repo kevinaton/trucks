@@ -24,7 +24,7 @@
 
     $('#AnalyzeBy').select2Init({
         showAll: true,
-        allowClear: true
+        allowClear: false
     });
 
     $("#ViewButton").click(function () {
