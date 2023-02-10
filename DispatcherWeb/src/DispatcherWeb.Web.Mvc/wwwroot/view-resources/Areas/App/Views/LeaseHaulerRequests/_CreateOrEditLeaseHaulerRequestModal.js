@@ -25,7 +25,6 @@
             function initLeseHaulerDropdown() {
                 $leaseHaulerDropdown.select2Init({
                     abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
-                    //dropdownParent: _modalManager.getModalContent()
                     showAll: false,
                     allowClear: true
                 });
