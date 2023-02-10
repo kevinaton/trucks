@@ -270,11 +270,18 @@
             _freightAmountInput.val(round(_freightAmountInput.val()).toFixed(2));
 
             _loadAtDropdown.select2Init({
-                abpServiceMethod: abp.services.app.location.getLocationsSelectList
+                abpServiceMethod: abp.services.app.location.getLocationsSelectList,
+                showAll: false,
+                allowClear: true
             });
+
             _deliverToDropdown.select2Init({
-                abpServiceMethod: abp.services.app.location.getLocationsSelectList
+                abpServiceMethod: abp.services.app.location.getLocationsSelectList,
+                showAll: false,
+                allowClear: true
+
             });
+
             _serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
                 showAll: false,
@@ -283,6 +290,7 @@
                     _createOrEditServiceModal.open({ name: newServiceName });
                 } : null
             });
+
             _materialUomDropdown.select2Uom();
             _freightUomDropdown.select2Uom();
             _designationDropdown.select2Init({

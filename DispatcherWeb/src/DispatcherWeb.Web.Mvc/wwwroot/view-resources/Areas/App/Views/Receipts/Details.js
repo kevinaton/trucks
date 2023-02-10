@@ -194,10 +194,6 @@
         $("#DeliveryDate").datepickerInit();
         $("#ReceiptDate").datepickerInit();
 
-        $("#LocationId").select2Init({
-            abpServiceMethod: abp.services.app.location.getLocationsSelectList
-        });
-
         $("#CustomerId").select2Init({
             abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
             showAll: false,
