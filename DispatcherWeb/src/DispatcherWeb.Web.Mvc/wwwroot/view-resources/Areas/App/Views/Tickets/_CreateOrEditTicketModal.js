@@ -46,24 +46,22 @@
 
             loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                width: 'calc(100% - 45px)',
                 showAll: false,
                 allowClear: true,
-                /*addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
+                addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
                     _addLocationTarget = "LoadAtId";
                     _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
-                } : undefined*/
+                } : null
             });
 
             deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                width: 'calc(100% - 45px)',
                 showAll: false,
                 allowClear: true,
-                /*addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
+                addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
                     _addLocationTarget = "DeliverToId";
                     _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
-                } : undefined*/
+                } : null
             });
 
             _$form.find("select#OfficeId").select2Init({
@@ -198,12 +196,6 @@
                 var targetDropdown = _$form.find("#" + _addLocationTarget);
                 abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.id, e.item.displayName);
                 targetDropdown.change();
-            });
-
-            modal.find(".AddNewLocationButton").click(function (e) {
-                e.preventDefault();
-                _addLocationTarget = $(this).data('target-field');
-                _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
             });
 
             if (modal.find("#ReadOnly").val() === "true") {
