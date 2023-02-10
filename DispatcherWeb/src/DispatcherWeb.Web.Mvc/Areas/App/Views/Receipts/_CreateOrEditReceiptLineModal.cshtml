@@ -47,15 +47,13 @@
         </div>
         <div class="form-group">
             <label class="required-label">Item</label>
-            <div class="input-group">
-                <select class="form-control" asp-for="ServiceId" required>
-                    <option value="">Select an item</option>
-                    @if (Model.ServiceId != 0)
-                    {
-                        <option selected value="@Model.ServiceId">@Model.ServiceName</option>
-                    }
-                </select>
-            </div>
+            <select class="form-control" asp-for="ServiceId" required>
+                <option value="">Select an item</option>
+                @if (Model.ServiceId != 0)
+                {
+                    <option selected value="@Model.ServiceId">@Model.ServiceName</option>
+                }
+            </select>
         </div>
         <div class="form-group">
             <label class="required-label" for="MaterialUomId">Material UOM</label>
