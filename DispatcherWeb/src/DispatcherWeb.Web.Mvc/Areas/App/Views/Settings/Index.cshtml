@@ -673,7 +673,7 @@
                                 <input id="TaxVatNo" type="text" class="form-control" name="TaxVatNo" value="@Model.Settings.Billing.TaxVatNo" maxlength="32">
                             </div>
                             <div class="form-group">
-                                <label for="TaxCalculationType">@L("TaxCalculationType")</label>
+                                <label for="TaxCalculationType" class="required-label">@L("TaxCalculationType")</label>
                                 <select class="form-control" name="TaxCalculationType" id="TaxCalculationType" asp-items="@Html.GetEnumSelectList(Model.Settings.Billing.TaxCalculationType)"></select>
                             </div>
                             <div id="AutopopulateCheckboxBlock">
@@ -690,13 +690,13 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="InvoiceTemplate">@L("InvoiceTemplate")</label>
+                                <label for="InvoiceTemplate" class="required-label">@L("InvoiceTemplate")</label>
                                 <select class="form-control" name="InvoiceTemplate" id="InvoiceTemplate" asp-items="@Html.GetEnumSelectList(Model.Settings.Billing.InvoiceTemplate)"></select>
                             </div>
                             @if (await FeatureChecker.IsEnabledAsync(AppFeatures.QuickbooksFeature))
                             {
                                 <div class="form-group">
-                                    <label for="QuickbooksIntegrationKind">@L("AccountingIntegration")</label>
+                                    <label for="QuickbooksIntegrationKind" class="required-label">@L("AccountingIntegration")</label>
                                     <select class="form-control" name="QuickbooksIntegrationKind" id="QuickbooksIntegrationKind" asp-items="@Html.GetEnumSelectList(Model.Settings.Billing.QuickbooksIntegrationKind ?? QuickbooksIntegrationKind.None)"></select>
                                 </div>
                                 <input type="hidden" id="IsQuickbooksConnected" name="IsQuickbooksConnected" asp-for="Settings.Billing.IsQuickbooksConnected" />
