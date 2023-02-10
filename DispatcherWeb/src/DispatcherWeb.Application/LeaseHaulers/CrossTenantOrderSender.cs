@@ -654,7 +654,7 @@ namespace DispatcherWeb.LeaseHaulers
                                 {
                                     await haulingOrderLineUpdater.UpdateFieldAsync(x => x.Designation, DesignationEnum.FreightOnly);
                                 }
-                                var destinationUom = await FindOrGetFallbackUnitOfMeasureAsync(sourceOrderLine.FreightUom.Name ?? sourceOrderLine.MaterialUom.Name);
+                                var destinationUom = await FindOrGetFallbackUnitOfMeasureAsync(sourceOrderLine.FreightUom?.Name ?? sourceOrderLine.MaterialUom?.Name);
                                 await haulingOrderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, destinationUom.Id);
                                 break;
 
@@ -728,7 +728,7 @@ namespace DispatcherWeb.LeaseHaulers
                                 {
                                     await materialOrderLineUpdater.UpdateFieldAsync(x => x.Designation, DesignationEnum.FreightAndMaterial);
                                 }
-                                var destinationUom = await FindOrGetFallbackUnitOfMeasureAsync(sourceOrderLine.FreightUom.Name ?? sourceOrderLine.MaterialUom.Name);
+                                var destinationUom = await FindOrGetFallbackUnitOfMeasureAsync(sourceOrderLine.FreightUom?.Name ?? sourceOrderLine.MaterialUom?.Name);
                                 await materialOrderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, destinationUom.Id);
                                 break;
 
