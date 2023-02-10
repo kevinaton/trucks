@@ -5,8 +5,8 @@
         var _dtHelper = abp.helper.dataTables;
 
         $("#StatusFilter").select2Init({
-            allowClear: false,
-            showAll: true
+            showAll: true,
+            allowClear: true
         });
 
         $("#StartDateFilter").daterangepicker({

@@ -60,12 +60,9 @@
         var today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        $("#LoadAtId").select2Init({
-            abpServiceMethod: abp.services.app.location.getLocationsSelectList
-        });
-
-        $("#DeliverToId").select2Init({
-            abpServiceMethod: abp.services.app.location.getLocationsSelectList
+        $("#Status").select2Init({
+            showAll: true,
+            allowClear: false
         });
 
         var projectServicesTable = $('#ProjectServicesTable');
