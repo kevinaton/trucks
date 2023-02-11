@@ -4,6 +4,7 @@ using DispatcherWeb.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    partial class DispatcherWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230210050929_AddedJobNumberToOrderLinesAndQuoteServices")]
+    partial class AddedJobNumberToOrderLinesAndQuoteServices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5424,10 +5426,6 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<bool>("IsMaterialRateOverridden")
                         .HasColumnType("bit");
-
-                    b.Property<string>("JobNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");

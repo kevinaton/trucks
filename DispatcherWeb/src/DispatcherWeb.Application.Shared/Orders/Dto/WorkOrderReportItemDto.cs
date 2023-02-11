@@ -30,6 +30,7 @@ namespace DispatcherWeb.Orders.Dto
         public bool IsMaterialTotalOverridden { get; set; }
         public bool IsFreightTotalOverridden { get; set; }
         public decimal? Rate => FreightPricePerUnit.HasValue || MaterialPricePerUnit.HasValue ? (FreightPricePerUnit ?? 0) + (MaterialPricePerUnit ?? 0) : (decimal?)null;
+        public string JobNumber { get; set; }
         public string Note { get; set; }
         public double NumberOfTrucks { get; set; }
         public DateTime? TimeOnJob { get; set; }

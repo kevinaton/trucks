@@ -523,6 +523,29 @@
         };
     }
 
+    function hanldeBlockTextChange(block, input) {
+        var newVal = input.val() || '';
+        var field = input.attr('name');
+
+        if (input.attr('maxlength')) {
+            let maxLength = Number(input.attr('maxlength'));
+            if (newVal.length > maxLength) {
+                newVal = newVal.substring(0, maxLength);
+            }
+        }
+
+        var affectedBlocks = _orderLineBlocks.filter(o => o.orderLine.id === block.orderLine.id);
+        affectedBlocks.forEach(function (affectedBlock) {
+            affectedBlock.orderLine[field] = newVal;
+            updateCardFromModel(affectedBlock);
+            refreshFieldHighlighting(affectedBlock);
+        });
+
+        return {
+            newVal
+        };
+    }
+
     function refreshFieldHighlighting(block) {
         if (block.ui) {
             let highlightRates = !(block.orderLine.freightRate || block.orderLine.materialRate);
@@ -656,7 +679,7 @@
             block.ui.driver,
             //block.ui.customer, //always readonly
             //block.ui.orderId, //always readonly
-            //block.ui.jobNumber, //always readonly
+            block.ui.jobNumber,
             block.ui.loadAt,
             block.ui.deliverTo,
             block.ui.item,
@@ -1046,7 +1069,7 @@
             ).append(
                 renderDisabledInput(ui, 'orderId', app.localize('OrderId'), 'orderId', '')
             ).append(
-                renderDisabledInput(ui, 'jobNumber', app.localize('JobNbr'), 'jobNumber', '')
+                renderTextInput(ui, 'jobNumber', app.localize('JobNbr'), 'jobNumber', abp.entityStringFieldLengths.orderLine.jobNumber)
             ).append(
                 renderDropdownPlaceholder(ui, 'loadAt', app.localize('LoadAt'), 'loadAtId', 'loadAtName')
             ).append(
@@ -1203,6 +1226,19 @@
                     orderLines: [block.orderLine]
                 });
             });
+        });
+
+        //should work for all orderline text fields
+        block.ui.jobNumber.focusout(function () {
+            if (_initializing) {
+                return;
+            }
+            var field = $(this).attr('name');
+            if ($(this).val() === block.orderLine[field]) {
+                return;
+            }
+            hanldeBlockTextChange(block, $(this));
+            saveOrderLine(block.orderLine);
         });
 
         block.ui.freightRate.add(
@@ -1707,6 +1743,17 @@
         ).append(
             ui[uiField] = $('<input class="form-control" type="text" data-rule-number="true" data-rule-min="0">').attr('data-rule-max', app.consts.maxDecimal).attr('name', nameOnForm).attr('id', id)
         );
+    }
+
+    function renderTextInput(ui, uiField, labelText, nameOnForm, maxlength) {
+        let id = abp.helper.getUniqueElementId();
+        var result = $('<div class="form-group col-lg-3 col-md-4 col-sm-6">').append(
+            $('<label class="control-label">').attr('for', id).text(labelText)
+        ).append(
+            ui[uiField] = $('<input type="text" class="form-control">').attr('name', nameOnForm).attr('id', id).attr('maxlength', maxlength)
+        );
+
+        return result;
     }
 
     function renderClickableWarningIcon(ui) {

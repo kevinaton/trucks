@@ -1,4 +1,5 @@
 ﻿using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders.TaxDetails;
 using Newtonsoft.Json;
 using System;
@@ -77,7 +78,12 @@ namespace DispatcherWeb.Receipts.Dto
         public bool IsFreightRateOverridden { get; set; }
 
         public bool CanOverrideTotals => true;
+        
         //public bool IsMultipleLoads { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
+        public string JobNumber { get; set; }
+
         public List<int> TicketIds { get; set; }
     }
 }

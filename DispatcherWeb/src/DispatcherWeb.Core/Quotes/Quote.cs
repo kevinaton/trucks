@@ -52,7 +52,8 @@ namespace DispatcherWeb.Quotes
         [StringLength(20)]
         public string SpectrumNumber { get; set; }
 
-        [StringLength(EntityStringFieldLengths.Order.JobNumber)]
+        [Obsolete]
+        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
         public string JobNumber { get; set; }
 
         [Column(TypeName = "money")]

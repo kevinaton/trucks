@@ -80,7 +80,6 @@ namespace DispatcherWeb.Receipts
                         OfficeId = receipt.OfficeId,
                         OfficeName = receipt.Office.Name,
                         MaterialTotal = receipt.MaterialTotal,
-                        JobNumber = receipt.JobNumber,
                         FreightTotal = receipt.FreightTotal,
                         PoNumber = receipt.PoNumber,
                         CustomerId = receipt.CustomerId,
@@ -124,7 +123,6 @@ namespace DispatcherWeb.Receipts
                         CustomerId = order.CustomerId,
                         CustomerName = order.Customer.Name,
                         DeliveryDate = order.DeliveryDate == null ? today : order.DeliveryDate.Value,
-                        JobNumber = order.JobNumber,
                         //OfficeId = order.LocationId,
                         //OfficeName = order.Office.Name,
                         OrderId = order.Id,
@@ -161,7 +159,6 @@ namespace DispatcherWeb.Receipts
             receipt.CustomerId = model.CustomerId;
             receipt.DeliveryDate = model.DeliveryDate;
             receipt.FreightTotal = model.FreightTotal;
-            receipt.JobNumber = model.JobNumber;
             receipt.MaterialTotal = model.MaterialTotal;
             receipt.OfficeId = model.OfficeId;
             receipt.PoNumber = model.PoNumber;
@@ -283,7 +280,8 @@ namespace DispatcherWeb.Receipts
                         MaterialQuantity = x.MaterialQuantity,
                         FreightUomName = x.FreightUom.Name,
                         MaterialUomName = x.MaterialUom.Name,
-                        ReceiptId = x.ReceiptId
+                        JobNumber = x.JobNumber,
+                        ReceiptId = x.ReceiptId,
                     })
                     .OrderBy(input.Sorting)
                     //.PageBy(input)
@@ -339,6 +337,7 @@ namespace DispatcherWeb.Receipts
                                 //MaterialQuantity = x.MaterialQuantity,
                                 FreightUomName = x.FreightUom.Name,
                                 MaterialUomName = x.MaterialUom.Name,
+                                JobNumber = x.JobNumber,
                                 //ReceiptId = x.ReceiptId
                             },
                             Tickets = x.Tickets
@@ -492,6 +491,7 @@ namespace DispatcherWeb.Receipts
                         MaterialQuantity = x.MaterialQuantity,
                         FreightUomName = x.FreightUom.Name,
                         MaterialUomName = x.MaterialUom.Name,
+                        JobNumber = x.JobNumber,
                         ReceiptId = x.ReceiptId
                     })
                     .SingleAsync(x => x.Id == input.Id.Value);
@@ -582,6 +582,7 @@ namespace DispatcherWeb.Receipts
             receiptLine.MaterialRate = model.MaterialRate;
             receiptLine.MaterialAmount = model.MaterialAmount;
             receiptLine.MaterialQuantity = model.MaterialQuantity;
+            receiptLine.JobNumber = model.JobNumber;
 
             if (isNew)
             {

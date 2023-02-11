@@ -102,7 +102,6 @@
 
         public static class Order
         {
-            public const int JobNumber = 20;
             public const int PoNumber = 20;
             public const int Directions = 1000;
             public const int SpectrumNumber = 20;
@@ -111,6 +110,7 @@
 
         public static class OrderLine
         {
+            public const int JobNumber = 20;
             public const int Note = 1000;
             public const int DriverNote = 500;
         }
@@ -122,7 +122,7 @@
 
         public static class Invoice
         {
-            public const int JobNumber = 50; //different from Order.JobNumber limit to support multiple job numbers displayed
+            public const int JobNumber = 100; //different from OrderLine.JobNumber limit to support multiple job numbers displayed
             public const int PoNumber = 50;
             public const int Message = 400;
         }

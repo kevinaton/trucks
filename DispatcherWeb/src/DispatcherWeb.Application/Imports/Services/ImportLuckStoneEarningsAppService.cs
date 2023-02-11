@@ -400,7 +400,6 @@ namespace DispatcherWeb.Imports.Services
                         .Include(x => x.OrderLines)
                         .Where(x => x.DeliveryDate == order.DeliveryDate
                             && x.CustomerId == order.CustomerId
-                            && x.JobNumber == order.JobNumber
                             && x.LocationId == order.LocationId
                             && x.IsClosed
                             && x.IsImported).FirstOrDefault();

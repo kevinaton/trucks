@@ -219,10 +219,6 @@
                     title: "Quote"
                 },
                 {
-                    data: "jobNumber",
-                    title: "Job #"
-                },
-                {
                     data: "poNumber",
                     title: "PO #"
                 },

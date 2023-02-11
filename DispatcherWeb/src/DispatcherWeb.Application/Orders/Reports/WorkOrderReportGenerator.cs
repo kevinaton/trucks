@@ -196,11 +196,7 @@ namespace DispatcherWeb.Orders.Reports
                 paragraph = document.LastSection.AddParagraph("Contact: ");
                 paragraph.AddText(model.ContactFullDetails ?? "");
 
-                paragraph = document.LastSection.AddParagraph("Job Number: ");
-                paragraph.AddText(model.JobNumber ?? "");
-                paragraph.Format.AddTabStop(secondColumnMargin);
-                paragraph.AddTab();
-                paragraph.AddText("PO Number: ");
+                paragraph = document.LastSection.AddParagraph("PO Number: ");
                 paragraph.AddText(model.PoNumber ?? "");
 
                 if (!model.HidePrices && model.SplitRateColumn)

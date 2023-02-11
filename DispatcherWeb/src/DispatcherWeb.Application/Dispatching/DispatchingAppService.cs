@@ -223,7 +223,7 @@ namespace DispatcherWeb.Dispatching
                     Status = d.Status,
                     CustomerName = d.OrderLine.Order.Customer.Name,
                     QuoteName = d.OrderLine.Order.Quote.Name,
-                    JobNumber = d.OrderLine.Order.JobNumber,
+                    JobNumber = d.OrderLine.JobNumber,
                     LoadAtNamePlain = d.OrderLine.LoadAt.Name + d.OrderLine.LoadAt.StreetAddress + d.OrderLine.LoadAt.City + d.OrderLine.LoadAt.State, //for sorting
                     LoadAt = d.OrderLine.LoadAt == null ? null : new LocationNameDto
                     {
@@ -2884,7 +2884,7 @@ namespace DispatcherWeb.Dispatching
                     }).ToList(),
                     LoadTime = x.SourceDateTime,
                     DeliveryTime = x.DestinationDateTime,
-                    JobNumber = x.Dispatch.OrderLine.Order.JobNumber,
+                    JobNumber = x.Dispatch.OrderLine.JobNumber,
                     ProductOrService = x.Dispatch.OrderLine.Service.Service1,
                     DispatchId = x.DispatchId,
                     OrderLineId = x.Dispatch.OrderLineId

@@ -89,6 +89,9 @@ namespace DispatcherWeb.Orders
 
         public bool IsFreightPriceOverridden { get; set; }
 
+        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
+        public string JobNumber { get; set; }
+
         [StringLength(EntityStringFieldLengths.OrderLine.Note)]
         public string Note { get; set; }
 

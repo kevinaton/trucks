@@ -3,6 +3,7 @@
 @using DispatcherWeb.Configuration
 @using DispatcherWeb.Features
 @using Abp.Application.Features
+@using DispatcherWeb.Infrastructure
 @using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Orders.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
@@ -154,6 +155,10 @@
                     <button type="button" class="btn btn-default" id="SetStaggeredTimeButton" title="@L("SetStaggeredTimes")"><span class="far fa-clock"></span></button>
                 </span>
             </div>
+        </div>
+        <div class="form-group">
+            <label>@L("JobNumber")</label>
+            <input class="form-control" type="text" asp-for="JobNumber" maxlength="@EntityStringFieldLengths.OrderLine.JobNumber">
         </div>
         <div class="form-group">
             <label>Note</label>

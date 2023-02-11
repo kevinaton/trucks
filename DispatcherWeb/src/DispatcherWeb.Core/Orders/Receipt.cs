@@ -44,7 +44,8 @@ namespace DispatcherWeb.Orders
         public int? QuoteId { get; set; }
         public Quote Quote { get; set; }
 
-        [StringLength(EntityStringFieldLengths.Order.PoNumber)]
+        [Obsolete]
+        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
         public string JobNumber { get; set; }
 
         [StringLength(EntityStringFieldLengths.Order.PoNumber)]
@@ -83,7 +84,6 @@ namespace DispatcherWeb.Orders
                 //IsFreightTotalOverridden = 
                 //IsMaterialTotalOverridden = 
                 //Total
-                JobNumber = order.JobNumber,
                 OfficeId = officeId,
                 OrderId = order.Id,
                 PoNumber = order.PONumber,

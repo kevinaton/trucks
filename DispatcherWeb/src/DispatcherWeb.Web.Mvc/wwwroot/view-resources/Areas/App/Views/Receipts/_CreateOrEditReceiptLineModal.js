@@ -28,6 +28,7 @@
         var _freightAmountInput = null; //total for item
         var _isMaterialAmountOverriddenInput = null;
         var _isFreightAmountOverriddenInput = null;
+        var _jobNumberInput = null;
 
         function reloadPricing(callback) {
             if (_initializing) {
@@ -288,6 +289,7 @@
             _freightAmountInput = _$form.find("#FreightAmount"); //total for item
             _isMaterialAmountOverriddenInput = _$form.find("#IsMaterialAmountOverridden");
             _isFreightAmountOverriddenInput = _$form.find("#IsFreightAmountOverridden");
+            _jobNumberInput = _$form.find("#JobNumber");
 
             _materialAmountInput.val(round(_materialAmountInput.val()).toFixed(2));
             _freightAmountInput.val(round(_freightAmountInput.val()).toFixed(2));
@@ -454,6 +456,7 @@
                 _receiptLine.freightQuantity = receiptLine.FreightQuantity;
                 _receiptLine.materialAmount = receiptLine.MaterialAmount;
                 _receiptLine.freightAmount = receiptLine.FreightAmount;
+                _receiptLine.jobNumber = receiptLine.JobNumber;
                 this.saveCallback && this.saveCallback(_receiptLine);
                 _modalManager.close();
                 abp.event.trigger('app.createOrEditReceiptLineModalSaved', {});
@@ -522,6 +525,7 @@
             _$form.find("#FreightQuantity").val(_receiptLine.freightQuantity);
             _$form.find("#MaterialAmount").val(_receiptLine.materialAmount);
             _$form.find("#FreightAmount").val(_receiptLine.freightAmount);
+            _$form.find("#JobNumber").val(_receiptLine.jobNumber);
             _modalManager.getModal().find('.modal-title').text(receiptLine.isNew ? "Add new line" : "Edit line");
             _initializing = false;
             reloadPricing();

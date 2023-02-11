@@ -77,6 +77,9 @@ namespace DispatcherWeb.Orders.Dto
         
         public decimal FreightPrice { get; set; }
 
+        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
+        public string JobNumber { get; set; }
+
         [StringLength(EntityStringFieldLengths.OrderLine.Note)]
         public string Note { get; set; }
 

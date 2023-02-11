@@ -28,7 +28,6 @@ namespace DispatcherWeb.Receipts.Dto
         public string CustomerName { get; set; }
         public int? QuoteId { get; set; }
         public string QuoteName { get; set; }
-        public string JobNumber { get; set; }
         public string PoNumber { get; set; }
         public decimal SalesTaxRate { get; set; }
 

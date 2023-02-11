@@ -53,6 +53,9 @@ namespace DispatcherWeb.Quotes.Dto
 
         public decimal? FreightQuantity { get; set; }
 
+        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
+        public string JobNumber { get; set; }
+
         [StringLength(EntityStringFieldLengths.OrderLine.Note)]
         public string Note { get; set; }
     }
