@@ -54,7 +54,6 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
                 roles = getRolesOutput.Items.Select(r => new ComboboxItemDto(r.Id.ToString(), r.DisplayName)).ToList();
             }
 
-            roles.Insert(0, new ComboboxItemDto("", ""));
             permissions.Insert(0, new ComboboxItemDto("", ""));
 
             var model = new UsersViewModel

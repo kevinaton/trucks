@@ -64,15 +64,9 @@
                                 {
                                     <div class="col-xl-6 m--margin-bottom-10">
                                         <label for="RoleSelectionCombo">@L("Role")</label>
-                                        @Html.DropDownList(
-                                            "RoleSelectionCombobox", Model.Roles.Select(i => i.ToSelectListItem()),
-                                            new
-                                            {
-                                                @class = "form-control selectpicker",
-                                                data_live_search = "true",
-                                                data_none_selected_text = L("FilterByRole"),
-                                                id = "RoleSelectionCombo"
-                                            })
+                                        <select class="form-control filter" name="RoleSelectionCombo" id="RoleSelectionCombo" asp-items="Model.Roles.Select(i => i.ToSelectListItem())">
+                                            <option value="">@L("FilterByRole")</option>
+                                        </select>
                                     </div>
                                 }
                                 @*<div class="@(IsGranted(AppPermissions.Pages_Administration_Roles) ? "col-xl-6" : "col-xl-12")">
