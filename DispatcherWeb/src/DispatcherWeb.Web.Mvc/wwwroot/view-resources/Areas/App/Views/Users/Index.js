@@ -288,8 +288,6 @@
 
         $("#ClearSearchButton").click(function () {
             $(this).closest('form')[0].reset();
-            //$('#RoleSelectionCombo').selectpicker('refresh');
-            $('#RoleSelectionCombo').refresh();
             $(".filter").change();
             getUsers();
         });
