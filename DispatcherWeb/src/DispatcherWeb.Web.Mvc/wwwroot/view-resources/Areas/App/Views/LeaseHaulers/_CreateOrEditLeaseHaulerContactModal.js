@@ -1,11 +1,11 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditLeaseHaulerContactModal = function () {
 
         var _modalManager;
         var _leaseHaulerService = abp.services.app.leaseHauler;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
@@ -26,7 +26,14 @@
 
             setRequiredAttributesAccordingToPreferredFormat();
 
-            _$form.find('#NotifyPreferredFormat').change(function () {
+            var notifyPreferredFormat = _$form.find('#NotifyPreferredFormat');
+
+            notifyPreferredFormat.select2Init({
+                showAll: true,
+                allowClear: false
+            });
+
+            notifyPreferredFormat.change(function () {
                 setRequiredAttributesAccordingToPreferredFormat();
             });
 
@@ -62,7 +69,7 @@
 
         this.save = function () {
             if (!_$form.valid()) {
-            	_$form.showValidateMessage();
+                _$form.showValidateMessage();
                 return;
             }
 
