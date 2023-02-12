@@ -1160,8 +1160,8 @@
         replaceDropdownPlaceholderWithDropdownOnFocus(block, 'loadAt', dropdown => {
             block.ui.loadAt.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                showAll: true,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             }).change(function () {
                 if (_initializing) {
                     return;
@@ -1176,8 +1176,8 @@
         replaceDropdownPlaceholderWithDropdownOnFocus(block, 'deliverTo', dropdown => {
             block.ui.deliverTo.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                showAll: true,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             }).change(function () {
                 if (_initializing) {
                     return;
