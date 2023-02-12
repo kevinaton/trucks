@@ -329,6 +329,10 @@ max-width: 150px; */
     margin-top: 40px;
 }
 
+.dropdown-menu {
+    font-weight: normal !important;
+}
+
 .datepicker.datepicker-dropdown.dropdown-menu {
     z-index: 1061 !important;
 }
@@ -1895,14 +1899,14 @@ a.btn-default:hover {
     border-radius: 50%;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__clear:hover {
-    background: #E3E6E9;
-}
+    .select2-container--default .select2-selection--single .select2-selection__clear:hover {
+        background: #E3E6E9;
+    }
 
-.select2-container--default .select2-selection--single .select2-selection__clear span {
-    font-weight: 900;
-    font-size: 24px;
-}
+    .select2-container--default .select2-selection--single .select2-selection__clear span {
+        font-weight: 900;
+        font-size: 24px;
+    }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     top: 20%;
@@ -1914,13 +1918,13 @@ a.btn-default:hover {
     border-radius: 50%;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__arrow:hover {
-    background: #E3E6E9;
-}
+    .select2-container--default .select2-selection--single .select2-selection__arrow:hover {
+        background: #E3E6E9;
+    }
 
-.select2-container--default .select2-selection--single .select2-selection__arrow:before {
-    font-weight: bold;
-}
+    .select2-container--default .select2-selection--single .select2-selection__arrow:before {
+        font-weight: bold;
+    }
 
 .select2-rendered__match {
     font-weight: 800;
@@ -1972,16 +1976,16 @@ a.btn-default:hover {
     overflow: hidden;
 }
 
-.select2-container--default .select2-selection--multiple .select2-selection__clear:hover {
-    background: #E3E6E9;
-}
+    .select2-container--default .select2-selection--multiple .select2-selection__clear:hover {
+        background: #E3E6E9;
+    }
 
-.select2-container--default .select2-selection--multiple .select2-selection__clear span {
-    font-weight: 300;
-    font-size: 26px;
-    display: inline-block;
-    line-height: 23px;
-}
+    .select2-container--default .select2-selection--multiple .select2-selection__clear span {
+        font-weight: 300;
+        font-size: 26px;
+        display: inline-block;
+        line-height: 23px;
+    }
 
 .select2-preset {
     padding: 0.85rem 1.15rem;
