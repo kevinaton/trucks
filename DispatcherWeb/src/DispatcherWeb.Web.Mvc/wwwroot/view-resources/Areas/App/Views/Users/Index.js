@@ -30,6 +30,11 @@
             showAll: true
         });
 
+        $("#RoleSelectionCombo").select2Init({
+            showAll: true,
+            allowClear: true 
+        });
+        
         var dataTable = _$usersTable.DataTableInit({
             paging: true,
             serverSide: true,
@@ -283,7 +288,6 @@
 
         $("#ClearSearchButton").click(function () {
             $(this).closest('form')[0].reset();
-            $('#RoleSelectionCombo').selectpicker('refresh');
             $(".filter").change();
             getUsers();
         });
