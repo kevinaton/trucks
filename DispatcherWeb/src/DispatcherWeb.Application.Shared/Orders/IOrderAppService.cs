@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Abp.Application.Services;
+﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Scheduling.Dto;
 using MigraDoc.DocumentObjectModel;
+using System.Threading.Tasks;
 
 namespace DispatcherWeb.Orders
 {
@@ -47,5 +47,7 @@ namespace DispatcherWeb.Orders
         Task SetSharedOrderLines(SetSharedOrderLineInput input);
         Task SetOrderOfficeId(SetOrderOfficeIdInput input);
         Task<SetOrderDateResult> SetOrderDate(SetOrderDateInput input);
+
+        Task<ListResultDto<SelectListDto>> GetOrdersSelectList(GetSelectListInput input);
     }
 }

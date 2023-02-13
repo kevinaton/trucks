@@ -9,7 +9,9 @@
 @{
     ViewBag.CurrentPageName = AppPageNames.Tenant.Tickets;
 }
-@section Scripts{
+
+@section Scripts
+{
     <environment names="Development">
         <script src="~/view-resources/Areas/app/Views/Tickets/Index.js" asp-append-version="true"></script>
         <script src="~/view-resources/Areas/App/Views/Tickets/_CreateOrEditTicketModal.js" asp-append-version="true"></script>
@@ -38,12 +40,12 @@
             @if (IsGranted(AppPermissions.AllowImportingTruxEarnings) && await SettingManager.GetSettingValueAsync<bool>(AppSettings.Trux.AllowImportingTruxEarnings))
             {
                 <a asp-controller="Imports" asp-action="Trux" class="btn btn-primary" data-toggle="tooltip" data-html="true"
-                        title="@L("ImportTruxEarnings")"><i class="fas fa-upload"></i> @L("Trux")</a>
+               title="@L("ImportTruxEarnings")"><i class="fas fa-upload"></i> @L("Trux")</a>
             }
             @if (IsGranted(AppPermissions.AllowImportingLuckStoneEarnings) && await SettingManager.GetSettingValueAsync<bool>(AppSettings.LuckStone.AllowImportingLuckStoneEarnings))
             {
                 <a asp-controller="Imports" asp-action="LuckStone" class="btn btn-primary" data-toggle="tooltip" data-html="true"
-                        title="@L("ImportLuckStoneEarnings")"><i class="fas fa-upload"></i> @L("LuckStone")</a>
+               title="@L("ImportLuckStoneEarnings")"><i class="fas fa-upload"></i> @L("LuckStone")</a>
             }
             <div class="btn-group dropdown">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -57,7 +59,9 @@
             @if (IsGranted(AppPermissions.Pages_Invoices))
             {
                 <button id="InvoiceSelectedTicketsButton" class="btn btn-primary" data-toggle="tooltip" data-html="true"
-                        title="Invoice Selected Tickets">@L("Invoice")</button>
+                    title="Invoice Selected Tickets">
+                    @L("Invoice")
+                </button>
             }
             @if (IsGranted(AppPermissions.Pages_Tickets_Edit))
             {
@@ -112,13 +116,15 @@
                         </div>
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="TruckFilter">@L("Truck")</label>
-                            <input class="form-control m-input filter" id="TruckFilter" name="TruckCode" placeholder="Truck" type="text">
+                            <select class="form-control m-input filter" name="TruckId" id="TruckFilter" data-display-name="TruckCode">
+                                <option value="">Select Truck</option>
+                            </select>
                         </div>
                         @if (await FeatureChecker.IsEnabledAsync(AppFeatures.AllowInvoicingFeature))
                         {
                             <div class="form-group col-xl-3">
                                 <label class="control-label" for="BillingStatusFilter">@L("BillingStatus")</label>
-                                <select class="form-control m-input filter" name="BillingStatus" id="BillingStatusFilter">
+                                <select class="form-control m-input filter" name="BillingStatus" id="BillingStatusFilter" data-display-name="BillingStatusName">
                                     <option value="">@L("All")</option>
                                     <option value="true">@L("Billed")</option>
                                     <option value="false">@L("Unbilled")</option>
@@ -127,7 +133,7 @@
                         }
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="IsVerifiedFilter">@L("Verified")</label>
-                            <select class="form-control m-input filter" name="IsVerified" id="IsVerifiedFilter">
+                            <select class="form-control m-input filter" name="IsVerified" id="IsVerifiedFilter" data-display-name="IsVerifiedDescription">
                                 <option value="">&nbsp;</option>
                                 <option value="true">@L("Verified")</option>
                                 <option value="false">@L("Unverified")</option>
@@ -135,20 +141,26 @@
                         </div>
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="CustomerNameFilter">@L("Customer")</label>
-                            <input class="form-control m-input filter" id="CustomerNameFilter" name="CustomerName" placeholder="Customer" type="text">
+                            <select class="form-control m-input filter" name="CustomerId" id="CustomerFilter" data-display-name="CustomerName">
+                                <option value="">Select Customer</option>
+                            </select>
                         </div>
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="LoadAtFilter">@L("LoadAt")</label>
-                            <input class="form-control m-input filter" id="LoadAtFilter" name="LoadAt" placeholder="Load At" type="text">
+                            <select class="dropdown form-control filter" name="LoadAtId" id="LoadAtFilter" data-display-name="LoadAtName">
+                                <option value="">@L("SelectALocation")</option>
+                            </select>
                         </div>
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="DeliverToFilter">@L("DeliverTo")</label>
-                            <input class="form-control m-input filter" id="DeliverToFilter" name="DeliverTo" placeholder="Deliver To" type="text">
+                            <select class="dropdown form-control filter" name="DeliverToId" id="DeliverToFilter" data-display-name="DeliverToName">
+                                <option value="">@L("SelectALocation")</option>
+                            </select>
                         </div>
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="TicketStatusFilter">@L("TicketStatus")</label>
-                            <select class="form-control filter" name="TicketStatus" id="TicketStatusFilter" asp-items="Html.GetEnumSelectList<TicketListStatusFilterEnum>()">
-                                <option value=""></option>
+                            <select class="form-control filter" name="TicketStatus" id="TicketStatusFilter" asp-items="Html.GetEnumSelectList<TicketListStatusFilterEnum>()" data-display-name="TicketStatusDescription">
+                                <option value="">Select ticket status</option>
                             </select>
                         </div>
                         <div class="form-group col-xl-3">
@@ -159,7 +171,9 @@
                         </div>
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="OrderIdFilter">@L("OrderNumber")</label>
-                            <input class="form-control m-input filter no-numeric-spinner" id="OrderIdFilter" name="OrderId" placeholder="@L("OrderNumber")" type="number" step="1" pattern="\d+">
+                            <select class="form-control m-input filter" id="OrderIdFilter" name="OrderId" data-display-name="OrderIdTitle">
+                                <option value="">Select an order</option>
+                            </select>
                         </div>
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="JobNumberFilter">@L("JobNumber")</label>
@@ -176,7 +190,7 @@
                         }
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="IsImportedFilter">@L("Imported")</label>
-                            <select class="form-control m-input filter" name="IsImported" id="IsImportedFilter">
+                            <select class="form-control m-input filter" name="IsImported" id="IsImportedFilter" data-display-name="IsImportedDescription">
                                 <option value="">&nbsp;</option>
                                 <option value="true">@L("Imported")</option>
                                 <option value="false">@L("NotImported")</option>
