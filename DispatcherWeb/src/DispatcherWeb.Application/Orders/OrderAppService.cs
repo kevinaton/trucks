@@ -366,11 +366,6 @@ namespace DispatcherWeb.Orders
                 orderEditDto.DefaultFuelSurchargeCalculationName = AppConsts.FuelSurchargeCalculationBlankName;
             }
 
-            if (orderEditDto.FuelSurchargeCalculationId == null)
-            {
-                orderEditDto.FuelSurchargeCalculationId = 0;
-            }
-
             return orderEditDto;
         }
 
@@ -470,8 +465,7 @@ namespace DispatcherWeb.Orders
                 }
             }
 
-            var newCalculationId = model.FuelSurchargeCalculationId == 0 ? null : model.FuelSurchargeCalculationId;
-            var needToRecalculateFuelSurcharge = order.FuelSurchargeCalculationId != newCalculationId || order.BaseFuelCost != model.BaseFuelCost;
+            var needToRecalculateFuelSurcharge = order.FuelSurchargeCalculationId != model.FuelSurchargeCalculationId || order.BaseFuelCost != model.BaseFuelCost;
 
             order.CODTotal = model.CODTotal;
             order.ContactId = model.ContactId;
@@ -492,7 +486,7 @@ namespace DispatcherWeb.Orders
             order.QuoteId = model.QuoteId;
             order.SalesTax = model.SalesTax;
             order.SalesTaxRate = model.SalesTaxRate;
-            order.FuelSurchargeCalculationId = newCalculationId;
+            order.FuelSurchargeCalculationId = model.FuelSurchargeCalculationId;
             order.BaseFuelCost = model.BaseFuelCost;
             order.Priority = model.Priority;
 

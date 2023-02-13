@@ -331,13 +331,10 @@
                                         <div class="col-lg-8 col-md-6 col-sm-12">
                                             <input type="hidden" id="DefaultFuelSurchargeCalculationName" value="@Model.DefaultFuelSurchargeCalculationName" />
                                             <select class="form-control" asp-for="FuelSurchargeCalculationId" disabled="@(Model.QuoteId.HasValue ? "disabled" : null)">
-                                                @if (Model.FuelSurchargeCalculationId != 0)
+                                                <option value="">@AppConsts.FuelSurchargeCalculationBlankName</option>
+                                                @if (Model.FuelSurchargeCalculationId > 0)
                                                 {
                                                     <option selected value="@Model.FuelSurchargeCalculationId">@Model.FuelSurchargeCalculationName</option>
-                                                }
-                                                else
-                                                {
-                                                    <option selected value="0">@AppConsts.FuelSurchargeCalculationBlankName</option>
                                                 }
                                             </select>
                                         </div>

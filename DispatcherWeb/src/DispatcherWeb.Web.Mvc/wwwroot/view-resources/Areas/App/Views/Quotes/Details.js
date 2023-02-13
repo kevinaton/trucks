@@ -115,13 +115,34 @@
 
         $("#SalesPersonId").select2Init({
             abpServiceMethod: abp.services.app.user.getSalespersonsSelectList,
-            minimumInputLength: 0,
+            showAll: false,
             allowClear: false
         });
-        $("#Status").select2Init({ allowClear: false });
-        $("#ContactId").select2Init();
+        $("#Status").select2Init({
+            showAll: true,
+            allowClear: false
+        });
+        $("#ContactId").select2Init({
+            showAll: false,
+            allowClear: true,
+            addItemCallback: async function (newItemName) {
+                var customerId = $("#CustomerId").val();
+                if (!customerId) {
+                    abp.notify.warn("Select a customer first");
+                    $("#CustomerId").focus();
+                    return;
+                }
+                _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId });
+            }
+        });
         $("#CustomerId").select2Init({
-            abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList
+            abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
+            showAll: false,
+            allowClear: false,
+            addItemCallback: async function (newItemName) {
+                var customerId = _quoteId ? $('#CustomerId').val() : null;
+                _createOrEditCustomerModal.open({ name: newItemName, id: customerId });
+            }
         });
         var contactChildDropdown = abp.helper.ui.initChildDropdown({
             parentDropdown: $("#CustomerId"),
@@ -137,16 +158,15 @@
 
         $("#FuelSurchargeCalculationId").select2Init({
             abpServiceMethod: abp.services.app.fuelSurchargeCalculation.getFuelSurchargeCalculationsSelectList,
-            minimumInputLength: 0,
-            //showAll: true,
-            allowClear: false
+            showAll: true,
+            allowClear: true
         });
         $("#FuelSurchargeCalculationId").change(function () {
             let dropdownData = $("#FuelSurchargeCalculationId").select2('data');
             let selectedOption = dropdownData && dropdownData.length && dropdownData[0];
-            let canChangeBaseFuelCost = selectedOption && selectedOption.item.canChangeBaseFuelCost || false;
+            let canChangeBaseFuelCost = selectedOption?.item?.canChangeBaseFuelCost || false;
             $("#BaseFuelCostContainer").toggle(canChangeBaseFuelCost);
-            $("#BaseFuelCost").val(selectedOption && selectedOption.item.baseFuelCost);
+            $("#BaseFuelCost").val(selectedOption?.item?.baseFuelCost || 0);
             $("#FuelSurchargeCalculationId").removeUnselectedOptions();
         });
 
@@ -497,12 +517,6 @@
             _viewQuoteHistoryModal.open({ id: quoteHistoryId });
         });
 
-        $("#AddNewCustomerButton").click(function (e) {
-            e.preventDefault();
-            var customerId = _quoteId ? $('#CustomerId').val() : null;
-            _createOrEditCustomerModal.open({ id: customerId });
-        });
-
         abp.event.on('app.customerNameExists', function (e) {
             selectCustomerInControl(e);
         });
@@ -517,17 +531,6 @@
                 $('#CustomerId').select2Init();
             }
         }
-
-        $("#AddNewContactButton").click(function (e) {
-            e.preventDefault();
-            var customerId = $("#CustomerId").val();
-            if (!customerId) {
-                abp.notify.warn("Select a customer first");
-                $("#CustomerId").focus();
-                return;
-            }
-            _createOrEditCustomerContactModal.open({ customerId: customerId });
-        });
 
         abp.event.on('app.createOrEditCustomerContactModalSaved', function (e) {
             contactChildDropdown.updateChildDropdown(function () {
