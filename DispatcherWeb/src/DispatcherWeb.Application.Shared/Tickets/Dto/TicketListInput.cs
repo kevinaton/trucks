@@ -16,13 +16,13 @@ namespace DispatcherWeb.Tickets.Dto
         public int? CarrierId { get; set; }
         public int? ServiceId { get; set; }
         public string TicketNumber { get; set; }
-        public string TruckCode { get; set; }
+        public int? TruckId { get; set; }
         public Shift[] Shifts { get; set; }
         public bool? BillingStatus { get; set; }
         public bool? IsVerified { get; set; }
-        public string CustomerName { get; set; }
-        public string LoadAt { get; set; }
-        public string DeliverTo { get; set; }
+        public int? CustomerId { get; set; }
+        public int? LoadAtId { get; set; }
+        public int? DeliverToId { get; set; }
         public string JobNumber { get; set; }
         public TicketListStatusFilterEnum? TicketStatus { get; set; }
         public int[] TicketIds { get; set; }

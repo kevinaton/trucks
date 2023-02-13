@@ -1,34 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Abp.Application.Services.Dto;
+﻿using Abp.Application.Services.Dto;
 using Abp.Configuration;
 using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
-using Abp.Linq.Extensions;
-using DispatcherWeb.Dto;
 using Abp.Extensions;
+using Abp.Linq.Extensions;
 using Abp.UI;
+using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Configuration;
+using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Dto;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Locations.Dto;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Sessions;
-using DispatcherWeb.Trucks;
-using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.LeaseHaulerRequests;
-using DispatcherWeb.Trucks.Dto;
-using System.Globalization;
-using DispatcherWeb.Receipts.Dto;
-using DispatcherWeb.Locations;
-using DispatcherWeb.Locations.Dto;
 using DispatcherWeb.SignalR.Entities;
-using DispatcherWeb.Dispatching;
-using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Trucks;
+using DispatcherWeb.Trucks.Dto;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace DispatcherWeb
 {
@@ -342,7 +340,7 @@ namespace DispatcherWeb
                     State = o.LoadAt.State
                 },
                 DeliverTo = o.DeliverTo == null ? null : new LocationNameDto
-                { 
+                {
                     Name = o.DeliverTo.Name,
                     StreetAddress = o.DeliverTo.StreetAddress,
                     City = o.DeliverTo.City,
@@ -632,13 +630,13 @@ namespace DispatcherWeb
                     DeliverToNamePlain = ol.DeliverTo.Name + ol.DeliverTo.StreetAddress + ol.DeliverTo.City + ol.DeliverTo.State, //for sorting
                     DeliverTo = ol.DeliverTo == null ? null : new LocationNameDto
                     {
-                        Name = ol.DeliverTo.Name, 
-                        StreetAddress = ol.DeliverTo.StreetAddress, 
-                        City = ol.DeliverTo.City, 
+                        Name = ol.DeliverTo.Name,
+                        StreetAddress = ol.DeliverTo.StreetAddress,
+                        City = ol.DeliverTo.City,
                         State = ol.DeliverTo.State
                     },
                     JobNumber = ol.JobNumber,
-                    Note = ol.Note, 
+                    Note = ol.Note,
                     Item = ol.Service.Service1,
                     MaterialUom = ol.MaterialUom.Name,
                     FreightUom = ol.FreightUom.Name,
@@ -933,6 +931,6 @@ namespace DispatcherWeb
             }.SetLastUpdateDateTime(entity);
         }
 
-        
+
     }
 }

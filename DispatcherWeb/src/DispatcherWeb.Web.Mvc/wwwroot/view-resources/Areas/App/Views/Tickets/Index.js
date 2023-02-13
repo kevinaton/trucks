@@ -38,6 +38,10 @@
                 if (filter.orderDateRangeFilter) {
                     $('#OrderDateRangeFilter').val(filter.orderDateRangeFilter);
                 }
+                if (filter.ticketNumber) {
+                    $('#TicketNumberFilter').val(filter.ticketNumber);
+                }
+
                 if (filter.carrierId) {
                     abp.helper.ui.addAndSetDropdownValue($("#CarrierFilter"), filter.carrierId, filter.carrierName);
                 }
@@ -48,19 +52,38 @@
                     abp.helper.ui.addAndSetDropdownValue($("#DriverFilter"), filter.driverId, filter.driverName);
                 }
                 if (filter.billingStatus) {
-                    $("#BillingStatusFilter").val(filter.billingStatus);
+                    abp.helper.ui.addAndSetDropdownValue($("#BillingStatusFilter"), filter.billingStatus, filter.billingStatusName);
                 }
-                if (filter.ticketNumber) {
-                    $('#TicketNumberFilter').val(filter.ticketNumber);
+                if (filter.isImported) {
+                    abp.helper.ui.addAndSetDropdownValue($("#IsImportedFilter"), filter.isImported, filter.isImportedDescription);
                 }
-                if (filter.truckCode) {
-                    $('#TruckFilter').val(filter.truckCode);
+                if (filter.truckId) {
+                    abp.helper.ui.addAndSetDropdownValue($("#TruckFilter"), filter.truckId, filter.truckCode);
+                }
+                if (filter.customerId) {
+                    abp.helper.ui.addAndSetDropdownValue($("#CustomerFilter"), filter.customerId, filter.customerName);
+                }
+                if (filter.loadAtId) {
+                    abp.helper.ui.addAndSetDropdownValue($("#LoadAtFilter"), filter.loadAtId, filter.loadAtName);
+                }
+                if (filter.deliverToId) {
+                    abp.helper.ui.addAndSetDropdownValue($("#DeliverToFilter"), filter.deliverToId, filter.deliverToName);
+                }
+                if (filter.ticketStatus) {
+                    abp.helper.ui.addAndSetDropdownValue($("#TicketStatusFilter"), filter.ticketStatus, filter.ticketStatusDescription);
+                }
+                if (filter.isVerified) {
+                    abp.helper.ui.addAndSetDropdownValue($("#IsVerifiedFilter"), filter.isVerified, filter.isVerifiedDescription);
+                }
+                if (filter.orderId) {
+                    abp.helper.ui.addAndSetDropdownValue($("#OrderIdFilter"), filter.orderId, filter.orderId);
                 }
                 if (filter.officeId) {
                     abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), filter.officeId, filter.officeName);
                 } else {
                     abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
                 }
+
 
                 app.localStorage.getItem('tickets_grid', function (result) {
                     callback(JSON.parse(result));
@@ -76,7 +99,8 @@
         ajax: function (data, callback, settings) {
             var abpData = _dtHelper.toAbpData(data);
             _lastAbpData = $.extend({}, abpData);
-            $.extend(abpData, getFilterData());
+            var filterData = getFilterData();
+            $.extend(abpData, filterData);
 
             localStorage.setItem('tickets_filter', JSON.stringify(abpData));
 
@@ -84,9 +108,9 @@
             _ticketService.ticketListView(abpData).done(function (abpResult) {
                 callback(_dtHelper.fromAbpResult(abpResult));
             })
-            .always(function () {
-                abp.ui.clearBusy();
-            });
+                .always(function () {
+                    abp.ui.clearBusy();
+                });
         },
         order: [[2, 'asc']],
         headerCallback: function (thead, data, start, end, display) {
@@ -166,7 +190,7 @@
                 title: "Truck"
             },
             {
-                data : "driverName",
+                data: "driverName",
                 title: "Driver",
                 responsivePriority: 10000 + 2,
             },
@@ -235,34 +259,34 @@
                         + '<li><a class="btnDeleteRow dropdown-item"><i class="fa fa-trash"></i> Delete entire ticket</a></li>'
                         + '</ul>'
                         + '</div>';
-                }			
+                }
             }
         ]
     });
 
-    ticketTable.on('change', '.'+rowSelectAllClass, function () {
+    ticketTable.on('change', '.' + rowSelectAllClass, function () {
         if ($(this).is(":checked")) {
-            ticketTable.find('.'+rowSelectionClass).not(':checked').prop('checked', true).change();
+            ticketTable.find('.' + rowSelectionClass).not(':checked').prop('checked', true).change();
         } else {
-            ticketTable.find('.'+rowSelectionClass + ':checked').prop('checked', false).change();
+            ticketTable.find('.' + rowSelectionClass + ':checked').prop('checked', false).change();
         }
     });
 
     ticketTable.on('change', '.' + rowSelectionClass, function () {
         var row = _dtHelper.getRowData(this);
         if ($(this).is(":checked")) {
-            if (ticketTable.find('.'+rowSelectionClass).not(':checked').length === 0) {
-                ticketTable.find('.'+rowSelectAllClass).not(':checked').prop('checked', true).change();
+            if (ticketTable.find('.' + rowSelectionClass).not(':checked').length === 0) {
+                ticketTable.find('.' + rowSelectAllClass).not(':checked').prop('checked', true).change();
             }
             setRowSelectionState(row.id, true);
         } else {
-            if (ticketTable.find('.'+rowSelectionClass + ':checked').length === 0) {
-                ticketTable.find('.'+rowSelectAllClass + ':checked').prop('checked', false).change();
+            if (ticketTable.find('.' + rowSelectionClass + ':checked').length === 0) {
+                ticketTable.find('.' + rowSelectAllClass + ':checked').prop('checked', false).change();
             }
             setRowSelectionState(row.id, false);
         }
         //$.each(selectionChangedCallbacks, function (ind, callback) {
-        var selectedRowsCount = ticketTable.find('.'+rowSelectionClass + ':checked').length;
+        var selectedRowsCount = ticketTable.find('.' + rowSelectionClass + ':checked').length;
         //    callback(selectedRowsCount);
         //});
     });
@@ -327,7 +351,7 @@
         _createOrEditTicketModal.open({ id: ticketId });
     });
 
-    $('#CreateNewButton').click(function (e) {        
+    $('#CreateNewButton').click(function (e) {
         _createOrEditTicketModal.open();
     });
 
@@ -398,7 +422,9 @@
         $('#CarrierFilter').val(0).trigger("change");
         $('#ServiceFilter').val(0).trigger("change");
         $('#DriverFilter').val('').trigger("change");
+        $('#TruckFilter').val('').trigger("change");
         $('#Shifts').val('').trigger("change");
+        $(".filter").change();
         $("#DateRangeFilter").val('');
         $("#OrderDateRangeFilter").val('');
         $('#OfficeIdFilter').val('').trigger("change");
@@ -451,12 +477,6 @@
     }
 
     function initFilterControls() {
-        var drpOptions = {
-            locale: {
-                cancelLabel: 'Clear'
-            },
-            showDropDown: true
-        };
         $("#DateRangeFilter").daterangepicker({
             locale: {
                 cancelLabel: 'Clear'
@@ -478,6 +498,12 @@
         }).on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
         });
+        $('#TruckFilter').select2Init({
+            abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
+            abpServiceParams: { excludeTrailers: false, includeLeaseHaulerTrucks: true },
+            showAll: false,
+            allowClear: true
+        });
         $('#CarrierFilter').select2Init({
             abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
             showAll: false,
@@ -488,8 +514,15 @@
             showAll: false,
             allowClear: true
         });
-        $('#Shifts').select2Init({ allowClear: false });
-        //$('#BillingStatusFilter').select2Init({ allowClear: false }); //"All" is being hidden from options when select2 is initialized
+        $('#Shifts').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+        $('#BillingStatusFilter').select2Init({
+            showAll: true,
+            allowClear: true
+        });
+
         $('#IsVerifiedFilter').select2Init({
             showAll: true,
             allowClear: true
@@ -507,6 +540,31 @@
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
             allowClear: true
+        });
+        $('#CustomerFilter').select2Init({
+            abpServiceMethod: abp.services.app.customer.getCustomersSelectList,
+            showAll: false,
+            allowClear: true
+        });
+
+        $('#LoadAtFilter').select2Init({
+            abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        $('#DeliverToFilter').select2Init({
+            abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        $('#TicketStatusFilter').select2Init({
+            showAll: true,
+            allowClear: true
+        });
+        $('#OrderIdFilter').select2Init({
+            abpServiceMethod: abp.services.app.order.getOrderIdsSelectList,
+            showAll: false,
+            allowClear: false
         });
     }
 
