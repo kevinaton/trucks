@@ -84,15 +84,6 @@ namespace DispatcherWeb
             });
         }
 
-        public static IQueryable<SelectListDto> ToSelectListDto(this IQueryable<Order> query)
-        {
-            return query.Select(x => new SelectListDto
-            {
-                Id = x.Id.ToString(),
-                Name = x.Id.ToString()
-            });
-        }
-
         public static async Task<PagedResultDto<SelectListDto>> GetSelectListResult(this IQueryable<SelectListDto<LocationSelectListInfoDto>> query, GetSelectListInput input)
         {
             return await GetSelectListResult(query, input, ConvertLocationSelectListResult);

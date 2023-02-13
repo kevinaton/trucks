@@ -48,6 +48,6 @@ namespace DispatcherWeb.Orders
         Task SetOrderOfficeId(SetOrderOfficeIdInput input);
         Task<SetOrderDateResult> SetOrderDate(SetOrderDateInput input);
 
-        Task<ListResultDto<SelectListDto>> GetOrdersSelectList(GetSelectListInput input);
+        Task<ListResultDto<SelectListDto>> GetOrderIdsSelectList(GetSelectListInput input);
     }
 }

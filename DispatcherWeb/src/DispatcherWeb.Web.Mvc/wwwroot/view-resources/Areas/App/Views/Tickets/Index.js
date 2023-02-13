@@ -477,12 +477,6 @@
     }
 
     function initFilterControls() {
-        var drpOptions = {
-            locale: {
-                cancelLabel: 'Clear'
-            },
-            showDropDown: true
-        };
         $("#DateRangeFilter").daterangepicker({
             locale: {
                 cancelLabel: 'Clear'
@@ -521,9 +515,14 @@
             allowClear: true
         });
         $('#Shifts').select2Init({
+            showAll: true,
             allowClear: false
         });
-        $('#BillingStatusFilter').selectpicker();
+        $('#BillingStatusFilter').select2Init({
+            showAll: true,
+            allowClear: true
+        });
+
         $('#IsVerifiedFilter').select2Init({
             showAll: true,
             allowClear: true
@@ -560,10 +559,10 @@
         });
         $('#TicketStatusFilter').select2Init({
             showAll: true,
-            allowClear: false
+            allowClear: true
         });
         $('#OrderIdFilter').select2Init({
-            abpServiceMethod: abp.services.app.order.getOrdersSelectList,
+            abpServiceMethod: abp.services.app.order.getOrderIdsSelectList,
             showAll: false,
             allowClear: false
         });

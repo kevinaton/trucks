@@ -53,7 +53,6 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DispatcherWeb.Orders
 {
@@ -224,11 +223,14 @@ namespace DispatcherWeb.Orders
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_View)]
-        public async Task<ListResultDto<SelectListDto>> GetOrdersSelectList(GetSelectListInput input)
+        public async Task<ListResultDto<SelectListDto>> GetOrderIdsSelectList(GetSelectListInput input)
         {
             var ordersQuery = _orderRepository.GetAll()
-                                                .ToSelectListDto()
-                                                .OrderBy(p => p.Name);
+                                    .Select(x => new SelectListDto
+                                    {
+                                        Id = x.Id.ToString(),
+                                        Name = x.Id.ToString()
+                                    });
 
             return await ordersQuery.GetSelectListResult(input);
         }

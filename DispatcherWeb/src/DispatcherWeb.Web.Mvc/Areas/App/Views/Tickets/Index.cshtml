@@ -117,7 +117,7 @@
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="TruckFilter">@L("Truck")</label>
                             <select class="form-control m-input filter" name="TruckId" id="TruckFilter" data-display-name="TruckCode">
-                                <option value="">Select Truck</option>
+                                <option value="">Select a Truck</option>
                             </select>
                         </div>
                         @if (await FeatureChecker.IsEnabledAsync(AppFeatures.AllowInvoicingFeature))
@@ -142,7 +142,7 @@
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="CustomerNameFilter">@L("Customer")</label>
                             <select class="form-control m-input filter" name="CustomerId" id="CustomerFilter" data-display-name="CustomerName">
-                                <option value="">Select Customer</option>
+                                <option value="">Select a Customer</option>
                             </select>
                         </div>
                         <div class="form-group col-xl-3">
