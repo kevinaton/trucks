@@ -329,10 +329,6 @@ max-width: 150px; */
     margin-top: 40px;
 }
 
-.dropdown-menu {
-    font-weight: normal;
-}
-
 .datepicker.datepicker-dropdown.dropdown-menu {
     z-index: 1061 !important;
 }
