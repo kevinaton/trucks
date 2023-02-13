@@ -786,6 +786,7 @@
                             editor.append($('<option selected></option>').text(rowData[nameField]).attr("value", rowData[idField]));
                             editor.focus();
                             editor.select2Init({
+                                showAll: false,
                                 allowClear: true,
                                 abpServiceMethod: abp.services.app.location.getLocationsSelectList
                             });
