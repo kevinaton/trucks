@@ -174,8 +174,8 @@
                                     activeOnly: true,
                                     orderLineId: _validateTrucksAndDrivers ? _orderLineId : null
                                 },
-                                showAll: true,
-                                allowClear: false,
+                                showAll: false,
+                                allowClear: true,
                                 selectOnClose: true
                             },
                             editCompleteCallback: function editCompleteCallback(editResult, rowData, cell) {
@@ -211,7 +211,8 @@
                                 abpServiceParamsGetter: (params, rowData) => ({
                                     truckId: rowData.truckId
                                 }),
-                                showAll: true,
+                                showAll: false,
+                                allowClear: true,
                                 selectOnClose: true
                             },
                             editCompleteCallback: function editCompleteCallback(editResult, rowData, cell) {
