@@ -168,7 +168,8 @@ namespace DispatcherWeb.Web.Startup
                     {
                         policy.WithOrigins(corsOrigins)
                             .AllowAnyHeader()
-                            .AllowAnyMethod();
+                            .AllowAnyMethod()
+                            .AllowCredentials();
                     });
                 });
             }
