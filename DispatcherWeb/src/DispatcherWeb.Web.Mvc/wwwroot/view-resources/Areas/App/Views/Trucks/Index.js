@@ -121,7 +121,8 @@
 
             ],
             createdRow: function (row, data, index) {
-                $('td', row).eq(7).addClass(getUntilDueClass(data.dueDateStatus, data.dueMileageStatus));
+                // commented in reference to PR comment, https://dev.azure.com/wallinginfosystems/DispatcherWeb/_git/DispatcherWeb/pullRequest/377#1676235425
+                //$('td', row).eq(7).addClass(getUntilDueClass(data.dueDateStatus, data.dueMileageStatus));
             }
         });
 

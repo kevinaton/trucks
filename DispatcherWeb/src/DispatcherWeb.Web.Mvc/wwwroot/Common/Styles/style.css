@@ -330,7 +330,7 @@ max-width: 150px; */
 }
 
 .dropdown-menu {
-    font-weight: normal !important;
+    font-weight: normal;
 }
 
 .datepicker.datepicker-dropdown.dropdown-menu {
