@@ -104,8 +104,8 @@
 
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-                minimumInputLength: 0,
-                allowClear: false
+                showAll: false,
+                allowClear: true
             });
             if (cachedFilter.officeId) {
                 abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), cachedFilter.officeId, cachedFilter.officeName);
@@ -113,7 +113,8 @@
 
             $("#CustomerIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.customer.getCustomersSelectList,
-                showAll: true
+                showAll: false,
+                allowClear: true
             });
             if (cachedFilter.customerId) {
                 abp.helper.ui.addAndSetDropdownValue($("#CustomerIdFilter"), cachedFilter.customerId, cachedFilter.customerName);
@@ -121,6 +122,7 @@
 
             $("#ServiceIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.service.getAllServicesSelectList,
+                showAll: false,
                 allowClear: true
             });
             if (cachedFilter.serviceId) {
@@ -129,6 +131,8 @@
 
             $("#LoadAtIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
+                showAll: false,
+                allowClear: true
             });
             if (cachedFilter.loadAtId) {
                 abp.helper.ui.addAndSetDropdownValue($("#LoadAtIdFilter"), cachedFilter.loadAtId, cachedFilter.loadAt);
@@ -136,6 +140,8 @@
 
             $("#DeliverToIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
+                showAll: false,
+                allowClear: true
             });
             if (cachedFilter.deliverToId) {
                 abp.helper.ui.addAndSetDropdownValue($("#DeliverToIdFilter"), cachedFilter.deliverToId, cachedFilter.deliverTo);
