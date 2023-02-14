@@ -1886,6 +1886,7 @@ a.btn-default:hover {
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     position: static;
+    padding-right: 2.5rem;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__clear {
@@ -1997,4 +1998,8 @@ a.btn-default:hover {
     font-family: Poppins;
     -ms-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
+}
+
+.select2-selection.select2-selection--single.select2-selection--clearable {
+    padding-right: 24px;
 }
