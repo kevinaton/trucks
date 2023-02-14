@@ -17,7 +17,7 @@
             
             _projectDropdown.select2Init({
                 abpServiceMethod: abp.services.app.project.getActiveOrPendingProjectsSelectList,
-                minimumInputLength: 0,
+                showAll: false,
                 allowClear: false,
             });
         };

@@ -109,22 +109,6 @@ namespace DispatcherWeb.FuelSurchargeCalculations
 
             var result = await query.GetSelectListResult(input);
 
-            if (input.Term.IsNullOrEmpty())
-            {
-                var items = result.Items.ToList();
-                items.Insert(0, new SelectListDto<FuelSurchargeCalculationSelectListInfoDto>
-                {
-                    Id = "0",
-                    Name = AppConsts.FuelSurchargeCalculationBlankName,
-                    Item = new FuelSurchargeCalculationSelectListInfoDto
-                    {
-                        CanChangeBaseFuelCost = false,
-                        BaseFuelCost = 0M
-                    }
-                });
-                result.Items = items;
-            }
-
             return result;
         }
     }
