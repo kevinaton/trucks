@@ -17,39 +17,33 @@
         </div>
         <div class="form-group">
             <label>@L("LoadAt")</label>
-            <div class="input-group">
-                <select class="form-control" asp-for="LoadAtId">
-                    <option value="">@L("SelectALocation")</option>
-                    @if (Model.LoadAtId.HasValue)
-                    {
-                        <option selected value="@Model.LoadAtId">@Model.LoadAtName</option>
-                    }
-                </select>
-            </div>
+            <select class="form-control" asp-for="LoadAtId">
+                <option value="">@L("SelectALocation")</option>
+                @if (Model.LoadAtId.HasValue)
+                {
+                    <option selected value="@Model.LoadAtId">@Model.LoadAtName</option>
+                }
+            </select>
         </div>
         <div class="form-group">
             <label>@L("DeliverTo")</label>
-            <div class="input-group">
-                <select class="form-control" asp-for="DeliverToId">
-                    <option value="">@L("SelectALocation")</option>
-                    @if (Model.DeliverToId.HasValue)
-                    {
-                        <option selected value="@Model.DeliverToId">@Model.DeliverToName</option>
-                    }
-                </select>
-            </div>
+            <select class="form-control" asp-for="DeliverToId">
+                <option value="">@L("SelectALocation")</option>
+                @if (Model.DeliverToId.HasValue)
+                {
+                    <option selected value="@Model.DeliverToId">@Model.DeliverToName</option>
+                }
+            </select>
         </div>
         <div class="form-group">
             <label class="required-label">@L("Item")</label>
-            <div class="input-group">
-                <select class="form-control" asp-for="ServiceId" required>
-                    <option value="">Select an item</option>
-                    @if (Model.ServiceId != 0)
-                    {
-                        <option selected value="@Model.ServiceId">@Model.ServiceName</option>
-                    }
-                </select>
-            </div>
+            <select class="form-control" asp-for="ServiceId" required>
+                <option value="">Select an item</option>
+                @if (Model.ServiceId != 0)
+                {
+                    <option selected value="@Model.ServiceId">@Model.ServiceName</option>
+                }
+            </select>
         </div>
         <div class="form-group">
             <label class="required-label">@L("MaterialUom")</label>
