@@ -28,10 +28,12 @@ namespace DispatcherWeb.DriverApp.FcmPushMessages
             var result = await _fcmPushMessageRepository.GetAll()
                 .Where(x => x.ReceiverUserId == Session.UserId)
                 .WhereIf(!input.Token.IsNullOrEmpty(), x => x.FcmRegistrationToken.Token == input.Token)
+                .WhereIf(input.Guid.HasValue, x => x.Id == input.Guid)
                 .WhereIf(input.Received == false, x => !x.ReceivedAtDateTime.HasValue)
                 .WhereIf(input.Received == true, x => x.ReceivedAtDateTime.HasValue)
                 .Select(x => new FcmPushMessageDto
                 {
+                    Guid = x.Id,
                     JsonPayload = x.JsonPayload,
                     SentAtDateTime = x.SentAtDateTime,
                     ReceivedAtDateTime = x.ReceivedAtDateTime,
