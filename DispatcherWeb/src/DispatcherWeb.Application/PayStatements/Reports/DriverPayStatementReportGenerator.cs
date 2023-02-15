@@ -304,7 +304,21 @@ namespace DispatcherWeb.Orders.Reports
                     row.Borders.Visible = false;
                     cell = row.Cells[0];
                     cell.MergeRight = 3 + (allowProductionPay ? 6 : 0);
-                    paragraph = cell.AddParagraph($"Total: ", tm);
+                    paragraph = cell.AddParagraph($"Freight Total: ", tm);
+                    paragraph.Format.Alignment = ParagraphAlignment.Right;
+
+                    cell = row.Cells[4 + (allowProductionPay ? 6 : 0)];
+                    paragraph = cell.AddParagraph(driverModel.Tickets.Sum(t => t.FreightRate * t.Quantity).ToString("C2", model.CurrencyCulture) ?? "", tm);
+                    paragraph.Format.Alignment = ParagraphAlignment.Right;
+                    paragraph.Format.Font.Bold = true;
+
+                    row = table.AddRow();
+                    row.Borders.Visible = false;
+                    row = table.AddRow();
+                    row.Borders.Visible = false;
+                    cell = row.Cells[0];
+                    cell.MergeRight = 3 + (allowProductionPay ? 6 : 0);
+                    paragraph = cell.AddParagraph($"Driver Pay: ", tm);
                     paragraph.Format.Alignment = ParagraphAlignment.Right;
 
                     cell = row.Cells[4 + (allowProductionPay ? 6 : 0)];
