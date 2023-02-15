@@ -560,9 +560,9 @@
             } else {
                 let dropdownData = $("#FuelSurchargeCalculationId").select2('data');
                 let selectedOption = dropdownData && dropdownData.length && dropdownData[0];
-                let canChangeBaseFuelCost = selectedOption && selectedOption.item && selectedOption.item.canChangeBaseFuelCost || false;
+                let canChangeBaseFuelCost = selectedOption?.item?.canChangeBaseFuelCost || false;
                 $("#BaseFuelCostContainer").toggle(canChangeBaseFuelCost);
-                $("#BaseFuelCost").val(selectedOption && selectedOption.item && selectedOption.item.baseFuelCost);
+                $("#BaseFuelCost").val(selectedOption?.item?.baseFuelCost || 0);
                 $("#FuelSurchargeCalculationId").removeUnselectedOptions();
             }
         });
@@ -634,7 +634,7 @@
                     abp.helper.ui.addAndSetDropdownValue($("#FuelSurchargeCalculationId"), fuelSurchargeCalculationId, option.data('fuelSurchargeCalculationName'));
                     updateInputValue("#BaseFuelCost", option.data('baseFuelCost'));
                 } else {
-                    abp.helper.ui.addAndSetDropdownValue($("#FuelSurchargeCalculationId"), "0", " ");
+                    $("#FuelSurchargeCalculationId").val(null).change();
                     updateInputValue("#BaseFuelCost", 0);
                 }
                 $("#BaseFuelCostContainer").toggle(option.data('canChangeBaseFuelCost') === true);

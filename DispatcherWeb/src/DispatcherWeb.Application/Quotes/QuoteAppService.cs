@@ -307,11 +307,6 @@ namespace DispatcherWeb.Quotes
                 quoteEditDto.SalesPersonName = userFullName;
             }
 
-            if (quoteEditDto.FuelSurchargeCalculationId == null)
-            {
-                quoteEditDto.FuelSurchargeCalculationId = 0;
-            }
-
             return quoteEditDto;
         }
 
@@ -439,10 +434,6 @@ namespace DispatcherWeb.Quotes
                 quote.BaseFuelCost = model.BaseFuelCost;
             }
 
-            if (model.FuelSurchargeCalculationId == 0)
-            {
-                model.FuelSurchargeCalculationId = null;
-            }
             if (quote.FuelSurchargeCalculationId != model.FuelSurchargeCalculationId)
             {
                 if (quote.CaptureHistory)
