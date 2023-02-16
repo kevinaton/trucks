@@ -140,8 +140,7 @@
             showAll: false,
             allowClear: false,
             addItemCallback: async function (newItemName) {
-                var customerId = _quoteId ? $('#CustomerId').val() : null;
-                _createOrEditCustomerModal.open({ name: newItemName, id: customerId });
+                _createOrEditCustomerModal.open({ name: newItemName });
             }
         });
         var contactChildDropdown = abp.helper.ui.initChildDropdown({
@@ -526,9 +525,6 @@
         function selectCustomerInControl(e) {
             if ($('#CustomerId').val() !== e.item.id.toString()) {
                 abp.helper.ui.addAndSetDropdownValue($("#CustomerId"), e.item.id, e.item.name);
-            } else {
-                $('#CustomerId option[value="' + e.item.id + '"]').text(e.item.name);
-                $('#CustomerId').select2Init();
             }
         }
 
