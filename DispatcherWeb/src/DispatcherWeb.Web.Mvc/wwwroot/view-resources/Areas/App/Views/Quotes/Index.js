@@ -24,7 +24,7 @@
 
             $("#ProjectIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.project.getProjectsSelectList,
-                showAll: true,
+                showAll: false,
                 allowClear: true
             });
             $("#CustomerIdFilter").select2Init({
