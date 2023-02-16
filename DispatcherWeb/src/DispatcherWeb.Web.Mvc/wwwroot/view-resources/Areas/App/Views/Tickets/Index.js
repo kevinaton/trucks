@@ -564,7 +564,7 @@
         $('#OrderIdFilter').select2Init({
             abpServiceMethod: abp.services.app.order.getOrderIdsSelectList,
             showAll: false,
-            allowClear: false
+            allowClear: true
         });
     }
 
