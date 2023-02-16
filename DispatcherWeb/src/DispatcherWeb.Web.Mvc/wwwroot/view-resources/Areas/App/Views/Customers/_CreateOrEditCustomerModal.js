@@ -141,13 +141,13 @@
             var preferredDeliveryMethodSelect = _modalManager.getModal().find('#PreferredDeliveryMethod');
             preferredDeliveryMethodSelect.select2Init({
                 showAll: true,
-                allowClear: false
+                allowClear: true
             });
 
             var termsSelect = _modalManager.getModal().find('#Terms');
             termsSelect.select2Init({
                 showAll: true,
-                allowClear: false
+                allowClear: true
             });
 
             var invoicingMethodSelect = _modalManager.getModal().find('#InvoicingMethod');
