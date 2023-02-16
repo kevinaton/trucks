@@ -104,7 +104,7 @@
 
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-                showAll: false,
+                showAll: true,
                 allowClear: true
             });
             if (cachedFilter.officeId) {
