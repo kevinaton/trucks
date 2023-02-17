@@ -65,7 +65,7 @@ namespace DispatcherWeb.QuickbooksOnline
                         Tax = l.Tax,
                         IsTaxable = l.Item.IsTaxable,
                         PONumber = l.Ticket.OrderLine.Order.PONumber,
-                        JobNumber = l.Ticket.OrderLine.JobNumber,
+                        JobNumber = l.JobNumber,
                         LeaseHaulerName = l.Ticket.Truck.LeaseHaulerTruck.LeaseHauler.Name,
                         LineNumber = l.LineNumber,
                         TicketNumber = l.Ticket.TicketNumber,
