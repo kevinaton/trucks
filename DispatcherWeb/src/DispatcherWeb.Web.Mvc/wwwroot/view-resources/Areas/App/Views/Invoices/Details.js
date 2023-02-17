@@ -312,8 +312,7 @@
                         dropdownOptions: {
                             abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
                             showAll: false,
-                            allowClear: false,
-                            selectOnClose: true
+                            allowClear: false
                         },
                         editStartingCallback: function editStartingCallback(rowData, cell, selectedOption) {
                             console.log(selectedOption);

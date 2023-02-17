@@ -1409,8 +1409,7 @@
                                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                                 abpServiceParams: { allOffices: true, includeLeaseHaulerTrucks: true, activeOnly: true, /*orderLineId: _validateTrucksAndDrivers ? _orderLineId : null*/ },
                                 showAll: false,
-                                allowClear: false,
-                                selectOnClose: true
+                                allowClear: false
                             },
                             validate: async function (rowData, newId) {
                                 try {
