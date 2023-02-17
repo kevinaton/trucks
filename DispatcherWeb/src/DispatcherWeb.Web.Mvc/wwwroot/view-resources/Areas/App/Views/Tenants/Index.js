@@ -337,11 +337,14 @@
             if (await abp.message.confirm(
                 app.localize("DeleteDispatchDataWarningMessage", tenant.tenancyName)
             )) {
+                abp.ui.setBusy();
                 _tenantService.deleteDispatchDataForTenant({
                     id: tenant.id
                 }).done(function () {
                     getTenants();
                     abp.notify.success(app.localize("SuccessfullyDeleted"));
+                }).always(function () {
+                    abp.ui.clearBusy();
                 });
             }
         }
