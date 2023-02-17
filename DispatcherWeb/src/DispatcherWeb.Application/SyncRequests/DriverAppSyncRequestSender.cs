@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.BackgroundJobs;
 using Abp.Dependency;
@@ -15,8 +14,8 @@ using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.SignalR;
 using DispatcherWeb.SignalR.Entities;
+using DispatcherWeb.SyncRequests.DriverApp;
 using DispatcherWeb.SyncRequests.FcmPushMessages;
-using DispatcherWeb.SyncRequests.FcmPushMessages.ChangeDetails;
 using DispatcherWeb.WebPush;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -107,68 +106,6 @@ namespace DispatcherWeb.SyncRequests
 
             var syncRequestChanges = syncRequest.Changes.ToList();
 
-            //Dispatches need an additional DeliveryDate field in the change details
-            var dispatches = syncRequestChanges
-                .OfType<SyncRequestChangeDetail<ChangedDispatch>>()
-                .SelectMany(x => GetDriverIds(x.Entity).Select(driverId => new
-                {
-                    DriverId = driverId,
-                    UserId = drivers.FirstOrDefault(x => x.DriverId == driverId)?.UserId,
-                    x.Entity.Id,
-                    x.ChangeType
-                }))
-                .Where(x => x.UserId.HasValue)
-                .ToList();
-
-            syncRequestChanges.RemoveAll(x => x is SyncRequestChangeDetail<ChangedDispatch>);
-
-            if (dispatches.Any())
-            {
-                var dispatchIds = dispatches.Select(x => x.Id).Distinct().ToList();
-                var dispatchesDetails = await _dispatchRepository.GetAll()
-                    .Where(x => dispatchIds.Contains(x.Id))
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.OrderLine.Order.DeliveryDate,
-                    }).ToListAsync();
-
-                foreach (var dispatchesOfUser in dispatches.Where(x => x.UserId.HasValue).GroupBy(x => x.UserId.Value))
-                {
-                    var userId = dispatchesOfUser.Key;
-                    foreach (var fcmToken in fcmTokens.Where(x => x.UserId == userId))
-                    {
-                        var pushMessage = new ReloadSpecificEntitiesPushMessage
-                        {
-                            EntityType = EntityEnum.Dispatch
-                        };
-
-                        foreach (var dispatch in dispatchesOfUser)
-                        {
-                            pushMessage.Changes.Add(new FcmDispatchDetailsDto
-                            {
-                                Id = dispatch.Id,
-                                ChangeType = dispatch.ChangeType,
-                                DeliveryDate = dispatchesDetails.FirstOrDefault(x => x.Id == dispatch.Id)?.DeliveryDate?.ToString("yyyy-MM-dd")
-                            });
-                        }
-
-                        var pushMessageJson = JsonConvert.SerializeObject(pushMessage);
-
-                        newFcmPushMessages.Add((new FcmPushMessage
-                        {
-                            Id = pushMessage.Guid,
-                            TenantId = Session.TenantId,
-                            FcmRegistrationTokenId = fcmToken.Id,
-                            ReceiverUserId = userId,
-                            ReceiverDriverId = dispatchesOfUser.FirstOrDefault()?.DriverId,
-                            JsonPayload = pushMessageJson,
-                        }, pushMessage.EntityType));
-                    }
-                }
-            }
-
-            //Simple entity types that don't require additional fields
             foreach (var entityTypeGroup in syncRequestChanges.GroupBy(x => x.EntityType))
             {
                 var entityType = entityTypeGroup.Key;
@@ -176,14 +113,18 @@ namespace DispatcherWeb.SyncRequests
                 {
                     continue;
                 }
+
+                var changeDetailsConverter = GetChangeDetailsConverter(entityType);
+                await changeDetailsConverter.CacheDataIfNeeded(entityTypeGroup);
+
                 var changeDetails = entityTypeGroup
                     .OfType<ISyncRequestChangeDetail>()
-                    .Where(x => x.Entity is ChangedDriverAppEntity<int>)
-                    .SelectMany(x => GetDriverIds((ChangedDriverAppEntity<int>)x.Entity).Select(driverId => new
+                    .Where(x => x.Entity is IChangedDriverAppEntity)
+                    .SelectMany(x => GetDriverIds((IChangedDriverAppEntity)x.Entity).Select(driverId => new
                     {
                         DriverId = driverId,
                         UserId = drivers.FirstOrDefault(x => x.DriverId == driverId)?.UserId,
-                        ((ChangedDriverAppEntity<int>)x.Entity).Id,
+                        Entity = (IChangedDriverAppEntity)x.Entity,
                         x.ChangeType
                     }))
                     .Where(x => x.UserId.HasValue)
@@ -196,16 +137,12 @@ namespace DispatcherWeb.SyncRequests
                     {
                         var pushMessage = new ReloadSpecificEntitiesPushMessage
                         {
-                            EntityType = entityType
+                            EntityType = changeDetailsConverter.GetEntityTypeForPushMessage(entityType)
                         };
 
                         foreach (var changeDetail in changeDetailsOfUser)
                         {
-                            pushMessage.Changes.Add(new FcmEntityChangeDetailsDto<int>
-                            {
-                                Id = changeDetail.Id,
-                                ChangeType = changeDetail.ChangeType,
-                            });
+                            pushMessage.Changes.Add(changeDetailsConverter.GetChangeDetails(changeDetail.Entity, changeDetail.ChangeType));
                         }
 
                         var pushMessageJson = JsonConvert.SerializeObject(pushMessage);
@@ -281,7 +218,20 @@ namespace DispatcherWeb.SyncRequests
             }
         }
 
-        private List<int> GetDriverIds(SyncRequest syncRequest)
+        private GenericChangeDetailsConverter GetChangeDetailsConverter(EntityEnum entityType)
+        {
+            switch (entityType)
+            {
+                case EntityEnum.Dispatch:
+                    return new DispatchChangeDetailsConverter(_dispatchRepository);
+                case EntityEnum.EmployeeTimeClassification:
+                    return new TimeClassificationChangeDetailsConverter();
+                default:
+                    return new GenericChangeDetailsConverter();
+            }
+        }
+
+        private static List<int> GetDriverIds(SyncRequest syncRequest)
         {
             var driverRelatedChanges = syncRequest.Changes
                             .OfType<ISyncRequestChangeDetail>()
@@ -291,19 +241,21 @@ namespace DispatcherWeb.SyncRequests
 
             var driverIds = driverRelatedChanges.Select(x => x.DriverId)
                 .Union(driverRelatedChanges.Select(x => x.OldDriverIdToNotify))
-                .Distinct()
                 .Where(x => x.HasValue)
                 .Select(x => x.Value)
+                .Union(driverRelatedChanges.SelectMany(x => x.DriverIds ?? new List<int>()))
+                .Distinct()
                 .ToList();
             
             return driverIds;
         }
 
-        private List<int> GetDriverIds(IChangedDriverAppEntity changedDriverAppEntity)
+        private static List<int> GetDriverIds(IChangedDriverAppEntity changedDriverAppEntity)
         {
             return new[] { changedDriverAppEntity.DriverId, changedDriverAppEntity.OldDriverIdToNotify }
                 .Where(x => x.HasValue)
                 .Select(x => x.Value)
+                .Union(changedDriverAppEntity.DriverIds ?? new List<int>())
                 .Distinct()
                 .ToList();
         }

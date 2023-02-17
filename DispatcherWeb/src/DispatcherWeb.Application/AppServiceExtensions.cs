@@ -29,6 +29,7 @@ using DispatcherWeb.Locations.Dto;
 using DispatcherWeb.SignalR.Entities;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Common.Dto;
+using DispatcherWeb.TimeClassifications;
 
 namespace DispatcherWeb
 {
@@ -941,6 +942,15 @@ namespace DispatcherWeb
                 DriverId = entity.DriverId,
                 TimeClassificationId = entity.TimeClassificationId,
                 EntityReference = entity,
+            }.SetLastUpdateDateTime(entity);
+        }
+
+        public static ChangedTimeClassification ToChangedEntity(this TimeClassification entity)
+        {
+            return new ChangedTimeClassification
+            {
+                Id = entity.Id,
+                EntityReference = entity
             }.SetLastUpdateDateTime(entity);
         }
     }
