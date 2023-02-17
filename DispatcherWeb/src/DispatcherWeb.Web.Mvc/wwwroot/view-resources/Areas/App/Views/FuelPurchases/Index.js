@@ -141,7 +141,7 @@
             };
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-                minimumInputLength: 0,
+                showAll: true,
                 allowClear: false
             });
             $("#FuelDateTimeFilter").daterangepicker(drpOptions)
