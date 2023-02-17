@@ -145,7 +145,6 @@
                             }),
                             showAll: true,
                             allowClear: true
-                            //selectOnClose: true
                         },
                         validate: async (rowData, newValue, cell) => {
                             if (!rowData.driverId) {

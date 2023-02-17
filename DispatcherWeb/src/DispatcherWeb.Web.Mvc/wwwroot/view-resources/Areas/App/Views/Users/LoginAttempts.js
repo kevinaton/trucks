@@ -4,7 +4,7 @@
         var _dtHelper = abp.helper.dataTables;
         
         $("#LoginResultFilter").select2Init({
-            minimumInputLength: 0,
+            showAll: true,
             allowClear: false
         });
 

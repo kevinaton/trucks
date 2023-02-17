@@ -1192,7 +1192,6 @@
         replaceDropdownPlaceholderWithDropdownOnFocus(block, 'item', dropdown => {
             block.ui.item.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
-                minimumInputLength: 0,
                 showAll: true,
                 allowClear: false
             }).change(function () {
@@ -1409,9 +1408,8 @@
                             dropdownOptions: {
                                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                                 abpServiceParams: { allOffices: true, includeLeaseHaulerTrucks: true, activeOnly: true, /*orderLineId: _validateTrucksAndDrivers ? _orderLineId : null*/ },
-                                showAll: true,
-                                allowClear: false,
-                                selectOnClose: true
+                                showAll: false,
+                                allowClear: false
                             },
                             validate: async function (rowData, newId) {
                                 try {
