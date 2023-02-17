@@ -69,6 +69,9 @@ namespace DispatcherWeb.MultiTenancy
         private readonly IRepository<SentSms> _sentSmsRepository;
         private readonly IRepository<TimeOff> _timeOffRepository;
         private readonly IRepository<DriverAssignment> _driverAssignmentRepository;
+        private readonly IRepository<BilledOrder> _billedOrderRepository;
+        private readonly IRepository<SharedOrderLine> _sharedOrderLineRepository;
+        private readonly IRepository<SharedOrder> _sharedOrderRepository;
 
         public TenantAppService(
             IRepository<Driver> driverRepository,
@@ -102,7 +105,10 @@ namespace DispatcherWeb.MultiTenancy
             IRepository<DriverMessage> driverMessageRepository,
             IRepository<SentSms> sentSmsRepository,
             IRepository<TimeOff> timeOffRepository,
-            IRepository<DriverAssignment> driverAssignmentRepository
+            IRepository<DriverAssignment> driverAssignmentRepository,
+            IRepository<BilledOrder> billedOrderRepository,
+            IRepository<SharedOrderLine> sharedOrderLineRepository,
+            IRepository<SharedOrder> sharedOrderRepository
         )
         {
             _driverRepository = driverRepository;
@@ -137,6 +143,9 @@ namespace DispatcherWeb.MultiTenancy
             _sentSmsRepository = sentSmsRepository;
             _timeOffRepository = timeOffRepository;
             _driverAssignmentRepository = driverAssignmentRepository;
+            _billedOrderRepository = billedOrderRepository;
+            _sharedOrderLineRepository = sharedOrderLineRepository;
+            _sharedOrderRepository = sharedOrderRepository;
             AppUrlService = NullAppUrlService.Instance;
             EventBus = NullEventBus.Instance;
         }
@@ -223,43 +232,59 @@ namespace DispatcherWeb.MultiTenancy
         }
 
         [AbpAuthorize(AppPermissions.Pages_Tenants_DeleteDispatchData)]
-        public async Task DeleteDispatchDataForTenant(EntityDto input)
+        public async Task DeleteDispatchDataForTenant(DeleteDispatchDataForTenantInput input)
         {
+            var batchSize = input.BatchSize ?? 100;
             using (CurrentUnitOfWork.SetTenantId(input.Id))
             {
                 using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
                 {
-                    await _employeeTimePayStatementTimeRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _employeeTimeRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _payStatementTimeRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _payStatementTicketRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _payStatementDetailRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _payStatementDriverDateConflictRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _payStatementRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _leaseHaulerStatementTicketRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _leaseHaulerStatementRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _ticketRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _loadRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _invoiceUploadBatchRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _invoiceEmailRepository.DeleteInBatchesAsync(x => x.Invoice.TenantId == input.Id, CurrentUnitOfWork);
-                    await _invoiceLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _invoiceRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _invoiceBatchRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _dispatchRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _orderLineTruckRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _orderLineOfficeAmountRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _orderPaymentRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _paymentsRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _orderLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _orderEmailRepository.DeleteInBatchesAsync(x => x.Order.TenantId == input.Id, CurrentUnitOfWork);
-                    await _orderTruckRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _receiptLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _receiptRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _orderRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _driverMessageRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _sentSmsRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _timeOffRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
-                    await _driverAssignmentRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork);
+                    await _employeeTimePayStatementTimeRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _employeeTimeRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _payStatementTimeRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _payStatementTicketRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _payStatementDetailRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _payStatementDriverDateConflictRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _payStatementRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _leaseHaulerStatementTicketRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _leaseHaulerStatementRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _invoiceEmailRepository.DeleteInBatchesAsync(x => x.Invoice.TenantId == input.Id, CurrentUnitOfWork, batchSize);
+                    await _invoiceLineRepository.HardDeleteInBatchesAsync(x => x.ParentInvoiceLineId.HasValue, CurrentUnitOfWork, batchSize);
+                    await _invoiceLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _invoiceRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _invoiceUploadBatchRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _invoiceBatchRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+
+                    var ticketsWithLoad = await _ticketRepository.GetAll()
+                        .Where(t => t.LoadId.HasValue)
+                        .ToListAsync();
+                    foreach (var ticket in ticketsWithLoad)
+                    {
+                        ticket.LoadId = null;
+                    }
+                    await CurrentUnitOfWork.SaveChangesAsync();
+
+                    await _ticketRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _loadRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _dispatchRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _orderLineTruckRepository.HardDeleteInBatchesAsync(x => x.ParentOrderLineTruckId.HasValue, CurrentUnitOfWork, batchSize);
+                    await _orderLineTruckRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _orderLineOfficeAmountRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _orderPaymentRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _paymentsRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _receiptLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _receiptRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _billedOrderRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _sharedOrderLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _sharedOrderRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _orderLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _orderEmailRepository.DeleteInBatchesAsync(x => x.Order.TenantId == input.Id, CurrentUnitOfWork, batchSize);
+                    await _orderTruckRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _orderRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _driverMessageRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _sentSmsRepository.DeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _timeOffRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
+                    await _driverAssignmentRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                 }
             }
         }

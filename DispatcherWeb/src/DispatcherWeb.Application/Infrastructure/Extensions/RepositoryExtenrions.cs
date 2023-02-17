@@ -13,7 +13,7 @@ namespace DispatcherWeb.Infrastructure.Extensions
 {
     public static class RepositoryExtenrions
     {
-        public static async Task DeleteInBatchesAsync<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, Expression<Func<TEntity, bool>> predicate, IActiveUnitOfWork currentUnitOfWork, int batchSize = 1000) where TEntity : class, IEntity<TPrimaryKey>
+        public static async Task DeleteInBatchesAsync<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, Expression<Func<TEntity, bool>> predicate, IActiveUnitOfWork currentUnitOfWork, int batchSize = 100) where TEntity : class, IEntity<TPrimaryKey>
         {
             List<TEntity> records;
             do
@@ -25,7 +25,7 @@ namespace DispatcherWeb.Infrastructure.Extensions
             while (records.Any());
         }
 
-        public static async Task HardDeleteInBatchesAsync<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, Expression<Func<TEntity, bool>> predicate, IActiveUnitOfWork currentUnitOfWork, int batchSize = 1000) where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
+        public static async Task HardDeleteInBatchesAsync<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, Expression<Func<TEntity, bool>> predicate, IActiveUnitOfWork currentUnitOfWork, int batchSize = 100) where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
         {
             List<TEntity> records;
             do
