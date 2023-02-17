@@ -44,6 +44,16 @@
                 });
             });
 
+        $("#HasException").select2Init({
+            showAll: true,
+            allowClear: true
+        });
+
+        $("#EntityTypeFullName").select2Init({
+            showAll: true,
+            allowClear: true
+        });
+
         var auditLogDataTable = _$auditLogsTable.DataTableInit({
             paging: true,
             serverSide: true,
@@ -326,10 +336,11 @@
         });
 
 
-        $("#ClearSearchButton").click(function () {            
-            $(this).closest('form')[0].reset();          
+        $("#ClearSearchButton").click(function () {
+            $(this).closest('form')[0].reset();
+            $('.filter').change();
             getAuditLogs();
-        });              
+        });
 
         _$auditLogFilterForm.keydown(function (e) {
             if (e.which === 13) {

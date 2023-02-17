@@ -230,6 +230,7 @@
                 let editCompleteCallback = editorOptions.editCompleteCallback;
                 let getDisplayValue = editorOptions.getDisplayValue || function (rowData, fieldName) { return rowData[fieldName]; };
                 let validate = editorOptions.validate || function () { return true; };
+                let selectTextOnFocus = editorOptions.selectTextOnFocus;
                 return function (cell, cellData, rowData, rowIndex, colIndex) {
                     $(cell).empty();
                     var editor = $('<input type="text">').appendTo($(cell));
@@ -239,6 +240,9 @@
                     editor.val(getDisplayValue(rowData, fieldName));
                     editor.focus(function () {
                         editor.val(rowData[fieldName]);
+                        if (selectTextOnFocus) {
+                            editor.select();
+                        }
                     });
                     editor.focusout(function () {
                         var newValue = $(this).val();
@@ -289,10 +293,16 @@
                 let editCompleteCallback = editorOptions.editCompleteCallback;
                 let maxLength = editorOptions.maxLength;
                 let isRequired = editorOptions.required;
+                let selectTextOnFocus = editorOptions.selectTextOnFocus;
                 return function (cell, cellData, rowData, rowIndex, colIndex) {
                     $(cell).empty();
                     var editor = $('<input type="text">').appendTo($(cell));
                     editor.val(rowData[fieldName]);
+                    editor.focus(function () {
+                        if (selectTextOnFocus) {
+                            editor.select();
+                        }
+                    });
                     editor.focusout(function () {
                         var newValue = $(this).val();
                         if (newValue === (rowData[fieldName] || "").toString()) {

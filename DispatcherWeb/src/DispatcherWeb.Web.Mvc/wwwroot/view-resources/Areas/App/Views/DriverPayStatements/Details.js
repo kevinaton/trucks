@@ -168,9 +168,7 @@
                                 }
                             },
                             showAll: true,
-                            allowClear: false,
-                            noSearch: true,
-                            selectOnClose: true
+                            allowClear: false
                         },
                         editCompleteCallback: function (editResult, rowData, cell) {
                             rowData.isProductionPay = editResult.isProductionPay;

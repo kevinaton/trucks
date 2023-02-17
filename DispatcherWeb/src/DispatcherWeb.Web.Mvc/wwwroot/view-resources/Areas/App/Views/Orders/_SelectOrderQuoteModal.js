@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.SelectOrderQuoteModal = function () {
 
         var _modalManager;
@@ -6,12 +6,12 @@
         var _capturedQuoteInput = null;
         var _quoteInput = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             abp.helper.ui.initControls();
 
             var cancelButton = _modalManager.getModal().find('.close-button');
@@ -21,17 +21,25 @@
             okButton.find('.fa').remove();
 
             var quoteInputContainer = _$form.find("#QuoteInputContainer");
-            
+
             abp.event.trigger('app.selectOrderQuoteModal.requestInput', function (input) {
                 _capturedQuoteInput = $(input);
                 _quoteInput = _capturedQuoteInput.clone();
                 _quoteInput.attr('id', 'PopupQuoteId');
                 _quoteInput.appendTo(quoteInputContainer);
+                _$form.find("#PopupQuoteId").select2Init({
+                    showAll: true,
+                    allowClear: true
+                });
             });
         };
 
         this.save = function () {
             if (_capturedQuoteInput) {
+                _capturedQuoteInput.select2Init({
+                    showAll: true,
+                    allowClear: true
+                });
                 _capturedQuoteInput.val(_quoteInput.val());
             }
 

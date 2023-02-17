@@ -183,13 +183,14 @@ namespace DispatcherWeb.Services
                     .Where(x => x.QuoteId == input.QuoteId
                                 && x.ServiceId == input.ServiceId
                                 && (x.MaterialUomId == input.MaterialUomId || x.FreightUomId == input.FreightUomId)
-                                && x.LoadAtId == input.LoadAtId)
+                                && x.LoadAtId == input.LoadAtId
+                                && x.DeliverToId == input.DeliverToId)
                     .Select(x => new
                     {
                         x.PricePerUnit,
                         x.FreightRate,
                         x.MaterialUomId,
-                        x.FreightUomId
+                        x.FreightUomId 
                     })
                     .ToListAsync();
 
@@ -211,7 +212,7 @@ namespace DispatcherWeb.Services
         }
 
         [AbpAuthorize(AppPermissions.Pages_Services)]
-        public async Task<ServiceEditDto> GetServiceForEdit(NullableIdDto input)
+        public async Task<ServiceEditDto> GetServiceForEdit(NullableIdNameDto input)
         {
             ServiceEditDto serviceEditDto;
 
@@ -235,7 +236,8 @@ namespace DispatcherWeb.Services
             {
                 serviceEditDto = new ServiceEditDto
                 {
-                    IsActive = true
+                    IsActive = true,
+                    Service1 = input.Name
                 };
             }
 

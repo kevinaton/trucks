@@ -375,7 +375,6 @@ namespace DispatcherWeb.Imports.Services
                     {
                         DeliveryDate = date,
                         CustomerId = _truxCustomerId,
-                        JobNumber = jobId.ToString(),
                         CreatorUserId = _userId,
                         LocationId = _officeId.Value,
                         TenantId = _tenantId,
@@ -388,7 +387,6 @@ namespace DispatcherWeb.Imports.Services
                         .Include(x => x.OrderLines)
                         .Where(x => x.DeliveryDate == order.DeliveryDate
                             && x.CustomerId == order.CustomerId
-                            && x.JobNumber == order.JobNumber
                             && x.LocationId == order.LocationId
                             && x.IsClosed
                             && x.IsImported).FirstOrDefault();
@@ -429,6 +427,7 @@ namespace DispatcherWeb.Imports.Services
                             Designation = isFreight ? DesignationEnum.FreightOnly : DesignationEnum.MaterialOnly,
                             LoadAtId = GetLoadAtId(row),
                             DeliverToId = GetDeliverToId(row),
+                            JobNumber = jobId.ToString(),
                             IsComplete = true,
                             NumberOfTrucks = 1,
                             ProductionPay = _useForProductionPay && isFreight,

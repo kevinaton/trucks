@@ -58,6 +58,7 @@ namespace DispatcherWeb.Trucks
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<Ticket> _ticketRepository;
         private readonly IRepository<TimeOff> _timeOffRepository;
+        private readonly IOrderLineUpdaterFactory _orderLineUpdaterFactory;
         private readonly ISingleOfficeAppService _singleOfficeService;
         private readonly ITruckListCsvExporter _truckListCsvExporter;
         private readonly IDriverApplicationPushSender _driverApplicationPushSender;
@@ -79,6 +80,7 @@ namespace DispatcherWeb.Trucks
             IRepository<Dispatch> dispatchRepository,
             IRepository<Ticket> ticketRepository,
             IRepository<TimeOff> timeOffRepository,
+            IOrderLineUpdaterFactory orderLineUpdaterFactory,
             ISingleOfficeAppService singleOfficeService,
             ITruckListCsvExporter truckListCsvExporter,
             IDriverApplicationPushSender driverApplicationPushSender,
@@ -100,6 +102,7 @@ namespace DispatcherWeb.Trucks
             _dispatchRepository = dispatchRepository;
             _ticketRepository = ticketRepository;
             _timeOffRepository = timeOffRepository;
+            _orderLineUpdaterFactory = orderLineUpdaterFactory;
             _singleOfficeService = singleOfficeService;
             _truckListCsvExporter = truckListCsvExporter;
             _driverApplicationPushSender = driverApplicationPushSender;
@@ -820,15 +823,18 @@ namespace DispatcherWeb.Trucks
                 from driverAssignment in gj.DefaultIfEmpty()
                 where driverAssignment == null
                 select new { olt.Id, olt.OrderLine.Order.DeliveryDate };
+
             var idsToDeleteOrComplete = await orderLineTrucksToDeleteOrCompleteQuery.ToListAsync();
             var idGroupsToDeleteOrComplete = idsToDeleteOrComplete.GroupBy(x => new { MarkComplete = x.DeliveryDate == today });
             foreach (var idGroup in idGroupsToDeleteOrComplete)
             {
                 var ids = idGroup.Select(x => x.Id).ToList();
+                var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                    .Where(x => ids.Contains(x.Id) || x.ParentOrderLineTruckId.HasValue && ids.Contains(x.ParentOrderLineTruckId.Value))
+                    .ToListAsync();
                 if (idGroup.Key.MarkComplete)
                 {
-                    var orderLineTrucksToComplete = await _orderLineTruckRepository.GetAll().Where(x => ids.Contains(x.Id) || x.ParentOrderLineTruckId.HasValue && ids.Contains(x.ParentOrderLineTruckId.Value)).ToListAsync();
-                    orderLineTrucksToComplete.ForEach(olt =>
+                    orderLineTrucks.ForEach(olt =>
                     {
                         olt.IsDone = true;
                         olt.Utilization = 0;
@@ -836,7 +842,19 @@ namespace DispatcherWeb.Trucks
                 }
                 else
                 {
-                    await _orderLineTruckRepository.DeleteAsync(x => ids.Contains(x.Id) || x.ParentOrderLineTruckId.HasValue && ids.Contains(x.ParentOrderLineTruckId.Value));
+                    orderLineTrucks.ForEach(_orderLineTruckRepository.Delete);
+                    var orderLineIds = orderLineTrucks.Select(x => x.OrderLineId).Distinct().ToList();
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                    foreach (var orderLineId in orderLineIds)
+                    {
+                        var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineId);
+                        var order = await orderLineUpdater.GetOrderAsync();
+                        if (order.DeliveryDate >= await GetToday())
+                        {
+                            orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                            await orderLineUpdater.SaveChangesAsync();
+                        }
+                    }
                 }
             }
         }
@@ -938,7 +956,10 @@ namespace DispatcherWeb.Trucks
                 .ToListAsync();
 
             var orderLineTruckIdsToDelete = orderLineTrucksToRemove.Where(x => x.DeliveryDate != today).Select(x => x.Id).ToList();
-            await _orderLineTruckRepository.DeleteAsync(x => orderLineTruckIdsToDelete.Contains(x.Id) || x.ParentOrderLineTruckId.HasValue && orderLineTruckIdsToDelete.Contains(x.ParentOrderLineTruckId.Value));
+            var orderLineTrucksToDelete = await _orderLineTruckRepository.GetAll()
+                .Where(x => orderLineTruckIdsToDelete.Contains(x.Id) || x.ParentOrderLineTruckId.HasValue && orderLineTruckIdsToDelete.Contains(x.ParentOrderLineTruckId.Value))
+                .ToListAsync();
+            orderLineTrucksToDelete.ForEach(_orderLineTruckRepository.Delete);
 
             if (orderLineTrucksToRemove.Where(x => x.DeliveryDate == today).Any())
             {
@@ -948,6 +969,22 @@ namespace DispatcherWeb.Trucks
                 {
                     orderLineTruck.IsDone = true;
                     orderLineTruck.Utilization = 0;
+                }
+            }
+
+            var orderLineIdsNeedingStaggeredTimeRecalculation = orderLineTrucksToDelete.Select(x => x.OrderLineId).Distinct().ToList();
+            if (orderLineIdsNeedingStaggeredTimeRecalculation.Any())
+            {
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var orderLineId in orderLineIdsNeedingStaggeredTimeRecalculation.Distinct().ToList())
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineId);
+                    var order = await orderLineUpdater.GetOrderAsync();
+                    if (order.DeliveryDate >= today)
+                    {
+                        orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                        await orderLineUpdater.SaveChangesAsync();
+                    }
                 }
             }
 

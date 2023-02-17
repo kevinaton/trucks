@@ -41,21 +41,14 @@
             });
             serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
-                minimumInputLength: 0,
+                showAll: false,
                 allowClear: false
-                //dropdownParent: $("#" + _modalManager.getModalId())
             });
-            materialUomDropdown.select2Uom({
-                //dropdownParent: $("#" + _modalManager.getModalId())
-            });
-            freightUomDropdown.select2Uom({
-                //dropdownParent: $("#" + _modalManager.getModalId())
-            });
+            materialUomDropdown.select2Uom();
+            freightUomDropdown.select2Uom();
             designationDropdown.select2Init({
                 showAll: true,
-                noSearch: true,
                 allowClear: false
-                //dropdownParent: $("#" + _modalManager.getModalId())
             });
 
             abp.helper.ui.syncUomDropdowns(_materialUomDropdown, _freightUomDropdown, _designationDropdown, materialQuantityInput, freightQuantityInput);

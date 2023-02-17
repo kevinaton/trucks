@@ -9,5 +9,6 @@ namespace DispatcherWeb.DriverApp.FcmPushMessages.Dto
     {
         public bool? Received { get; set; }
         public string Token { get; set; }
+        public Guid? Guid { get; set; }
     }
 }

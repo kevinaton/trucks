@@ -7,7 +7,6 @@
         public string ChargeTo { get; set; }
         public string PONumber { get; set; }
         public string SpectrumNumber { get; set; }
-        public string JobNumber { get; set; }
         public int? ContactId { get; set; }
         public string Directions { get; set; }
         public int? CustomerId { get; set; }

@@ -18,7 +18,7 @@
         var $officeIdFilterSelect = $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
-            noSearch: true
+            allowClear: true
         });
 
         if ($officeIdFilterSelect.data('filter-office-id')) {
@@ -32,15 +32,13 @@
             abpServiceParams: {
                 isInUse: true
             },
-            allowClear: true,
             showAll: true,
-            noSearch: true
+            allowClear: true
         });
 
         $("#StatusFilter").select2Init({
-            allowClear: false,
             showAll: true,
-            noSearch: true
+            allowClear: false
         });
 
         var trucksTable = $('#TrucksTable');
@@ -123,7 +121,8 @@
 
             ],
             createdRow: function (row, data, index) {
-                $('td', row).eq(7).addClass(getUntilDueClass(data.dueDateStatus, data.dueMileageStatus));
+                // commented in reference to PR comment, https://dev.azure.com/wallinginfosystems/DispatcherWeb/_git/DispatcherWeb/pullRequest/377#1676235425
+                //$('td', row).eq(7).addClass(getUntilDueClass(data.dueDateStatus, data.dueMileageStatus));
             }
         });
 

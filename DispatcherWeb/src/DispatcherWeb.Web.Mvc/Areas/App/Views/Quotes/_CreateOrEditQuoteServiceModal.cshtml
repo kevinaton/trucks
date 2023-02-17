@@ -1,4 +1,5 @@
 ﻿@using System.Threading.Tasks
+@using DispatcherWeb.Infrastructure
 @using DispatcherWeb.Quotes.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @using DispatcherWeb.Authorization
@@ -17,57 +18,33 @@
         </div>
         <div class="form-group">
             <label>@L("LoadAt")</label>
-            <div class="input-group">
-                <select class="form-control" asp-for="LoadAtId">
-                    <option value="">@L("SelectALocation")</option>
-                    @if (Model.LoadAtId.HasValue)
-                    {
-                        <option selected value="@Model.LoadAtId">@Model.LoadAtName</option>
-                    }
-                </select>
-                @if (await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Locations))
+            <select class="form-control" asp-for="LoadAtId">
+                <option value="">@L("SelectALocation")</option>
+                @if (Model.LoadAtId.HasValue)
                 {
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default AddNewLocationButton" data-target-field="LoadAtId"><span class="fa fa-plus"></span></button>
-                    </span>
+                    <option selected value="@Model.LoadAtId">@Model.LoadAtName</option>
                 }
-            </div>
+            </select>
         </div>
         <div class="form-group">
             <label>@L("DeliverTo")</label>
-            <div class="input-group">
-                <select class="form-control" asp-for="DeliverToId">
-                    <option value="">@L("SelectALocation")</option>
-                    @if (Model.DeliverToId.HasValue)
-                    {
-                        <option selected value="@Model.DeliverToId">@Model.DeliverToName</option>
-                    }
-                </select>
-                @if (await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Locations))
+            <select class="form-control" asp-for="DeliverToId">
+                <option value="">@L("SelectALocation")</option>
+                @if (Model.DeliverToId.HasValue)
                 {
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default AddNewLocationButton" data-target-field="DeliverToId"><span class="fa fa-plus"></span></button>
-                    </span>
+                    <option selected value="@Model.DeliverToId">@Model.DeliverToName</option>
                 }
-            </div>
+            </select>
         </div>
         <div class="form-group">
             <label class="required-label">@L("Item")</label>
-            <div class="input-group">
-                <select class="form-control" asp-for="ServiceId" required>
-                    <option value="">Select an item</option>
-                    @if (Model.ServiceId != 0)
-                    {
-                        <option selected value="@Model.ServiceId">@Model.ServiceName</option>
-                    }
-                </select>
-                @if (await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Services))
+            <select class="form-control" asp-for="ServiceId" required>
+                <option value="">Select an item</option>
+                @if (Model.ServiceId != 0)
                 {
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" id="AddNewServiceButton"><span class="fa fa-plus"></span></button>
-                    </span>
+                    <option selected value="@Model.ServiceId">@Model.ServiceName</option>
                 }
-            </div>
+            </select>
         </div>
         <div class="form-group">
             <label class="required-label">@L("MaterialUom")</label>
@@ -122,6 +99,10 @@
         <div class="form-group">
             <label>@L("FreightQuantity")</label>
             <input class="form-control" type="text" asp-for="FreightQuantity" data-rule-number="true" data-rule-min="0" data-rule-max="1000000">
+        </div>
+        <div class="form-group">
+            <label>@L("JobNumber")</label>
+            <input class="form-control" type="text" asp-for="JobNumber" maxlength="@EntityStringFieldLengths.OrderLine.JobNumber">
         </div>
         <div class="form-group">
             <label>@L("Notes")</label>

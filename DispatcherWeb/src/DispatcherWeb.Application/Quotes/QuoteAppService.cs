@@ -178,7 +178,6 @@ namespace DispatcherWeb.Quotes
                         Directions = x.Directions,
                         PONumber = x.PONumber,
                         SpectrumNumber = x.SpectrumNumber,
-                        JobNumber = x.JobNumber,
                         Status = x.Status,
                         CustomerId = x.CustomerId,
                         ChargeTo = x.ChargeTo,
@@ -233,7 +232,6 @@ namespace DispatcherWeb.Quotes
                         SalesPersonName = quote.SalesPerson.Name + " " + quote.SalesPerson.Surname,
                         PONumber = quote.PONumber,
                         SpectrumNumber = quote.SpectrumNumber,
-                        JobNumber = quote.JobNumber,
                         BaseFuelCost = quote.BaseFuelCost,
                         FuelSurchargeCalculationId = quote.FuelSurchargeCalculationId,
                         FuelSurchargeCalculationName = quote.FuelSurchargeCalculation.Name,
@@ -307,11 +305,6 @@ namespace DispatcherWeb.Quotes
                 var userFullName = await UserManager.Users.Where(x => x.Id == AbpSession.UserId).Select(x => x.Name + " " + x.Surname).FirstOrDefaultAsync();
                 quoteEditDto.SalesPersonId = AbpSession.UserId;
                 quoteEditDto.SalesPersonName = userFullName;
-            }
-
-            if (quoteEditDto.FuelSurchargeCalculationId == null)
-            {
-                quoteEditDto.FuelSurchargeCalculationId = 0;
             }
 
             return quoteEditDto;
@@ -432,15 +425,6 @@ namespace DispatcherWeb.Quotes
                 quote.SpectrumNumber = model.SpectrumNumber;
             }
 
-            if (quote.JobNumber != model.JobNumber)
-            {
-                if (quote.CaptureHistory)
-                {
-                    fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.JobNumber, quote.JobNumber, model.JobNumber));
-                }
-                quote.JobNumber = model.JobNumber;
-            }
-
             if (quote.BaseFuelCost != model.BaseFuelCost)
             {
                 if (quote.CaptureHistory)
@@ -450,10 +434,6 @@ namespace DispatcherWeb.Quotes
                 quote.BaseFuelCost = model.BaseFuelCost;
             }
 
-            if (model.FuelSurchargeCalculationId == 0)
-            {
-                model.FuelSurchargeCalculationId = null;
-            }
             if (quote.FuelSurchargeCalculationId != model.FuelSurchargeCalculationId)
             {
                 if (quote.CaptureHistory)
@@ -747,7 +727,6 @@ namespace DispatcherWeb.Quotes
                 SalesPersonId = quote.SalesPersonId,
                 PONumber = quote.PONumber,
                 SpectrumNumber = quote.SpectrumNumber,
-                JobNumber = quote.JobNumber,
                 BaseFuelCost = quote.BaseFuelCost,
                 FuelSurchargeCalculationId = quote.FuelSurchargeCalculationId,
                 Directions = quote.Directions,
@@ -773,6 +752,7 @@ namespace DispatcherWeb.Quotes
                 LeaseHaulerRate = s.LeaseHaulerRate,
                 MaterialQuantity = s.MaterialQuantity,
                 FreightQuantity = s.FreightQuantity,
+                JobNumber = s.JobNumber,
                 Note = s.Note,
                 Quote = newQuote
             }).ToList().ForEach(x =>
@@ -823,6 +803,7 @@ namespace DispatcherWeb.Quotes
                     x.LineNumber,
                     x.MaterialPrice,
                     x.MaterialPricePerUnit,
+                    x.JobNumber,
                     x.Note,
                     x.MaterialQuantity,
                     x.FreightQuantity,
@@ -844,7 +825,6 @@ namespace DispatcherWeb.Quotes
                 Directions = order.Directions,
                 Name = input.QuoteName,
                 PONumber = order.PONumber,
-                JobNumber = order.JobNumber,
                 Status = ProjectStatus.Active,
                 SalesPersonId = AbpSession.UserId,
                 Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes),
@@ -863,6 +843,7 @@ namespace DispatcherWeb.Quotes
             {
                 QuoteId = quote.Id,
                 Designation = x.Designation,
+                JobNumber = x.JobNumber,
                 Note = x.Note,
                 FreightRate = x.FreightPricePerUnit,
                 PricePerUnit = x.MaterialPricePerUnit,
@@ -1079,6 +1060,7 @@ namespace DispatcherWeb.Quotes
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
+                        JobNumber = x.JobNumber,
                         Note = x.Note
                     })
                     .SingleAsync(x => x.Id == input.Id.Value);
@@ -1252,6 +1234,15 @@ namespace DispatcherWeb.Quotes
                 quoteService.FreightQuantity = model.FreightQuantity;
             }
 
+            if (quoteService.JobNumber != model.JobNumber)
+            {
+                if (captureHistory)
+                {
+                    fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.LineItemNote, quoteService.JobNumber, model.JobNumber));
+                }
+                quoteService.JobNumber = model.JobNumber;
+            }
+
             if (quoteService.Note != model.Note)
             {
                 if (captureHistory)
@@ -1282,7 +1273,6 @@ namespace DispatcherWeb.Quotes
                     CustomerCountryCode = x.Customer.CountryCode,
                     ProjectName = x.Project.Name,
                     QuotePoNumber = x.PONumber,
-                    QuoteJobNumber = x.JobNumber,
                     QuoteId = x.Id,
                     QuoteName = x.Name,
                     QuoteNotes = x.Notes,
@@ -1316,6 +1306,7 @@ namespace DispatcherWeb.Quotes
                             City = s.DeliverTo.City,
                             State = s.DeliverTo.State
                         },
+                        JobNumber = s.JobNumber,
                         Note = s.Note
                     }).ToList()
                 })

@@ -10,6 +10,50 @@ interface JQuery {
     abp.helper = abp.helper || {};
     abp.helper.ui = abp.helper.ui || {};
 
+    abp.enums = abp.enums || {};
+    enum Select2ItemKind {
+        addNewItem = -1,
+    };
+    abp.enums.select2ItemKind = Select2ItemKind;
+
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }
+
+    function escapeRegExpReplacement(string) {
+        return string.replace(/\$/g, '$$$$');
+    }
+
+    function renderSelect2MatchedText(text: string, match: string) {
+        if (!match || !text) {
+            return $('<span>').text(text);
+        }
+
+        var matchRegex = new RegExp('(' + escapeRegExp(match) + ')', 'gi');
+        var parts = text.split(matchRegex);
+
+        var result = $('<span>');
+        for (var i = 0; i < parts.length; i++) {
+            var span = $('<span>').text(parts[i])
+            if (i % 2 !== 0) {
+                span.addClass('select2-rendered__match');
+            }
+            result.append(span);
+        }
+
+        return result;
+    }
+
+    function getSelect2AddNewItemOption(text: string) {
+        return {
+            id: Select2ItemKind.addNewItem,
+            name: text,
+            text: text,
+            select2ItemKind: Select2ItemKind.addNewItem,
+            select2PreventHighlightingByDefault: true
+        };
+    }
+
     jQuery.fn.select2Init = function (userOptions) {
         userOptions = userOptions || {};
         var $element = $(this);
@@ -26,6 +70,7 @@ interface JQuery {
                 data: function (params) {
                     params.page = params.page || 1;
                     return {
+                        page: params.page,
                         term: params.term,
                         skipCount: (params.page - 1) * select2PageSize,
                         maxResultCount: select2PageSize
@@ -41,12 +86,29 @@ interface JQuery {
                 processResults: function (data, params) {
                     params.page = params.page || 1;
 
-                    return {
-                        results: data.items,
-                        pagination: {
-                            more: params.page * select2PageSize < data.totalCount
-                        }
-                    };
+                    var result;
+                    if (data.results && data.pagination !== undefined) {
+                        result = data;
+                    } else {
+                        result = {
+                            results: data.items,
+                            pagination: {
+                                more: params.page * select2PageSize < data.totalCount
+                            }
+                        };
+                    }
+
+                    if (userOptions.addItemCallback
+                        && params.page === 1
+                        && params.term
+                        && !result.results.some(i => (i.name || i.text || '').toLowerCase() === params.term?.toLowerCase())) {
+                        result.results = [
+                            getSelect2AddNewItemOption(params.term),
+                            ...result.results
+                        ];
+                    }
+
+                    return result;
                 },
                 cache: false
             },
@@ -54,16 +116,48 @@ interface JQuery {
                 if (data.id === '') {
                     return placeholder;
                 }
-                data.text = data.name;
-                return data.name;
+                if (data.loading) {
+                    return data.text;
+                }
+                if (!data.text && !data.name && data.element && $(data.element).is('option')) {
+                    data.text = $(data.element).text();
+                }
+                data.text = data.text || data.name;
+
+                var select2 = $element.data('select2');
+                var term = select2?.results?.lastParams?.term || select2?.$dropdown.find("input").val();
+
+                if (data.select2ItemKind) {
+                    switch (data.select2ItemKind) {
+                        case Select2ItemKind.addNewItem:
+                            return $('<span>').append(
+                                $('<span class="select2-results__add-new-icon">').append(
+                                    $('<i class="fa fa-plus">')
+                                )
+                            ).append(
+                                $('<span>').text('Add ')
+                            ).append(
+                                //renderSelect2MatchedText(data.text, term)
+                                $('<span>').text(data.text)
+                            );
+                    }
+                }
+
+                return renderSelect2MatchedText(data.text, term);
             }
         };
         if (!userOptions.abpServiceMethod) {
             //defaultOptions.ajax.transport = undefined;
             defaultOptions.ajax = undefined;
-            defaultOptions.templateResult = undefined;
+            //defaultOptions.templateResult = undefined;
             if (userOptions.showAll === undefined && userOptions.minimumInputLength === undefined) {
                 userOptions.showAll = true;
+            }
+            if (userOptions.addItemCallback) {
+                defaultOptions.tags = true;
+                defaultOptions.createTag = function (params) {
+                    return getSelect2AddNewItemOption(params.term) as any;
+                };
             }
         }
         if (userOptions.dropdownParent !== undefined) {
@@ -83,7 +177,26 @@ interface JQuery {
         //same, but for the case when a term is entered but popup is closed before an ajax call is complete
         $element.on("select2:opening", function () { $(this).data("select2").$results.empty(); });
 
-        $element.change(function () {
+        if (userOptions.addItemCallback) {
+            $element.on('select2:selecting', function (e) {
+                var selectedOption = (e.params as any)?.args?.data;
+                var select2 = $element.data('select2');
+                if (selectedOption?.select2ItemKind === Select2ItemKind.addNewItem) {
+                    e.preventDefault();
+                    (select2 as any)?.close();
+                    abp.ui.setBusy(select2?.$container);
+                    userOptions.addItemCallback(selectedOption.text).then(result => {
+                        if (result) {
+                            abp.helper.ui.addAndSetDropdownValue($element, result.id, result.name);
+                        }
+                    }).finally(() => {
+                        abp.ui.clearBusy(select2?.$container);
+                    });
+                }
+            });
+        }
+
+        $element.change(async function () {
             if ($element.closest(".form-group").hasClass("has-danger")) {
                 $(this).closest("form").valid();
             }

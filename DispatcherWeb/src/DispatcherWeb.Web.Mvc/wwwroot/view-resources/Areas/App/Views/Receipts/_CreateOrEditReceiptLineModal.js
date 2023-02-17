@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditReceiptLineModal = function () {
 
         var _modalManager;
@@ -28,6 +28,7 @@
         var _freightAmountInput = null; //total for item
         var _isMaterialAmountOverriddenInput = null;
         var _isFreightAmountOverriddenInput = null;
+        var _jobNumberInput = null;
 
         function reloadPricing(callback) {
             if (_initializing) {
@@ -45,7 +46,8 @@
                 serviceId: _serviceDropdown.val(),
                 materialUomId: _materialUomDropdown.val(),
                 freightUomId: _freightUomDropdown.val(),
-                loadAtId: _loadAtDropdown.val()
+                loadAtId: _loadAtDropdown.val(),
+                deliverToId: _deliverToDropdown.val()
             }).done(function (pricing) {
                 _pricing = pricing;
                 refreshHighlighting();
@@ -57,11 +59,13 @@
         function refreshHighlighting() {
             if (_pricing && _pricing.quoteBasedPricing) {
                 _loadAtDropdown.addClass("quote-based-pricing");
+                _deliverToDropdown.addClass("quote-based-pricing");
                 _serviceDropdown.addClass("quote-based-pricing");
                 _materialUomDropdown.addClass("quote-based-pricing");
                 _freightUomDropdown.addClass("quote-based-pricing");
             } else {
                 _loadAtDropdown.removeClass("quote-based-pricing");
+                _deliverToDropdown.removeClass("quote-based-pricing");
                 _serviceDropdown.removeClass("quote-based-pricing");
                 _materialUomDropdown.removeClass("quote-based-pricing");
                 _freightUomDropdown.removeClass("quote-based-pricing");
@@ -124,6 +128,28 @@
             _isMaterialAmountOverriddenInput.val(val ? "True" : "False");
         }
 
+        function setFreightRateFromPricingIfNeeded(rate, sender) {
+            if (getIsFreightRateOverridden() || designationIsMaterialOnly()) {
+                return;
+            }
+            //when quantity changes, don't reset the rate from pricing unless the rate was empty
+            if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _freightRateInput.val()) {
+                return;
+            }
+            _freightRateInput.val(rate);
+        }
+
+        function setMaterialRateFromPricingIfNeeded(rate, sender) {
+            if (getIsMaterialRateOverridden() || !designationHasMaterial()) {
+                return;
+            }
+            //when quantity changes, don't reset the rate from pricing unless the rate was empty
+            if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _materialRateInput.val()) {
+                return;
+            }
+            _materialRateInput.val(rate);
+        }
+
         var _recalculating = false;
         function recalculate(sender) {
             if (_initializing || _recalculating) {
@@ -134,12 +160,11 @@
                 if (sender.is(_freightRateInput)) {
                     setIsFreightRateOverridden(_pricing.freightRate !== Number(_freightRateInput.val())); //_freightRateInput value used to be rouned
                 } else {
-                    if (!getIsFreightRateOverridden() && !designationIsMaterialOnly())
-                        _freightRateInput.val(_pricing.freightRate);
+                    setFreightRateFromPricingIfNeeded(_pricing.freightRate, sender);
                 }
             } else {
                 //no freight pricing
-                if (!getIsFreightRateOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown))) {
+                if (!getIsFreightRateOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
                     _freightRateInput.val('');
                 }
             }
@@ -147,12 +172,11 @@
                 if (sender.is(_materialRateInput)) {
                     setIsMaterialRateOverridden(_pricing.pricePerUnit !== Number(_materialRateInput.val())); //_materialRateInput used to be rounded
                 } else {
-                    if (!getIsMaterialRateOverridden() && designationHasMaterial())
-                        _materialRateInput.val(_pricing.pricePerUnit);
+                    setMaterialRateFromPricingIfNeeded(_pricing.pricePerUnit, sender);
                 }
             } else {
                 //no material pricing
-                if (!getIsMaterialRateOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown))) {
+                if (!getIsMaterialRateOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
                     _materialRateInput.val('');
                 }
             }
@@ -234,7 +258,7 @@
             _freightAmountInput.closest('.form-group').show();
         }
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             var _createOrEditServiceModal = new app.ModalManager({
@@ -265,27 +289,37 @@
             _freightAmountInput = _$form.find("#FreightAmount"); //total for item
             _isMaterialAmountOverriddenInput = _$form.find("#IsMaterialAmountOverridden");
             _isFreightAmountOverriddenInput = _$form.find("#IsFreightAmountOverridden");
+            _jobNumberInput = _$form.find("#JobNumber");
 
             _materialAmountInput.val(round(_materialAmountInput.val()).toFixed(2));
             _freightAmountInput.val(round(_freightAmountInput.val()).toFixed(2));
 
             _loadAtDropdown.select2Init({
-                abpServiceMethod: abp.services.app.location.getLocationsSelectList
+                abpServiceMethod: abp.services.app.location.getLocationsSelectList,
+                showAll: false,
+                allowClear: true
             });
+
             _deliverToDropdown.select2Init({
-                abpServiceMethod: abp.services.app.location.getLocationsSelectList
+                abpServiceMethod: abp.services.app.location.getLocationsSelectList,
+                showAll: false,
+                allowClear: true
+
             });
+
             _serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
-                minimumInputLength: 0,
-                allowClear: false,
-                width: 'calc(100% - 45px)'
+                showAll: false,
+                allowClear: true,
+                addItemCallback: abp.auth.isGranted('Pages.Services') ? async function (newServiceName) {
+                    _createOrEditServiceModal.open({ name: newServiceName });
+                } : null
             });
+
             _materialUomDropdown.select2Uom();
             _freightUomDropdown.select2Uom();
             _designationDropdown.select2Init({
                 showAll: true,
-                noSearch: true,
                 allowClear: false
             });
 
@@ -309,15 +343,10 @@
                 _serviceDropdown.change();
             });
 
-            _modalManager.getModal().find("#AddNewServiceButton").click(function (e) {
-                e.preventDefault();
-                _createOrEditServiceModal.open();
-            });
-
             reloadPricing();
             refreshHighlighting();
 
-            _loadAtDropdown.change(function () {
+            _loadAtDropdown.add(_deliverToDropdown).change(function () {
                 var sender = $(this);
                 reloadPricing(function () {
                     recalculate(sender);
@@ -427,6 +456,7 @@
                 _receiptLine.freightQuantity = receiptLine.FreightQuantity;
                 _receiptLine.materialAmount = receiptLine.MaterialAmount;
                 _receiptLine.freightAmount = receiptLine.FreightAmount;
+                _receiptLine.jobNumber = receiptLine.JobNumber;
                 this.saveCallback && this.saveCallback(_receiptLine);
                 _modalManager.close();
                 abp.event.trigger('app.createOrEditReceiptLineModalSaved', {});
@@ -457,9 +487,9 @@
             }
 
             if (!isFreightUomValid
-                    || !isFreightQuantityValid
-                    || !isMaterialUomValid
-                    || !isMaterialQuantityValid) {
+                || !isFreightQuantityValid
+                || !isMaterialUomValid
+                || !isMaterialQuantityValid) {
                 abp.message.error('Please check the following: \n'
                     + (isMaterialUomValid ? '' : '"Material UOM" - This field is required.\n')
                     + (isMaterialQuantityValid ? '' : '"Material Quantity" - This field is required.\n')
@@ -495,6 +525,7 @@
             _$form.find("#FreightQuantity").val(_receiptLine.freightQuantity);
             _$form.find("#MaterialAmount").val(_receiptLine.materialAmount);
             _$form.find("#FreightAmount").val(_receiptLine.freightAmount);
+            _$form.find("#JobNumber").val(_receiptLine.jobNumber);
             _modalManager.getModal().find('.modal-title').text(receiptLine.isNew ? "Add new line" : "Edit line");
             _initializing = false;
             reloadPricing();

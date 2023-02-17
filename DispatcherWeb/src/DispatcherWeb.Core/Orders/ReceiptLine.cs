@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.Orders
 {
@@ -83,6 +84,9 @@ namespace DispatcherWeb.Orders
 
         public bool IsFreightRateOverridden { get; set; }
 
+        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
+        public string JobNumber { get; set; }
+
         public ICollection<Ticket> Tickets { get; set; }
 
         public static ReceiptLine FromOrderLine(OrderLine orderLine, decimal materialQuantity, decimal freightQuantity)
@@ -110,7 +114,8 @@ namespace DispatcherWeb.Orders
                 ServiceId = orderLine.ServiceId,
                 TenantId = orderLine.TenantId,
                 LoadAtId = orderLine.LoadAtId,
-                DeliverToId = orderLine.DeliverToId
+                DeliverToId = orderLine.DeliverToId,
+                JobNumber = orderLine.JobNumber,
             };
         }
     }

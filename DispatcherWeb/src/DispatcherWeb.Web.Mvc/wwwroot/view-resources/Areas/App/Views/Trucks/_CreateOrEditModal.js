@@ -63,7 +63,6 @@
             _$form.find("select#OfficeId").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
-                noSearch: true,
                 allowClear: false
             });
 
@@ -121,29 +120,31 @@
                 abpServiceParams: {
                     includeLeaseHaulerDrivers: abp.setting.getBoolean('App.LeaseHaulers.AllowSubcontractorsToDriveCompanyOwnedTrucks')
                 },
-                showAll: true,
-                //dropdownParent: $("#" + _modalManager.getModalId())
+                showAll: false,
+                allowClear: true
             });
 
             $defaultTrailerId.select2Init({
                 abpServiceMethod: abp.services.app.truck.getActiveTrailersSelectList,
                 showAll: true,
-                //dropdownParent: $("#" + _modalManager.getModalId())
+                allowClear: true
             });
 
             vehicleCategoryDropdown.select2Init({
                 abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
                 showAll: true,
-                //noSearch: true,
                 allowClear: false
             });
 
             $("#FuelType").select2Init({
-                allowClear: true,
                 showAll: true,
-                noSearch: true
+                allowClear: true
             });
 
+            $("#BedConstruction").select2Init({
+                showAll: true,
+                allowClear: false
+            });
 
 
 
@@ -297,7 +298,9 @@
 
             var dtdTrackerDeviceTypeInput = _$form.find("#DtdTrackerDeviceTypeId");
             dtdTrackerDeviceTypeInput.select2Init({
-                abpServiceMethod: abp.services.app.truckTelematics.getWialonDeviceTypesSelectList
+                abpServiceMethod: abp.services.app.truckTelematics.getWialonDeviceTypesSelectList,
+                showAll: false,
+                allowClear: true
             });
             
             dtdTrackerDeviceTypeInput.change(function () {

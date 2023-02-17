@@ -24,18 +24,20 @@
 			var $truckSelect = _$form.find('#TruckId').select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                 abpServiceParams: { allOffices: true, inServiceOnly: true },
-                showAll: true,
-				allowClear: false
+				showAll: false,
+				allowClear: true
 			});
+
 			var $vehicleServiceSelect = _$form.find("#VehicleServiceId").select2Init({
 				abpServiceMethod: abp.services.app.vehicleService.getSelectList,
-				minimumInputLength: 0,
-				allowClear: false
+				showAll: false,
+				allowClear: true
 			});
 
 			_$form.find('#VehicleServiceId, #TruckId').on('change', function () {
 				fillDefaultValues();
 			});
+
 			function fillDefaultValues() {
 				var vehicleServiceId = $vehicleServiceSelect.val();
 				var truckId = $truckSelect.val();

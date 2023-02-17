@@ -25,6 +25,7 @@
     @*<partial name="_GoogleMapsScript" />*@
     <script src="~/view-resources/Areas/App/Views/Settings/Index.js" asp-append-version="true"></script>
 }
+
 <div class="m-subheader">
     <div class="d-flex align-items-center row">
         <div class="mr-auto col-sm-12 col-md-6">
@@ -151,7 +152,7 @@
                 </ul>
                 <div class="tab-content col-9 col-md-9 col-xl-10">
                     @*@if (Clock.SupportsMultipleTimezone)
-                        {*@
+                    {*@
                     <div class="tab-pane active" id="SettingsGeneralTab">
                         <form id="GeneralSettingsForm" class="m-form">
                             @if (!ViewBag.IsMultiTenancyEnabled)
@@ -246,9 +247,9 @@
 
                             @* Removed by #7741 *@
                             @*<div class="form-group">
-            <label for="DriverOrderSms">@L("DriverOrderSms")</label>
-            <textarea class="form-control" name="DriverOrderSms" rows="3">@Model.Settings.General.DriverOrderSms</textarea>
-        </div>*@
+                            <label for="DriverOrderSms">@L("DriverOrderSms")</label>
+                            <textarea class="form-control" name="DriverOrderSms" rows="3">@Model.Settings.General.DriverOrderSms</textarea>
+                            </div>*@
 
                             <div class="form-group">
                                 <label for="Setting_UseShifts" class="m-checkbox col-lg-12">
@@ -281,15 +282,15 @@
                             </div>
 
                             @*@if (await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Administration_RecalculateHasAllActualAmountsValues))
-        {
-            <div class="form-group">
-                <button type="button" class="btn btn-default" id="RecalculateHasAllActualAmountsValuesButton">@L("RecalculateHasAllActualAmountsValues")</button>
-            </div>
-        }*@
+                            {
+                            <div class="form-group">
+                            <button type="button" class="btn btn-default" id="RecalculateHasAllActualAmountsValuesButton">@L("RecalculateHasAllActualAmountsValues")</button>
+                            </div>
+                            }*@
                         </form>
                     </div>
                     @*}
-                        <div class="tab-pane @((!Clock.SupportsMultipleTimezone) ? "active" : "")" id="SettingsAppearanceTab">*@
+                    <div class="tab-pane @((!Clock.SupportsMultipleTimezone) ? "active" : "")" id="SettingsAppearanceTab">*@
                     <div class="tab-pane" id="SettingsAppearanceTab">
                         <form id="SettingsLogoUploadForm" method="POST" class="m-form mb-5" action="@Url.Action("UploadLogo", "TenantCustomization", new {area = string.Empty, TenantCustomizationController.LogoType.ApplicationLogo})">
                             <h5>@L("ApplicationLogo")</h5>
@@ -673,7 +674,7 @@
                                 <input id="TaxVatNo" type="text" class="form-control" name="TaxVatNo" value="@Model.Settings.Billing.TaxVatNo" maxlength="32">
                             </div>
                             <div class="form-group">
-                                <label for="TaxCalculationType">@L("TaxCalculationType")</label>
+                                <label for="TaxCalculationType" class="required-label">@L("TaxCalculationType")</label>
                                 <select class="form-control" name="TaxCalculationType" id="TaxCalculationType" asp-items="@Html.GetEnumSelectList(Model.Settings.Billing.TaxCalculationType)"></select>
                             </div>
                             <div id="AutopopulateCheckboxBlock">
@@ -690,13 +691,13 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="InvoiceTemplate">@L("InvoiceTemplate")</label>
+                                <label for="InvoiceTemplate" class="required-label">@L("InvoiceTemplate")</label>
                                 <select class="form-control" name="InvoiceTemplate" id="InvoiceTemplate" asp-items="@Html.GetEnumSelectList(Model.Settings.Billing.InvoiceTemplate)"></select>
                             </div>
                             @if (await FeatureChecker.IsEnabledAsync(AppFeatures.QuickbooksFeature))
                             {
                                 <div class="form-group">
-                                    <label for="QuickbooksIntegrationKind">@L("AccountingIntegration")</label>
+                                    <label for="QuickbooksIntegrationKind" class="required-label">@L("AccountingIntegration")</label>
                                     <select class="form-control" name="QuickbooksIntegrationKind" id="QuickbooksIntegrationKind" asp-items="@Html.GetEnumSelectList(Model.Settings.Billing.QuickbooksIntegrationKind ?? QuickbooksIntegrationKind.None)"></select>
                                 </div>
                                 <input type="hidden" id="IsQuickbooksConnected" name="IsQuickbooksConnected" asp-for="Settings.Billing.IsQuickbooksConnected" />
@@ -786,21 +787,13 @@
                                         </div>
                                         <div class="form-group margin-top-20">
                                             <label for="ItemIdToUseForFuelSurchargeOnInvoice" class="required-label">@L("ItemToUseForFuelSurchargeOnInvoice")</label>
-                                            <div class="input-group">
-                                                <select class="form-control" id="ItemIdToUseForFuelSurchargeOnInvoice" name="ItemIdToUseForFuelSurchargeOnInvoice">
-                                                    <option value="">Select an item</option>
-                                                    @if (Model.Settings.Fuel.ItemIdToUseForFuelSurchargeOnInvoice > 0)
-                                                    {
-                                                        <option value="@Model.Settings.Fuel.ItemIdToUseForFuelSurchargeOnInvoice" selected>@Model.Settings.Fuel.ItemNameToUseForFuelSurchargeOnInvoice</option>
-                                                    }
-                                                </select>
-                                                @if (await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Services))
+                                            <select class="form-control" id="ItemIdToUseForFuelSurchargeOnInvoice" name="ItemIdToUseForFuelSurchargeOnInvoice">
+                                                <option value="">Select an item</option>
+                                                @if (Model.Settings.Fuel.ItemIdToUseForFuelSurchargeOnInvoice > 0)
                                                 {
-                                                    <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default AddNewServiceButton" data-target-field="ItemIdToUseForFuelSurchargeOnInvoice"><span class="fa fa-plus"></span></button>
-                                                    </span>
+                                                    <option value="@Model.Settings.Fuel.ItemIdToUseForFuelSurchargeOnInvoice" selected>@Model.Settings.Fuel.ItemNameToUseForFuelSurchargeOnInvoice</option>
                                                 }
-                                            </div>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
@@ -7,29 +8,26 @@ using Abp.Configuration;
 using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
-using Abp.Linq.Extensions;
-using DispatcherWeb.Dto;
 using Abp.Extensions;
+using Abp.Linq.Extensions;
 using Abp.UI;
+using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Configuration;
+using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Dto;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Locations.Dto;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Sessions;
-using DispatcherWeb.Trucks;
-using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.LeaseHaulerRequests;
-using DispatcherWeb.Trucks.Dto;
-using System.Globalization;
-using DispatcherWeb.Receipts.Dto;
-using DispatcherWeb.Locations;
-using DispatcherWeb.Locations.Dto;
 using DispatcherWeb.SignalR.Entities;
-using DispatcherWeb.Dispatching;
-using DispatcherWeb.Common.Dto;
 using DispatcherWeb.TimeClassifications;
+using DispatcherWeb.Trucks;
+using DispatcherWeb.Trucks.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb
 {
@@ -129,7 +127,6 @@ namespace DispatcherWeb
                     OfficeName = o.Order.Office.Name,
                     Directions = o.Order.Directions,
                     FreightTotal = o.Receipt.FreightTotal,
-                    JobNumber = o.Order.JobNumber,
                     MaterialTotal = o.Receipt.MaterialTotal,
                     PoNumber = o.Order.PONumber,
                     SpectrumNumber = o.Order.SpectrumNumber,
@@ -187,6 +184,7 @@ namespace DispatcherWeb
                             },
                             ServiceName = s.Service.Service1,
                             IsTaxable = s.Service.IsTaxable,
+                            JobNumber = s.JobNumber,
                             Note = s.OrderLine.Note,
                             NumberOfTrucks = s.OrderLine.NumberOfTrucks ?? 0,
                             TimeOnJob = s.OrderLine.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? s.OrderLine.FirstStaggeredTimeOnJob : s.OrderLine.TimeOnJob,
@@ -242,7 +240,6 @@ namespace DispatcherWeb
                     OfficeName = o.Order.Office.Name,
                     Directions = o.Order.Directions,
                     FreightTotal = o.Order.FreightTotal,
-                    JobNumber = o.Order.JobNumber,
                     MaterialTotal = o.Order.MaterialTotal,
                     PoNumber = o.Order.PONumber,
                     SpectrumNumber = o.Order.SpectrumNumber,
@@ -296,6 +293,7 @@ namespace DispatcherWeb
                             },
                             ServiceName = s.Service.Service1,
                             IsTaxable = s.Service.IsTaxable,
+                            JobNumber = s.JobNumber,
                             Note = s.Note,
                             NumberOfTrucks = s.NumberOfTrucks ?? 0,
                             TimeOnJob = s.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? s.FirstStaggeredTimeOnJob : s.TimeOnJob,
@@ -343,7 +341,7 @@ namespace DispatcherWeb
                     State = o.LoadAt.State
                 },
                 DeliverTo = o.DeliverTo == null ? null : new LocationNameDto
-                { 
+                {
                     Name = o.DeliverTo.Name,
                     StreetAddress = o.DeliverTo.StreetAddress,
                     City = o.DeliverTo.City,
@@ -615,7 +613,6 @@ namespace DispatcherWeb
                     CustomerIsCod = ol.Order.Customer.IsCod,
                     CustomerId = ol.Order.CustomerId,
                     CustomerName = ol.Order.Customer.Name,
-                    JobNumber = ol.Order.JobNumber,
                     IsTimeStaggered = ol.StaggeredTimeKind != StaggeredTimeKind.None || ol.OrderLineTrucks.Any(olt => olt.TimeOnJob != null),
                     IsTimeEditable = ol.StaggeredTimeKind == StaggeredTimeKind.None,
                     Time = ol.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? ol.FirstStaggeredTimeOnJob : ol.TimeOnJob,
@@ -634,12 +631,13 @@ namespace DispatcherWeb
                     DeliverToNamePlain = ol.DeliverTo.Name + ol.DeliverTo.StreetAddress + ol.DeliverTo.City + ol.DeliverTo.State, //for sorting
                     DeliverTo = ol.DeliverTo == null ? null : new LocationNameDto
                     {
-                        Name = ol.DeliverTo.Name, 
-                        StreetAddress = ol.DeliverTo.StreetAddress, 
-                        City = ol.DeliverTo.City, 
+                        Name = ol.DeliverTo.Name,
+                        StreetAddress = ol.DeliverTo.StreetAddress,
+                        City = ol.DeliverTo.City,
                         State = ol.DeliverTo.State
                     },
-                    Note = ol.Note, 
+                    JobNumber = ol.JobNumber,
+                    Note = ol.Note,
                     Item = ol.Service.Service1,
                     MaterialUom = ol.MaterialUom.Name,
                     FreightUom = ol.FreightUom.Name,

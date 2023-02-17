@@ -393,7 +393,6 @@
             $('input,select,textarea').not('#SalesTaxRate, #FuelSurchargeCalculationId, #BaseFuelCost').attr('disabled', true);
             $("#CreateNewOrderLineButton").hide();
             $("#EditInternalNotesButton").closest('.form-group').hide();
-            $("#AddNewCustomerButton, #AddNewContactButton").attr('disabled', true);
         }
 
         function disableOrderEdit() {
@@ -402,7 +401,6 @@
             $('#SaveOrderButton').hide();
             $("#CreateNewOrderLineButton").hide();
             $("#EditInternalNotesButton").closest('.form-group').hide();
-            $("#AddNewCustomerButton, #AddNewContactButton").attr('disabled', true);
             if (canEditAnyOrderDirections()) {
                 $("#SaveDirectionsButton").closest('.form-group').show();
                 $("#Directions").attr('disabled', false);
@@ -468,21 +466,52 @@
 
         $("#DeliveryDate").datepickerInit();
 
-        $("#Shift").select2Init({ minimumResultsForSearch: 5, allowClear: false });
+        $("#Shift").select2Init({
+            showAll: true,
+            allowClear: false
+        });
         
         $("#Time").timepickerInit({ stepping: 1 });
 
         $("#LocationId").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            minimumInputLength: 0,
-            minimumResultsForSearch: Infinity,
+            showAll: true,
             allowClear: false
         });
 
         $("#CustomerId").select2Init({
             abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
+            showAll: false,
+            allowClear: true,
+            addItemCallback: async function (newItemName) {
+                _createOrEditCustomerModal.open({ name: newItemName });
+            },
+        });
+
+        $("#QuoteId").select2Init({
+            showAll: true,
+            allowClear: true,
+        });
+
+        $("#ContactId").select2Init({
+            showAll: true,
+            allowClear: true,
+            addItemCallback: async function (newItemName) {
+                var customerId = $("#CustomerId").val();
+                if (!customerId) {
+                    abp.notify.warn("Select a customer first");
+                    $("#CustomerId").focus();
+                    return;
+                }
+                _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId });
+            }
+        });
+
+        $("#Priority").select2Init({
+            showAll: true,
             allowClear: false
         });
+
         var quoteChildDropdown = abp.helper.ui.initChildDropdown({
             parentDropdown: $("#CustomerId"),
             childDropdown: $("#QuoteId"),
@@ -522,9 +551,8 @@
 
         $("#FuelSurchargeCalculationId").select2Init({
             abpServiceMethod: abp.services.app.fuelSurchargeCalculation.getFuelSurchargeCalculationsSelectList,
-            minimumInputLength: 0,
-            //showAll: true,
-            allowClear: false
+            showAll: true,
+            allowClear: true
         });
         $("#FuelSurchargeCalculationId").change(function () {
             if (_quoteId !== '') {
@@ -532,9 +560,9 @@
             } else {
                 let dropdownData = $("#FuelSurchargeCalculationId").select2('data');
                 let selectedOption = dropdownData && dropdownData.length && dropdownData[0];
-                let canChangeBaseFuelCost = selectedOption && selectedOption.item && selectedOption.item.canChangeBaseFuelCost || false;
+                let canChangeBaseFuelCost = selectedOption?.item?.canChangeBaseFuelCost || false;
                 $("#BaseFuelCostContainer").toggle(canChangeBaseFuelCost);
-                $("#BaseFuelCost").val(selectedOption && selectedOption.item && selectedOption.item.baseFuelCost);
+                $("#BaseFuelCost").val(selectedOption?.item?.baseFuelCost || 0);
                 $("#FuelSurchargeCalculationId").removeUnselectedOptions();
             }
         });
@@ -595,7 +623,6 @@
             }
             updateInputValue("#PONumber", option.data('poNumber'));
             updateInputValue("#SpectrumNumber", option.data('spectrumNumber'));
-            updateInputValue("#JobNumber", option.data('jobNumber'));
             updateInputValue("#Directions", option.data('directions'));
             if (abp.session.officeCopyChargeTo) {
                 updateInputValue("#ChargeTo", option.data('chargeTo'));
@@ -607,7 +634,7 @@
                     abp.helper.ui.addAndSetDropdownValue($("#FuelSurchargeCalculationId"), fuelSurchargeCalculationId, option.data('fuelSurchargeCalculationName'));
                     updateInputValue("#BaseFuelCost", option.data('baseFuelCost'));
                 } else {
-                    abp.helper.ui.addAndSetDropdownValue($("#FuelSurchargeCalculationId"), "0", " ");
+                    $("#FuelSurchargeCalculationId").val(null).change();
                     updateInputValue("#BaseFuelCost", 0);
                 }
                 $("#BaseFuelCostContainer").toggle(option.data('canChangeBaseFuelCost') === true);
@@ -1401,11 +1428,6 @@
         }
 
         //Handle popup adding
-    
-        $("#AddNewCustomerButton").click(function (e) {
-            e.preventDefault();
-            _createOrEditCustomerModal.open();
-        });
 
         abp.event.on('app.customerNameExists', function(e) {
             selectCustomerInControl(e);
@@ -1425,17 +1447,6 @@
             });
             $("#CustomerId").append(option).trigger('change');
         }
-
-        $("#AddNewContactButton").click(function (e) {
-            e.preventDefault();
-            var customerId = $("#CustomerId").val();
-            if (!customerId) {
-                abp.notify.warn("Select a customer first");
-                $("#CustomerId").focus();
-                return;
-            }
-            _createOrEditCustomerContactModal.open({ customerId: customerId });
-        });
 
         abp.event.on('app.createOrEditCustomerContactModalSaved', function (e) {
             contactChildDropdown.updateChildDropdown(function () {

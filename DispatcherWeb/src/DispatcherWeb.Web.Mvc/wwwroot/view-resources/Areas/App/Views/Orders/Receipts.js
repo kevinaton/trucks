@@ -70,8 +70,7 @@
 
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-                minimumInputLength: 0,
-                minimumResultsForSearch: Infinity,
+                showAll: true,
                 allowClear: false
             });
             if (cachedFilter.officeId) {
@@ -80,7 +79,8 @@
 
             $("#CustomerIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.customer.getCustomersSelectList,
-                showAll: true
+                showAll: false,
+                allowClear: true
             });
             if (cachedFilter.customerId) {
                 abp.helper.ui.addAndSetDropdownValue($("#CustomerIdFilter"), cachedFilter.customerId, cachedFilter.customerName);

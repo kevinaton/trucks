@@ -15,6 +15,5 @@ namespace DispatcherWeb.LeaseHaulers.Dto.CrossTenantOrderSender
         public string PONumber { get; set; }
         public OrderPriority Priority { get; set; }
         public string SpectrumNumber { get; set; }
-        public string JobNumber { get; set; }
     }
 }

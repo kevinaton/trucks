@@ -50,10 +50,14 @@
                 }
             });
 
+            _$generalForm.find("#OrderNotifyPreferredFormat").select2Init({
+                showAll: true,
+                allowClear: false
+            });
+
             _$generalForm.find("#OfficeId").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
-                noSearch: true,
                 allowClear: false
             });
 
@@ -201,8 +205,8 @@
                                 reloadGrid();
                             });
                             editor.select2Init({
-                                allowClear: false,
-                                minimumResultsForSearch: -1 //no search
+                                showAll: true,
+                                allowClear: false
                             });
                         }
                     },

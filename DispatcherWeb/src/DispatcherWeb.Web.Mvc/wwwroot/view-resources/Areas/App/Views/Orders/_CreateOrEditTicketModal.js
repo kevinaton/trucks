@@ -174,9 +174,8 @@
                                     activeOnly: true,
                                     orderLineId: _validateTrucksAndDrivers ? _orderLineId : null
                                 },
-                                showAll: true,
-                                allowClear: false,
-                                selectOnClose: true
+                                showAll: false,
+                                allowClear: true
                             },
                             editCompleteCallback: function editCompleteCallback(editResult, rowData, cell) {
                                 var driverCell = $(cell).closest('tr').find('td.driver-name-column');
@@ -211,8 +210,8 @@
                                 abpServiceParamsGetter: (params, rowData) => ({
                                     truckId: rowData.truckId
                                 }),
-                                showAll: true,
-                                selectOnClose: true
+                                showAll: false,
+                                allowClear: true
                             },
                             editCompleteCallback: function editCompleteCallback(editResult, rowData, cell) {
                                 var truckCell = $(cell).closest('tr').find('td.truck-code-column');

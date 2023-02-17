@@ -1,58 +1,58 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Threading.Tasks;
+﻿using Abp.Application.Features;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Collections.Extensions;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
+using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.Timing;
 using Abp.UI;
-using Abp.Configuration;
-using DispatcherWeb.Authorization;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.Encryption;
-using DispatcherWeb.Offices;
-using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.Orders.Reports;
-using DispatcherWeb.Quotes;
-using DispatcherWeb.Locations;
-using Microsoft.AspNetCore.Hosting;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Mail;
-using Abp.Application.Features;
-using Abp.Collections.Extensions;
-using Abp.Domain.Uow;
-using Abp.Extensions;
 using Abp.Web.Models;
+using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching;
+using DispatcherWeb.DriverApplication;
+using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.Drivers;
-using DispatcherWeb.Emailing;
-using DispatcherWeb.Exceptions;
-using DispatcherWeb.Notifications;
 using DispatcherWeb.Dto;
+using DispatcherWeb.Emailing;
+using DispatcherWeb.Encryption;
+using DispatcherWeb.Exceptions;
 using DispatcherWeb.Features;
 using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Templates;
-using DispatcherWeb.Scheduling.Dto;
-using Microsoft.EntityFrameworkCore;
-using MigraDoc.DocumentObjectModel;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Notifications;
+using DispatcherWeb.Offices;
+using DispatcherWeb.Orders.Dto;
+using DispatcherWeb.Orders.Reports;
+using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Payments;
 using DispatcherWeb.Payments.Dto;
-using DispatcherWeb.Trucks;
-using DispatcherWeb.Storage;
-using DispatcherWeb.Orders.TaxDetails;
+using DispatcherWeb.Quotes;
+using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Services;
 using DispatcherWeb.SignalR;
+using DispatcherWeb.Storage;
 using DispatcherWeb.SyncRequests;
-using DispatcherWeb.DriverApplication.Dto;
-using DispatcherWeb.DriverApplication;
-using DispatcherWeb.Common.Dto;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using MigraDoc.DocumentObjectModel;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
+using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace DispatcherWeb.Orders
 {
@@ -185,7 +185,7 @@ namespace DispatcherWeb.Orders
                 .WhereIf(input.ServiceId.HasValue,
                          x => x.OrderLines.Any(ol => ol.ServiceId == input.ServiceId))
                 .WhereIf(!string.IsNullOrEmpty(input.JobNumber),
-                        x => x.JobNumber == input.JobNumber)
+                        x => x.OrderLines.Any(ol => ol.JobNumber == input.JobNumber))
                 .WhereIf(!string.IsNullOrEmpty(input.Misc),
                          x => x.Quote.Name.Contains(input.Misc)
                          || x.ChargeTo.Contains(input.Misc))
@@ -196,7 +196,6 @@ namespace DispatcherWeb.Orders
                  .Where(x => x.IsPending == input.ShowPendingOrders);
 
             var totalCount = await query.CountAsync();
-
             var items = await query
                 .Select(x => new OrderDto
                 {
@@ -206,14 +205,13 @@ namespace DispatcherWeb.Orders
                     OfficeName = x.Office.Name,
                     CustomerName = x.Customer.Name,
                     QuoteName = x.Quote.Name,
-                    JobNumber = x.JobNumber,
                     PONumber = x.PONumber,
                     ContactName = x.CustomerContact.Name,
                     ChargeTo = x.ChargeTo,
                     CODTotal = x.CODTotal,
                     NumberOfTrucks = x.OrderLines.Sum(ol => ol.NumberOfTrucks),
                     IsShared = false /*x.SharedOrders.Any(o => o.OfficeId != x.LocationId)*/,
-                    EmailDeliveryStatuses = x.OrderEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList()
+                    EmailDeliveryStatuses = x.OrderEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList(),
                 })
                 .OrderBy(input.Sorting)
                 .PageBy(input)
@@ -224,13 +222,26 @@ namespace DispatcherWeb.Orders
                 items);
         }
 
+        [AbpAuthorize(AppPermissions.Pages_Orders_View)]
+        public async Task<ListResultDto<SelectListDto>> GetOrderIdsSelectList(GetSelectListInput input)
+        {
+            var ordersQuery = _orderRepository.GetAll()
+                                    .Select(x => new SelectListDto
+                                    {
+                                        Id = x.Id.ToString(),
+                                        Name = x.Id.ToString()
+                                    });
+
+            return await ordersQuery.GetSelectListResult(input);
+        }
+
         [DontWrapResult]
         [AbpAuthorize(AppPermissions.Pages_Orders_View)]
         public async Task<OrderEditDto> GetOrderForEdit(NullableIdDto input)
         {
             OrderEditDto orderEditDto;
 
-            if(input.Id.HasValue)
+            if (input.Id.HasValue)
             {
                 orderEditDto = await _orderRepository.GetAll()
                     .Select(order => new OrderEditDto
@@ -259,7 +270,6 @@ namespace DispatcherWeb.Orders
                         IsShared = order.SharedOrders.Any(o => o.OfficeId != order.LocationId),
                         //IsFreightTotalOverridden = order.IsFreightTotalOverridden,
                         //IsMaterialTotalOverridden = order.IsMaterialTotalOverridden,
-                        JobNumber = order.JobNumber,
                         LocationId = order.LocationId,
                         MaterialTotal = order.MaterialTotal,
                         OfficeName = order.Office.Name,
@@ -293,7 +303,7 @@ namespace DispatcherWeb.Orders
                     })
                     .FirstOrDefaultAsync(x => x.Id == input.Id.Value);
 
-                if(orderEditDto == null)
+                if (orderEditDto == null)
                 {
                     throw await GetOrderNotFoundException(new EntityDto(input.Id.Value));
                 }
@@ -351,7 +361,7 @@ namespace DispatcherWeb.Orders
                 orderEditDto.DefaultFuelSurchargeCalculationName = defaultFuelSurchargeCalculation.Name;
                 orderEditDto.DefaultBaseFuelCost = defaultFuelSurchargeCalculation.BaseFuelCost;
                 orderEditDto.DefaultCanChangeBaseFuelCost = defaultFuelSurchargeCalculation.CanChangeBaseFuelCost;
-                
+
                 if (!input.Id.HasValue)
                 {
                     orderEditDto.FuelSurchargeCalculationId = defaultFuelSurchargeCalculationId;
@@ -365,11 +375,6 @@ namespace DispatcherWeb.Orders
                 orderEditDto.DefaultFuelSurchargeCalculationName = AppConsts.FuelSurchargeCalculationBlankName;
             }
 
-            if (orderEditDto.FuelSurchargeCalculationId == null)
-            {
-                orderEditDto.FuelSurchargeCalculationId = 0;
-            }
-
             return orderEditDto;
         }
 
@@ -377,7 +382,7 @@ namespace DispatcherWeb.Orders
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<EditOrderResult> EditOrder(OrderEditDto model)
         {
-            using(var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
+            using (var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
             {
                 var result = await EditOrderInternal(model);
 
@@ -431,7 +436,7 @@ namespace DispatcherWeb.Orders
                     await ThrowIfOrderHasReceiptsForOwnerOfficeId(model.Id.Value);
                 }
 
-                if (order.CustomerId != model.CustomerId || order.MaterialCompanyOrderId.HasValue && order.JobNumber != model.JobNumber)
+                if (order.CustomerId != model.CustomerId)
                 {
                     if (await HasLoadedDispatchesForOrder(model.Id.Value) || await HasManualTicketsForOrder(model.Id.Value))
                     {
@@ -469,8 +474,7 @@ namespace DispatcherWeb.Orders
                 }
             }
 
-            var newCalculationId = model.FuelSurchargeCalculationId == 0 ? null : model.FuelSurchargeCalculationId;
-            var needToRecalculateFuelSurcharge = order.FuelSurchargeCalculationId != newCalculationId || order.BaseFuelCost != model.BaseFuelCost;
+            var needToRecalculateFuelSurcharge = order.FuelSurchargeCalculationId != model.FuelSurchargeCalculationId || order.BaseFuelCost != model.BaseFuelCost;
 
             order.CODTotal = model.CODTotal;
             order.ContactId = model.ContactId;
@@ -482,7 +486,6 @@ namespace DispatcherWeb.Orders
             order.IsClosed = model.IsClosed;
             //order.IsFreightTotalOverridden = model.IsFreightTotalOverridden;
             //order.IsMaterialTotalOverridden = model.IsMaterialTotalOverridden;
-            order.JobNumber = model.JobNumber;
             order.LocationId = model.LocationId;
             order.MaterialTotal = model.MaterialTotal;
             order.PONumber = model.PONumber;
@@ -491,7 +494,7 @@ namespace DispatcherWeb.Orders
             order.QuoteId = model.QuoteId;
             order.SalesTax = model.SalesTax;
             order.SalesTaxRate = model.SalesTaxRate;
-            order.FuelSurchargeCalculationId = newCalculationId;
+            order.FuelSurchargeCalculationId = model.FuelSurchargeCalculationId;
             order.BaseFuelCost = model.BaseFuelCost;
             order.Priority = model.Priority;
 
@@ -592,7 +595,6 @@ namespace DispatcherWeb.Orders
                 {
                     x.HasLinkedHaulingCompanyOrders,
                     x.DeliveryDate,
-                    JobNumber = x.JobNumber, //x.Customer.Name,
                     x.Directions,
                     x.IsClosed,
                     x.IsPending,
@@ -623,7 +625,6 @@ namespace DispatcherWeb.Orders
                     {
                         var destinationOrderEditDto = await GetOrderForEdit(new NullableIdDto(destinationOrderId.Id));
                         destinationOrderEditDto.DeliveryDate = sourceOrder.DeliveryDate;
-                        destinationOrderEditDto.JobNumber = sourceOrder.JobNumber;
                         destinationOrderEditDto.Directions = sourceOrder.Directions;
                         destinationOrderEditDto.IsClosed = sourceOrder.IsClosed;
                         destinationOrderEditDto.IsPending = sourceOrder.IsPending;
@@ -683,7 +684,7 @@ namespace DispatcherWeb.Orders
                                     ol.IsComplete ||
                                     ol.Tickets.Any() ||
                                     ol.OfficeAmounts.Any() ||
-                                    ol.OrderLineTrucks.Any() 
+                                    ol.OrderLineTrucks.Any()
                                     )
                     );
                 if (prerequisitesExist)
@@ -695,7 +696,7 @@ namespace DispatcherWeb.Orders
 
         private async Task ThrowUserFriendlyExceptionIfOfficeIsChangedAndThereArePrerequisites(Order order, OrderEditDto model)
         {
-            if(model.Id.HasValue && model.OfficeId != order.LocationId)
+            if (model.Id.HasValue && model.OfficeId != order.LocationId)
             {
                 await CheckOrderPrerequisites(model.Id.Value);
             }
@@ -773,11 +774,6 @@ namespace DispatcherWeb.Orders
             }
         }
 
-        private async Task ClearOrderOrderLineTrucks(int orderId)
-        {
-            await _orderLineTruckRepository.DeleteAsync(olt => olt.OrderLine.OrderId == orderId);
-        }
-
         public async Task<OrderLastModifiedDatesDto> GetOrderLastModifiedDates(int orderId)
         {
             var result = await _orderRepository.GetAll()
@@ -801,7 +797,7 @@ namespace DispatcherWeb.Orders
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<SetOrderDateResult> SetOrderDate(SetOrderDateInput input)
         {
-            using(var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions {IsTransactional = true}))
+            using (var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
             {
                 var result = await SetOrderDateInternal(input);
                 if (result.Completed)
@@ -826,17 +822,18 @@ namespace DispatcherWeb.Orders
                 return result;
             }
         }
+
         private async Task<SetOrderDateResult> SetOrderDateInternal(SetOrderDateInput input)
         {
             await CheckUseShiftSettingCorrespondsInput(input.Shift);
             SetOrderDateResult result = new SetOrderDateResult();
             var order = await _orderRepository.GetAsync(input.OrderId);
-            if(order.DeliveryDate == input.Date && order.Shift == input.Shift)
+            if (order.DeliveryDate == input.Date && order.Shift == input.Shift)
             {
                 result.Completed = true;
                 return result;
             }
-            if(input.OrderLineId == null)
+            if (input.OrderLineId == null)
             {
                 var hasCompletedOrderLines = await _orderLineRepository.GetAll()
                     .Where(x => x.OrderId == input.OrderId)
@@ -850,17 +847,20 @@ namespace DispatcherWeb.Orders
                 await CheckOpenDispatchesForOrder(input.OrderId);
                 await ThrowIfOrderLinesHaveTicketsOrActualAmounts(input.OrderId);
 
-                if(!input.KeepTrucks)
+                if (!input.KeepTrucks)
                 {
-                    await ClearOrderTrucks(new EntityDto(input.OrderId));
+                    await DeleteOrderLineTrucks(x => x.OrderLine.OrderId == input.OrderId);
                 }
                 else
                 {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLine.OrderId == input.OrderId && (!x.Truck.IsActive || x.Truck.IsOutOfService));
-                    await ClearLeaseHaulerTrucksFromOrder(input.OrderId);
+                    await DeleteOrderLineTrucks(x => x.OrderLine.OrderId == input.OrderId
+                        && (!x.Truck.IsActive
+                            || x.Truck.IsOutOfService
+                            || x.Truck.LocationId == null
+                            || x.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule), input.Date);
                     var notAvailableTrucks = await GetOrderTrucksNotAvailableForDateShift(input.OrderId, input.Date, input.Shift);
                     notAvailableTrucks.AddRange(await GetOrderTrucksWithoutDriverOnDateShift(input.OrderId, input.Date, input.Shift));
-                    if(await ShouldReturnResultOrDeleteNotAvailableTrucks(notAvailableTrucks, input.RemoveNotAvailableTrucks, result))
+                    if (await ShouldReturnResultOrDeleteNotAvailableTrucks(notAvailableTrucks, input.RemoveNotAvailableTrucks, result))
                     {
                         return result;
                     }
@@ -890,17 +890,20 @@ namespace DispatcherWeb.Orders
                 await CheckOpenDispatchesForOrderLine(input.OrderLineId.Value);
                 await ThrowIfOrderLineHasTicketsOrActualAmounts(input.OrderLineId.Value);
 
-                if(!input.KeepTrucks)
+                if (!input.KeepTrucks)
                 {
-                    await ClearOrderLineTrucks(new EntityDto(input.OrderLineId.Value));
+                    await DeleteOrderLineTrucks(x => x.OrderLineId == input.OrderLineId);
                 }
                 else
                 {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLineId == input.OrderLineId && (!x.Truck.IsActive || x.Truck.IsOutOfService));
-                    await ClearLeaseHaulerTrucksFromOrderLine(input.OrderLineId.Value);
+                    await DeleteOrderLineTrucks(x => x.OrderLineId == input.OrderLineId
+                        && (!x.Truck.IsActive
+                            || x.Truck.IsOutOfService
+                            || x.Truck.LocationId == null
+                            || x.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule), input.Date);
                     var notAvailableTrucks = await GetOrderLineTrucksNotAvailableForDateShift(input.OrderLineId.Value, input.Date, input.Shift);
                     notAvailableTrucks.AddRange(await GetOrderLineTrucksWithoutDriverOnDateShift(input.OrderLineId.Value, input.Date, input.Shift));
-                    if(await ShouldReturnResultOrDeleteNotAvailableTrucks(notAvailableTrucks, input.RemoveNotAvailableTrucks, result))
+                    if (await ShouldReturnResultOrDeleteNotAvailableTrucks(notAvailableTrucks, input.RemoveNotAvailableTrucks, result))
                     {
                         return result;
                     }
@@ -991,23 +994,36 @@ namespace DispatcherWeb.Orders
                     .Select(da => da)
                     .ToListAsync();
             }
+        }
 
-            async Task ClearLeaseHaulerTrucksFromOrder(int orderId)
-            {
-                if (await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature))
+        private async Task DeleteOrderLineTrucks(Expression<Func<OrderLineTruck, bool>> filter, DateTime? deliveryDate = null)
+        {
+            var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                .Where(filter)
+                .ToListAsync();
+
+            orderLineTrucks.ForEach(_orderLineTruckRepository.Delete);
+
+            var today = await GetToday();
+            var orderLineIds = orderLineTrucks.Select(x => x.OrderLineId).Distinct().ToList();
+            var orderLineDates = await _orderLineRepository.GetAll()
+                .Select(x => new
                 {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLine.OrderId == orderId && (x.Truck.LocationId == null || x.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule));
-                    await CurrentUnitOfWork.SaveChangesAsync();
+                    x.Id,
+                    x.Order.DeliveryDate
+                }).ToListAsync();
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+            foreach (var orderLineId in orderLineIds)
+            {
+                if ((deliveryDate ?? orderLineDates.FirstOrDefault(x => x.Id == orderLineId)?.DeliveryDate) >= today)
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineId);
+                    orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                    await orderLineUpdater.SaveChangesAsync();
                 }
             }
-            async Task ClearLeaseHaulerTrucksFromOrderLine(int orderLineId)
-            {
-                if (await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature))
-                {
-                    await _orderLineTruckRepository.DeleteAsync(x => x.OrderLineId == orderLineId && (x.Truck.LocationId == null || x.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule));
-                    await CurrentUnitOfWork.SaveChangesAsync();
-                }
-            }
+            await CurrentUnitOfWork.SaveChangesAsync();
         }
 
         public async Task UpdateOrderLineDatesIfNeeded(DateTime? deliveryDate, int? orderId)
@@ -1093,15 +1109,16 @@ namespace DispatcherWeb.Orders
             SetOrderDateResult result
         )
         {
-            if(notAvailableTrucks.Count > 0)
+            if (notAvailableTrucks.Count > 0)
             {
-                if(removeNotAvailableTrucks)
+                if (removeNotAvailableTrucks)
                 {
-                    foreach(var orderLineTruck in notAvailableTrucks.Select(x => new { x.TruckId, x.OrderLineId }))
+                    var truckIdsPerOrderLineId = notAvailableTrucks.GroupBy(x => x.OrderLineId);
+                    foreach (var truckIdGroup in truckIdsPerOrderLineId)
                     {
-                        await _orderLineTruckRepository.DeleteAsync(olt =>
-                            olt.TruckId == orderLineTruck.TruckId && olt.OrderLineId == orderLineTruck.OrderLineId
-                        );
+                        var orderLineId = truckIdGroup.Key;
+                        var truckIds = truckIdGroup.Select(x => x.TruckId).Distinct().ToList();
+                        await DeleteOrderLineTrucks(x => x.OrderLineId == orderLineId && truckIds.Contains(x.TruckId));
                     }
                 }
                 else
@@ -1156,18 +1173,18 @@ namespace DispatcherWeb.Orders
         public async Task SetOrderOfficeId(SetOrderOfficeIdInput input)
         {
             var order = await _orderRepository.GetAsync(input.OrderId);
-            if(order.LocationId == input.OfficeId)
+            if (order.LocationId == input.OfficeId)
             {
                 return;
             }
-            if(input.OrderLineId == null)
+            if (input.OrderLineId == null)
             {
                 await CheckOrderPrerequisites(input.OrderId);
                 await ThrowIfOrderLinesHaveTicketsOrActualAmounts(input.OrderId);
                 await ThrowIfOrderHasReceiptsForOwnerOfficeId(input.OrderId);
                 order.LocationId = input.OfficeId;
 
-                await _orderLineRepository.DeleteAsync(x => x.OrderId == input.OrderId 
+                await _orderLineRepository.DeleteAsync(x => x.OrderId == input.OrderId
                     && (x.MaterialQuantity == null || x.MaterialQuantity == 0)
                     && (x.FreightQuantity == null || x.FreightQuantity == 0)
                     && (x.NumberOfTrucks == null || x.NumberOfTrucks < 0.01));
@@ -1205,7 +1222,7 @@ namespace DispatcherWeb.Orders
         }
         private async Task CheckOrderPrerequisites(int orderId)
         {
-            if(await _orderRepository.GetAll()
+            if (await _orderRepository.GetAll()
                 .AnyAsync(o => o.Id == orderId && (
                                    o.OrderLines.Any(ol => ol.SharedOrderLines.Any()) ||
                                    o.OrderLines.Any(ol => ol.IsComplete) ||
@@ -1218,10 +1235,6 @@ namespace DispatcherWeb.Orders
                 throw new UserFriendlyException("The Order cannot be transferred!");
             }
         }
-        private async Task ClearOrderLineTrucks(EntityDto input)
-        {
-            await _orderLineTruckRepository.DeleteAsync(x => x.OrderLineId == input.Id);
-        }
 
         private async Task<Order> CreateOrderCopyAndAssignOrderLineToIt(Order order, int orderLineId)
         {
@@ -1229,7 +1242,7 @@ namespace DispatcherWeb.Orders
             await _orderRepository.InsertAsync(newOrder);
             var orderLine = await _orderLineRepository.GetAsync(orderLineId);
             orderLine.Order = newOrder;
-           
+
             await DecrementOrderLineNumbers(order.Id, orderLine.LineNumber);
             orderLine.LineNumber = 1;
 
@@ -1240,15 +1253,11 @@ namespace DispatcherWeb.Orders
 
             return newOrder;
         }
-        private async Task ClearOrderTrucks(EntityDto input)
-        {
-            await _orderLineTruckRepository.DeleteAsync(x => x.OrderLine.OrderId == input.Id);
-        }
 
 
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<bool> DoesOrderHaveMultipleLines(int orderId) => 
+        public async Task<bool> DoesOrderHaveMultipleLines(int orderId) =>
             await _orderLineRepository.GetAll().CountAsync(ol => ol.OrderId == orderId) > 1;
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
@@ -1259,7 +1268,7 @@ namespace DispatcherWeb.Orders
                 throw new ArgumentException($"{nameof(input.DateBegin)} must be less or equal than {nameof(input.DateEnd)}");
             }
 
-            if((input.DateEnd - input.DateBegin).Days + 1 > 7)
+            if ((input.DateEnd - input.DateBegin).Days + 1 > 7)
             {
                 throw new ArgumentException("You cannot copy order for more than 7 days.");
             }
@@ -1279,9 +1288,9 @@ namespace DispatcherWeb.Orders
 
             List<int> createdOrderIds = new List<int>();
             DateTime currentDate = input.DateBegin;
-            while(currentDate <= input.DateEnd)
+            while (currentDate <= input.DateEnd)
             {
-                foreach(var shift in shifts)
+                foreach (var shift in shifts)
                 {
                     var newOrder = order.CreateCopy();
                     newOrder.IsClosed = false;
@@ -1297,7 +1306,7 @@ namespace DispatcherWeb.Orders
 
                     newOrderLines = order.OrderLines
                         .WhereIf(input.OrderLineId.HasValue, ol => ol.Id == input.OrderLineId)
-                        .WhereIf(!allowCopyZeroQuantity && !input.OrderLineId.HasValue, ol => ol.MaterialQuantity > 0 || ol.FreightQuantity > 0 || ol.NumberOfTrucks > 0) 
+                        .WhereIf(!allowCopyZeroQuantity && !input.OrderLineId.HasValue, ol => ol.MaterialQuantity > 0 || ol.FreightQuantity > 0 || ol.NumberOfTrucks > 0)
                         .Select(x => new OrderLine
                         {
                             LineNumber = copySingleOrderLine ? 1 : x.LineNumber,
@@ -1324,6 +1333,7 @@ namespace DispatcherWeb.Orders
                             FirstStaggeredTimeOnJob = x.FirstStaggeredTimeOnJob == null ? null : (currentDate.Date.Add(x.FirstStaggeredTimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
                             StaggeredTimeKind = x.StaggeredTimeKind,
                             StaggeredTimeInterval = x.StaggeredTimeInterval,
+                            JobNumber = x.JobNumber,
                             Note = x.Note,
                             IsMultipleLoads = x.IsMultipleLoads,
                             ProductionPay = allowProductionPay && x.ProductionPay,
@@ -1334,7 +1344,7 @@ namespace DispatcherWeb.Orders
                     {
                         _orderLineRepository.Insert(newOrderLine);
                     }
-                    
+
                     var newId = await _orderRepository.InsertAndGetIdAsync(newOrder);
                     newOrder.Id = newId;
                     await _orderTaxCalculator.CalculateTotalsAsync(newOrder.Id);
@@ -1360,7 +1370,7 @@ namespace DispatcherWeb.Orders
                 })
                 .FirstOrDefaultAsync();
 
-            if(order == null)
+            if (order == null)
             {
                 throw await GetOrderNotFoundException(input);
             }
@@ -1370,7 +1380,7 @@ namespace DispatcherWeb.Orders
                 OrderId = order.Id
             };
 
-            if(order.HasInternalNotes)
+            if (order.HasInternalNotes)
             {
                 result.InternalNotes = _encryptionService.Decrypt(order.EncryptedInternalNotes);
             }
@@ -1383,7 +1393,7 @@ namespace DispatcherWeb.Orders
         {
             var order = await _orderRepository.GetAsync(input.OrderId);
 
-            if(string.IsNullOrEmpty(input.InternalNotes))
+            if (string.IsNullOrEmpty(input.InternalNotes))
             {
                 order.EncryptedInternalNotes = null;
                 order.HasInternalNotes = false;
@@ -1406,7 +1416,7 @@ namespace DispatcherWeb.Orders
                 })
                 .FirstOrDefaultAsync();
 
-            if(order == null)
+            if (order == null)
             {
                 throw await GetOrderNotFoundException(input);
             }
@@ -1525,7 +1535,7 @@ namespace DispatcherWeb.Orders
                 {
                     OfficeName = x.Office.Name,
                     OfficeId = x.OfficeId,
-                    
+
                 }).ToListAsync();
 
             if (receipts.Any())
@@ -1544,7 +1554,7 @@ namespace DispatcherWeb.Orders
         }
         private void CreateSharedOrderLineForEachOffice(int orderLineId, int[] officeIdsToShare)
         {
-            foreach(int officeId in officeIdsToShare)
+            foreach (int officeId in officeIdsToShare)
             {
                 _sharedOrderLineRepository.Insert(new SharedOrderLine
                 {
@@ -1556,7 +1566,7 @@ namespace DispatcherWeb.Orders
         private async Task UpdateSharedDateTime(int orderLineId)
         {
             var orderLine = await _orderLineRepository.GetAsync(orderLineId);
-            if(orderLine.SharedDateTime == null)
+            if (orderLine.SharedDateTime == null)
             {
                 orderLine.SharedDateTime = Clock.Now;
             }
@@ -1570,9 +1580,9 @@ namespace DispatcherWeb.Orders
 
             var userIds = new List<Abp.UserIdentifier>();
 
-            foreach(var user in users)
+            foreach (var user in users)
             {
-                if(await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Dispatching))
+                if (await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Dispatching))
                 {
                     userIds.Add(user.ToUserIdentifier());
                 }
@@ -1600,7 +1610,7 @@ namespace DispatcherWeb.Orders
                 {
                     IsClosed = o.IsClosed,
                     HasCompletedOrderLines = o.OrderLines.Any(ol => ol.IsComplete),
-                    HasRelatedData = 
+                    HasRelatedData =
                         o.SharedOrders.Any() ||
                         o.BilledOrders.Any() ||
                         o.OrderEmails.Any() ||
@@ -1767,6 +1777,7 @@ namespace DispatcherWeb.Orders
                         IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        JobNumber = x.JobNumber,
                         Note = x.Note,
                         IsMultipleLoads = x.IsMultipleLoads,
                         NumberOfTrucks = x.NumberOfTrucks,
@@ -1842,6 +1853,7 @@ namespace DispatcherWeb.Orders
                         //Quantity = x.Quantity, //Do not default quantities. They will have to fill that in.
                         //MaterialQuantity = x.MaterialQuantity,
                         //FreightQuantity = x.FreightQuantity,
+                        JobNumber = x.JobNumber,
                         Note = x.Note,
                         CanOverrideTotals = true,
                         QuoteId = input.QuoteId.Value,
@@ -1921,6 +1933,7 @@ namespace DispatcherWeb.Orders
                         IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        JobNumber = x.JobNumber,
                         Note = x.Note,
                         NumberOfTrucks = x.NumberOfTrucks,
                         TimeOnJob = x.TimeOnJob,
@@ -2054,7 +2067,7 @@ namespace DispatcherWeb.Orders
                 await EditOrderLineInternal(model);
             }
             await CurrentUnitOfWork.SaveChangesAsync();
-            
+
             if (modelList.Any())
             {
                 await _orderTaxCalculator.CalculateTotalsAsync(modelList.First().OrderId);
@@ -2078,7 +2091,7 @@ namespace DispatcherWeb.Orders
             {
                 await orderLineUpdater.UpdateFieldAsync(o => o.StaggeredTimeKind, model.StaggeredTimeKind);
                 await orderLineUpdater.UpdateFieldAsync(o => o.StaggeredTimeInterval, model.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? model.StaggeredTimeInterval : null);
-                
+
                 var firstStaggeredTimeOnJobUtc = model.StaggeredTimeKind == StaggeredTimeKind.SetInterval
                     ? date.AddTimeOrNull(model.FirstStaggeredTimeOnJob)?.ConvertTimeZoneFrom(timezone)
                     : (DateTime?)null;
@@ -2109,6 +2122,7 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.IsMaterialPriceOverridden, model.IsMaterialPriceOverridden);
             await orderLineUpdater.UpdateFieldAsync(o => o.IsFreightPriceOverridden, model.IsFreightPriceOverridden);
             await orderLineUpdater.UpdateFieldAsync(o => o.LeaseHaulerRate, model.LeaseHaulerRate);
+            await orderLineUpdater.UpdateFieldAsync(o => o.JobNumber, model.JobNumber);
             await orderLineUpdater.UpdateFieldAsync(o => o.Note, model.Note);
 
             await orderLineUpdater.UpdateFieldAsync(o => o.TimeOnJob, date.AddTimeOrNull(model.TimeOnJob)?.ConvertTimeZoneFrom(timezone));
@@ -2132,7 +2146,7 @@ namespace DispatcherWeb.Orders
                 .Select(ol => new
                 {
                     IsComplete = ol.IsComplete,
-                    HasRelatedData = 
+                    HasRelatedData =
                         ol.Order.IsClosed ||
                         ol.OfficeAmounts.Any() ||
                         ol.OrderLineTrucks.Any() ||
@@ -2148,7 +2162,7 @@ namespace DispatcherWeb.Orders
             {
                 throw new UserFriendlyException(L("Order_Delete_Error_HasRelatedData"));
             }
-            
+
             if (record.IsComplete)
             {
                 throw new UserFriendlyException(L("Order_Delete_Error_HasCompletedOrderLines"));
@@ -2237,7 +2251,7 @@ namespace DispatcherWeb.Orders
                 })
                 .FirstOrDefaultAsync();
 
-            if(orderLineOfficeAmountEditDto == null)
+            if (orderLineOfficeAmountEditDto == null)
             {
                 orderLineOfficeAmountEditDto = new OrderLineOfficeAmountEditDto
                 {
@@ -2327,7 +2341,7 @@ namespace DispatcherWeb.Orders
                     x => x.OfficeId == input.OfficeId)
                 .WhereIf(input.CustomerId.HasValue,
                     x => x.CustomerId == input.CustomerId);
-                //.Where(x => x.ReceiptLines.Any(l => l.Tickets.Any(a => a.OfficeId == OfficeId)) || x.Receipts.Any(r => r.OfficeId == OfficeId)); //&& a.ActualQuantity != null
+            //.Where(x => x.ReceiptLines.Any(l => l.Tickets.Any(a => a.OfficeId == OfficeId)) || x.Receipts.Any(r => r.OfficeId == OfficeId)); //&& a.ActualQuantity != null
         }
 
         [AbpAuthorize(AppPermissions.Pages_Reports_Receipts)]
@@ -2486,7 +2500,7 @@ namespace DispatcherWeb.Orders
                     Items = x.OrderLines.Select(l => new BillingReconciliationItemDto
                     {
                         AllowAddingTickets = allowAddingTickets,
-                        TicketQuantity = allowAddingTickets 
+                        TicketQuantity = allowAddingTickets
                             ? l.Tickets.Sum(t => t.Quantity) : 0,
                         //ReceiptLinesMaterialTotal = allowAddingTickets
                         //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.MaterialAmount),
@@ -2615,9 +2629,9 @@ namespace DispatcherWeb.Orders
                 .ToListAsync();
             //only one record is expected, but we'll want to delete both records in case a duplicate occurs somehow
 
-            if(input.IsBilled)
+            if (input.IsBilled)
             {
-                if(!existingBillingRecords.Any())
+                if (!existingBillingRecords.Any())
                 {
                     _billedOrderRepository.Insert(new BilledOrder
                     {
@@ -2628,7 +2642,7 @@ namespace DispatcherWeb.Orders
             }
             else
             {
-                if(existingBillingRecords.Any())
+                if (existingBillingRecords.Any())
                 {
                     existingBillingRecords.ForEach(async x => await _billedOrderRepository.DeleteAsync(x));
                 }
@@ -2642,7 +2656,7 @@ namespace DispatcherWeb.Orders
             {
                 throw new ArgumentNullException(nameof(input.Id), "At least one of (Id, Date) should be set");
             }
-            
+
             var logoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
             var paidImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "Common/Images/Paid.png");
             var staggeredTimeImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "Common/Images/far-clock.png");
@@ -2650,7 +2664,7 @@ namespace DispatcherWeb.Orders
             var showDriverNamesOnPrintedOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ShowDriverNamesOnPrintedOrder);
             bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
             var spectrumNumberLabel = await SettingManager.GetSettingValueAsync(AppSettings.General.UserDefinedField1);
-            var showSignatureColumn = (DispatchVia)await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DispatchVia) == DispatchVia.DriverApplication 
+            var showSignatureColumn = (DispatchVia)await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DispatchVia) == DispatchVia.DriverApplication
                     && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp);
             var shiftDictionary = await SettingManager.GetShiftDictionary();
             var currentCulture = await SettingManager.GetCurrencyCultureAsync();
@@ -2782,10 +2796,10 @@ namespace DispatcherWeb.Orders
                     x.Order.DeliveryDate == input.Date &&
                     !x.Order.IsPending &&
                     (x.Order.LocationId == OfficeId || x.SharedOrderLines.Any(s => s.OfficeId == OfficeId))
-                    && (x.MaterialQuantity > 0 || x.FreightQuantity > 0  || x.NumberOfTrucks > 0)
+                    && (x.MaterialQuantity > 0 || x.FreightQuantity > 0 || x.NumberOfTrucks > 0)
                 );
         }
-        
+
         [AbpAuthorize(AppPermissions.Pages_Reports_PaymentReconciliation)]
         public async Task<byte[]> GetPaymentReconciliationReport(GetPaymentReconciliationReportInput input)
         {
@@ -2794,7 +2808,7 @@ namespace DispatcherWeb.Orders
             var startDateFilter = input.StartDate.ConvertTimeZoneFrom(timeZone);
             var endDateFilter = input.EndDate.ConvertTimeZoneFrom(timeZone);
             var heartlandPublicKeyId = await _paymentAppService.GetHeartlandPublicKeyIdAsync();
-            
+
             try
             {
                 await _paymentAppService.UpdatePaymentsFromHeartland(new UpdatePaymentsFromHeartlandInput
@@ -2809,7 +2823,7 @@ namespace DispatcherWeb.Orders
                 Logger.Error("Exception on UpdatePyamentsFromHeartland", e);
                 throw new UserFriendlyException("Error", "Unable to receive transactions from Heartland. Please try again later.", e);
             }
-            
+
             var items = await _paymentRepository.GetAll()
                 .WhereIf(!input.AllOffices,
                     x => x.PaymentHeartlandKeyId == heartlandPublicKeyId
@@ -2955,7 +2969,7 @@ namespace DispatcherWeb.Orders
                 })
                 .FirstOrDefaultAsync();
 
-            if(order == null)
+            if (order == null)
             {
                 throw await GetOrderNotFoundException(input);
             }
@@ -3013,11 +3027,11 @@ namespace DispatcherWeb.Orders
                 Body = input.Body,
                 IsBodyHtml = false
             };
-            foreach(var to in EmailHelper.SplitEmailAddresses(input.To))
+            foreach (var to in EmailHelper.SplitEmailAddresses(input.To))
             {
                 message.To.Add(to);
             }
-            foreach(var cc in EmailHelper.SplitEmailAddresses(input.CC))
+            foreach (var cc in EmailHelper.SplitEmailAddresses(input.CC))
             {
                 message.CC.Add(cc);
             }
@@ -3046,7 +3060,7 @@ namespace DispatcherWeb.Orders
             filename = Utilities.RemoveInvalidFileNameChars(filename);
             filename += ".pdf";
 
-            using(var stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 report.SaveToMemoryStream(stream);
                 message.Attachments.Add(new Attachment(stream, filename));
@@ -3064,13 +3078,13 @@ namespace DispatcherWeb.Orders
                 }
             }
         }
-        
+
         private async Task DecrementOrderLineNumbers(int orderId, int aboveLineNumber)
         {
             var orderLines = await _orderLineRepository.GetAll()
                        .Where(x => x.OrderId == orderId && x.LineNumber > aboveLineNumber)
                        .ToListAsync();
-            
+
             foreach (var item in orderLines)
             {
                 item.LineNumber -= 1;

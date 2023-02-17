@@ -183,9 +183,8 @@
 		function initFilterControls() {
 			$("#OfficeIdFilter").select2Init({
 				abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-				minimumInputLength: 0,
-				minimumResultsForSearch: Infinity,
-				allowClear: false
+				showAll: true,
+				allowClear: true
 			});
 			if (abp.session.officeId) {
 				abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
@@ -194,12 +193,12 @@
 			//	$('#DriverIdFilter').val('');
 			//});
 
-			var drpOptions = {
-				locale: {
-					cancelLabel: 'Clear'
-				}
-			};
-			$("#DateFilter").daterangepicker(drpOptions)
+			$("#DateFilter").daterangepicker(
+				{
+					locale: {
+						cancelLabel: 'Clear'
+					}
+				})
 				.on('apply.daterangepicker', function (ev, picker) {
 					$(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
 				})
@@ -208,10 +207,13 @@
                 });
 			$("#DriverIdFilter").select2Init({
 				abpServiceMethod: abp.services.app.driver.getDriversSelectList,
-				showAll: true
+				showAll: false,
+				allowClear: true
 			});
 			$("#UserIdFilter").select2Init({
-				abpServiceMethod: abp.services.app.user.getUsersSelectList
+				abpServiceMethod: abp.services.app.user.getUsersSelectList,
+				showAll: false,
+				allowClear: true
 			});
 		}
 

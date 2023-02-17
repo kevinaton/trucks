@@ -30,7 +30,10 @@
             return isPastDate;
         }
 
-        var $shiftSelect = $('#ShiftFilter').select2Init({ minimumResultsForSearch: 5, allowClear: false });
+        var $shiftSelect = $('#ShiftFilter').select2Init({
+            showAll: true,
+            allowClear: false
+        });
         $shiftSelect.on('change', function () {
             _shift = Number($shiftSelect.val());
             refreshButtons();
@@ -69,8 +72,7 @@
 
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            minimumInputLength: 0,
-            minimumResultsForSearch: Infinity,
+            showAll: true,
             allowClear: false
         });
         abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
@@ -141,8 +143,8 @@
                                 officeId: allowSubcontractorsToDriveCompanyOwnedTrucks ? null : _officeId,
                                 includeLeaseHaulerDrivers: allowSubcontractorsToDriveCompanyOwnedTrucks,
                             }),
-                            showAll: true
-                            //selectOnClose: true
+                            showAll: true,
+                            allowClear: true
                         },
                         validate: async (rowData, newValue, cell) => {
                             if (!rowData.driverId) {

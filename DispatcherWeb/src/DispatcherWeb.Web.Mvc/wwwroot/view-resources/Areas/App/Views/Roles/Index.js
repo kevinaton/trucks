@@ -49,9 +49,9 @@
                         return '';
                     },
                     targets: 0
-                },               
+                },
                 {
-                    targets: 1,                  
+                    targets: 1,
                     data: "displayName",
                     render: function (displayName, type, row, meta) {
                         var $span = $('<span/>');
@@ -98,7 +98,7 @@
                     autoWidth: false,
                     defaultContent: '',
                     width: '10px',
-                    responsivePriority: 1,  
+                    responsivePriority: 1,
                     rowAction: {
                         items: [{
                             text: '<i class="fa fa-edit"></i> ' + app.localize('Edit'),

@@ -49,9 +49,6 @@ namespace DispatcherWeb.Orders.Dto
         [StringLength(EntityStringFieldLengths.Order.SpectrumNumber)]
         public string SpectrumNumber { get; set; }
 
-        [StringLength(EntityStringFieldLengths.Order.JobNumber)]
-        public string JobNumber { get; set; }
-
         public int? ContactId { get; set; }
 
         public string ContactName { get; set; }

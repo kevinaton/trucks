@@ -15,11 +15,15 @@
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
-            noSearch: true
+            allowClear: true
+        });
+
+        $("#StatusFilter").select2Init({
+            showAll: true,
+            allowClear: false
         });
 
         var driversTable = $('#DriversTable');
-
         var driversGrid = driversTable.DataTableInit({
             paging: true,
             serverSide: true,

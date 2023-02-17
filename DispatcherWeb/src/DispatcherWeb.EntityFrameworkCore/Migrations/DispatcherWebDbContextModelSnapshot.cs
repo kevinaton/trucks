@@ -3302,8 +3302,8 @@ namespace DispatcherWeb.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("JobNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
@@ -4999,6 +4999,10 @@ namespace DispatcherWeb.Migrations
                     b.Property<bool>("IsMultipleLoads")
                         .HasColumnType("bit");
 
+                    b.Property<string>("JobNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
 
@@ -5420,6 +5424,10 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<bool>("IsMaterialRateOverridden")
                         .HasColumnType("bit");
+
+                    b.Property<string>("JobNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
@@ -6639,6 +6647,10 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("JobNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");

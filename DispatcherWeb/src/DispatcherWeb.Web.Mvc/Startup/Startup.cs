@@ -168,7 +168,8 @@ namespace DispatcherWeb.Web.Startup
                     {
                         policy.WithOrigins(corsOrigins)
                             .AllowAnyHeader()
-                            .AllowAnyMethod();
+                            .AllowAnyMethod()
+                            .AllowCredentials();
                     });
                 });
             }
@@ -263,6 +264,7 @@ namespace DispatcherWeb.Web.Startup
                         .From("https://hps.github.io/token/")
                         .From("https://dc.services.visualstudio.com/v2/track") //appinsights
                         .From("https://user.userguiding.com/sdk/")
+                        .From("https://nps.userguiding.com/api/")
                         .From("https://api.userguiding.com/")
                         .From("https://metrics.userguiding.com/")
 #if DEBUG

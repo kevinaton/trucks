@@ -127,7 +127,7 @@
         "node_modules/datatables.net-select/js/dataTables.select.js",
         "node_modules/datatables.net-responsive/js/dataTables.responsive.js",
         "node_modules/datatables.net-responsive-bs4/js/responsive.bootstrap4.js",
-        "node_modules/select2/dist/js/select2.js",
+        "wwwroot/lib/select2/dist/js/select2.js",
         "node_modules/bootstrap-notify/bootstrap-notify.min.js",
         "node_modules/chart.js/dist/chart.js",
         "node_modules/bootstrap-markdown/js/bootstrap-markdown.js",

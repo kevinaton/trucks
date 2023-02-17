@@ -138,6 +138,24 @@
                 await warnIfDuplicateCustomerName(customerName);
             });
 
+            var preferredDeliveryMethodSelect = _modalManager.getModal().find('#PreferredDeliveryMethod');
+            preferredDeliveryMethodSelect.select2Init({
+                showAll: true,
+                allowClear: true
+            });
+
+            var termsSelect = _modalManager.getModal().find('#Terms');
+            termsSelect.select2Init({
+                showAll: true,
+                allowClear: true
+            });
+
+            var invoicingMethodSelect = _modalManager.getModal().find('#InvoicingMethod');
+            invoicingMethodSelect.select2Init({
+                showAll: true,
+                allowClear: false
+            });
+
             var customerContactsTable = _modalManager.getModal().find('#CustomerContactsTable');
             var customerContactsGrid = customerContactsTable.DataTableInit({
                 paging: false,

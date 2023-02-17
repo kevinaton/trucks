@@ -25,7 +25,7 @@
             var timeClassificationIdInput = _modal.find("#TimeClassificationId");
             timeClassificationIdInput.select2Init({
                 abpServiceMethod: _timeClassificationService.getTimeClassificationsSelectList,
-                minimumInputLength: 0,
+                showAll: true,
                 allowClear: false
             });
 

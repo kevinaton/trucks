@@ -135,23 +135,30 @@
 
             _loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                width: 'calc(100% - 45px)'
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
+                    _addLocationTarget = "LoadAtId";
+                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
+                } : undefined
             });
             _deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                width: 'calc(100% - 45px)'
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
+                    _addLocationTarget = "DeliverToId";
+                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
+                } : undefined
             });
             _serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
-                minimumInputLength: 0,
+                showAll: false,
                 allowClear: false,
-                width: 'calc(100% - 45px)'
+                addItemCallback: abp.auth.hasPermission('Pages.Services') ? async function (newItemName) {
+                    createOrEditServiceModal.open({ name: newItemName });
+                } : undefined
             });
             _materialUomDropdown.select2Uom();
             _freightUomDropdown.select2Uom();
             _designationDropdown.select2Init({
                 showAll: true,
-                noSearch: true,
                 allowClear: false
             });
 
@@ -184,21 +191,10 @@
                 targetDropdown.change();
             });
 
-            _modalManager.getModal().find("#AddNewServiceButton").click(function (e) {
-                e.preventDefault();
-                createOrEditServiceModal.open();
-            });
-
-            _modalManager.getModal().find(".AddNewLocationButton").click(function (e) {
-                e.preventDefault();
-                _addLocationTarget = $(this).data('target-field');
-                createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
-            });
-
             reloadPricing();
             refreshHighlighting();
 
-            _loadAtDropdown.change(function () {
+            _loadAtDropdown.add(_deliverToDropdown).change(function () {
                 var sender = $(this);
                 var val = sender.val();
                 if (val && val.startsWith(abp.helper.googlePlacesHelper.googlePlaceIdPrefix)) {
@@ -257,7 +253,24 @@
             });
             initOverrideButtons();
             disableProductionPayIfNeeded(false);
+            disableQuoteRelatedFieldsIfNeeded();
         };
+
+        function disableQuoteRelatedFieldsIfNeeded() {
+            if (_quoteId) {
+                _designationDropdown
+                    .add(_loadAtDropdown)
+                    .add(_deliverToDropdown)
+                    .add(_serviceDropdown)
+                    .add(_freightUomDropdown)
+                    .add(_materialUomDropdown)
+                    .add(_freightPricePerUnitInput)
+                    .add(_materialPricePerUnitInput)
+                    //.add(_freightQuantityInput)
+                    //.add(_materialQuantityInput)
+                    .prop('disabled', true);
+            }
+        }
 
         function initOverrideButtons() {
             _unlockMaterialPriceButton = _$form.find("#UnlockMaterialTotalButton");
@@ -326,6 +339,7 @@
                 materialUomId: _materialUomDropdown.val(),
                 freightUomId: _freightUomDropdown.val(),
                 loadAtId: _loadAtDropdown.val(),
+                deliverToId: _deliverToDropdown.val(),
                 quoteId: _quoteId
             }).done(function (pricing) {
                 _pricing = pricing;
@@ -338,11 +352,13 @@
         function refreshHighlighting() {
             if (_pricing && _pricing.quoteBasedPricing) {
                 _loadAtDropdown.addClass("quote-based-pricing");
+                _deliverToDropdown.addClass("quote-based-pricing");
                 _serviceDropdown.addClass("quote-based-pricing");
                 _materialUomDropdown.addClass("quote-based-pricing");
                 _freightUomDropdown.addClass("quote-based-pricing");
             } else {
                 _loadAtDropdown.removeClass("quote-based-pricing");
+                _deliverToDropdown.removeClass("quote-based-pricing");
                 _serviceDropdown.removeClass("quote-based-pricing");
                 _materialUomDropdown.removeClass("quote-based-pricing");
                 _freightUomDropdown.removeClass("quote-based-pricing");
@@ -475,55 +491,72 @@
             productionPayInput.closest('label').attr('title', '').tooltip('dispose');
         }
 
+        function setFreightRateFromPricingIfNeeded(rate, sender) {
+            if (getIsFreightPricePerUnitOverridden() || designationIsMaterialOnly()) {
+                return;
+            }
+            //when quantity changes, don't reset the rate from pricing unless the rate was empty
+            if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _freightPricePerUnitInput.val()) {
+                return;
+            }
+            _freightPricePerUnitInput.val(rate);
+        }
+
+        function setMaterialRateFromPricingIfNeeded(rate, sender) {
+            if (getIsMaterialPricePerUnitOverridden() || !designationHasMaterial()) {
+                return;
+            }
+            //when quantity changes, don't reset the rate from pricing unless the rate was empty
+            if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _materialPricePerUnitInput.val()) {
+                return;
+            }
+            _materialPricePerUnitInput.val(rate);
+        }
+
         function recalculate(sender) {
             if (_initializing || _recalculating) {
                 return;
             }
             _recalculating = true;
-            if (_pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.freightRate !== null) {
+
+            var freightRatePricing =
+                _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.freightRate !== null ? _pricing.quoteBasedPricing.freightRate
+                    : _pricing && _pricing.hasPricing && _pricing.freightRate !== null ? _pricing.freightRate
+                        : null;
+
+            var materialRatePricing =
+                _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null ? _pricing.quoteBasedPricing.pricePerUnit
+                : _pricing && _pricing.hasPricing && _pricing.pricePerUnit !== null ? _pricing.pricePerUnit
+                    : null;
+
+            if (freightRatePricing !== null) {
                 if (sender.is(_freightPricePerUnitInput)) {
-                    setIsFreightPricePerUnitOverridden(_pricing.quoteBasedPricing.freightRate !== Number(_freightPricePerUnitInput.val())); //freightPricePerUnitInput value used to be rounded
+                    setIsFreightPricePerUnitOverridden(freightRatePricing !== Number(_freightPricePerUnitInput.val()));
                 } else {
-                    if (!getIsFreightPricePerUnitOverridden() && !designationIsMaterialOnly())
-                        _freightPricePerUnitInput.val(_pricing.quoteBasedPricing.freightRate);
-                }
-            } else if (_pricing && _pricing.hasPricing && _pricing.freightRate !== null) {
-                if (sender.is(_freightPricePerUnitInput)) {
-                    setIsFreightPricePerUnitOverridden(_pricing.freightRate !== Number(_freightPricePerUnitInput.val())); //freightPricePerUnitInput value used to be rouned
-                } else {
-                    if (!getIsFreightPricePerUnitOverridden() && !designationIsMaterialOnly())
-                        _freightPricePerUnitInput.val(_pricing.freightRate);
+                    setFreightRateFromPricingIfNeeded(freightRatePricing, sender);
                 }
             } else {
                 //no freight pricing
-                if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown))) {
+                if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
                     _freightPricePerUnitInput.val('');
                 }
             }
-            if (_pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null) {
+
+            if (materialRatePricing !== null) {
                 if (sender.is(_materialPricePerUnitInput)) {
-                    setIsMaterialPricePerUnitOverridden(_pricing.quoteBasedPricing.pricePerUnit !== Number(_materialPricePerUnitInput.val())); //materialPricePerUnitInput value used to be rounded
-                }
-                else {
-                    if (!getIsMaterialPricePerUnitOverridden() && designationHasMaterial())
-                        _materialPricePerUnitInput.val(_pricing.quoteBasedPricing.pricePerUnit);
-                }
-            } else if (_pricing && _pricing.hasPricing && _pricing.pricePerUnit !== null) {
-                if (sender.is(_materialPricePerUnitInput)) {
-                    setIsMaterialPricePerUnitOverridden(_pricing.pricePerUnit !== Number(_materialPricePerUnitInput.val())); //materialPricePerUnitInput used to be rounded
+                    setIsMaterialPricePerUnitOverridden(materialRatePricing !== Number(_materialPricePerUnitInput.val()));
                 } else {
-                    if (!getIsMaterialPricePerUnitOverridden() && designationHasMaterial())
-                        _materialPricePerUnitInput.val(_pricing.pricePerUnit);
+                    setMaterialRateFromPricingIfNeeded(materialRatePricing, sender);
                 }
             } else {
                 //no material pricing
-                if (!getIsMaterialPricePerUnitOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown))) {
+                if (!getIsMaterialPricePerUnitOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
                     _materialPricePerUnitInput.val('');
                 }
             }
-            var materialPricePerUnit = _materialPricePerUnitInput.val(); //used to be rounded
-            var freightPricePerUnit = _freightPricePerUnitInput.val(); //used to be rounded
-            var materialQuantity = _materialQuantityInput.val(); //quantityInput value used to be rounded
+            var materialPricePerUnit = _materialPricePerUnitInput.val();
+            var freightPricePerUnit = _freightPricePerUnitInput.val();
+            var materialQuantity = _materialQuantityInput.val();
             var freightQuantity = _freightQuantityInput.val();
             var materialPrice = round(materialPricePerUnit * materialQuantity);
             var freightPrice = round(freightPricePerUnit * freightQuantity);
@@ -661,6 +694,7 @@
             _orderLine.isMultipleLoads = !!orderLine.IsMultipleLoads;
             _orderLine.productionPay = !!orderLine.ProductionPay;
             _orderLine.timeOnJob = orderLine.TimeOnJob;
+            _orderLine.jobNumber = orderLine.JobNumber;
             _orderLine.note = orderLine.Note;
 
             if (this.saveCallback) {
@@ -765,12 +799,16 @@
             _$form.find("#IsMultipleLoads").prop('checked', _orderLine.isMultipleLoads);
             _$form.find("#ProductionPay").prop('checked', _orderLine.productionPay);
             _$form.find("#TimeOnJob").val(_orderLine.timeOnJob);
+            _$form.find("#JobNumber").val(_orderLine.jobNumber);
             _$form.find("#Note").val(_orderLine.note);
+
+            _quoteId = _$form.find("#QuoteId").val();
 
             updateStaggeredTimeControls();
             updateTimeOnJobInput();
             updateProductionPay();
             disableProductionPayIfNeeded(false);
+            disableQuoteRelatedFieldsIfNeeded();
 
             _modalManager.getModal().find('.modal-title').text(orderLine.isNew ? "Add new line" : "Edit line");
             _initializing = false;

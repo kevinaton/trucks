@@ -29,7 +29,9 @@
         </div>
         <div class="form-group">
             <label class="required-label">@L("Type")</label>
-            <select class="form-control" asp-for="Type" asp-items="@Html.GetServiceTypeSelectList(Model.Type)" required></select>
+            <select class="form-control" asp-for="Type" asp-items="@Html.GetServiceTypeSelectList(Model.Type)" required>
+                <option value="">Select a type</option>
+            </select>
         </div>
         <div class="m-checkbox-list">
             <label class="custom-checkbox">

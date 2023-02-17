@@ -235,7 +235,6 @@ namespace DispatcherWeb.LeaseHaulers
                         MaterialCompanyTenantId = materialCompanyTenantId,
                         MaterialCompanyOrderId = sourceOrder.Id,
                         CustomerId = materialCompanyCustomer.Id,
-                        JobNumber = sourceOrder.JobNumber, //sourceOrder.Customer.Name.Truncate(EntityStringFieldLengths.Order.JobNumber),
                         Directions = sourceOrder.Directions,
                         IsClosed = sourceOrder.IsClosed,
                         IsPending = sourceOrder.IsPending,
@@ -286,6 +285,7 @@ namespace DispatcherWeb.LeaseHaulers
                     MaterialQuantity = null,
                     MaterialPrice = 0,
                     IsMultipleLoads = sourceOrderLine.IsMultipleLoads,
+                    JobNumber = sourceOrderLine.JobNumber,
                     Note = sourceOrderLine.Note,
                     NumberOfTrucks = sourceOrderLine.NumberOfTrucks,
                     StaggeredTimeInterval = sourceOrderLine.StaggeredTimeInterval,
@@ -417,6 +417,7 @@ namespace DispatcherWeb.LeaseHaulers
                     IsComplete = x.IsComplete,
                     IsMultipleLoads = x.IsMultipleLoads,
                     LineNumber = x.LineNumber,
+                    JobNumber = x.JobNumber,
                     Note = x.Note,
                     NumberOfTrucks = x.NumberOfTrucks,
                     Order = new OrderDto
@@ -428,7 +429,6 @@ namespace DispatcherWeb.LeaseHaulers
                             Name = x.Order.Customer.Name,
                         },
                         Directions = x.Order.Directions,
-                        JobNumber = x.Order.JobNumber,
                         IsClosed = x.Order.IsClosed,
                         IsPending = x.Order.IsPending,
                         PONumber = x.Order.PONumber,
@@ -654,7 +654,7 @@ namespace DispatcherWeb.LeaseHaulers
                                 {
                                     await haulingOrderLineUpdater.UpdateFieldAsync(x => x.Designation, DesignationEnum.FreightOnly);
                                 }
-                                var destinationUom = await FindOrGetFallbackUnitOfMeasureAsync(sourceOrderLine.FreightUom.Name ?? sourceOrderLine.MaterialUom.Name);
+                                var destinationUom = await FindOrGetFallbackUnitOfMeasureAsync(sourceOrderLine.FreightUom?.Name ?? sourceOrderLine.MaterialUom?.Name);
                                 await haulingOrderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, destinationUom.Id);
                                 break;
 
@@ -672,6 +672,10 @@ namespace DispatcherWeb.LeaseHaulers
 
                             case nameof(OrderLine.IsMultipleLoads):
                                 await haulingOrderLineUpdater.UpdateFieldAsync(x => x.IsMultipleLoads, sourceOrderLine.IsMultipleLoads);
+                                break;
+
+                            case nameof(OrderLine.JobNumber):
+                                await haulingOrderLineUpdater.UpdateFieldAsync(x => x.JobNumber, sourceOrderLine.JobNumber);
                                 break;
 
                             case nameof(OrderLine.Note):
@@ -728,7 +732,7 @@ namespace DispatcherWeb.LeaseHaulers
                                 {
                                     await materialOrderLineUpdater.UpdateFieldAsync(x => x.Designation, DesignationEnum.FreightAndMaterial);
                                 }
-                                var destinationUom = await FindOrGetFallbackUnitOfMeasureAsync(sourceOrderLine.FreightUom.Name ?? sourceOrderLine.MaterialUom.Name);
+                                var destinationUom = await FindOrGetFallbackUnitOfMeasureAsync(sourceOrderLine.FreightUom?.Name ?? sourceOrderLine.MaterialUom?.Name);
                                 await materialOrderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, destinationUom.Id);
                                 break;
 
@@ -746,6 +750,10 @@ namespace DispatcherWeb.LeaseHaulers
 
                             case nameof(OrderLine.IsMultipleLoads):
                                 await materialOrderLineUpdater.UpdateFieldAsync(x => x.IsMultipleLoads, sourceOrderLine.IsMultipleLoads);
+                                break;
+
+                            case nameof(OrderLine.JobNumber):
+                                await materialOrderLineUpdater.UpdateFieldAsync(x => x.JobNumber, sourceOrderLine.JobNumber);
                                 break;
 
                             case nameof(OrderLine.Note):

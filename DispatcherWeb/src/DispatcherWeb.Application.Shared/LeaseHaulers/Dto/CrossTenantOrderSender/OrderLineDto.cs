@@ -22,6 +22,7 @@ namespace DispatcherWeb.LeaseHaulers.Dto.CrossTenantOrderSender
         public bool IsComplete { get; set; }
         public bool IsMultipleLoads { get; set; }
         public int LineNumber { get; set; }
+        public string JobNumber { get; set; }
         public string Note { get; set; }
         public double? NumberOfTrucks { get; set; }
         public OrderDto Order { get; set; }

@@ -41,9 +41,6 @@ namespace DispatcherWeb.Quotes.Dto
         [StringLength(20)]
         public string SpectrumNumber { get; set; }
 
-        [StringLength(EntityStringFieldLengths.Order.JobNumber)]
-        public string JobNumber { get; set; }
-
         //[Required(ErrorMessage = "Base Fuel Cost is a required field")]
         [DisplayFormat(DataFormatString = "{0:F2}", ApplyFormatInEditMode = true)]
         public decimal? BaseFuelCost { get; set; }

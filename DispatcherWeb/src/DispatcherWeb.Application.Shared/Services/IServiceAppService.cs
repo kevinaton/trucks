@@ -12,7 +12,7 @@ namespace DispatcherWeb.Services
         Task<PagedResultDto<SelectListDto>> GetServicesSelectList(GetSelectListInput input);
         Task<ListResultDto<SelectListDto>> GetServicesByIdsSelectList(GetItemsByIdsInput input);
         Task<ServicePricingDto> GetServicePricing(GetServicePricingInput input);
-        Task<ServiceEditDto> GetServiceForEdit(NullableIdDto input);
+        Task<ServiceEditDto> GetServiceForEdit(NullableIdNameDto input);
         Task<int> EditService(ServiceEditDto model);
         Task<bool> CanDeleteService(EntityDto input);
         Task DeleteService(EntityDto input);

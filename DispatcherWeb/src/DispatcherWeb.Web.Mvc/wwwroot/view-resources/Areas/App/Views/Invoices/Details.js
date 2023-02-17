@@ -71,6 +71,7 @@
 
         $("#CustomerId").select2Init({
             abpServiceMethod: abp.services.app.invoice.getActiveCustomersSelectList,
+            showAll: false,
             allowClear: false
         });
 
@@ -127,7 +128,7 @@
 
         $("#Terms").select2Init({
             showAll: true,
-            allowClear: false
+            allowClear: true
         });
 
         function disableCustomerDropdownIfNeeded() {
@@ -310,9 +311,8 @@
                         nameField: 'itemName',
                         dropdownOptions: {
                             abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
-                            showAll: true,
-                            allowClear: false,
-                            selectOnClose: true
+                            showAll: false,
+                            allowClear: false
                         },
                         editStartingCallback: function editStartingCallback(rowData, cell, selectedOption) {
                             console.log(selectedOption);

@@ -56,6 +56,7 @@ namespace DispatcherWeb.UnitTests.Application.Trucks
             dispatchRepository.GetAll().Returns(dispatchMockSet);
             IRepository<Ticket> ticketRepository = Substitute.For<IRepository<Ticket>>();
             IRepository<TimeOff> timeOffRepository = Substitute.For<IRepository<TimeOff>>();
+            IOrderLineUpdaterFactory orderLineUpdaterFactory = Substitute.For<IOrderLineUpdaterFactory>();
             ISingleOfficeAppService singleOfficeAppService = Substitute.For<ISingleOfficeAppService>();
             ITruckListCsvExporter truckListCsvExporter = Substitute.For<ITruckListCsvExporter>();
             ISyncRequestSender syncRequestSender = Substitute.For<ISyncRequestSender>();
@@ -74,6 +75,7 @@ namespace DispatcherWeb.UnitTests.Application.Trucks
                 dispatchRepository,
                 ticketRepository,
                 timeOffRepository,
+                orderLineUpdaterFactory,
                 singleOfficeAppService,
                 truckListCsvExporter,
                 driverApplicationPushSender,

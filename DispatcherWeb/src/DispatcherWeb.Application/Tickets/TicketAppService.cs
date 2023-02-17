@@ -281,9 +281,7 @@ namespace DispatcherWeb.Tickets
             //}
 
             model.Id = await _ticketRepository.InsertOrUpdateAndGetIdAsync(ticket);
-            
-            await CurrentUnitOfWork.SaveChangesAsync();
-            await RecalculateOfficeAmountsAsync(model.OrderLineId);
+
             await CurrentUnitOfWork.SaveChangesAsync();
             var taxDetails = await _orderTaxCalculator.CalculateTotalsAsync(orderLineData.OrderId);
             if (quantityWasChanged)
@@ -316,7 +314,7 @@ namespace DispatcherWeb.Tickets
                 }).FirstOrDefault() : null;
 
             var orderLineTrucks = await _orderLineTruckRepository.GetAll()
-                .WhereIf(order != null, x => 
+                .WhereIf(order != null, x =>
                     x.OrderLine.Order.DeliveryDate == order.DeliveryDate
                     && x.OrderLine.Order.Shift == order.Shift
                     && x.OrderLine.Order.LocationId == order.LocationId)
@@ -363,7 +361,7 @@ namespace DispatcherWeb.Tickets
 
             return result;
         }
-        
+
         public async Task<GetTruckForTicketDriverResult> GetTruckForTicketDriver(GetTruckForTicketDriverInput input)
         {
             var order = input.OrderLineId.HasValue ? _orderLineRepository.GetAll()
@@ -510,7 +508,7 @@ namespace DispatcherWeb.Tickets
             ticket.LoadAtId = model.LoadAtId;
             ticket.IsVerified = model.IsVerified;
             ticket.IsBilled = model.IsBilled;
-          
+
             if (ticket.TruckId == null && !(model.CarrierId > 0))
             {
                 throw new UserFriendlyException($"Invalid truck number");
@@ -523,8 +521,6 @@ namespace DispatcherWeb.Tickets
 
             if (model.OrderLineId.HasValue)
             {
-                await CurrentUnitOfWork.SaveChangesAsync();
-                await RecalculateOfficeAmountsAsync(model.OrderLineId.Value);
                 await CurrentUnitOfWork.SaveChangesAsync();
                 await _orderTaxCalculator.CalculateTotalsForOrderLineAsync(model.OrderLineId.Value);
                 if (quantityWasChanged)
@@ -599,7 +595,7 @@ namespace DispatcherWeb.Tickets
                     Filename = ticket.TicketPhotoFilename ?? (ticket.TicketPhotoId + ".jpg")
                 };
             }
-            return new TicketPhotoDto();            
+            return new TicketPhotoDto();
         }
 
         public async Task<bool> InvoiceHasTicketPhotos(int invoiceId)
@@ -651,56 +647,6 @@ namespace DispatcherWeb.Tickets
             }
         }
 
-        [AbpAllowAnonymous]
-        [RemoteService(false)]
-        public async Task RecalculateAllOfficeAmountsAsync()
-        {
-            var orderLineIds = await _orderLineRepository.GetAll()
-                .Select(x => x.Id)
-                .ToListAsync();
-
-            foreach (var orderLineId in orderLineIds)
-            {
-                await RecalculateOfficeAmountsAsync(orderLineId);
-            }
-        }
-
-        [AbpAllowAnonymous]
-        [RemoteService(false)]
-        public Task RecalculateOfficeAmountsAsync(int orderLineId)
-        {
-            //var ticketGroups = await _ticketRepository.GetAll()
-            //    .Include(x => x.Truck)
-            //    .Where(x => x.OrderLineId == orderLineId)
-            //    .GroupBy(x => x.Truck.LocationId)
-            //    .ToListAsync();
-
-            //foreach (var ticketGroup in ticketGroups)
-            //{
-            //    var officeId = ticketGroup.Key;
-            //    var actualMaterialQuantity = ticketGroup.Select(x => x.MaterialQuantity).DefaultIfEmpty(0).Sum();
-            //    var actualFreightQuantity = ticketGroup.Select(x => x.FreightQuantity).DefaultIfEmpty(0).Sum();
-
-            //    if (officeId == null)
-            //    {
-            //        continue;
-            //    }
-
-            //    var receiptLine = await _receiptSeeder.SetOrderLineReceiptAmountsAsync(new SetOrderLineReceiptAmountsInput
-            //    {
-            //        MaterialQuantity = actualMaterialQuantity,
-            //        FreightQuantity = actualFreightQuantity,
-            //        OrderLineId = orderLineId
-            //    }, officeId.Value);
-
-            //    foreach (var ticket in ticketGroup)
-            //    {
-            //        ticket.ReceiptLineId = receiptLine.Id;
-            //    }
-            //}
-            return Task.CompletedTask;
-        }
-
         public async Task<string> CheckTruckIsOutofServiceOrInactive(TicketEditDto model)
         {
             string result = string.Empty;
@@ -729,7 +675,7 @@ namespace DispatcherWeb.Tickets
                 .Where(t => t.TruckCode == truckCode)
                 .Select(t => new { t.Id })
                 .FirstOrDefaultAsync())?.Id;
-        }     
+        }
 
 
         public async Task<IList<TicketOrderLineDto>> LookForExistingOrderLines(LookForExistingOrderLinesInput input)
@@ -832,8 +778,6 @@ namespace DispatcherWeb.Tickets
             if (ticket.OrderLineId.HasValue)
             {
                 await CurrentUnitOfWork.SaveChangesAsync();
-                await RecalculateOfficeAmountsAsync(ticket.OrderLineId.Value);
-                await CurrentUnitOfWork.SaveChangesAsync();
                 orderTaxDetails = await _orderTaxCalculator.CalculateTotalsForOrderLineAsync(ticket.OrderLineId.Value);
             }
 
@@ -899,7 +843,7 @@ namespace DispatcherWeb.Tickets
 
             var shiftDictionary = await SettingManager.GetShiftDictionary();
             items.ForEach(x => x.Shift = x.ShiftRaw.HasValue && shiftDictionary.ContainsKey(x.ShiftRaw.Value) ? shiftDictionary[x.ShiftRaw.Value] : "");
-            
+
             return new PagedResultDto<TicketListViewDto>(
                 totalCount,
                 items);
@@ -963,20 +907,22 @@ namespace DispatcherWeb.Tickets
                 .WhereIf(orderDateRangeBegin.HasValue, x => x.OrderLine.Order.DeliveryDate >= orderDateRangeBegin)
                 .WhereIf(orderDateRangeEnd.HasValue, x => x.OrderLine.Order.DeliveryDate < orderDateRangeEnd)
                 .WhereIf(!string.IsNullOrEmpty(input.TicketNumber), x => x.TicketNumber.Contains(input.TicketNumber))
-                .WhereIf(!string.IsNullOrEmpty(input.TruckCode), x => x.TruckCode.Contains(input.TruckCode))
-                .WhereIf(!string.IsNullOrEmpty(input.JobNumber), x => x.OrderLine.Order.JobNumber == input.JobNumber)
+                .WhereIf(input.TruckId.HasValue, x => x.TruckId == input.TruckId)
+                .WhereIf(!string.IsNullOrEmpty(input.JobNumber), x => x.OrderLine.JobNumber == input.JobNumber)
                 .WhereIf(!input.Shifts.IsNullOrEmpty() && !input.Shifts.Contains(Shift.NoShift), t => t.Shift.HasValue && input.Shifts.Contains(t.Shift.Value) ||
                                                             t.OrderLine.Order.Shift.HasValue && input.Shifts.Contains(t.OrderLine.Order.Shift.Value))
                 .WhereIf(!input.Shifts.IsNullOrEmpty() && input.Shifts.Contains(Shift.NoShift), t => !t.Shift.HasValue && !t.OrderLineId.HasValue || input.Shifts.Contains(t.Shift.Value) ||
                                                             t.OrderLineId.HasValue && !t.OrderLine.Order.Shift.HasValue || input.Shifts.Contains(t.OrderLine.Order.Shift.Value))
                 .WhereIf(input.BillingStatus.HasValue, x => x.IsBilled == input.BillingStatus)
                 .WhereIf(input.IsVerified.HasValue, x => x.IsVerified == input.IsVerified)
-                .WhereIf(!input.CustomerName.IsNullOrEmpty(), x => x.Customer.Name.Contains(input.CustomerName))
+                .WhereIf(input.CustomerId.HasValue, x => x.Customer.Id == input.CustomerId)
                 .WhereIf(input.TicketStatus == TicketListStatusFilterEnum.MissingTicketsOnly, x => string.IsNullOrEmpty(x.TicketNumber) || x.Quantity == 0)
                 .WhereIf(input.TicketStatus == TicketListStatusFilterEnum.EnteredTicketsOnly, x => !string.IsNullOrEmpty(x.TicketNumber) && x.Quantity != 0)
                 .WhereIf(input.TicketIds?.Any() == true, x => input.TicketIds.Contains(x.Id))
                 .WhereIf(input.OrderId.HasValue, x => x.OrderLine.OrderId == input.OrderId)
                 .WhereIf(input.IsImported.HasValue, x => x.IsImported == input.IsImported)
+                .WhereIf(input.LoadAtId.HasValue, x => x.LoadAtId == input.LoadAtId)
+                .WhereIf(input.DeliverToId.HasValue, x => x.DeliverToId == input.DeliverToId)
                 .Select(t => new TicketListViewDto
                 {
                     Id = t.Id,
@@ -986,7 +932,7 @@ namespace DispatcherWeb.Tickets
                     ShiftRaw = t.OrderLineId.HasValue ? t.OrderLine.Order.Shift : t.Shift,
                     CustomerName = t.Customer != null ? t.Customer.Name : "",
                     QuoteName = t.OrderLine.Order.Quote.Name,
-                    JobNumber = t.OrderLine.Order.JobNumber,
+                    JobNumber = t.OrderLine.JobNumber,
                     Product = t.Service.Service1,
                     TicketNumber = t.TicketNumber,
                     Quantity = t.Quantity,
@@ -1029,10 +975,9 @@ namespace DispatcherWeb.Tickets
                     IsImported = t.IsImported,
                     ProductionPay = t.OrderLine.ProductionPay,
                     PayStatementId = t.PayStatementTickets.Select(x => x.PayStatementDetail.PayStatementId).First()
-                })
-                .WhereIf(!input.LoadAt.IsNullOrEmpty(), x => x.LoadAtNamePlain.Contains(input.LoadAt))
-                .WhereIf(!input.DeliverTo.IsNullOrEmpty(), x => x.DeliverToNamePlain.Contains(input.DeliverTo))
-                ;
+                });
+            /*.WhereIf(!input.LoadAt.IsNullOrEmpty(), x => x.LoadAtNamePlain == input.LoadAt)
+            .WhereIf(!input.DeliverTo.IsNullOrEmpty(), x => x.DeliverToNamePlain == input.DeliverTo);*/
         }
 
         [HttpPost]
@@ -1049,7 +994,7 @@ namespace DispatcherWeb.Tickets
                     Id = x.Id,
                     Shift = x.Order.Shift,
                     OrderId = x.OrderId,
-                    JobNumber = x.Order.JobNumber,
+                    JobNumber = x.JobNumber,
                     CustomerId = x.Order.CustomerId,
                     CustomerName = x.Order.Customer.Name,
                     OrderDate = x.Order.DeliveryDate,
@@ -1291,7 +1236,7 @@ namespace DispatcherWeb.Tickets
             {
                 var ticketIds = model.Tickets.Select(x => x.Id).Where(x => x != 0).ToList();
                 var tickets = await _ticketRepository.GetAll().Where(x => ticketIds.Contains(x.Id)).ToListAsync();
-                
+
                 var orderLineIds = model.Tickets.Select(x => x.OrderLineId).Where(x => !orderLines.Any(o => o.Id == x)).Distinct().ToList();
                 if (orderLineIds.Any())
                 {
@@ -1488,6 +1433,10 @@ namespace DispatcherWeb.Tickets
                         orderLine.ServiceId = orderLineModel.ServiceId;
                         orderLineTickets.ForEach(t => t.ServiceId = orderLineModel.ServiceId);
                     }
+                    if (orderLine.JobNumber != orderLineModel.JobNumber)
+                    {
+                        orderLine.JobNumber = orderLineModel.JobNumber;
+                    }
                     if (orderLine.Designation.FreightAndMaterial())
                     {
                         if (orderLine.MaterialUomId != orderLineModel.UomId || orderLine.FreightUomId != orderLineModel.UomId)
@@ -1529,7 +1478,7 @@ namespace DispatcherWeb.Tickets
                             LoadAtId = orderLine.LoadAtId,
                             QuoteId = orderLine.Order.QuoteId
                         });
-                        if (!(orderLine.MaterialPricePerUnit > 0) && orderLineModel.MaterialRate > 0 
+                        if (!(orderLine.MaterialPricePerUnit > 0) && orderLineModel.MaterialRate > 0
                             && orderLine.Designation.FreightOnly())
                         {
                             orderLine.Designation = orderLineModel.Designation = DesignationEnum.FreightAndMaterial;

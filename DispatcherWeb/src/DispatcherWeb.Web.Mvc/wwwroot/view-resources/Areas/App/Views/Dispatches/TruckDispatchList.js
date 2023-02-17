@@ -27,14 +27,13 @@
 
         var $viewFilterSelect = $("#DispatchListViewFilter").select2Init({
             showAll: true,
-            noSearch: true,
             allowClear: false
         });
 
         var $officeIdFilterSelect = $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
-            noSearch: true
+            allowClear: true 
         });
 
         abp.helper.ui.addAndSetDropdownValue($officeIdFilterSelect, abp.session.officeId, abp.session.officeName);
