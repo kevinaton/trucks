@@ -289,12 +289,26 @@
                     //className: "cell-text-wrap all",
                 },
                 {
-                    data: "leaseHaulerName",
-                    title: "Hauler"
+                    data: "truckCode",
+                    render: function (data, type, full, meta) {
+                        return (full.leaseHaulerName ? _dtHelper.renderText(full.leaseHaulerName) + ' ' : '')
+                            + (_dtHelper.renderText(full.truckCode) || '');
+                    },
+                    title: "Truck"
                 },
                 {
-                    data: "truckCode",
-                    title: "Truck"
+                    data: "jobNumber",
+                    title: "Job #",
+                    editable: {
+                        editor: _dtHelper.editors.text,
+                        maxLength: abp.entityStringFieldLengths.orderLine.jobNumber,
+                        isReadOnly: function (rowData, isRowReadOnly) {
+                            return isRowReadOnly || rowData.ticketId;
+                        },
+                        editCompleteCallback: function (editResult, rowData, $cell) {
+                            refreshJobNumberVisibilityAndText();
+                        }
+                    }
                 },
                 {
                     data: "deliveryDateTime",
@@ -579,6 +593,7 @@
                 ticketId: null,
                 ticketNumber: null,
                 truckCode: null,
+                jobNumber: null,
                 fuelSurcharge: 0,
                 guid: null,
                 parentInvoiceLineGuid: null,

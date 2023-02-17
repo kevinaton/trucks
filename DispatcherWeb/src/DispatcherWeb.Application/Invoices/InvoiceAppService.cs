@@ -47,6 +47,7 @@ namespace DispatcherWeb.Invoices
         private readonly InvoicePrintOutGenerator1 _invoicePrintOutGenerator1;
         private readonly InvoicePrintOutGenerator2 _invoicePrintOutGenerator2;
         private readonly InvoicePrintOutGenerator3 _invoicePrintOutGenerator3;
+        private readonly InvoicePrintOutGenerator4 _invoicePrintOutGenerator4;
         private readonly ITrackableEmailSender _trackableEmailSender;
         private readonly ICrossTenantOrderSender _crossTenantOrderSender;
 
@@ -63,6 +64,7 @@ namespace DispatcherWeb.Invoices
             InvoicePrintOutGenerator1 invoicePrintOutGenerator1,
             InvoicePrintOutGenerator2 invoicePrintOutGenerator2,
             InvoicePrintOutGenerator3 invoicePrintOutGenerator3,
+            InvoicePrintOutGenerator4 invoicePrintOutGenerator4,
             ITrackableEmailSender trackableEmailSender,
             ICrossTenantOrderSender crossTenantOrderSender
             )
@@ -79,6 +81,7 @@ namespace DispatcherWeb.Invoices
             _invoicePrintOutGenerator1 = invoicePrintOutGenerator1;
             _invoicePrintOutGenerator2 = invoicePrintOutGenerator2;
             _invoicePrintOutGenerator3 = invoicePrintOutGenerator3;
+            _invoicePrintOutGenerator4 = invoicePrintOutGenerator4;
             _trackableEmailSender = trackableEmailSender;
             _crossTenantOrderSender = crossTenantOrderSender;
         }
@@ -113,8 +116,8 @@ namespace DispatcherWeb.Invoices
                     Status = x.Status,
                     CustomerName = x.Customer.Name,
                     CustomerHasMaterialCompany = x.Customer.MaterialCompanyTenantId != null,
-                    JobNumbers = x.InvoiceLines.Select(l => l.Ticket.OrderLine.JobNumber).Where(j => !string.IsNullOrEmpty(j)).Distinct().ToList(),
-                    JobNumberSort = x.InvoiceLines.Select(l => l.Ticket.OrderLine.JobNumber).Where(j => !string.IsNullOrEmpty(j)).FirstOrDefault(),
+                    JobNumbers = x.InvoiceLines.Select(l => l.JobNumber).Where(j => !string.IsNullOrEmpty(j)).Distinct().ToList(),
+                    JobNumberSort = x.InvoiceLines.Select(l => l.JobNumber).Where(j => !string.IsNullOrEmpty(j)).FirstOrDefault(),
                     IssueDate = x.IssueDate,
                     TotalAmount = x.TotalAmount,
                     QuickbooksExportDateTime = x.QuickbooksExportDateTime
@@ -213,7 +216,7 @@ namespace DispatcherWeb.Invoices
                     IsTaxable = x.Item.IsTaxable,
                     TicketId = x.TicketId,
                     TicketNumber = x.Ticket.TicketNumber,
-                    JobNumber = x.Ticket.OrderLine.JobNumber,
+                    JobNumber = x.JobNumber,
                     PoNumber = x.Ticket.OrderLine.Order.PONumber,
                     TruckCode = x.TruckCode,
                     ChildInvoiceLineKind = x.ChildInvoiceLineKind,
@@ -471,6 +474,7 @@ namespace DispatcherWeb.Invoices
                     invoiceLine.DeliveryDateTime = modelInvoiceLine.DeliveryDateTime;
                     invoiceLine.TruckCode = modelInvoiceLine.TruckCode;
                     invoiceLine.ItemId = modelInvoiceLine.ItemId;
+                    invoiceLine.JobNumber = modelInvoiceLine.JobNumber;
                     invoiceLine.Description = modelInvoiceLine.Description;
                     invoiceLine.Quantity = modelInvoiceLine.Quantity;
                     invoiceLine.MaterialRate = modelInvoiceLine.MaterialRate;
@@ -685,6 +689,7 @@ namespace DispatcherWeb.Invoices
                         TruckCode = ticket.TruckCode,
                         Description = ticket.Description,
                         ItemId = ticket.ServiceId,
+                        JobNumber = ticket.JobNumber,
                         Quantity = ticket.Quantity,
                         FreightRate = ticket.FreightRate,
                         MaterialRate = ticket.MaterialRate,
@@ -855,6 +860,10 @@ namespace DispatcherWeb.Invoices
                     report = await _invoicePrintOutGenerator3.GenerateReport(data);
                     break;
 
+                case InvoiceTemplateEnum.Invoice4:
+                    report = await _invoicePrintOutGenerator4.GenerateReport(data);
+                    break;
+
                 default:
                     throw new NotImplementedException();
             }         
@@ -886,6 +895,7 @@ namespace DispatcherWeb.Invoices
                         FreightRate = l.FreightRate,
                         MaterialRate = l.MaterialRate,
                         ItemName = l.Item.Service1,
+                        JobNumber = l.JobNumber,
                         Subtotal = l.Subtotal,
                         ExtendedAmount = l.ExtendedAmount,
                         FreightExtendedAmount = l.FreightExtendedAmount,

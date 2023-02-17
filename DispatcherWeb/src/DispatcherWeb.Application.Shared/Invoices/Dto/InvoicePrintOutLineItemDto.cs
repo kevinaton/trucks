@@ -24,6 +24,6 @@ namespace DispatcherWeb.Invoices.Dto
         public decimal? MaterialRate { get; set; }
         public decimal? RateSum => (FreightRate ?? 0) + (MaterialRate ?? 0);
         public ChildInvoiceLineKind? ChildInvoiceLineKind { get; set; }
-
+        public string JobNumber { get; set; }
     }
 }

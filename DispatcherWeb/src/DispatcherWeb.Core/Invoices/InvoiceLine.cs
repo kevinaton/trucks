@@ -35,6 +35,9 @@ namespace DispatcherWeb.Invoices
 
         public virtual Service Item { get; set; }
 
+        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
+        public string JobNumber { get; set; }
+
         public short LineNumber { get; set; }
 
         public int? TicketId { get; set; }
