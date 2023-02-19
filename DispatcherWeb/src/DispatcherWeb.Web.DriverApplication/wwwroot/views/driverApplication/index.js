@@ -1115,18 +1115,6 @@ $('#SaveLoadButton').click(async function () {
         await App.logInfo(`SaveLoadButton clicked for dispatch ${currentDispatch && currentDispatch.id}`);
         await refreshDispatchesIfNoBackgroundSync();
 
-        if (!currentDispatch.isExtraLoad) {
-            if (_info.requireToEnterTickets && !currentDispatch.isTicketAdded && shouldShowModifyTicketButtonOnLoadView()) {
-                showValidationError('Ticket is required!', 'Validation error');
-                return;
-            }
-
-            if (_info.requireTicketPhoto && !currentDispatch.isTicketPhotoAdded && !_info.lastTakenTicketPhoto && shouldShowModifyTicketButtonOnLoadView()) {
-                showValidationError('Ticket Photo is required!', 'Validation error');
-                return;
-            }
-        }
-
         if (currentDispatch.productionPay && _info.timeClassificationId !== _info.productionPayId) {
             await App.logInfo(`SaveLoadButton: currently clocked in as ${_info.timeClassificationId}, changing to ${_info.productionPayId}`);
             await clockOut();
