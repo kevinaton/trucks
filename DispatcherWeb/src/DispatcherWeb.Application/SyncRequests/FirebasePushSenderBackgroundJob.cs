@@ -15,14 +15,17 @@ namespace DispatcherWeb.SyncRequests
     {
         private readonly IFirebasePushSender _firebasePushSender;
         private readonly IRepository<FcmPushMessage, Guid> _fcmPushMessageRepository;
+        private readonly IRepository<FcmRegistrationToken> _fcmRegistrationTokenRepository;
 
         public FirebasePushSenderBackgroundJob(
             IFirebasePushSender firebasePushSender,
-            IRepository<FcmPushMessage, Guid> fcmPushMessageRepository
+            IRepository<FcmPushMessage, Guid> fcmPushMessageRepository,
+            IRepository<FcmRegistrationToken> fcmRegistrationTokenRepository
             )
         {
             _firebasePushSender = firebasePushSender;
             _fcmPushMessageRepository = fcmPushMessageRepository;
+            _fcmRegistrationTokenRepository = fcmRegistrationTokenRepository;
         }
 
         [UnitOfWork(isTransactional: false)]
@@ -55,7 +58,12 @@ namespace DispatcherWeb.SyncRequests
                     }
                     else
                     {
-                        //todo maybe we have to remove the subscription for some specific ex.Message values
+                        if (ex.Message == "Requested entity was not found")
+                        {
+                            Logger.Info($"Removing registration token {args.RegistrationToken.Id} because it was rejected by FCM");
+                            await _fcmRegistrationTokenRepository.DeleteAsync(x => x.Id == args.RegistrationToken.Id);
+                            await CurrentUnitOfWork.SaveChangesAsync();
+                        }
                     }
                 }
             }
