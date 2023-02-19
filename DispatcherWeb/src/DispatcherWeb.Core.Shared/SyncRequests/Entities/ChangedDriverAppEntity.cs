@@ -1,4 +1,6 @@
-﻿using Abp.Domain.Entities.Auditing;
+﻿using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
+using Abp.Timing;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,10 +14,12 @@ namespace DispatcherWeb.SyncRequests.Entities
 
     public class ChangedDriverAppEntity<TKey> : ChangedEntityId<TKey>, IChangedDriverAppEntity
     {
-        public int? DriverId { get; set; } //no need to send driver app notification if driverId and OldDriverIdToNotify is null
+        public int? DriverId { get; set; } //no need to send driver app notification if driverId and OldDriverIdToNotify is null, unless UserId is specified
 
         //[JsonIgnore]
         public List<int> DriverIds { get; set; } = new List<int>(); //can be used for entities affecting multiple drivers
+
+        public long? UserId { get; set; } //can be specified instead of DriverId
 
         public DateTime LastUpdateDateTime { get; set; }
 
@@ -36,14 +40,25 @@ namespace DispatcherWeb.SyncRequests.Entities
         }
 
         [JsonIgnore]
-        public FullAuditedEntity<TKey> EntityReference { get; set; }
+        public Entity<TKey> EntityReference { get; set; }
 
         public void UpdateFromEntityReference()
         {
             if (EntityReference != null)
             {
                 Id = EntityReference.Id;
-                this.SetLastUpdateDateTime(EntityReference);
+                if (EntityReference is FullAuditedEntity<TKey> fullAuditedEntity)
+                {
+                    this.SetLastUpdateDateTime(fullAuditedEntity);
+                }
+                else if (EntityReference is IHasCreationTime hasCreationTimeEntity)
+                {
+                    LastUpdateDateTime = hasCreationTimeEntity.CreationTime;
+                }
+                else
+                {
+                    LastUpdateDateTime = Clock.Now;
+                }
             }
         }
 
@@ -56,6 +71,7 @@ namespace DispatcherWeb.SyncRequests.Entities
         {
             return obj is ChangedDriverAppEntity<TKey> other
                 && other.DriverId.Equals(DriverId)
+                && other.UserId.Equals(UserId)
                 && other.GetSortedDriverIdsAsString() == GetSortedDriverIdsAsString()
                 && other.LastUpdateDateTime.Equals(LastUpdateDateTime)
                 && other.OldDriverIdToNotify.Equals(OldDriverIdToNotify)

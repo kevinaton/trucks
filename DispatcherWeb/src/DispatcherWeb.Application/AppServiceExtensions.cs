@@ -897,59 +897,5 @@ namespace DispatcherWeb
             culture.NumberFormat.CurrencySymbol = currencySymbol;
             return culture;
         }
-
-        public static ChangedDispatch ToChangedEntity(this Dispatch entity)
-        {
-            return new ChangedDispatch
-            {
-                Id = entity.Id,
-                DriverId = entity.DriverId,
-                EntityReference = entity
-            }.SetLastUpdateDateTime(entity);
-        }
-
-        public static ChangedEmployeeTime ToChangedEntity(this Drivers.EmployeeTime entity)
-        {
-            return new ChangedEmployeeTime
-            {
-                Id = entity.Id,
-                DriverId = entity.DriverId,
-                Guid = entity.Guid,
-                TruckId = entity.EquipmentId,
-                UserId = entity.UserId,
-                EntityReference = entity
-            }.SetLastUpdateDateTime(entity);
-        }
-
-        public static ChangedDriverAssignment ToChangedEntity(this DriverAssignment entity)
-        {
-            return new ChangedDriverAssignment
-            {
-                Id = entity.Id,
-                DriverId = entity.DriverId,
-                TruckId = entity.TruckId,
-                EntityReference = entity
-            }.SetLastUpdateDateTime(entity);
-        }
-
-        public static ChangedEmployeeTimeClassification ToChangedEntity(this EmployeeTimeClassification entity)
-        {
-            return new ChangedEmployeeTimeClassification
-            {
-                Id = entity.Id,
-                DriverId = entity.DriverId,
-                TimeClassificationId = entity.TimeClassificationId,
-                EntityReference = entity,
-            }.SetLastUpdateDateTime(entity);
-        }
-
-        public static ChangedTimeClassification ToChangedEntity(this TimeClassification entity)
-        {
-            return new ChangedTimeClassification
-            {
-                Id = entity.Id,
-                EntityReference = entity
-            }.SetLastUpdateDateTime(entity);
-        }
     }
 }
