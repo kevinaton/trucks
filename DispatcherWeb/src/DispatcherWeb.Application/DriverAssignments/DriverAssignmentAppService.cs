@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using Abp.Timing;
 using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.TimeOffs;
-using DispatcherWeb.SignalR;
 using DispatcherWeb.SyncRequests;
 using DispatcherWeb.Common.Dto;
 

@@ -1,6 +1,6 @@
-﻿using DispatcherWeb.SignalR.Entities;
+﻿using DispatcherWeb.SyncRequests.Entities;
 
-namespace DispatcherWeb.SignalR
+namespace DispatcherWeb.SyncRequests
 {
     public interface ISyncRequestChangeDetail
     {

@@ -25,7 +25,6 @@ using DispatcherWeb.Offices;
 using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Features;
 using DispatcherWeb.LeaseHaulers;
-using DispatcherWeb.SignalR;
 using DispatcherWeb.SyncRequests;
 
 namespace DispatcherWeb.Drivers

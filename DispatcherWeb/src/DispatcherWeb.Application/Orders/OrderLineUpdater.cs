@@ -13,7 +13,6 @@ using DispatcherWeb.Infrastructure.EntityReadonlyCheckers;
 using DispatcherWeb.Infrastructure.EntityUpdaters;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.SignalR;
 using DispatcherWeb.SyncRequests;
 using Microsoft.EntityFrameworkCore;
 using System;

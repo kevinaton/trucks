@@ -23,7 +23,7 @@ using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Sessions;
-using DispatcherWeb.SignalR.Entities;
+using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;

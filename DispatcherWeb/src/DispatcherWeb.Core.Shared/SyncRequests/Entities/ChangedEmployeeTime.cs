@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DispatcherWeb.SignalR.Entities
+namespace DispatcherWeb.SyncRequests.Entities
 {
     public class ChangedEmployeeTime : ChangedDriverAppEntity
     {

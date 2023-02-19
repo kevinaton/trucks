@@ -38,7 +38,6 @@ using DispatcherWeb.Payments.Dto;
 using DispatcherWeb.Quotes;
 using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Services;
-using DispatcherWeb.SignalR;
 using DispatcherWeb.Storage;
 using DispatcherWeb.SyncRequests;
 using Microsoft.AspNetCore.Hosting;

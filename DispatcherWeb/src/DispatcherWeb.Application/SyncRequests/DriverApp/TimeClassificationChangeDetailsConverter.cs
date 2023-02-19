@@ -1,5 +1,5 @@
 ﻿using System;
-using DispatcherWeb.SignalR.Entities;
+using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.SyncRequests.FcmPushMessages.ChangeDetails;
 
 namespace DispatcherWeb.SyncRequests.DriverApp

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DispatcherWeb.SignalR;
-using DispatcherWeb.SignalR.Entities;
+using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.SyncRequests.FcmPushMessages.ChangeDetails;
 
 namespace DispatcherWeb.SyncRequests.DriverApp

@@ -1,4 +1,5 @@
 ﻿using Abp.RealTime;
+using DispatcherWeb.SyncRequests;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

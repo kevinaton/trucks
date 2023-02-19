@@ -12,7 +12,6 @@ using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Features;
 using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.SignalR;
 using DispatcherWeb.SyncRequests;
 using DispatcherWeb.TimeClassifications.Dto;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-﻿namespace DispatcherWeb.SignalR.Entities
+﻿namespace DispatcherWeb.SyncRequests.Entities
 {
     public class ChangedTimeClassification : ChangedDriverAppEntity
     {

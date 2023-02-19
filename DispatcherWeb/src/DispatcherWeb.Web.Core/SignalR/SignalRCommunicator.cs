@@ -2,6 +2,7 @@
 using Abp.RealTime;
 using Castle.Core.Logging;
 using DispatcherWeb.SignalR;
+using DispatcherWeb.SyncRequests;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Threading.Tasks;

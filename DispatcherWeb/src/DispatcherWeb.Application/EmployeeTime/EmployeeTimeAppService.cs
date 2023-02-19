@@ -10,16 +10,13 @@ using DispatcherWeb.Dto;
 using DispatcherWeb.EmployeeTime.Dto;
 using DispatcherWeb.EmployeeTime.Exporting;
 using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.SignalR;
 using DispatcherWeb.SyncRequests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NUglify.Helpers;
 using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
-using static DispatcherWeb.Infrastructure.EntityStringFieldLengths;
 
 namespace DispatcherWeb.EmployeeTime
 {

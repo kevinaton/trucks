@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DispatcherWeb.SignalR.Entities
+namespace DispatcherWeb.SyncRequests.Entities
 {
     public class ChangedDriverAppEntity : ChangedDriverAppEntity<int>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DispatcherWeb.SignalR.Entities
+namespace DispatcherWeb.SyncRequests.Entities
 {
     public interface IChangedDriverAppEntity
     {

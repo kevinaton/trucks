@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Domain.Repositories;
 using DispatcherWeb.Dispatching;
-using DispatcherWeb.SignalR;
-using DispatcherWeb.SignalR.Entities;
+using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.SyncRequests.FcmPushMessages.ChangeDetails;
 using Microsoft.EntityFrameworkCore;
 
