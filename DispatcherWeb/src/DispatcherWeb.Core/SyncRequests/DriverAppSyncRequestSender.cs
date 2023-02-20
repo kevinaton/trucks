@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.BackgroundJobs;
 using Abp.Dependency;
@@ -13,10 +12,9 @@ using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Runtime.Session;
-using DispatcherWeb.SignalR;
-using DispatcherWeb.SignalR.Entities;
+using DispatcherWeb.SyncRequests.Entities;
+using DispatcherWeb.SyncRequests.DriverApp;
 using DispatcherWeb.SyncRequests.FcmPushMessages;
-using DispatcherWeb.SyncRequests.FcmPushMessages.ChangeDetails;
 using DispatcherWeb.WebPush;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -70,25 +68,22 @@ namespace DispatcherWeb.SyncRequests
             var newFcmPushMessages = new List<(FcmPushMessage pushMessage, EntityEnum entityType)>();
 
             var driverIds = GetDriverIds(syncRequest);
-            if (!driverIds.Any())
+            var userIds = GetUserIds(syncRequest);
+            if (!driverIds.Any() && !userIds.Any())
             {
                 return;
             }
 
             var drivers = await _driverRepository.GetAll()
-                .Where(x => driverIds.Contains(x.Id) && x.UserId.HasValue)
-                .Select(x => new
+                .Where(x => x.UserId.HasValue && (driverIds.Contains(x.Id) || userIds.Contains(x.UserId.Value)))
+                .Select(x => new UserDriverId
                 {
                     DriverId = x.Id,
-                    x.UserId
+                    UserId = x.UserId.Value,
+                    IsDriverActive = !x.IsInactive
                 }).ToListAsync();
 
-            if (!drivers.Any())
-            {
-                return;
-            }
-
-            var userIds = drivers.Select(x => x.UserId).Distinct().ToList();
+            userIds = userIds.Union(drivers.Select(x => x.UserId)).Distinct().ToList();
             var fcmTokens = await _fcmRegistrationTokenRepository.GetAll()
                 .Where(x => userIds.Contains(x.UserId))
                 .Select(x => new FcmRegistrationTokenDto
@@ -107,68 +102,6 @@ namespace DispatcherWeb.SyncRequests
 
             var syncRequestChanges = syncRequest.Changes.ToList();
 
-            //Dispatches need an additional DeliveryDate field in the change details
-            var dispatches = syncRequestChanges
-                .OfType<SyncRequestChangeDetail<ChangedDispatch>>()
-                .SelectMany(x => GetDriverIds(x.Entity).Select(driverId => new
-                {
-                    DriverId = driverId,
-                    UserId = drivers.FirstOrDefault(x => x.DriverId == driverId)?.UserId,
-                    x.Entity.Id,
-                    x.ChangeType
-                }))
-                .Where(x => x.UserId.HasValue)
-                .ToList();
-
-            syncRequestChanges.RemoveAll(x => x is SyncRequestChangeDetail<ChangedDispatch>);
-
-            if (dispatches.Any())
-            {
-                var dispatchIds = dispatches.Select(x => x.Id).Distinct().ToList();
-                var dispatchesDetails = await _dispatchRepository.GetAll()
-                    .Where(x => dispatchIds.Contains(x.Id))
-                    .Select(x => new
-                    {
-                        x.Id,
-                        x.OrderLine.Order.DeliveryDate,
-                    }).ToListAsync();
-
-                foreach (var dispatchesOfUser in dispatches.Where(x => x.UserId.HasValue).GroupBy(x => x.UserId.Value))
-                {
-                    var userId = dispatchesOfUser.Key;
-                    foreach (var fcmToken in fcmTokens.Where(x => x.UserId == userId))
-                    {
-                        var pushMessage = new ReloadSpecificEntitiesPushMessage
-                        {
-                            EntityType = EntityEnum.Dispatch
-                        };
-
-                        foreach (var dispatch in dispatchesOfUser)
-                        {
-                            pushMessage.Changes.Add(new FcmDispatchDetailsDto
-                            {
-                                Id = dispatch.Id,
-                                ChangeType = dispatch.ChangeType,
-                                DeliveryDate = dispatchesDetails.FirstOrDefault(x => x.Id == dispatch.Id)?.DeliveryDate?.ToString("yyyy-MM-dd")
-                            });
-                        }
-
-                        var pushMessageJson = JsonConvert.SerializeObject(pushMessage);
-
-                        newFcmPushMessages.Add((new FcmPushMessage
-                        {
-                            Id = pushMessage.Guid,
-                            TenantId = Session.TenantId,
-                            FcmRegistrationTokenId = fcmToken.Id,
-                            ReceiverUserId = userId,
-                            ReceiverDriverId = dispatchesOfUser.FirstOrDefault()?.DriverId,
-                            JsonPayload = pushMessageJson,
-                        }, pushMessage.EntityType));
-                    }
-                }
-            }
-
-            //Simple entity types that don't require additional fields
             foreach (var entityTypeGroup in syncRequestChanges.GroupBy(x => x.EntityType))
             {
                 var entityType = entityTypeGroup.Key;
@@ -176,36 +109,34 @@ namespace DispatcherWeb.SyncRequests
                 {
                     continue;
                 }
+
+                var changeDetailsConverter = GetChangeDetailsConverter(entityType);
+                await changeDetailsConverter.CacheDataIfNeeded(entityTypeGroup);
+
                 var changeDetails = entityTypeGroup
                     .OfType<ISyncRequestChangeDetail>()
-                    .Where(x => x.Entity is ChangedDriverAppEntity<int>)
-                    .SelectMany(x => GetDriverIds((ChangedDriverAppEntity<int>)x.Entity).Select(driverId => new
+                    .Where(x => x.Entity is IChangedDriverAppEntity)
+                    .SelectMany(x => GetUserDriverIds((IChangedDriverAppEntity)x.Entity, drivers).Select(user => new
                     {
-                        DriverId = driverId,
-                        UserId = drivers.FirstOrDefault(x => x.DriverId == driverId)?.UserId,
-                        ((ChangedDriverAppEntity<int>)x.Entity).Id,
+                        User = user,
+                        Entity = (IChangedDriverAppEntity)x.Entity,
                         x.ChangeType
                     }))
-                    .Where(x => x.UserId.HasValue)
                     .ToList();
 
-                foreach (var changeDetailsOfUser in changeDetails.Where(x => x.UserId.HasValue).GroupBy(x => x.UserId.Value))
+                foreach (var changeDetailsOfUser in changeDetails.GroupBy(x => x.User))
                 {
-                    var userId = changeDetailsOfUser.Key;
-                    foreach (var fcmToken in fcmTokens.Where(x => x.UserId == userId))
+                    var user = changeDetailsOfUser.Key;
+                    foreach (var fcmToken in fcmTokens.Where(x => x.UserId == user.UserId))
                     {
                         var pushMessage = new ReloadSpecificEntitiesPushMessage
                         {
-                            EntityType = entityType
+                            EntityType = changeDetailsConverter.GetEntityTypeForPushMessage(entityType)
                         };
 
                         foreach (var changeDetail in changeDetailsOfUser)
                         {
-                            pushMessage.Changes.Add(new FcmEntityChangeDetailsDto<int>
-                            {
-                                Id = changeDetail.Id,
-                                ChangeType = changeDetail.ChangeType,
-                            });
+                            pushMessage.Changes.Add(changeDetailsConverter.GetChangeDetails(changeDetail.Entity, changeDetail.ChangeType));
                         }
 
                         var pushMessageJson = JsonConvert.SerializeObject(pushMessage);
@@ -215,8 +146,8 @@ namespace DispatcherWeb.SyncRequests
                             Id = pushMessage.Guid,
                             TenantId = Session.TenantId,
                             FcmRegistrationTokenId = fcmToken.Id,
-                            ReceiverUserId = userId,
-                            ReceiverDriverId = changeDetailsOfUser.FirstOrDefault()?.DriverId,
+                            ReceiverUserId = user.UserId,
+                            ReceiverDriverId = user.DriverId,
                             JsonPayload = pushMessageJson,
                         }, pushMessage.EntityType));
                     }
@@ -281,31 +212,119 @@ namespace DispatcherWeb.SyncRequests
             }
         }
 
-        private List<int> GetDriverIds(SyncRequest syncRequest)
+        private GenericChangeDetailsConverter GetChangeDetailsConverter(EntityEnum entityType)
         {
-            var driverRelatedChanges = syncRequest.Changes
+            switch (entityType)
+            {
+                case EntityEnum.Dispatch:
+                    return new DispatchChangeDetailsConverter(_dispatchRepository);
+                case EntityEnum.EmployeeTimeClassification:
+                    return new TimeClassificationChangeDetailsConverter();
+                case EntityEnum.ChatMessage:
+                    return new ChatMessageChangeDetailsConverter();
+                default:
+                    return new GenericChangeDetailsConverter();
+            }
+        }
+
+        private static List<IChangedDriverAppEntity> GetDriverRelatedChanges(SyncRequest syncRequest)
+        {
+            return syncRequest.Changes
                             .OfType<ISyncRequestChangeDetail>()
                             .Where(x => x.Entity is IChangedDriverAppEntity)
                             .Select(x => (IChangedDriverAppEntity)x.Entity)
                             .ToList();
+        }
+
+        private static List<int> GetDriverIds(SyncRequest syncRequest)
+        {
+            var driverRelatedChanges = GetDriverRelatedChanges(syncRequest);
 
             var driverIds = driverRelatedChanges.Select(x => x.DriverId)
                 .Union(driverRelatedChanges.Select(x => x.OldDriverIdToNotify))
-                .Distinct()
                 .Where(x => x.HasValue)
                 .Select(x => x.Value)
+                .Union(driverRelatedChanges.SelectMany(x => x.DriverIds ?? new List<int>()))
+                .Distinct()
                 .ToList();
             
             return driverIds;
         }
 
-        private List<int> GetDriverIds(IChangedDriverAppEntity changedDriverAppEntity)
+        private static List<long> GetUserIds(SyncRequest syncRequest)
         {
-            return new[] { changedDriverAppEntity.DriverId, changedDriverAppEntity.OldDriverIdToNotify }
+            var driverRelatedChanges = GetDriverRelatedChanges(syncRequest);
+
+            var userIds = driverRelatedChanges.Select(x => x.UserId)
                 .Where(x => x.HasValue)
                 .Select(x => x.Value)
                 .Distinct()
                 .ToList();
+
+            return userIds;
+        }
+
+        private static List<UserDriverId> GetUserDriverIds(IChangedDriverAppEntity changedDriverAppEntity, List<UserDriverId> cachedDriverUserIds)
+        {
+            var result = new List<UserDriverId>();
+
+            var driverIds = new[] { changedDriverAppEntity.DriverId, changedDriverAppEntity.OldDriverIdToNotify }
+                .Where(x => x.HasValue)
+                .Select(x => x.Value)
+                .Union(changedDriverAppEntity.DriverIds ?? new List<int>())
+                .Distinct()
+                .ToList();
+
+            foreach (var driverId in driverIds)
+            {
+                var user = GetUserFromDriverId(driverId, cachedDriverUserIds);
+                if (user != null)
+                {
+                    result.Add(user);
+                }
+            }
+
+            var userIds = new[] { changedDriverAppEntity.UserId }
+                .Where(x => x.HasValue)
+                .Select(x => x.Value)
+                .ToList();
+
+            foreach (var userId in userIds)
+            {
+                var driver = GetDriverFromUserId(changedDriverAppEntity.UserId.Value, cachedDriverUserIds);
+                if (driver != null && !result.Contains(driver))
+                {
+                    result.Add(driver);
+                }
+                else if (!result.Any(x => x.UserId == userId))
+                {
+                    result.Add(new UserDriverId()
+                    {
+                        UserId = userId,
+                    });
+                }
+            }
+
+            return result;
+        }
+
+        private static UserDriverId GetDriverFromUserId(long userId, List<UserDriverId> cachedDriverUserIds)
+        {
+            return cachedDriverUserIds
+                .OrderByDescending(x => x.IsDriverActive)
+                .FirstOrDefault(x => x.UserId == userId);
+        }
+
+        private static UserDriverId GetUserFromDriverId(int driverId, List<UserDriverId> cachedDriverUserIds)
+        {
+            return cachedDriverUserIds.FirstOrDefault(x => x.DriverId == driverId);
+        }
+
+        private class UserDriverId
+        {
+            public long UserId { get; set; }
+            public int? DriverId { get; set; }
+            public bool IsDriverActive { get; set; }
         }
     }
 }

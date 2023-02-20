@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Abp.Domain.Entities.Auditing;
 using Abp.Extensions;
-using DispatcherWeb.SignalR.Entities;
+using DispatcherWeb.SyncRequests.Entities;
 
 namespace DispatcherWeb
 {

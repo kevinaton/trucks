@@ -25,6 +25,7 @@ using DispatcherWeb.Offices;
 using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Features;
 using DispatcherWeb.LeaseHaulers;
+using DispatcherWeb.SyncRequests;
 
 namespace DispatcherWeb.Drivers
 {
@@ -45,6 +46,7 @@ namespace DispatcherWeb.Drivers
         private readonly ISingleOfficeAppService _singleOfficeService;
         private readonly IDriverInactivatorService _driverInactivatorService;
         private readonly ICrossTenantOrderSender _crossTenantOrderSender;
+        private readonly ISyncRequestSender _syncRequestSender;
 
         public DriverAppService(
             IRepository<Driver> driverRepository,
@@ -60,7 +62,8 @@ namespace DispatcherWeb.Drivers
             IDriverUserLinkService driverUserLinkService,
             ISingleOfficeAppService singleOfficeService,
             IDriverInactivatorService driverInactivatorService,
-            ICrossTenantOrderSender crossTenantOrderSender
+            ICrossTenantOrderSender crossTenantOrderSender,
+            ISyncRequestSender syncRequestSender
             )
         {
             _driverRepository = driverRepository;
@@ -77,6 +80,7 @@ namespace DispatcherWeb.Drivers
             _singleOfficeService = singleOfficeService;
             _driverInactivatorService = driverInactivatorService;
             _crossTenantOrderSender = crossTenantOrderSender;
+            _syncRequestSender = syncRequestSender;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Drivers)]
@@ -523,9 +527,13 @@ namespace DispatcherWeb.Drivers
                 .Where(x => x.DriverId == driver.Id)
                 .ToListAsync() : new List<EmployeeTimeClassification>();
 
+            var syncRequest = new SyncRequest();
+
             foreach (var existingToDelete in existingEmployeeTimeClassifications.Where(x => !modelEmployeeTimeClassifications.Any(e => e.TimeClassificationId == x.TimeClassificationId)))
             {
                 await _employeeTimeClassificationRepository.DeleteAsync(existingToDelete);
+                syncRequest
+                    .AddChange(EntityEnum.EmployeeTimeClassification, existingToDelete.ToChangedEntity(), ChangeType.Removed);
             }
 
             foreach (var classification in modelEmployeeTimeClassifications)
@@ -537,19 +545,29 @@ namespace DispatcherWeb.Drivers
                     existingToUpdate.PayRate = classification.PayRate ?? 0;
                     existingToUpdate.IsDefault = classification.IsDefault;
                     existingToUpdate.AllowForManualTime = classification.AllowForManualTime;
+                    
+                    syncRequest
+                        .AddChange(EntityEnum.EmployeeTimeClassification, existingToUpdate.ToChangedEntity(), ChangeType.Modified);
                 }
                 else
                 {
-                    await _employeeTimeClassificationRepository.InsertAsync(new EmployeeTimeClassification
+                    var employeeTimeClassificationEntity = new EmployeeTimeClassification
                     {
                         Driver = driver,
                         TimeClassificationId = classification.TimeClassificationId,
                         PayRate = classification.PayRate ?? 0,
                         IsDefault = classification.IsDefault,
                         AllowForManualTime = classification.AllowForManualTime
-                    });
+                    };
+
+                    await _employeeTimeClassificationRepository.InsertAsync(employeeTimeClassificationEntity);
+                    syncRequest
+                        .AddChange(EntityEnum.EmployeeTimeClassification, employeeTimeClassificationEntity.ToChangedEntity(), ChangeType.Modified);
                 }
             }
+
+            await _syncRequestSender.SendSyncRequest(syncRequest
+                .AddLogMessage("Updated EmployeeTimeClassification records for driver"));
         }
 
         public async Task<DriverTrucksDto> GetDriverTrucks(EntityDto input)

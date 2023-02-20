@@ -13,6 +13,7 @@ using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Authorization.Users.Cache;
 using DispatcherWeb.Friendships;
 using DispatcherWeb.Friendships.Cache;
+using DispatcherWeb.SyncRequests;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Chat
@@ -30,6 +31,7 @@ namespace DispatcherWeb.Chat
         private readonly IUserEmailer _userEmailer;
         private readonly IRepository<ChatMessage, long> _chatMessageRepository;
         private readonly IChatFeatureChecker _chatFeatureChecker;
+        private readonly ISyncRequestSender _syncRequestSender;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
 
         public ChatMessageManager(
@@ -42,7 +44,8 @@ namespace DispatcherWeb.Chat
             IUserFriendsCache userFriendsCache,
             IUserEmailer userEmailer,
             IRepository<ChatMessage, long> chatMessageRepository,
-            IChatFeatureChecker chatFeatureChecker, 
+            IChatFeatureChecker chatFeatureChecker,
+            ISyncRequestSender syncRequestSender,
             IUnitOfWorkManager unitOfWorkManager)
         {
             _friendshipManager = friendshipManager;
@@ -55,6 +58,7 @@ namespace DispatcherWeb.Chat
             _userEmailer = userEmailer;
             _chatMessageRepository = chatMessageRepository;
             _chatFeatureChecker = chatFeatureChecker;
+            _syncRequestSender = syncRequestSender;
             _unitOfWorkManager = unitOfWorkManager;
         }
 
@@ -85,8 +89,8 @@ namespace DispatcherWeb.Chat
 
             var sharedMessageId = Guid.NewGuid();
 
-            await HandleSenderToReceiverAsync(sender, receiver, message, sharedMessageId);
-            var sentMessage = await HandleReceiverToSenderAsync(sender, receiver, message, sharedMessageId);
+            var sentMessage = await HandleSenderToReceiverAsync(sender, receiver, message, sharedMessageId);
+            await HandleReceiverToSenderAsync(sender, receiver, message, sharedMessageId);
             await HandleSenderUserInfoChangeAsync(sender, receiver, senderTenancyName, senderUserName, senderProfilePictureId);
 
             return sentMessage;
@@ -132,7 +136,7 @@ namespace DispatcherWeb.Chat
             return await _chatMessageRepository.FirstOrDefaultAsync(m => m.Id == id && m.UserId == userId);
         }
 
-        private async Task HandleSenderToReceiverAsync(UserIdentifier senderIdentifier, UserIdentifier receiverIdentifier, string message, Guid sharedMessageId)
+        private async Task<ChatMessage> HandleSenderToReceiverAsync(UserIdentifier senderIdentifier, UserIdentifier receiverIdentifier, string message, Guid sharedMessageId)
         {
             var friendshipState = (await _friendshipManager.GetFriendshipOrNullAsync(senderIdentifier, receiverIdentifier))?.State;
             if (friendshipState == null)
@@ -156,7 +160,7 @@ namespace DispatcherWeb.Chat
             if (friendshipState.Value == FriendshipState.Blocked)
             {
                 //Do not send message if receiver banned the sender
-                return;
+                return null;
             }
 
             var sentMessage = new ChatMessage(
@@ -175,6 +179,8 @@ namespace DispatcherWeb.Chat
                 _onlineClientManager.GetAllByUserId(senderIdentifier),
                 sentMessage
                 );
+
+            return sentMessage;
         }
 
         private async Task<ChatMessage> HandleReceiverToSenderAsync(UserIdentifier senderIdentifier, UserIdentifier receiverIdentifier, string message, Guid sharedMessageId)
@@ -221,16 +227,28 @@ namespace DispatcherWeb.Chat
             {
                 await _chatCommunicator.SendMessageToClient(clients, sentMessage);
             }
-            else if (GetUnreadMessageCount(senderIdentifier, receiverIdentifier) == 1)
+            else
             {
-                var senderTenancyName = await GetTenancyNameOrNull(senderIdentifier.TenantId);
+                if (GetUnreadMessageCount(senderIdentifier, receiverIdentifier) == 1)
+                {
+                    var senderTenancyName = await GetTenancyNameOrNull(senderIdentifier.TenantId);
 
-                await _userEmailer.TryToSendChatMessageMail(
-                      await _userManager.GetUserAsync(receiverIdentifier),
-                      (await _userManager.GetUserAsync(senderIdentifier)).UserName,
-                      senderTenancyName,
-                      sentMessage
-                  );
+                    await _userEmailer.TryToSendChatMessageMail(
+                          await _userManager.GetUserAsync(receiverIdentifier),
+                          (await _userManager.GetUserAsync(senderIdentifier)).UserName,
+                          senderTenancyName,
+                          sentMessage
+                      );
+                }
+
+                await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>
+                {
+                    using (CurrentUnitOfWork.SetTenantId(sentMessage.TenantId))
+                    {
+                        await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                            .AddChange(EntityEnum.ChatMessage, sentMessage.ToChangedEntity()));
+                    }
+                });
             }
 
             return sentMessage;

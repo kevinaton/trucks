@@ -1,9 +1,9 @@
-﻿using DispatcherWeb.SignalR.Entities;
+﻿using DispatcherWeb.SyncRequests.Entities;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DispatcherWeb.SignalR
+namespace DispatcherWeb.SyncRequests
 {
     public partial class SyncRequest
     {

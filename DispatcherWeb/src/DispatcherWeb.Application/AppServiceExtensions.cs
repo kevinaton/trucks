@@ -1,4 +1,9 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Abp.Configuration;
 using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
@@ -18,15 +23,11 @@ using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Sessions;
-using DispatcherWeb.SignalR.Entities;
+using DispatcherWeb.SyncRequests.Entities;
+using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb
 {
@@ -896,41 +897,5 @@ namespace DispatcherWeb
             culture.NumberFormat.CurrencySymbol = currencySymbol;
             return culture;
         }
-
-        public static ChangedDispatch ToChangedEntity(this Dispatch entity)
-        {
-            return new ChangedDispatch
-            {
-                Id = entity.Id,
-                DriverId = entity.DriverId,
-                EntityReference = entity
-            }.SetLastUpdateDateTime(entity);
-        }
-
-        public static ChangedEmployeeTime ToChangedEntity(this Drivers.EmployeeTime entity)
-        {
-            return new ChangedEmployeeTime
-            {
-                Id = entity.Id,
-                DriverId = entity.DriverId,
-                Guid = entity.Guid,
-                TruckId = entity.EquipmentId,
-                UserId = entity.UserId,
-                EntityReference = entity
-            }.SetLastUpdateDateTime(entity);
-        }
-
-        public static ChangedDriverAssignment ToChangedEntity(this DriverAssignment entity)
-        {
-            return new ChangedDriverAssignment
-            {
-                Id = entity.Id,
-                DriverId = entity.DriverId,
-                TruckId = entity.TruckId,
-                EntityReference = entity
-            }.SetLastUpdateDateTime(entity);
-        }
-
-
     }
 }

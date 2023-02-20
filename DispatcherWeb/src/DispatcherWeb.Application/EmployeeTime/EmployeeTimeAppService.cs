@@ -10,9 +10,9 @@ using DispatcherWeb.Dto;
 using DispatcherWeb.EmployeeTime.Dto;
 using DispatcherWeb.EmployeeTime.Exporting;
 using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.SyncRequests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NUglify.Helpers;
 using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
@@ -27,18 +27,21 @@ namespace DispatcherWeb.EmployeeTime
         private readonly IRepository<EmployeeTimeClassification> _employeeTimeClassificationRepository;
         private readonly IRepository<Driver> _driverRepository;
         private readonly IEmployeeTimeListCsvExporter _employeeTimeListCsvExporter;
+        private readonly ISyncRequestSender _syncRequestSender;
 
         public EmployeeTimeAppService(
             IRepository<Drivers.EmployeeTime> employeeTimeRepository,
             IRepository<EmployeeTimeClassification> employeeTimeClassificationRepository,
             IRepository<Driver> driverRepository,
-            IEmployeeTimeListCsvExporter employeeTimeListCsvExporter
+            IEmployeeTimeListCsvExporter employeeTimeListCsvExporter,
+            ISyncRequestSender syncRequestSender
                 )
         {
             _employeeTimeRepository = employeeTimeRepository;
             _employeeTimeClassificationRepository = employeeTimeClassificationRepository;
             _driverRepository = driverRepository;
             _employeeTimeListCsvExporter = employeeTimeListCsvExporter;
+            _syncRequestSender = syncRequestSender;
         }
 
         private async Task<IOrderedQueryable<EmployeeTimeDto>> GetEmployeeTimeRecordsQueryAsync(GetEmployeeTimeRecordsInput input)
@@ -262,6 +265,9 @@ namespace DispatcherWeb.EmployeeTime
             //entity.PayRate = model.DriverPayRate;
 
             await _employeeTimeRepository.InsertOrUpdateAndGetIdAsync(entity);
+
+            await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                .AddChange(EntityEnum.EmployeeTime, entity.ToChangedEntity()));
         }
 
         [AbpAuthorize(AppPermissions.Pages_TimeEntry_EditAll, AppPermissions.Pages_TimeEntry_EditPersonal)]
@@ -284,6 +290,10 @@ namespace DispatcherWeb.EmployeeTime
             }
 
             await _employeeTimeRepository.DeleteAsync(employeeTime);
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+            await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                .AddChange(EntityEnum.EmployeeTime, employeeTime.ToChangedEntity(), ChangeType.Removed));
         }
 
         public async Task<EmployeeTimeIndexDto> GetEmployeeTimeIndexModel()

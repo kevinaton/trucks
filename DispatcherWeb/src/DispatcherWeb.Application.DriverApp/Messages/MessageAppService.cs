@@ -72,6 +72,11 @@ namespace DispatcherWeb.DriverApp.Messages
             }
 
             var sentMessage = await _chatMessageManager.SendMessageAsync(model.TargetUserId, model.Message);
+            if (sentMessage == null)
+            {
+                return null;
+            }
+
             return new MessageDto
             {
                 Id = sentMessage.Id,

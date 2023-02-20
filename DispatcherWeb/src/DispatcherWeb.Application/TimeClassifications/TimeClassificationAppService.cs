@@ -12,6 +12,7 @@ using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Features;
 using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.SyncRequests;
 using DispatcherWeb.TimeClassifications.Dto;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -24,18 +25,24 @@ namespace DispatcherWeb.TimeClassifications
     public class TimeClassificationAppService : DispatcherWebAppServiceBase, ITimeClassificationAppService
     {
         private readonly IRepository<TimeClassification> _timeClassificationRepository;
+        private readonly IRepository<EmployeeTimeClassification> _employeeTimeClassificationRepository;
         private readonly IRepository<Drivers.EmployeeTime> _employeeTimeRepository;
         private readonly IRepository<Driver> _driverRepository;
+        private readonly ISyncRequestSender _syncRequestSender;
 
         public TimeClassificationAppService(
             IRepository<TimeClassification> timeClassificationRepository,
+            IRepository<EmployeeTimeClassification> employeeTimeClassificationRepository,
             IRepository<Drivers.EmployeeTime> employeeTimeRepository,
-            IRepository<Driver> driverRepository
+            IRepository<Driver> driverRepository,
+            ISyncRequestSender syncRequestSender
             )
         {
             _timeClassificationRepository = timeClassificationRepository;
+            _employeeTimeClassificationRepository = employeeTimeClassificationRepository;
             _employeeTimeRepository = employeeTimeRepository;
             _driverRepository = driverRepository;
+            _syncRequestSender = syncRequestSender;
         }
 
         public async Task<ListResultDto<SelectListDto>> GetTimeClassificationsSelectList(GetTimeClassificationsSelectListInput input)
@@ -133,6 +140,8 @@ namespace DispatcherWeb.TimeClassifications
                     .FirstAsync()
                 : false;
 
+            var nameHasChanged = model.Id.HasValue && entity.Name != model.Name;
+
             entity.Name = model.Name;
             entity.DefaultRate = model.DefaultRate;
             entity.TenantId = Session.TenantId ?? 0;
@@ -151,6 +160,20 @@ namespace DispatcherWeb.TimeClassifications
             }
 
             await _timeClassificationRepository.InsertOrUpdateAndGetIdAsync(entity);
+
+            if (nameHasChanged)
+            {
+                var affectedDriverIds = await _employeeTimeClassificationRepository.GetAll()
+                    .Where(x => x.TimeClassificationId == model.Id)
+                    .Select(x => x.DriverId)
+                    .Distinct()
+                    .ToListAsync();
+
+                await _syncRequestSender.SendSyncRequest(
+                    new SyncRequest()
+                        .AddChange(EntityEnum.TimeClassification,
+                            entity.ToChangedEntity().AddDriverIds(affectedDriverIds)));
+            }
         }
 
         [AbpAuthorize(AppPermissions.Pages_TimeEntry_EditTimeClassifications)]
