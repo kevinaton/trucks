@@ -12,20 +12,17 @@
         //$("#DateFilter").val(moment().startOf('day').add(-1, 'd').format('MM/DD/YYYY')).datepickerInit();
 
         $('#DateFilter').val(moment().add(-1, 'd').format('MM/DD/YYYY - MM/DD/YYYY'));
-        var drpOptions = {
+        $("#DateFilter").daterangepicker({
             //autoUpdateInput: false,
             locale: {
                 cancelLabel: 'Clear'
             },
             showDropDown: true
-        };
-        $("#DateFilter").daterangepicker(drpOptions)
-            .on('apply.daterangepicker', function (ev, picker) {
-                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-            })
-            .on('cancel.daterangepicker', function (ev, picker) {
-                $(this).val('');
-            });
+        }).on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+        }).on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
 
         $("#DriverIdFilter").select2Init({
             abpServiceMethod: abp.services.app.driver.getDriversSelectList,

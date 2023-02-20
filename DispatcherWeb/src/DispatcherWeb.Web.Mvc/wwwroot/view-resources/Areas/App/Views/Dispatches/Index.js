@@ -144,35 +144,24 @@
         $("#ClearSearchButton").click(function () {
             $(this).closest('form')[0].reset();
             $(".filter").change();
-            initCustomerIdFilter();
-            initOfficeIdFilter();
             reloadMainGrid();
         });
 
         function initFilterControls() {
-            var drpOptions = {
+            var todayString = moment().startOf('day').format('MM/DD/YYYY');
+            $("#DateFilter").daterangepicker({
                 autoUpdateInput: false,
                 locale: {
                     cancelLabel: 'Clear'
                 },
                 showDropDown: true
-            };
-            var todayString = moment().startOf('day').format('MM/DD/YYYY');
-            $("#DateFilter").daterangepicker(drpOptions)
-                .on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-                    $("#CustomerIdFilter").val('');
-                    $("#CustomerIdFilter").trigger('change');
-                    $("#OfficeIdFilter").val('');
-                    $("#OfficeIdFilter").trigger('change');
-                    initCustomerIdFilter();
-                    initOfficeIdFilter();
-                })
-                .on('cancel.daterangepicker', function (ev, picker) {
-                    $(this).val('');
-                    initCustomerIdFilter();
-                    initOfficeIdFilter();
-                });
+            }).on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+                $("#CustomerIdFilter").val('').trigger('change');
+                $("#OfficeIdFilter").val('').trigger('change');
+            }).on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
             if (!$('#OrderLineId').val()) {
                 $("#DateFilter").val(todayString + ' - ' + todayString);
             }
@@ -184,30 +173,29 @@
             });
             $("#TruckFilter").select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-                abpServiceParams: { excludeTrailers: true, includeLeaseHaulerTrucks: true },
+                abpServiceParams: {
+                    excludeTrailers: true,
+                    includeLeaseHaulerTrucks: true
+                },
                 showAll: false,
                 allowClear: true
             });
             $("#DriverFilter").select2Init({
                 abpServiceMethod: abp.services.app.driver.getDriversSelectList,
-                abpServiceParams: { includeLeaseHaulerDrivers: true },
+                abpServiceParams: {
+                    includeLeaseHaulerDrivers: true
+                },
                 showAll: false,
                 allowClear: true
             });
-            initCustomerIdFilter();
-            initOfficeIdFilter();
-        }
-
-        function initCustomerIdFilter() {
             $("#CustomerIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.customer.getCustomersWithOrdersSelectList,
-                abpServiceParams: _dtHelper.getDateRangeObject($("#DateFilter").val(), 'dateBegin', 'dateEnd'),
+                abpServiceParamsGetter: (params) => ({
+                    ..._dtHelper.getDateRangeObject($("#DateFilter").val(), 'dateBegin', 'dateEnd')
+                }),
                 showAll: false,
                 allowClear: true
             });
-        }
-
-        function initOfficeIdFilter() {
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getAllOfficesSelectList,
                 showAll: true,

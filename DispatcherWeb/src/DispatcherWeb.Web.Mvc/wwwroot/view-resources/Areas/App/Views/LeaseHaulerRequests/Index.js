@@ -248,20 +248,16 @@
     }
 
     function initFilterControls() {
-        var drpOptions = {
+        $("#DateRangeFilter").daterangepicker({
             locale: {
                 cancelLabel: 'Clear'
             },
             showDropDown: true
-        };
-
-        $("#DateRangeFilter").daterangepicker(drpOptions)
-            .on('apply.daterangepicker', function (ev, picker) {
-                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-            })
-            .on('cancel.daterangepicker', function (ev, picker) {
-                $(this).val('');
-            });
+        }).on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+        }).on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
 
         $('#LeaseHaulerIdFilter').select2Init({
             abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,

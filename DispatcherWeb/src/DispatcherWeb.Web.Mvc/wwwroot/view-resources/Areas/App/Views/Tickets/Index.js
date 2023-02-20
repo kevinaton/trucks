@@ -500,7 +500,10 @@
         });
         $('#TruckFilter').select2Init({
             abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-            abpServiceParams: { excludeTrailers: false, includeLeaseHaulerTrucks: true },
+            abpServiceParams: {
+                excludeTrailers: false,
+                includeLeaseHaulerTrucks: true
+            },
             showAll: false,
             allowClear: true
         });

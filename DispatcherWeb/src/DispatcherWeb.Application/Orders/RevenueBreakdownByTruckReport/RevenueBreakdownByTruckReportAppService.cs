@@ -104,8 +104,8 @@ namespace DispatcherWeb.Orders.RevenueBreakdownByTruckReport
         {
             bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
             IRevenueBreakdownByTruckReportDataService reportDataService = allowAddingTickets
-                ? (IRevenueBreakdownByTruckReportDataService) _iocResolver.Resolve<IRevenueBreakdownByTruckReportByTicketsDataService>()
-                : (IRevenueBreakdownByTruckReportDataService) _iocResolver.Resolve<IRevenueBreakdownByTruckReportByOrderLinesDataService>();
+                ? _iocResolver.Resolve<IRevenueBreakdownByTruckReportByTicketsDataService>()
+                : _iocResolver.Resolve<IRevenueBreakdownByTruckReportByOrderLinesDataService>();
             var items = await reportDataService.GetRevenueBreakdownItems(input);
             _iocResolver.Release(reportDataService);
 

@@ -155,7 +155,10 @@
 
         $('#TruckId').select2Init({
             abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-            abpServiceParams: { allOffices: true, inServiceOnly: true },
+            abpServiceParams: {
+                allOffices: true,
+                inServiceOnly: true
+            },
             showAll: false,
             allowClear: true
         });
@@ -179,7 +182,10 @@
         workOrderLinesTable.on('click', '.btnEditRow', function () {
             var workOrderLineId = _dtHelper.getRowData(this).id;
             saveWorkOrder(function () {
-                _createOrEditWorkOrderLineModal.open({ id: workOrderLineId, workOrderId: getWorkOrderId() });
+                _createOrEditWorkOrderLineModal.open({
+                    id: workOrderLineId,
+                    workOrderId: getWorkOrderId()
+                });
             });
         });
 

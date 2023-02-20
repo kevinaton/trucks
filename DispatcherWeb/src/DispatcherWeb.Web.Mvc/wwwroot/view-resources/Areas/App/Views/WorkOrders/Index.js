@@ -157,22 +157,22 @@
         });
 
         function initFilterControls() {
-            var drpOptions = {
+            $("#StartDateFilter, #CompletionDateFilter, #IssueDateFilter").daterangepicker({
                 locale: {
                     cancelLabel: 'Clear'
                 }
-            };
-            $("#StartDateFilter, #CompletionDateFilter, #IssueDateFilter").daterangepicker(drpOptions)
-                .on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-                })
-                .on('cancel.daterangepicker', function (ev, picker) {
-                    $(this).val('');
-                });
+            }).on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            }).on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
 
             $("#TruckFilter").select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-                abpServiceParams: { allOffices: true, inServiceOnly: true },
+                abpServiceParams: {
+                    allOffices: true,
+                    inServiceOnly: true
+                },
                 showAll: false,
                 allowClear: true
             });

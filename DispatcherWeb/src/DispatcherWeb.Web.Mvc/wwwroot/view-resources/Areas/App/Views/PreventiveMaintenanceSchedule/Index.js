@@ -278,19 +278,16 @@
         }
 
         function initFilterControls() {
-            var drpOptions = {
+            $("#DueDateFilter").daterangepicker({
                 autoUpdateInput: false,
                 locale: {
                     cancelLabel: 'Clear'
                 }
-            };
-            $("#DueDateFilter").daterangepicker(drpOptions)
-                .on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-                })
-                .on('cancel.daterangepicker', function (ev, picker) {
-                    $(this).val('');
-                });
+            }).on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            }).on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
 
             $("#StatusFilter").select2Init({
                 showAll: true,

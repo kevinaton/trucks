@@ -5,42 +5,44 @@
 
     abp.helper.reports.setReportService(abp.services.app.revenueBreakdownByTruckReport);
 
-	abp.helper.reports.setFormDataHandler(function (formData) {
+    abp.helper.reports.setFormDataHandler(function (formData) {
         $.extend(formData, _dtHelper.getDateRangeObject(formData.DeliveryDate, 'DeliveryDateBegin', 'DeliveryDateEnd'));
         delete formData.DeliveryDateFilter;
 
-		if (formData.Shifts && !$.isArray(formData.Shifts)) {
-			formData.Shifts = [formData.Shifts];
-		}
+        if (formData.Shifts && !$.isArray(formData.Shifts)) {
+            formData.Shifts = [formData.Shifts];
+        }
 
-		if (formData.TruckIds && !$.isArray(formData.TruckIds)) {
-			formData.TruckIds = [formData.TruckIds];
-		}
+        if (formData.TruckIds && !$.isArray(formData.TruckIds)) {
+            formData.TruckIds = [formData.TruckIds];
+        }
 
     });
 
     $('#DeliveryDateFilter').val(moment().format('MM/DD/YYYY - MM/DD/YYYY'));
-    var drpOptions = {
+    $("#DeliveryDateFilter").daterangepicker({
         //autoUpdateInput: false,
         locale: {
             cancelLabel: 'Clear'
         },
         showDropDown: true
-    };
-    $("#DeliveryDateFilter").daterangepicker(drpOptions)
-        .on('apply.daterangepicker', function (ev, picker) {
-            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-        })
-        .on('cancel.daterangepicker', function (ev, picker) {
-            $(this).val('');
-        });
+    }).on('apply.daterangepicker', function (ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    }).on('cancel.daterangepicker', function (ev, picker) {
+        $(this).val('');
+    });
 
-	$("#TruckFilter").select2Init({
-		abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-        abpServiceParams: { excludeTrailers: true, includeLeaseHaulerTrucks: true },
+    $("#TruckFilter").select2Init({
+        abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
+        abpServiceParamsGetter: (params) => ({
+            officeId: $('#OfficeIdFilter').val(),
+            allOffices: true,
+            excludeTrailers: true,
+            includeLeaseHaulerTrucks: true,
+        }),
         showAll: false,
-		allowClear: true
-	});
+        allowClear: true
+    });
 
     $("#OfficeIdFilter").select2Init({
         abpServiceMethod: abp.services.app.office.getOfficesSelectList,

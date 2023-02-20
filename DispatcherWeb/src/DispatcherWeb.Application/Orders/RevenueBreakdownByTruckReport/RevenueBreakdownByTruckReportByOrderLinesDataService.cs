@@ -38,7 +38,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownByTruckReport
                     OrderLineTruck = olt,
                     OrderLine = olt.OrderLine,
                     Truck = olt.Truck,
-                    ReceiptLines = olt.OrderLine.ReceiptLines.Where(x => x.Receipt.OfficeId == input.OfficeId)
+                    //ReceiptLines = olt.OrderLine.ReceiptLines.Where(x => x.Receipt.OfficeId == input.OfficeId)
                 })
                 .Select(olt => new 
                 {
