@@ -315,9 +315,9 @@ namespace DispatcherWeb.Dispatching
 
         [AbpAuthorize(AppPermissions.Pages_Dispatches_Edit)]
         [AbpAuthorize(AppPermissions.Pages_SendOrdersToDrivers)]
-        public async Task CreateDispatchesForDateShift(CreateDispatchesForDateShiftInput input)
+        public async Task SendOrdersToDrivers(SendOrdersToDriversInput input)
         {
-            await _dispatchSender.CreateDispatchesForDateShift(input);
+            await _dispatchSender.SendOrdersToDrivers(input);
         }
 
         private async Task<bool> ShouldSendOrdersToDriversImmediately()

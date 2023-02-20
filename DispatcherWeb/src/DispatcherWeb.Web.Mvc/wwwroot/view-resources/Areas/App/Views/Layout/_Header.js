@@ -246,20 +246,6 @@
             printOrdersModal.open();
         });
 
-        //Send Orders To Drivers
-
-        var sendOrdersToDriversModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Orders/SendOrdersToDriversModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_SendOrdersToDriversModal.js',
-            modalClass: 'SendOrdersToDriversModal',
-            //modalSize: 'sm'
-        });
-
-        $('#SendOrdersToDriversNavbarItem').click(function (e) {
-            e.preventDefault();
-            sendOrdersToDriversModal.open();
-        });
-
         //Payment Reconciliation Report
 
         var printPaymentReconciliationReportModal = new app.ModalManager({

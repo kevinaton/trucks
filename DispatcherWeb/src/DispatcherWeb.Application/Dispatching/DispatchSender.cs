@@ -95,7 +95,7 @@ namespace DispatcherWeb.Dispatching
             _backgroundJobManager = backgroundJobManager;
         }
 
-        public async Task CacheDataForDateShift(CreateDispatchesForDateShiftInput input)
+        public async Task CacheDataForDateShift(SendOrdersToDriversInput input)
         {
             await PopulateOrderLineTruckCache(input);
             
@@ -117,11 +117,11 @@ namespace DispatcherWeb.Dispatching
             await PopulateEmployeeTimeCache(input.DeliveryDate);
         }
 
-        private List<OrderLineTruckDto> GetCachedOrderLineTrucks(CreateDispatchesForDateShiftInput input)
+        private List<OrderLineTruckDto> GetCachedOrderLineTrucks(SendOrdersToDriversInput input)
         {
             if (_orderLineTrucks == null)
             {
-                throw new ApplicationException("Cache hasn't been populated prior to calling GetOrderLineTrucks. Make sure you call CacheDataForDateShift before using CreateDispatchesForDateShiftInternal");
+                throw new ApplicationException("Cache hasn't been populated prior to calling GetOrderLineTrucks. Make sure you call CacheDataForDateShift before using SendOrdersToDriversInternal");
             }
             var maxTimespan = TimeSpan.FromDays(1).Subtract(TimeSpan.FromSeconds(1));
             return _orderLineTrucks
@@ -137,7 +137,7 @@ namespace DispatcherWeb.Dispatching
                 .ToList();
         }
 
-        private async Task PopulateDriverAssignmentCache(CreateDispatchesForDateShiftInput input)
+        private async Task PopulateDriverAssignmentCache(SendOrdersToDriversInput input)
         {
             _driverAssignments = await _driverAssignmentRepository.GetAll()
                 .Where(da =>
@@ -251,7 +251,7 @@ namespace DispatcherWeb.Dispatching
             });
         }
 
-        private async Task PopulateOrderLineTruckCache(CreateDispatchesForDateShiftInput input)
+        private async Task PopulateOrderLineTruckCache(SendOrdersToDriversInput input)
         {
             await PopulateOrderLineTruckCache(
                 _orderLineTruckRepository.GetAll()
@@ -575,11 +575,11 @@ namespace DispatcherWeb.Dispatching
 
 
 
-        public async Task CreateDispatchesForDateShift(CreateDispatchesForDateShiftInput input)
+        public async Task SendOrdersToDrivers(SendOrdersToDriversInput input)
         {
             await CacheDataForDateShift(input);
 
-            await CreateDispatchesForDateShiftInternal(input);
+            await SendOrdersToDriversInternal(input);
 
             await CleanUp();
         }
@@ -662,11 +662,11 @@ namespace DispatcherWeb.Dispatching
             return _orderedTruckDispatches[truckId];
         }
 
-        private async Task CreateDispatchesForDateShiftInternal(CreateDispatchesForDateShiftInput input)
+        private async Task SendOrdersToDriversInternal(SendOrdersToDriversInput input)
         {
             if (_orderLines == null || _orderLineTrucks == null || _driverAssignments == null)
             {
-                throw new ApplicationException("Cache hasn't been populated prior to calling CreateDispatchesForDateShiftInternal. Make sure you call CacheDataForDateShift before using CreateDispatchesForDateShiftInternal");
+                throw new ApplicationException("Cache hasn't been populated prior to calling SendOrdersToDriversInternal. Make sure you call CacheDataForDateShift before using SendOrdersToDriversInternal");
             }
 
             bool ordersExistForDate = _orderLines
@@ -686,12 +686,12 @@ namespace DispatcherWeb.Dispatching
             {
                 throw new UserFriendlyException(
                     input.Shift.HasValue ?
-                        L("CreateDispatchesForDateShift_NoTrucks_DateShift", input.DeliveryDate.ToString("d"), await SettingManager.GetShiftName(input.Shift.Value)) :
-                        L("CreateDispatchesForDateShift_NoTrucks_Date", input.DeliveryDate.ToString("d"))
+                        L("SendOrdersToDrivers_NoTrucks_DateShift", input.DeliveryDate.ToString("d"), await SettingManager.GetShiftName(input.Shift.Value)) :
+                        L("SendOrdersToDrivers_NoTrucks_Date", input.DeliveryDate.ToString("d"))
                 );
             }
 
-            if (input.SendAllOrders && orderLineTrucks.Any(o => (o.TruckTimeOnJobUtc ?? o.OrderLine?.TimeOnJobUtc) == null))
+            if (!input.SendOnlyFirstOrder && orderLineTrucks.Any(o => (o.TruckTimeOnJobUtc ?? o.OrderLine?.TimeOnJobUtc) == null))
             {
                 throw new UserFriendlyException(L("SomeOfOrderDontHaveStartTimeSpecified"));
             }
@@ -699,17 +699,7 @@ namespace DispatcherWeb.Dispatching
             var sendDispatchMessageInputList = new List<SendDispatchMessageInput>();
             foreach (var orderLineTruckGroup in orderLineTruckGroups)
             {
-                if (input.SendAllOrders)
-                {
-                    sendDispatchMessageInputList.AddRange(orderLineTruckGroup.Select((orderLineTruck, i) => new SendDispatchMessageInput
-                    {
-                        OrderLineId = orderLineTruck.OrderLineId,
-                        NumberOfDispatches = 1,
-                        FirstDispatchForDay = i == 0,
-                        OrderLineTruckIds = new[] { orderLineTruck.OrderLineTruckId }
-                    }));
-                }
-                else
+                if (input.SendOnlyFirstOrder)
                 {
                     var orderLineTruck = orderLineTruckGroup.First();
                     sendDispatchMessageInputList.Add(new SendDispatchMessageInput
@@ -719,6 +709,16 @@ namespace DispatcherWeb.Dispatching
                         FirstDispatchForDay = true,
                         OrderLineTruckIds = new[] { orderLineTruck.OrderLineTruckId }
                     });
+                }
+                else
+                {
+                    sendDispatchMessageInputList.AddRange(orderLineTruckGroup.Select((orderLineTruck, i) => new SendDispatchMessageInput
+                    {
+                        OrderLineId = orderLineTruck.OrderLineId,
+                        NumberOfDispatches = 1,
+                        FirstDispatchForDay = i == 0,
+                        OrderLineTruckIds = new[] { orderLineTruck.OrderLineTruckId }
+                    }));
                 }
             }
 
@@ -869,7 +869,7 @@ namespace DispatcherWeb.Dispatching
 
                 if (orderLine.DeliveryDate.HasValue)
                 {
-                    await PopulateDriverAssignmentCache(new CreateDispatchesForDateShiftInput
+                    await PopulateDriverAssignmentCache(new SendOrdersToDriversInput
                     {
                         DeliveryDate = orderLine.DeliveryDate.Value,
                         OfficeIds = new[] { orderLine.OfficeId },
@@ -926,11 +926,11 @@ namespace DispatcherWeb.Dispatching
             var today = await GetToday();
             if (today > orderLine.DeliveryDate)
             {
-                throw new ArgumentException("Cannot create Dispatch for the past date!");
+                throw new UserFriendlyException("Cannot create Dispatch for the past date!");
             }
             if (orderLine.DeliveryDate == null)
             {
-                throw new ArgumentException("Cannot create Dispatch for the order without a specified date!");
+                throw new UserFriendlyException("Cannot create Dispatch for the order without a specified date!");
             }
 
             var orderLineTrucks = input.OrderLineTruckIds

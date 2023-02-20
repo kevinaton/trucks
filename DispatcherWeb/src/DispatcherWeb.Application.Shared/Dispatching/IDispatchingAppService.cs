@@ -26,7 +26,7 @@ namespace DispatcherWeb.Dispatching
         Task<SendDispatchMessageDto> CreateSendDispatchMessageDto(int orderLineId, bool firstDispatchForDay = false);
         Task<bool> OtherDispatchesExist(OtherDispatchesExistInput input);
         Task DuplicateDispatch(DuplicateDispatchInput input);
-        Task CreateDispatchesForDateShift(CreateDispatchesForDateShiftInput input);
+        Task SendOrdersToDrivers(SendOrdersToDriversInput input);
         Task CancelDispatches(CancelDispatchesInput input);
         Task DeleteUnacknowledgedDispatches(DeleteUnacknowledgedDispatchesInput input);
         Task<bool> GetDispatchTruckStatus(int dispatchId);

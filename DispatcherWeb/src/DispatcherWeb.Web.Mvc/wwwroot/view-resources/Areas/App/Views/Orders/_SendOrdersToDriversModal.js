@@ -22,7 +22,7 @@
 			});
 
 			_dateInput = _$form.find("#DeliveryDate");
-			_dateInput.datepickerInit({ minDate: (new Date()).setHours(0,0,0,0) });
+			_dateInput.datepickerInit();
 
 			_$form.find('#Shift').select2Init({ allowClear: false });
 
@@ -32,7 +32,6 @@
 				showAll: true,
 				allowClear: false
 			});
-			abp.helper.ui.addAndSetDropdownValue(_officeIdsInput, abp.session.officeId, abp.session.officeName);
 
 			$('#SendOnlyFirstOrderCheckbox').closest('.form-group').find('label i').tooltip();
 		};
@@ -44,22 +43,22 @@
 			}
 			var formData = _$form.serializeFormToObject();
 			var officeIds = _officeIdsInput.val();
-			var sendAllOrders = false;
+			var sendOnlyFirstOrder = false;
 			var $sendOnlyFirstOrder = _$form.find('#SendOnlyFirstOrderCheckbox');
-			if ($sendOnlyFirstOrder.length && !$sendOnlyFirstOrder.is(':checked')) {
-				sendAllOrders = true;
+			if ($sendOnlyFirstOrder.length && $sendOnlyFirstOrder.is(':checked')) {
+				sendOnlyFirstOrder = true;
 			}
 			var $createAllDispatches = _$form.find('#CreateAllDispatchesCheckbox');
-			if ($createAllDispatches.length && $createAllDispatches.is(':checked')) {
-				sendAllOrders = true;
+			if ($createAllDispatches.length && !$createAllDispatches.is(':checked')) {
+				sendOnlyFirstOrder = true;
 			}
 
 			_modalManager.setBusy(true);
-			_dispatchingService.createDispatchesForDateShift({
+			_dispatchingService.sendOrdersToDrivers({
 				deliveryDate: formData.DeliveryDate,
 				shift: formData.Shift,
 				officeIds: officeIds,
-				sendAllOrders: sendAllOrders
+				sendOnlyFirstOrder: sendOnlyFirstOrder
 			}).done(function () {
 				abp.notify.info('Dispatches being created.');
 				_modalManager.close();

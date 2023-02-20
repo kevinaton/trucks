@@ -228,6 +228,13 @@
             modalClass: 'ChangeDriverForOrderLineTruckModal'
         });
 
+        var _sendOrdersToDriversModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/SendOrdersToDriversModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_SendOrdersToDriversModal.js',
+            modalClass: 'SendOrdersToDriversModal',
+            //modalSize: 'sm'
+        });
+
         var _reassignTrucksModal = abp.helper.createModal('ReassignTrucks', 'Scheduling');
 
         var _createOrEditLeaseHaulerRequestModal = abp.helper.createModal('CreateOrEditLeaseHaulerRequest', 'LeaseHaulerRequests');
@@ -244,7 +251,7 @@
         $('#ShiftFilter').select2Init({ allowClear: false });
 
         refreshHideProgressBarCheckboxVisibility();
-        refreshDriverAssignmentButtonVisibility();
+        refreshDateRelatedButtonsVisibility();
 
         $("#TruckTileChooseGroupingButton > .btn").click(function () {
             refreshView($(this));
@@ -897,8 +904,17 @@
             //}
         }
 
+        function refreshDateRelatedButtonsVisibility() {
+            refreshDriverAssignmentButtonVisibility();
+            refreshSendOrdersToDriversButtonVisibility();
+        }
+
         function refreshDriverAssignmentButtonVisibility() {
             $('#AddDefaultDriverAssignmentsButton').closest('li').toggle(!isPastDate());
+        }
+
+        function refreshSendOrdersToDriversButtonVisibility() {
+            $('#SendOrdersToDriversButton').closest('li').toggle(!isPastDate());
         }
 
         function refreshProgressBarColumnVisibility() {
@@ -920,7 +936,7 @@
                 reloadMainGrid();
                 refreshLeaseHaulerButtonVisibility();
                 refreshHideProgressBarCheckboxVisibility();
-                refreshDriverAssignmentButtonVisibility();
+                refreshDateRelatedButtonsVisibility();
             }
         });
         $('#DateFilter').blur(function () {
@@ -1278,7 +1294,7 @@
                     if (filter.date) {
                         $('#DateFilter').val(filter.date);
                         refreshHideProgressBarCheckboxVisibility();
-                        refreshDriverAssignmentButtonVisibility();
+                        refreshDateRelatedButtonsVisibility();
                     }
                     if (filter.shift) {
                         $('#ShiftFilter').val(filter.shift).trigger("change");
@@ -2271,6 +2287,21 @@
             finally {
                 abp.ui.clearBusy();
             }
+        });
+
+        $('#SendOrdersToDriversButton').click(function (e) {
+            e.preventDefault();
+            var filterData = _dtHelper.getFilterData();
+            _sendOrdersToDriversModal.open({
+                deliveryDate: filterData.date,
+                shift: filterData.shift,
+                selectedOffices: [
+                    {
+                        id: filterData.officeId,
+                        name: filterData.officeName
+                    }
+                ]
+            });
         });
 
         $('#ScheduleTable tbody tr').contextmenu({ 'target': '#context-menu' });

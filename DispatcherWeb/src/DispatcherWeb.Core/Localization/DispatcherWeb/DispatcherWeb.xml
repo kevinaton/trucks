@@ -1307,8 +1307,8 @@
 		<text name="RunUntilStoppedEndedSuccessfully">Run Until Stopped ended successfully</text>
 		<text name="DispatchesBeingCreated">Dispatches being created</text>
 		<text name="SendOrders_NoOrders">There are no orders for {0}</text>
-		<text name="CreateDispatchesForDateShift_NoTrucks_Date">No orders were sent for {0} because there were no trucks assigned to orders for that date.</text>
-		<text name="CreateDispatchesForDateShift_NoTrucks_DateShift">No orders were sent for {0} {1} because there were no trucks assigned to orders for that date and shift.</text>
+		<text name="SendOrdersToDrivers_NoTrucks_Date">No orders were sent for {0} because there were no trucks assigned to orders for that date.</text>
+		<text name="SendOrdersToDrivers_NoTrucks_DateShift">No orders were sent for {0} {1} because there were no trucks assigned to orders for that date and shift.</text>
 		<text name="OrganizationUnits_SelectUser">Select a user!</text>
 		<text name="OutofServiceDate">Out of service date</text>
 		<text name="ShareButton">Share</text>
