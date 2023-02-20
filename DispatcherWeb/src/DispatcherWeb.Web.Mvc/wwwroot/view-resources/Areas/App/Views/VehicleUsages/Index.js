@@ -125,43 +125,40 @@
         });
 
         function initFilterControls() {
-            var drpOptions = {
-                locale: {
-                    cancelLabel: 'Clear'
-                }
-            };
             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
                 allowClear: false
             });
-            $("#ReadingDateTimeFilter").daterangepicker(drpOptions)
-                .on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-                })
-                .on('cancel.daterangepicker', function (ev, picker) {
-                    $(this).val('');
-                });
+
+            $("#TruckFilter").select2Init({
+                abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
+                abpServiceParamsGetter: (params) => ({
+                    officeId: $('#OfficeIdFilter').val(),
+                    allOffices: true
+                }),
+                showAll: false,
+                allowClear: true
+            });
+
+            $("#ReadingDateTimeFilter").daterangepicker({
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            }).on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            }).on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
 
             $("#ReadingTypeFilter").select2Init({
                 showAll: true,
                 allowClear: true 
             });
-
-            initTruckFilter();
-        }
-        function initTruckFilter() {
-            $("#TruckFilter").val('');
-            $("#TruckFilter").select2Init({
-                abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-                abpServiceParams: { officeId: $('#OfficeIdFilter').val(), allOffices: true },
-                showAll: false,
-                allowClear: true
-            });
         }
 
         $('#OfficeIdFilter').on('change', function () {
-            initTruckFilter();
+            $("#TruckFilter").val('').change();
         });
 
         var reloadMainGrid = function () {

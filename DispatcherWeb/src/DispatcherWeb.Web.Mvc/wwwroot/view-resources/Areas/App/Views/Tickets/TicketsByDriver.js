@@ -1407,7 +1407,12 @@
                             nameField: 'truckCode',
                             dropdownOptions: {
                                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-                                abpServiceParams: { allOffices: true, includeLeaseHaulerTrucks: true, activeOnly: true, /*orderLineId: _validateTrucksAndDrivers ? _orderLineId : null*/ },
+                                abpServiceParams: {
+                                    allOffices: true,
+                                    includeLeaseHaulerTrucks: true,
+                                    activeOnly: true,
+                                    //orderLineId: _validateTrucksAndDrivers ? _orderLineId : null
+                                },
                                 showAll: false,
                                 allowClear: false
                             },

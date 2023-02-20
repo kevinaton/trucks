@@ -134,37 +134,33 @@
         });
 
         function initFilterControls() {
-            var drpOptions = {
-                locale: {
-                    cancelLabel: 'Clear'
-                }
-            };
-            $("#OfficeIdFilter").select2Init({
+             $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
                 allowClear: false
             });
-            $("#FuelDateTimeFilter").daterangepicker(drpOptions)
-                .on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-                })
-                .on('cancel.daterangepicker', function (ev, picker) {
-                    $(this).val('');
-                });
-            initTruckFilter();
-        }
-        function initTruckFilter() {
-            $("#TruckFilter").val('');
             $("#TruckFilter").select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-                abpServiceParams: { officeId: $('#OfficeIdFilter').val(), allOffices: true },
+                abpServiceParamsGetter: (params) => ({
+                    officeId: $('#OfficeIdFilter').val(),
+                    allOffices: true
+                }),
                 showAll: false,
                 allowClear: true
+            });
+            $("#FuelDateTimeFilter").daterangepicker({
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            }).on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            }).on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
             });
         }
 
         $('#OfficeIdFilter').on('change', function () {
-            initTruckFilter();
+            $("#TruckFilter").val('').change();
         });
 
 

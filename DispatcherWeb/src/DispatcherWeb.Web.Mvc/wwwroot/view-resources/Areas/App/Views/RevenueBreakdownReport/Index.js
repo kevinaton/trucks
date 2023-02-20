@@ -16,20 +16,17 @@
     });
 
     $('#DeliveryDateFilter').val(moment().format('MM/DD/YYYY - MM/DD/YYYY'));
-    var drpOptions = {
+    $("#DeliveryDateFilter").daterangepicker({
         //autoUpdateInput: false,
         locale: {
             cancelLabel: 'Clear'
         },
         showDropDown: true
-    };
-    $("#DeliveryDateFilter").daterangepicker(drpOptions)
-        .on('apply.daterangepicker', function (ev, picker) {
-            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-        })
-        .on('cancel.daterangepicker', function (ev, picker) {
-            $(this).val('');
-        });
+    }).on('apply.daterangepicker', function (ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    }).on('cancel.daterangepicker', function (ev, picker) {
+        $(this).val('');
+    });
 
     $("#CustomerIdFilter").select2Init({
         abpServiceMethod: abp.services.app.customer.getCustomersSelectList,

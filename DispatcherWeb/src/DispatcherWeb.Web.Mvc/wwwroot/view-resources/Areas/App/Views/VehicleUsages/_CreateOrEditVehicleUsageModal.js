@@ -18,7 +18,10 @@
             var $truckSelect = _$form.find("#TruckId");
             $truckSelect.select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-                abpServiceParams: { allOffices: true, officeId: _$form.find('#OfficeId').val() },
+                abpServiceParams: {
+                    allOffices: true,
+                    officeId: _$form.find('#OfficeId').val()
+                },
                 showAll: false,
                 allowClear: true
             });
@@ -103,7 +106,10 @@
                 abp.notify.info('Saved successfully.');
                 if (saveAndNew) {
                     _modalManager.getModal().on('hidden.bs.modal', function (e) {
-                        _modalManager.open({ id: null, officeId: _$form.find('#OfficeId').val() });
+                        _modalManager.open({
+                            id: null,
+                            officeId: _$form.find('#OfficeId').val()
+                        });
                     });
                 }
                 _modalManager.close();

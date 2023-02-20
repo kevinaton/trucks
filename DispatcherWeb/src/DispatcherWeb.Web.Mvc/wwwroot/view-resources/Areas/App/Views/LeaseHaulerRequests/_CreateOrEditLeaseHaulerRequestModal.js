@@ -289,9 +289,6 @@
                 });
                 rows.find('.lease-hauler-truck-select').each(function () {
                     $(this).select2Init({
-                        //abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulerTrucksSelectList,
-                        //abpServiceParamsGetter: function () { return { leaseHaulerId: $('#LeaseHaulerId').val() }; },
-                        //dropdownParent: _modalManager.getModalContent()
                         showAll: false,
                         allowClear: true
                     });
@@ -299,9 +296,6 @@
 
                 rows.find('.lease-hauler-driver-select').each(function () {
                     $(this).select2Init({
-                        //abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulerDriversSelectList,
-                        //abpServiceParams: { leaseHaulerId: $('#LeaseHaulerId').val() },
-                        //dropdownParent: _modalManager.getModalContent()
                         showAll: false,
                         allowClear: true
                     });

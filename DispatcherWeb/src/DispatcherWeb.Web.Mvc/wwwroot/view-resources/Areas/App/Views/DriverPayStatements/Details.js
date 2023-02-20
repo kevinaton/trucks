@@ -162,11 +162,9 @@
                         nameField: 'timeClassificationName',
                         dropdownOptions: {
                             abpServiceMethod: abp.services.app.timeClassification.getTimeClassificationsSelectList,
-                            abpServiceParamsGetter: function (params, rowData) {
-                                return {
-                                    excludeProductionPay: rowData.itemKind === abp.enums.payStatementItemKind.time
-                                }
-                            },
+                            abpServiceParamsGetter: (params, rowData) => ({
+                                excludeProductionPay: rowData.itemKind === abp.enums.payStatementItemKind.time
+                            }),
                             showAll: true,
                             allowClear: false
                         },
