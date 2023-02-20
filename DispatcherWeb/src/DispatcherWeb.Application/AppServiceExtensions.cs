@@ -361,6 +361,7 @@ namespace DispatcherWeb
                     FreightUom = o.FreightUom.Name
                 }
             })
+            .OrderBy(item => item.CustomerName)
             .ToListAsync();
 
             var taxCalculationType = await taxCalculator.GetTaxCalculationTypeAsync();
