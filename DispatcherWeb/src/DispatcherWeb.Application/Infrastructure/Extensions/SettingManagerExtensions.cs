@@ -229,22 +229,32 @@ namespace DispatcherWeb.Infrastructure.Extensions
             return (ShowFuelSurchargeOnInvoiceEnum)await settingManager.GetSettingValueAsync<int>(AppSettings.Fuel.ShowFuelSurchargeOnInvoice);
         }
 
-        public static async Task<int> GetDefaultFuelSurchargeCalculationId(this ISettingManager settingManager)
+        public static async Task<int?> GetDefaultFuelSurchargeCalculationId(this ISettingManager settingManager)
         {
             if (!await settingManager.GetSettingValueAsync<bool>(AppSettings.Fuel.ShowFuelSurcharge))
             {
-                return 0;
+                return null;
             }
-            return await settingManager.GetSettingValueAsync<int>(AppSettings.Fuel.DefaultFuelSurchargeCalculationId);
+            var result = await settingManager.GetSettingValueAsync<int>(AppSettings.Fuel.DefaultFuelSurchargeCalculationId);
+            if (result == 0)
+            {
+                return null;
+            }
+            return result;
         }
 
-        public static async Task<int> GetDefaultFuelSurchargeCalculationIdForTenant(this ISettingManager settingManager, int tenantId)
+        public static async Task<int?> GetDefaultFuelSurchargeCalculationIdForTenant(this ISettingManager settingManager, int tenantId)
         {
             if (!await settingManager.GetSettingValueForTenantAsync<bool>(AppSettings.Fuel.ShowFuelSurcharge, tenantId))
             {
-                return 0;
+                return null;
             }
-            return await settingManager.GetSettingValueForTenantAsync<int>(AppSettings.Fuel.DefaultFuelSurchargeCalculationId, tenantId);
+            var result = await settingManager.GetSettingValueForTenantAsync<int>(AppSettings.Fuel.DefaultFuelSurchargeCalculationId, tenantId);
+            if (result == 0)
+            {
+                return null;
+            }
+            return result;
         }
 
         public static async Task<bool> IsQuickbooksConnected(this ISettingManager settingManager)

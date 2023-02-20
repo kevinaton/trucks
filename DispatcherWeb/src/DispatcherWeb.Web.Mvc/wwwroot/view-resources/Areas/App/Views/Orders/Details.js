@@ -643,7 +643,11 @@
             } else {
                 let defaultFuelSurchargeCalculationId = abp.setting.getInt('App.Fuel.DefaultFuelSurchargeCalculationId');
                 let defaultFuelSurchargeCalculationName = $("#DefaultFuelSurchargeCalculationName").val();
-                abp.helper.ui.addAndSetDropdownValue($("#FuelSurchargeCalculationId"), defaultFuelSurchargeCalculationId, defaultFuelSurchargeCalculationName);
+                if (defaultFuelSurchargeCalculationId > 0) {
+                    abp.helper.ui.addAndSetDropdownValue($("#FuelSurchargeCalculationId"), defaultFuelSurchargeCalculationId, defaultFuelSurchargeCalculationName);
+                } else {
+                    $("#FuelSurchargeCalculationId").val(null).change();
+                }
                 updateInputValue("#BaseFuelCost", $("#DefaultBaseFuelCost").val());
                 $("#BaseFuelCostContainer").toggle($("#DefaultCanChangeBaseFuelCost").val() === 'True');
                 $("#FuelSurchargeCalculationId").prop("disabled", false);
