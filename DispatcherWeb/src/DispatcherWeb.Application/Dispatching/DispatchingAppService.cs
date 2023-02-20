@@ -2237,6 +2237,7 @@ namespace DispatcherWeb.Dispatching
         [RemoteService(false)]
         public async Task SendCompletedDispatchNotificationIfNeeded(int dispatchId)
         {
+            await CurrentUnitOfWork.SaveChangesAsync();
             var dispatch = await _dispatchRepository.GetAsync(dispatchId);
             await SendCompletedDispatchNotificationIfNeeded(dispatch);
         }

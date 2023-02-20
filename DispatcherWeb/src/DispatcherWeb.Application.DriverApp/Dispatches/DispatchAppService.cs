@@ -186,7 +186,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
 
             await CurrentUnitOfWork.SaveChangesAsync();
             //todo send notifications etc, add status validation if needed
-            _syncRequestSender.SendSyncRequest(new SyncRequest()
+            await _syncRequestSender.SendSyncRequest(new SyncRequest()
                 .AddChange(EntityEnum.Dispatch, dispatch.ToChangedEntity())
                 //.SetIgnoreForDeviceId(input.DeviceId) //TODO add DeviceId to all DriverApp requests
                 .AddLogMessage("Dispatch was updated from Driver App"));
