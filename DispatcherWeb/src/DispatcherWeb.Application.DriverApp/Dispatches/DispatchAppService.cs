@@ -14,6 +14,8 @@ using Abp.Runtime.Session;
 using DispatcherWeb.DriverApp.Loads.Dto;
 using DispatcherWeb.DriverApp.Tickets.Dto;
 using Abp.UI;
+using DispatcherWeb.SyncRequests;
+using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.DriverApp.Dispatches
 {
@@ -21,12 +23,18 @@ namespace DispatcherWeb.DriverApp.Dispatches
     public class DispatchAppService : DispatcherWebDriverAppAppServiceBase, IDispatchAppService
     {
         private readonly IRepository<Dispatch> _dispatchRepository;
+        private readonly ISyncRequestSender _syncRequestSender;
+        private readonly IDispatchingAppService _dispatchingAppService;
 
         public DispatchAppService(
-            IRepository<Dispatch> dispatchRepository
+            IRepository<Dispatch> dispatchRepository,
+            ISyncRequestSender syncRequestSender,
+            DispatcherWeb.Dispatching.IDispatchingAppService dispatchingAppService
             )
         {
             _dispatchRepository = dispatchRepository;
+            _syncRequestSender = syncRequestSender;
+            _dispatchingAppService = dispatchingAppService;
         }
 
         public async Task<IPagedResult<DispatchDto>> Get(GetInput input)
@@ -161,13 +169,27 @@ namespace DispatcherWeb.DriverApp.Dispatches
                 throw new UserFriendlyException($"You cannot modify dispatches assigned to other users");
             }
 
+            var oldDispatchStatus = dispatch.Status;
+
             dispatch.Status = model.Status;
             dispatch.Acknowledged = model.AcknowledgedDateTime;
             dispatch.IsMultipleLoads = model.IsMultipleLoads;
 
-            await CurrentUnitOfWork.SaveChangesAsync();
+            if (dispatch.Status != oldDispatchStatus)
+            {
+                if (dispatch.Status == DispatchStatus.Completed)
+                {
+                    await CurrentUnitOfWork.SaveChangesAsync();
+                    await _dispatchingAppService.SendCompletedDispatchNotificationIfNeeded(model.Id);
+                }
+            }
 
+            await CurrentUnitOfWork.SaveChangesAsync();
             //todo send notifications etc, add status validation if needed
+            _syncRequestSender.SendSyncRequest(new SyncRequest()
+                .AddChange(EntityEnum.Dispatch, dispatch.ToChangedEntity())
+                //.SetIgnoreForDeviceId(input.DeviceId) //TODO add DeviceId to all DriverApp requests
+                .AddLogMessage("Dispatch was updated from Driver App"));
 
             return (await Get(new GetInput { Id = model.Id })).Items.FirstOrDefault();
         }
