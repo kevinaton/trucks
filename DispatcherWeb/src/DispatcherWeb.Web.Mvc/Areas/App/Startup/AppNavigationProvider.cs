@@ -141,14 +141,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_PrintOrders)
                         )
                     ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.SendOrdersToDrivers,
-                        L("SendOrdersToDrivers"),
-                        customData: new MenuItemCustomData { Id = "SendOrdersToDriversNavbarItem" },
-                        url: "#",
-                        icon: "fa fa-envelope",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_SendOrdersToDrivers)
-                        )
-                    ).AddItem(new MenuItemDefinition(
                         AppPageNames.Tenant.Dispatches,
                         L("LoadHistory"),
                         customData: new MenuItemCustomData { Id = "LoadHistoryNavbarItem" },

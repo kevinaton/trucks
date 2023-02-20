@@ -14,10 +14,10 @@ using Xunit;
 
 namespace DispatcherWeb.Tests.Dispatching
 {
-    public class DispatchingAppService_CreateDispatchesForDateShift_Tests : DispatchingAppService_Tests_Base
+    public class DispatchingAppService_SendOrdersToDrivers_Tests : DispatchingAppService_Tests_Base
     {
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_in_Complete_state_when_DispatchVia_setting_is_None()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_in_Complete_state_when_DispatchVia_setting_is_None()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -41,7 +41,7 @@ namespace DispatcherWeb.Tests.Dispatching
             ((AbpServiceBase)_dispatchingAppService).SubstituteDispatchSettings(DispatchVia.None);
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 OfficeIds = new[] { _officeId }
@@ -57,7 +57,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_for_each_unique_driver_per_OrderLine()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_for_each_unique_driver_per_OrderLine()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -74,7 +74,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 OfficeIds = new[] { _officeId }
@@ -87,7 +87,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_for_Date_and_Shift()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_for_Date_and_Shift()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -109,7 +109,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 Shift = Shift.Shift1,
@@ -124,7 +124,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_for_Date_and_Shift_with_MultipleLoads_from_OrderLine()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_for_Date_and_Shift_with_MultipleLoads_from_OrderLine()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -146,7 +146,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 OfficeIds = new[] { _officeId }
@@ -166,7 +166,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_for_Date_and_Shift_when_Driver_is_from_another_office()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_for_Date_and_Shift_when_Driver_is_from_another_office()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -189,7 +189,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 Shift = Shift.Shift1,
@@ -204,7 +204,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_for_Date_and_Shift_and_OrderLineTruck_not_IsDone()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_for_Date_and_Shift_and_OrderLineTruck_not_IsDone()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -233,7 +233,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 Shift = Shift.Shift1,
@@ -248,7 +248,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_not_create_Dispatches_for_closed_OrderLine()
+        public async Task Test_SendOrdersToDrivers_should_not_create_Dispatches_for_closed_OrderLine()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -264,7 +264,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 Shift = Shift.Shift1,
@@ -277,7 +277,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_not_create_Dispatches_for_OrderLineTruck_IsDone_true()
+        public async Task Test_SendOrdersToDrivers_should_not_create_Dispatches_for_OrderLineTruck_IsDone_true()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -299,7 +299,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 Shift = Shift.Shift1,
@@ -313,7 +313,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_throw_UserFriendlyException_when_there_are_no_TruckDrivers_for_Date_and_Shift()
+        public async Task Test_SendOrdersToDrivers_should_throw_UserFriendlyException_when_there_are_no_TruckDrivers_for_Date_and_Shift()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -322,7 +322,7 @@ namespace DispatcherWeb.Tests.Dispatching
             var orderLine1 = order1.OrderLines.ToList()[0];
 
             // Act, Assert
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 Shift = Shift.Shift1,
@@ -331,7 +331,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_for_Tomorrow()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_for_Tomorrow()
         {
             // Arrange
             var tomorrow = Clock.Now.Date.AddDays(1);
@@ -347,7 +347,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = tomorrow,
                 Shift = Shift.Shift1,
@@ -362,7 +362,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_for_Date_and_Shift_per_OrderLine()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_for_Date_and_Shift_per_OrderLine()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -390,7 +390,7 @@ namespace DispatcherWeb.Tests.Dispatching
             settingManager.GetSettingValueAsync(AppSettings.DispatchingAndMessaging.DriverDispatchSmsTemplate).Returns("");
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 Shift = Shift.Shift1,
@@ -407,7 +407,7 @@ namespace DispatcherWeb.Tests.Dispatching
         }
 
         [Fact]
-        public async Task Test_CreateDispatchesForDateShift_should_create_Dispatches_for_each_Order_sorted_by_TimeOnJob()
+        public async Task Test_SendOrdersToDrivers_should_create_Dispatches_for_each_Order_sorted_by_TimeOnJob()
         {
             // Arrange
             var today = Clock.Now.Date;
@@ -436,7 +436,7 @@ namespace DispatcherWeb.Tests.Dispatching
             _smsSender.SendAsync("", "", true).ReturnsForAnyArgs(new SmsSendResult("12345", SmsStatus.Sent, null, null));
 
             // Act
-            await _dispatchingAppService.CreateDispatchesForDateShift(new CreateDispatchesForDateShiftInput()
+            await _dispatchingAppService.SendOrdersToDrivers(new SendOrdersToDriversInput()
             {
                 DeliveryDate = today,
                 OfficeIds = new[] { _officeId }

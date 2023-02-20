@@ -14,7 +14,7 @@ namespace DispatcherWeb.Dispatching
         Task<SendSmsResult[]> BatchSendSms(params SendSmsInput[] inputs);
         Task<bool> CanAddDispatchBasedOnTime(CanAddDispatchBasedOnTimeInput input);
         Task CleanUp();
-        Task CreateDispatchesForDateShift(CreateDispatchesForDateShiftInput input);
+        Task SendOrdersToDrivers(SendOrdersToDriversInput input);
         Task<string> CreateDispatchMessageFromTemplate(OrderLineDataForDispatchMessage orderLine, bool firstDispatchForDay = false);
         Task<SendDispatchMessageDto> CreateSendDispatchMessageDto(int orderLineId, bool firstDispatchForDay = false);
         Task EnsureCanCreateDispatchAsync(int orderLineId, int newTruckCount, int newDispatchCount, bool multipleLoads);

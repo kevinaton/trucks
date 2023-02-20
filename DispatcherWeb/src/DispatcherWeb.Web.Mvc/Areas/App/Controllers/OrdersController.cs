@@ -4,6 +4,7 @@ using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.UI;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Dispatching.Dto;
 using DispatcherWeb.DriverAssignments.Dto;
 using DispatcherWeb.Exceptions;
 using DispatcherWeb.OrderPayments;
@@ -204,9 +205,9 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_SendOrdersToDrivers)]
-        public PartialViewResult SendOrdersToDriversModal()
+        public PartialViewResult SendOrdersToDriversModal(SendOrdersToDriversModalInput input)
         {
-            return PartialView("_SendOrdersToDriversModal");
+            return PartialView("_SendOrdersToDriversModal", input);
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_Reports_PaymentReconciliation)]
