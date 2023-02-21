@@ -95,8 +95,7 @@
     "topojson": "^3.0.2",
     "typeahead.js": "^0.11.1",
     "underscore": "^1.13.1",
-    "urijs": "^1.19.7",
-    "vis-timeline": "^7.7.0"
+    "urijs": "^1.19.7"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.14",
