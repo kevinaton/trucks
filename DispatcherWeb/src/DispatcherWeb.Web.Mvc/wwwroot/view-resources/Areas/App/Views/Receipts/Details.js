@@ -219,6 +219,11 @@
             }
         });
 
+        $("#QuoteId").select2Init({
+            showAll: true,
+            allowClear: true
+        });
+
         $("#OfficeId").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
