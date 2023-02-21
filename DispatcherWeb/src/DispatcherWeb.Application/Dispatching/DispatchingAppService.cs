@@ -2218,6 +2218,34 @@ namespace DispatcherWeb.Dispatching
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
+            await SendCompletedDispatchNotificationIfNeeded(dispatch);
+
+            var newActiveDispatch = await GetFirstOpenDispatch(dispatch.DriverId);
+
+            return await _dispatchSender.SendSms(new SendSmsInput
+            {
+                TruckId = dispatch.TruckId,
+                DriverId = dispatch.DriverId,
+                PhoneNumber = dispatch.PhoneNumber,
+                OrderNotifyPreferredFormat = dispatch.OrderNotifyPreferredFormat,
+                SendOrdersToDriversImmediately = false,
+                AfterCompleted = true,
+                ActiveDispatchWasChanged = oldActiveDispatch?.Id != newActiveDispatch?.Id
+            });
+        }
+
+        [RemoteService(false)]
+        public async Task SendCompletedDispatchNotificationIfNeeded(int dispatchId)
+        {
+            await CurrentUnitOfWork.SaveChangesAsync();
+            var dispatch = await _dispatchRepository.GetAsync(dispatchId);
+            await SendCompletedDispatchNotificationIfNeeded(dispatch);
+        }
+
+        private async Task SendCompletedDispatchNotificationIfNeeded(Dispatch dispatch)
+        {
+            await CurrentUnitOfWork.SaveChangesAsync();
+
             var hasMoreDispatches = await _dispatchRepository.GetAll()
                     .Where(d => d.DriverId == dispatch.DriverId && (Dispatch.ActiveStatuses.Contains(d.Status) || d.Status == DispatchStatus.Created) && d.Id != dispatch.Id)
                     .AnyAsync();
@@ -2252,19 +2280,6 @@ namespace DispatcherWeb.Dispatching
                         });
                 }
             }
-
-            var newActiveDispatch = await GetFirstOpenDispatch(dispatch.DriverId);
-
-            return await _dispatchSender.SendSms(new SendSmsInput
-            {
-                TruckId = dispatch.TruckId,
-                DriverId = dispatch.DriverId,
-                PhoneNumber = dispatch.PhoneNumber,
-                OrderNotifyPreferredFormat = dispatch.OrderNotifyPreferredFormat,
-                SendOrdersToDriversImmediately = false,
-                AfterCompleted = true,
-                ActiveDispatchWasChanged = oldActiveDispatch?.Id != newActiveDispatch?.Id
-            });
         }
 
         [AbpAllowAnonymous]

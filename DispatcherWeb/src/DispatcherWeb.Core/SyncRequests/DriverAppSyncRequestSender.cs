@@ -18,6 +18,7 @@ using DispatcherWeb.SyncRequests.FcmPushMessages;
 using DispatcherWeb.WebPush;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Abp.Collections.Extensions;
 
 namespace DispatcherWeb.SyncRequests
 {
@@ -86,6 +87,7 @@ namespace DispatcherWeb.SyncRequests
             userIds = userIds.Union(drivers.Select(x => x.UserId)).Distinct().ToList();
             var fcmTokens = await _fcmRegistrationTokenRepository.GetAll()
                 .Where(x => userIds.Contains(x.UserId))
+                //.WhereIf(syncRequest.IgnoreForDeviceId.HasValue, x => x.) //TODO add DeviceId or DeviceGuid to FcmRegistrationToken records
                 .Select(x => new FcmRegistrationTokenDto
                 {
                     Id = x.Id,
