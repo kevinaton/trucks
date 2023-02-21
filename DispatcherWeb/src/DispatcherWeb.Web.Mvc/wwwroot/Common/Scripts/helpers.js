@@ -1717,11 +1717,7 @@
                                 optionCreatedCallback(option, val);
                             option.appendTo(childDropdown);
                         });
-                        if (oldChildValue === '') {
-                            if (data.items.length === 1 && !updateOptions.skipCallbacks) {
-                                childDropdown.val(data.items[0].id).change();
-                            }
-                        } else {
+                        if (oldChildValue !== '') {
                             if (childDropdown.find('option[value="' + oldChildValue + '"]').length === 0) {
                                 childDropdown.append(oldChildOption);
                             }

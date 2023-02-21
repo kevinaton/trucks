@@ -574,7 +574,7 @@
                     hasActiveOrPendingQuotes = true;
                 }
             });
-            if (hasActiveOrPendingQuotes && data.items.length > 1) {
+            if (hasActiveOrPendingQuotes && data.items.length > 0) {
                 _selectOrderQuoteModal.open();
             }
         });
