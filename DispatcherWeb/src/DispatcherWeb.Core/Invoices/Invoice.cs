@@ -15,8 +15,6 @@ namespace DispatcherWeb.Invoices
     [Table("Invoice")]
     public class Invoice : FullAuditedEntity, IMustHaveTenant
     {
-        public const int MaxMessageLength = EntityStringFieldLengths.Invoice.Message;
-
         public Invoice()
         {
             InvoiceLines = new HashSet<InvoiceLine>();
@@ -62,7 +60,7 @@ namespace DispatcherWeb.Invoices
 
         public string QuickbooksInvoiceId { get; set; }
 
-        [StringLength(MaxMessageLength)]
+        [StringLength(EntityStringFieldLengths.Invoice.Message)]
         public string Message { get; set; }
 
         public decimal TaxRate { get; set; }

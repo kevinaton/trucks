@@ -8,6 +8,7 @@
 @using Abp.Application.Features
 @using DispatcherWeb.Web.Controllers
 @using DispatcherWeb.Authorization
+@using DispatcherWeb.Infrastructure
 @using DispatcherWeb.Infrastructure.Extensions
 
 @model SettingsViewModel
@@ -659,7 +660,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="DefaultMessageOnInvoice">@L("DefaultMessageOnInvoice")</label>
-                                <textarea class="form-control" name="DefaultMessageOnInvoice" maxlength="@DispatcherWeb.Invoices.Invoice.MaxMessageLength" rows="5">@Model.Settings.Billing.DefaultMessageOnInvoice</textarea>
+                                <textarea class="form-control" name="DefaultMessageOnInvoice" maxlength="@EntityStringFieldLengths.Invoice.Message" rows="5">@Model.Settings.Billing.DefaultMessageOnInvoice</textarea>
                             </div>
                             <div class="form-group">
                                 <label for="InvoiceEmailSubjectTemplate">@L("InvoiceEmailSubjectTemplate")</label>

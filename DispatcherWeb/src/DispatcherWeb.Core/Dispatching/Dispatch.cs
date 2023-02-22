@@ -19,9 +19,6 @@ namespace DispatcherWeb.Dispatching
     [Table("Dispatch")]
     public class Dispatch : FullAuditedEntity, IMustHaveTenant
     {
-        public const int MaxMessageLength = 550;
-        public const int MaxPhoneNumberLength = 15;
-
         public static DispatchStatus[] ClosedDispatchStatuses = new[] { DispatchStatus.Completed, DispatchStatus.Error, DispatchStatus.Canceled };
         public static DispatchStatus[] OutstandingDispatchStatuses = new[] { DispatchStatus.Created, DispatchStatus.Sent, /*DispatchStatus.Received, */DispatchStatus.Acknowledged };
         public static DispatchStatus[] UnacknowledgedStatuses = new[] { DispatchStatus.Created, DispatchStatus.Sent, };
@@ -48,7 +45,7 @@ namespace DispatcherWeb.Dispatching
         public long? UserId { get; set; }
         public User User { get; set; }
 
-        [StringLength(MaxPhoneNumberLength)]
+        [StringLength(EntityStringFieldLengths.Dispatch.PhoneNumber)]
         public string PhoneNumber { get; set; }
 
         public OrderNotifyPreferredFormat OrderNotifyPreferredFormat { get; set; }
@@ -61,7 +58,7 @@ namespace DispatcherWeb.Dispatching
 
         public DateTime? TimeOnJob { get; set; }
 
-        [StringLength(MaxMessageLength)]
+        [StringLength(EntityStringFieldLengths.Dispatch.Message)]
         public string Message { get; set; }
 
         public Guid Guid { get; set; }
