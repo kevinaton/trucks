@@ -128,6 +128,13 @@
                     dispatchIds: modifiedDispatchIds
                 }).then(modifiedTruckDispatches => {
                     console.log('Received modified truck dispatches', modifiedTruckDispatches);
+                    var missingDispatchIds = modifiedDispatchIds.filter(id => !modifiedTruckDispatches.some(m => m.dispatches.some(d => d.id === id)));
+                    if (missingDispatchIds.length) {
+                        console.log('Removing missing dispatch ids: ' + missingDispatchIds.join());
+                        _truckDispatches.forEach(truckDispatch => {
+                            truckDispatch.dispatches = truckDispatch.dispatches.filter(d => !missingDispatchIds.includes(d.id));
+                        });
+                    }
                     modifiedTruckDispatches.forEach(modifiedTruckDispatch => {
                         let existingTruckDispatch = _truckDispatches.find(x => x.officeId === modifiedTruckDispatch.officeId && x.truckId === modifiedTruckDispatch.truckId && x.driverId === modifiedTruckDispatch.driverId);
                         if (!existingTruckDispatch) {
