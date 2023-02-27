@@ -1,10 +1,11 @@
 ﻿namespace DispatcherWeb.Dispatching.Dto
 {
-    public class SendSmsInput
+    public class SendSmsOrEmailInput
     {
         public int TruckId { get; set; }
         public int DriverId { get; set; }
         public string PhoneNumber { get; set; }
+        public string EmailAddress { get; set; }
         public OrderNotifyPreferredFormat OrderNotifyPreferredFormat { get; set; }
         public bool SendOrdersToDriversImmediately { get; set; }
         public bool AfterCompleted { get; set; }

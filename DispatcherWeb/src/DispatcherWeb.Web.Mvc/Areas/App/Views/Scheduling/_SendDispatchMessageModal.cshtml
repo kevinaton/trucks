@@ -1,5 +1,6 @@
 ﻿@using System.Threading.Tasks
 @using DispatcherWeb.Dispatching
+@using DispatcherWeb.Infrastructure
 @using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @using DispatcherWeb.Web.Areas.App.Models.Scheduling
@@ -24,7 +25,7 @@
                 <label class="required-label" for="Message">@L("MessageText")</label>
                 <label id="MessageLength">@L("{0}chars", Model.Message.Length)</label>
             </div>
-            <textarea class="form-control" rows="6" asp-for="Message" required maxlength="@(Dispatch.MaxMessageLength - 100)"
+            <textarea class="form-control" rows="6" asp-for="Message" required maxlength="@(EntityStringFieldLengths.Dispatch.Message - 100)"
             style="min-height:84px;"></textarea>
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-link pr-0" id="ClearMessageBtn">@L("ClearText")</button>
@@ -38,7 +39,7 @@
                 {
                     <option value="@orderLineTruck.Value"
                         selected=@(orderLineTruck.Selected ? "selected" : null)
-                        data-hasphone="@orderLineTruck.HasPhone.ToLowerCaseString()">
+                        data-hascontactinfo="@orderLineTruck.HasContactInfo.ToLowerCaseString()">
                         @orderLineTruck.Text
                     </option>
                 }

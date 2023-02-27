@@ -2,7 +2,7 @@
 
 namespace DispatcherWeb.Dispatching.Dto.DispatchSender
 {
-    public class DeferredSendSmsInput : SendSmsInput
+    public class DeferredSendSmsOrEmailInput : SendSmsOrEmailInput
     {
         public DispatchDto OldActiveDispatch { get; set; }
         public DispatchDto NewActiveDispatch { get; set; }

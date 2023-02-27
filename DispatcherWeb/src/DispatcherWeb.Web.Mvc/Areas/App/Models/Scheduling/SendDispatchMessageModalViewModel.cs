@@ -17,7 +17,7 @@ namespace DispatcherWeb.Web.Areas.App.Models.Scheduling
                     Selected = selectedOrderLineTruckId.HasValue
                         ? selectedOrderLineTruckId == x.OrderLineTruckId
                         : true,
-                    HasPhone = x.HasPhone,
+                    HasContactInfo = x.HasContactInfo,
                     OrderLineTruckId = x.OrderLineTruckId
                 }).ToList();
             Message = sendDispatchMessageDto.Message;
@@ -37,7 +37,7 @@ namespace DispatcherWeb.Web.Areas.App.Models.Scheduling
             public string Text { get; set; }
             public string Value { get; set; }
             public bool Selected { get; set; }
-            public bool HasPhone { get; set; }
+            public bool HasContactInfo { get; set; }
             public int OrderLineTruckId { get; set; }
         }
     }

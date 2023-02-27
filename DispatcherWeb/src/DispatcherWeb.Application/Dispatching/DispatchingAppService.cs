@@ -355,6 +355,7 @@ namespace DispatcherWeb.Dispatching
                     d.OrderLineId,
                     d.OrderLineTruckId,
                     d.PhoneNumber,
+                    d.EmailAddress,
                     d.Message,
                     MultipleLoads = d.IsMultipleLoads,
                     d.OrderNotifyPreferredFormat,
@@ -380,6 +381,7 @@ namespace DispatcherWeb.Dispatching
                     OrderLineId = dispatch.OrderLineId,
                     OrderLineTruckId = dispatch.OrderLineTruckId,
                     PhoneNumber = dispatch.PhoneNumber,
+                    EmailAddress = dispatch.EmailAddress,
                     OrderNotifyPreferredFormat = dispatch.OrderNotifyPreferredFormat,
                     Message = dispatchMessage,
                     IsMultipleLoads = dispatch.MultipleLoads,
@@ -402,11 +404,12 @@ namespace DispatcherWeb.Dispatching
                     .AddChanges(EntityEnum.Dispatch, affectedDispatches.Select(x => x.ToChangedEntity()))
                     .AddLogMessage($"Duplicated dispatch {input.DispatchId}"));
 
-            await _dispatchSender.SendSms(new SendSmsInput
+            await _dispatchSender.SendSmsOrEmail(new SendSmsOrEmailInput
             {
                 TruckId = dispatch.TruckId,
                 DriverId = dispatch.DriverId,
                 PhoneNumber = dispatch.PhoneNumber,
+                EmailAddress = dispatch.EmailAddress,
                 OrderNotifyPreferredFormat = dispatch.OrderNotifyPreferredFormat,
                 ActiveDispatchWasChanged = oldActiveDispatch?.Id != newActiveDispatch?.Id
             });
@@ -619,11 +622,12 @@ namespace DispatcherWeb.Dispatching
                     activeDispatchWasChanged = oldActiveDispatch?.Id != newActiveDispatch?.Id;
                 }
 
-                await _dispatchSender.SendSms(new SendSmsInput
+                await _dispatchSender.SendSmsOrEmail(new SendSmsOrEmailInput
                 {
                     TruckId = dispatch.TruckId,
                     DriverId = dispatch.DriverId,
                     PhoneNumber = dispatch.PhoneNumber,
+                    EmailAddress = dispatch.EmailAddress,
                     OrderNotifyPreferredFormat = dispatch.OrderNotifyPreferredFormat,
                     ActiveDispatchWasChanged = activeDispatchWasChanged
                 });
@@ -690,11 +694,12 @@ namespace DispatcherWeb.Dispatching
                     activeDispatchWasChanged = oldActiveDispatch?.Id != newActiveDispatch?.Id;
                 }
 
-                await _dispatchSender.SendSms(new SendSmsInput
+                await _dispatchSender.SendSmsOrEmail(new SendSmsOrEmailInput
                 {
                     TruckId = dispatch.TruckId,
                     DriverId = dispatch.DriverId,
                     PhoneNumber = dispatch.PhoneNumber,
+                    EmailAddress = dispatch.EmailAddress,
                     OrderNotifyPreferredFormat = dispatch.OrderNotifyPreferredFormat,
                     ActiveDispatchWasChanged = activeDispatchWasChanged
                 });
@@ -757,11 +762,12 @@ namespace DispatcherWeb.Dispatching
 
             if (!cancelDispatch.CancelAllDispatchesForDriver)
             {
-                await _dispatchSender.SendSms(new SendSmsInput
+                await _dispatchSender.SendSmsOrEmail(new SendSmsOrEmailInput
                 {
                     TruckId = dispatchEntity.TruckId,
                     DriverId = dispatchEntity.DriverId,
                     PhoneNumber = dispatchEntity.PhoneNumber,
+                    EmailAddress = dispatchEntity.EmailAddress,
                     OrderNotifyPreferredFormat = dispatchEntity.OrderNotifyPreferredFormat,
                     ActiveDispatchWasChanged = oldActiveDispatch?.Id != newActiveDispatch?.Id
                 });
@@ -2222,11 +2228,12 @@ namespace DispatcherWeb.Dispatching
 
             var newActiveDispatch = await GetFirstOpenDispatch(dispatch.DriverId);
 
-            return await _dispatchSender.SendSms(new SendSmsInput
+            return await _dispatchSender.SendSmsOrEmail(new SendSmsOrEmailInput
             {
                 TruckId = dispatch.TruckId,
                 DriverId = dispatch.DriverId,
                 PhoneNumber = dispatch.PhoneNumber,
+                EmailAddress = dispatch.EmailAddress,
                 OrderNotifyPreferredFormat = dispatch.OrderNotifyPreferredFormat,
                 SendOrdersToDriversImmediately = false,
                 AfterCompleted = true,
