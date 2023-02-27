@@ -1319,6 +1319,7 @@
 		<text name="UnableToDeleteTruckWithAssociatedData">You can’t delete this truck because it has data associated with it.</text>
 		<text name="UnableToDeleteDriverWithAssociatedData">You can’t delete this driver because it has data associated with it.</text>
 		<text name="UnableToDeleteUserWithAssociatedData">You can’t delete this user because it has data associated with it.</text>
+		<text name="UnableToDeleteQuoteServiceWithAssociatedData">You can't delete this quote item because it has data associated with it.</text>
 		<text name="UnableToDeleteEmployeeTimeWithAssociatedData">You can’t delete this time because it has data associated with it.</text>
 		<text name="UnableToEditEmployeeTimeWithAssociatedData">You can’t edit this time because it has data associated with it.</text>
 		<text name="UnableToDeleteSelectedRowWithAssociatedData">You can't delete selected row because it has data associated with it.</text>

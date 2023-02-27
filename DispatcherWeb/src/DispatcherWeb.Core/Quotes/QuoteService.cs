@@ -62,5 +62,35 @@ namespace DispatcherWeb.Quotes
         public virtual Location LoadAt { get; set; }
 
         public virtual Location DeliverTo { get; set; }
+
+        public QuoteService Clone()
+        {
+            return new QuoteService
+            {
+                CreationTime = CreationTime,
+                CreatorUserId = CreatorUserId,
+                DeleterUserId = DeleterUserId,
+                DeletionTime = DeletionTime,
+                DeliverToId = DeliverToId,
+                Designation = Designation,
+                FreightQuantity = FreightQuantity,
+                FreightRate = FreightRate,
+                FreightUomId = FreightUomId,
+                Id = Id,
+                IsDeleted = IsDeleted,
+                JobNumber = JobNumber,
+                LastModificationTime = LastModificationTime,
+                LastModifierUserId = LastModifierUserId,
+                LeaseHaulerRate = LeaseHaulerRate,
+                LoadAtId = LoadAtId,
+                MaterialQuantity = MaterialQuantity,
+                MaterialUomId = MaterialUomId,
+                Note = Note,
+                PricePerUnit = PricePerUnit,
+                QuoteId = QuoteId,
+                ServiceId = ServiceId,
+                TenantId = TenantId,
+            };
+        }
     }
 }
