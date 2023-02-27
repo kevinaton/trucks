@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.BackgroundJobs;
@@ -10,10 +9,8 @@ using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Notifications;
 using Abp.Runtime.Session;
-using Abp.UI;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
-using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.Infrastructure.Sms.Dto;
 using DispatcherWeb.Notifications;
@@ -24,7 +21,6 @@ namespace DispatcherWeb.BackgroundJobs
 {
     public class SmsSenderBackgroundJob : AsyncBackgroundJob<SmsSenderBackgroundJobArgs>, ITransientDependency
     {
-        //private readonly IDispatchSender _dispatchSender;
         private readonly IAppNotifier _appNotifier;
         private readonly IAbpSession _abpSession;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
@@ -35,7 +31,6 @@ namespace DispatcherWeb.BackgroundJobs
         private readonly IRepository<Driver> _driverRepository;
 
         public SmsSenderBackgroundJob(
-            //IDispatchSender dispatchSender,
             IAppNotifier appNotifier,
             IAbpSession abpSession,
             IUnitOfWorkManager unitOfWorkManager,
@@ -46,7 +41,6 @@ namespace DispatcherWeb.BackgroundJobs
             IRepository<Driver> driverRepository
             )
         {
-            //_dispatchSender = dispatchSender;
             _appNotifier = appNotifier;
             _abpSession = abpSession;
             _unitOfWorkManager = unitOfWorkManager;
@@ -77,10 +71,10 @@ namespace DispatcherWeb.BackgroundJobs
                     var errorList = resultList.Where(x => x.sendResult.ErrorCode.HasValue).ToList();
                     if (errorList.Any())
                     {
-                        if (errorList.Any(r => r.input.DispatchId.HasValue) && !await SettingManager.DispatchViaDriverApplication())
+                        if (errorList.Any(r => r.input.DispatchId.HasValue && r.input.CancelDispatchOnError))
                         {
                             var dispatchIds = resultList
-                                .Where(r => r.input.DispatchId.HasValue && r.sendResult.ErrorCode.HasValue)
+                                .Where(r => r.input.DispatchId.HasValue && r.input.CancelDispatchOnError && r.sendResult.ErrorCode.HasValue)
                                 .Select(r => r.input.DispatchId.Value)
                                 .Distinct().ToList();
                             var dispatches = await _dispatchRepository.GetAll()

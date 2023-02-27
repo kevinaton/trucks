@@ -48,6 +48,9 @@ namespace DispatcherWeb.Dispatching
         [StringLength(EntityStringFieldLengths.Dispatch.PhoneNumber)]
         public string PhoneNumber { get; set; }
 
+        [StringLength(EntityStringFieldLengths.Dispatch.Email)]
+        public string EmailAddress { get; set; }
+
         public OrderNotifyPreferredFormat OrderNotifyPreferredFormat { get; set; }
 
         public DateTime? Sent { get; set; }

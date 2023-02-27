@@ -131,7 +131,8 @@
         {
             public const int PhoneNumber = General.PhoneNumber;
             public const int Email = General.Email;
-            public const int Message = 550;
+            public const int Message = 4000;
+            public const int SmsMessageLimit = 550;
             public const int Note = 1000;
         }
 

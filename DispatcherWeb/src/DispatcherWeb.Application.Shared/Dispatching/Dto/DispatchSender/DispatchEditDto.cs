@@ -3,6 +3,7 @@
     public class DispatchEditDto : DispatchDto
     {
         public string PhoneNumber { get; set; }
+        public string EmailAddress { get; set; }
         public long? UserId { get; set; }
         public OrderNotifyPreferredFormat OrderNotifyPreferredFormat { get; set; }
         public string Note { get; set; }

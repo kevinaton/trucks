@@ -11,7 +11,7 @@ namespace DispatcherWeb.Dispatching
     public interface IDispatchSender
     {
         Dispatch AddDispatch(DispatchEditDto dispatchDto);
-        Task<SendSmsResult[]> BatchSendSms(params SendSmsInput[] inputs);
+        Task<SendSmsResult[]> BatchSendSmsOrEmail(params SendSmsOrEmailInput[] inputs);
         Task<bool> CanAddDispatchBasedOnTime(CanAddDispatchBasedOnTimeInput input);
         Task CleanUp();
         Task SendOrdersToDrivers(SendOrdersToDriversInput input);
@@ -19,6 +19,6 @@ namespace DispatcherWeb.Dispatching
         Task<SendDispatchMessageDto> CreateSendDispatchMessageDto(int orderLineId, bool firstDispatchForDay = false);
         Task EnsureCanCreateDispatchAsync(int orderLineId, int newTruckCount, int newDispatchCount, bool multipleLoads);
         Task<CreateDispatchesAndSendSmsToEachDriverResult> SendDispatchMessage(SendDispatchMessageInput input, bool skipSmsIfDispatchesExist = true);
-        Task<SendSmsResult> SendSms(SendSmsInput input);
+        Task<SendSmsResult> SendSmsOrEmail(SendSmsOrEmailInput input);
     }
 }

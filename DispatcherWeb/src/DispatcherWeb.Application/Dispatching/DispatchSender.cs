@@ -26,6 +26,7 @@ using DispatcherWeb.DriverApplication;
 using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Exceptions;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Templates;
 using DispatcherWeb.Notifications;
@@ -64,9 +65,10 @@ namespace DispatcherWeb.Dispatching
         private List<(DispatchEditDto dto, Dispatch entity)> _pendingNewDispatchQueue = new();
         private Dictionary<int, List<DispatchDto>> _orderedTruckDispatches = new();
         private List<Func<Task>> _pendingCleanupActions = new();
-        private List<DeferredSendSmsInput> _deferredSmsMessages = new();
+        private List<DeferredSendSmsOrEmailInput> _deferredSmsOrEmailMessages = new();
         private List<int> _sentDisaptchIds = new();
         private SmsSenderBackgroundJobArgs _smsSenderBackgrounJobArgs = null;
+        private EmailSenderBackgroundJobArgs _emailSenderBackgrounJobArgs = null;
 
         public DispatchSender(
             IRepository<OrderLine> orderLineRepository,
@@ -241,7 +243,6 @@ namespace DispatcherWeb.Dispatching
                 //    TruckCode = olt.Truck.TruckCode,
                 //    //DriverId = x.DriverAssignment.DriverId.Value,
                 //    //DriverName = Utilities.FormatFullName(x.DriverAssignment.FirstName, x.DriverAssignment.LastName),
-                //    //HasPhone = !x.DriverAssignment.Phone.IsNullOrEmpty(),
                 //    //DriverPreferredNotifyFormat = x.DriverAssignment.OrderNotifyPreferredFormat
                 //    TruckTimeOnJob = olt.TimeOnJob,
                 //}).ToList(),
@@ -320,6 +321,7 @@ namespace DispatcherWeb.Dispatching
                     DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
                     UserId = x.Driver.UserId,
                     DriverPhoneNumber = x.Driver.CellPhoneNumber,
+                    DriverEmailAddress = x.Driver.EmailAddress,
                     DriverPreferredNotifyFormat = x.Driver.OrderNotifyPreferredFormat,
                     TruckTimeOnJobUtc = x.TimeOnJob,
                     IsDone = x.IsDone,
@@ -437,12 +439,17 @@ namespace DispatcherWeb.Dispatching
             await SavePendingDispatches();
             await ReorderPendingDispatches();
 
-            await ProcessDeferredSmsMessages();
+            await ProcessDeferredSmsOrEmailMessages();
             await RunPendingCleanUpActions();
 
             if (_smsSenderBackgrounJobArgs?.SmsInputs?.Any() == true)
             {
                 await _backgroundJobManager.EnqueueAsync<SmsSenderBackgroundJob, SmsSenderBackgroundJobArgs>(_smsSenderBackgrounJobArgs);
+            }
+
+            if (_emailSenderBackgrounJobArgs?.EmailInputs?.Any() == true)
+            {
+                await _backgroundJobManager.EnqueueAsync<EmailSenderBackgroundJob, EmailSenderBackgroundJobArgs>(_emailSenderBackgrounJobArgs);
             }
         }
 
@@ -532,20 +539,20 @@ namespace DispatcherWeb.Dispatching
             await CurrentUnitOfWork.SaveChangesAsync();
         }
 
-        private async Task ProcessDeferredSmsMessages()
+        private async Task ProcessDeferredSmsOrEmailMessages()
         {
-            if (!_deferredSmsMessages.Any())
+            if (!_deferredSmsOrEmailMessages.Any())
             {
                 return;
             }
             await CurrentUnitOfWork.SaveChangesAsync();
-            foreach (var deferredSmsInput in _deferredSmsMessages)
+            foreach (var deferredSmsOrEmailInput in _deferredSmsOrEmailMessages)
             {
-                deferredSmsInput.DispatchId = deferredSmsInput.Dispatch.Id;
-                deferredSmsInput.NewActiveDispatch = GetFirstOpenDispatch(deferredSmsInput.DriverId);
+                deferredSmsOrEmailInput.DispatchId = deferredSmsOrEmailInput.Dispatch.Id;
+                deferredSmsOrEmailInput.NewActiveDispatch = GetFirstOpenDispatch(deferredSmsOrEmailInput.DriverId);
                 //deferredSmsInput.ActiveDispatchWasChanged = deferredSmsInput.OldActiveDispatch?.Id != deferredSmsInput.NewActiveDispatch?.Id;
                 //either use this (below) OR the background job that would call BatchSendSms
-                await SendSmsInternal(deferredSmsInput);
+                await SendSmsOrEmailInternal(deferredSmsOrEmailInput);
             }
             //await _backgroundJobManager.EnqueueAsync<BatchDispatchSmsSenderBackgroundJob, BatchDispatchSmsSenderBackgroundJobArgs>(new BatchDispatchSmsSenderBackgroundJobArgs
             //{
@@ -958,16 +965,17 @@ namespace DispatcherWeb.Dispatching
             {
                 var timeOnJobUtc = orderLineTruck?.TruckTimeOnJobUtc ?? orderLine.TimeOnJobUtc;
 
-                if (!orderLineTruck.HasPhone && (await SettingManager.SendSmsOnDispatching() != SendSmsOnDispatchingEnum.DontSend || !dispatchViaDriverApp))
+                if (!orderLineTruck.HasContactInfo 
+                    && (await SettingManager.SendSmsOnDispatching() != SendSmsOnDispatchingEnum.DontSend || !dispatchViaDriverApp))
                 {
-                    Logger.Warn($"The Driver with DriverId={orderLineTruck.DriverId} doesn't have a cell phone number.");
-                    if (!dispatchViaDriverApp || !orderLineTruck.DriverPreferredNotifyFormat.IsIn(OrderNotifyPreferredFormat.Neither, OrderNotifyPreferredFormat.Email))
+                    Logger.Warn($"The Driver with DriverId={orderLineTruck.DriverId} doesn't have a cell phone number or an email.");
+                    if (!dispatchViaDriverApp)
                     {
                         _pendingCleanupActions.Add(async () =>
                         {
                             await _appNotifier.SendMessageAsync(
                                 Session.ToUserIdentifier(),
-                                $"Driver {orderLineTruck.DriverName} doesn't have a valid SMS number.",
+                                $"Driver {orderLineTruck.DriverName} doesn't have a valid SMS number or Email Address.",
                                 NotificationSeverity.Error
                             );
                         });
@@ -1011,19 +1019,6 @@ namespace DispatcherWeb.Dispatching
                         MultipleLoads = input.IsMultipleLoads,
                         NumberOfDispatches = input.NumberOfDispatches
                     });
-                    if (dispatchMessage.Length > Dispatch.MaxMessageLength)
-                    {
-                        _pendingCleanupActions.Add(async () =>
-                        {
-                            await _appNotifier.SendMessageAsync(
-                                Session.ToUserIdentifier(),
-                                $"Message to '{orderLineTruck.DriverName}' in truck number '{orderLineTruck.TruckCode}' failed because it was too long. You should contact the driver.",
-                                NotificationSeverity.Error
-                            );
-                        });
-                        //result.Success = false;
-                        continue;
-                    }
 
                     var newDispatch = new DispatchEditDto
                     {
@@ -1032,6 +1027,7 @@ namespace DispatcherWeb.Dispatching
                         OrderLineId = orderLine.Id,
                         OrderLineTruckId = orderLineTruck.OrderLineTruckId,
                         PhoneNumber = orderLineTruck.DriverPhoneNumber,
+                        EmailAddress = orderLineTruck.DriverEmailAddress,
                         UserId = orderLineTruck.UserId,
                         OrderNotifyPreferredFormat = orderLineTruck.DriverPreferredNotifyFormat,
                         Message = dispatchMessage,
@@ -1075,12 +1071,13 @@ namespace DispatcherWeb.Dispatching
                     Dispatches = affectedDispatches
                 });
                 
-                DeferredSendSms(new DeferredSendSmsInput
+                DeferredSendSmsOrEmail(new DeferredSendSmsOrEmailInput
                 {
                     TruckId = orderLineTruck.TruckId,
                     DriverId = orderLineTruck.DriverId,
                     UserId = orderLineTruck.UserId,
                     PhoneNumber = orderLineTruck.DriverPhoneNumber,
+                    EmailAddress = orderLineTruck.DriverEmailAddress,
                     OrderNotifyPreferredFormat = orderLineTruck.DriverPreferredNotifyFormat,
                     SendOrdersToDriversImmediately = sendOrdersToDriversImmediately,
                     SkipIfDispatchesExist = skipSmsIfDispatchesExist,
@@ -1196,14 +1193,14 @@ namespace DispatcherWeb.Dispatching
         }
 
         [RemoteService(false)]
-        public async Task<SendSmsResult> SendSms(SendSmsInput input)
+        public async Task<SendSmsResult> SendSmsOrEmail(SendSmsOrEmailInput input)
         {
-            var result = await BatchSendSms(input);
+            var result = await BatchSendSmsOrEmail(input);
             return result[0];
         }
 
         [RemoteService(false)]
-        public async Task<SendSmsResult[]> BatchSendSms(params SendSmsInput[] inputs)
+        public async Task<SendSmsResult[]> BatchSendSmsOrEmail(params SendSmsOrEmailInput[] inputs)
         {
             var dispatchIds = inputs.Where(x => x.DispatchId.HasValue).Select(x => x.DispatchId.Value).Distinct().ToList();
             if (dispatchIds.Any())
@@ -1220,7 +1217,7 @@ namespace DispatcherWeb.Dispatching
 
             foreach (var input in inputs)
             {
-                result.Add(await SendSmsInternal(input));
+                result.Add(await SendSmsOrEmailInternal(input));
             }
 
             await CleanUp();
@@ -1228,12 +1225,12 @@ namespace DispatcherWeb.Dispatching
             return result.ToArray();
         }
 
-        private void DeferredSendSms(DeferredSendSmsInput input)
+        private void DeferredSendSmsOrEmail(DeferredSendSmsOrEmailInput input)
         {
-            _deferredSmsMessages.Add(input);
+            _deferredSmsOrEmailMessages.Add(input);
         }
 
-        private async Task<SendSmsResult> SendSmsInternal(SendSmsInput input)
+        private async Task<SendSmsResult> SendSmsOrEmailInternal(SendSmsOrEmailInput input)
         {
             if (/*input.SkipIfDispatchesExist && */!input.SendOrdersToDriversImmediately && await SettingManager.DispatchViaDriverApplication())
             {
@@ -1242,55 +1239,109 @@ namespace DispatcherWeb.Dispatching
                     || (sendSmsOnDispatching == SendSmsOnDispatchingEnum.SendWhenUserNotClockedIn
                         && input.UserId.HasValue && await IsUserClockedIn(input.UserId.Value)))
                 {
-                    Logger.Info($"Skipping sms to DriverId {input.DriverId} ({input.PhoneNumber}) because SendSmsOnDispatching is {sendSmsOnDispatching}");
+                    Logger.Info($"Skipping sms to DriverId {input.DriverId} ({input.PhoneNumber}/{input.EmailAddress}) because SendSmsOnDispatching is {sendSmsOnDispatching}");
                     return new SendSmsResultDispatchViaSmsIsFalse();
                 }
             }
 
             if (input.ActiveDispatchWasChanged == false && !input.SendOrdersToDriversImmediately && input.SkipIfDispatchesExist)
             {
-                Logger.Info($"Skipping sms to DriverId {input.DriverId} ({input.PhoneNumber}) because ActiveDispatchWasChanged=false, SendOrdersToDriversImmediately=false, SkipIfDispatchesExist=true");
+                Logger.Info($"Skipping sms to DriverId {input.DriverId} ({input.PhoneNumber}/{input.EmailAddress}) because ActiveDispatchWasChanged=false, SendOrdersToDriversImmediately=false, SkipIfDispatchesExist=true");
                 return new SendSmsResultDidntAffectActiveDispatch();
             }
 
             var dispatch = input.DispatchId.HasValue ? await GetDispatchFromCacheOrDb(input.DispatchId.Value) : await GetNextDispatchFromDb(input.TruckId, input.DriverId);
             if (dispatch == null)
             {
-                Logger.Info($"Skipping sms to DriverId {input.DriverId} ({input.PhoneNumber}) because no dispatch was found (using DispatchId '{input.DispatchId}')");
+                Logger.Info($"Skipping sms to DriverId {input.DriverId} ({input.PhoneNumber}/{input.EmailAddress}) because no dispatch was found (using DispatchId '{input.DispatchId}')");
                 return new SendSmsResultNoDispatch();
             }
 
             if (input.AfterCompleted && await DriverAlreadyAcknowledgedDispatchTodayFromCacheOrDb(input.TruckId, input.DriverId))
             {
-                Logger.Info($"Skipping sms to DriverId {input.DriverId} ({input.PhoneNumber}) because AfterCompleted=true and  DriverAlreadyAcknowledgedDispatchToday");
+                Logger.Info($"Skipping sms to DriverId {input.DriverId} ({input.PhoneNumber}/{input.EmailAddress}) because AfterCompleted=true and  DriverAlreadyAcknowledgedDispatchToday");
                 return new SendSmsResultNextDispatch(dispatch.Guid);
             }
 
-            if (input.OrderNotifyPreferredFormat.IsIn(OrderNotifyPreferredFormat.Neither, OrderNotifyPreferredFormat.Email))
-            {
-                return await LogErrorAndSetStatusAndReturnErrorResult("Preferred notify format is set to " + input.OrderNotifyPreferredFormat);
-                //return new SendSmsResultPreferredFormatIsNotSms();
-            }
-            if (input.PhoneNumber.IsNullOrEmpty())
-            {
-                return await LogErrorAndSetStatusAndReturnErrorResult("Driver doesn't have a valid SMS number.");
-            }
+            var messageSendingErrors = new List<string>();
 
-            _smsSenderBackgrounJobArgs ??= new SmsSenderBackgroundJobArgs
+            if (input.OrderNotifyPreferredFormat.IsIn(OrderNotifyPreferredFormat.Neither))
             {
-                RequestorUser = Session.ToUserIdentifier(),
-                SmsInputs = new List<SmsSenderBackgroundJobArgsSms>()
-            };
-            _smsSenderBackgrounJobArgs.SmsInputs.Add(new SmsSenderBackgroundJobArgsSms
+                messageSendingErrors.Add("Preferred notify format is set to " + input.OrderNotifyPreferredFormat);
+            }
+            else
             {
-                DispatchId = dispatch.Id,
-                Text = dispatch.Message,
-                ToPhoneNumber = input.PhoneNumber,
-                TrackStatus = false,
-                UseTenantPhoneNumberOnly = false
-            });
+                if (input.OrderNotifyPreferredFormat.HasFlag(OrderNotifyPreferredFormat.Sms))
+                {
+                    if (input.PhoneNumber.IsNullOrEmpty())
+                    {
+                        messageSendingErrors.Add("Driver doesn't have a valid SMS number.");
+                    }
+                    else
+                    {
+                        _smsSenderBackgrounJobArgs ??= new SmsSenderBackgroundJobArgs
+                        {
+                            RequestorUser = Session.ToUserIdentifier(),
+                            SmsInputs = new List<SmsSenderBackgroundJobArgsSms>()
+                        };
+                        _smsSenderBackgrounJobArgs.SmsInputs.Add(new SmsSenderBackgroundJobArgsSms
+                        {
+                            DispatchId = dispatch.Id,
+                            CancelDispatchOnError = false, //was !await SettingManager.DispatchViaDriverApplication()
+                            Text = dispatch.Message?.TruncateWithPostfix(EntityStringFieldLengths.Dispatch.SmsMessageLimit),
+                            ToPhoneNumber = input.PhoneNumber,
+                            TrackStatus = false,
+                            UseTenantPhoneNumberOnly = false
+                        });
+                        Logger.Info($"Scheduled SMS sending for dispatchId {dispatch.Id}, driverId {input.DriverId}, phone {input.PhoneNumber}");
+                    }
+                }
+                if (input.OrderNotifyPreferredFormat.HasFlag(OrderNotifyPreferredFormat.Email))
+                {
+                    if (input.EmailAddress.IsNullOrEmpty())
+                    {
+                        messageSendingErrors.Add("Driver doesn't have a valid Email address.");
+                    }
+                    else
+                    {
+                        _emailSenderBackgrounJobArgs ??= new EmailSenderBackgroundJobArgs
+                        {
+                            RequestorUser = Session.ToUserIdentifier(),
+                            EmailInputs = new List<EmailSenderBackgroundJobArgsEmail>()
+                        };
+                        _emailSenderBackgrounJobArgs.EmailInputs.Add(new EmailSenderBackgroundJobArgsEmail
+                        {
+                            DispatchId = dispatch.Id,
+                            CancelDispatchOnError = false,
+                            Text = dispatch.Message,
+                            ToEmailAddress = input.EmailAddress,
+                        });
+                        Logger.Info($"Scheduled Email sending for dispatchId {dispatch.Id}, driverId {input.DriverId}, email {input.EmailAddress}");
+                    }
+                }
+            }
+            
             _sentDisaptchIds.Add(dispatch.Id);
-            Logger.Info($"Scheduled SMS sending for dispatchId {dispatch.Id}, driverId {input.DriverId}, phone {input.PhoneNumber}");
+            if (messageSendingErrors.Any())
+            {
+                string driverName = await GetDriverNameFromCacheOrDb(input.DriverId);
+                var messageSendingErrorsFormatted = string.Join(" \r\n", messageSendingErrors);
+                Logger.Error($"There was an error while sending the sms/email to DriverId: {input.DriverId}, TruckId: {input.TruckId}. {messageSendingErrorsFormatted}");
+                string detailedErrorMessage = $"Unable to send the dispatch for {driverName} with phone number '{input.PhoneNumber}' and email address '{input.EmailAddress}'. {messageSendingErrorsFormatted}";
+                if (!await SettingManager.DispatchViaDriverApplication())
+                {
+                    //dispatch.Status = DispatchStatus.Error;
+                    _pendingCleanupActions.Add(async () =>
+                    {
+                        await _appNotifier.SendMessageAsync(
+                            Session.ToUserIdentifier(),
+                            detailedErrorMessage,
+                            NotificationSeverity.Error
+                        );
+                    });
+                }
+                //return new SendSmsResultError(detailedErrorMessage);
+            }
 
             if (input.SendOrdersToDriversImmediately)
             {
@@ -1302,27 +1353,6 @@ namespace DispatcherWeb.Dispatching
                 ChangeDispatchStatusToSent(dispatch);
             }
             return new SendSmsResultSuccess();
-
-            // Local functions
-            async Task<SendSmsResultError> LogErrorAndSetStatusAndReturnErrorResult(string errorMessage)
-            {
-                string driverName = await GetDriverNameFromCacheOrDb(input.DriverId);
-                Logger.Error($"There was an error while sending the sms to DriverId: {input.DriverId}, TruckId: {input.TruckId}");
-                string detailedErrorMessage = $"Unable to send the dispatch for {driverName} with phone number {input.PhoneNumber}. {errorMessage}";
-                if (!await SettingManager.DispatchViaDriverApplication())
-                {
-                    dispatch.Status = DispatchStatus.Error;
-                    _pendingCleanupActions.Add(async () =>
-                    {
-                        await _appNotifier.SendMessageAsync(
-                            Session.ToUserIdentifier(),
-                            detailedErrorMessage,
-                            NotificationSeverity.Error
-                        );
-                    });
-                }
-                return new SendSmsResultError(detailedErrorMessage);
-            }
         }
 
         //this implementation is different from DispatchingAppService.ChangeDispatchStatusToCompleted, this one is not expected to be an entry point, only to be called in response to sending an sms
@@ -1390,12 +1420,13 @@ namespace DispatcherWeb.Dispatching
             {
                 var newActiveDispatch = GetFirstOpenDispatch(dispatch.DriverId);
 
-                await SendSmsInternal(new SendSmsInput
+                await SendSmsOrEmailInternal(new SendSmsOrEmailInput
                 {
                     TruckId = dispatch.TruckId,
                     DriverId = dispatch.DriverId,
                     DispatchId = newActiveDispatch?.Id,
                     PhoneNumber = dispatch.PhoneNumber,
+                    EmailAddress = dispatch.EmailAddress,
                     OrderNotifyPreferredFormat = dispatch.OrderNotifyPreferredFormat,
                     SendOrdersToDriversImmediately = await ShouldSendOrdersToDriversImmediately(),
                     AfterCompleted = true,
@@ -1487,9 +1518,10 @@ namespace DispatcherWeb.Dispatching
                 OrderLineId = dispatchDto.OrderLineId,
                 OrderLineTruckId = dispatchDto.OrderLineTruckId,
                 PhoneNumber = dispatchDto.PhoneNumber,
+                EmailAddress = dispatchDto.EmailAddress,
                 UserId = dispatchDto.UserId,
                 OrderNotifyPreferredFormat = dispatchDto.OrderNotifyPreferredFormat,
-                Message = dispatchDto.Message,
+                Message = dispatchDto.Message?.TruncateWithPostfix(EntityStringFieldLengths.Dispatch.Message),
                 Note = dispatchDto.Note,
                 IsMultipleLoads = dispatchDto.IsMultipleLoads,
                 WasMultipleLoads = dispatchDto.IsMultipleLoads,

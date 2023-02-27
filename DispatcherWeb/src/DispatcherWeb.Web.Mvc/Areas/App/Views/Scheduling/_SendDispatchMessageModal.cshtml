@@ -39,7 +39,7 @@
                 {
                     <option value="@orderLineTruck.Value"
                         selected=@(orderLineTruck.Selected ? "selected" : null)
-                        data-hasphone="@orderLineTruck.HasPhone.ToLowerCaseString()">
+                        data-hascontactinfo="@orderLineTruck.HasContactInfo.ToLowerCaseString()">
                         @orderLineTruck.Text
                     </option>
                 }
