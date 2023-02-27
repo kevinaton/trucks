@@ -45,9 +45,7 @@
             abp.services.app.service.getServicePricing({
                 serviceId: _serviceDropdown.val(),
                 materialUomId: _materialUomDropdown.val(),
-                freightUomId: _freightUomDropdown.val(),
-                loadAtId: _loadAtDropdown.val(),
-                deliverToId: _deliverToDropdown.val()
+                freightUomId: _freightUomDropdown.val()
             }).done(function (pricing) {
                 _pricing = pricing;
                 refreshHighlighting();
@@ -58,14 +56,10 @@
 
         function refreshHighlighting() {
             if (_pricing && _pricing.quoteBasedPricing) {
-                _loadAtDropdown.addClass("quote-based-pricing");
-                _deliverToDropdown.addClass("quote-based-pricing");
                 _serviceDropdown.addClass("quote-based-pricing");
                 _materialUomDropdown.addClass("quote-based-pricing");
                 _freightUomDropdown.addClass("quote-based-pricing");
             } else {
-                _loadAtDropdown.removeClass("quote-based-pricing");
-                _deliverToDropdown.removeClass("quote-based-pricing");
                 _serviceDropdown.removeClass("quote-based-pricing");
                 _materialUomDropdown.removeClass("quote-based-pricing");
                 _freightUomDropdown.removeClass("quote-based-pricing");
@@ -164,7 +158,7 @@
                 }
             } else {
                 //no freight pricing
-                if (!getIsFreightRateOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
+                if (!getIsFreightRateOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown))) {
                     _freightRateInput.val('');
                 }
             }
@@ -176,7 +170,7 @@
                 }
             } else {
                 //no material pricing
-                if (!getIsMaterialRateOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
+                if (!getIsMaterialRateOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown))) {
                     _materialRateInput.val('');
                 }
             }
@@ -346,12 +340,6 @@
             reloadPricing();
             refreshHighlighting();
 
-            _loadAtDropdown.add(_deliverToDropdown).change(function () {
-                var sender = $(this);
-                reloadPricing(function () {
-                    recalculate(sender);
-                });
-            });
             _serviceDropdown.change(function () {
                 var sender = $(this);
                 reloadPricing(function () {

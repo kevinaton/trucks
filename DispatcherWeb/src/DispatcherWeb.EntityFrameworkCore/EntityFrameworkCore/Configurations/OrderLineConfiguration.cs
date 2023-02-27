@@ -70,6 +70,12 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .WithOne(e => e.OrderLine)
                 .HasForeignKey(e => e.OrderLineId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .HasOne(e => e.QuoteService)
+                .WithMany(e => e.OrderLines)
+                .HasForeignKey(e => e.QuoteServiceId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Dispatching;
-using DispatcherWeb.Orders.TaxDetails;
-using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
-using DispatcherWeb.UnitsOfMeasure;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Quotes;
+using DispatcherWeb.Services;
+using DispatcherWeb.UnitsOfMeasure;
 
 namespace DispatcherWeb.Orders
 {
@@ -140,6 +140,10 @@ namespace DispatcherWeb.Orders
         /// HaulingCompany's tenant id. Only set for MaterialCompany order lines when a copy of this order line exists on another HaulingCompany tenant.
         /// </summary>
         public int? HaulingCompanyTenantId { get; set; }
+
+        public int? QuoteServiceId { get; set; }
+
+        public virtual QuoteService QuoteService { get; set; }
 
         public virtual Order Order { get; set; }
 

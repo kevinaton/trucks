@@ -1,12 +1,13 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
-using DispatcherWeb.UnitsOfMeasure;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Orders;
+using DispatcherWeb.Services;
+using DispatcherWeb.UnitsOfMeasure;
 
 namespace DispatcherWeb.Quotes
 {
@@ -47,6 +48,8 @@ namespace DispatcherWeb.Quotes
 
         [StringLength(EntityStringFieldLengths.OrderLine.Note)]
         public string Note { get; set; }
+
+        public virtual ICollection<OrderLine> OrderLines { get; set; }
 
         public virtual UnitOfMeasure MaterialUom { get; set; }
 

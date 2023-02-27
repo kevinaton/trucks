@@ -105,5 +105,6 @@ namespace DispatcherWeb.Orders.Dto
         public DateTime? FirstStaggeredTimeOnJob { get; set; }
         public int? StaggeredTimeInterval { get; set; }
         public bool UpdateStaggeredTime { get; set; }
+        public int? QuoteServiceId { get; set; }
     }
 }
