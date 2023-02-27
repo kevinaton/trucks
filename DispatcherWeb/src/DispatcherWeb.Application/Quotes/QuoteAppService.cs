@@ -1115,14 +1115,22 @@ namespace DispatcherWeb.Quotes
         [AbpAuthorize(AppPermissions.Pages_Quotes_Edit)]
         public async Task DeleteQuoteServices(IdListInput input)
         {
-            var quoteServices = await _quoteServiceRepository.GetAll().AsNoTracking().Where(x => input.Ids.Contains(x.Id)).ToListAsync();
+            if (await _quoteServiceRepository.GetAll()
+                    .AnyAsync(x => input.Ids.Contains(x.Id) && x.OrderLines.Any()))
+            {
+                throw new UserFriendlyException(L("UnableToDeleteQuoteServiceWithAssociatedData"));
+            }
+
+            var quoteServices = await _quoteServiceRepository.GetAll()
+                .Where(x => input.Ids.Contains(x.Id))
+                .ToListAsync();
 
             foreach (var quoteService in quoteServices)
             {
-                var fieldDiffs = await UpdateValuesAndGetDiff(quoteService, new QuoteServiceEditDto());
+                var fieldDiffs = await UpdateValuesAndGetDiff(quoteService.Clone(), new QuoteServiceEditDto());
                 await UpdateDiffDisplayValues(quoteService.Id, false, fieldDiffs);
                 await InsertQuoteHistory(fieldDiffs, QuoteChangeType.LineItemDeleted, quoteService.QuoteId);
-                await _quoteServiceRepository.DeleteAsync(quoteService.Id);
+                await _quoteServiceRepository.DeleteAsync(quoteService);
             }
         }
 

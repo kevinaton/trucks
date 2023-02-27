@@ -1309,6 +1309,7 @@ namespace DispatcherWeb.Orders
                         .Select(x => new OrderLine
                         {
                             LineNumber = copySingleOrderLine ? 1 : x.LineNumber,
+                            QuoteServiceId = x.QuoteServiceId,
                             MaterialQuantity = x.MaterialQuantity,
                             FreightQuantity = x.FreightQuantity,
                             NumberOfTrucks = x.NumberOfTrucks,
@@ -1731,6 +1732,7 @@ namespace DispatcherWeb.Orders
                     {
                         Id = x.Id,
                         LineNumber = x.LineNumber,
+                        QuoteServiceId = x.QuoteServiceId,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
                         //Tickets = x.Tickets.Select(t => new TicketDto 
@@ -1820,6 +1822,7 @@ namespace DispatcherWeb.Orders
                     .Select(x => new OrderLineEditDto
                     {
                         Id = x.Id,
+                        QuoteServiceId = x.Id,
                         LoadAtId = x.LoadAtId,
                         LoadAt = x.LoadAt == null ? null : new LocationNameDto
                         {
@@ -1897,6 +1900,7 @@ namespace DispatcherWeb.Orders
                         Id = x.Id,
                         OrderId = x.OrderId,
                         QuoteId = x.Order.QuoteId,
+                        QuoteServiceId = x.QuoteServiceId,
                         LineNumber = x.LineNumber,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
@@ -2106,6 +2110,7 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.MaterialQuantity, model.MaterialQuantity);
             await orderLineUpdater.UpdateFieldAsync(o => o.FreightQuantity, model.FreightQuantity);
             await orderLineUpdater.UpdateFieldAsync(o => o.LineNumber, model.LineNumber);
+            await orderLineUpdater.UpdateFieldAsync(o => o.QuoteServiceId, model.QuoteServiceId);
             await orderLineUpdater.UpdateFieldAsync(o => o.MaterialPricePerUnit, model.MaterialPricePerUnit);
             await orderLineUpdater.UpdateFieldAsync(o => o.FreightPricePerUnit, model.FreightPricePerUnit);
             await orderLineUpdater.UpdateFieldAsync(o => o.IsMaterialPricePerUnitOverridden, model.IsMaterialPricePerUnitOverridden);

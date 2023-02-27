@@ -1475,8 +1475,7 @@ namespace DispatcherWeb.Tickets
                             ServiceId = orderLine.ServiceId,
                             MaterialUomId = orderLine.MaterialUomId,
                             FreightUomId = orderLine.FreightUomId,
-                            LoadAtId = orderLine.LoadAtId,
-                            QuoteId = orderLine.Order.QuoteId
+                            QuoteServiceId = orderLine.QuoteServiceId
                         });
                         if (!(orderLine.MaterialPricePerUnit > 0) && orderLineModel.MaterialRate > 0
                             && orderLine.Designation.FreightOnly())

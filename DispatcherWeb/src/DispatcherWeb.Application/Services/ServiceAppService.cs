@@ -177,33 +177,25 @@ namespace DispatcherWeb.Services
                     FreightRate = serviceMatchingBoth?.FreightRate ?? serviceMatchingFreight?.FreightRate,
                 } : new ServicePricingDto();
 
-            if (input.QuoteId.HasValue)
+            if (input.QuoteServiceId.HasValue)
             {
-                var quotePrices = await _quoteServiceRepository.GetAll()
-                    .Where(x => x.QuoteId == input.QuoteId
-                                && x.ServiceId == input.ServiceId
-                                && (x.MaterialUomId == input.MaterialUomId || x.FreightUomId == input.FreightUomId)
-                                && x.LoadAtId == input.LoadAtId
-                                && x.DeliverToId == input.DeliverToId)
+                var quotePricing = await _quoteServiceRepository.GetAll()
+                    .Where(x => x.Id == input.QuoteServiceId)
                     .Select(x => new
                     {
                         x.PricePerUnit,
                         x.FreightRate,
                         x.MaterialUomId,
-                        x.FreightUomId 
+                        x.FreightUomId
                     })
-                    .ToListAsync();
+                    .FirstOrDefaultAsync();
 
-                var quoteMatchingBoth = quotePrices.FirstOrDefault(x => x.MaterialUomId == input.MaterialUomId && x.FreightUomId == input.FreightUomId);
-                var quoteMatchingMaterial = quotePrices.FirstOrDefault(x => x.MaterialUomId == input.MaterialUomId);
-                var quoteMatchingFreight = quotePrices.FirstOrDefault(x => x.FreightUomId == input.FreightUomId);
-
-                if (servicePricing != null && quotePrices.Any())
+                if (quotePricing != null)
                 {
                     servicePricing.QuoteBasedPricing = new QuoteServicePricingDto
                     {
-                        PricePerUnit = quoteMatchingBoth?.PricePerUnit ?? quoteMatchingMaterial?.PricePerUnit,
-                        FreightRate = quoteMatchingBoth?.FreightRate ?? quoteMatchingFreight?.FreightRate
+                        PricePerUnit = quotePricing.PricePerUnit,
+                        FreightRate = quotePricing.FreightRate
                     };
                 }
             }
