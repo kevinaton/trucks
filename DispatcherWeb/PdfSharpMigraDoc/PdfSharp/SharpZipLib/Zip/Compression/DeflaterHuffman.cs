@@ -76,23 +76,23 @@ namespace PdfSharp.SharpZipLib.Zip.Compression
         static readonly int[] BL_ORDER = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 
         static readonly byte[] bit4Reverse = {
-			0,
-			8,
-			4,
-			12,
-			2,
-			10,
-			6,
-			14,
-			1,
-			9,
-			5,
-			13,
-			3,
-			11,
-			7,
-			15
-		};
+            0,
+            8,
+            4,
+            12,
+            2,
+            10,
+            6,
+            14,
+            1,
+            9,
+            5,
+            13,
+            3,
+            11,
+            7,
+            15
+        };
 
         static short[] staticLCodes;
         static byte[] staticLLength;

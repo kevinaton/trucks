@@ -58,7 +58,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 return string.Format("{0}?{1}", _authorizeEndpoint.OriginalString, qs);
             }
 
-           
+
         }
     }
 }

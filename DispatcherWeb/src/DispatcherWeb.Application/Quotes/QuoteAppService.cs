@@ -606,7 +606,7 @@ namespace DispatcherWeb.Quotes
 
         private async Task UpdateDiffDisplayValues(int recordId, bool updateNewValues, List<QuoteFieldDiff> diffs)
         {
-            diffs.RemoveAll(x => (x.OldDisplayValue != null || x.NewDisplayValue != null) 
+            diffs.RemoveAll(x => (x.OldDisplayValue != null || x.NewDisplayValue != null)
                             && ((x.OldDisplayValue ?? string.Empty) == (x.NewDisplayValue ?? string.Empty)));
 
             var quoteFieldsWithDisplayValue = new[]
@@ -764,9 +764,9 @@ namespace DispatcherWeb.Quotes
         }
 
         [AbpAuthorize(
-            AppPermissions.Pages_Quotes_Edit, 
-            AppPermissions.Pages_Orders_Edit, 
-            AppPermissions.Pages_Projects, 
+            AppPermissions.Pages_Quotes_Edit,
+            AppPermissions.Pages_Orders_Edit,
+            AppPermissions.Pages_Projects,
             RequireAllPermissions = true
         )]
         public async Task<int> CreateQuoteFromOrder(CreateQuoteFromOrderInput input)
@@ -900,7 +900,7 @@ namespace DispatcherWeb.Quotes
             {
                 return false;
             }
-            
+
             return true;
         }
 
@@ -1095,7 +1095,7 @@ namespace DispatcherWeb.Quotes
             {
                 quoteService.QuoteId = model.QuoteId;
             }
-            
+
             var fieldDiffs = await UpdateValuesAndGetDiff(quoteService, model);
 
             await UpdateDiffDisplayValues(quoteService.Id, false, fieldDiffs);
@@ -1364,13 +1364,13 @@ namespace DispatcherWeb.Quotes
         private async Task<string> GetLogoBase64String()
         {
             var tenant = await TenantManager.GetByIdAsync(AbpSession.GetTenantId());
-            if(tenant.ReportsLogoId == null || tenant.ReportsLogoFileType == null)
+            if (tenant.ReportsLogoId == null || tenant.ReportsLogoFileType == null)
             {
                 return null;
             }
 
             var logoObject = await _binaryObjectManager.GetOrNullAsync(tenant.ReportsLogoId.Value);
-            if(logoObject == null)
+            if (logoObject == null)
             {
                 return null;
             }
@@ -1384,7 +1384,7 @@ namespace DispatcherWeb.Quotes
             {
                 return null;
             }
-            
+
             var tempFilePath = Path.Combine(_appFolders.TempFileDownloadFolder, signatureFile.Id.ToString());
             try
             {

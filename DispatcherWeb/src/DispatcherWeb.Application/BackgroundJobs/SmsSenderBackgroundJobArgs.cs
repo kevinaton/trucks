@@ -6,7 +6,7 @@ namespace DispatcherWeb.BackgroundJobs
     public class SmsSenderBackgroundJobArgs
     {
         public UserIdentifier RequestorUser { get; set; }
-        public List<SmsSenderBackgroundJobArgsSms> SmsInputs { get; set; } 
+        public List<SmsSenderBackgroundJobArgsSms> SmsInputs { get; set; }
     }
 
     public class SmsSenderBackgroundJobArgsSms

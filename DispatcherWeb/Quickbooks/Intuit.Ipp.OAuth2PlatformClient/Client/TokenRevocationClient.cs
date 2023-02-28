@@ -2,16 +2,16 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 // Modified for Intuit's Oauth2 implementation
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text;
-using System.Linq;
+using Newtonsoft.Json;
 using NotQuiteSystem.Net.Http;
 
 namespace Intuit.Ipp.OAuth2PlatformClient
@@ -138,11 +138,11 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 var response = await Client.PostAsync("", msgRequest.Content).ConfigureAwait(false);
                 HttpResponseHeaders headers = response.Headers;
 
-              
+
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     string intuit_tid;
-                      IEnumerable<string> values;
+                    IEnumerable<string> values;
                     if (headers.TryGetValues("intuit_tid", out values))
                     {
                         intuit_tid = values.First();

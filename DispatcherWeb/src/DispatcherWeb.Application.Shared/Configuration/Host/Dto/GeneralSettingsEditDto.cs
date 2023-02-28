@@ -17,7 +17,7 @@ namespace DispatcherWeb.Configuration.Host.Dto
         public string OrderEmailBodyTemplate { get; set; }
 
         public string OrderEmailSubjectTemplate { get; set; }
-        
+
         public string ReceiptEmailBodyTemplate { get; set; }
 
         public string ReceiptEmailSubjectTemplate { get; set; }

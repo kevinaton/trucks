@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Abp.Auditing;
+﻿using Abp.Auditing;
 using Abp.EntityFrameworkCore;
 using Castle.Core.Logging;
 using DispatcherWeb.Auditing;
@@ -11,7 +8,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Repositories
 {
     public class AuditLogRepository : DispatcherWebRepositoryBase<AuditLog, long>, IAuditLogRepository
     {
-        public AuditLogRepository(IDbContextProvider<DispatcherWebDbContext> dbContextProvider, ILogger logger) 
+        public AuditLogRepository(IDbContextProvider<DispatcherWebDbContext> dbContextProvider, ILogger logger)
             : base(dbContextProvider)
         {
             Logger = logger;

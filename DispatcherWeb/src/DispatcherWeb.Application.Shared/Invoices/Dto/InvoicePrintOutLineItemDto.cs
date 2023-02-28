@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DispatcherWeb.Invoices.Dto
 {
@@ -16,7 +14,7 @@ namespace DispatcherWeb.Invoices.Dto
         public decimal Subtotal { get; set; }
         public decimal ExtendedAmount { get; set; }
         public decimal MaterialExtendedAmount { get; set; }
-        public decimal FreightExtendedAmount { get; set; }        
+        public decimal FreightExtendedAmount { get; set; }
         public decimal Tax { get; set; }
         public string ItemName { get; set; }
         public decimal Quantity { get; set; }

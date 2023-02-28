@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
 namespace DispatcherWeb.QuickbooksDesktop.Models
 {
@@ -42,14 +40,14 @@ namespace DispatcherWeb.QuickbooksDesktop.Models
 
         public override StringBuilder AppendRow(StringBuilder s)
         {
-            return AppendTabSeparatedLine(s, new[] 
-            { 
-                RowType, 
-                Name, 
-                AccountType, 
-                Description, 
-                AccountNumber, 
-                Extra 
+            return AppendTabSeparatedLine(s, new[]
+            {
+                RowType,
+                Name,
+                AccountType,
+                Description,
+                AccountNumber,
+                Extra
             });
         }
 

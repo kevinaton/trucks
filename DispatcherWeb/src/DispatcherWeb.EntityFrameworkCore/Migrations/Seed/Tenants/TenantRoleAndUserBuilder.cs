@@ -1,18 +1,15 @@
 ﻿using System.Linq;
-using Abp;
 using Abp.Authorization;
 using Abp.Authorization.Roles;
 using Abp.Authorization.Users;
 using Abp.MultiTenancy;
-using Abp.Notifications;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.EntityFrameworkCore;
-using DispatcherWeb.Notifications;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace DispatcherWeb.Migrations.Seed.Tenants
 {
@@ -37,7 +34,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //Admin role
 
             var adminRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Admin);
-            if(adminRole == null)
+            if (adminRole == null)
             {
                 adminRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Admin, StaticRoleNames.Tenants.Admin) { IsStatic = true }).Entity;
                 _context.SaveChanges();
@@ -49,7 +46,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
                     .Where(p => !AppPermissions.ManualPermissionsList.Contains(p.Name))
                     .ToList();
 
-                foreach(var permission in permissions)
+                foreach (var permission in permissions)
                 {
                     GrantPermission(adminRole.Id, permission.Name);
                 }
@@ -87,7 +84,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //Dispatching role
 
             var dispatchingRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Dispatching);
-            if(dispatchingRole == null)
+            if (dispatchingRole == null)
             {
                 dispatchingRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Dispatching, StaticRoleNames.Tenants.Dispatching) { IsStatic = true }).Entity;
                 _context.SaveChanges();
@@ -116,7 +113,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //LimitedQuoting role
 
             var limitedQuotingRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.LimitedQuoting);
-            if(limitedQuotingRole == null)
+            if (limitedQuotingRole == null)
             {
                 limitedQuotingRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.LimitedQuoting, StaticRoleNames.Tenants.LimitedQuoting) { IsStatic = true }).Entity;
                 _context.SaveChanges();
@@ -132,7 +129,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //Quoting role
 
             var quotingRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Quoting);
-            if(quotingRole == null)
+            if (quotingRole == null)
             {
                 quotingRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Quoting, StaticRoleNames.Tenants.Quoting) { IsStatic = true }).Entity;
                 _context.SaveChanges();
@@ -151,7 +148,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //Backoffice role
 
             var backofficeRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Backoffice);
-            if(backofficeRole == null)
+            if (backofficeRole == null)
             {
                 backofficeRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Backoffice, StaticRoleNames.Tenants.Backoffice) { IsStatic = true }).Entity;
                 _context.SaveChanges();
@@ -174,12 +171,12 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //Driver role
 
             var driverRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Driver);
-            if(driverRole == null)
+            if (driverRole == null)
             {
                 driverRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Driver, StaticRoleNames.Tenants.Driver) { IsStatic = true }).Entity;
                 _context.SaveChanges();
 
-                GrantPermission(driverRole.Id, new []
+                GrantPermission(driverRole.Id, new[]
                     {
                         AppPermissions.Pages_DriverApplication,
                     }
@@ -206,7 +203,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //Maintenance role
 
             var maintenanceRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Maintenance);
-            if(maintenanceRole == null)
+            if (maintenanceRole == null)
             {
                 maintenanceRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Maintenance, StaticRoleNames.Tenants.Maintenance) { IsStatic = true }).Entity;
                 _context.SaveChanges();
@@ -224,7 +221,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //MaintenanceSupervisor role
 
             var maintenanceSupervisorRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.MaintenanceSupervisor);
-            if(maintenanceSupervisorRole == null)
+            if (maintenanceSupervisorRole == null)
             {
                 maintenanceSupervisorRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.MaintenanceSupervisor, StaticRoleNames.Tenants.MaintenanceSupervisor) { IsStatic = true }).Entity;
                 _context.SaveChanges();
@@ -247,12 +244,12 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //Administrative role
 
             var administrativeRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Administrative);
-            if(administrativeRole == null)
+            if (administrativeRole == null)
             {
                 administrativeRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Administrative, StaticRoleNames.Tenants.Administrative) { IsStatic = true }).Entity;
                 _context.SaveChanges();
 
-                
+
                 GrantPermission(administrativeRole.Id, DefaultRolePermissions.GetRolePermissions(StaticRoleNames.Tenants.Administrative).ToArray());
                 _context.SaveChanges();
             }
@@ -260,7 +257,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             //Managers role
 
             var managersRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Managers);
-            if(managersRole == null)
+            if (managersRole == null)
             {
                 managersRole = _context.Roles.Add(new Role(_tenantId, StaticRoleNames.Tenants.Managers, StaticRoleNames.Tenants.Managers) { IsStatic = true }).Entity;
                 _context.SaveChanges();
@@ -394,7 +391,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             var existingPermissions = _context.Permissions.IgnoreQueryFilters().OfType<RolePermissionSetting>()
                 .Where(x => permissionNames.Contains(x.Name) && x.RoleId == roleId)
                 .Select(x => x.Name).ToList();
-            foreach(var permissionName in permissionNames.Except(existingPermissions).ToList())
+            foreach (var permissionName in permissionNames.Except(existingPermissions).ToList())
             {
                 GrantPermission(roleId, permissionName);
             }
@@ -402,7 +399,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
 
         private void GrantPermissionIfMissing(int roleId, string permissionName)
         {
-            if(!_context.Permissions.OfType<RolePermissionSetting>().Any(x => x.Name == permissionName && x.RoleId == roleId))
+            if (!_context.Permissions.OfType<RolePermissionSetting>().Any(x => x.Name == permissionName && x.RoleId == roleId))
             {
                 GrantPermission(roleId, permissionName);
             }
@@ -410,7 +407,7 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
 
         private void GrantPermission(int roleId, string[] permissionNames)
         {
-            foreach(var permissionName in permissionNames)
+            foreach (var permissionName in permissionNames)
             {
                 GrantPermission(roleId, permissionName);
             }

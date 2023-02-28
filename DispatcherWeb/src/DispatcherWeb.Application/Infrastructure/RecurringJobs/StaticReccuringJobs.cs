@@ -35,14 +35,14 @@ namespace DispatcherWeb.Infrastructure.RecurringJobs
                 JobIds.RemoveOldDriverAppLogs,
                 x => x.RemoveOldDriverApplicationLogs(),
                 string.Format(EveryDay, "0", "6") //6:00 AM UTC, 2AM EST
-                //string.Format(EveryDay, "*/5", "*") //debug, every 5 minutes
+                                                  //string.Format(EveryDay, "*/5", "*") //debug, every 5 minutes
             );
 
             RecurringJob.AddOrUpdate<IAuditLogAppService>(
                 JobIds.RemoveOldAuditLogs,
                 x => x.RemoveOldAuditLogs(),
                 string.Format(EveryDay, "0", "7") //7:00 AM UTC, 3AM EST
-                //string.Format(EveryDay, "*/5", "*") //debug, every 5 minutes
+                                                  //string.Format(EveryDay, "*/5", "*") //debug, every 5 minutes
             );
 
             //commented out since this should only run on qa4, not on prod

@@ -20,7 +20,6 @@
 namespace Intuit.Ipp.Utility
 {
     using System;
-    using Intuit.Ipp.Utility.Properties;
 
     /// <summary>   
     /// Helper functions for date-related problems.

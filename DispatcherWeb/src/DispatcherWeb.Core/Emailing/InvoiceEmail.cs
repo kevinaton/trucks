@@ -1,8 +1,6 @@
-﻿using Abp.Domain.Entities;
+﻿using System;
+using Abp.Domain.Entities;
 using DispatcherWeb.Invoices;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DispatcherWeb.Emailing
 {

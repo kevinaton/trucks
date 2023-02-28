@@ -21,20 +21,15 @@ namespace Intuit.Ipp.ReportService
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Globalization;
-    using System.Linq;
     using System.Net;
-    using System.Reflection;
+    using System.Text;
     using Intuit.Ipp.Core;
     using Intuit.Ipp.Core.Rest;
     using Intuit.Ipp.Data;
-    using Intuit.Ipp.ReportService.Properties;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
-    using Intuit.Ipp.Utility;
-    using System.Text;
-    using System.IO;
+    using Intuit.Ipp.ReportService.Properties;
 
     /// <summary>
     /// This class file contains ReportService which performs Read operation for Reports
@@ -86,7 +81,7 @@ namespace Intuit.Ipp.ReportService
         /// <returns>Returns an updated version of the entity with updated identifier and sync token.</returns>
         public Report ExecuteReport(string reportName)
         {
-           
+
             this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method ExecuteReport.");
 
             // Validate parameter
@@ -105,7 +100,7 @@ namespace Intuit.Ipp.ReportService
             string uri = "";
             string reportsQueryParameters = GetReportQueryParameters();
             if (reportsQueryParameters.Length > 0)
-            { 
+            {
                 uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/reports/{2}?{3}", Utility.CoreConstants.VERSION, this.serviceContext.RealmId, resourceString, reportsQueryParameters);
             }
             else
@@ -319,7 +314,7 @@ namespace Intuit.Ipp.ReportService
             this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method ExecuteReport Async.");
             this.OnExecuteReportAsyncCompleted(sender, eventArgs);
         }
-        
+
         #endregion
 
         #region properties
@@ -327,62 +322,62 @@ namespace Intuit.Ipp.ReportService
         /// <summary>
         /// Gets or sets the StartDate
         /// </summary>
-        public string start_date {get; set;}
+        public string start_date { get; set; }
 
         /// <summary>
         /// Gets or sets the end_date
         /// </summary>
-        public string end_date  {get; set;}
+        public string end_date { get; set; }
 
         /// <summary>
         /// Gets or sets the date_macro
         /// </summary>
-        public string date_macro {get; set;}
+        public string date_macro { get; set; }
 
         /// <summary>
         /// Gets or sets the accounting_method
         /// </summary>
-        public string accounting_method  {get; set;}
+        public string accounting_method { get; set; }
 
         /// <summary>
         /// Gets or sets the summarize_column_by
         /// </summary>
-        public string summarize_column_by  {get; set;}
+        public string summarize_column_by { get; set; }
 
         /// <summary>
         /// Gets or sets the customer
         /// </summary>
-        public string  customer  {get; set;}
+        public string customer { get; set; }
 
         /// <summary>
         /// Gets or sets the vendor
         /// </summary>
-        public string vendor  {get; set;}
+        public string vendor { get; set; }
 
         /// <summary>
         /// Gets or sets the item
         /// </summary>
-        public string item  {get; set;}
+        public string item { get; set; }
 
         /// <summary>
         /// Gets or sets the class
         /// </summary>
-        public string classid  {get; set;}
+        public string classid { get; set; }
 
         /// <summary>
         /// Gets or sets the department
         /// </summary>
-        public string department  {get; set;}
+        public string department { get; set; }
 
         /// <summary>
         /// Gets or sets the qzurl
         /// </summary>
-        public string qzurl  {get; set;}
+        public string qzurl { get; set; }
 
         /// <summary>
         /// Gets or sets the aging_period
         /// </summary>
-        public string  aging_period  {get; set;}
+        public string aging_period { get; set; }
 
         /// <summary>
         /// Gets or sets the num_periods
@@ -667,7 +662,7 @@ namespace Intuit.Ipp.ReportService
         /// </summary>
         public string custom_pp { get; set; }
 
-       
+
 
 
         #endregion

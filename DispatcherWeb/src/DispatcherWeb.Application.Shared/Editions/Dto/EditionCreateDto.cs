@@ -7,7 +7,7 @@ namespace DispatcherWeb.Editions.Dto
         public int? Id { get; set; }
 
         [Required]
-        public string DisplayName { get; set; }   
+        public string DisplayName { get; set; }
 
         public decimal? DailyPrice { get; set; }
 

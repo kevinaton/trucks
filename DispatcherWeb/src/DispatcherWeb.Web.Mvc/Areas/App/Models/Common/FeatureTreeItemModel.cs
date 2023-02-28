@@ -8,7 +8,7 @@ namespace DispatcherWeb.Web.Areas.App.Models.Common
 
         public FeatureTreeItemModel()
         {
-            
+
         }
 
         public FeatureTreeItemModel(IFeatureEditViewModel editModel, string parentName)

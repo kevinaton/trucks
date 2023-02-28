@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
-using Abp.Extensions;
 using Abp.UI;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Exceptions;
@@ -139,7 +138,7 @@ namespace DispatcherWeb.OrderPayments
             {
                 throw new UserFriendlyException("Order is not authorized", "Please refresh the page and try again.");
             }
-            
+
             return new CaptureOrderAuthorizationDto
             {
                 ReceiptId = input.Id,
@@ -171,7 +170,7 @@ namespace DispatcherWeb.OrderPayments
             if (orderHasPreviousAuthorization)
             {
                 throw new UserFriendlyException("Order is already authorized", "Please refresh the page and try again.");
-            }   
+            }
 
             input.PaymentDescription = $"OrderId: {order.Id} for {order.Office?.Name}, Customer: {order.Customer.Name}";
             var result = await _paymentAppService.AuthorizeCharge(input);
@@ -215,7 +214,7 @@ namespace DispatcherWeb.OrderPayments
                 .Include(x => x.Payment)
                 .Where(x => x.OrderId == order.Id && x.OfficeId == OfficeId)
                 .FirstOrDefaultAsync(x => !x.Payment.IsCancelledOrRefunded && x.Payment.AuthorizationTransactionId != null);
-            
+
             var authorizationPayment = orderPayment?.Payment;
 
             if (authorizationPayment == null)
@@ -310,9 +309,9 @@ namespace DispatcherWeb.OrderPayments
                 throw new UserFriendlyException("You can't refund a payment for a receipt which is not assigned to your office", "");
             }
 
-            await _paymentAppService.RefundPayment(new EntityDto(payment.Id));           
+            await _paymentAppService.RefundPayment(new EntityDto(payment.Id));
         }
-        
+
         private async Task<Exception> GetOrderNotFoundException(EntityDto input)
         {
             if (await _orderRepository.IsEntityDeleted(input, CurrentUnitOfWork))

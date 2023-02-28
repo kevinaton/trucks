@@ -24,12 +24,12 @@ using System.Diagnostics;
 namespace Intuit.Ipp.Core.Rest
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
     using System.Net;
     using System.Text;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Utility;
-    using System.IO;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Rest Handler class.
@@ -63,7 +63,7 @@ namespace Intuit.Ipp.Core.Rest
             this.RequestSerializer = CoreHelper.GetSerializer(this.serviceContext, true);
             this.responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
             this.RequestLogging = CoreHelper.GetRequestLogging(this.serviceContext);
-           // this.AdvancedLogging =  CoreHelper.GetAdvancedLogging(this.serviceContext);
+            // this.AdvancedLogging =  CoreHelper.GetAdvancedLogging(this.serviceContext);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Intuit.Ipp.Core.Rest
 
             // Set the content type
             httpWebRequest.ContentType = requestParameters.ContentType;
-            
+
             // Set the accept header type to JSON.
             if (this.responseSerializer is JsonObjectSerializer)
             {
@@ -269,7 +269,7 @@ namespace Intuit.Ipp.Core.Rest
                             // Log Request Body to a file
                             this.RequestLogging.LogPlatformRequests(" RequestUrl: " + requestEndpoint + ", Request Payload:" + requestXML.ToString(), true);
                             //Log to Serilog
-                            CoreHelper.AdvancedLogging.Log( "Request Payload:" + requestXML.ToString());
+                            CoreHelper.AdvancedLogging.Log("Request Payload:" + requestXML.ToString());
 
                             // Use of encoding to get bytes used to write to request stream.
                             UTF8Encoding encoding = new UTF8Encoding();
@@ -283,7 +283,7 @@ namespace Intuit.Ipp.Core.Rest
 
 
                     TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
-                    
+
                     // Set the request properties.
                     this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Adding the payload to request.\n Start dump: \n" + requestXML.ToString() : "Adding the payload to request.");
 

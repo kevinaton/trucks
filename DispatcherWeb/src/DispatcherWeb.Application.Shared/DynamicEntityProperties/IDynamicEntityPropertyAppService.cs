@@ -18,7 +18,7 @@ namespace DispatcherWeb.DynamicEntityProperties
         Task Update(DynamicEntityPropertyDto dto);
 
         Task Delete(int id);
-        
+
         Task<ListResultDto<GetAllEntitiesHasDynamicPropertyOutput>> GetAllEntitiesHasDynamicProperty();
     }
 }

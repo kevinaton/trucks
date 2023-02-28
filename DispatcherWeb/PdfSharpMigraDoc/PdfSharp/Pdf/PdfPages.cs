@@ -28,12 +28,12 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Collections;
-using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf.Advanced;
 using PdfSharp.Pdf.Annotations;
+using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf
 {
@@ -194,7 +194,7 @@ namespace PdfSharp.Pdf
             }
             if (Owner.Settings.TrimMargins.AreSet)
                 page.TrimMargins = Owner.Settings.TrimMargins;
-            
+
             return page;
         }
 

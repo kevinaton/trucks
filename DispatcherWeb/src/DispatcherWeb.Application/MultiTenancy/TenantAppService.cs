@@ -6,28 +6,28 @@ using Abp;
 using Abp.Application.Features;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Events.Bus;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Security;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Editions.Dto;
-using DispatcherWeb.MultiTenancy.Dto;
-using DispatcherWeb.Url;
-using Abp.Domain.Repositories;
-using DispatcherWeb.Drivers;
-using DispatcherWeb.PayStatements;
-using DispatcherWeb.LeaseHaulerStatements;
-using DispatcherWeb.Orders;
 using DispatcherWeb.Dispatching;
-using DispatcherWeb.Invoices;
-using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Drivers;
+using DispatcherWeb.Editions.Dto;
 using DispatcherWeb.Emailing;
+using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Invoices;
+using DispatcherWeb.LeaseHaulerStatements;
+using DispatcherWeb.MultiTenancy.Dto;
+using DispatcherWeb.Orders;
 using DispatcherWeb.Payments;
+using DispatcherWeb.PayStatements;
 using DispatcherWeb.Sms;
 using DispatcherWeb.TimeOffs;
+using DispatcherWeb.Url;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.MultiTenancy
 {
@@ -205,7 +205,7 @@ namespace DispatcherWeb.MultiTenancy
 
             input.ConnectionString = SimpleStringCipher.Instance.Encrypt(input.ConnectionString);
             var tenant = await TenantManager.GetByIdAsync(input.Id);
-             if (tenant.EditionId != input.EditionId)
+            if (tenant.EditionId != input.EditionId)
             {
                 await EventBus.TriggerAsync(new TenantEditionChangedEventData
                 {
@@ -214,7 +214,7 @@ namespace DispatcherWeb.MultiTenancy
                     NewEditionId = input.EditionId
                 });
             }
-           ObjectMapper.Map(input, tenant);
+            ObjectMapper.Map(input, tenant);
             tenant.SubscriptionEndDateUtc = tenant.SubscriptionEndDateUtc?.ToUniversalTime();
 
             await TenantManager.UpdateAsync(tenant);
@@ -323,7 +323,7 @@ namespace DispatcherWeb.MultiTenancy
         }
 
         public async Task AddMonthToDriverDOTRequirements(EntityDto input)
-        {            
+        {
             var driversQuery = _driverRepository.GetAll()
                 .Where(x => !x.IsExternal && x.TenantId == input.Id);
             var drivers = await driversQuery.ToListAsync();
@@ -346,7 +346,7 @@ namespace DispatcherWeb.MultiTenancy
 
                 await _driverRepository.UpdateAsync(item);
             }
-            
+
         }
     }
 }

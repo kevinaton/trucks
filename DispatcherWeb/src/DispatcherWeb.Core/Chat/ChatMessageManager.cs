@@ -116,7 +116,7 @@ namespace DispatcherWeb.Chat
                 }
             });
         }
-        
+
         public virtual int GetUnreadMessageCount(UserIdentifier sender, UserIdentifier receiver)
         {
             return _unitOfWorkManager.WithUnitOfWork(() =>

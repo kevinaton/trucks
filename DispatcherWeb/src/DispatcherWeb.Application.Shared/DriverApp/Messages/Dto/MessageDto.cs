@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using DispatcherWeb.Chat;
 
 namespace DispatcherWeb.DriverApp.Messages.Dto

@@ -1,19 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Threading.Tasks;
 using Abp.Application.Features;
 using Abp.Configuration;
 using Abp.Dependency;
-using Abp.Extensions;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Features;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.PayStatements.Dto;
 using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 
 namespace DispatcherWeb.Orders.Reports
@@ -24,7 +20,7 @@ namespace DispatcherWeb.Orders.Reports
         public IFeatureChecker FeatureChecker { get; }
 
         public DriverPayStatementReportGenerator(
-            ISettingManager settingManager, 
+            ISettingManager settingManager,
             IFeatureChecker featureChecker
             )
         {
@@ -57,7 +53,7 @@ namespace DispatcherWeb.Orders.Reports
                     }
 
                 }
-                
+
                 return new DriverPayStatementReport
                 {
                     FileBytes = zipStream.ToArray(),
@@ -116,7 +112,7 @@ namespace DispatcherWeb.Orders.Reports
                 section.Headers.EvenPage.Add(paragraph.Clone());
             }
             InitNewDocument();
-            
+
             var filename = GetFilename(model);
 
             var firstPage = true;
@@ -326,7 +322,7 @@ namespace DispatcherWeb.Orders.Reports
                     paragraph.Format.Alignment = ParagraphAlignment.Right;
                     paragraph.Format.Font.Bold = true;
                 }
-                
+
                 //if (driverModel.PayMethod == PayMethod.Salary)
                 //{
                 //    paragraph = document.LastSection.AddParagraph($"Salary: {driverModel.PayRate.ToString("C2", model.CurrencyCulture)}");

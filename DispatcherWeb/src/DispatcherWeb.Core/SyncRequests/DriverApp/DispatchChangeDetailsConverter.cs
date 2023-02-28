@@ -25,7 +25,7 @@ namespace DispatcherWeb.SyncRequests.DriverApp
             var dispatchChanges = changes
                 .OfType<SyncRequestChangeDetail<ChangedDispatch>>()
                 .ToList();
-            
+
             var dispatchIds = dispatchChanges.Select(x => x.Entity.Id).Distinct().ToList();
 
             _dispatchDetails = await _dispatchRepository.GetAll()

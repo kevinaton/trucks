@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DispatcherWeb.FuelPurchases;
 using DispatcherWeb.FuelPurchases.Dto;
-using DispatcherWeb.Trucks;
 using Shouldly;
 using Xunit;
 

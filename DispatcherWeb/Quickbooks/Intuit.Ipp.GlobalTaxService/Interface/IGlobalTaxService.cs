@@ -22,10 +22,6 @@
 
 namespace Intuit.Ipp.GlobalTaxService.Interface
 {
-
-
-
-    using System.Collections.ObjectModel;
     using Intuit.Ipp.Data;
 
 
@@ -39,7 +35,7 @@ namespace Intuit.Ipp.GlobalTaxService.Interface
         /// </summary>        
         /// <param name="taxCode">TaxService entity to Add.</param>
         /// <returns>Returns an updated version of the entity with updated identifier.</returns>
-        
+
         TaxService AddTaxCode(TaxService taxCode);
     }
 }

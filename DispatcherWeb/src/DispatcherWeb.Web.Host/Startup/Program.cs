@@ -1,7 +1,7 @@
 ﻿using System.IO;
+using DispatcherWeb.Web.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using DispatcherWeb.Web.Helpers;
 
 namespace DispatcherWeb.Web.Startup
 {

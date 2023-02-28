@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.Dependency;
 using DispatcherWeb.Imports.DataResolvers.OfficeResolvers;
 
@@ -16,7 +12,7 @@ namespace DispatcherWeb.Imports.Services
             ByFuelId
         }
         public static IImportDataBaseAppService GetImportAppService(
-            IIocResolver iocResolver, 
+            IIocResolver iocResolver,
             ImportType importType,
             OfficeResolverType officeResolverType
         )
@@ -26,7 +22,7 @@ namespace DispatcherWeb.Imports.Services
             {
                 case ImportType.FuelUsage:
                     officeResolver = GetOfficeResolver(iocResolver, officeResolverType);
-                    return iocResolver.Resolve<IImportFuelUsageAppService>(new {officeResolver});
+                    return iocResolver.Resolve<IImportFuelUsageAppService>(new { officeResolver });
                 case ImportType.VehicleUsage:
                     officeResolver = GetOfficeResolver(iocResolver, officeResolverType);
                     return iocResolver.Resolve<IImportVehicleUsageAppService>(new { officeResolver });

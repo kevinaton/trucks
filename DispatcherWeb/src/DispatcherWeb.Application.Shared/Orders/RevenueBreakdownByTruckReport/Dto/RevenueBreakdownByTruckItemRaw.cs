@@ -1,7 +1,5 @@
-﻿using DispatcherWeb.Tickets;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using DispatcherWeb.Tickets;
 
 namespace DispatcherWeb.Orders.RevenueBreakdownByTruckReport.Dto
 {

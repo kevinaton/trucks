@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 // Modified for Intuit's Oauth2 implementation
 
-using System.Collections.Generic;
-using System.Configuration;
 using Intuit.Ipp.OAuth2PlatformClient.Helpers;
 
 namespace Intuit.Ipp.OAuth2PlatformClient
@@ -39,7 +37,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         public void SetAuthority(AppEnvironment appEnvironment)
         {
             string authority = "";
-            if (appEnvironment == AppEnvironment.Production|| appEnvironment == AppEnvironment.Sandbox)
+            if (appEnvironment == AppEnvironment.Production || appEnvironment == AppEnvironment.Sandbox)
             {
                 authority = OidcConstants.Discovery.IssuerUrl;
             }

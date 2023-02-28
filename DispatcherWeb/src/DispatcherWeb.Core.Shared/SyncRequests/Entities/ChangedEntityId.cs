@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.SyncRequests.Entities
+﻿namespace DispatcherWeb.SyncRequests.Entities
 {
     public abstract class ChangedEntityAbstract
     {
@@ -26,7 +22,7 @@ namespace DispatcherWeb.SyncRequests.Entities
         }
 
         public override bool IsSame(ChangedEntityAbstract obj)
-        {    
+        {
             return obj is ChangedEntityId<TKey> other
                 && other.Id.Equals(Id)
                 && base.IsSame(obj);

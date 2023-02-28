@@ -456,7 +456,7 @@ namespace DispatcherWeb.Invoices
                         _invoiceLineRepository.Insert(invoiceLine);
                         newInvoiceLineEntities.Add(invoiceLine);
                     }
-                    
+
                     invoiceLine.LineNumber = modelInvoiceLine.LineNumber;
                     if (invoiceLine.TicketId != modelInvoiceLine.TicketId)
                     {
@@ -866,7 +866,7 @@ namespace DispatcherWeb.Invoices
 
                 default:
                     throw new NotImplementedException();
-            }         
+            }
 
             return report;
         }

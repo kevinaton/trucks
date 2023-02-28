@@ -29,23 +29,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Text;
 #if CORE || GDI
-using System.Drawing;
-using GdiFontFamily = System.Drawing.FontFamily;
 #endif
 #if WPF
 using System.Windows.Media;
 using System.Windows.Markup;
 using WpfFontFamily = System.Windows.Media.FontFamily;
 #endif
-using PdfSharp.Fonts;
-using PdfSharp.Fonts.OpenType;
 using PdfSharp.Internal;
-using PdfSharp.Pdf;
 
 namespace PdfSharp.Drawing
 {

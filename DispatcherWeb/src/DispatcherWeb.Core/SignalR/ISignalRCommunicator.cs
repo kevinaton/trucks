@@ -1,7 +1,7 @@
-﻿using Abp.RealTime;
-using DispatcherWeb.SyncRequests;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Abp.RealTime;
+using DispatcherWeb.SyncRequests;
 
 namespace DispatcherWeb.SignalR
 {

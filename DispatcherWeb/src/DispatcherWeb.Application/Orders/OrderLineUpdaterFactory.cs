@@ -1,4 +1,5 @@
-﻿using Abp.Dependency;
+﻿using System;
+using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Localization;
@@ -10,7 +11,6 @@ using DispatcherWeb.Infrastructure.EntityReadonlyCheckers;
 using DispatcherWeb.Infrastructure.EntityUpdaters;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.SyncRequests;
-using System;
 
 namespace DispatcherWeb.Orders
 {

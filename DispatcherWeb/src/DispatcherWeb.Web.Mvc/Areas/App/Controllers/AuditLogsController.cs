@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Auditing;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Auditing;
 using DispatcherWeb.Auditing.Dto;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Web.Areas.App.Models.AuditLogs;
 using DispatcherWeb.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
 {

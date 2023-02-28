@@ -8,7 +8,7 @@ namespace DispatcherWeb.Chat.Dto
     public class GetUserChatFriendsWithSettingsOutput
     {
         public DateTime ServerTime { get; set; }
-        
+
         public List<FriendDto> Friends { get; set; }
 
         public GetUserChatFriendsWithSettingsOutput()

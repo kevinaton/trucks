@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.BackgroundJobs;
@@ -32,16 +29,16 @@ namespace DispatcherWeb.Infrastructure.BackgroundJobs
             try
             {
                 await _notificationPublisher.PublishAsync(
-                    AppNotificationNames.MileageUpdateCompleted, 
-                    new MessageNotificationData("We are updating your truck mileages. This is a slow process, so we will notify you when it is done."), 
-                    null, 
-                    NotificationSeverity.Info, 
-                    userIds: new []{ new UserIdentifier(args.TenantId, args.UserId) }
+                    AppNotificationNames.MileageUpdateCompleted,
+                    new MessageNotificationData("We are updating your truck mileages. This is a slow process, so we will notify you when it is done."),
+                    null,
+                    NotificationSeverity.Info,
+                    userIds: new[] { new UserIdentifier(args.TenantId, args.UserId) }
                 );
                 var result = AsyncHelper.RunSync(() => _truckTelematicsAppService.UpdateMileageForTenantAsync(args.TenantId, args.UserId));
                 string ignoredTrucksMessage = result.trucksIgnored != 0 ? $"Ignored (don't exist in the DB) {result.trucksIgnored} trucks." : "";
                 await _notificationPublisher.PublishAsync(
-                    AppNotificationNames.MileageUpdateCompleted, 
+                    AppNotificationNames.MileageUpdateCompleted,
                     new MessageNotificationData($"Updating mileage has finished successfully. Updated {result.trucksUpdated} trucks. {ignoredTrucksMessage}"),
                     null,
                     NotificationSeverity.Success,
@@ -52,7 +49,7 @@ namespace DispatcherWeb.Infrastructure.BackgroundJobs
             {
                 Logger.Error($"Error when updating mileage: {e}");
                 await _notificationPublisher.PublishAsync(
-                    AppNotificationNames.MileageUpdateError, 
+                    AppNotificationNames.MileageUpdateError,
                     new MessageNotificationData("Updating mileage failed."),
                     null,
                     NotificationSeverity.Error,

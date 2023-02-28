@@ -30,7 +30,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf.Advanced;
 using PdfSharp.Pdf.Internal;
@@ -432,7 +431,7 @@ namespace PdfSharp.Pdf.Security
         void PrepareKey()
         {
             if (_key != null && _keySize > 0) //!!!mod 2017-11-06 Added "if" because PrepareRC4Key fails if _key is null. But _key appears to be always null, so maybe PrepareKey() is obsolete.
-            PrepareRC4Key(_key, 0, _keySize);
+                PrepareRC4Key(_key, 0, _keySize);
         }
 
         /// <summary>

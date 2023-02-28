@@ -12,7 +12,7 @@ namespace DispatcherWeb.Web.Utils
             {
                 return true;
             }
-            
+
             if (UrlWithProtocolRegex.IsMatch(url))
             {
                 return true;

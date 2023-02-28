@@ -320,8 +320,8 @@ namespace MigraDoc.DocumentObjectModel
                             number = "ff" + color.Substring(1);
                             break;
                         case 4:
-                            number = "ff" + color.Substring(1,1) + color.Substring(1, 1) + 
-                                     color.Substring(2, 1) + color.Substring(2, 1) + 
+                            number = "ff" + color.Substring(1, 1) + color.Substring(1, 1) +
+                                     color.Substring(2, 1) + color.Substring(2, 1) +
                                      color.Substring(3, 1) + color.Substring(3, 1);
                             break;
                         default:

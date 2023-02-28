@@ -32,8 +32,8 @@
 
 using System;
 using System.Collections.Generic;
-using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.DocumentObjectModel.publics;
+using MigraDoc.DocumentObjectModel.Tables;
 
 namespace MigraDoc.DocumentObjectModel.Visitors
 {

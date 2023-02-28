@@ -16,7 +16,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         private static readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
         private readonly byte[] _uint32Buffer = new byte[4];
 
-        
+
         /// <summary>
         /// Create Random keys bytes
         /// </summary>

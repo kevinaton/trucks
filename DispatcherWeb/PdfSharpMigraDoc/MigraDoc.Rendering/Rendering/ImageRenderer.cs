@@ -29,11 +29,11 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Diagnostics;
-using PdfSharp.Drawing;
+using System.IO;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.Rendering.Resources;
+using PdfSharp.Drawing;
 
 namespace MigraDoc.Rendering
 {
@@ -194,7 +194,7 @@ namespace MigraDoc.Rendering
                         double horzRes = usrResolutionSet ? _image.Resolution : xImage.HorizontalResolution;
                         double vertRes = usrResolutionSet ? _image.Resolution : xImage.VerticalResolution;
 
-// ReSharper disable CompareOfFloatsByEqualityOperator
+                        // ReSharper disable CompareOfFloatsByEqualityOperator
                         if (horzRes == 0 && vertRes == 0)
                         {
                             horzRes = 72;
@@ -236,7 +236,7 @@ namespace MigraDoc.Rendering
                             {
                                 resultWidth = inherentWidth / inherentHeight * usrHeight;
                             }
-// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                             else if (!usrHeightSet && !usrWidthSet)
                             {
                                 resultHeight = inherentHeight;

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using Abp.MultiTenancy;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Editions;
 using DispatcherWeb.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Migrations.Seed.Tenants
 {

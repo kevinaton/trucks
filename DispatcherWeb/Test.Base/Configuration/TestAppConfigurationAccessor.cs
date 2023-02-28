@@ -1,7 +1,7 @@
 ﻿using Abp.Dependency;
 using Abp.Reflection.Extensions;
-using Microsoft.Extensions.Configuration;
 using DispatcherWeb.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace DispatcherWeb.Test.Base.Configuration
 {

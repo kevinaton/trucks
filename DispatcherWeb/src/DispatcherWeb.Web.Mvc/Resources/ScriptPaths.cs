@@ -16,7 +16,7 @@ namespace DispatcherWeb.Web.Resources
         private readonly IOfficeSettingsManager _officeSettingsManager;
 
         private readonly ConcurrentDictionary<string, string> _scriptPaths;
-        
+
         public AspNetZeroAbpSession Session { get; set; }
 
         public ScriptPaths(

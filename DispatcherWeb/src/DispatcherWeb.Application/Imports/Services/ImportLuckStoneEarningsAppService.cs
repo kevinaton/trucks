@@ -1,4 +1,8 @@
-﻿using Abp.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.UI;
@@ -6,22 +10,18 @@ using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Features;
 using DispatcherWeb.Imports.Dto;
 using DispatcherWeb.Imports.RowReaders;
 using DispatcherWeb.Infrastructure.AzureBlobs;
-using DispatcherWeb.Features;
-using DispatcherWeb.TimeClassifications;
+using DispatcherWeb.Locations;
+using DispatcherWeb.LuckStone;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
+using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Trucks;
-using DispatcherWeb.LuckStone;
 using DispatcherWeb.UnitsOfMeasure;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace DispatcherWeb.Imports.Services
 {
@@ -356,7 +356,7 @@ namespace DispatcherWeb.Imports.Services
                 .ToList();
 
             PopulateDriversForTrucks(
-                trucks.Select(x => x.Id).Distinct().ToList(), 
+                trucks.Select(x => x.Id).Distinct().ToList(),
                 _luckStoneEarnings.Select(x => x.TicketDateTime.ConvertTimeZoneTo(_timeZone).Date).Distinct().ToList()
             );
 
@@ -634,7 +634,7 @@ namespace DispatcherWeb.Imports.Services
                      equals new { existingLocation.Name, existingLocation.StreetAddress, existingLocation.City, existingLocation.State, existingLocation.ZipCode }
                      into existingLocationLeftJoin
                  from existingLocation in existingLocationLeftJoin.DefaultIfEmpty()
-                 
+
                  select new
                  {
                      LuckStoneLocation = new

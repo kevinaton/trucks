@@ -1,11 +1,9 @@
-﻿using Abp.Extensions;
+﻿using System;
+using Abp.Extensions;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Tickets;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DispatcherWeb.Invoices.Dto
 {
@@ -63,7 +61,7 @@ namespace DispatcherWeb.Invoices.Dto
         public decimal Subtotal { get; set; }
 
         public decimal Total { get; set; } //=> MaterialTotal + FreightTotal + Tax;
-        
+
         public string LeaseHaulerName { get; set; }
 
         public int? InvoiceLineId { get; set; }

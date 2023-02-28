@@ -7,7 +7,6 @@ using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.Timing;
-using DispatcherWeb.Drivers;
 using DispatcherWeb.Orders.RevenueBreakdownByTruckReport.Dto;
 using DispatcherWeb.Orders.RevenueBreakdownReport.Dto;
 using DispatcherWeb.Runtime.Session;
@@ -155,7 +154,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
             var driversTime = await _employeeTimeRepository.GetAll()
                 .WhereIf(input.TruckIds != null, x => input.TruckIds.Contains(x.EquipmentId))
                 .WhereIf(input.UserIds != null, x => input.UserIds.Contains(x.UserId))
-                .Where(x => 
+                .Where(x =>
                     //  && !(x.EndDateTime != null && x.EndDateTime <= startDate)
                     //  && !(x.StartDateTime >= endDate))
                     (x.EndDateTime == null && !x.IsImported || x.EndDateTime > startDate)
@@ -195,7 +194,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
 
                 var startDateInUserTimeZone = start.ConvertTimeZoneTo(timeZone).Date;
                 var firstMidnightAfterStart = start.ConvertTimeZoneTo(timeZone).Date.AddDays(1).ConvertTimeZoneFrom(timeZone);
-                
+
                 var hoursToAddTotal = Convert.ToDecimal((end - start).TotalHours);
                 var hoursToAdd = hoursToAddTotal;
                 decimal hoursRemainder = 0;
@@ -213,7 +212,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                     DeliveryDate = startDateInUserTimeZone,
                     HoursToAdd = hoursToAdd
                 });
-                
+
                 while (hoursRemainder > 0)
                 {
                     startDateInUserTimeZone = startDateInUserTimeZone.AddDays(1);
@@ -228,7 +227,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                         HoursToAdd = hoursToAdd
                     });
                 }
-                
+
             }
         }
     }

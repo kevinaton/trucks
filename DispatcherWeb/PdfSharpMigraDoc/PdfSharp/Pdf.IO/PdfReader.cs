@@ -33,8 +33,8 @@ using System.Diagnostics;
 using System.IO;
 using PdfSharp.Internal;
 using PdfSharp.Pdf.Advanced;
-using PdfSharp.Pdf.Security;
 using PdfSharp.Pdf.Internal;
+using PdfSharp.Pdf.Security;
 
 namespace PdfSharp.Pdf.IO
 {
@@ -315,7 +315,7 @@ namespace PdfSharp.Pdf.IO
                     encrypt.Reference = xrefEncrypt;
                     xrefEncrypt.Value = encrypt;
                     PdfStandardSecurityHandler securityHandler = document.SecurityHandler;
-                    TryAgain:
+                TryAgain:
                     PasswordValidity validity = securityHandler.ValidatePassword(password);
                     if (validity == PasswordValidity.Invalid)
                     {

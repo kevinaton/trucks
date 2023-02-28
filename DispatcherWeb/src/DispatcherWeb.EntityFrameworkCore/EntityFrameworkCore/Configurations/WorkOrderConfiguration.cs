@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DispatcherWeb.EntityFrameworkCore.Configurations
 {
-	public class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrder>
-	{
-		public void Configure(EntityTypeBuilder<WorkOrder> builder)
-		{
+    public class WorkOrderConfiguration : IEntityTypeConfiguration<WorkOrder>
+    {
+        public void Configure(EntityTypeBuilder<WorkOrder> builder)
+        {
             builder
                 .Property(e => e.TotalLaborCost)
                 .HasColumnType("decimal(12, 2)");
@@ -23,6 +23,6 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
             builder
                 .Property(e => e.Discount)
                 .HasColumnType("decimal(5, 2)");
-		}
+        }
     }
 }

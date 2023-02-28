@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using DispatcherWeb.DriverApp.Loads.Dto;
 using DispatcherWeb.DriverApp.Locations.Dto;
 using DispatcherWeb.DriverApp.Tickets.Dto;
-using Newtonsoft.Json;
 
 namespace DispatcherWeb.DriverApp.Dispatches.Dto
 {

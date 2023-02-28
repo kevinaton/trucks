@@ -1,5 +1,4 @@
 ﻿using DispatcherWeb.Customers;
-using DispatcherWeb.Projects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,12 +14,12 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .HasForeignKey(e => e.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-			builder
-				.HasMany(e => e.Orders)
-				.WithOne(e => e.Customer)
-				.HasForeignKey(e => e.CustomerId)
-				.OnDelete(DeleteBehavior.Restrict);
+            builder
+                .HasMany(e => e.Orders)
+                .WithOne(e => e.Customer)
+                .HasForeignKey(e => e.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-		}
-	}
+        }
+    }
 }

@@ -4,8 +4,8 @@ using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Dispatching.Exporting
 {
-	public interface IDispatchListCsvExporter
-	{
-		FileDto ExportToFile(List<DispatchListDto> dispatchDtos);
-	}
+    public interface IDispatchListCsvExporter
+    {
+        FileDto ExportToFile(List<DispatchListDto> dispatchDtos);
+    }
 }

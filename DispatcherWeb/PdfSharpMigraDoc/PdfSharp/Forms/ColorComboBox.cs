@@ -27,14 +27,10 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
 #if GDI
 using System.Drawing;
 using System.Windows.Forms;
 #endif
-using PdfSharp.Drawing;
 
 #if GDI
 namespace PdfSharp.Forms

@@ -3,7 +3,6 @@ using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Configuration;
 using Abp.Runtime.Session;
 using Abp.Timing;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration.Host;
@@ -12,6 +11,7 @@ using DispatcherWeb.Timing;
 using DispatcherWeb.Timing.Dto;
 using DispatcherWeb.Web.Areas.App.Models.HostSettings;
 using DispatcherWeb.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
 {
@@ -26,8 +26,8 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
         public HostSettingsController(
             IHostSettingsAppService hostSettingsAppService,
-            UserManager userManager, 
-            IEditionAppService editionAppService, 
+            UserManager userManager,
+            IEditionAppService editionAppService,
             ITimingAppService timingAppService)
         {
             _hostSettingsAppService = hostSettingsAppService;

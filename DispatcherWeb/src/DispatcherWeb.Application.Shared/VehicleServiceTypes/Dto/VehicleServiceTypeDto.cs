@@ -5,9 +5,9 @@ namespace DispatcherWeb.VehicleServiceTypes.Dto
 {
     public class VehicleServiceTypeDto : EntityDto
     {
-		[Required]
-		[StringLength(100)]
-		public string Name { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
 
-	}
+    }
 }

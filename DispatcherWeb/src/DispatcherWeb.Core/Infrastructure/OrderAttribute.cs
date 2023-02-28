@@ -9,6 +9,6 @@ namespace DispatcherWeb.Infrastructure
             Order = order;
         }
 
-		public int Order { get; }
-	}
+        public int Order { get; }
+    }
 }

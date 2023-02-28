@@ -31,7 +31,7 @@ namespace DispatcherWeb.Web.Timing
 
             //if (Clock.SupportsMultipleTimezone)
             //{
-                script.AppendLine("    abp.timing.timeZoneInfo = " + await GetUsersTimezoneScriptsAsync());
+            script.AppendLine("    abp.timing.timeZoneInfo = " + await GetUsersTimezoneScriptsAsync());
             //}
 
             script.Append("})();");

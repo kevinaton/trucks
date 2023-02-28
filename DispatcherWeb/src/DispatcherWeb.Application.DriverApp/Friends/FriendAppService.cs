@@ -70,7 +70,7 @@ namespace DispatcherWeb.DriverApp.Friends
                             ReceiverReadState = m.ReceiverReadState
                         })
                         .First(),
-                   UnreadMessageCount = x.Count(m => m.ReadState == ChatMessageReadState.Unread)
+                    UnreadMessageCount = x.Count(m => m.ReadState == ChatMessageReadState.Unread)
                 })
                 .ToListAsync();
 

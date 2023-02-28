@@ -1,5 +1,3 @@
-using System;
-
 namespace DispatcherWeb.Web.Chat.SignalR
 {
     public class SendChatMessageInput

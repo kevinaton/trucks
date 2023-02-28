@@ -23,15 +23,11 @@ namespace Intuit.Ipp.Utility
 
 
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using Newtonsoft.Json;
     using System.Reflection;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     //using Intuit.Ipp.Data;
-    using System.Collections;
-    using System.Diagnostics;
 
     /// <summary>
     /// JSON.Net extention for handling Json serialization/deserialization of POCO classes generated for Intuit XSD.
@@ -172,7 +168,7 @@ namespace Intuit.Ipp.Utility
                                             //Adding additional hardcode for recurring txn json serializtion issue
                                             string[] entitiesSupportedforRecurTxn = { "Bill", "Invoice", "Purchase", "CreditMemo", "Deposit", "Estimate", "JournalEntry", "RefundReceipt", "SalesReceipt", "Transfer", "VendorCredit", "PurchaseOrder" };
 
-                                            if (propertyInfo.Name == "AnyIntuitObject" && value.GetType().Name == "RecurringTransaction" )
+                                            if (propertyInfo.Name == "AnyIntuitObject" && value.GetType().Name == "RecurringTransaction")
                                             {
                                                 string entityNametoCheckForRecurTxn = propertyInfo.GetValue(value, null).GetType().Name;
                                                 if (entitiesSupportedforRecurTxn.Contains(entityNametoCheckForRecurTxn))
@@ -182,7 +178,8 @@ namespace Intuit.Ipp.Utility
                                                 else { writer.WritePropertyName(propertyInfo.Name); }
 
                                             }
-                                            else {
+                                            else
+                                            {
                                                 writer.WritePropertyName(propertyInfo.Name);
                                             }
                                         }
@@ -357,7 +354,7 @@ namespace Intuit.Ipp.Utility
                                         Type type = Assembly.Load("Intuit.Ipp.Data").GetTypes().Where(a => a.Name == prop.Name).FirstOrDefault();
                                         AssignValueToProperty(target, prop, type, objectTypeProp.Name, serializer);
                                     }
-                                    
+
                                 }
                             }
 

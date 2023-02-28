@@ -10,8 +10,8 @@ using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Session;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Users.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Authorization.Users
 {
@@ -31,7 +31,7 @@ namespace DispatcherWeb.Authorization.Users
             var userId = AbpSession.GetUserId();
             var query = _userLoginAttemptRepository.GetAll()
                 .Where(la => la.UserId == userId)
-                .WhereIf(!input.Filter.IsNullOrEmpty(), la => la.ClientIpAddress.Contains(input.Filter) ||  la.BrowserInfo.Contains(input.Filter))
+                .WhereIf(!input.Filter.IsNullOrEmpty(), la => la.ClientIpAddress.Contains(input.Filter) || la.BrowserInfo.Contains(input.Filter))
                 .WhereIf(input.StartDate.HasValue, la => la.CreationTime >= input.StartDate)
                 .WhereIf(input.EndDate.HasValue, la => la.CreationTime <= input.EndDate)
                 .WhereIf(input.Result.HasValue, la => la.Result == input.Result);
@@ -44,7 +44,7 @@ namespace DispatcherWeb.Authorization.Users
                 .ToListAsync();
 
             var loginAttemptDtos = ObjectMapper.Map<List<UserLoginAttemptDto>>(loginAttempts);
-            
+
             return new PagedResultDto<UserLoginAttemptDto>(
                 loginAttemptCount,
                 loginAttemptDtos

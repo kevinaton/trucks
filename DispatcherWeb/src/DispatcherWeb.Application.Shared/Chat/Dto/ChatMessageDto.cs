@@ -20,7 +20,7 @@ namespace DispatcherWeb.Chat.Dto
         public ChatMessageReadState ReceiverReadState { get; set; }
 
         public string Message { get; set; }
-        
+
         public DateTime CreationTime { get; set; }
 
         public string SharedMessageId { get; set; }

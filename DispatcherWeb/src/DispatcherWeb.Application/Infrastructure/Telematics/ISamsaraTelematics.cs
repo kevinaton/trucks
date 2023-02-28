@@ -1,8 +1,6 @@
-﻿using DispatcherWeb.Infrastructure.Telematics.Dto;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DispatcherWeb.Infrastructure.Telematics.Dto;
 
 namespace DispatcherWeb.Infrastructure.Telematics
 {

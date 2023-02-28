@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Imports.Columns
+﻿namespace DispatcherWeb.Imports.Columns
 {
     public class VendorColumn
     {

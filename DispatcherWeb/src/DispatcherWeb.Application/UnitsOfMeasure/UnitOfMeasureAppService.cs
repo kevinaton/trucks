@@ -5,7 +5,6 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.UnitsOfMeasure
 {

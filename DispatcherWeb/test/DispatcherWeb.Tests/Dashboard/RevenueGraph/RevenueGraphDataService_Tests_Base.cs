@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DispatcherWeb.Customers;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
 using Xunit;
 
 namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
@@ -27,7 +27,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
             var truck = await CreateTruck();
             await UsingDbContextAsync(async context =>
             {
-                var customer = context.Customers.FirstOrDefault() ?? new Customer() {TenantId = 1, Name = "Cust"};
+                var customer = context.Customers.FirstOrDefault() ?? new Customer() { TenantId = 1, Name = "Cust" };
 
                 var currentDate = _startDate;
                 int i = 0;

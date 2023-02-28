@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DispatcherWeb.MultiTenancy.HostDashboard.Dto;
-using Shouldly;
+﻿using Shouldly;
 using Xunit;
 
 namespace DispatcherWeb.Tests.MultiTenancy.HostDashboard

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Timing;
@@ -11,8 +10,6 @@ using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Scheduling;
 using DispatcherWeb.Scheduling.Dto;
-using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
 using DispatcherWeb.Tests.TestInfrastructure;
 using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;

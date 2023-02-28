@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DispatcherWeb.DashboardCustomization.Dto
+﻿namespace DispatcherWeb.DashboardCustomization.Dto
 {
     public class GetDashboardInput
     {

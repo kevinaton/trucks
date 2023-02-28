@@ -18,7 +18,7 @@ namespace DispatcherWeb.Authorization.Users.Profile.Dto
         public int Width { get; set; }
 
         public int Height { get; set; }
-        
+
         public bool UseGravatarProfilePicture { get; set; }
         public void AddValidationErrors(CustomValidationContext context)
         {

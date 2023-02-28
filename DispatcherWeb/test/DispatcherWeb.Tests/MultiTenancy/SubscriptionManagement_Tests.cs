@@ -19,7 +19,7 @@ namespace DispatcherWeb.Tests.MultiTenancy
         private readonly EditionManager _editionManager;
         private readonly IPaymentAppService _paymentAppService;
 
-     public SubscriptionManagement_Tests()
+        public SubscriptionManagement_Tests()
         {
             LoginAsHostAdmin();
             _tenantAppService = Resolve<ITenantAppService>();
@@ -50,7 +50,7 @@ namespace DispatcherWeb.Tests.MultiTenancy
             };
 
             decimal price;
-            price = _tenantManager.GetUpgradePrice(currentEdition, targetEdition, remainingDaysCount,PaymentPeriodType.Monthly);
+            price = _tenantManager.GetUpgradePrice(currentEdition, targetEdition, remainingDaysCount, PaymentPeriodType.Monthly);
 
             price.ShouldBe(upgradePrice);
         }
@@ -415,8 +415,8 @@ namespace DispatcherWeb.Tests.MultiTenancy
                 new CreateTenantInput
                 {
                     CompanyName = "Tenant for test purpose",
-                    AdminFirstName= "Test",
-                    AdminLastName= "Test",
+                    AdminFirstName = "Test",
+                    AdminLastName = "Test",
                     AdminEmailAddress = "admin@testtenant.com",
                     AdminPassword = "123qwe",
                     IsActive = true,

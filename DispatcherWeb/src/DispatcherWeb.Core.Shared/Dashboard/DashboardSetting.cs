@@ -9,7 +9,7 @@ namespace DispatcherWeb.Dashboard
         public string PermissionName { get; set; }
         public string FeatureName { get; set; }
 
-        public SettingDefinition SettingDefinition => 
+        public SettingDefinition SettingDefinition =>
             new SettingDefinition(SettingName, "true", scopes: SettingScopes.User, isVisibleToClients: true);
 
 

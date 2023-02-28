@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Timing;
 using DispatcherWeb.DailyHistory;
@@ -43,11 +41,11 @@ namespace DispatcherWeb.Tests.DailyHistory
             const string service2Name = "Service2Name";
             const string method1Name = "Method1Name";
             const string method2Name = "Method2Name";
-            var user1 = await CreateUser(1); 
+            var user1 = await CreateUser(1);
             await CreateAuditLog(1, user1.Id, _yesterdayUtc, 100, service1Name, method1Name); // 1
             await CreateAuditLog(1, user1.Id, _todayUtc.AddMilliseconds(-1), 500, service2Name, method2Name); // 2
             await CreateAuditLog(1, user1.Id, _todayUtc, 0, service1Name, method1Name);
-            var user2 = await CreateUser(1); 
+            var user2 = await CreateUser(1);
             await CreateAuditLog(1, user2.Id, _yesterdayUtc, 300, service1Name, method1Name); // 1
 
             // Act

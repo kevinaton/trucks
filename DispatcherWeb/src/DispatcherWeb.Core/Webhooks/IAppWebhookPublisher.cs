@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using DispatcherWeb.Authorization.Users;
 
 namespace DispatcherWeb.WebHooks
 {

@@ -1,4 +1,10 @@
-﻿using Abp.BackgroundJobs;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Net;
+using System.Threading.Tasks;
+using Abp.BackgroundJobs;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
@@ -9,13 +15,6 @@ using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.WebPush;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using WebPushLib = WebPush;
 
 namespace DispatcherWeb.DriverApplication

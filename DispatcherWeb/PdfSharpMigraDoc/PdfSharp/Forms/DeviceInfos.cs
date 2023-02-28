@@ -27,10 +27,6 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Security;
 //using System.Security.Permissions;
 
 #if GDI

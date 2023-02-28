@@ -151,7 +151,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 response = await Client.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
                 HttpResponseHeaders headers = response.Headers;
-               
+
 
                 if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.BadRequest)
                 {

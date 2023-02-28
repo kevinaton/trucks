@@ -97,14 +97,14 @@ namespace PdfSharp.Drawing
         {
             return (ushort)(bigEndian ?
                 GetByte(offset) * 256 + GetByte(offset + 1) :
-                GetByte(offset)       + GetByte(offset + 1) * 256);
+                GetByte(offset) + GetByte(offset + 1) * 256);
         }
 
         internal uint GetDWord(int offset, bool bigEndian)
         {
             return (uint)(bigEndian ?
                 GetWord(offset, true) * 65536 + GetWord(offset + 2, true) :
-                GetWord(offset, false)        + GetWord(offset + 2, false) * 65536);
+                GetWord(offset, false) + GetWord(offset + 2, false) * 65536);
         }
 
         private static void CopyStream(Stream input, Stream output)
@@ -212,7 +212,7 @@ namespace PdfSharp.Drawing
         /// </summary>
         public ImageData ImageData
         {
-            get { if(!HasImageData) _imageData = PrepareImageData();  return _imageData; }
+            get { if (!HasImageData) _imageData = PrepareImageData(); return _imageData; }
             private set { _imageData = value; }
         }
         private ImageData _imageData;

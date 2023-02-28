@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using CsvHelper;
-using DispatcherWeb.Imports.Columns;
-using DispatcherWeb.Trucks;
 using DispatcherWeb.Infrastructure.Extensions;
 
 namespace DispatcherWeb.Imports.RowReaders
@@ -148,7 +146,7 @@ namespace DispatcherWeb.Imports.RowReaders
             return result;
         }
 
-        protected decimal? GetDecimal(string fieldName, int decimals) => 
+        protected decimal? GetDecimal(string fieldName, int decimals) =>
             GetDecimal(fieldName)?.RoundTo(decimals);
 
         protected decimal? GetDecimal(string fieldName, bool required = false)

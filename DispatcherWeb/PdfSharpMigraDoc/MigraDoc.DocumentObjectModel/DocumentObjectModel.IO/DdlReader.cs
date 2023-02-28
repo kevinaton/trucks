@@ -145,8 +145,8 @@ namespace MigraDoc.DocumentObjectModel.IO
         public DocumentObject ReadObject()
         {
             string ddl = _reader.ReadToEnd();
-            DdlParser parser = !String.IsNullOrEmpty(_fileName) ? 
-                new DdlParser(_fileName, ddl, _errorManager) : 
+            DdlParser parser = !String.IsNullOrEmpty(_fileName) ?
+                new DdlParser(_fileName, ddl, _errorManager) :
                 new DdlParser(ddl, _errorManager);
             return parser.ParseDocumentObject();
         }

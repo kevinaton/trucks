@@ -36,7 +36,7 @@ namespace DispatcherWeb.WebPush
                 Credential = credential,
             });
 
-            
+
         }
 
         public async Task SendAsync(FcmRegistrationTokenDto registrationToken, string jsonPayload) //jsonPayload should be a serialized instance of DriverApplication.FcmPushMessage

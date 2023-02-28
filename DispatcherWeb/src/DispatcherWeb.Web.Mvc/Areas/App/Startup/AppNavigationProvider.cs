@@ -1,14 +1,11 @@
-﻿using Abp.Application.Navigation;
+﻿using Abp.Application.Features;
+using Abp.Application.Navigation;
+using Abp.Authorization;
 using Abp.Localization;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Web.Models.Layout;
-using System.Collections.Generic;
-using Abp.Application.Features;
-using Abp.Configuration;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Features;
-using System.Threading.Tasks;
-using Abp.Authorization;
+using DispatcherWeb.Web.Models.Layout;
 
 namespace DispatcherWeb.Web.Areas.App.Startup
 {
@@ -573,7 +570,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Administration_Tenant_Settings),
                             featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
                         )
-                    )                    
+                    )
                 );
         }
 

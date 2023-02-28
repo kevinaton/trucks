@@ -1,4 +1,6 @@
-﻿using Abp.Application.Features;
+﻿using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
@@ -15,9 +17,6 @@ using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.SyncRequests;
 using DispatcherWeb.TimeClassifications.Dto;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.TimeClassifications
 {
@@ -57,8 +56,8 @@ namespace DispatcherWeb.TimeClassifications
 
             var items = await _timeClassificationRepository.GetAll()
                 .WhereIf(!allowProductionPay || input.ExcludeProductionPay, x => !x.IsProductionBased)
-                .WhereIf(driverId.HasValue, 
-                    x => x.EmployeeTimeClassifications.Any(e => e.DriverId == driverId 
+                .WhereIf(driverId.HasValue,
+                    x => x.EmployeeTimeClassifications.Any(e => e.DriverId == driverId
                         && (!input.AllowForManualTime.HasValue || e.AllowForManualTime == input.AllowForManualTime)))
                 .Select(x => new SelectListDto<TimeClassificationSelectListInfo>
                 {

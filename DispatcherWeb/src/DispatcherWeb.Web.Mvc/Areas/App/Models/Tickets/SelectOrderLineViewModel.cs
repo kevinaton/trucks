@@ -4,8 +4,8 @@ namespace DispatcherWeb.Web.Areas.App.Models.Tickets
 {
     public class SelectOrderLineViewModel
     {
-		public int OrderLineId { get; set; }
+        public int OrderLineId { get; set; }
 
-		public SelectList OrderLineSelectList { get; set; }
-	}
+        public SelectList OrderLineSelectList { get; set; }
+    }
 }

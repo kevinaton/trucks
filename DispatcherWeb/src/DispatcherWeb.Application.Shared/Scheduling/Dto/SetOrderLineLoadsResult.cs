@@ -2,7 +2,7 @@
 {
     public class SetOrderLineLoadsResult
     {
-		public int? Loads { get; set; }
-		public decimal? EstimatedAmount { get; set; }
-	}
+        public int? Loads { get; set; }
+        public decimal? EstimatedAmount { get; set; }
+    }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Imports.RowReaders
+﻿namespace DispatcherWeb.Imports.RowReaders
 {
     public interface ITruckImportRow : IImportRow
     {

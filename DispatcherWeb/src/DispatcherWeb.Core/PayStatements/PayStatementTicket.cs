@@ -1,11 +1,8 @@
-﻿using Abp.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Orders;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using DispatcherWeb.TimeClassifications;
 
 namespace DispatcherWeb.PayStatements
 {

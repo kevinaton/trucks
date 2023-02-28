@@ -1,5 +1,4 @@
-﻿using NUglify;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace DispatcherWeb.Scheduling.Dto

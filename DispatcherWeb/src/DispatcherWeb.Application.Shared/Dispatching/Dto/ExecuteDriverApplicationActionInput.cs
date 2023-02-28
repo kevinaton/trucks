@@ -1,6 +1,6 @@
-﻿using DispatcherWeb.DriverApplication.Dto;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using DispatcherWeb.DriverApplication.Dto;
 
 namespace DispatcherWeb.Dispatching.Dto
 {

@@ -18,7 +18,7 @@
 // <summary>This file contains SdkException.</summary>
 // <summary>This file contains class that describes an entitlement.</summary>
 ////*********************************************************
-namespace Intuit.Ipp.Data 
+namespace Intuit.Ipp.Data
 {
     using System;
     using System.Collections.Generic;

@@ -286,10 +286,10 @@ namespace PdfSharp.SharpZipLib.Zip.Compression.Streams
         {
 #if true//NETCF_1_0
             keys = new uint[] {
-				0x12345678,
-				0x23456789,
-				0x34567890
-			};
+                0x12345678,
+                0x23456789,
+                0x34567890
+            };
 
             byte[] rawPassword = ZipConstants.ConvertToArray(password);
 
@@ -494,20 +494,20 @@ namespace PdfSharp.SharpZipLib.Zip.Compression.Streams
         }
 
 #if !NETFX_CORE && !UWP
-		/// <summary>
-		/// Asynchronous reads are not supported a NotSupportedException is always thrown
-		/// </summary>
-		/// <param name="buffer">The buffer to read into.</param>
-		/// <param name="offset">The offset to start storing data at.</param>
-		/// <param name="count">The number of bytes to read</param>
-		/// <param name="callback">The async callback to use.</param>
-		/// <param name="state">The state to use.</param>
-		/// <returns>Returns an <see cref="IAsyncResult"/></returns>
-		/// <exception cref="NotSupportedException">Any access</exception>
-		public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-		{
-			throw new NotSupportedException("DeflaterOutputStream BeginRead not currently supported");
-		}
+        /// <summary>
+        /// Asynchronous reads are not supported a NotSupportedException is always thrown
+        /// </summary>
+        /// <param name="buffer">The buffer to read into.</param>
+        /// <param name="offset">The offset to start storing data at.</param>
+        /// <param name="count">The number of bytes to read</param>
+        /// <param name="callback">The async callback to use.</param>
+        /// <param name="state">The state to use.</param>
+        /// <returns>Returns an <see cref="IAsyncResult"/></returns>
+        /// <exception cref="NotSupportedException">Any access</exception>
+        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+        {
+            throw new NotSupportedException("DeflaterOutputStream BeginRead not currently supported");
+        }
 #endif
 
 #if !NETFX_CORE && !UWP
@@ -522,9 +522,9 @@ namespace PdfSharp.SharpZipLib.Zip.Compression.Streams
 		/// <returns>Returns an IAsyncResult.</returns>
 		/// <exception cref="NotSupportedException">Any access</exception>
 		public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-		{
-			throw new NotSupportedException("BeginWrite is not supported");
-		}
+        {
+            throw new NotSupportedException("BeginWrite is not supported");
+        }
 #endif
 
         /// <summary>
@@ -539,19 +539,21 @@ namespace PdfSharp.SharpZipLib.Zip.Compression.Streams
         }
 
 #if !NETFX_CORE && !UWP
-		/// <summary>
-		/// Calls <see cref="Finish"/> and closes the underlying
-		/// stream when <see cref="IsStreamOwner"></see> is true.
-		/// </summary>
-		public override void Close()
-		{
-			if ( !isClosed_ ) {
-				isClosed_ = true;
+        /// <summary>
+        /// Calls <see cref="Finish"/> and closes the underlying
+        /// stream when <see cref="IsStreamOwner"></see> is true.
+        /// </summary>
+        public override void Close()
+        {
+            if (!isClosed_)
+            {
+                isClosed_ = true;
 
-				try {
-					Finish();
+                try
+                {
+                    Finish();
 #if true//NETCF_1_0
-                    keys =null;
+                    keys = null;
 #else
 					if ( cryptoTransform_ != null ) {
 						GetAuthCodeIfAES();
@@ -559,14 +561,16 @@ namespace PdfSharp.SharpZipLib.Zip.Compression.Streams
 						cryptoTransform_ = null;
 					}
 #endif
-				}
-				finally {
-					if( isStreamOwner_ ) {
-						baseOutputStream_.Close();
-					}
-				}
-			}
-		}
+                }
+                finally
+                {
+                    if (isStreamOwner_)
+                    {
+                        baseOutputStream_.Close();
+                    }
+                }
+            }
+        }
 #else
         public void Close()
         {

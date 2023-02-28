@@ -31,7 +31,7 @@ namespace DispatcherWeb.Imports.Services
             _fuelSurchargeCalculator = fuelSurchargeCalculator;
         }
 
-        protected override bool IsRowEmpty(ImportFuelUsageRow row) => 
+        protected override bool IsRowEmpty(ImportFuelUsageRow row) =>
             row.TruckNumber.IsNullOrWhiteSpace() || !row.FuelDateTime.HasValue || !row.Amount.HasValue;
 
         protected override bool ImportRow(ImportFuelUsageRow row, int truckId)

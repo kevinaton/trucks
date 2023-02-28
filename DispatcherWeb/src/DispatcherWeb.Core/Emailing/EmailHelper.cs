@@ -18,13 +18,13 @@ namespace DispatcherWeb.Emailing
         {
             var receivers = mail.To.Select(x => x.Address).Distinct()
                 .Select((x, i) => new TrackableEmailReceiver
-            {
-                TrackableEmailId = trackableEmailId,
-                Email = x,
-                Order = i,
-                ReceiverKind = EmailReceiverKind.To,
-                IsSender = false /* IsSender==true is filtered out in the grid but we want it to be shown in this case */ /*x == mail.From.Address*/
-            }).ToList();
+                {
+                    TrackableEmailId = trackableEmailId,
+                    Email = x,
+                    Order = i,
+                    ReceiverKind = EmailReceiverKind.To,
+                    IsSender = false /* IsSender==true is filtered out in the grid but we want it to be shown in this case */ /*x == mail.From.Address*/
+                }).ToList();
 
             var cc = mail.CC.Select(x => x.Address).Distinct()
                 .Where(x => receivers.All(r => r.Email != x))

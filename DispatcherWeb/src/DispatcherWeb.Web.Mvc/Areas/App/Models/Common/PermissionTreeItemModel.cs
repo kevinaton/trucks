@@ -8,7 +8,7 @@ namespace DispatcherWeb.Web.Areas.App.Models.Common
 
         public PermissionTreeItemModel()
         {
-            
+
         }
 
         public PermissionTreeItemModel(IPermissionsEditViewModel editModel, string parentName)

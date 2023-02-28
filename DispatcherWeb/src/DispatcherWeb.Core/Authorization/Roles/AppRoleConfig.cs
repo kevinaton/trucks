@@ -17,11 +17,11 @@ namespace DispatcherWeb.Authorization.Roles
                 );
 
             //Static tenant roles
-		roleManagementConfig.StaticRoles.Add(
-                new StaticRoleDefinition(
-                    StaticRoleNames.Tenants.User,
-                    MultiTenancySides.Tenant)
-                );	
+            roleManagementConfig.StaticRoles.Add(
+                    new StaticRoleDefinition(
+                        StaticRoleNames.Tenants.User,
+                        MultiTenancySides.Tenant)
+                    );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(

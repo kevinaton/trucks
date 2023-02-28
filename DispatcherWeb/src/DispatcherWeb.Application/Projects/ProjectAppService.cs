@@ -5,19 +5,18 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.UI;
+using DispatcherWeb.Authorization;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Dto;
-using DispatcherWeb.Projects.Dto;
-using DispatcherWeb.Orders;
-using Abp.Extensions;
-using Abp.Timing;
-using DispatcherWeb.Authorization;
-using DispatcherWeb.Quotes;
 using DispatcherWeb.Locations;
+using DispatcherWeb.Orders;
+using DispatcherWeb.Projects.Dto;
+using DispatcherWeb.Quotes;
 using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Common.Dto;
 
 namespace DispatcherWeb.Projects
 {
@@ -149,7 +148,7 @@ namespace DispatcherWeb.Projects
         {
             var project = model.Id.HasValue ? await _projectRepository.GetAsync(model.Id.Value) : new Project();
 
-            if(project.Status != model.Status && model.Status == ProjectStatus.Inactive)
+            if (project.Status != model.Status && model.Status == ProjectStatus.Inactive)
             {
                 // Whenever the status is changed to inactive, the end date should default to today regardless of whether this is a new project
                 model.EndDate = await GetToday();

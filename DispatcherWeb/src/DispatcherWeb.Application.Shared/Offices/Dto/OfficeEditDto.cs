@@ -10,7 +10,7 @@ namespace DispatcherWeb.Offices.Dto
         [Required]
         [StringLength(150)]
         public string Name { get; set; }
-        
+
         [Required]
         [StringLength(7)]
         public string TruckColor { get; set; }

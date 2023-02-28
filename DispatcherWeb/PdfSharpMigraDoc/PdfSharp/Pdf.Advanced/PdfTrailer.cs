@@ -29,9 +29,9 @@
 
 using System;
 using System.Diagnostics;
+using PdfSharp.Pdf.Internal;
 using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf.Security;
-using PdfSharp.Pdf.Internal;
 
 namespace PdfSharp.Pdf.Advanced
 {

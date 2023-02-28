@@ -12,7 +12,7 @@ namespace DispatcherWeb.Quotes.Dto
 
         public int? SalesPersonId { get; set; }
 
-		public string Misc { get; set; }
+        public string Misc { get; set; }
 
         public int? QuoteId { get; set; }
 

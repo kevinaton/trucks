@@ -11,7 +11,7 @@ namespace DispatcherWeb.Organizations.Dto
         public string DisplayName { get; set; }
 
         public int MemberCount { get; set; }
-        
+
         public int RoleCount { get; set; }
     }
 }

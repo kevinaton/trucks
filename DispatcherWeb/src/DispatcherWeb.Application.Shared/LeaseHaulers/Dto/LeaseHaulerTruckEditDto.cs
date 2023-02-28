@@ -14,7 +14,7 @@ namespace DispatcherWeb.LeaseHaulers.Dto
         [Required(ErrorMessage = "Truck Code is a required field")]
         [StringLength(25)]
         public string TruckCode { get; set; }
-        
+
         public int VehicleCategoryId { get; set; }
         public string VehicleCategoryName { get; set; }
 
@@ -33,7 +33,7 @@ namespace DispatcherWeb.LeaseHaulers.Dto
         public int? DefaultDriverId { get; set; }
 
         public string DefaultDriverName { get; set; }
-        
+
         public bool IsActive { get; set; }
 
         public DateTime? InactivationDate { get; set; }

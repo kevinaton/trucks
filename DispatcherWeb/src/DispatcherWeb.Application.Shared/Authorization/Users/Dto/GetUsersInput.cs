@@ -22,7 +22,7 @@ namespace DispatcherWeb.Authorization.Users.Dto
             {
                 Sorting = "Name,Surname";
             }
-             Filter = Filter?.Trim();
-       }
+            Filter = Filter?.Trim();
+        }
     }
 }

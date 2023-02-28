@@ -32,10 +32,8 @@
 
 using System;
 using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Runtime.InteropServices;
 using System.IO;
 #if GDI
 using System.Drawing;
@@ -52,15 +50,11 @@ using WpfFontFamily = System.Windows.Media.FontFamily;
 using WpfTypeface = System.Windows.Media.Typeface;
 using WpfGlyphTypeface = System.Windows.Media.GlyphTypeface;
 #endif
-using PdfSharp.Fonts;
 #if !EDF_CORE
 using PdfSharp.Drawing;
-using PdfSharp.Internal;
 #endif
 
 using Fixed = System.Int32;
-using FWord = System.Int16;
-using UFWord = System.UInt16;
 
 #pragma warning disable 0649
 

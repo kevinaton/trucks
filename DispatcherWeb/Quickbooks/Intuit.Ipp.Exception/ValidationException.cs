@@ -22,7 +22,6 @@
 namespace Intuit.Ipp.Exception
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Runtime.Serialization;
     using Intuit.Ipp.Exception.Properties;
 
@@ -49,7 +48,7 @@ namespace Intuit.Ipp.Exception
         public ValidationException(IList<IdsError> innerExceptions)
             : base(Resources.ValidationExceptionDefaultMessage, innerExceptions)
         {
-            
+
         }
 
         /// <summary>
@@ -101,7 +100,7 @@ namespace Intuit.Ipp.Exception
             : base(errorMessage, errorCode, source, innerException)
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the ValidationException class.
         /// </summary>

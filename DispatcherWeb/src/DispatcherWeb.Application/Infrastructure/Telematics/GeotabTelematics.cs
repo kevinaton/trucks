@@ -9,7 +9,6 @@ using Abp.Localization;
 using Abp.UI;
 using Castle.Core.Internal;
 using Castle.Core.Logging;
-using DispatcherWeb.Configuration;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Telematics.Dto;
 using DispatcherWeb.Infrastructure.Utilities;

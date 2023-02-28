@@ -1,6 +1,6 @@
 ﻿namespace DispatcherWeb.Dto
 {
-    
+
     public class MustHaveTenantDto<TPrimaryKey>
     {
         public TPrimaryKey Id { get; set; }

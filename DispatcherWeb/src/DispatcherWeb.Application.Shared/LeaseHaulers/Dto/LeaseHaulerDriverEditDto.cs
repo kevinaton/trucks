@@ -1,6 +1,6 @@
-﻿using DispatcherWeb.Infrastructure;
+﻿using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Security;
-using System.ComponentModel.DataAnnotations;
 
 namespace DispatcherWeb.LeaseHaulers.Dto
 {
@@ -20,7 +20,7 @@ namespace DispatcherWeb.LeaseHaulers.Dto
         public string LastName { get; set; }
 
         public string FullName => FirstName + " " + LastName;
-        
+
         public bool DriverIsActive { get; set; }
 
         public bool EnableForDriverApplication { get; set; }

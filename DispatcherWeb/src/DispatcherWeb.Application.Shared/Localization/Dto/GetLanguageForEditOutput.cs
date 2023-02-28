@@ -8,7 +8,7 @@ namespace DispatcherWeb.Localization.Dto
         public ApplicationLanguageEditDto Language { get; set; }
 
         public List<ComboboxItemDto> LanguageNames { get; set; }
-        
+
         public List<ComboboxItemDto> Flags { get; set; }
 
         public GetLanguageForEditOutput()

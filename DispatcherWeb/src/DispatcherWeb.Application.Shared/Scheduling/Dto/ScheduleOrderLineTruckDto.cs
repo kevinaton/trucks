@@ -1,5 +1,5 @@
-﻿using DispatcherWeb.Trucks.Dto;
-using System;
+﻿using System;
+using DispatcherWeb.Trucks.Dto;
 
 namespace DispatcherWeb.Scheduling.Dto
 {

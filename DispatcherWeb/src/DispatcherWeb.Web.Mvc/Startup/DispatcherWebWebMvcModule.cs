@@ -9,9 +9,6 @@ using Abp.Reflection.Extensions;
 using Abp.Threading.BackgroundWorkers;
 using Abp.Web.Sessions;
 using Abp.Web.Timing;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.Infrastructure.AzureBlobs;
@@ -21,6 +18,9 @@ using DispatcherWeb.Storage;
 using DispatcherWeb.Web.Areas.App.Startup;
 using DispatcherWeb.Web.Session;
 using DispatcherWeb.Web.Timing;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace DispatcherWeb.Web.Startup
 {
@@ -44,7 +44,7 @@ namespace DispatcherWeb.Web.Startup
             Configuration.Modules.AbpWebCommon().MultiTenancy.DomainFormat = _appConfiguration["App:WebSiteRootAddress"] ?? "https://localhost:44332/";
             Configuration.Modules.AspNetZero().LicenseCode = _appConfiguration["AbpZeroLicenseCode"];
             Configuration.Navigation.Providers.Add<AppNavigationProvider>();
-            
+
             Configuration.ReplaceService<ISessionScriptManager, DispatcherWebSessionScriptManager>();
             Configuration.ReplaceService<ITimingScriptManager, DispatcherWebTimingScriptManager>();
             Configuration.ReplaceService<IBinaryObjectManager, AzureBlobBinaryObjectManager>();
@@ -86,10 +86,10 @@ namespace DispatcherWeb.Web.Startup
             appFolders.TempFileDownloadFolder = Path.Combine(_env.WebRootPath, @"Temp\Downloads");
             appFolders.WebLogsFolder = Path.Combine(_env.ContentRootPath, @"App_Data\Logs");
 
-            if(_env.IsDevelopment())
+            if (_env.IsDevelopment())
             {
                 var currentAssemblyDirectoryPath = Assembly.GetExecutingAssembly().GetDirectoryPathOrNull();
-                if(currentAssemblyDirectoryPath != null)
+                if (currentAssemblyDirectoryPath != null)
                 {
                     appFolders.WebLogsFolder = Path.Combine(currentAssemblyDirectoryPath, @"App_Data\Logs");
                 }

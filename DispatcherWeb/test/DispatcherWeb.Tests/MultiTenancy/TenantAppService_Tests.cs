@@ -4,12 +4,12 @@ using Abp.Application.Services.Dto;
 using Abp.MultiTenancy;
 using Abp.Zero.Configuration;
 using DispatcherWeb.Authorization.Roles;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.MultiTenancy.Dto;
 using DispatcherWeb.Notifications;
+using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
 namespace DispatcherWeb.Tests.MultiTenancy
@@ -46,8 +46,8 @@ namespace DispatcherWeb.Tests.MultiTenancy
                 new CreateTenantInput
                 {
                     CompanyName = "Tenant for test purpose",
-                    AdminFirstName= "Test",
-                    AdminLastName= "Test",
+                    AdminFirstName = "Test",
+                    AdminLastName = "Test",
                     AdminEmailAddress = "admin@testtenant.com",
                     AdminPassword = "123qwe",
                     IsActive = true
@@ -116,8 +116,8 @@ namespace DispatcherWeb.Tests.MultiTenancy
                 new CreateTenantInput
                 {
                     CompanyName = "Tenant for test purpose",
-                    AdminFirstName= "Test",
-                    AdminLastName= "Test",
+                    AdminFirstName = "Test",
+                    AdminLastName = "Test",
                     AdminEmailAddress = "admin@testtenant.com",
                     AdminPassword = "123qwe",
                     IsActive = true,
@@ -139,8 +139,8 @@ namespace DispatcherWeb.Tests.MultiTenancy
             await _tenantAppService.CreateTenant(
                 new CreateTenantInput
                 {
-                    AdminFirstName= "Test",
-                    AdminLastName= "Test",
+                    AdminFirstName = "Test",
+                    AdminLastName = "Test",
                     CompanyName = "Tenant for test purpose",
                     AdminEmailAddress = "admin@testtenant.com",
                     AdminPassword = "123qwe",
@@ -157,7 +157,7 @@ namespace DispatcherWeb.Tests.MultiTenancy
             {
                 //Check static roles
                 var staticRoleNames = Resolve<IRoleManagementConfig>().StaticRoles.Where(r => r.Side == MultiTenancySides.Tenant).Select(role => role.RoleName).ToList();
-                foreach(var staticRoleName in staticRoleNames)
+                foreach (var staticRoleName in staticRoleNames)
                 {
                     (await context.Roles.CountAsync(r => r.TenantId == tenant.Id && r.Name == staticRoleName)).ShouldBe(1);
                 }

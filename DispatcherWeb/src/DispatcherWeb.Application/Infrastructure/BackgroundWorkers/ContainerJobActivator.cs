@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Abp.Dependency;
-using Hangfire;
-
-namespace DispatcherWeb.Infrastructure.BackgroundWorkers
+﻿namespace DispatcherWeb.Infrastructure.BackgroundWorkers
 {
     //TODO: Do we need this?
     //Looks like this was added simultaneously with the ScheduledReports, and the ScheduledReports work without this, so we might not need this

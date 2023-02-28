@@ -1,15 +1,12 @@
-﻿using Abp.Dependency;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Events.Bus.Entities;
 using Abp.Events.Bus.Handlers;
 using DispatcherWeb.Orders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Receipts
 {

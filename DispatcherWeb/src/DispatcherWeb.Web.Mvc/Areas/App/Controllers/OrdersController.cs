@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.UI;
@@ -77,7 +76,7 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         {
             return View();
         }
-        
+
         [AbpMvcAuthorize(AppPermissions.Pages_Reports_BillingReconciliation)]
         public IActionResult BillingReconciliation()
         {
@@ -140,7 +139,7 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             var model = await _orderAppService.GetSharedOrders(new EntityDto(id));
             return PartialView("_ShareOrderModal", model);
         }
-        
+
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<PartialViewResult> ShareOrderLineModal(int id)
@@ -148,14 +147,14 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             var model = await _orderAppService.GetSharedOrderLines(new EntityDto(id));
             return PartialView("_ShareOrderLineModal", model);
         }
-        
+
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
         public PartialViewResult SetNoDriverForTruckModal(SetNoDriverForTruckInput model)
         {
             return PartialView("_SetNoDriverForTruckModal", model);
         }
-        
+
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
         public PartialViewResult SetDefaultDriverForTruckModal(SetDefaultDriverForTruckInput model)
@@ -253,6 +252,6 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         {
             return PartialView("_SelectOrderQuoteModal");
         }
-       
+
     }
 }

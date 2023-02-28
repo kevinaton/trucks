@@ -38,7 +38,7 @@ namespace Intuit.Ipp.XsdExtension
             CodeCompileUnit cu = new CodeCompileUnit();
 
             codeDomContext.CodeNamespace.Imports.Add(new CodeNamespaceImport("Newtonsoft.Json"));
-            
+
             cu.Namespaces.Add(codeDomContext.CodeNamespace);
 
             using (StringWriter writer = new StringWriter(CultureInfo.InvariantCulture))

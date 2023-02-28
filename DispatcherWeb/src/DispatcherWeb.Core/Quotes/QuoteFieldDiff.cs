@@ -6,7 +6,7 @@ namespace DispatcherWeb.Quotes
 {
     [Table("QuoteFieldDiff")]
     public class QuoteFieldDiff : FullAuditedEntity, IMustHaveTenant
-	{
+    {
         public QuoteFieldDiff()
         {
         }
@@ -32,9 +32,9 @@ namespace DispatcherWeb.Quotes
             NewDisplayValue = newValue;
         }
 
-		public int TenantId { get; set; }
+        public int TenantId { get; set; }
 
-		public int QuoteHistoryRecordId { get; set; }
+        public int QuoteHistoryRecordId { get; set; }
 
         public QuoteFieldEnum Field { get; set; }
 

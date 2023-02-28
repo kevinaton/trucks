@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using AboveGoal.Prospects.Import;
 using Abp.Dependency;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Core;
@@ -24,9 +22,9 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
             var filesBlobContainer = GetBlobContainer();
             var path = $"{id}/{fileName}";
             CloudBlockBlob fileBlob = filesBlobContainer.GetBlockBlobReference(path);
-            if(metadataList != null)
+            if (metadataList != null)
             {
-                foreach(var metadataItem in metadataList)
+                foreach (var metadataItem in metadataList)
                 {
                     fileBlob.Metadata.Add(metadataItem);
                 }
@@ -99,19 +97,19 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
         public AttachmentHelper.ContentWithType GetFromAzureBlob(string path, string containerName = null)
         {
             AttachmentHelper.ContentWithType contentWithType = new AttachmentHelper.ContentWithType();
-            if(String.IsNullOrEmpty(path))
+            if (String.IsNullOrEmpty(path))
             {
                 contentWithType.Content = new byte[0];
                 return contentWithType;
             }
             var filesBlobContainer = GetBlobContainer();
             CloudBlockBlob fileBlob = filesBlobContainer.GetBlockBlobReference(path);
-            if(!fileBlob.Exists())
+            if (!fileBlob.Exists())
             {
                 contentWithType.Content = new byte[0];
                 return contentWithType;
             }
-            using(MemoryStream ms = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
                 fileBlob.DownloadToStream(ms);
                 contentWithType.Content = ms.ToArray();
@@ -129,7 +127,7 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
         }
         private void AddKeyValueToMetadata(IDictionary<string, string> blobMetadata, string key, string value)
         {
-            if(blobMetadata.ContainsKey(key))
+            if (blobMetadata.ContainsKey(key))
             {
                 blobMetadata[key] = value;
             }
@@ -145,7 +143,7 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
         }
         public async Task<IDictionary<string, string>> GetMetadataAsync(string blobName)
         {
-            if(String.IsNullOrEmpty(blobName))
+            if (String.IsNullOrEmpty(blobName))
             {
                 throw new ArgumentException($"{nameof(blobName)} cannot be null or empty!");
             }
@@ -157,7 +155,7 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
         public async Task DeleteSecureFilesAsync(Guid id)
         {
             string[] fileNames = GetSecureFileNames(id);
-            foreach(var fileName in fileNames)
+            foreach (var fileName in fileNames)
             {
                 await DeleteSecureFileAsync(fileName /* fileName is path */);
             }
@@ -169,7 +167,7 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
         }
         public async Task<bool> DeleteSecureFileAsync(string blobName)
         {
-            if(String.IsNullOrEmpty(blobName))
+            if (String.IsNullOrEmpty(blobName))
             {
                 throw new ArgumentException($"{nameof(blobName)} cannot be null or empty!");
             }
@@ -191,11 +189,11 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
         {
             var blobContainer = GetBlobContainer();
             var fileBlobs = blobContainer.ListBlobs(null, true, BlobListingDetails.Metadata);
-            foreach(var blobItem in fileBlobs)
+            foreach (var blobItem in fileBlobs)
             {
                 CloudBlockBlob fileBlob = (CloudBlockBlob)blobItem;
                 string blobName = fileBlob.Name;
-                if(fileBlob.Properties.LastModified?.Add(expirationPeriod) > DateTime.UtcNow)
+                if (fileBlob.Properties.LastModified?.Add(expirationPeriod) > DateTime.UtcNow)
                 {
                     continue;
                 }
@@ -289,7 +287,7 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
             blobClient.DefaultRequestOptions.RequireEncryption = true;
             blobClient.DefaultRequestOptions.EncryptionPolicy = new BlobEncryptionPolicy(GetBlobStorageKey(), null);
             var filesBlobContainer = blobClient.GetContainerReference(SecureFilesContainerName);
-            if(!filesBlobContainer.Exists())
+            if (!filesBlobContainer.Exists())
             {
                 filesBlobContainer.CreateIfNotExists(BlobContainerPublicAccessType.Off);
             }

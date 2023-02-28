@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.UI;
 using CsvHelper;
 using CsvHelper.Configuration;
 using DispatcherWeb.Imports.RowReaders;
-using System.Globalization;
 
 namespace DispatcherWeb.Imports
 {
@@ -27,7 +25,7 @@ namespace DispatcherWeb.Imports
                 PrepareHeaderForMatch = args => args.Header.ToLower().Trim(),
                 MissingFieldFound = null
             };
-            
+
             _csv = new CsvReader(textReader, config);
 
             if (fieldMap != null)
@@ -51,7 +49,7 @@ namespace DispatcherWeb.Imports
             return _csv.HeaderRecord.Select(h => h.Trim()).ToArray();
         }
 
-        public IEnumerable<T> AsEnumerable<T>() where T: IImportRow
+        public IEnumerable<T> AsEnumerable<T>() where T : IImportRow
         {
             _csv.Read();
             _csv.ReadHeader();

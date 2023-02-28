@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Timing;
@@ -42,14 +40,14 @@ namespace DispatcherWeb.Tests.Dispatching
             var order = await CreateOrderWithOrderLines(today);
             var orderLine = order.OrderLines.First();
             var dispatch = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, currentDispatchStatus);
-                await UpdateEntity(dispatch, d =>
+            await UpdateEntity(dispatch, d =>
+            {
+                d.Sent = today;
+                if (currentDispatchStatus == DispatchStatus.Completed)
                 {
-                    d.Sent = today;
-                    if (currentDispatchStatus == DispatchStatus.Completed)
-                    {
-                        d.Acknowledged = today;
-                    }
-                });
+                    d.Acknowledged = today;
+                }
+            });
             var dispatch2 = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, nextDispatchStatus);
 
             // Act 
@@ -83,15 +81,15 @@ namespace DispatcherWeb.Tests.Dispatching
             var order = await CreateOrderWithOrderLines(today);
             var orderLine = order.OrderLines.First();
             var dispatch = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, currentDispatchStatus);
-                await UpdateEntity(dispatch, d =>
+            await UpdateEntity(dispatch, d =>
+            {
+                d.IsDeleted = true;
+                d.Sent = today;
+                if (currentDispatchStatus == DispatchStatus.Completed)
                 {
-                    d.IsDeleted = true;
-                    d.Sent = today;
-                    if (currentDispatchStatus == DispatchStatus.Completed)
-                    {
-                        d.Acknowledged = today;
-                    }
-                });
+                    d.Acknowledged = today;
+                }
+            });
             var dispatch2 = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, nextDispatchStatus);
 
             // Act 

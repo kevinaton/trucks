@@ -3,8 +3,8 @@ using DispatcherWeb.DriverAssignments.Dto;
 
 namespace DispatcherWeb.DriverAssignments
 {
-	public interface INotifyDriversAppService
-	{
-		Task<bool> NotifyDrivers(NotifyDriversInput input);
-	}
+    public interface INotifyDriversAppService
+    {
+        Task<bool> NotifyDrivers(NotifyDriversInput input);
+    }
 }

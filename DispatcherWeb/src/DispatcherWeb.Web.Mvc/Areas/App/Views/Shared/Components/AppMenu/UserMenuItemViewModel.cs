@@ -13,7 +13,7 @@ namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppMenu
         public int ItemDepth { get; set; }
 
         public bool RootLevel { get; set; }
-        
+
         public bool IsTabMenuUsed { get; set; }
     }
 }

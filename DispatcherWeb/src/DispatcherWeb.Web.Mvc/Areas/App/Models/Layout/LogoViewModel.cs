@@ -1,5 +1,5 @@
-﻿using DispatcherWeb.Sessions.Dto;
-using Abp.Extensions;
+﻿using Abp.Extensions;
+using DispatcherWeb.Sessions.Dto;
 
 namespace DispatcherWeb.Web.Areas.App.Models.Layout
 {

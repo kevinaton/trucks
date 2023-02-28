@@ -3,8 +3,8 @@ using DispatcherWeb.Infrastructure.Reports.Dto;
 
 namespace DispatcherWeb.Infrastructure.Reports
 {
-	public interface IScheduledReportGeneratorAppService
-	{
-		Task GenerateReport(ScheduledReportGeneratorInput scheduledReportGeneratorInput);
-	}
+    public interface IScheduledReportGeneratorAppService
+    {
+        Task GenerateReport(ScheduledReportGeneratorInput scheduledReportGeneratorInput);
+    }
 }

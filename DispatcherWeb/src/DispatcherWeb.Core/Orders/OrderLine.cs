@@ -51,7 +51,7 @@ namespace DispatcherWeb.Orders
         public bool IsMaterialPricePerUnitOverridden { get; set; }
 
         public bool IsFreightPricePerUnitOverridden { get; set; }
-        
+
         [Required(ErrorMessage = "Service/Product Item is a required field")]
         public int ServiceId { get; set; }
 

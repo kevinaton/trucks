@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Configuration.Tenants.Dto
 {
@@ -12,8 +8,8 @@ namespace DispatcherWeb.Configuration.Tenants.Dto
         public bool AllowSmsMessages { get; set; }
         public SendSmsOnDispatchingEnum SendSmsOnDispatching { get; set; }
         public string SmsPhoneNumber { get; set; }
-		public string DriverDispatchSms { get; set; }
-		public string DriverStartTime { get; set; }
+        public string DriverDispatchSms { get; set; }
+        public string DriverStartTime { get; set; }
         public bool HideTicketControlsInDriverApp { get; set; }
         public bool RequireDriversToEnterTickets { get; set; }
         public bool RequireSignature { get; set; }

@@ -28,8 +28,8 @@
 #endregion
 
 using System.Collections.Generic;
-using PdfSharp.Drawing;
 using PdfSharp.Charting.Renderers;
+using PdfSharp.Drawing;
 
 namespace PdfSharp.Charting
 {

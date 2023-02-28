@@ -1,17 +1,5 @@
-﻿using DispatcherWeb.DriverApplication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
-using Abp.Application.Services;
-using Abp.Runtime.Session;
-using DispatcherWeb.Authorization.Users;
-using DispatcherWeb.DriverApplication.Dto;
-using DispatcherWeb.Drivers;
-using DispatcherWeb.Orders;
-using DispatcherWeb.Trucks;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Abp.AutoMapper;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.Security;

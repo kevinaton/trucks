@@ -29,8 +29,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf.Filters;
 

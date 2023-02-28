@@ -110,12 +110,12 @@ namespace Intuit.Ipp.Exception
             : base(errorMessage, innerException)
         {
             string errorDetail = string.Empty;
-           
+
             if (innerException != null)
             {
                 if (innerException.GetType() == typeof(ValidationException))
                 {
-                    ValidationException tempException = innerException as ValidationException; 
+                    ValidationException tempException = innerException as ValidationException;
 
                     if (tempException.InnerExceptions != null)
                     {
@@ -144,7 +144,7 @@ namespace Intuit.Ipp.Exception
             {
                 this.errorMessage = errorMessage;
             }
-            
+
             this.errorCode = errorCode;
             this.source = source;
             this.innerException = innerException;
@@ -242,7 +242,7 @@ namespace Intuit.Ipp.Exception
             {
                 return this.errorMessage;
             }
-          
+
         }
 
         /// <summary>

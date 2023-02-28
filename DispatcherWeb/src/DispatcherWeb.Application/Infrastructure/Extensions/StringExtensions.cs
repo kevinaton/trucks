@@ -1,11 +1,7 @@
-﻿using Abp.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Abp.Extensions;
 using DispatcherWeb.Infrastructure.Templates;
 
 namespace DispatcherWeb.Infrastructure.Extensions
@@ -16,7 +12,7 @@ namespace DispatcherWeb.Infrastructure.Extensions
 
         public static string WithMaxLength(this string value, int maxLength, bool showEllipsis = false)
         {
-            return value?.Substring(0, Math.Min(value.Length, maxLength)) 
+            return value?.Substring(0, Math.Min(value.Length, maxLength))
                    + (showEllipsis && value?.Length > maxLength ? "\u2026" : "")
             ;
         }
@@ -32,9 +28,9 @@ namespace DispatcherWeb.Infrastructure.Extensions
 
         public static string ReplaceTokens(this string template, Dictionary<string, string> tokenDictionary)
         {
-            foreach(var keyValuePair in tokenDictionary)
+            foreach (var keyValuePair in tokenDictionary)
             {
-                template =  template.Replace(keyValuePair.Key, keyValuePair.Value, true, CultureInfo.InvariantCulture);
+                template = template.Replace(keyValuePair.Key, keyValuePair.Value, true, CultureInfo.InvariantCulture);
             }
 
             return template;

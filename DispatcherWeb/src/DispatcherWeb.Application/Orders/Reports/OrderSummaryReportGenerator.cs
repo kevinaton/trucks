@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Orders.Dto;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
@@ -81,7 +80,7 @@ namespace DispatcherWeb.Orders.Reports
                 for (int j = 1; j < 6; j++)
                 {
                     //Load 1-5
-                    table.AddColumn(Unit.FromCentimeter(7.8/5)); //~1.55 each
+                    table.AddColumn(Unit.FromCentimeter(7.8 / 5)); //~1.55 each
                 }
             }
 
@@ -113,7 +112,7 @@ namespace DispatcherWeb.Orders.Reports
             cell.AddParagraph("# Of Trucks");
             cell = row.Cells[i++];
             cell.AddParagraph("Trucks");
-            
+
             if (model.ShowLoadColumns)
             {
                 for (int j = 1; j < 6; j++)
@@ -156,7 +155,7 @@ namespace DispatcherWeb.Orders.Reports
             }
 
             table.SetEdge(0, 0, table.Columns.Count, table.Rows.Count, Edge.Box, BorderStyle.Single, 1, Colors.Black);
-            
+
 
             return document.SaveToBytesArray();
         }

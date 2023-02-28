@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Identity;
-using Microsoft.AspNetCore.Hosting;
-using IdentityServer4.Services;
 using DispatcherWeb.Web.Models.Home;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 
 namespace DispatcherWeb.Web.Controllers
@@ -37,8 +37,8 @@ namespace DispatcherWeb.Web.Controllers
                 return RedirectToAction("SelectEdition", "TenantRegistration");
             }
 
-            return AbpSession.UserId.HasValue ? 
-                RedirectToAction("Index", "Home", new { area = "App" }) : 
+            return AbpSession.UserId.HasValue ?
+                RedirectToAction("Index", "Home", new { area = "App" }) :
                 RedirectToAction("Login", "Account");
         }
 

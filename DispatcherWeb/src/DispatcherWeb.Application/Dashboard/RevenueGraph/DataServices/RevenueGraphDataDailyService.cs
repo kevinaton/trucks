@@ -1,10 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
-using DispatcherWeb.Dashboard.Dto;
 using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
 using DispatcherWeb.Dashboard.RevenueGraph.Dto;
-using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
 {
@@ -38,7 +36,7 @@ namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
                      })
                     .ToList()
                 ;
-            var allDaysOfPefiod = 
+            var allDaysOfPefiod =
                 Enumerable.Range(0, 1 + input.PeriodEnd.Subtract(input.PeriodBegin).Days)
                 .Select(offset => input.PeriodBegin.AddDays(offset))
                 ;

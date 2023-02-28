@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Dispatching;
@@ -45,8 +43,8 @@ namespace DispatcherWeb.Tests.Scheduling
                 {
                     TenantId = 1,
                     DeliveryDate = date,
-                    Customer = context.Customers.FirstOrDefault() ?? new Customer() {TenantId = 1, Name = "Cust"},
-                    Office = context.Offices.FirstOrDefault() ?? new Office() {TenantId = 1, Name = "Office1", TruckColor = "fff"},
+                    Customer = context.Customers.FirstOrDefault() ?? new Customer() { TenantId = 1, Name = "Cust" },
+                    Office = context.Offices.FirstOrDefault() ?? new Office() { TenantId = 1, Name = "Office1", TruckColor = "fff" },
                     SalesTaxRate = 2,
                 };
                 order.OrderLines.Add(new OrderLine()

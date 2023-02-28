@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DispatcherWeb.Web.Areas.App.Models.Shared
+﻿namespace DispatcherWeb.Web.Areas.App.Models.Shared
 {
     public class ReportViewModelBase
     {

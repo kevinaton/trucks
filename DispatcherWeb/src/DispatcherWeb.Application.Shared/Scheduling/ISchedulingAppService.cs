@@ -1,12 +1,12 @@
-﻿using Abp.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using DispatcherWeb.Dto;
 using DispatcherWeb.LeaseHaulers.Dto;
 using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Scheduling.Dto;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Scheduling
 {

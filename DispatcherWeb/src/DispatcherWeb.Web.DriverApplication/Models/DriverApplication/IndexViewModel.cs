@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DispatcherWeb.Web.DriverApplication.Models.DriverApplication
+﻿namespace DispatcherWeb.Web.DriverApplication.Models.DriverApplication
 {
     public class IndexViewModel
     {

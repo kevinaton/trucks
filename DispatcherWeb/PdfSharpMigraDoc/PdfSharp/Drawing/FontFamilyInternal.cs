@@ -31,7 +31,6 @@ using System.Diagnostics;
 using System.Globalization;
 using PdfSharp.Internal;
 #if CORE || GDI
-using System.Drawing;
 using GdiFontFamily = System.Drawing.FontFamily;
 #endif
 #if WPF

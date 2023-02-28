@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Authorization.Users;
 using Abp.Configuration;
@@ -5,14 +7,12 @@ using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.Extensions;
 using Abp.Zero.Configuration;
-using Microsoft.AspNetCore.Identity;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.MultiTenancy;
-using System.Threading.Tasks;
-using Abp.Extensions;
-using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace DispatcherWeb.Authorization

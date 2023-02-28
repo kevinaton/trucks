@@ -1,8 +1,6 @@
-﻿using Abp.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
+using Abp.Extensions;
 
 namespace DispatcherWeb.QuickbooksDesktop.Models
 {
@@ -127,7 +125,7 @@ namespace DispatcherWeb.QuickbooksDesktop.Models
             BillingAddress5 = addressLines.Skip(4).FirstOrDefault();
             return this;
         }
-        
+
         public CustomerRow SetShippingAddress(QuickbooksOnline.Dto.PhysicalAddressDto address)
         {
             var addressLines = GetAddressLines(address);

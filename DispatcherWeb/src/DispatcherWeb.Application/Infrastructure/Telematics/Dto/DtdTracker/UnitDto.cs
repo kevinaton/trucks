@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DispatcherWeb.Infrastructure.Telematics.Dto.DtdTracker
 {
@@ -33,10 +30,10 @@ namespace DispatcherWeb.Infrastructure.Telematics.Dto.DtdTracker
         public WialonMeasureUnits MeasureUnits { get; set; }
         //"mu": 1, /* measure units: 0 - si, 1 - us, 2 - imperial, 3 - metric with gallons */
 
-        
+
         [JsonProperty("hw")]
         public long DeviceTypeId { get; set; }
-        
+
         [JsonProperty("psw")]
         public string Password { get; set; }
 

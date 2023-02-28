@@ -27,7 +27,6 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 
 namespace PdfSharp
 {
@@ -133,7 +132,7 @@ namespace PdfSharp
         /// </summary>
 // ReSharper disable RedundantNameQualifier
         public static int BuildNumber = (System.DateTime.Now - new System.DateTime(2005, 1, 1)).Days;
-// ReSharper restore RedundantNameQualifier
+        // ReSharper restore RedundantNameQualifier
 #endif
 
         /// <summary>

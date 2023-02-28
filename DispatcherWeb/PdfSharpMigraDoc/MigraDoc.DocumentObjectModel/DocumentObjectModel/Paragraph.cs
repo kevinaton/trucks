@@ -32,10 +32,10 @@
 
 using System;
 using System.Collections.Generic;
-using MigraDoc.DocumentObjectModel.publics;
-using MigraDoc.DocumentObjectModel.Visitors;
 using MigraDoc.DocumentObjectModel.Fields;
+using MigraDoc.DocumentObjectModel.publics;
 using MigraDoc.DocumentObjectModel.Shapes;
+using MigraDoc.DocumentObjectModel.Visitors;
 
 namespace MigraDoc.DocumentObjectModel
 {

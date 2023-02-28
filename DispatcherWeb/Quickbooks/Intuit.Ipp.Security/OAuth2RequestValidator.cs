@@ -7,9 +7,7 @@
 
 namespace Intuit.Ipp.Security
 {
-    using System.Collections.Generic;
     using System.Collections.Specialized;
-    using System.Configuration;
     using System.Net;
     using System.Security.Cryptography;
     using System.Text.RegularExpressions;
@@ -42,7 +40,7 @@ namespace Intuit.Ipp.Security
             {
                 throw new InvalidTokenException("Access token cannot be null or empty.");
             }
-            
+
             if (!Regex.IsMatch(accessToken, @"^[\x20-\x7E]+$"))
             {
                 throw new InvalidTokenException("Access token contains forbidden char.");

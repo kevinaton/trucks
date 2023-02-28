@@ -19,8 +19,6 @@
 // <summary>This file contains Request Log configuration.</summary>
 // -----------------------------------------------------------------------
 
-using System;
-
 namespace Intuit.Ipp.Core.Configuration
 {
     using System.IO;
@@ -108,7 +106,7 @@ namespace Intuit.Ipp.Core.Configuration
                     IdsExceptionManager.HandleException(exception);
                 }
 
-                this.serviceRequestLoggingLocationForFile= value;
+                this.serviceRequestLoggingLocationForFile = value;
             }
         }
 

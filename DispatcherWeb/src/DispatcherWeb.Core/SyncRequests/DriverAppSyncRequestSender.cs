@@ -12,13 +12,12 @@ using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Runtime.Session;
-using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.SyncRequests.DriverApp;
+using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.SyncRequests.FcmPushMessages;
 using DispatcherWeb.WebPush;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Abp.Collections.Extensions;
 
 namespace DispatcherWeb.SyncRequests
 {
@@ -249,7 +248,7 @@ namespace DispatcherWeb.SyncRequests
                 .Union(driverRelatedChanges.SelectMany(x => x.DriverIds ?? new List<int>()))
                 .Distinct()
                 .ToList();
-            
+
             return driverIds;
         }
 

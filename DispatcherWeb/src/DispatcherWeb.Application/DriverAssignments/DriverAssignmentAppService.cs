@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -6,26 +7,25 @@ using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
+using Abp.Timing;
 using Abp.UI;
-using DispatcherWeb.Orders;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Dispatching;
+using DispatcherWeb.DriverApplication;
+using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.DriverAssignments.Dto;
 using DispatcherWeb.Drivers;
-using DispatcherWeb.Offices;
-using DispatcherWeb.Trucks;
-using DispatcherWeb.Infrastructure.RepositoryExtensions;
-using Microsoft.EntityFrameworkCore;
-using Abp.Linq.Extensions;
-using DispatcherWeb.Dispatching;
 using DispatcherWeb.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using DispatcherWeb.DriverApplication;
-using System.Collections.Generic;
-using Abp.Timing;
-using DispatcherWeb.DriverApplication.Dto;
-using DispatcherWeb.TimeOffs;
+using DispatcherWeb.Infrastructure.RepositoryExtensions;
+using DispatcherWeb.Offices;
+using DispatcherWeb.Orders;
 using DispatcherWeb.SyncRequests;
-using DispatcherWeb.Common.Dto;
+using DispatcherWeb.TimeOffs;
+using DispatcherWeb.Trucks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.DriverAssignments
 {
@@ -835,7 +835,7 @@ namespace DispatcherWeb.DriverAssignments
                 .AnyAsync();
 
             result.HasOpenDispatches = await _dispatchRepository.GetAll()
-                .Where(x => input.Date == x.OrderLine.Order.DeliveryDate 
+                .Where(x => input.Date == x.OrderLine.Order.DeliveryDate
                     && input.Shift == x.OrderLine.Order.Shift
                     && Dispatch.OpenStatuses.Contains(x.Status))
                 .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)

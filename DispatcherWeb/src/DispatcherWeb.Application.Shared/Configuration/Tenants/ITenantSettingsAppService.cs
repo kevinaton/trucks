@@ -9,13 +9,13 @@ namespace DispatcherWeb.Configuration.Tenants
     {
         Task<TenantSettingsEditDto> GetAllSettings();
 
-        Task UpdateAllSettings(TenantSettingsEditDto input);       
+        Task UpdateAllSettings(TenantSettingsEditDto input);
 
         Task SendTestEmail(SendTestEmailInput input);
         Task<bool> CanLinkDtdTrackerAccount();
         Task LinkDtdTrackerAccount(string accessToken);
 
         Task ClearLogo();
-	    Task ClearCustomCss();
-   }
+        Task ClearCustomCss();
+    }
 }

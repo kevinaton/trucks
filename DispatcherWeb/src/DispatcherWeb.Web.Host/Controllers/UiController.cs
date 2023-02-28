@@ -4,7 +4,6 @@ using Abp.Authorization;
 using Abp.Authorization.Users;
 using Abp.Configuration.Startup;
 using Abp.UI;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Accounts;
 using DispatcherWeb.Authorization.Accounts.Dto;
@@ -13,6 +12,7 @@ using DispatcherWeb.Identity;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Web.Models.Ui;
 using DispatcherWeb.Web.Session;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -67,7 +67,7 @@ namespace DispatcherWeb.Web.Controllers
             }
 
             await _signInManager.SignOutAsync();
-            
+
             return View();
         }
 

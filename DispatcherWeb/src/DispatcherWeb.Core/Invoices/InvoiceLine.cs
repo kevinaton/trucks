@@ -1,16 +1,13 @@
-﻿using Abp.Domain.Entities;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.Customers;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Services;
 using DispatcherWeb.Trucks;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace DispatcherWeb.Invoices
 {
@@ -22,7 +19,7 @@ namespace DispatcherWeb.Invoices
         public int TenantId { get; set; }
 
         public int InvoiceId { get; set; }
-        
+
         public virtual Invoice Invoice { get; set; }
 
         public int? ParentInvoiceLineId { get; set; }

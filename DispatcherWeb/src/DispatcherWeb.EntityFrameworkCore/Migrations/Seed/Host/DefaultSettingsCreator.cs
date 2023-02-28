@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using Abp.Configuration;
 using Abp.Localization;
-using Abp.MultiTenancy;
 using Abp.Net.Mail;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Migrations.Seed.Host
 {

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abp.Timing;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Editions;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.MultiTenancy.Dto;
 using DispatcherWeb.MultiTenancy.Payments;
-using DispatcherWeb.Test.Base;
+using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;
 
@@ -44,8 +43,8 @@ namespace DispatcherWeb.Tests.MultiTenancy
                 AdminEmailAddress = "admin@volosoft.com",
                 AdminPassword = "123qwe",
                 CompanyName = "Volosoft",
-                AdminFirstName= "Test",
-                AdminLastName= "Test",
+                AdminFirstName = "Test",
+                AdminLastName = "Test",
                 SubscriptionStartType = SubscriptionStartType.Free
             });
 
@@ -79,8 +78,8 @@ namespace DispatcherWeb.Tests.MultiTenancy
                 AdminEmailAddress = "admin@volosoft.com",
                 AdminPassword = "123qwe",
                 CompanyName = "Volosoft",
-                AdminFirstName= "Test",
-                AdminLastName= "Test",
+                AdminFirstName = "Test",
+                AdminLastName = "Test",
                 SubscriptionStartType = SubscriptionStartType.Trial
             }));
 
@@ -113,8 +112,8 @@ namespace DispatcherWeb.Tests.MultiTenancy
                 AdminEmailAddress = "admin@volosoft.com",
                 AdminPassword = "123qwe",
                 CompanyName = "Volosoft",
-                AdminFirstName= "Test",
-                AdminLastName= "Test",
+                AdminFirstName = "Test",
+                AdminLastName = "Test",
                 SubscriptionStartType = SubscriptionStartType.Trial
             });
 

@@ -8,19 +8,19 @@ using DispatcherWeb.Infrastructure;
 namespace DispatcherWeb.ScheduledReports
 {
     [Table("ScheduledReport")]
-	public class ScheduledReport : FullAuditedEntity, IMustHaveTenant
-	{
-		public int TenantId { get; set; }
+    public class ScheduledReport : FullAuditedEntity, IMustHaveTenant
+    {
+        public int TenantId { get; set; }
 
-		public ReportType ReportType { get; set; }
+        public ReportType ReportType { get; set; }
 
-		[StringLength(EntityStringFieldLengths.ScheduledReport.SendTo)]
-		public string SendTo { get; set; }
+        [StringLength(EntityStringFieldLengths.ScheduledReport.SendTo)]
+        public string SendTo { get; set; }
 
-		public ReportFormat ReportFormat { get; set; }
+        public ReportFormat ReportFormat { get; set; }
 
-		public TimeSpan ScheduleTime { get; set; }
+        public TimeSpan ScheduleTime { get; set; }
 
-		public DayOfWeekBitFlag SendOnDaysOfWeek { get; set; }
-	}
+        public DayOfWeekBitFlag SendOnDaysOfWeek { get; set; }
+    }
 }

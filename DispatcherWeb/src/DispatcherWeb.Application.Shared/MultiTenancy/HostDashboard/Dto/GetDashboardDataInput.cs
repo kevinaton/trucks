@@ -1,6 +1,6 @@
-﻿using Abp.Runtime.Validation;
+﻿using System;
+using Abp.Runtime.Validation;
 using DispatcherWeb.Dto;
-using System;
 
 namespace DispatcherWeb.MultiTenancy.HostDashboard.Dto
 {
@@ -17,12 +17,12 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard.Dto
             if (string.IsNullOrEmpty(Sorting))
             {
                 Sorting = "TenantName";
-            	TrimTime();
-        	}
+                TrimTime();
+            }
 
 
-  	}
-      private void TrimTime()
+        }
+        private void TrimTime()
         {
             StartDate = StartDate.Date;
             StartDate = StartDate.Date;

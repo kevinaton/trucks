@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Timing;
 using DispatcherWeb.Scheduling.Dto;
@@ -22,8 +20,8 @@ namespace DispatcherWeb.Tests.Scheduling
         [InlineData(DispatchStatus.Acknowledged, DispatchStatus.Loaded, false, true)]
         [InlineData(DispatchStatus.Sent, DispatchStatus.Loaded, true, true)]
         public async Task Test_SomeOrderLineTrucksHaveDispatches_should_return_HasDispatchesResult(
-            DispatchStatus? dispatchStatus1, 
-            DispatchStatus? dispatchStatus2, 
+            DispatchStatus? dispatchStatus1,
+            DispatchStatus? dispatchStatus2,
             bool unacknowledged,
             bool acknowledged
         )
@@ -50,7 +48,7 @@ namespace DispatcherWeb.Tests.Scheduling
             var result = await _schedulingAppService.SomeOrderLineTrucksHaveDispatches(new SomeOrderLineTrucksHaveDispatchesInput()
             {
                 OrderLineId = orderLine.Id,
-                TruckIds = new []{truck1.Id, truck2.Id},
+                TruckIds = new[] { truck1.Id, truck2.Id },
             });
 
             // Assert

@@ -20,15 +20,15 @@
 namespace Intuit.Ipp.EntitlementService
 {
     using System;
+    using System.Globalization;
+    using System.Net;
     using Intuit.Ipp.Core;
     using Intuit.Ipp.Core.Rest;
     using Intuit.Ipp.Data;
     using Intuit.Ipp.Diagnostics;
-    using Intuit.Ipp.Exception;
-    using System.Globalization;
-    using System.Net;
-    using Intuit.Ipp.Utility;
     using Intuit.Ipp.EntitlementService.Properties;
+    using Intuit.Ipp.Exception;
+    using Intuit.Ipp.Utility;
 
     /// <summary>
     /// This class file contains EntitlementService which performs Get operation for Entitlements
@@ -77,7 +77,7 @@ namespace Intuit.Ipp.EntitlementService
             string uri = string.Format(CultureInfo.InvariantCulture, "{0}/entitlements/{1}/{2}", entitlementBaseUrl, Utility.CoreConstants.VERSION, serviceContext.RealmId);
 
             orginialSerializationFormat = this.serviceContext.IppConfiguration.Message.Response.SerializationFormat;
-            
+
             // Only XML format is supported by Entitlements API
             serviceContext.IppConfiguration.Message.Response.SerializationFormat = Core.Configuration.SerializationFormat.Xml;
             // Creates request parameters

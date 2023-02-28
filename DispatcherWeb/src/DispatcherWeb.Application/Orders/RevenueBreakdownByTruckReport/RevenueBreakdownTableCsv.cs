@@ -11,9 +11,9 @@ namespace DispatcherWeb.Orders.RevenueBreakdownByTruckReport
 
         public void AddRow(
             string deliveryDate,
-			string shiftName,
+            string shiftName,
             string truck,
-			string materialRevenue,
+            string materialRevenue,
             string freightRevenue,
             string fuelSurcharge,
             string totalRevenue,
@@ -22,17 +22,17 @@ namespace DispatcherWeb.Orders.RevenueBreakdownByTruckReport
         )
         {
             _csv.WriteField(deliveryDate);
-			if (shiftName != null)
-			{
-				_csv.WriteField(shiftName);
-			}
-			_csv.WriteField(truck);
-			_csv.WriteField(materialRevenue);
+            if (shiftName != null)
+            {
+                _csv.WriteField(shiftName);
+            }
+            _csv.WriteField(truck);
+            _csv.WriteField(materialRevenue);
             _csv.WriteField(freightRevenue);
             if (fuelSurcharge != null)
-			{
-				_csv.WriteField(fuelSurcharge);
-			}
+            {
+                _csv.WriteField(fuelSurcharge);
+            }
             _csv.WriteField(totalRevenue);
             _csv.WriteField(driverTime);
             _csv.WriteField(revenuePerHour);

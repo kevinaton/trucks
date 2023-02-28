@@ -5,15 +5,15 @@ using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Domain.Uow;
 using Abp.Runtime.Session;
+using DispatcherWeb.Authorization.Roles;
+using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.Configuration;
+using DispatcherWeb.MultiTenancy;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using DispatcherWeb.Authorization.Roles;
-using DispatcherWeb.Authorization.Users;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.MultiTenancy;
 
 namespace DispatcherWeb.Identity
 {
@@ -32,7 +32,7 @@ namespace DispatcherWeb.Identity
             ISettingManager settingManager,
             IAuthenticationSchemeProvider schemes,
             IUserConfirmation<User> userConfirmation,
-            IAbpSession abpSession) 
+            IAbpSession abpSession)
             : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, unitOfWorkManager, settingManager, schemes, userConfirmation)
         {
             _settingManager = settingManager;
@@ -42,7 +42,7 @@ namespace DispatcherWeb.Identity
         public override async Task<IEnumerable<AuthenticationScheme>> GetExternalAuthenticationSchemesAsync()
         {
             var schemes = await base.GetExternalAuthenticationSchemesAsync();
-            
+
             if (_abpSession.TenantId.HasValue)
             {
                 schemes = schemes.Where(IsSchemeEnabledOnTenant);
@@ -56,17 +56,17 @@ namespace DispatcherWeb.Identity
             switch (scheme.Name)
             {
                 case "OpenIdConnect":
-                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.OpenIdConnect_IsDeactivated,_abpSession.GetTenantId());
-                case "Microsoft": 
-                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.Microsoft_IsDeactivated,_abpSession.GetTenantId());
-                case "Google": 
-                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.Google_IsDeactivated,_abpSession.GetTenantId());
-                case "Twitter": 
-                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.Twitter_IsDeactivated,_abpSession.GetTenantId());
+                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.OpenIdConnect_IsDeactivated, _abpSession.GetTenantId());
+                case "Microsoft":
+                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.Microsoft_IsDeactivated, _abpSession.GetTenantId());
+                case "Google":
+                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.Google_IsDeactivated, _abpSession.GetTenantId());
+                case "Twitter":
+                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.Twitter_IsDeactivated, _abpSession.GetTenantId());
                 case "Facebook":
-                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.Facebook_IsDeactivated,_abpSession.GetTenantId());
-                case "WsFederation": 
-                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.WsFederation_IsDeactivated,_abpSession.GetTenantId());
+                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.Facebook_IsDeactivated, _abpSession.GetTenantId());
+                case "WsFederation":
+                    return !_settingManager.GetSettingValueForTenant<bool>(AppSettings.ExternalLoginProvider.Tenant.WsFederation_IsDeactivated, _abpSession.GetTenantId());
                 default: return true;
             }
         }

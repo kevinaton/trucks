@@ -21,11 +21,6 @@ using Abp.Timing;
 using Abp.UI;
 using Abp.Web.Models;
 using Abp.Zero.Configuration;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
 using DispatcherWeb.Authentication.TwoFactor.Google;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Accounts;
@@ -35,22 +30,25 @@ using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Debugging;
 using DispatcherWeb.Identity;
+using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Notifications;
-using DispatcherWeb.Web.Models.Account;
 using DispatcherWeb.Security;
 using DispatcherWeb.Security.Recaptcha;
 using DispatcherWeb.Sessions;
 using DispatcherWeb.Url;
 using DispatcherWeb.Web.IdentityServer;
+using DispatcherWeb.Web.Models.Account;
 using DispatcherWeb.Web.Security.Recaptcha;
 using DispatcherWeb.Web.Session;
 using DispatcherWeb.Web.Views.Shared.Components.TenantChange;
-using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Infrastructure.Sms;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using IdentityServer4.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -162,7 +160,7 @@ namespace DispatcherWeb.Web.Controllers
                     }
                 }
 
-                return RedirectToAction("Index", "Error", new {statusCode = 403});
+                return RedirectToAction("Index", "Error", new { statusCode = 403 });
             }
             returnUrl = NormalizeReturnUrl(returnUrl);
 
@@ -180,7 +178,7 @@ namespace DispatcherWeb.Web.Controllers
             //ViewBag.UseCaptcha = UseCaptchaOnLogin(); //todo
 
             await _signInManager.SignOutAsync();
-            
+
             return View(
                 new LoginFormViewModel
                 {
@@ -357,7 +355,7 @@ namespace DispatcherWeb.Web.Controllers
             }
         }
 
-        public async Task<ActionResult> Logout([FromServices]IIdentityServerInteractionService interaction, string returnUrl = "", string logoutId = "")
+        public async Task<ActionResult> Logout([FromServices] IIdentityServerInteractionService interaction, string returnUrl = "", string logoutId = "")
         {
             if (AbpSession.TenantId == null)
             {

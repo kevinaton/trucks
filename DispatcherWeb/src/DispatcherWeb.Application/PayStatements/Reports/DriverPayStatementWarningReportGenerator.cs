@@ -7,7 +7,6 @@ using Abp.Dependency;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Localization;
 using DispatcherWeb.PayStatements.Dto;
-using Intuit.Ipp.Data;
 using MigraDoc.DocumentObjectModel;
 
 namespace DispatcherWeb.Orders.Reports
@@ -84,7 +83,8 @@ namespace DispatcherWeb.Orders.Reports
             var productionPayTimeButNoTickets = model.DriverDateConflicts.Where(d => d.ConflictKind == DriverDateConflictKind.ProductionPayTimeButNoTickets);
             var bothProductionAndHourlyPay = model.DriverDateConflicts.Where(d => d.ConflictKind == DriverDateConflictKind.BothProductionAndHourlyPay);
 
-            if (productionPayTimeButNoTickets.Any()) {
+            if (productionPayTimeButNoTickets.Any())
+            {
                 foreach (var conflict in productionPayTimeButNoTickets)
                 {
                     paragraph = document.LastSection.AddParagraph(LocalizationHelper.L("{0}HasProductionPayTimeOn{1}ButNoTickets", conflict.DriverName, conflict.Date.ToString("d")));
@@ -93,7 +93,8 @@ namespace DispatcherWeb.Orders.Reports
                 paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.7);
             }
 
-            if (bothProductionAndHourlyPay.Any()) {
+            if (bothProductionAndHourlyPay.Any())
+            {
                 paragraph = document.LastSection.AddParagraph(LocalizationHelper.L("ListOfDriverTimeConflicts"));
                 //paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.7);
                 foreach (var conflict in bothProductionAndHourlyPay)

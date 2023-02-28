@@ -2,21 +2,16 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 // Modified for Intuit's Oauth2 implementation
 
-using Intuit.Ipp.OAuth2PlatformClient.Helpers;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
-using System.Net;
-using System.Reflection;
-using System.Linq;
-using System.IO;
-using System.Globalization;
+using System.Threading.Tasks;
+using Intuit.Ipp.OAuth2PlatformClient.Helpers;
+using Newtonsoft.Json;
 
 namespace Intuit.Ipp.OAuth2PlatformClient
 {   /// <summary>
@@ -249,7 +244,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
 
 
             DiscoveryDoc = GetDiscoveryDoc();
-            
+
 
         }
 
@@ -262,17 +257,17 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         public DiscoveryResponse GetDiscoveryDoc()
         {
 
-                DiscoveryClient discoveryClient;
-                if (ApplicationEnvironment == AppEnvironment.Default || ApplicationEnvironment == AppEnvironment.Custom)
-                {
-                    discoveryClient = new DiscoveryClient(DiscoveryUrl);
-                }
-                else
-                {
-                    discoveryClient = new DiscoveryClient(ApplicationEnvironment);
-                }
-                DiscoveryResponse discoveryResponse =  discoveryClient.Get();
-             if(discoveryResponse.IsError==true)
+            DiscoveryClient discoveryClient;
+            if (ApplicationEnvironment == AppEnvironment.Default || ApplicationEnvironment == AppEnvironment.Custom)
+            {
+                discoveryClient = new DiscoveryClient(DiscoveryUrl);
+            }
+            else
+            {
+                discoveryClient = new DiscoveryClient(ApplicationEnvironment);
+            }
+            DiscoveryResponse discoveryResponse = discoveryClient.Get();
+            if (discoveryResponse.IsError == true)
             {
                 throw new System.Exception(discoveryResponse.Error);
             }
@@ -377,7 +372,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// <returns></returns>
         public string GetAuthorizationURL(List<OidcScopes> scopes)
         {
-            if(string.IsNullOrEmpty(DiscoveryDoc.AuthorizeEndpoint))
+            if (string.IsNullOrEmpty(DiscoveryDoc.AuthorizeEndpoint))
             {
                 throw new System.Exception("Discovery Call failed. Authorize Endpoint is empty.");
             }
@@ -695,7 +690,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// <param name="accessOrRefreshToken"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TokenRevocationResponse> RevokeTokenAsync(string revokeTokenEndpoint,string accessOrRefreshToken, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<TokenRevocationResponse> RevokeTokenAsync(string revokeTokenEndpoint, string accessOrRefreshToken, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (string.IsNullOrEmpty(revokeTokenEndpoint))
             {

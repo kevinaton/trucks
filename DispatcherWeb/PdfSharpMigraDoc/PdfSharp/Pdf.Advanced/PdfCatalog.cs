@@ -28,8 +28,8 @@
 #endregion
 
 using System;
-using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf.AcroForms;
+using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf.Advanced
 {
@@ -141,7 +141,7 @@ namespace PdfSharp.Pdf.Advanced
         {
             get
             {
-               if (_outline == null)
+                if (_outline == null)
                 {
                     ////// Ensure that the page tree exists.
                     ////// ReSharper disable once UnusedVariable because we need dummy to call the getter.
@@ -150,7 +150,7 @@ namespace PdfSharp.Pdf.Advanced
                     // Now create the outline item tree.
                     _outline = (PdfOutline)Elements.GetValue(Keys.Outlines, VCF.CreateIndirect);
                 }
-               return _outline.Outlines;
+                return _outline.Outlines;
             }
         }
         PdfOutline _outline;

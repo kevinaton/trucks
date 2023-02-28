@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Abp.Auditing;
+﻿using Abp.Auditing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,7 +8,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
     {
         public void Configure(EntityTypeBuilder<AuditLog> builder)
         {
-            builder.HasIndex(e => new {e.ExecutionTime});
+            builder.HasIndex(e => new { e.ExecutionTime });
 
             builder.HasIndex(e => new { e.ImpersonatorTenantId, e.TenantId, e.UserId, e.ExecutionTime });
         }

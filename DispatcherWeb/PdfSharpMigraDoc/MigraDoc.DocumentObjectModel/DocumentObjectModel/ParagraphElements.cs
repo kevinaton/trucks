@@ -31,8 +31,8 @@
 #endregion
 
 using System;
-using MigraDoc.DocumentObjectModel.publics;
 using MigraDoc.DocumentObjectModel.Fields;
+using MigraDoc.DocumentObjectModel.publics;
 using MigraDoc.DocumentObjectModel.Shapes;
 
 namespace MigraDoc.DocumentObjectModel

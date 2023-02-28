@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DispatcherWeb.EntityFrameworkCore.Configurations
 {
-	public class WorkOrderLineConfiguration : IEntityTypeConfiguration<WorkOrderLine>
-	{
+    public class WorkOrderLineConfiguration : IEntityTypeConfiguration<WorkOrderLine>
+    {
         public void Configure(EntityTypeBuilder<WorkOrderLine> builder)
         {
             builder

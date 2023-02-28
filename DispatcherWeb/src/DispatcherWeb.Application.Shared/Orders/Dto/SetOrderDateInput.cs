@@ -7,7 +7,7 @@ namespace DispatcherWeb.Orders.Dto
         public int OrderId { get; set; }
         public int? OrderLineId { get; set; }
         public DateTime Date { get; set; }
-		public Shift? Shift { get; set; }
+        public Shift? Shift { get; set; }
         public bool KeepTrucks { get; set; }
 
         public bool RemoveNotAvailableTrucks { get; set; }

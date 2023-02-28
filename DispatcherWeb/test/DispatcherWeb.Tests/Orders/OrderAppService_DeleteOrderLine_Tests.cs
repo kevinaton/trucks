@@ -41,7 +41,7 @@ namespace DispatcherWeb.Tests.Orders
         public async Task Test_DeleteOrder_should_delete_OrderLine()
         {
             // Act 
-            await _orderAppService.DeleteOrderLine(new DeleteOrderLineInput(_orderLineId) {OrderId = _orderId});
+            await _orderAppService.DeleteOrderLine(new DeleteOrderLineInput(_orderLineId) { OrderId = _orderId });
 
             // Assert
             var orderLine = await GetOrderLine();
@@ -168,7 +168,7 @@ namespace DispatcherWeb.Tests.Orders
 
         private async Task DeleteOrderLineShouldThrowUserFriendlyException()
         {
-            await _orderAppService.DeleteOrderLine(new DeleteOrderLineInput(_orderLineId) {OrderId = _orderId}).ShouldThrowAsync(typeof(UserFriendlyException));
+            await _orderAppService.DeleteOrderLine(new DeleteOrderLineInput(_orderLineId) { OrderId = _orderId }).ShouldThrowAsync(typeof(UserFriendlyException));
             var orderLine = await GetOrderLine();
             orderLine.IsDeleted.ShouldBeFalse();
         }

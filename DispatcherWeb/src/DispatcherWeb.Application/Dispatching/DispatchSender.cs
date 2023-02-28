@@ -60,7 +60,7 @@ namespace DispatcherWeb.Dispatching
         private List<EmployeeTimeDto> _employeeTimes;
         private List<DriverAcknowledgementDto> _driverAcknowledgements = new();
         private User _cachedCurrentUser;
-        
+
         //cleanup queues
         private List<(DispatchEditDto dto, Dispatch entity)> _pendingNewDispatchQueue = new();
         private Dictionary<int, List<DispatchDto>> _orderedTruckDispatches = new();
@@ -100,10 +100,10 @@ namespace DispatcherWeb.Dispatching
         public async Task CacheDataForDateShift(SendOrdersToDriversInput input)
         {
             await PopulateOrderLineTruckCache(input);
-            
+
             var orderLineIds = _orderLineTrucks.Select(x => x.OrderLineId).Distinct().ToArray();
             await PopulateOrderLineCache(orderLineIds);
-            
+
             await PopulateDriverAssignmentCache(input);
 
             var driverIds = _orderLineTrucks.Select(x => x.DriverId).Distinct().ToArray();
@@ -112,7 +112,7 @@ namespace DispatcherWeb.Dispatching
             var truckIds = GetCachedOrderLineTrucks(input).Select(x => x.TruckId).Distinct().ToList();
             await PopulateDispatchCache(
                 _dispatchRepository.GetAll()
-                    .Where(x => orderLineIds.Contains(x.OrderLineId) 
+                    .Where(x => orderLineIds.Contains(x.OrderLineId)
                         || Dispatch.OpenStatuses.Contains(x.Status) && truckIds.Contains(x.TruckId))
             );
 
@@ -184,7 +184,7 @@ namespace DispatcherWeb.Dispatching
                         throw await GetOrderLineNotFoundExceptionAsync(new EntityDto(id));
                     }
                 }
-                
+
                 _orderLines.AddRange(orderLines);
 
                 if (_orderLineTrucks != null)
@@ -478,7 +478,7 @@ namespace DispatcherWeb.Dispatching
                 dispatch.dto.SortOrder = dispatch.entity.SortOrder;
             }
             await CurrentUnitOfWork.SaveChangesAsync();
-            
+
             _pendingNewDispatchQueue.Clear();
         }
 
@@ -807,7 +807,7 @@ namespace DispatcherWeb.Dispatching
             await PopulateOrderLineTruckCache(orderLineId);
 
             var orderLine = await GetOrderLineFromCacheAsync(orderLineId);
-            
+
             return await CreateSendDispatchMessageDtoInternal(orderLine, firstDispatchForDay);
         }
 
@@ -892,7 +892,7 @@ namespace DispatcherWeb.Dispatching
             await PopulateEmployeeTimeCache(await GetToday());
 
             var result = await SendDispatchMessageInternal(input, skipSmsIfDispatchesExist);
-            
+
             _pendingCleanupActions.Add(async () =>
             {
                 await SendSyncRequestsForCreatedDisaptchesAsync(result.DispatchesOfOrderLineTruck);
@@ -965,7 +965,7 @@ namespace DispatcherWeb.Dispatching
             {
                 var timeOnJobUtc = orderLineTruck?.TruckTimeOnJobUtc ?? orderLine.TimeOnJobUtc;
 
-                if (!orderLineTruck.HasContactInfo 
+                if (!orderLineTruck.HasContactInfo
                     && (await SettingManager.SendSmsOnDispatching() != SendSmsOnDispatchingEnum.DontSend || !dispatchViaDriverApp))
                 {
                     Logger.Warn($"The Driver with DriverId={orderLineTruck.DriverId} doesn't have a cell phone number or an email.");
@@ -1046,7 +1046,7 @@ namespace DispatcherWeb.Dispatching
                     var orderedTruckDispatches = GetOrderedDispatchesForTruck(orderLineTruck.TruckId);
                     affectedDispatches.Add(AddDispatch(newDispatch));
                     firstNewDispatch ??= newDispatch;
-                    
+
                     if (input.AddDispatchBasedOnTime && timeOnJobUtc.HasValue)
                     {
                         var insertIndex = orderedTruckDispatches.FindIndex(x => x.TimeOnJob > timeOnJobUtc);
@@ -1070,7 +1070,7 @@ namespace DispatcherWeb.Dispatching
                     OrderLineTruck = orderLineTruck,
                     Dispatches = affectedDispatches
                 });
-                
+
                 DeferredSendSmsOrEmail(new DeferredSendSmsOrEmailInput
                 {
                     TruckId = orderLineTruck.TruckId,
@@ -1207,7 +1207,7 @@ namespace DispatcherWeb.Dispatching
             {
                 var truckIds = inputs.Select(x => x.TruckId).Distinct().ToList();
                 var driverIds = inputs.Select(x => x.DriverId).Distinct().ToList();
-                var dispatchQuery = _dispatchRepository.GetAll().Where(x => dispatchIds.Contains(x.Id) 
+                var dispatchQuery = _dispatchRepository.GetAll().Where(x => dispatchIds.Contains(x.Id)
                     || Dispatch.OpenStatuses.Contains(x.Status) && (truckIds.Contains(x.TruckId) || driverIds.Contains(x.DriverId)));
                 await PopulateDispatchCache(dispatchQuery);
                 await PopulateDispatchEntityCache(dispatchQuery);
@@ -1320,7 +1320,7 @@ namespace DispatcherWeb.Dispatching
                     }
                 }
             }
-            
+
             _sentDisaptchIds.Add(dispatch.Id);
             if (messageSendingErrors.Any())
             {

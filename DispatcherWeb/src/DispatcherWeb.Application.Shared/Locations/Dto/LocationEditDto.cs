@@ -1,5 +1,5 @@
-﻿using DispatcherWeb.Infrastructure;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.Locations.Dto
 {

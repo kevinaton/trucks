@@ -18,7 +18,7 @@ namespace Intuit.Ipp.XsdExtension
     /// Helper class to generate or parse CodeDom
     /// </summary>
     internal static class CodeDomHelper
-    {        
+    {
         /// <summary>
         /// Sets passed comments to CodeDOM
         /// </summary>
@@ -50,10 +50,10 @@ namespace Intuit.Ipp.XsdExtension
         public static Dictionary<string, string> GetDocumentationForElement(XmlSchemaAnnotated annotatedElement)
         {
             Dictionary<string, string> annotationElements = new Dictionary<string, string>();
-            StringBuilder documatationHolder = new StringBuilder(); 
-            StringBuilder appInfoHolder = new StringBuilder(); 
+            StringBuilder documatationHolder = new StringBuilder();
+            StringBuilder appInfoHolder = new StringBuilder();
             XmlSchemaAnnotation annotation = annotatedElement.Annotation;
-            
+
             // Look inside the Annotation element
             if (annotation != null)
             {
@@ -62,7 +62,7 @@ namespace Intuit.Ipp.XsdExtension
                 {
                     // Cannot use for..each
                     for (int elementCount = 0; elementCount < annotationItems.Count; elementCount++)
-                    {                        
+                    {
                         XmlSchemaDocumentation xsdDocumentation = annotationItems[elementCount] as XmlSchemaDocumentation;
                         if (xsdDocumentation != null)
                         {
@@ -70,7 +70,7 @@ namespace Intuit.Ipp.XsdExtension
                             if (documentationMarkups.Length > 0)
                             {
                                 documatationHolder.Append(documentationMarkups[0].InnerText);
-                                documatationHolder.Append(" ");                              
+                                documatationHolder.Append(" ");
                             }
                         }
 
@@ -81,13 +81,13 @@ namespace Intuit.Ipp.XsdExtension
                             if (appInfoMarkups.Length > 0)
                             {
                                 appInfoHolder.Append(appInfoMarkups[0].InnerText);
-                                appInfoHolder.Append(" ");                               
+                                appInfoHolder.Append(" ");
                             }
                         }
                     }
 
                     if (documatationHolder.Length > 0)
-                    {                        
+                    {
                         annotationElements.Add("DOC", documatationHolder.ToString());
                     }
 
@@ -113,6 +113,6 @@ namespace Intuit.Ipp.XsdExtension
             CodeAttributeArgument attrArg = new CodeAttributeArgument(enumExpr);
             attributeDeclaration.Arguments.Add(attrArg);
             memberProperty.CustomAttributes.Add(attributeDeclaration);
-        }       
+        }
     }
 }

@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Abp.Authorization.Users;
 using Abp.Domain.Uow;
 using Abp.Runtime.Security;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.MultiTenancy;
+using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
 namespace DispatcherWeb.Tests.Authorization.Users

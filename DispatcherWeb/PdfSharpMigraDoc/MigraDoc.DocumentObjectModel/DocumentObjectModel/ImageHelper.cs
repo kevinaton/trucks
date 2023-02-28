@@ -45,7 +45,7 @@ namespace MigraDoc.DocumentObjectModel
         /// </summary>
         public static string GetImageName(string root, string filename, string imagePath)
         {
-            List<string> subfolders = new List<string>(imagePath.Split(new [] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+            List<string> subfolders = new List<string>(imagePath.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
             subfolders.Add("");
 
             foreach (string subfolder in subfolders)

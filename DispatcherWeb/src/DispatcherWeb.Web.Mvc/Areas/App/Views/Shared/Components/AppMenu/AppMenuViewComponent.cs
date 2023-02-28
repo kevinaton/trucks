@@ -2,13 +2,11 @@
 using System.Threading.Tasks;
 using Abp.Application.Navigation;
 using Abp.Runtime.Session;
-using DispatcherWeb.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Web.Areas.App.Models.Layout;
 using DispatcherWeb.Web.Areas.App.Startup;
 using DispatcherWeb.Web.Views;
-using DispatcherWeb.Features;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppMenu
 {

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Abp.TestBase;
 using Abp.Timing;
 using Abp.UI;
 using DispatcherWeb.Customers;
-using DispatcherWeb.Dispatching.Dto;
 using DispatcherWeb.DriverAssignments;
 using DispatcherWeb.DriverAssignments.Dto;
 using DispatcherWeb.Drivers;
@@ -72,18 +70,18 @@ namespace DispatcherWeb.Tests.DriverAssignments
             var driver1 = await CreateDriver();
             var driver2 = await CreateDriver();
             DateTime date = DateTime.Today;
-			await UsingDbContextAsync(async context =>
-			{
-				DriverAssignment da = new DriverAssignment()
-				{
-					TenantId = 1,
-					Date = date,
-					OfficeId = truckEntity.LocationId,
-					TruckId = truckEntity.Id,
-					DriverId = driver1.Id,
-				};
-				await context.DriverAssignments.AddAsync(da);
-			});
+            await UsingDbContextAsync(async context =>
+            {
+                DriverAssignment da = new DriverAssignment()
+                {
+                    TenantId = 1,
+                    Date = date,
+                    OfficeId = truckEntity.LocationId,
+                    TruckId = truckEntity.Id,
+                    DriverId = driver1.Id,
+                };
+                await context.DriverAssignments.AddAsync(da);
+            });
 
             // Act
             await _driverAssignmentAppService.SetDriverForTruck(new SetDriverForTruckInput()
@@ -175,7 +173,7 @@ namespace DispatcherWeb.Tests.DriverAssignments
                 TruckId = truckEntity.Id,
                 StartDate = date,
                 EndDate = date,
-				Shift = Shift.Shift1,
+                Shift = Shift.Shift1,
             });
 
             // Assert
@@ -185,8 +183,8 @@ namespace DispatcherWeb.Tests.DriverAssignments
             driverAssignments.Count().ShouldBe(1);
             var driverAssignment = driverAssignments.First();
             driverAssignment.DriverId.ShouldBeNull();
-			driverAssignment.Date.ShouldBe(date);
-			driverAssignment.Shift.ShouldBe(Shift.Shift1);
+            driverAssignment.Date.ShouldBe(date);
+            driverAssignment.Shift.ShouldBe(Shift.Shift1);
         }
 
         [Fact]
@@ -195,11 +193,11 @@ namespace DispatcherWeb.Tests.DriverAssignments
             // Arrange
             var truckEntity = await CreateTruckEntity();
             DateTime date = DateTime.Today;
-			var order = await CreateOrderWithOrderLines(date);
-			var orderLine = order.OrderLines.First();
-			var driver = await CreateDriver();
-			var dispatch = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, DispatchStatus.Sent);
-			var dispatch2 = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, DispatchStatus.Acknowledged);
+            var order = await CreateOrderWithOrderLines(date);
+            var orderLine = order.OrderLines.First();
+            var driver = await CreateDriver();
+            var dispatch = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, DispatchStatus.Sent);
+            var dispatch2 = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, DispatchStatus.Acknowledged);
 
             // Act
             await _driverAssignmentAppService.SetNoDriverForTruck(new SetNoDriverForTruckInput()
@@ -216,10 +214,10 @@ namespace DispatcherWeb.Tests.DriverAssignments
             driverAssignments.Count().ShouldBe(1);
             var driverAssignment = driverAssignments.First();
             driverAssignment.DriverId.ShouldBeNull();
-			var updatedDispatch = await UsingDbContextAsync(async context => await context.Dispatches.Where(d => d.Id == dispatch.Id).FirstAsync());
-			updatedDispatch.Status.ShouldBe(DispatchStatus.Canceled);
-			var updatedDispatch2 = await UsingDbContextAsync(async context => await context.Dispatches.Where(d => d.Id == dispatch2.Id).FirstAsync());
-			updatedDispatch2.Status.ShouldBe(DispatchStatus.Acknowledged);
+            var updatedDispatch = await UsingDbContextAsync(async context => await context.Dispatches.Where(d => d.Id == dispatch.Id).FirstAsync());
+            updatedDispatch.Status.ShouldBe(DispatchStatus.Canceled);
+            var updatedDispatch2 = await UsingDbContextAsync(async context => await context.Dispatches.Where(d => d.Id == dispatch2.Id).FirstAsync());
+            updatedDispatch2.Status.ShouldBe(DispatchStatus.Acknowledged);
         }
 
         [Fact]
@@ -254,83 +252,83 @@ namespace DispatcherWeb.Tests.DriverAssignments
             orderLineTrucks.First().OrderLine.OrderId.ShouldBe(orderEntity2.Id);
         }
 
-		[Theory]
-		[InlineData(DispatchStatus.Created, true, false)]
-		[InlineData(DispatchStatus.Sent, true, false)]
-		[InlineData(DispatchStatus.Acknowledged, false, true)]
-		[InlineData(DispatchStatus.Loaded, false, true)]
-		[InlineData(DispatchStatus.Completed, false, false)]
-		[InlineData(DispatchStatus.Canceled, false, false)]
-		public async Task Test_ThereAreOpenDispatchesForTruckOnDate_should_return_result_when_there_is_dispatch(DispatchStatus status, bool unacknowledged, bool acknowledged)
-		{
-			// Arrange
-			var truckEntity = await CreateTruckEntity();
-			DateTime date = DateTime.Today;
-			var order = await CreateOrderWithOrderLines(date);
-			var orderLine = order.OrderLines.First();
-			var driver = await CreateDriver();
-			var dispatch = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, status);
+        [Theory]
+        [InlineData(DispatchStatus.Created, true, false)]
+        [InlineData(DispatchStatus.Sent, true, false)]
+        [InlineData(DispatchStatus.Acknowledged, false, true)]
+        [InlineData(DispatchStatus.Loaded, false, true)]
+        [InlineData(DispatchStatus.Completed, false, false)]
+        [InlineData(DispatchStatus.Canceled, false, false)]
+        public async Task Test_ThereAreOpenDispatchesForTruckOnDate_should_return_result_when_there_is_dispatch(DispatchStatus status, bool unacknowledged, bool acknowledged)
+        {
+            // Arrange
+            var truckEntity = await CreateTruckEntity();
+            DateTime date = DateTime.Today;
+            var order = await CreateOrderWithOrderLines(date);
+            var orderLine = order.OrderLines.First();
+            var driver = await CreateDriver();
+            var dispatch = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, status);
 
-			// Act
-			var result = await _driverAssignmentAppService.ThereAreOpenDispatchesForTruckOnDate(new ThereAreOpenDispatchesForTruckOnDateInput()
-			{
-				TruckId = truckEntity.Id,
-				StartDate = date,
-				EndDate = date,
-			});
-			
-			// Assert
-			result.ThereAreUnacknowledgedDispatches.ShouldBe(unacknowledged);
-			result.ThereAreAcknowledgedDispatches.ShouldBe(acknowledged);
-		}
+            // Act
+            var result = await _driverAssignmentAppService.ThereAreOpenDispatchesForTruckOnDate(new ThereAreOpenDispatchesForTruckOnDateInput()
+            {
+                TruckId = truckEntity.Id,
+                StartDate = date,
+                EndDate = date,
+            });
 
-		[Fact]
-		public async Task Test_ThereAreOpenDispatchesForTruckOnDate_should_return_result_when_there_is_no_dispatch()
-		{
-			// Arrange
-			var truckEntity = await CreateTruckEntity();
-			DateTime date = DateTime.Today;
-			var order = await CreateOrderWithOrderLines(date);
-			var orderLine = order.OrderLines.First();
-			var driver = await CreateDriver();
+            // Assert
+            result.ThereAreUnacknowledgedDispatches.ShouldBe(unacknowledged);
+            result.ThereAreAcknowledgedDispatches.ShouldBe(acknowledged);
+        }
 
-			// Act
-			var result = await _driverAssignmentAppService.ThereAreOpenDispatchesForTruckOnDate(new ThereAreOpenDispatchesForTruckOnDateInput()
-			{
-				TruckId = truckEntity.Id,
-				StartDate = date,
-				EndDate = date,
-			});
-			
-			// Assert
-			result.ThereAreUnacknowledgedDispatches.ShouldBe(false);
-			result.ThereAreAcknowledgedDispatches.ShouldBe(false);
-		}
+        [Fact]
+        public async Task Test_ThereAreOpenDispatchesForTruckOnDate_should_return_result_when_there_is_no_dispatch()
+        {
+            // Arrange
+            var truckEntity = await CreateTruckEntity();
+            DateTime date = DateTime.Today;
+            var order = await CreateOrderWithOrderLines(date);
+            var orderLine = order.OrderLines.First();
+            var driver = await CreateDriver();
 
-		[Fact]
-		public async Task Test_ThereAreOpenDispatchesForTruckOnDate_should_return_result_when_there_are_dispatches()
-		{
-			// Arrange
-			var truckEntity = await CreateTruckEntity();
-			DateTime date = DateTime.Today;
-			var order = await CreateOrderWithOrderLines(date);
-			var orderLine = order.OrderLines.First();
-			var driver = await CreateDriver();
-			var dispatch1 = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, DispatchStatus.Created);
-			var dispatch2 = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, DispatchStatus.Acknowledged);
+            // Act
+            var result = await _driverAssignmentAppService.ThereAreOpenDispatchesForTruckOnDate(new ThereAreOpenDispatchesForTruckOnDateInput()
+            {
+                TruckId = truckEntity.Id,
+                StartDate = date,
+                EndDate = date,
+            });
 
-			// Act
-			var result = await _driverAssignmentAppService.ThereAreOpenDispatchesForTruckOnDate(new ThereAreOpenDispatchesForTruckOnDateInput()
-			{
-				TruckId = truckEntity.Id,
-				StartDate = date,
-				EndDate = date,
-			});
-			
-			// Assert
-			result.ThereAreUnacknowledgedDispatches.ShouldBe(true);
-			result.ThereAreAcknowledgedDispatches.ShouldBe(true);
-		}
+            // Assert
+            result.ThereAreUnacknowledgedDispatches.ShouldBe(false);
+            result.ThereAreAcknowledgedDispatches.ShouldBe(false);
+        }
+
+        [Fact]
+        public async Task Test_ThereAreOpenDispatchesForTruckOnDate_should_return_result_when_there_are_dispatches()
+        {
+            // Arrange
+            var truckEntity = await CreateTruckEntity();
+            DateTime date = DateTime.Today;
+            var order = await CreateOrderWithOrderLines(date);
+            var orderLine = order.OrderLines.First();
+            var driver = await CreateDriver();
+            var dispatch1 = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, DispatchStatus.Created);
+            var dispatch2 = await CreateDispatch(truckEntity.Id, driver.Id, orderLine.Id, DispatchStatus.Acknowledged);
+
+            // Act
+            var result = await _driverAssignmentAppService.ThereAreOpenDispatchesForTruckOnDate(new ThereAreOpenDispatchesForTruckOnDateInput()
+            {
+                TruckId = truckEntity.Id,
+                StartDate = date,
+                EndDate = date,
+            });
+
+            // Assert
+            result.ThereAreUnacknowledgedDispatches.ShouldBe(true);
+            result.ThereAreAcknowledgedDispatches.ShouldBe(true);
+        }
 
         [Fact]
         public async Task Test_SetDefaultDriverForTruck_should_update_DriverAssignments_with_DefaultDriver()

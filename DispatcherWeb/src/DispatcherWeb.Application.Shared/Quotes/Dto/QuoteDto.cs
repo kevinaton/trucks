@@ -14,7 +14,7 @@ namespace DispatcherWeb.Quotes.Dto
         public string SalesPersonName { get; set; }
         public List<EmailDeliveryStatus> EmailDeliveryStatuses { get; set; }
         public EmailDeliveryStatus? CalculatedEmailDeliveryStatus => EmailDeliveryStatuses.GetLowestStatus();
-		public DateTime? QuoteDate { get; set; }
+        public DateTime? QuoteDate { get; set; }
         public ProjectStatus Status { get; set; }
     }
 }

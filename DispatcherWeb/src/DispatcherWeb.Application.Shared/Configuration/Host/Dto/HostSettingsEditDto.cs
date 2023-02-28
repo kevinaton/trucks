@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DispatcherWeb.Configuration.Dto;
-using DispatcherWeb.Configuration.Tenants.Dto;
 
 namespace DispatcherWeb.Configuration.Host.Dto
 {
@@ -27,7 +26,7 @@ namespace DispatcherWeb.Configuration.Host.Dto
         public HostBillingSettingsEditDto Billing { get; set; }
 
         public OtherSettingsEditDto OtherSettings { get; set; }
-	    public ExternalLoginProviderSettingsEditDto ExternalLoginProviderSettings { get; set; }
+        public ExternalLoginProviderSettingsEditDto ExternalLoginProviderSettings { get; set; }
 
     }
 }

@@ -28,9 +28,9 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
+using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using PdfSharp.Drawing;
-using MigraDoc.DocumentObjectModel;
 
 namespace MigraDoc.Rendering
 {
@@ -45,7 +45,7 @@ namespace MigraDoc.Rendering
             _shading = shading;
             RealizeBrush();
         }
-        
+
         public void Render(XUnit x, XUnit y, XUnit width, XUnit height)
         {
             if (_shading == null || _brush == null)

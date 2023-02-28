@@ -8,7 +8,7 @@ namespace DispatcherWeb.Configuration
     public class DefaultAppConfigurationAccessor : IAppConfigurationAccessor, ISingletonDependency
     {
         public IConfigurationRoot Configuration { get; }
-        
+
         public DefaultAppConfigurationAccessor()
         {
             Configuration = AppConfigurations.Get(Directory.GetCurrentDirectory());

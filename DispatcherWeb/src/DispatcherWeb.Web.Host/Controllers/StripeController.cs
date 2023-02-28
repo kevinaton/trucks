@@ -7,7 +7,7 @@ namespace DispatcherWeb.Web.Controllers
         public StripeController(
             StripeGatewayManager stripeGatewayManager,
             StripePaymentGatewayConfiguration stripeConfiguration,
-            IStripePaymentAppService stripePaymentAppService) 
+            IStripePaymentAppService stripePaymentAppService)
             : base(stripeGatewayManager, stripeConfiguration, stripePaymentAppService)
         {
         }

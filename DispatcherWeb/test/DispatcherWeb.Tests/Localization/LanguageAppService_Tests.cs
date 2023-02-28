@@ -144,7 +144,7 @@ namespace DispatcherWeb.Tests.Localization
             var currentEnabledLanguages =
                 (await _languageManager.GetLanguagesAsync(AbpSession.TenantId)).Where(l => !l.IsDisabled);
             var randomEnabledLanguage = RandomHelper.GetRandomOf(currentEnabledLanguages.ToArray());
-            
+
             //Act
             var output = await _languageAppService.GetLanguageForEdit(new NullableIdDto(null));
 

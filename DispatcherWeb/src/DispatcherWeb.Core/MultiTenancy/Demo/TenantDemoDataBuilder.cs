@@ -4,11 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp;
-using Abp.Authorization.Users;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Organizations;
-using Microsoft.Extensions.Configuration;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
@@ -16,6 +14,7 @@ using DispatcherWeb.Chat;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Friendships;
 using DispatcherWeb.Storage;
+using Microsoft.Extensions.Configuration;
 
 namespace DispatcherWeb.MultiTenancy.Demo
 {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoFixture;
-using DispatcherWeb.Authorization.Users;
+﻿using System.Threading.Tasks;
 using DispatcherWeb.Drivers;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;

@@ -1,4 +1,11 @@
-﻿using Abp.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using Abp.Configuration;
 using Abp.Dependency;
 using Abp.Extensions;
 using Abp.Localization;
@@ -8,18 +15,10 @@ using DispatcherWeb.Configuration;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Telematics.Dto;
 using DispatcherWeb.Infrastructure.Telematics.Dto.DtdTracker;
-using DispatcherWeb.Infrastructure.Telematics.Dto.Samsara;
 using DispatcherWeb.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Infrastructure.Telematics
 {
@@ -50,7 +49,7 @@ namespace DispatcherWeb.Infrastructure.Telematics
         private async Task<TResult> PostToApi<TResult>(TokenLoginResult loginResult, string command, object parameters, HttpContent httpContent = null) where TResult : IWialonResult
         {
             var stringApiResult = await PostToApi(loginResult, command, parameters, httpContent);
-            
+
             TResult result;
             try
             {
@@ -144,7 +143,8 @@ namespace DispatcherWeb.Infrastructure.Telematics
                 var logoutResult = await PostToApi<WialonResult>(loginResult, WialonCommands.Logout, new { });
                 return logoutResult;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 Logger.Error("Error during wialon logout", e);
                 return null;
             }
@@ -191,7 +191,7 @@ namespace DispatcherWeb.Infrastructure.Telematics
                 {
                     TruckCodeOrUniqueId = unit.UniqueId,
                     CurrentHours = Convert.ToDouble(unit.EngineHours),
-                    CurrentMileage =  UnitConverter.GetMiles(Convert.ToDouble(unit.Mileage), unit.MeasureUnits)
+                    CurrentMileage = UnitConverter.GetMiles(Convert.ToDouble(unit.Mileage), unit.MeasureUnits)
                 });
             }
 
@@ -203,7 +203,7 @@ namespace DispatcherWeb.Infrastructure.Telematics
         public async Task<WialonDeviceTypesResult> GetDeviceTypes()
         {
             var loginResult = await LoginToApi();
-            
+
             var items = await PostToApi<WialonListResult<DeviceTypeDto>>(loginResult, WialonCommands.GetDeviceTypes, new
             {
                 includeType = 1
@@ -437,7 +437,7 @@ namespace DispatcherWeb.Infrastructure.Telematics
             {
                 return;
             }
-            
+
             Logger.Info($"Uploading messages for wialon unit {unitId} ({messages.Count} messages)");
 
             var fileToUpload = string.Join("\r\n", messages.Select(x => x.ToString()));

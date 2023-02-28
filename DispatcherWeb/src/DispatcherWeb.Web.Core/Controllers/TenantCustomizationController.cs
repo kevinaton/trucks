@@ -5,18 +5,17 @@ using System.Net;
 using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.AspNetZeroCore.Net;
-using Abp.Authorization;
 using Abp.Extensions;
 using Abp.IO.Extensions;
 using Abp.Runtime.Session;
 using Abp.UI;
 using Abp.Web.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -54,7 +53,7 @@ namespace DispatcherWeb.Web.Controllers
                     throw new UserFriendlyException(L("File_Empty_Error"));
                 }
 
-                if (logoFile.Length > LogoMaxSize()) 
+                if (logoFile.Length > LogoMaxSize())
                 {
                     throw new UserFriendlyException(L("File_SizeLimit_Error"));
                 }
@@ -182,7 +181,7 @@ namespace DispatcherWeb.Web.Controllers
                 return File(logoObject.Bytes, tenant.LogoFileType);
             }
         }
-        
+
         [AllowAnonymous]
         [Route("/TenantCustomization/GetTenantLogo/{skin}/{tenantId?}")]
         [HttpGet]

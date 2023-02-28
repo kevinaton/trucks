@@ -1,11 +1,14 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.UI;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Payments.Dto;
-using GlobalPayments.Api;
 using GlobalPayments.Api.Entities;
 using GlobalPayments.Api.PaymentMethods;
 using GlobalPayments.Api.Services;
@@ -14,12 +17,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Abp.Collections.Extensions;
 
 namespace DispatcherWeb.Payments
 {
@@ -194,7 +191,7 @@ namespace DispatcherWeb.Payments
         public async Task<CaptureAuthorizationResult> CaptureAuthorization(CaptureAuthorizationDto input)
         {
             var payment = await _paymentRepository.GetAsync(input.PaymentId);
-            
+
             if (payment.AuthorizationTransactionId.IsNullOrEmpty())
             {
                 throw new UserFriendlyException("Payment is not authorized", "Please refresh the page and try again.");
@@ -256,7 +253,7 @@ namespace DispatcherWeb.Payments
         public async Task RefundPayment(EntityDto input)
         {
             var payment = await _paymentRepository.GetAsync(input.Id);
-            
+
             if (payment.AuthorizationCaptureTransactionId.IsNullOrEmpty())
             {
                 throw new UserFriendlyException("You can't refund a payment unless the payment was finalized", "Please refresh the page and try again.");
@@ -583,7 +580,7 @@ namespace DispatcherWeb.Payments
                     || x.CreationTime >= input.StartDate
                     && x.CreationTime < input.EndDate.AddDays(1))
                 .ToListAsync();
-            
+
             var apiKeys = await _officeSettingsManager.GetHeartlandKeysForOffices();
 
             var apiKeyGroups = apiKeys
@@ -732,7 +729,7 @@ namespace DispatcherWeb.Payments
                 }
             }
         }
-        
+
         public async Task<int> GetHeartlandPublicKeyIdAsync()
         {
             var heartlandPublicKey = await _officeSettingsManager.GetHeartlandPublicKeyAsync();

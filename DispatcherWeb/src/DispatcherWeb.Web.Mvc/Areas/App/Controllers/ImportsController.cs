@@ -2,20 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AboveGoal.Prospects.Import;
 using Abp.Application.Features;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Timing;
-using Abp.UI;
 using Abp.Web.Models;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Features;
 using DispatcherWeb.Imports;
 using DispatcherWeb.Imports.Dto;
 using DispatcherWeb.Infrastructure.AzureBlobs;
-using DispatcherWeb.Infrastructure.SecureFiles;
 using DispatcherWeb.Infrastructure.Utilities;
 using DispatcherWeb.SecureFiles;
 using DispatcherWeb.Web.Areas.App.Models.Imports;
@@ -132,8 +129,8 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
         [Modal]
         public PartialViewResult ImportMappingModal(
-            Guid id, 
-            string fileName, 
+            Guid id,
+            string fileName,
             ImportType importType
         )
         {
@@ -144,8 +141,8 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
         [Modal]
         public PartialViewResult ImportJacobusEnergyModal(
-            Guid id, 
-            string fileName, 
+            Guid id,
+            string fileName,
             ImportType importType
         )
         {
@@ -156,8 +153,8 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
         [Modal]
         public PartialViewResult ImportWithNoMappingModal(
-            Guid id, 
-            string fileName, 
+            Guid id,
+            string fileName,
             ImportType importType
         )
         {

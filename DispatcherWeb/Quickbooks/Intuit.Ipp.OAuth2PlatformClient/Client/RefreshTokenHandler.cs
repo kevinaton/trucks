@@ -135,22 +135,22 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var accessToken = await GetAccessTokenAsync(cancellationToken);
-         
+
             if (await RefreshTokensAsync(cancellationToken) == false)
             {
                 return new HttpResponseMessage(HttpStatusCode.Unauthorized);
             }
 
 
-           
-           
+
+
             request.Headers.Authorization = new BasicAuthenticationHeaderValue(ClientId, ClientSecret);
             request.Content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded");
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
 
             var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-                       
+
 
             return response;
         }
@@ -161,12 +161,13 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// <param name="disposing">disposing</param>
         protected override void Dispose(bool disposing)
         {
-          if (disposing && !_disposed) {
-              _disposed = true;
-              _lock.Dispose();
-          }
+            if (disposing && !_disposed)
+            {
+                _disposed = true;
+                _lock.Dispose();
+            }
 
-          base.Dispose(disposing);
+            base.Dispose(disposing);
         }
 
         /// <summary>

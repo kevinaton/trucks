@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DispatcherWeb.Orders
+﻿namespace DispatcherWeb.Orders
 {
     public static class OrderExtensions
     {
@@ -17,7 +11,7 @@ namespace DispatcherWeb.Orders
                 ChargeTo = order.ChargeTo,
                 CustomerId = order.CustomerId,
                 DeliveryDate = order.DeliveryDate,
-				Shift = order.Shift,
+                Shift = order.Shift,
                 IsPending = order.IsPending,
                 Directions = order.Directions,
                 FreightTotal = order.FreightTotal,

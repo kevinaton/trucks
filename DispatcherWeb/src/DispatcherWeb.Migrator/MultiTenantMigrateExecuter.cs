@@ -22,7 +22,7 @@ namespace DispatcherWeb.Migrator
         private readonly IDbPerTenantConnectionStringResolver _connectionStringResolver;
 
         public MultiTenantMigrateExecuter(
-            AbpZeroDbMigrator migrator, 
+            AbpZeroDbMigrator migrator,
             IRepository<Tenant> tenantRepository,
             Log log,
             DbMigratorConnectionStringResolver connectionStringResolver)

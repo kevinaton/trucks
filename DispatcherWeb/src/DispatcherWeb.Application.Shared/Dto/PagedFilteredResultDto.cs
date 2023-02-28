@@ -9,7 +9,7 @@ namespace DispatcherWeb.Dto
     {
         /// <summary>Total count of Items after applied filters</summary>
         public int FilteredCount { get; set; }
-        
+
         public PagedFilteredResultDto()
         {
         }

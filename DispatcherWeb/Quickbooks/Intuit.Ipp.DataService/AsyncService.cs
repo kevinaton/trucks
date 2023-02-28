@@ -90,17 +90,17 @@ namespace Intuit.Ipp.DataService
         /// </summary>
         public event DataServiceCallback<IEntity>.CallCompletedEventHandler OnUpdateAsynCompleted;
 
-        
+
         /// <summary>
         /// call back event for update account.
         /// </summary>
         public event DataServiceCallback<IEntity>.CallCompletedEventHandler OnUpdateAccAsynCompleted;
-        
+
         /// <summary>
         /// call back event for update account.
         /// </summary>
         public event DataServiceCallback<IEntity>.CallCompletedEventHandler OnDoNotUpdateAccAsyncCompleted;
-        
+
         /// <summary>
         /// Call Back event for Delete.
         /// </summary>
@@ -160,7 +160,7 @@ namespace Intuit.Ipp.DataService
             // string resourceString = entity.GetType().Name.ToLower(CultureInfo.InvariantCulture);
             string resourceString = entity.GetType().Name;
             this.requestedEntity = entity;
-            
+
             try
             {
                 // Builds resource Uri
@@ -186,7 +186,7 @@ namespace Intuit.Ipp.DataService
                 findAllCompletedEventArgs.Error = idsException;
                 this.OnFindAllAsynCompleted(this, findAllCompletedEventArgs);
             }
-            
+
         }
 
         /// <summary>
@@ -343,7 +343,7 @@ namespace Intuit.Ipp.DataService
             try
             {
                 // Builds resource Uri
-               
+
                 string uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/{2}?include=updateaccountontxns", CoreConstants.VERSION, this.serviceContext.RealmId, resourceString);
 
                 //// Create request parameters
@@ -393,7 +393,7 @@ namespace Intuit.Ipp.DataService
             {
                 // Builds resource Uri
                 //string uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/{2}", CoreConstants.VERSION, this.serviceContext.RealmId, resourceString);
-               
+
                 string uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/{2}?include=donotupdateaccountontxns", CoreConstants.VERSION, this.serviceContext.RealmId, resourceString);
 
                 //// Create request parameters
@@ -565,7 +565,7 @@ namespace Intuit.Ipp.DataService
             {
                 // Builds resource Uri
                 string uri = string.Empty;
-                
+
                 if (resourceString.Equals("preferences"))
                 {
                     uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/{2}/pdf", CoreConstants.VERSION, this.serviceContext.RealmId, resourceString);
@@ -617,7 +617,7 @@ namespace Intuit.Ipp.DataService
             {
                 try
                 {
-                   
+
                     pdfCallCompletedEventArgs.PdfBytes = eventArgs.ByteResult;
 
 
@@ -779,7 +779,7 @@ namespace Intuit.Ipp.DataService
             {
                 // Builds resource Uri
                 string uri = string.Empty;
-                
+
                 if (resourceString.Equals("preferences"))
                 {
                     uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/{2}", CoreConstants.VERSION, this.serviceContext.RealmId, resourceString);
@@ -896,7 +896,7 @@ namespace Intuit.Ipp.DataService
                 this.OnFindByLevelAsyncCompleted(this, findAllCompletedEventArgs);
                 return;
             }
-            
+
             string level = string.Empty;
             level = ServicesHelper.PrepareByLevel(entity, serviceContext);
 
@@ -1255,32 +1255,32 @@ namespace Intuit.Ipp.DataService
         /// <param name="sender">The sender.</param>
         /// <param name="eventArgs">The <see cref="Intuit.Ipp.Core.AsyncCallCompletedEventArgs"/> instance containing the event data.</param>
         private void AddAsyncompleted(object sender, AsyncCallCompletedEventArgs eventArgs)
-    {
-        CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
-        if (eventArgs.Error == null)
         {
-            try
+            CallCompletedEventArgs<IEntity> callCompletedEventArgs = new CallCompletedEventArgs<IEntity>();
+            if (eventArgs.Error == null)
             {
-                IEntitySerializer responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
-                IntuitResponse restResponse = (IntuitResponse)responseSerializer.Deserialize<IntuitResponse>(eventArgs.Result);
-                callCompletedEventArgs.Entity = restResponse.AnyIntuitObject as IEntity;
-                this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddAsyncompleted in AsyncService object.");
-                this.OnAddAsyncCompleted(this, callCompletedEventArgs);
+                try
+                {
+                    IEntitySerializer responseSerializer = CoreHelper.GetSerializer(this.serviceContext, false);
+                    IntuitResponse restResponse = (IntuitResponse)responseSerializer.Deserialize<IntuitResponse>(eventArgs.Result);
+                    callCompletedEventArgs.Entity = restResponse.AnyIntuitObject as IEntity;
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing event AddAsyncompleted in AsyncService object.");
+                    this.OnAddAsyncCompleted(this, callCompletedEventArgs);
+                }
+                catch (SystemException systemException)
+                {
+                    IdsException idsException = CreateIdsException(systemException);
+                    this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, idsException.ToString());
+                    callCompletedEventArgs.Error = idsException;
+                    this.OnAddAsyncCompleted(this, callCompletedEventArgs);
+                }
             }
-            catch (SystemException systemException)
+            else
             {
-                IdsException idsException = CreateIdsException(systemException);
-                this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Error, idsException.ToString());
-                callCompletedEventArgs.Error = idsException;
+                callCompletedEventArgs.Error = eventArgs.Error;
                 this.OnAddAsyncCompleted(this, callCompletedEventArgs);
             }
         }
-        else
-        {
-            callCompletedEventArgs.Error = eventArgs.Error;
-            this.OnAddAsyncCompleted(this, callCompletedEventArgs);
-        }
-    }
 
         /// <summary>
         /// Callback event
@@ -1314,7 +1314,7 @@ namespace Intuit.Ipp.DataService
                 this.OnUpdateAsynCompleted(this, callCompletedEventArgs);
             }
         }
-       
+
 
         /// <summary>
         /// Callback event
@@ -1404,7 +1404,7 @@ namespace Intuit.Ipp.DataService
                         statusPropInfo.SetValue(this.requestedEntity, intuitEntity.status, null);
                     }
 
-                    
+
                     if (intuitEntity.status != EntityStatusEnum.Deleted)
                     {
                         IdsException exception = new IdsException(Resources.CommunicationErrorMessage, new CommunicationException(Resources.StatusNotDeleted));

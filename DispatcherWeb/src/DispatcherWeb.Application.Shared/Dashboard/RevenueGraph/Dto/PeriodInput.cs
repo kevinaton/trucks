@@ -1,9 +1,5 @@
-﻿using DispatcherWeb.Dashboard.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using DispatcherWeb.Dashboard.Dto;
 
 namespace DispatcherWeb.Dashboard.RevenueGraph.Dto
 {

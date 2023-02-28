@@ -1,6 +1,6 @@
-﻿using Abp.Domain.Entities.Auditing;
+﻿using System.Collections.Generic;
+using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Dispatching.Dto.DispatchSender;
-using System.Collections.Generic;
 
 namespace DispatcherWeb.Dispatching.Dto
 {

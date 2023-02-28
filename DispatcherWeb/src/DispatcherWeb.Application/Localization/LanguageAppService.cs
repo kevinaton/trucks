@@ -70,7 +70,7 @@ namespace DispatcherWeb.Localization
             output.LanguageNames = _applicationCulturesProvider
                 .GetAllCultures()
                 .Select(c => new ComboboxItemDto(c.Name, c.EnglishName + " (" + c.Name + ")")
-                    {IsSelected = output.Language.Name == c.Name})
+                { IsSelected = output.Language.Name == c.Name })
                 .ToList();
 
             //Flags
@@ -78,7 +78,7 @@ namespace DispatcherWeb.Localization
                 .FlagClassNames
                 .OrderBy(f => f)
                 .Select(f => new ComboboxItemDto(f, FamFamFamFlagsHelper.GetCountryCode(f))
-                    {IsSelected = output.Language.Icon == f})
+                { IsSelected = output.Language.Icon == f })
                 .ToList();
 
             return output;
@@ -158,7 +158,7 @@ namespace DispatcherWeb.Localization
             {
                 Key = t.Name,
                 BaseValue = GetValueOrNull(baseValues, i),
-                TargetValue = GetValueOrNull(targetValues, i) ?? GetValueOrNull(baseValues, i) 
+                TargetValue = GetValueOrNull(targetValues, i) ?? GetValueOrNull(baseValues, i)
             }).AsQueryable();
 
             //Filters

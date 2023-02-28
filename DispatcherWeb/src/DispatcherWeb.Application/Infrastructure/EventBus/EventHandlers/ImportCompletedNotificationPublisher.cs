@@ -46,9 +46,9 @@ namespace DispatcherWeb.Infrastructure.EventBus.EventHandlers
         {
             var tenancyName = _notAuthorizedUserService.GetTenancyNameOrNull(user.TenantId);
             string fileLink = $"{_webUrlService.GetSiteRootAddress(tenancyName)}app/ImportResults/{file}";
-            await _notificationPublisher.PublishAsync(AppNotificationNames.ImportCompleted, 
-                new ImportCompletedNotificationData(fileLink), 
-                userIds: new[] { user }, 
+            await _notificationPublisher.PublishAsync(AppNotificationNames.ImportCompleted,
+                new ImportCompletedNotificationData(fileLink),
+                userIds: new[] { user },
                 severity: NotificationSeverity.Success);
         }
 

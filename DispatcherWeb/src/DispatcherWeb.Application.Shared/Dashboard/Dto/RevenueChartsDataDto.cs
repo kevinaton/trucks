@@ -5,7 +5,7 @@ namespace DispatcherWeb.Dashboard.Dto
     public class RevenueChartsDataDto
     {
         public TicketType RequestedTicketType { get; set; }
-        public bool IsGPSConfigured { get; set; }        
+        public bool IsGPSConfigured { get; set; }
         public decimal FuelCostValue { get; set; }
         public decimal AvgFuelCostPerMileValue { get; set; }
         public decimal AvgRevenuePerHourValue { get; set; }
@@ -114,7 +114,7 @@ namespace DispatcherWeb.Dashboard.Dto
 
         public decimal ProductionPayValue { get; set; }
         public decimal HourlyPayValue { get; set; }
-        public decimal LeaseHaulerPaymentValue { get; set; }       
+        public decimal LeaseHaulerPaymentValue { get; set; }
         public decimal AdjustedRevenueValue
         {
             get
@@ -133,7 +133,7 @@ namespace DispatcherWeb.Dashboard.Dto
                 return result;
             }
         }
-        
+
         #endregion
     }
 }

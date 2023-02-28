@@ -2,12 +2,11 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Drivers.Dto;
-using Microsoft.AspNetCore.Mvc;
-using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Web.Areas.App.Models.LeaseHaulers;
+using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.Web.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.app.Controllers
 {
@@ -22,20 +21,20 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             _leaseHaulerAppService = leaseHaulerAppService;
         }
 
-		[AbpMvcAuthorize(AppPermissions.Pages_LeaseHaulers_Edit)]
+        [AbpMvcAuthorize(AppPermissions.Pages_LeaseHaulers_Edit)]
         public IActionResult Index()
         {
             return View();
         }
 
-		[AbpMvcAuthorize(AppPermissions.Pages_LeaseHaulers_Edit)]
+        [AbpMvcAuthorize(AppPermissions.Pages_LeaseHaulers_Edit)]
         public async Task<PartialViewResult> CreateOrEditLeaseHaulerModal(int? id)
         {
             var model = await _leaseHaulerAppService.GetLeaseHaulerForEdit(new NullableIdDto(id));
             return PartialView("_CreateOrEditLeaseHaulerModal", model);
         }
 
-		[AbpMvcAuthorize(AppPermissions.Pages_LeaseHaulers_Edit)]
+        [AbpMvcAuthorize(AppPermissions.Pages_LeaseHaulers_Edit)]
         public async Task<PartialViewResult> CreateOrEditLeaseHaulerContactModal(int? id, int? leaseHaulerId)
         {
             var model = await _leaseHaulerAppService.GetLeaseHaulerContactForEdit(new NullableIdDto(id));

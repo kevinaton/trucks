@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Abp.Collections.Extensions;
 using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -53,7 +51,7 @@ namespace DispatcherWeb.Web.Swagger
             }
             else
             {
-                schema.Extensions.Add("x-enumNames", enumNames);   
+                schema.Extensions.Add("x-enumNames", enumNames);
             }
         }
 
@@ -66,7 +64,7 @@ namespace DispatcherWeb.Web.Swagger
             }
 
             parameter.Schema = schema;
-            
+
             var enumNames = new OpenApiArray();
             enumNames.AddRange(Enum.GetNames(type).Select(_ => new OpenApiString(_)));
             schema.Extensions.Add("x-enumNames", enumNames);

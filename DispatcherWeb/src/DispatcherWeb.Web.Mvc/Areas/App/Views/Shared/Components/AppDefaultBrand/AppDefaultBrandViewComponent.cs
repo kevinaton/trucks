@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Web.Areas.App.Models.Layout;
 using DispatcherWeb.Web.Session;
 using DispatcherWeb.Web.Views;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppDefaultBrand
 {

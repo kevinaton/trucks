@@ -1,5 +1,4 @@
 ﻿using DispatcherWeb.Payments.Dto;
-using System.ComponentModel.DataAnnotations;
 
 namespace DispatcherWeb.OrderPayments.Dto
 {

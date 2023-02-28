@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Abp.AspNetCore.Mvc.Authorization;
+﻿using Abp.AspNetCore.Mvc.Authorization;
 using Abp.AspNetCore.Mvc.Controllers;
 using Abp.Auditing;
 using DispatcherWeb.Dto;
@@ -20,11 +15,11 @@ namespace DispatcherWeb.Web.Controllers
         public ActionResult Index(FileDto file)
         {
             byte[] fileBytes = AttachmentHelper.GetReportFile(AbpSession.UserId.ToString(), file.FileToken);
-            if(fileBytes.Length == 0)
+            if (fileBytes.Length == 0)
             {
                 return NotFound();
             }
-            if(file.FileType == MimeTypeNames.ApplicationPdf)
+            if (file.FileType == MimeTypeNames.ApplicationPdf)
             {
                 Response.Headers.Add("Content-Disposition", "inline; filename=" + file.FileName);
                 return File(fileBytes, file.FileType);

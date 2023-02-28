@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DispatcherWeb.Web.Areas.App.Startup
+﻿namespace DispatcherWeb.Web.Areas.App.Startup
 {
     public static class AppPageTitles
     {

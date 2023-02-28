@@ -7,7 +7,7 @@ namespace DispatcherWeb.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("Delete from TimeOff");
-            
+
             migrationBuilder.RenameColumn(
                 name: "StartDateTime",
                 table: "TimeOff",

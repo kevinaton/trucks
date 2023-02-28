@@ -21,10 +21,8 @@
 namespace Intuit.Ipp.Utility
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Text;
-    using System.Xml;
     using System.Xml.Serialization;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
@@ -39,7 +37,7 @@ namespace Intuit.Ipp.Utility
         /// </summary>
         public XmlObjectSerializer()
         {
-            this.IDSLogger = new TraceLogger(); 
+            this.IDSLogger = new TraceLogger();
         }
 
         /// <summary>

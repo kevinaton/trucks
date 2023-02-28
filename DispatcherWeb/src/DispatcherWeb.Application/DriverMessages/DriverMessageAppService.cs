@@ -12,13 +12,11 @@ using Abp.Runtime.Session;
 using Abp.UI;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.BackgroundJobs;
-using DispatcherWeb.Drivers;
 using DispatcherWeb.DriverMessages.Dto;
-using DispatcherWeb.Emailing;
+using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Sms;
 using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Notifications;
 using Twilio.Exceptions;
 
 namespace DispatcherWeb.DriverMessages

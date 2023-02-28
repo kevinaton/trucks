@@ -1,4 +1,11 @@
-﻿using Abp.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Abp.Configuration;
 using Abp.Dependency;
 using Abp.Localization;
 using Abp.UI;
@@ -9,13 +16,6 @@ using DispatcherWeb.Infrastructure.Utilities;
 using IdentityModel.Client;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Infrastructure.Telematics
 {
@@ -88,7 +88,7 @@ namespace DispatcherWeb.Infrastructure.Telematics
                     {
                         foreach (var stat in statGroup)
                         {
-                            if (stat.ObdOdometerMeters?.Time > statToUse.ObdOdometerMeters?.Time 
+                            if (stat.ObdOdometerMeters?.Time > statToUse.ObdOdometerMeters?.Time
                                 || stat.ObdEngineSeconds?.Time > statToUse.ObdEngineSeconds?.Time
                                 || stat.ObdOdometerMeters == null && stat.GpsOdometerMeters?.Time > statToUse.GpsOdometerMeters?.Time)
                             {

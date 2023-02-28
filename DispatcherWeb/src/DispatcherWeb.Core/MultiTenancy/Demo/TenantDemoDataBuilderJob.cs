@@ -12,8 +12,8 @@ namespace DispatcherWeb.MultiTenancy.Demo
         private readonly IUnitOfWorkManager _unitOfWorkManager;
 
         public TenantDemoDataBuilderJob(
-            TenantDemoDataBuilder tenantDemoDataBuilder, 
-            TenantManager tenantManager, 
+            TenantDemoDataBuilder tenantDemoDataBuilder,
+            TenantManager tenantManager,
             IUnitOfWorkManager unitOfWorkManager)
         {
             _tenantDemoDataBuilder = tenantDemoDataBuilder;

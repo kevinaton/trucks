@@ -15,21 +15,19 @@ using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.UI;
 using Abp.Zero.Configuration;
-using Microsoft.AspNetCore.Identity;
 using DispatcherWeb.Authentication.TwoFactor.Google;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.Authorization.Users.Profile.Cache;
 using DispatcherWeb.Authorization.Users.Profile.Dto;
 using DispatcherWeb.Configuration;
-using DispatcherWeb.Dto;
 using DispatcherWeb.Friendships;
 using DispatcherWeb.Gdpr;
-using DispatcherWeb.Identity;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.Security;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Timing;
+using Microsoft.AspNetCore.Identity;
 
 namespace DispatcherWeb.Authorization.Users.Profile
 {
@@ -130,7 +128,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
             var user = await GetCurrentUserAsync();
             var code = RandomHelper.GetRandom(100000, 999999).ToString();
             var cacheKey = AbpSession.ToUserIdentifier().ToString();
-            var cacheItem = new SmsVerificationCodeCacheItem {Code = code};
+            var cacheItem = new SmsVerificationCodeCacheItem { Code = code };
 
             await _cacheManager.GetSmsVerificationCodeCache().SetAsync(
                 cacheKey,
@@ -291,19 +289,19 @@ namespace DispatcherWeb.Authorization.Users.Profile
 
             byte[] byteArray = File.ReadAllBytes(tempSignaturePicturePath);
 
-            if(byteArray.LongLength == 0)
+            if (byteArray.LongLength == 0)
             {
                 throw new UserFriendlyException("Resized image is empty. Please try again.");
             }
 
-            if(byteArray.LongLength > 1048576) //1 MB
+            if (byteArray.LongLength > 1048576) //1 MB
             {
                 throw new UserFriendlyException("Resized image size must be less than 1MB. Please resize down and try again.");
             }
 
             var user = await UserManager.GetUserByIdAsync(AbpSession.GetUserId());
 
-            if(user.SignaturePictureId.HasValue)
+            if (user.SignaturePictureId.HasValue)
             {
                 await _binaryObjectManager.DeleteAsync(user.SignaturePictureId.Value);
             }

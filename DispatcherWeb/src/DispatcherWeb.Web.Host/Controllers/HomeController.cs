@@ -1,9 +1,9 @@
 ﻿using Abp.Auditing;
+using DispatcherWeb.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using DispatcherWeb.Configuration;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -11,9 +11,9 @@ namespace DispatcherWeb.Web.Controllers
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         readonly IConfigurationRoot _appConfiguration;
-        
+
         public HomeController(
-            IWebHostEnvironment webHostEnvironment, 
+            IWebHostEnvironment webHostEnvironment,
             IAppConfigurationAccessor appConfigurationAccessor)
         {
             _webHostEnvironment = webHostEnvironment;

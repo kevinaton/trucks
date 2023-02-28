@@ -10,8 +10,8 @@ namespace DispatcherWeb.Migrations
                 name: "EventContent",
                 table: "TrackableEmailEvents");
 
-			string sql = "update TrackableEmails set Subject = SUBSTRING(Subject, 0, 200) where len(Subject) > 200";
-			migrationBuilder.Sql(sql);
+            string sql = "update TrackableEmails set Subject = SUBSTRING(Subject, 0, 200) where len(Subject) > 200";
+            migrationBuilder.Sql(sql);
             migrationBuilder.AlterColumn<string>(
                 name: "Subject",
                 table: "TrackableEmails",
@@ -20,8 +20,8 @@ namespace DispatcherWeb.Migrations
                 oldClrType: typeof(string),
                 oldNullable: true);
 
-			sql = "update TrackableEmailReceivers set Email = SUBSTRING(Email, 0, 256) where len(Email) > 256";
-			migrationBuilder.Sql(sql);
+            sql = "update TrackableEmailReceivers set Email = SUBSTRING(Email, 0, 256) where len(Email) > 256";
+            migrationBuilder.Sql(sql);
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
                 table: "TrackableEmailReceivers",
@@ -30,8 +30,8 @@ namespace DispatcherWeb.Migrations
                 oldClrType: typeof(string),
                 oldNullable: true);
 
-			sql = "update TrackableEmailEvents set SendGridEventId = SUBSTRING(SendGridEventId, 0, 50) where len(SendGridEventId) > 50";
-			migrationBuilder.Sql(sql);
+            sql = "update TrackableEmailEvents set SendGridEventId = SUBSTRING(SendGridEventId, 0, 50) where len(SendGridEventId) > 50";
+            migrationBuilder.Sql(sql);
             migrationBuilder.AlterColumn<string>(
                 name: "SendGridEventId",
                 table: "TrackableEmailEvents",
@@ -40,8 +40,8 @@ namespace DispatcherWeb.Migrations
                 oldClrType: typeof(string),
                 oldNullable: true);
 
-			sql = "update TrackableEmailEvents set FailReason = SUBSTRING(FailReason, 0, 1000) where len(FailReason) > 1000";
-			migrationBuilder.Sql(sql);
+            sql = "update TrackableEmailEvents set FailReason = SUBSTRING(FailReason, 0, 1000) where len(FailReason) > 1000";
+            migrationBuilder.Sql(sql);
             migrationBuilder.AlterColumn<string>(
                 name: "FailReason",
                 table: "TrackableEmailEvents",
@@ -50,8 +50,8 @@ namespace DispatcherWeb.Migrations
                 oldClrType: typeof(string),
                 oldNullable: true);
 
-			sql = "update TrackableEmailEvents set Event = SUBSTRING(Event, 0, 20) where len(Event) > 20";
-			migrationBuilder.Sql(sql);
+            sql = "update TrackableEmailEvents set Event = SUBSTRING(Event, 0, 20) where len(Event) > 20";
+            migrationBuilder.Sql(sql);
             migrationBuilder.AlterColumn<string>(
                 name: "Event",
                 table: "TrackableEmailEvents",
@@ -60,8 +60,8 @@ namespace DispatcherWeb.Migrations
                 oldClrType: typeof(string),
                 oldNullable: true);
 
-			sql = "update TrackableEmailEvents set Email = SUBSTRING(Email, 0, 256) where len(Email) > 256";
-			migrationBuilder.Sql(sql);
+            sql = "update TrackableEmailEvents set Email = SUBSTRING(Email, 0, 256) where len(Email) > 256";
+            migrationBuilder.Sql(sql);
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
                 table: "TrackableEmailEvents",

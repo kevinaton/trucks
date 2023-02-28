@@ -16,8 +16,8 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
     [AbpMvcAuthorize(AppPermissions.Pages_Dispatches)]
     public class DispatchesController : DispatcherWebControllerBase
     {
-		private readonly IDispatchingAppService _dispatchingAppService;
-		private readonly ITruckAppService _truckAppService;
+        private readonly IDispatchingAppService _dispatchingAppService;
+        private readonly ITruckAppService _truckAppService;
 
         public DispatchesController(
             IDispatchingAppService dispatchingAppService,
@@ -30,47 +30,47 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
         public async Task<IActionResult> Index(int? orderLineId, int? truckId)
         {
-			if (!await SettingManager.DispatchViaAny())
-			{
-				return NotFound();
-			}
-			var model = new DispatchListViewModel
-			{
-				OrderLineId = orderLineId,
-				TruckId = truckId,
-				TruckCode = truckId.HasValue ? await _truckAppService.GetTruckCodeByTruckId(truckId.Value) : null
-			};
+            if (!await SettingManager.DispatchViaAny())
+            {
+                return NotFound();
+            }
+            var model = new DispatchListViewModel
+            {
+                OrderLineId = orderLineId,
+                TruckId = truckId,
+                TruckCode = truckId.HasValue ? await _truckAppService.GetTruckCodeByTruckId(truckId.Value) : null
+            };
             return View(model);
         }
 
         public async Task<IActionResult> TruckDispatchList()
         {
-			if(!await SettingManager.DispatchViaAny())
-			{
-				return NotFound();
-			}
+            if (!await SettingManager.DispatchViaAny())
+            {
+                return NotFound();
+            }
             return View();
         }
 
-		[Modal]
-		public async Task<PartialViewResult> ViewDispatchModal(int id)
-		{
-			var model = await _dispatchingAppService.ViewDispatch(id);
-			return PartialView("_ViewDispatchModal", model);
-		}
+        [Modal]
+        public async Task<PartialViewResult> ViewDispatchModal(int id)
+        {
+            var model = await _dispatchingAppService.ViewDispatch(id);
+            return PartialView("_ViewDispatchModal", model);
+        }
 
-		[Modal]
-		public PartialViewResult DuplicateDispatchMessageModal(int id)
-		{
-			var model = new DuplicateDispatchInput() {DispatchId = id};
-			return PartialView("_DuplicateDispatchMessageModal", model);
-		}
+        [Modal]
+        public PartialViewResult DuplicateDispatchMessageModal(int id)
+        {
+            var model = new DuplicateDispatchInput() { DispatchId = id };
+            return PartialView("_DuplicateDispatchMessageModal", model);
+        }
 
-		[Modal]
-		public async Task<PartialViewResult> SetDispatchTimeOnJobModal(int id)
-		{
-			var model = await _dispatchingAppService.GetDispatchTimeOnJob(id);
-			return PartialView("_SetDispatchTimeOnJobModal", model);
-		}
-	}
+        [Modal]
+        public async Task<PartialViewResult> SetDispatchTimeOnJobModal(int id)
+        {
+            var model = await _dispatchingAppService.GetDispatchTimeOnJob(id);
+            return PartialView("_SetDispatchTimeOnJobModal", model);
+        }
+    }
 }

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Castle.Core.Internal;
@@ -13,7 +10,7 @@ namespace DispatcherWeb.Imports.DataResolvers.OfficeResolvers
     public class OfficeByFuelIdResolver : OfficeResolverBase, ITransientDependency, IOfficeResolver
     {
         protected readonly IRepository<Office> _officeRepository;
-        public OfficeByFuelIdResolver(IRepository<Office> officeRepository) 
+        public OfficeByFuelIdResolver(IRepository<Office> officeRepository)
         {
             _officeRepository = officeRepository;
         }

@@ -1,5 +1,4 @@
 ﻿using DispatcherWeb.Orders.TaxDetails;
-using System.Collections.Generic;
 
 namespace DispatcherWeb.Orders.Dto
 {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Abp.Localization;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Migrations.Seed.Host
 {

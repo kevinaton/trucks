@@ -179,7 +179,7 @@ namespace MigraDoc.DocumentObjectModel
             // is not implemented in C# because nobody has done this.
             // See Eric Lippert on this topic: http://stackoverflow.com/questions/1331739/enum-type-constraints-in-c-sharp
 #if !NETFX_CORE
-            Debug.Assert(typeof (T).IsSubclassOf(typeof(Enum)));
+            Debug.Assert(typeof(T).IsSubclassOf(typeof(Enum)));
 #else
             Debug.Assert(typeof(T).GetTypeInfo().IsSubclassOf(typeof(Enum)));
 #endif

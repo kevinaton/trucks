@@ -236,7 +236,7 @@ namespace Intuit.Ipp.Core.Rest
                                TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
                                this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Adding the payload to request. \n Start dump: " + this.requestBody : "Adding the payload to request.");
 
-                               
+
                                // Check whether compression is enabled and compress the stream accordingly.
                                if (this.RequestCompressor != null)
                                {

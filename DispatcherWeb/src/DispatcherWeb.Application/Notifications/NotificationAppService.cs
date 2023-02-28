@@ -130,7 +130,7 @@ namespace DispatcherWeb.Notifications
 
             await _userNotificationManager.DeleteUserNotificationAsync(AbpSession.TenantId, input.Id);
         }
-         public async Task DeleteAllUserNotifications(DeleteAllUserNotificationsInput input)
+        public async Task DeleteAllUserNotifications(DeleteAllUserNotificationsInput input)
         {
             await _userNotificationManager.DeleteAllUserNotificationsAsync(
                 AbpSession.ToUserIdentifier(),
@@ -138,5 +138,5 @@ namespace DispatcherWeb.Notifications
                 input.StartDate,
                 input.EndDate);
         }
-   }
+    }
 }

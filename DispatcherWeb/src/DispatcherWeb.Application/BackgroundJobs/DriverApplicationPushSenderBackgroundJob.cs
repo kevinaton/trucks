@@ -1,14 +1,11 @@
-﻿using Abp.BackgroundJobs;
+﻿using System;
+using System.Threading.Tasks;
+using Abp.BackgroundJobs;
 using Abp.Dependency;
 using Abp.Domain.Uow;
 using Abp.Notifications;
-using Abp.Threading;
 using DispatcherWeb.DriverApplication;
 using DispatcherWeb.Notifications;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.BackgroundJobs
 {

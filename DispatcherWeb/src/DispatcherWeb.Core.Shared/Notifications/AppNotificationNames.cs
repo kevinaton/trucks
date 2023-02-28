@@ -10,9 +10,9 @@ namespace DispatcherWeb.Notifications
         public const string NewUserRegistered = "App.NewUserRegistered";
         public const string NewTenantRegistered = "App.NewTenantRegistered";
         public const string GdprDataPrepared = "App.GdprDataPrepared";
-        public const string TenantsMovedToEdition = "App.TenantsMovedToEdition"; 
-        public const string DownloadInvalidImportUsers = "App.DownloadInvalidImportUsers"; 
-      public const string OrderShared = "App.OrderShared";
+        public const string TenantsMovedToEdition = "App.TenantsMovedToEdition";
+        public const string DownloadInvalidImportUsers = "App.DownloadInvalidImportUsers";
+        public const string OrderShared = "App.OrderShared";
         public const string QuoteEmailDeliveryFailed = "App.QuoteEmailDeliveryFailed";
         public const string OrderEmailDeliveryFailed = "App.OrderEmailDeliveryFailed";
         public const string InvoiceEmailDeliveryFailed = "App.InvoiceEmailDeliveryFailed";

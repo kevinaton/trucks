@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
-using Abp.Localization.Sources;
-using Abp.Localization;
 using Abp;
-using Abp.ObjectMapping;
-using AutoMapper;
-using System.Globalization;
 using Abp.Dependency;
+using Abp.Localization;
+using Abp.Localization.Sources;
 
 namespace DispatcherWeb.Localization
 {

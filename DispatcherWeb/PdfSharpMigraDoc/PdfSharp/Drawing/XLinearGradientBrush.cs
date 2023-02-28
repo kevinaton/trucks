@@ -29,7 +29,6 @@
 
 using System;
 using System.ComponentModel;
-using PdfSharp.Internal;
 #if GDI
 using System.Drawing;
 using System.Drawing.Drawing2D;

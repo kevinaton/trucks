@@ -1,5 +1,4 @@
-﻿using Abp.Auditing;
-using DispatcherWeb.Configuration.Dto;
+﻿using DispatcherWeb.Configuration.Dto;
 
 namespace DispatcherWeb.Configuration.Tenants.Dto
 {

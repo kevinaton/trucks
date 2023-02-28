@@ -8,21 +8,19 @@ using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
-using Abp.UI;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Dto;
-using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Receipts.Dto;
 using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
 using DispatcherWeb.Tickets;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Common.Dto;
 
 namespace DispatcherWeb.Receipts
 {
@@ -134,7 +132,7 @@ namespace DispatcherWeb.Receipts
                         SalesTaxRate = order.SalesTaxRate
                         //MaterialTotal
                         //FreightTotal
-                        })
+                    })
                     .FirstAsync();
 
                 receiptEditDto.ReceiptDate = today;
@@ -342,12 +340,12 @@ namespace DispatcherWeb.Receipts
                             Tickets = x.Tickets
                                 .Where(t => !splitBillingByOffices || t.OfficeId == OfficeId)
                                 .Select(t => new
-                            {
-                                t.Id,
-                                t.Quantity,
-                                t.UnitOfMeasureId,
-                                t.ReceiptLineId
-                            }).ToList(),
+                                {
+                                    t.Id,
+                                    t.Quantity,
+                                    t.UnitOfMeasureId,
+                                    t.ReceiptLineId
+                                }).ToList(),
                             HasPreviousReceiptLines = x.ReceiptLines.Any(r => r.Receipt.OfficeId == OfficeId)
                         })
                         .ToListAsync();
@@ -428,7 +426,7 @@ namespace DispatcherWeb.Receipts
                 .ToList();
 
                 return new PagedResultDto<ReceiptLineEditDto>(
-                    receiptLines.Count, 
+                    receiptLines.Count,
                     receiptLines);
             }
             else
@@ -631,7 +629,7 @@ namespace DispatcherWeb.Receipts
 
             foreach (var receipt in receipts)
             {
-                OrderTaxCalculator.CalculateTotals(taxCalculationType, receipt, 
+                OrderTaxCalculator.CalculateTotals(taxCalculationType, receipt,
                     receipt.ReceiptLines
                         .Except(receiptLinesToDelete)
                         .Select(x => new ReceiptLineTaxDetailsDto

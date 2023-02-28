@@ -29,10 +29,10 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.Diagnostics;
-using System.Text;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using PdfSharp.Internal;
 
 #pragma warning disable 1591
@@ -68,7 +68,7 @@ namespace PdfSharp.Pdf.Content
         /// </summary>
         public CSymbol ScanNextToken()
         {
-            Again:
+        Again:
             ClearToken();
             char ch = MoveToNonWhiteSpace();
             switch (ch)
@@ -405,7 +405,7 @@ namespace PdfSharp.Pdf.Content
                 ch = (char)(chHi * 256 + chLo);
                 while (true)
                 {
-                    SkipChar:
+                SkipChar:
                     switch (ch)
                     {
                         case '(':
@@ -505,7 +505,7 @@ namespace PdfSharp.Pdf.Content
                 // 8-bit characters
                 while (true)
                 {
-                    SkipChar:
+                SkipChar:
                     switch (ch)
                     {
                         case '(':

@@ -12,6 +12,6 @@ namespace DispatcherWeb.Trucks.Dto
 
         public DateTime EndDate { get; set; }
 
-		public Shift[] Shifts { get; set; }
+        public Shift[] Shifts { get; set; }
     }
 }

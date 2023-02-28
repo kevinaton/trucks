@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization.Users;
 using Abp.Organizations;
-using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Organizations;
 using DispatcherWeb.Organizations.Dto;
 using Shouldly;

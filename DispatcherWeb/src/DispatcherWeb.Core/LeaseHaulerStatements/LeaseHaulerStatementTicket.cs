@@ -1,12 +1,9 @@
-﻿using Abp.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Trucks;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace DispatcherWeb.LeaseHaulerStatements
 {

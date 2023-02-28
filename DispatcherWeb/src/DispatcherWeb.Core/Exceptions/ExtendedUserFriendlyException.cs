@@ -6,7 +6,7 @@ namespace DispatcherWeb.Exceptions
     public class ExtendedUserFriendlyException : UserFriendlyException
     {
         public Dictionary<string, object> Parameters { get; } = new Dictionary<string, object>();
-        
+
         public string Kind
         {
             get { return GetParameter("Kind") as string; }

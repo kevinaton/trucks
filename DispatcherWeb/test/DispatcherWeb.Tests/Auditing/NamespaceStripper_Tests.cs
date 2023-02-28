@@ -4,7 +4,7 @@ using Xunit;
 
 namespace DispatcherWeb.Tests.Auditing
 {
-    public class NamespaceStripper_Tests: AppTestBase
+    public class NamespaceStripper_Tests : AppTestBase
     {
         private readonly INamespaceStripper _namespaceStripper;
 

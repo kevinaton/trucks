@@ -4,18 +4,18 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Abp;
-using Abp.UI;
 using Abp.Dependency;
 using Abp.Domain.Uow;
 using Abp.Extensions;
 using Abp.Runtime.Caching;
-using Abp.Threading;
 using Abp.Runtime.Security;
+using Abp.Threading;
 using Abp.Timing;
-using Microsoft.IdentityModel.Tokens;
-using DispatcherWeb.Authorization.Users;
-using DispatcherWeb.Authorization.Delegation;
+using Abp.UI;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Authorization.Delegation;
+using DispatcherWeb.Authorization.Users;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DispatcherWeb.Web.Authentication.JwtBearer
 {
@@ -146,7 +146,7 @@ namespace DispatcherWeb.Web.Authentication.JwtBearer
             }
 
             var impersonatorTenantId = impersonatorTenant == null ? null :
-                impersonatorTenant.Value.IsNullOrEmpty() ? (int?) null : Convert.ToInt32(impersonatorTenant.Value);
+                impersonatorTenant.Value.IsNullOrEmpty() ? (int?)null : Convert.ToInt32(impersonatorTenant.Value);
             var sourceUserId = Convert.ToInt64(user.Value);
             var impersonatorUserId = Convert.ToInt64(impersonatorUser.Value);
 

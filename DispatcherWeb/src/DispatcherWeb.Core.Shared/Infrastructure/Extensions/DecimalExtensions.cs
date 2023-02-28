@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DispatcherWeb.Infrastructure.Extensions
+﻿namespace DispatcherWeb.Infrastructure.Extensions
 {
     public static class DecimalExtensions
     {

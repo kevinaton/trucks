@@ -8,7 +8,7 @@ namespace DispatcherWeb.Orders.Dto
         public int? OrderLineId { get; set; }
         public DateTime DateBegin { get; set; }
         public DateTime DateEnd { get; set; }
-		public Shift[] Shifts { get; set; }
+        public Shift[] Shifts { get; set; }
         public bool CopyTrucks { get; set; }
     }
 }

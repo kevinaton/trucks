@@ -1,6 +1,6 @@
-﻿using DispatcherWeb.Dto;
+﻿using System.Collections.Generic;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Tickets.Dto;
-using System.Collections.Generic;
 
 namespace DispatcherWeb.Tickets.Exporting
 {
