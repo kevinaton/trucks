@@ -18,7 +18,7 @@ using DispatcherWeb.Quotes;
 namespace DispatcherWeb.Orders
 {
     [Table("Order")]
-    public class Order : FullAuditedEntity, IMustHaveTenant, IOrderTaxDetailsWithActualAmounts
+    public class Order : FullAuditedEntity, IMustHaveTenant, IOrderTaxDetails
     {
         public Order()
         {
@@ -63,8 +63,6 @@ namespace DispatcherWeb.Orders
 
         [Column(TypeName = "money")]
         public decimal CODTotal { get; set; }
-
-        public bool HasAllActualAmounts { get; set; }
 
         [StringLength(EntityStringFieldLengths.Order.ChargeTo)]
         public string ChargeTo { get; set; }

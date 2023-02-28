@@ -2167,7 +2167,7 @@ namespace DispatcherWeb.Orders
             };
         }
 
-        public async Task<IOrderTaxDetailsWithActualAmounts> CalculateOrderTotals(OrderTaxDetailsDto orderTaxDetails)
+        public async Task<IOrderTaxDetails> CalculateOrderTotals(OrderTaxDetailsDto orderTaxDetails)
         {
             List<OrderLineTaxDetailsDto> orderLines;
 
