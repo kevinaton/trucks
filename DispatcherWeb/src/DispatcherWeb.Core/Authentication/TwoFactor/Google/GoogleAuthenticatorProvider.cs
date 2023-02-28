@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.UI;
-using Microsoft.AspNetCore.Identity;
 using DispatcherWeb.Authorization.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace DispatcherWeb.Authentication.TwoFactor.Google
 {

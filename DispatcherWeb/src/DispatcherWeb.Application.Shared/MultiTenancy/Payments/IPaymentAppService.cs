@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abp.Application.Services;
+using Abp.Application.Services.Dto;
 using DispatcherWeb.MultiTenancy.Dto;
 using DispatcherWeb.MultiTenancy.Payments.Dto;
-using Abp.Application.Services.Dto;
 
 namespace DispatcherWeb.MultiTenancy.Payments
 {

@@ -91,7 +91,7 @@ namespace Intuit.Ipp.Utility
         /// <summary>
         /// The Redirect url required by token migration endpoint.
         /// </summary>
-        public const string TOKEN_MIGRATION_REDIRECT_URL= "https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl";
+        public const string TOKEN_MIGRATION_REDIRECT_URL = "https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl";
 
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Intuit.Ipp.Utility
         public const string TOKEN_MIGRATION_URL_SANDBOX = "https://developer-sandbox.api.intuit.com/v2/oauth2/tokens/migrate";
 
 
-       
+
         /// <summary>
         /// The Base Url for IPS.
         /// </summary>

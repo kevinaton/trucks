@@ -1,4 +1,10 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.Configuration;
@@ -35,12 +41,6 @@ using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Threading.Tasks;
 using static DispatcherWeb.Scheduling.Dto.OrderTrucksDto;
 
 namespace DispatcherWeb.Scheduling
@@ -1534,7 +1534,7 @@ namespace DispatcherWeb.Scheduling
         public async Task SetOrderLineTime(SetOrderLineTimeInput input)
         {
             var orderLineUpdater = _orderLineUpdaterFactory.Create(input.OrderLineId);
-            
+
             var order = await orderLineUpdater.GetOrderAsync();
             var date = order.DeliveryDate ?? await GetToday();
             var timezone = await GetTimezone();
@@ -2518,20 +2518,20 @@ namespace DispatcherWeb.Scheduling
 
             var orderTrucksQuery = loadsQuery.Where(load => load != null && load.SourceDateTime.HasValue)
                                         .Select(load => new
-                                                {
+                                        {
                                             load.Dispatch.OrderLineTruck.TruckId,
                                             load.Dispatch.OrderLineTruck.Truck.TruckCode,
                                             load.Dispatch.OrderLineTruck.DriverId,
 
                                             DispatchId = load.Dispatch.Id,
 
-                                                    LoadId = load.Id,
-                                                    load.SourceDateTime,
-                                                    load.DestinationDateTime,
-                                                    load.SourceLatitude,
-                                                    load.SourceLongitude,
-                                                    load.DestinationLatitude,
-                                                    load.DestinationLongitude,
+                                            LoadId = load.Id,
+                                            load.SourceDateTime,
+                                            load.DestinationDateTime,
+                                            load.SourceLatitude,
+                                            load.SourceLongitude,
+                                            load.DestinationLatitude,
+                                            load.DestinationLongitude,
 
                                             TicketId = load.Tickets.Count > 0 ? load.Tickets.FirstOrDefault().Id : 0,
                                             Qty = load.Tickets.Count > 0 ? load.Tickets.FirstOrDefault().Quantity : 0,
@@ -2567,7 +2567,7 @@ namespace DispatcherWeb.Scheduling
                     .OrderBy(p => p.SourceDateTime)
                     .ThenBy(p => p.DestinationDateTime)
                     .ToList()
-                        }).ToList();
+                }).ToList();
 
             return list;
         }
@@ -2582,7 +2582,7 @@ namespace DispatcherWeb.Scheduling
                                                         .SelectMany(dispatch => dispatch.Loads)
                                                             .Where(load => load != null && load.SourceDateTime.HasValue)
                                                             .Select(load => new
-        {
+                                                            {
                                                                 olt.TruckId,
                                                                 olt.Truck.TruckCode,
                                                                 olt.DriverId,
@@ -2620,7 +2620,7 @@ namespace DispatcherWeb.Scheduling
                             LoadsCount = p.Count(),
                             Quantity = p.Sum(x => x.Qty),
                             Loads = p.Select(load => new OrderTruckQueryResultDto.OrderTruckLoadQueryResultDto
-            {
+                            {
                                 LoadId = load.LoadId,
                                 DriverId = load.DriverId,
                                 SourceDateTime = load.SourceDateTime,

@@ -4,10 +4,9 @@ using Abp.Dependency;
 using Abp.Domain.Uow;
 using Abp.EntityFrameworkCore.Uow;
 using Abp.MultiTenancy;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.Migrations.Seed.Host;
-using DispatcherWeb.Migrations.Seed.Tenants;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Migrations.Seed
 {

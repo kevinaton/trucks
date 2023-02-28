@@ -9,8 +9,8 @@ namespace DispatcherWeb.Scheduling.Dto
     {
         public int OfficeId { get; set; }
         public DateTime Date { get; set; }
-		public Shift? Shift { get; set; }
-		public bool HideCompletedOrders { get; set; }
+        public Shift? Shift { get; set; }
+        public bool HideCompletedOrders { get; set; }
         public bool HideProgressBar { get; set; }
 
         public void Normalize()

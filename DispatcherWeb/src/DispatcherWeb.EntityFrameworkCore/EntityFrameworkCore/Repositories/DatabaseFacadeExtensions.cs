@@ -30,9 +30,9 @@ namespace DispatcherWeb.EntityFrameworkCore.Repositories
 
         private static List<SqlParameter> CreateSqlParameters(int mainEntityId, IList<int> mergingEntityIds)
         {
-            List<SqlParameter> parameters = new List<SqlParameter> {new SqlParameter("p0", mainEntityId)};
+            List<SqlParameter> parameters = new List<SqlParameter> { new SqlParameter("p0", mainEntityId) };
             int i = 1;
-            foreach(int recordId in mergingEntityIds)
+            foreach (int recordId in mergingEntityIds)
             {
                 parameters.Add(new SqlParameter($"p{i++}", recordId));
             }

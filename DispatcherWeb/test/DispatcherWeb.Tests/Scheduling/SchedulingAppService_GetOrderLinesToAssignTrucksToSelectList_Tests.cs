@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Timing;
 using DispatcherWeb.Dto;
@@ -23,7 +21,7 @@ namespace DispatcherWeb.Tests.Scheduling
             var orderLine2 = order.OrderLines.First(ol => ol.LineNumber == 2);
 
             // Act
-            var orderLineSelectList = await _schedulingAppService.GetOrderLinesToAssignTrucksToSelectList(new GetSelectListIdInput() {Id = orderLine1.Id });
+            var orderLineSelectList = await _schedulingAppService.GetOrderLinesToAssignTrucksToSelectList(new GetSelectListIdInput() { Id = orderLine1.Id });
 
             // Assert
             orderLineSelectList.Items.Count.ShouldBe(1);
@@ -48,7 +46,7 @@ namespace DispatcherWeb.Tests.Scheduling
             await CreateOrderLineTruck(truck.Id, driver.Id, orderLine2.Id, .5m);
 
             // Act
-            var orderLineSelectList = await _schedulingAppService.GetOrderLinesToAssignTrucksToSelectList(new GetSelectListIdInput() {Id = orderLine1.Id });
+            var orderLineSelectList = await _schedulingAppService.GetOrderLinesToAssignTrucksToSelectList(new GetSelectListIdInput() { Id = orderLine1.Id });
 
             // Assert
             orderLineSelectList.Items.Count.ShouldBe(0);
@@ -67,7 +65,7 @@ namespace DispatcherWeb.Tests.Scheduling
             var orderLine2 = order.OrderLines.First(ol => ol.LineNumber == 2);
 
             // Act
-            var orderLineSelectList = await _schedulingAppService.GetOrderLinesToAssignTrucksToSelectList(new GetSelectListIdInput() {Id = orderLine1.Id });
+            var orderLineSelectList = await _schedulingAppService.GetOrderLinesToAssignTrucksToSelectList(new GetSelectListIdInput() { Id = orderLine1.Id });
 
             // Assert
             orderLineSelectList.Items.Count.ShouldBe(1);
@@ -89,7 +87,7 @@ namespace DispatcherWeb.Tests.Scheduling
             await ShareOrderLine(orderLine21.Id, _officeId);
 
             // Act
-            var orderLineSelectList = await _schedulingAppService.GetOrderLinesToAssignTrucksToSelectList(new GetSelectListIdInput() {Id = orderLine1.Id });
+            var orderLineSelectList = await _schedulingAppService.GetOrderLinesToAssignTrucksToSelectList(new GetSelectListIdInput() { Id = orderLine1.Id });
 
             // Assert
             orderLineSelectList.Items.Count.ShouldBe(2);

@@ -24,7 +24,7 @@ namespace DispatcherWeb.Trucks.Dto
         public int VehicleCategoryId { get; set; }
 
         public string VehicleCategoryName { get; set; }
-        
+
         public int? DefaultDriverId { get; set; }
 
         public string DefaultDriverName { get; set; }

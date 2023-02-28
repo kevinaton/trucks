@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Domain.Repositories;
 using Abp.Net.Mail;
@@ -9,7 +8,6 @@ using Abp.Runtime.Session;
 using Abp.Timing;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Messages;
-using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.LeaseHaulerRequests.Dto;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Notifications;
@@ -119,7 +117,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
 
             void UpdateSuccessTuple(bool operationSuccess)
             {
-                if(operationSuccess)
+                if (operationSuccess)
                 {
                     success.successSome = true;
                 }

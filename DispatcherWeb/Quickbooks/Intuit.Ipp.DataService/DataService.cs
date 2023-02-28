@@ -26,9 +26,11 @@ namespace Intuit.Ipp.DataService
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Reflection;
+    using System.Text;
     using Intuit.Ipp.Core;
     using Intuit.Ipp.Core.Rest;
     using Intuit.Ipp.Data;
@@ -36,8 +38,6 @@ namespace Intuit.Ipp.DataService
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
     using Intuit.Ipp.Utility;
-    using System.Text;
-    using System.IO;
     //using Intuit.Ipp.QueryFilter;
     //using Intuit.Ipp.LinqExtender;
 
@@ -208,7 +208,7 @@ namespace Intuit.Ipp.DataService
             }
 
             string resourceString = entity.GetType().Name.ToLower(CultureInfo.InvariantCulture);
-            if(resourceString == "creditcardpaymenttxn")
+            if (resourceString == "creditcardpaymenttxn")
             {
                 resourceString = "creditcardpayment";
             }
@@ -890,7 +890,7 @@ namespace Intuit.Ipp.DataService
         public ReadOnlyCollection<T> FindByParentId<T>(T entity) where T : IEntity
         {
             this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method FindByParentId.");
-            
+
             ServicesHelper.ValidateEntity(entity, serviceContext);
             ServicesHelper.ValidateEntityType(entity, "TaxClassification", serviceContext);
 
@@ -944,7 +944,7 @@ namespace Intuit.Ipp.DataService
 
             // Check whether the Level is null and throw an exception if it is null.
             ServicesHelper.ValidateId(level, serviceContext);
-            
+
             string uri = string.Empty;
             uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/{2}?level={3}", CoreConstants.VERSION, this.serviceContext.RealmId, resourceString, level);
 
@@ -971,7 +971,7 @@ namespace Intuit.Ipp.DataService
             ServicesHelper.ValidateEntity(entity, serviceContext);
             string resourceString = entity.GetType().Name;
 
-           if (resourceString.ToLower(CultureInfo.InvariantCulture) == "creditcardpaymenttxn")
+            if (resourceString.ToLower(CultureInfo.InvariantCulture) == "creditcardpaymenttxn")
             {
                 resourceString = "creditcardpayment";
             }
@@ -982,7 +982,7 @@ namespace Intuit.Ipp.DataService
                 string uri = string.Empty;
                 uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/{2}", CoreConstants.VERSION, this.serviceContext.RealmId, resourceString.ToLower(CultureInfo.InvariantCulture));
 
-                entities = PrepareAndExecuteHttpRequest<T>(uri); 
+                entities = PrepareAndExecuteHttpRequest<T>(uri);
             }
             else
             {
@@ -2108,7 +2108,7 @@ namespace Intuit.Ipp.DataService
         }
 
         #endregion
-        
+
         /// <summary>
         /// Prepare Http request for Reading Tax Cassification methods
         /// </summary>

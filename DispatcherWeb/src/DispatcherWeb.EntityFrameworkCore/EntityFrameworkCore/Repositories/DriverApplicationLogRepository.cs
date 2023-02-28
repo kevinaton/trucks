@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.EntityFrameworkCore;
 using Castle.Core.Logging;
 using DispatcherWeb.Drivers;
@@ -12,7 +8,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Repositories
 {
     public class DriverApplicationLogRepository : DispatcherWebRepositoryBase<DriverApplicationLog>, IDriverApplicationLogRepository
     {
-        public DriverApplicationLogRepository(IDbContextProvider<DispatcherWebDbContext> dbContextProvider, ILogger logger) 
+        public DriverApplicationLogRepository(IDbContextProvider<DispatcherWebDbContext> dbContextProvider, ILogger logger)
             : base(dbContextProvider)
         {
             Logger = logger;
@@ -28,7 +24,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Repositories
             );
 
             Logger.Info($"DriverApplicationLogRepository.DeleteLogsEarlierThan {date:s}: {rowsAffected} rows affected");
-            
+
             return rowsAffected;
         }
 

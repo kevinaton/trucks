@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Web;
 using Abp.Auditing;
 using Abp.Runtime.Security;
@@ -7,7 +6,7 @@ using Abp.Runtime.Validation;
 
 namespace DispatcherWeb.Authorization.Accounts.Dto
 {
-    public class ResetPasswordInput: IShouldNormalize
+    public class ResetPasswordInput : IShouldNormalize
     {
         public long UserId { get; set; }
 

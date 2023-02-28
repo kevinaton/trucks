@@ -12,7 +12,7 @@ namespace DispatcherWeb.Offices
 {
     [Table("Office")]
     public class Office : FullAuditedEntity, IMustHaveTenant
-	{
+    {
         public const int MaxNameLength = 150;
         public const int MaxFuelIdsLength = 1000;
 
@@ -22,9 +22,9 @@ namespace DispatcherWeb.Offices
             Users = new HashSet<User>();
         }
 
-		public int TenantId { get; set; }
+        public int TenantId { get; set; }
 
-		[Required]
+        [Required]
         [StringLength(MaxNameLength)]
         public string Name { get; set; }
 
@@ -34,7 +34,7 @@ namespace DispatcherWeb.Offices
 
         public bool CopyDeliverToLoadAtChargeTo { get; set; } //now it's only CopyChargeTo
 
-	    [StringLength(50)] //29
+        [StringLength(50)] //29
         public string HeartlandPublicKey { get; set; }
 
         [StringLength(200)] //88

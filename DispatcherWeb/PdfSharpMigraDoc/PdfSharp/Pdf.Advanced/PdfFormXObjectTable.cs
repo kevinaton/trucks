@@ -28,9 +28,8 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 using PdfSharp.Drawing;
 
 namespace PdfSharp.Pdf.Advanced

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abp.Dependency;
-using DispatcherWeb.Storage;
 using Castle.Core.Logging;
+using DispatcherWeb.Storage;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 

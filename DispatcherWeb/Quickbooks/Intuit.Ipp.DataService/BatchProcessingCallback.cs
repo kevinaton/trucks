@@ -24,7 +24,7 @@ namespace Intuit.Ipp.DataService
     /// Contains event handler for call back event.
     /// </summary>
 
-    public static class BatchProcessingCallback 
+    public static class BatchProcessingCallback
     {
         /// <summary>
         /// event handler to handle call back for batch exceution completion

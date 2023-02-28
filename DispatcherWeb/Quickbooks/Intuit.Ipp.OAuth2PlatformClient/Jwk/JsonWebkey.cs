@@ -27,9 +27,9 @@
 
 // Modified for Intuit's Oauth2 implementation
 
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using System;
 
 namespace Intuit.Ipp.OAuth2PlatformClient
 {
@@ -64,9 +64,9 @@ namespace Intuit.Ipp.OAuth2PlatformClient
 
         private void Copy(JsonWebKey key)
         {
-            
-           
-            
+
+
+
             this.Kty = key.Kty;
             this.E = key.E;
             this.Use = key.Use;
@@ -75,7 +75,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
             this.N = key.N;
 
         }
-            
+
 
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// </summary>
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.Kid, Required = Required.Default)]
         public string Kid { get; set; }
-        
+
 
         /// <summary>
         /// Gets or sets the 'alg' (KeyType)..
@@ -119,9 +119,9 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore, PropertyName = JsonWebKeyParameterNames.N, Required = Required.Default)]
         public string N { get; set; }
 
-      
 
-        
+
+
 
         /// <summary>
         /// Returns KeySize

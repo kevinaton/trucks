@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DispatcherWeb.EntityFrameworkCore.Configurations
 {
-	public class VehicleServiceTypeConfiguration : IEntityTypeConfiguration<VehicleServiceType>
-	{
+    public class VehicleServiceTypeConfiguration : IEntityTypeConfiguration<VehicleServiceType>
+    {
         public void Configure(EntityTypeBuilder<VehicleServiceType> builder)
         {
             builder

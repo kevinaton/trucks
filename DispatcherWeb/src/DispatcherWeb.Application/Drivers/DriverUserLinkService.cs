@@ -66,7 +66,7 @@ namespace DispatcherWeb.Drivers
 
             var userIsInDriverRole = await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Driver);
             var userIsInLeaseHaulerRole = await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.LeaseHaulerDriver);
-            
+
             foreach (var linkedDriver in linkedDrivers)
             {
                 if (linkedDriver.IsExternal && !userIsInLeaseHaulerRole
@@ -76,7 +76,7 @@ namespace DispatcherWeb.Drivers
                     linkedDriver.UserId = null;
                 }
                 await UpdateDriverFromUserAsync(linkedDriver, user);
-                
+
                 //Is it possible for them to only want to inactivate the user, but not drivers? (e.g. to prevent them from using the driver app). If so, we should comment out the below block
                 if (!user.IsActive)
                 {
@@ -87,7 +87,7 @@ namespace DispatcherWeb.Drivers
                     }
                 }
             }
-            
+
             if (userIsInDriverRole && !linkedDrivers.Any(x => !x.IsExternal) && await ShouldCreateNewUserDriverLinks(Session.GetTenantId()))
             {
                 foreach (var linkedDriver in linkedDrivers)
@@ -192,7 +192,7 @@ namespace DispatcherWeb.Drivers
         {
             //driver email can be empty
             //driver can have id 0
-            
+
             await EnsureDriverEmailIsUniqueAsync(driver.EmailAddress, driver);
 
             var linkedUser = driver.UserId.HasValue ? await UserManager.Users.FirstOrDefaultAsync(x => x.Id == driver.UserId) : null;
@@ -211,7 +211,7 @@ namespace DispatcherWeb.Drivers
             {
                 return null;
             }
-            
+
             var user = await UserManager.FindByEmailAsync(driver.EmailAddress);
             if (user != null)
             {
@@ -389,7 +389,7 @@ namespace DispatcherWeb.Drivers
                 return;
             }
             if (await _driverRepository.GetAll()
-                .AnyAsync(d => d.Id != driverToIgnoreId 
+                .AnyAsync(d => d.Id != driverToIgnoreId
                         && d.IsExternal == driverToIgnore.IsExternal
                         && d.LeaseHaulerDriver.LeaseHaulerId == leaseHaulerId
                         && d.EmailAddress == emailAddress))

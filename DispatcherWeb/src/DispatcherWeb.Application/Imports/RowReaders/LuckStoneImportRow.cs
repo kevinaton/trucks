@@ -1,7 +1,7 @@
-﻿using CsvHelper;
-using DispatcherWeb.Infrastructure;
-using System;
+﻿using System;
 using System.Linq;
+using CsvHelper;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.Imports.RowReaders
 {
@@ -12,7 +12,7 @@ namespace DispatcherWeb.Imports.RowReaders
         public LuckStoneImportRow(CsvReader csv, ILookup<string, string> fieldMap) : base(csv, fieldMap)
         {
         }
-        
+
         public DateTime? TicketDateTime => GetDate(ColumnPrefix + "TicketDateTime", true);
         public string HaulerRef => GetString(ColumnPrefix + "HaulerRef", EntityStringFieldLengths.LuckStoneEarnings.HaulerRef);
         public string Site => GetString(ColumnPrefix + "Site", EntityStringFieldLengths.LuckStoneEarnings.Site);

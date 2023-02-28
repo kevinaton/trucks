@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.DriverApp.BinaryObjects.Dto
+﻿namespace DispatcherWeb.DriverApp.BinaryObjects.Dto
 {
     public class BinaryObjectDto
     {

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
-using DispatcherWeb.Dashboard.Dto;
 using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
 using DispatcherWeb.Dashboard.RevenueGraph.Dto;
-using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.Infrastructure.Utilities;
 
 namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
 {
@@ -26,7 +22,7 @@ namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
         {
             var revenueByDay =
                    (from item in await _revenueGraphDataItemsQueryService.GetRevenueGraphDataItemsAsync(input)
-                    group item by item.DeliveryDate.Value                    
+                    group item by item.DeliveryDate.Value
                    into g
                     select new
                     {
@@ -35,7 +31,7 @@ namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
                         FreightRevenue = g.Sum(olt => olt.IsFreightPriceOverridden ? decimal.Round(olt.FreightPriceOriginal, 2) : decimal.Round((olt.FreightPricePerUnit ?? 0) * olt.FreightQuantity, 2)),
                         InternalTrucksFuelSurcharge = g.Sum(olt => decimal.Round(olt.InternalTruckFuelSurcharge, 2)),
                         LeaseHaulersFuelSurcharge = g.Sum(olt => decimal.Round(olt.LeaseHaulerFuelSurcharge, 2)),
-                    })                    
+                    })
                    .ToList()
                ;
             var allDaysOfPefiod =

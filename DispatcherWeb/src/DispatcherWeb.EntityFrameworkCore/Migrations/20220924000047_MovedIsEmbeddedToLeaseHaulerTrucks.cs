@@ -1,5 +1,4 @@
-﻿using DispatcherWeb.LeaseHaulers;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -33,7 +32,7 @@ namespace DispatcherWeb.Migrations
                 (Name, IsDeleted, CreationTime, TenantId)
                 select distinct 'Unknown', 0, GetDate(), TenantId from Truck where IsEmbedded = 1
             ");
-            
+
             migrationBuilder.Sql(@"
                 insert into LeaseHaulerTruck
                 (TruckId, TenantId, CreationTime, IsDeleted, IsEmbedded, LeaseHaulerId)

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DispatcherWeb.Dashboard.RevenueGraph.Dto
+﻿namespace DispatcherWeb.Dashboard.RevenueGraph.Dto
 {
     public class GetRevenueByDateGraphDataInput : PeriodInput
     {

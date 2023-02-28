@@ -1,9 +1,9 @@
-﻿using DispatcherWeb.Common.Dto;
-using DispatcherWeb.Infrastructure;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Infrastructure;
+using Newtonsoft.Json;
 
 namespace DispatcherWeb.Tickets.Dto
 {

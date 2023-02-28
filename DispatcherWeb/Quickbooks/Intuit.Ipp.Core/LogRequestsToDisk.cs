@@ -27,7 +27,6 @@ namespace Intuit.Ipp.Core.Rest
     using System.Text;
     //using Intuit.Ipp.Core; 
     using Intuit.Ipp.Exception;
-    using Intuit.Ipp.Utility;
 
     /// <summary>
     /// Logs API Requests/Responses To Disk
@@ -93,8 +92,8 @@ namespace Intuit.Ipp.Core.Rest
                 {
                     if (isRequest)
                     {
-                        filePath = Path.Combine(this.ServiceRequestLoggingLocation,"Request-" + DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture) + ".txt");
-                        
+                        filePath = Path.Combine(this.ServiceRequestLoggingLocation, "Request-" + DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture) + ".txt");
+
                     }
                     else
                     {

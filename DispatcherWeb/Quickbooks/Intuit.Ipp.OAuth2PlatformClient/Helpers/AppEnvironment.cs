@@ -44,7 +44,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient.Helpers
         [StringValue("betaproduction")]
         BetaProduction = 6,
         [StringValue("default")]
-        Default=7,
+        Default = 7,
         [StringValue("custom")]
         Custom,
 

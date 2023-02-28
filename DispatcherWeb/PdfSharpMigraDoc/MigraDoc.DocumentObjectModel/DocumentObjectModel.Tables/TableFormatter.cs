@@ -50,7 +50,7 @@ namespace MigraDoc.DocumentObjectModel.Tables
 
             for (int i = 0; i < newRowsBottom; i++)
                 table.Rows.Add(new Row());
-            
+
             for (int i = 0; i < newColsRight; i++)
                 table.Columns.Add(new Column());
         }

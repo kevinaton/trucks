@@ -28,8 +28,8 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using PdfSharp.Fonts.OpenType;
 using PdfSharp.Pdf.Internal;
 

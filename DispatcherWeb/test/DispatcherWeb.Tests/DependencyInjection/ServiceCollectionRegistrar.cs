@@ -1,11 +1,11 @@
 ﻿using Abp.Dependency;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor.MsDependencyInjection;
+using DispatcherWeb.EntityFrameworkCore;
+using DispatcherWeb.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using DispatcherWeb.EntityFrameworkCore;
-using DispatcherWeb.Identity;
 
 namespace DispatcherWeb.Tests.DependencyInjection
 {

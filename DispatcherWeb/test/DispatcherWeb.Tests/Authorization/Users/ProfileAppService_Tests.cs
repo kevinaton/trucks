@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using System.Threading.Tasks;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Authorization.Users.Profile;
 using DispatcherWeb.Authorization.Users.Profile.Dto;
+using Microsoft.AspNetCore.Identity;
 using Shouldly;
 using Xunit;
 
@@ -89,6 +88,6 @@ namespace DispatcherWeb.Tests.Authorization.Users
                 .Resolve<IPasswordHasher<User>>()
                 .VerifyHashedPassword(currentUser, currentUser.Password, "2mF9d8Ac!5")
                 .ShouldBe(PasswordVerificationResult.Success);
-        } 
+        }
     }
 }

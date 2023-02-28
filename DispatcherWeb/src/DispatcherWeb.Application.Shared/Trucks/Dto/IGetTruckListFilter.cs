@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DispatcherWeb.Trucks.Dto
+﻿namespace DispatcherWeb.Trucks.Dto
 {
     public interface IGetTruckListFilter
     {

@@ -1,5 +1,4 @@
 ﻿using Abp.AspNetCore.SignalR.Hubs;
-using Abp.Auditing;
 using Abp.Dependency;
 using Abp.RealTime;
 using DispatcherWeb.SignalR;

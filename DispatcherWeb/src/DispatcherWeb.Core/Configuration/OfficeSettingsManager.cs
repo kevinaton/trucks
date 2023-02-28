@@ -43,7 +43,7 @@ namespace DispatcherWeb.Configuration
             {
                 return office.HeartlandPublicKey;
             }
-            
+
             var heartlandPublicKey = await _settingManager.GetSettingValueAsync(AppSettings.Heartland.PublicKey);
 
             return heartlandPublicKey;

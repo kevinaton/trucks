@@ -1,7 +1,7 @@
-﻿using DispatcherWeb.Common.Dto;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using DispatcherWeb.Common.Dto;
+using Newtonsoft.Json;
 
 namespace DispatcherWeb.Orders.SendOrdersToDrivers.Dto
 {

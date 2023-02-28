@@ -1,26 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
-using Abp.Application.Features;
 using Abp.Application.Services;
-using Abp.Application.Services.Dto;
 using Abp.Timing;
 using Abp.UI;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Customers;
-using DispatcherWeb.Features;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Services;
 using DispatcherWeb.Tests.TestInfrastructure;
 using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -834,7 +827,7 @@ namespace DispatcherWeb.Tests.Orders
             driverAssignments.Count.ShouldBe(4);
             var updatedDriverAssignment = driverAssignments.Single(da => da.Id == driverAssignment.Id);
             updatedDriverAssignment.Date.ShouldBe(date);
-            driverAssignments.Count(da => 
+            driverAssignments.Count(da =>
                 da.TruckId == driverAssignment.TruckId &&
                 da.DriverId == driverAssignment.DriverId &&
                 da.Date == anotherDate &&
@@ -876,7 +869,7 @@ namespace DispatcherWeb.Tests.Orders
             driverAssignments.Count.ShouldBe(3);
             var updatedDriverAssignment = driverAssignments.Single(da => da.Id == driverAssignment.Id);
             updatedDriverAssignment.Date.ShouldBe(date);
-            driverAssignments.Count(da => 
+            driverAssignments.Count(da =>
                 da.TruckId == driverAssignment.TruckId &&
                 da.DriverId == driverAssignment.DriverId &&
                 da.Date == anotherDate &&

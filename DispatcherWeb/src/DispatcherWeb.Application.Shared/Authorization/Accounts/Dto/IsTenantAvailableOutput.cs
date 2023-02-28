@@ -10,7 +10,7 @@
 
         public IsTenantAvailableOutput()
         {
-            
+
         }
 
         public IsTenantAvailableOutput(TenantAvailabilityState state, int? tenantId = null)

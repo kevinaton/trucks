@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Configuration.Tenants.Dto
+﻿namespace DispatcherWeb.Configuration.Tenants.Dto
 {
     public class LuckStoneSettingsEditDto
     {

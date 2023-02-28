@@ -32,11 +32,11 @@
 
 using System;
 using System.Collections.Generic;
-using MigraDoc.DocumentObjectModel.publics;
-using PdfSharp.Drawing;
 using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Visitors;
+using MigraDoc.DocumentObjectModel.publics;
 using MigraDoc.DocumentObjectModel.Tables;
+using MigraDoc.DocumentObjectModel.Visitors;
+using PdfSharp.Drawing;
 
 namespace MigraDoc.Rendering
 {

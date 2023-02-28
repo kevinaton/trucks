@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using DispatcherWeb.Infrastructure;
 using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Infrastructure;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DispatcherWeb.DriverApp.TruckPositions.Dto
 {
@@ -130,8 +130,8 @@ namespace DispatcherWeb.DriverApp.TruckPositions.Dto
                 private string _actionRaw;
 
                 [JsonProperty(PropertyName = "action")]
-                public string ActionRaw 
-                { 
+                public string ActionRaw
+                {
                     get
                     {
                         return _actionRaw;

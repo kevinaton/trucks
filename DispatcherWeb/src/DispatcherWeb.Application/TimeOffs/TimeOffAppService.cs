@@ -1,7 +1,10 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
-using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.Timing;
@@ -21,10 +24,6 @@ using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.TimeOffs
 {
@@ -241,7 +240,7 @@ namespace DispatcherWeb.TimeOffs
                 .ToListAsync();
 
             var result = new EditTimeOffResult();
-            
+
             var dispatchesToCancel = await _dispatchRepository.GetAll()
                     .Where(d => d.DriverId == input.DriverId
                         && d.OrderLine.Order.DeliveryDate >= input.StartDate
@@ -271,7 +270,7 @@ namespace DispatcherWeb.TimeOffs
                         if (existingAssignment.DriverId == input.DriverId)
                         {
                             updatedTruckId = existingAssignment.TruckId;
-                            
+
                             existingAssignment.DriverId = null;
                             //existingAssignment.OfficeId = sharedTruckResult.GetLocationForDate(date, input.Shift);
 

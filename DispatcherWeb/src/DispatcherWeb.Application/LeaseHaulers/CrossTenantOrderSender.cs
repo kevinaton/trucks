@@ -475,7 +475,7 @@ namespace DispatcherWeb.LeaseHaulers
                     && sourceLocation.PlaceId == x.PlaceId
                     && sourceLocation.Latitude == x.Latitude
                     && sourceLocation.Longitude == x.Longitude);
-            
+
             if (destinationLocation != null)
             {
                 return destinationLocation;

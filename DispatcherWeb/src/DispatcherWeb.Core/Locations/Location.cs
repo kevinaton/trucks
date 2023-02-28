@@ -21,7 +21,7 @@ namespace DispatcherWeb.Locations
         public string Name { get; set; }
 
         public int? CategoryId { get; set; }
-        
+
         [StringLength(EntityStringFieldLengths.GeneralAddress.MaxStreetAddressLength)]
         public string StreetAddress { get; set; }
 

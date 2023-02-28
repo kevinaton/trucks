@@ -7,9 +7,9 @@ namespace DispatcherWeb.SecureFiles
     public class SecureFileDefinition : Entity<Guid>
     {
         [StringLength(200)]
-		[Required]
-		public string Client { get; set; }
+        [Required]
+        public string Client { get; set; }
         [StringLength(500)]
-		public string Description { get; set; }
+        public string Description { get; set; }
     }
 }

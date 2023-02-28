@@ -9,12 +9,12 @@ using Abp.Linq;
 using Abp.Notifications;
 using Abp.Runtime.Session;
 using Abp.UI;
-using Microsoft.AspNetCore.Identity;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Debugging;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Notifications;
+using Microsoft.AspNetCore.Identity;
 
 namespace DispatcherWeb.Authorization.Users
 {
@@ -35,10 +35,10 @@ namespace DispatcherWeb.Authorization.Users
         public UserRegistrationManager(
             TenantManager tenantManager,
             UserManager userManager,
-            RoleManager roleManager, 
-            IUserEmailer userEmailer, 
-            INotificationSubscriptionManager notificationSubscriptionManager, 
-            IAppNotifier appNotifier, 
+            RoleManager roleManager,
+            IUserEmailer userEmailer,
+            INotificationSubscriptionManager notificationSubscriptionManager,
+            IAppNotifier appNotifier,
             IUserPolicy userPolicy,
             IPasswordHasher<User> passwordHasher)
         {

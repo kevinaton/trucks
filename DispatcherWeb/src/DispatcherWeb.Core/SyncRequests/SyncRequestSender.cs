@@ -1,10 +1,10 @@
-﻿using Abp.Collections.Extensions;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Abp.Collections.Extensions;
 using Abp.Dependency;
 using Abp.RealTime;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.SignalR;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.SyncRequests
 {

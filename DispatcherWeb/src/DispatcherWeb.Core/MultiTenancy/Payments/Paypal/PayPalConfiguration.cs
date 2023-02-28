@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Abp.Extensions;
-using Microsoft.Extensions.Configuration;
 using DispatcherWeb.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace DispatcherWeb.MultiTenancy.Payments.Paypal
 {

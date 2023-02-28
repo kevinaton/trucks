@@ -29,10 +29,7 @@
 
 using System;
 #if CORE || GDI
-using System.Drawing;
 using GdiFont = System.Drawing.Font;
-using GdiFontFamily = System.Drawing.FontFamily;
-using GdiFontStyle = System.Drawing.FontStyle;
 #endif
 #if WPF
 using System.Windows.Media;

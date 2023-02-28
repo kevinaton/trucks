@@ -1,8 +1,8 @@
-﻿using Abp.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using Abp.Extensions;
 using DispatcherWeb.Common.Dto;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 
 namespace DispatcherWeb.Dispatching.Dto
 {

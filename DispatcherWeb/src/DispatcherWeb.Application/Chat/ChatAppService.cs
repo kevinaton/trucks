@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
-using Abp.Domain.Repositories;
-using DispatcherWeb.Chat.Dto;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Application.Services.Dto;
 using Abp.Auditing;
 using Abp.Authorization;
+using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.RealTime;
 using Abp.Runtime.Session;
 using Abp.Timing;
-using Microsoft.EntityFrameworkCore;
+using DispatcherWeb.Chat.Dto;
 using DispatcherWeb.Friendships.Cache;
 using DispatcherWeb.Friendships.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Chat
 {

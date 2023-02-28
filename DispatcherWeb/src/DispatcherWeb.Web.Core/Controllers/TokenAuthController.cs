@@ -11,9 +11,9 @@ using Abp.AspNetCore.Mvc.Authorization;
 using Abp.AspNetZeroCore.Web.Authentication.External;
 using Abp.Authorization;
 using Abp.Authorization.Users;
-using Abp.MultiTenancy;
 using Abp.Configuration;
 using Abp.Extensions;
+using Abp.MultiTenancy;
 using Abp.Net.Mail;
 using Abp.Notifications;
 using Abp.Runtime.Caching;
@@ -22,30 +22,30 @@ using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.UI;
 using Abp.Zero.Configuration;
+using DispatcherWeb.Authentication.TwoFactor;
+using DispatcherWeb.Authentication.TwoFactor.Google;
+using DispatcherWeb.Authorization;
+using DispatcherWeb.Authorization.Accounts.Dto;
+using DispatcherWeb.Authorization.Delegation;
+using DispatcherWeb.Authorization.Impersonation;
+using DispatcherWeb.Authorization.Roles;
+using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.Configuration;
+using DispatcherWeb.Identity;
+using DispatcherWeb.MultiTenancy;
+using DispatcherWeb.Net.Sms;
+using DispatcherWeb.Notifications;
+using DispatcherWeb.Security.Recaptcha;
+using DispatcherWeb.Web.Authentication.External;
+using DispatcherWeb.Web.Authentication.JwtBearer;
+using DispatcherWeb.Web.Authentication.TwoFactor;
+using DispatcherWeb.Web.Common;
+using DispatcherWeb.Web.Models.TokenAuth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using DispatcherWeb.Authentication.TwoFactor;
-using DispatcherWeb.Authentication.TwoFactor.Google;
-using DispatcherWeb.Authorization;
-using DispatcherWeb.Authorization.Accounts.Dto;
-using DispatcherWeb.Authorization.Users;
-using DispatcherWeb.MultiTenancy;
-using DispatcherWeb.Web.Authentication.JwtBearer;
-using DispatcherWeb.Web.Authentication.TwoFactor;
-using DispatcherWeb.Web.Models.TokenAuth;
-using DispatcherWeb.Authorization.Impersonation;
-using DispatcherWeb.Authorization.Roles;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.Identity;
-using DispatcherWeb.Net.Sms;
-using DispatcherWeb.Notifications;
-using DispatcherWeb.Security.Recaptcha;
-using DispatcherWeb.Web.Authentication.External;
-using DispatcherWeb.Web.Common;
-using DispatcherWeb.Authorization.Delegation;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -210,9 +210,9 @@ namespace DispatcherWeb.Web.Controllers
             return new AuthenticateResultModel
             {
                 AccessToken = accessToken,
-                ExpireInSeconds = (int) _configuration.AccessTokenExpiration.TotalSeconds,
+                ExpireInSeconds = (int)_configuration.AccessTokenExpiration.TotalSeconds,
                 RefreshToken = refreshToken.token,
-                RefreshTokenExpireInSeconds = (int) _configuration.RefreshTokenExpiration.TotalSeconds,
+                RefreshTokenExpireInSeconds = (int)_configuration.RefreshTokenExpiration.TotalSeconds,
                 EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
                 TwoFactorRememberClientToken = twoFactorRememberClientToken,
                 UserId = loginResult.User.Id,
@@ -238,7 +238,7 @@ namespace DispatcherWeb.Web.Controllers
                 var user = await _userManager.GetUserAsync(
                     UserIdentifier.Parse(principal.Claims.First(x => x.Type == AppConsts.UserIdentifier).Value)
                 );
-                
+
                 if (user == null)
                 {
                     throw new UserFriendlyException("Unknown user or user identifier");
@@ -251,7 +251,7 @@ namespace DispatcherWeb.Web.Controllers
                 return await Task.FromResult(new RefreshTokenResult(
                     accessToken,
                     GetEncryptedAccessToken(accessToken),
-                    (int) _configuration.AccessTokenExpiration.TotalSeconds)
+                    (int)_configuration.AccessTokenExpiration.TotalSeconds)
                 );
             }
             catch (UserFriendlyException)
@@ -342,7 +342,7 @@ namespace DispatcherWeb.Web.Controllers
                 cacheKey,
                 cacheItem
             );
-            
+
             await _cacheManager.GetCache("ProviderCache").SetAsync(
                 "Provider",
                 model.Provider
@@ -359,7 +359,7 @@ namespace DispatcherWeb.Web.Controllers
             {
                 AccessToken = accessToken,
                 EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
-                ExpireInSeconds = (int) _configuration.AccessTokenExpiration.TotalSeconds
+                ExpireInSeconds = (int)_configuration.AccessTokenExpiration.TotalSeconds
             };
         }
 
@@ -383,7 +383,7 @@ namespace DispatcherWeb.Web.Controllers
             {
                 AccessToken = accessToken,
                 EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
-                ExpireInSeconds = (int) expiration.TotalSeconds
+                ExpireInSeconds = (int)expiration.TotalSeconds
             };
         }
 
@@ -397,7 +397,7 @@ namespace DispatcherWeb.Web.Controllers
             {
                 AccessToken = accessToken,
                 EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
-                ExpireInSeconds = (int) _configuration.AccessTokenExpiration.TotalSeconds
+                ExpireInSeconds = (int)_configuration.AccessTokenExpiration.TotalSeconds
             };
         }
 
@@ -456,50 +456,75 @@ namespace DispatcherWeb.Web.Controllers
             switch (loginResult.Result)
             {
                 case AbpLoginResultType.Success:
-                {
-                    var refreshToken = CreateRefreshToken(await CreateJwtClaims(loginResult.Identity, loginResult.User,
-                        tokenType: TokenType.RefreshToken));
-                    var accessToken = CreateAccessToken(await CreateJwtClaims(loginResult.Identity, loginResult.User,
-                        refreshTokenKey: refreshToken.key));
-
-                    var returnUrl = model.ReturnUrl;
-
-                    if (model.SingleSignIn.HasValue && model.SingleSignIn.Value &&
-                        loginResult.Result == AbpLoginResultType.Success)
                     {
-                        loginResult.User.SetSignInToken();
-                        returnUrl = AddSingleSignInParametersToReturnUrl(model.ReturnUrl, loginResult.User.SignInToken,
-                            loginResult.User.Id, loginResult.User.TenantId);
-                    }
+                        var refreshToken = CreateRefreshToken(await CreateJwtClaims(loginResult.Identity, loginResult.User,
+                            tokenType: TokenType.RefreshToken));
+                        var accessToken = CreateAccessToken(await CreateJwtClaims(loginResult.Identity, loginResult.User,
+                            refreshTokenKey: refreshToken.key));
 
-                    return new ExternalAuthenticateResultModel
-                    {
-                        AccessToken = accessToken,
-                        EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
-                        ExpireInSeconds = (int) _configuration.AccessTokenExpiration.TotalSeconds,
-                        ReturnUrl = returnUrl,
-                        RefreshToken = refreshToken.token,
-                        RefreshTokenExpireInSeconds = (int) _configuration.RefreshTokenExpiration.TotalSeconds
-                    };
-                }
-                case AbpLoginResultType.UnknownExternalLogin:
-                {
-                    var newUser = await RegisterExternalUserAsync(externalUser);
-                    if (!newUser.IsActive)
-                    {
+                        var returnUrl = model.ReturnUrl;
+
+                        if (model.SingleSignIn.HasValue && model.SingleSignIn.Value &&
+                            loginResult.Result == AbpLoginResultType.Success)
+                        {
+                            loginResult.User.SetSignInToken();
+                            returnUrl = AddSingleSignInParametersToReturnUrl(model.ReturnUrl, loginResult.User.SignInToken,
+                                loginResult.User.Id, loginResult.User.TenantId);
+                        }
+
                         return new ExternalAuthenticateResultModel
                         {
-                            WaitingForActivation = true
+                            AccessToken = accessToken,
+                            EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
+                            ExpireInSeconds = (int)_configuration.AccessTokenExpiration.TotalSeconds,
+                            ReturnUrl = returnUrl,
+                            RefreshToken = refreshToken.token,
+                            RefreshTokenExpireInSeconds = (int)_configuration.RefreshTokenExpiration.TotalSeconds
                         };
                     }
+                case AbpLoginResultType.UnknownExternalLogin:
+                    {
+                        var newUser = await RegisterExternalUserAsync(externalUser);
+                        if (!newUser.IsActive)
+                        {
+                            return new ExternalAuthenticateResultModel
+                            {
+                                WaitingForActivation = true
+                            };
+                        }
 
-                    //Try to login again with newly registered user!
-                    loginResult = await _logInManager.LoginAsync(
-                        new UserLoginInfo(model.AuthProvider, model.ProviderKey, model.AuthProvider),
-                        GetTenancyNameOrNull()
-                    );
+                        //Try to login again with newly registered user!
+                        loginResult = await _logInManager.LoginAsync(
+                            new UserLoginInfo(model.AuthProvider, model.ProviderKey, model.AuthProvider),
+                            GetTenancyNameOrNull()
+                        );
 
-                    if (loginResult.Result != AbpLoginResultType.Success)
+                        if (loginResult.Result != AbpLoginResultType.Success)
+                        {
+                            throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
+                                loginResult.Result,
+                                model.ProviderKey,
+                                GetTenancyNameOrNull()
+                            );
+                        }
+
+                        var refreshToken = CreateRefreshToken(await CreateJwtClaims(loginResult.Identity,
+                            loginResult.User, tokenType: TokenType.RefreshToken)
+                        );
+
+                        var accessToken = CreateAccessToken(await CreateJwtClaims(loginResult.Identity,
+                            loginResult.User, refreshTokenKey: refreshToken.key));
+
+                        return new ExternalAuthenticateResultModel
+                        {
+                            AccessToken = accessToken,
+                            EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
+                            ExpireInSeconds = (int)_configuration.AccessTokenExpiration.TotalSeconds,
+                            RefreshToken = refreshToken.token,
+                            RefreshTokenExpireInSeconds = (int)_configuration.RefreshTokenExpiration.TotalSeconds
+                        };
+                    }
+                default:
                     {
                         throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
                             loginResult.Result,
@@ -507,31 +532,6 @@ namespace DispatcherWeb.Web.Controllers
                             GetTenancyNameOrNull()
                         );
                     }
-
-                    var refreshToken = CreateRefreshToken(await CreateJwtClaims(loginResult.Identity,
-                        loginResult.User, tokenType: TokenType.RefreshToken)
-                    );
-
-                    var accessToken = CreateAccessToken(await CreateJwtClaims(loginResult.Identity,
-                        loginResult.User, refreshTokenKey: refreshToken.key));
-
-                    return new ExternalAuthenticateResultModel
-                    {
-                        AccessToken = accessToken,
-                        EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
-                        ExpireInSeconds = (int) _configuration.AccessTokenExpiration.TotalSeconds,
-                        RefreshToken = refreshToken.token,
-                        RefreshTokenExpireInSeconds = (int) _configuration.RefreshTokenExpiration.TotalSeconds
-                    };
-                }
-                default:
-                {
-                    throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(
-                        loginResult.Result,
-                        model.ProviderKey,
-                        GetTenancyNameOrNull()
-                    );
-                }
             }
         }
 
@@ -784,7 +784,7 @@ namespace DispatcherWeb.Web.Controllers
                 claims: claims,
                 notBefore: now,
                 signingCredentials: _configuration.SigningCredentials,
-                expires: expiration == null ? (DateTime?) null : now.Add(expiration.Value)
+                expires: expiration == null ? (DateTime?)null : now.Add(expiration.Value)
             );
 
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);

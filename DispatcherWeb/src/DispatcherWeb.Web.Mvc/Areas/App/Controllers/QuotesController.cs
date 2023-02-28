@@ -1,12 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
-using Abp.UI;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Quotes;
 using DispatcherWeb.Quotes.Dto;
 using DispatcherWeb.Web.Areas.App.Models.Quotes;
-using DispatcherWeb.Web.Areas.App.Models.Shared;
 using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.Web.Utils;
 using Microsoft.AspNetCore.Mvc;

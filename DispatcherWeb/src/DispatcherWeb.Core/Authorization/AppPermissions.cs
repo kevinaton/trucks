@@ -6,7 +6,7 @@
     /// </summary>
     public static class AppPermissions
     {
-        public static string[] ManualPermissionsList = new[] 
+        public static string[] ManualPermissionsList = new[]
         {
             AppPermissions.DriverProductionPay,
             AppPermissions.Pages_LeaseHaulerStatements,
@@ -20,7 +20,7 @@
         //COMMON PERMISSIONS (FOR BOTH OF TENANTS AND HOST)
         public const string Pages = "Pages";
 
-       // public const string Pages_DemoUiComponents= "Pages.DemoUiComponents";
+        // public const string Pages_DemoUiComponents= "Pages.DemoUiComponents";
         public const string Pages_Administration = "Pages.Administration";
 
         public const string Pages_Administration_Roles = "Pages.Administration.Roles";

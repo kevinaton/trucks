@@ -1,7 +1,5 @@
-﻿using DispatcherWeb.Dto;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Scheduling.Dto
 {

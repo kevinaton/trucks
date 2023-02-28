@@ -10,9 +10,9 @@ namespace DispatcherWeb.LeaseHaulers
     {
         public const int MaxCellPhoneNumberLength = 15;
 
-		public int TenantId { get; set; }
+        public int TenantId { get; set; }
 
-		[Required]
+        [Required]
         [StringLength(100)]
         public string Name { get; set; }
 

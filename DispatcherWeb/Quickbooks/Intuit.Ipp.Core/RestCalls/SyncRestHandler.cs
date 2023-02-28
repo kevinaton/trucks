@@ -28,7 +28,6 @@ namespace Intuit.Ipp.Core.Rest
     using System.Net;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
-    using Intuit.Ipp.Utility; 
 
     /// <summary>
     /// SyncRestHandler contains the logic for preparing the REST request, calls REST services and returns the response.
@@ -86,7 +85,7 @@ namespace Intuit.Ipp.Core.Rest
             HttpWebRequest request = base.PrepareRequest(requestParameters, requestBody, oauthRequestUri, includeRequestId);
             // set the timeout for the request if it has a value.
             Nullable<int> timeout = this.context.Timeout;
-            if ( timeout.HasValue)
+            if (timeout.HasValue)
             {
                 request.Timeout = timeout.Value;
             }
@@ -127,7 +126,7 @@ namespace Intuit.Ipp.Core.Rest
                         if (!response.StartsWith("{\"Report\":")) { response = "{\"Report\":" + response + "}"; }
                     }
                 }
-         
+
                 if (request != null && request.RequestUri != null && request.RequestUri.Segments != null)
                 {
                     if (System.Array.IndexOf(request.RequestUri.Segments, "taxservice/") >= 0)
@@ -212,7 +211,7 @@ namespace Intuit.Ipp.Core.Rest
         {
             FaultHandler handler = new FaultHandler(this.context);
             byte[] receivedBytes = new byte[0];
-            
+
             try
             {
                 // Check whether the retryPolicy is null.
@@ -226,7 +225,7 @@ namespace Intuit.Ipp.Core.Rest
                     // If no then call the rest service using the execute action of retry framework.
                     this.context.IppConfiguration.RetryPolicy.ExecuteAction(() =>
                     {
-                       receivedBytes = GetRestServiceCallResponseStream(request);
+                        receivedBytes = GetRestServiceCallResponseStream(request);
                     });
                 }
             }
@@ -272,7 +271,7 @@ namespace Intuit.Ipp.Core.Rest
                 string parsedResponse = this.ParseResponse(httpWebResponse);
                 TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
                 this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, (int)traceSwitch.Level > (int)TraceLevel.Info ? "Got the response from service.\n Start dump: \n " + parsedResponse : "Got the response from service.");
-                CoreHelper.AdvancedLogging.Log("Got the response from service.\n Start dump: \n " + parsedResponse );
+                CoreHelper.AdvancedLogging.Log("Got the response from service.\n Start dump: \n " + parsedResponse);
 
                 // Parse the response from the call and return.
                 return parsedResponse;
@@ -291,7 +290,7 @@ namespace Intuit.Ipp.Core.Rest
             Stream receiveStream = new MemoryStream();
             byte[] receiveBytes = new byte[0];
             MemoryStream mem = new MemoryStream();
-            
+
             // Call the service and get response.
             using (HttpWebResponse httpWebResponse = request.GetResponse() as HttpWebResponse)
             {
@@ -316,7 +315,7 @@ namespace Intuit.Ipp.Core.Rest
                         receiveBytes = mem.ToArray();
                     }
                 }
-                
+
                 TraceSwitch traceSwitch = new TraceSwitch("IPPTraceSwitch", "IPP Trace Switch");
                 this.context.IppConfiguration.Logger.CustomLogger.Log(TraceLevel.Info, "Got the response from service.");
                 CoreHelper.AdvancedLogging.Log("Got the response from service.");

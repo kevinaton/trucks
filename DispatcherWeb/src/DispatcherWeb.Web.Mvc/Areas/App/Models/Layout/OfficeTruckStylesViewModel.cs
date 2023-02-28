@@ -1,5 +1,5 @@
-﻿using DispatcherWeb.Offices.Dto;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DispatcherWeb.Offices.Dto;
 
 namespace DispatcherWeb.Web.Areas.App.Models.Layout
 {

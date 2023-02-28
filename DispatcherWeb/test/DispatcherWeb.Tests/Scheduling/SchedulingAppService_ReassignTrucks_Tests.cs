@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Timing;
 using Abp.UI;
@@ -34,7 +32,7 @@ namespace DispatcherWeb.Tests.Scheduling
             {
                 SourceOrderLineId = orderLine1.Id,
                 DestinationOrderLineId = orderLine2.Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert
@@ -72,7 +70,7 @@ namespace DispatcherWeb.Tests.Scheduling
             {
                 SourceOrderLineId = orderLine1.Id,
                 DestinationOrderLineId = orderLine2.Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert
@@ -108,7 +106,7 @@ namespace DispatcherWeb.Tests.Scheduling
             {
                 SourceOrderLineId = orderLine1.Id,
                 DestinationOrderLineId = orderLine2.Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert
@@ -149,7 +147,7 @@ namespace DispatcherWeb.Tests.Scheduling
             {
                 SourceOrderLineId = orderLine1.Id,
                 DestinationOrderLineId = orderLine2.Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert
@@ -186,7 +184,7 @@ namespace DispatcherWeb.Tests.Scheduling
             {
                 SourceOrderLineId = orderLine1.Id,
                 DestinationOrderLineId = orderLine2.Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert
@@ -224,7 +222,7 @@ namespace DispatcherWeb.Tests.Scheduling
             {
                 SourceOrderLineId = orderLine1.Id,
                 DestinationOrderLineId = orderLine2.Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             }).ShouldThrowAsync(typeof(UserFriendlyException));
         }
 
@@ -247,7 +245,7 @@ namespace DispatcherWeb.Tests.Scheduling
             {
                 SourceOrderLineId = orderLine1.Id,
                 DestinationOrderLineId = orderLine2.Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             }).ShouldThrowAsync(typeof(ArgumentException));
         }
     }

@@ -1,7 +1,5 @@
-﻿using Abp.Application.Services.Dto;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Abp.Application.Services.Dto;
 
 namespace DispatcherWeb.Invoices.Dto
 {

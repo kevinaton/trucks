@@ -1,7 +1,7 @@
-﻿using DispatcherWeb.Common.Dto;
+﻿using System;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Orders.TaxDetails;
 using Newtonsoft.Json;
-using System;
 
 namespace DispatcherWeb.Orders.Dto
 {

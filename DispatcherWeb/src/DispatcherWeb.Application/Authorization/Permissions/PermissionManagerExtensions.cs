@@ -31,9 +31,9 @@ namespace DispatcherWeb.Authorization.Permissions
             if (undefinedPermissionNames.Count > 0)
             {
                 throw new AbpValidationException($"There are {undefinedPermissionNames.Count} undefined permission names.")
-                      {
-                          ValidationErrors = undefinedPermissionNames.Select(permissionName => new ValidationResult("Undefined permission: " + permissionName)).ToList()
-                      };
+                {
+                    ValidationErrors = undefinedPermissionNames.Select(permissionName => new ValidationResult("Undefined permission: " + permissionName)).ToList()
+                };
             }
 
             return permissions;

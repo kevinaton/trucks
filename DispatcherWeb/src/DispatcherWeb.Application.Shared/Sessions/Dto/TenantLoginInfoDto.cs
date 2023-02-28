@@ -25,7 +25,7 @@ namespace DispatcherWeb.Sessions.Dto
         public SubscriptionPaymentType SubscriptionPaymentType { get; set; }
 
         public EditionInfoDto Edition { get; set; }
-        
+
         public List<NameValueDto> FeatureValues { get; set; }
 
         public DateTime CreationTime { get; set; }
@@ -44,7 +44,7 @@ namespace DispatcherWeb.Sessions.Dto
         {
             FeatureValues = new List<NameValueDto>();
         }
-        
+
         public bool IsInTrial()
         {
             return IsInTrialPeriod;

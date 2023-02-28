@@ -27,8 +27,8 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf.Internal;
+using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf.Filters
 {

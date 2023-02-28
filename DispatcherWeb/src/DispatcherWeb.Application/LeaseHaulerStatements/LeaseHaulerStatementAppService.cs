@@ -1,4 +1,7 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
@@ -14,12 +17,6 @@ using DispatcherWeb.LeaseHaulerStatements.Exporting;
 using DispatcherWeb.Orders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.LeaseHaulerStatements
 {

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp;
 using Abp.Notifications;
 using Abp.UI;
-using DispatcherWeb.Dispatching.Dto;
 using DispatcherWeb.DriverMessages;
 using DispatcherWeb.DriverMessages.Dto;
 using DispatcherWeb.Infrastructure.Sms;
@@ -48,7 +43,7 @@ namespace DispatcherWeb.Tests.DriverMessages
             // Act
             await _driverMessageAppService.SendMessage(new SendMessageInput()
             {
-                DriverIds = new []{driver.Id},
+                DriverIds = new[] { driver.Id },
                 Subject = "subject",
                 Body = "body",
             });
@@ -97,7 +92,7 @@ namespace DispatcherWeb.Tests.DriverMessages
             // Act
             await _driverMessageAppService.SendMessage(new SendMessageInput()
             {
-                DriverIds = new []{driver.Id},
+                DriverIds = new[] { driver.Id },
                 Subject = "subject",
                 Body = "body",
             });
@@ -118,7 +113,7 @@ namespace DispatcherWeb.Tests.DriverMessages
             // Act, Assert
             await _driverMessageAppService.SendMessage(new SendMessageInput()
             {
-                DriverIds = new []{driver.Id},
+                DriverIds = new[] { driver.Id },
                 Subject = "subject",
                 Body = " ",
             }).ShouldThrowAsync(typeof(UserFriendlyException));

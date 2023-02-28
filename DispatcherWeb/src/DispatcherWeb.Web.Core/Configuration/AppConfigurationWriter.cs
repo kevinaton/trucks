@@ -4,8 +4,8 @@ using Abp;
 using Abp.Dependency;
 using Abp.UI;
 using Castle.Core.Logging;
-using Microsoft.AspNetCore.Hosting;
 using DispatcherWeb.Configuration;
+using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -59,7 +59,7 @@ namespace DispatcherWeb.Web.Configuration
 
             foreach (var objectName in objectNames)
             {
-                jobj = (JObject) jobj[objectName];
+                jobj = (JObject)jobj[objectName];
                 if (jobj == null)
                 {
                     Logger.Error($"Key {key} does not exist!");

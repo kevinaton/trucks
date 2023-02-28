@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
-using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
@@ -34,8 +33,8 @@ namespace DispatcherWeb.Dashboard
         private readonly IRepository<EmployeeTimeClassification> _employeeTimeClassificationRepository;
         private readonly IRepository<Drivers.EmployeeTime> _employeeTimeRepository;
         private readonly IRepository<TenantDailyHistory> _tenantDailyHistoryRepository;
-        private readonly IRepository<FuelPurchase> _fuelPurchaseRepository;        
-        private readonly IRepository<VehicleUsage> _vehicleUsageRepository;                   
+        private readonly IRepository<FuelPurchase> _fuelPurchaseRepository;
+        private readonly IRepository<VehicleUsage> _vehicleUsageRepository;
         private readonly ITruckTelematicsAppService _truckTelematicsAppService;
         private readonly IDashboardSettingManager _dashboardSettingManager;
         private readonly IRevenueGraphByTicketsDataItemsQueryService _revenueGraphByTicketsDataItemsQueryService;
@@ -49,8 +48,8 @@ namespace DispatcherWeb.Dashboard
             IRepository<EmployeeTimeClassification> employeeTimeClassificationRepository,
             IRepository<Drivers.EmployeeTime> employeeTimeRepository,
             IRepository<TenantDailyHistory> tenantDailyHistory,
-            IRepository<FuelPurchase> fuelPurchaseRepository,            
-            IRepository<VehicleUsage> vehicleUsageRepository,                                  
+            IRepository<FuelPurchase> fuelPurchaseRepository,
+            IRepository<VehicleUsage> vehicleUsageRepository,
             ITruckTelematicsAppService truckTelematicsAppService,
             IDashboardSettingManager dashboardSettingManager,
             IRevenueGraphByTicketsDataItemsQueryService revenueGraphByTicketsDataItemsQueryService
@@ -64,8 +63,8 @@ namespace DispatcherWeb.Dashboard
             _employeeTimeClassificationRepository = employeeTimeClassificationRepository;
             _employeeTimeRepository = employeeTimeRepository;
             _tenantDailyHistoryRepository = tenantDailyHistory;
-            _fuelPurchaseRepository = fuelPurchaseRepository;            
-            _vehicleUsageRepository = vehicleUsageRepository;                               
+            _fuelPurchaseRepository = fuelPurchaseRepository;
+            _vehicleUsageRepository = vehicleUsageRepository;
             _truckTelematicsAppService = truckTelematicsAppService;
             _dashboardSettingManager = dashboardSettingManager;
             _revenueGraphByTicketsDataItemsQueryService = revenueGraphByTicketsDataItemsQueryService;
@@ -325,7 +324,7 @@ namespace DispatcherWeb.Dashboard
             var outOfServiceTrucks = await query.Where(t => t.IsOutOfService).CountAsync();
 
             var result = new GetTruckAvailabilityDataOutput
-            {   
+            {
                 Available = availableTrucks,
                 OutOfService = outOfServiceTrucks
             };
@@ -563,12 +562,12 @@ namespace DispatcherWeb.Dashboard
                     .Where(x => x.TicketDateTime >= periodBeginUtc && x.TicketDateTime < periodEndUtc)
                     .WhereIf(input.TicketType == TicketType.InternalTrucks, x => x.Driver.OfficeId != null)
                     .WhereIf(input.TicketType == TicketType.LeaseHaulers, x => x.Driver.OfficeId == null)
-                join productionPay in _employeeTimeClassificationRepository.GetAll() on ticket.DriverId equals productionPay.DriverId
-                select new
-                {
-                    Ticket = ticket,
-                    ProductionPay = productionPay
-                })
+                 join productionPay in _employeeTimeClassificationRepository.GetAll() on ticket.DriverId equals productionPay.DriverId
+                 select new
+                 {
+                     Ticket = ticket,
+                     ProductionPay = productionPay
+                 })
                 .Where(x => x.ProductionPay.TimeClassification.IsProductionBased)
                 .Select(x => new
                 {
@@ -583,14 +582,14 @@ namespace DispatcherWeb.Dashboard
                     .Where(x => x.EndDateTime >= periodBeginUtc && x.EndDateTime < periodEndUtc)
                     .WhereIf(input.TicketType == TicketType.InternalTrucks, x => x.User.Drivers.Any(d => d.OfficeId != null))
                     .WhereIf(input.TicketType == TicketType.LeaseHaulers, x => x.User.Drivers.Any(d => d.OfficeId == null))
-                join timeClassification in _employeeTimeClassificationRepository.GetAll() 
-                    on new { DriverId = employeeTime.DriverId.Value, TimeClassificationId = employeeTime.TimeClassificationId } 
-                    equals new { timeClassification.DriverId, timeClassification.TimeClassificationId }
-                select new
-                {
-                    EmployeeTime = employeeTime,
-                    TimeClassification = timeClassification,
-                })
+                 join timeClassification in _employeeTimeClassificationRepository.GetAll()
+                     on new { DriverId = employeeTime.DriverId.Value, TimeClassificationId = employeeTime.TimeClassificationId }
+                     equals new { timeClassification.DriverId, timeClassification.TimeClassificationId }
+                 select new
+                 {
+                     EmployeeTime = employeeTime,
+                     TimeClassification = timeClassification,
+                 })
                 .Where(x => x.EmployeeTime.EndDateTime != null && x.TimeClassification != null
                     && !x.TimeClassification.TimeClassification.IsProductionBased)
                 .Select(x => new
@@ -661,10 +660,10 @@ namespace DispatcherWeb.Dashboard
             //              select latest.Reading - previous.Reading).SumAsync();
 
             return (from previous in await previousData.ToListAsync()
-                          join latest in await latestData.ToListAsync() 
-                          on previous.TruckId equals latest.TruckId
-                          where latest != null && previous != null
-                          select latest.Reading - previous.Reading).Sum();
+                    join latest in await latestData.ToListAsync()
+                    on previous.TruckId equals latest.TruckId
+                    where latest != null && previous != null
+                    select latest.Reading - previous.Reading).Sum();
         }
 
         public async Task<List<DashboardSettingDto>> GetDashboardSettings()

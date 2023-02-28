@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.UI;
-using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Editions;
 using DispatcherWeb.MultiTenancy.Payments.Dto;
 using DispatcherWeb.MultiTenancy.Payments.Stripe;
 using DispatcherWeb.MultiTenancy.Payments.Stripe.Dto;
-using Stripe;
 using Stripe.Checkout;
 
 namespace DispatcherWeb.MultiTenancy.Payments
@@ -79,14 +77,14 @@ namespace DispatcherWeb.MultiTenancy.Payments
             }
 
             payment.SetAsPaid();
-            
+
             var tenant = await TenantManager.GetByIdAsync(payment.TenantId);
             if (tenant != null && payment.IsRecurring)
             {
                 tenant.SubscriptionPaymentType = SubscriptionPaymentType.RecurringAutomatic;
                 await TenantManager.UpdateAsync(tenant);
             }
-            
+
             await CurrentUnitOfWork.SaveChangesAsync();
 
             if (payment.IsProrationPayment())
@@ -140,7 +138,7 @@ namespace DispatcherWeb.MultiTenancy.Payments
                 StripeGatewayManager.StripeSessionIdSubscriptionPaymentExtensionDataKey,
                 input.StripeSessionId
             );
-            
+
             if (!paymentId.HasValue)
             {
                 throw new ApplicationException($"Cannot find any payment with sessionId {input.StripeSessionId}");
@@ -163,7 +161,7 @@ namespace DispatcherWeb.MultiTenancy.Payments
                              "sessionId={CHECKOUT_SESSION_ID}",
                 CancelUrl = input.CancelUrl
             };
-            
+
             if (payment.IsRecurring && !payment.IsProrationPayment())
             {
                 var plan = await _stripeGatewayManager.GetOrCreatePlanForPayment(input.PaymentId);
@@ -222,7 +220,7 @@ namespace DispatcherWeb.MultiTenancy.Payments
                 var tenant = await TenantManager.GetByIdAsync(payment.TenantId);
                 await _stripeGatewayManager.UpdateCustomerDescriptionAsync(sessionId, tenant.TenancyName);
             }
-            
+
             if (payment.Status == SubscriptionPaymentStatus.Completed)
             {
                 return new StripePaymentResultOutput

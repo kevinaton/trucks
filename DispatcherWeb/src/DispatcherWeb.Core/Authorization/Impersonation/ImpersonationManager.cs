@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Abp.Authorization.Users;
 using Abp.Runtime.Caching;
 using Abp.Runtime.Security;
 using Abp.Runtime.Session;
@@ -55,7 +54,7 @@ namespace DispatcherWeb.Authorization.Impersonation
 
         private async Task<ClaimsIdentity> GetClaimsIdentityFromCache(User user, ImpersonationCacheItem cacheItem)
         {
-            var identity = (ClaimsIdentity) (await _principalFactory.CreateAsync(user)).Identity;
+            var identity = (ClaimsIdentity)(await _principalFactory.CreateAsync(user)).Identity;
 
             if (!cacheItem.IsBackToImpersonator)
             {

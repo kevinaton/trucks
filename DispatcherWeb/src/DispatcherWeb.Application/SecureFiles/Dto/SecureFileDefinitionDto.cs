@@ -6,12 +6,12 @@ namespace DispatcherWeb.Infrastructure.SecureFiles.Dto
 {
     public class SecureFileDefinitionDto : EntityDto<Guid>
     {
-		[StringLength(200)]
-		[Required]
-		public string Client { get; set; }
-		[StringLength(500)]
-		public string Description { get; set; }
+        [StringLength(200)]
+        [Required]
+        public string Client { get; set; }
+        [StringLength(500)]
+        public string Description { get; set; }
 
-	    public string[] FileNames { get; set; }
-	}
+        public string[] FileNames { get; set; }
+    }
 }

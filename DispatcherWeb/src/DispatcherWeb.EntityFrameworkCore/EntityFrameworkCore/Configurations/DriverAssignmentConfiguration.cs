@@ -1,6 +1,4 @@
 ﻿using DispatcherWeb.Drivers;
-using DispatcherWeb.Offices;
-using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DispatcherWeb.DriverAssignments.Dto
 {
@@ -25,7 +23,7 @@ namespace DispatcherWeb.DriverAssignments.Dto
         public string DriverLastName { get; set; }
 
         public int? DriverId { get; set; }
-        
+
         public DateTime? StartTime { get; set; }
         public bool DriverIsExternal { get; set; }
         public bool DriverIsActive { get; set; }

@@ -29,9 +29,9 @@
 
 using System.Diagnostics;
 using System.Text;
+using PdfSharp.Drawing;
 using PdfSharp.Fonts;
 using PdfSharp.Fonts.OpenType;
-using PdfSharp.Drawing;
 
 namespace PdfSharp.Pdf.Advanced
 {

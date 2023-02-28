@@ -1,7 +1,4 @@
-﻿using System;
-using Abp.UI;
-
-namespace DispatcherWeb.Infrastructure.Extensions
+﻿namespace DispatcherWeb.Infrastructure.Extensions
 {
     public static class BoolExtensions
     {

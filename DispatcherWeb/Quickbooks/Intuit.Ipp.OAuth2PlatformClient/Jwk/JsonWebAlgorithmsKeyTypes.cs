@@ -39,7 +39,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// RSA const
         /// </summary>
         public const string RSA = "RSA"; //RS256
-        
+
 #pragma warning restore 1591
     }
 }

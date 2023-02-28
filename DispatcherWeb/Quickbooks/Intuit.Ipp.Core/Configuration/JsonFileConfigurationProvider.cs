@@ -24,15 +24,11 @@
 namespace Intuit.Ipp.Core.Configuration
 {
     using System;
-    using System.Globalization;
     using System.IO;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
     //using Intuit.Ipp.Retry;
     using Intuit.Ipp.Security;
-    using Intuit.Ipp.Utility;
-
-    using System.Configuration;
 #if NETSTANDARD2_0
     using Microsoft.Extensions.Configuration;
 #endif
@@ -55,7 +51,7 @@ namespace Intuit.Ipp.Core.Configuration
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile(path, optional: true)
                 .Build();
-           
+
 
 
         }
@@ -343,14 +339,14 @@ namespace Intuit.Ipp.Core.Configuration
 
             ippConfig.AdvancedLogger = new AdvancedLogger
             {
-             
+
                 RequestAdvancedLog = new RequestAdvancedLog()
                 {
                     EnableSerilogRequestResponseLoggingForDebug = false,
                     EnableSerilogRequestResponseLoggingForTrace = false,
                     EnableSerilogRequestResponseLoggingForConsole = false,
                     EnableSerilogRequestResponseLoggingForRollingFile = false,
-                   // EnableSerilogRequestResponseLoggingForAzureDocumentDB = false,
+                    // EnableSerilogRequestResponseLoggingForAzureDocumentDB = false,
                     ServiceRequestLoggingLocationForFile = System.IO.Path.GetTempPath()
                 }
             };
@@ -403,7 +399,7 @@ namespace Intuit.Ipp.Core.Configuration
 
             #endregion
 
-         
+
 
             //Read all appsettings.json sections
             var loggerSettings = builder.GetSection("Logger").GetSection("RequestLog");
@@ -431,7 +427,7 @@ namespace Intuit.Ipp.Core.Configuration
 
             if (!string.IsNullOrEmpty(serilogLoggerSettingsRollingFile["LogDirectory"]) && Convert.ToBoolean(serilogLoggerSettingsRollingFile["EnableLogs"]) == true)
             {
-             
+
 
 
                 ippConfig.AdvancedLogger.RequestAdvancedLog.EnableSerilogRequestResponseLoggingForRollingFile = Convert.ToBoolean(serilogLoggerSettingsRollingFile["EnableLogs"]);
@@ -684,7 +680,7 @@ namespace Intuit.Ipp.Core.Configuration
             ippConfig.VerifierToken.Value = webhooksVerifierTokenSettings["Value"];
 
 #endif
-           
+
 
             return ippConfig;
 

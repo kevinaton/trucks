@@ -1,8 +1,6 @@
-﻿using DispatcherWeb.Common.Dto;
+﻿using System;
+using DispatcherWeb.Common.Dto;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DispatcherWeb.Dispatching.Dto
 {

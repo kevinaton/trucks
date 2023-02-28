@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
+using Abp.Runtime.Security;
 using Abp.UI;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Configuration;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Features;
 using DispatcherWeb.Offices.Dto;
 using DispatcherWeb.Orders;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
-using Abp.Runtime.Security;
-using DispatcherWeb.Configuration;
-using Abp.Application.Features;
-using Abp.Configuration;
 
 namespace DispatcherWeb.Offices
 {
@@ -152,7 +151,7 @@ namespace DispatcherWeb.Offices
                 await CheckAllowMultiOffice();
                 await _singleOfficeService.Reset();
             }
-            
+
             var entity = model.Id.HasValue ? await _officeRepository.GetAsync(model.Id.Value) : new Office();
 
             entity.Name = model.Name;

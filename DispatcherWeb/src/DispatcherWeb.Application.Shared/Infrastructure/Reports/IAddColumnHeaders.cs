@@ -2,6 +2,6 @@
 {
     public interface IAddColumnHeaders
     {
-		void AddColumnHeaders(params string[] headers);
-	}
+        void AddColumnHeaders(params string[] headers);
+    }
 }

@@ -35,7 +35,6 @@ using System.Globalization;
 using System.ComponentModel;
 #if CORE || GDI
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using GdiFontFamily = System.Drawing.FontFamily;
 using GdiFont = System.Drawing.Font;
 using GdiFontStyle = System.Drawing.FontStyle;
@@ -317,10 +316,10 @@ namespace PdfSharp.Drawing
         /// </summary>
         void Initialize()
         {
-//#if DEBUG
-//            if (_familyName == "Segoe UI Semilight" && (_style & XFontStyle.BoldItalic) == XFontStyle.Italic)
-//                GetType();
-//#endif
+            //#if DEBUG
+            //            if (_familyName == "Segoe UI Semilight" && (_style & XFontStyle.BoldItalic) == XFontStyle.Italic)
+            //                GetType();
+            //#endif
 
             FontResolvingOptions fontResolvingOptions = OverrideStyleSimulations
                 ? new FontResolvingOptions(_style, StyleSimulations)

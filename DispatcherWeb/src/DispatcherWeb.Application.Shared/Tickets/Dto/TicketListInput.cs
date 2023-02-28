@@ -32,7 +32,7 @@ namespace DispatcherWeb.Tickets.Dto
 
         public void Normalize()
         {
-            if(Sorting.IsNullOrEmpty())
+            if (Sorting.IsNullOrEmpty())
             {
                 Sorting = "Date";
             }

@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using DispatcherWeb.HealthChecks;
+﻿using DispatcherWeb.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DispatcherWeb.Web.HealthCheck
 {

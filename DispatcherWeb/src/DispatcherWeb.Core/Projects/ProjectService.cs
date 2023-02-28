@@ -1,12 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
-using DispatcherWeb.UnitsOfMeasure;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Services;
+using DispatcherWeb.UnitsOfMeasure;
 
 namespace DispatcherWeb.Projects
 {
@@ -38,7 +37,7 @@ namespace DispatcherWeb.Projects
 
         [Column(TypeName = "money")]
         public decimal? LeaseHaulerRate { get; set; }
-        
+
         public decimal? MaterialQuantity { get; set; }
 
         public decimal? FreightQuantity { get; set; }
@@ -51,7 +50,7 @@ namespace DispatcherWeb.Projects
         public virtual UnitOfMeasure FreightUom { get; set; }
 
         public virtual Project Project { get; set; }
-        
+
         public virtual Service Service { get; set; }
 
         public virtual Location LoadAt { get; set; }

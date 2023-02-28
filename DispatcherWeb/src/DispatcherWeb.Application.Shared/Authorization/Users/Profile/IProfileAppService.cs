@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp.Application.Services;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.Authorization.Users.Profile.Dto;
-using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Authorization.Users.Profile
 {
@@ -22,7 +20,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
         Task<GetProfilePictureOutput> GetProfilePicture();
 
         Task<GetProfilePictureOutput> GetProfilePictureByUser(long userId);
-        
+
         Task<GetProfilePictureOutput> GetProfilePictureByUserName(string username);
 
         Task<GetProfilePictureOutput> GetFriendProfilePicture(GetFriendProfilePictureInput input);

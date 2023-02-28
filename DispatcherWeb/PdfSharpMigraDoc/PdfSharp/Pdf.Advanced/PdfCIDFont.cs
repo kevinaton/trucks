@@ -29,8 +29,8 @@
 #endregion
 
 using PdfSharp.Drawing;
-using PdfSharp.Pdf.Filters;
 using PdfSharp.Fonts.OpenType;
+using PdfSharp.Pdf.Filters;
 
 namespace PdfSharp.Pdf.Advanced
 {

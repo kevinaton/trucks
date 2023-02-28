@@ -18,10 +18,10 @@ namespace DispatcherWeb.Notifications
         private readonly IUnitOfWorkManager _unitOfWorkManager;
 
         public DispatcherWebNotificationStore(
-            IRepository<NotificationInfo, Guid> notificationRepository, 
-            IRepository<TenantNotificationInfo, Guid> tenantNotificationRepository, 
-            IRepository<UserNotificationInfo, Guid> userNotificationRepository, 
-            IRepository<NotificationSubscriptionInfo, Guid> notificationSubscriptionRepository, 
+            IRepository<NotificationInfo, Guid> notificationRepository,
+            IRepository<TenantNotificationInfo, Guid> tenantNotificationRepository,
+            IRepository<UserNotificationInfo, Guid> userNotificationRepository,
+            IRepository<NotificationSubscriptionInfo, Guid> notificationSubscriptionRepository,
             IUnitOfWorkManager unitOfWorkManager
             ) : base(notificationRepository, tenantNotificationRepository, userNotificationRepository, notificationSubscriptionRepository, unitOfWorkManager)
         {
@@ -43,7 +43,7 @@ namespace DispatcherWeb.Notifications
                 using (_unitOfWorkManager.Current.SetTenantId(user.TenantId))
                 {
                     var query = from userNotificationInfo in _userNotificationRepository.GetAll()
-                                join tenantNotificationInfo in _tenantNotificationRepository.GetAll() 
+                                join tenantNotificationInfo in _tenantNotificationRepository.GetAll()
                                     on userNotificationInfo.TenantNotificationId equals tenantNotificationInfo.Id
                                 where userNotificationInfo.UserId == user.UserId
                                 orderby userNotificationInfo.CreationTime descending
@@ -97,7 +97,7 @@ namespace DispatcherWeb.Notifications
                 using (_unitOfWorkManager.Current.SetTenantId(user.TenantId))
                 {
                     var query = from userNotificationInfo in _userNotificationRepository.GetAll()
-                                join tenantNotificationInfo in _tenantNotificationRepository.GetAll() 
+                                join tenantNotificationInfo in _tenantNotificationRepository.GetAll()
                                     on userNotificationInfo.TenantNotificationId equals tenantNotificationInfo.Id
                                 where userNotificationInfo.UserId == user.UserId
                                 orderby tenantNotificationInfo.CreationTime descending

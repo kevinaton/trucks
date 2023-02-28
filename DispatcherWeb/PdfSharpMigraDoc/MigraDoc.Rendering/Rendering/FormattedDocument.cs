@@ -31,10 +31,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using PdfSharp;
-using PdfSharp.Drawing;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.publics;
+using PdfSharp;
+using PdfSharp.Drawing;
 
 namespace MigraDoc.Rendering
 {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
@@ -10,10 +11,9 @@ using Abp.Organizations;
 using Abp.Runtime.Caching;
 using Abp.UI;
 using Abp.Zero.Configuration;
+using DispatcherWeb.Authorization.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using DispatcherWeb.Authorization.Users;
-using System;
 
 namespace DispatcherWeb.Authorization.Roles
 {
@@ -91,9 +91,9 @@ namespace DispatcherWeb.Authorization.Roles
 
         public async Task RestoreDefaultPermissionsAsync(Role role)
         {
-            foreach(string permissionName in DefaultRolePermissions.DefaultPermissions)
+            foreach (string permissionName in DefaultRolePermissions.DefaultPermissions)
             {
-                if(DefaultRolePermissions.IsPermissionsGrantedToRole(role.Name, permissionName))
+                if (DefaultRolePermissions.IsPermissionsGrantedToRole(role.Name, permissionName))
                 {
                     await GrantPermissionToRoleAsync(role, permissionName);
                 }

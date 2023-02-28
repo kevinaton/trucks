@@ -9,7 +9,7 @@ namespace DispatcherWeb.MultiTenancy.Payments.PayPal.Dto
         public string DemoUsername { get; set; }
 
         public string DemoPassword { get; set; }
-        
+
         public List<string> DisabledFundings { get; set; }
     }
 }

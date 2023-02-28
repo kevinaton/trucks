@@ -42,7 +42,7 @@ namespace Intuit.Ipp.XsdExtension
         #endregion
 
         #region Public Properties
-        
+
         /// <summary>
         /// Gets or sets exporter to export code from xsd schema to codedom
         /// </summary>

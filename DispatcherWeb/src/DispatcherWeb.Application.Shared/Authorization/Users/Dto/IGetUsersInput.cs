@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Abp.Application.Services.Dto;
-using Abp.Runtime.Validation;
 
 namespace DispatcherWeb.Authorization.Users.Dto
 {

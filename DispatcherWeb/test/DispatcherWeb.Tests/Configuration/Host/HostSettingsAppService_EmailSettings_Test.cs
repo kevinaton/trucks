@@ -62,7 +62,7 @@ namespace DispatcherWeb.Tests.Configuration.Host
             settings.Email.SmtpPassword = "654321";
             settings.Email.SmtpDomain = "changeddomain";
             settings.Email.SmtpEnableSsl = false;
-            
+
             //Act
             await _hostSettingsAppService.UpdateAllSettings(settings);
 

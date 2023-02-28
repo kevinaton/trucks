@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Abp.Application.Features;
 using Abp.Application.Services;
 using Abp.Authorization;
 using Abp.Configuration;
@@ -20,11 +18,10 @@ using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Features;
 using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Orders;
+using DispatcherWeb.TimeClassifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DispatcherWeb.DriverApplication
 {
@@ -170,7 +167,7 @@ namespace DispatcherWeb.DriverApplication
             var result = new GetDriverGuidResult
             {
                 UserId = user.Id,
-                IsAdmin = await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Admin) 
+                IsAdmin = await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Admin)
                     || await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Administrative),
                 DriverName = user.Name + " " + user.Surname
             };
@@ -332,7 +329,7 @@ namespace DispatcherWeb.DriverApplication
             {
                 result.DeviceId = await _deviceRepository.InsertAndGetIdAsync(new DriverApplicationDevice
                 {
-                    Useragent = input.Useragent 
+                    Useragent = input.Useragent
                 });
             }
 

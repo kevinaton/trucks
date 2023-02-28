@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
+using DispatcherWeb.Web.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Logging;
-using DispatcherWeb.Web.Helpers;
 
 namespace DispatcherWeb.Web.Startup
 {

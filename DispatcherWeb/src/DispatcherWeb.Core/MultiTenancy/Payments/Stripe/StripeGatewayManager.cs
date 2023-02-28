@@ -76,7 +76,7 @@ namespace DispatcherWeb.MultiTenancy.Payments.Stripe
                         Plan = newPlanId
                     }
                 },
-                ProrationBehavior = !isProrateCharged ? "always_invoice": "none"  
+                ProrationBehavior = !isProrateCharged ? "always_invoice" : "none"
             });
 
             var lastRecurringPayment = await _subscriptionPaymentRepository.GetByGatewayAndPaymentIdAsync(SubscriptionPaymentGatewayType.Stripe, subscriptionId);
@@ -180,7 +180,7 @@ namespace DispatcherWeb.MultiTenancy.Payments.Stripe
             var customerService = new CustomerService();
             var sessionService = new SessionService();
             var session = await sessionService.GetAsync(sessionId);
-            
+
             var customer = await customerService.UpdateAsync(session.CustomerId, new CustomerUpdateOptions
             {
                 Description = description
@@ -191,7 +191,7 @@ namespace DispatcherWeb.MultiTenancy.Payments.Stripe
                 Id = customer.Id
             };
         }
-        
+
         public void HandleEvent(RecurringPaymentsDisabledEventData eventData)
         {
             var subscriptionPayment = GetLastCompletedSubscriptionPayment(eventData.TenantId);

@@ -1,10 +1,10 @@
 ﻿using System;
 using Abp.IdentityServer4vNext;
+using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.EntityFrameworkCore;
 using IdentityServer4.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using DispatcherWeb.Authorization.Users;
-using DispatcherWeb.EntityFrameworkCore;
 
 namespace DispatcherWeb.Web.IdentityServer
 {

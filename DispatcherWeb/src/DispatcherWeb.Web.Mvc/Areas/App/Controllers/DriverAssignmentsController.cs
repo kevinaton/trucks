@@ -4,8 +4,8 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.DriverAssignments;
 using DispatcherWeb.DriverAssignments.Dto;
 using DispatcherWeb.Web.Controllers;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Web.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Mvc.Areas.App.Controllers
 {

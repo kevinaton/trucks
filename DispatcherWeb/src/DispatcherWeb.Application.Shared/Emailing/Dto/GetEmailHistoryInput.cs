@@ -1,7 +1,7 @@
 ﻿using System;
+using Abp.Extensions;
 using Abp.Runtime.Validation;
 using DispatcherWeb.Dto;
-using Abp.Extensions;
 
 namespace DispatcherWeb.Emailing.Dto
 {

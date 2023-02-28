@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.LeaseHaulerRequests.Dto
+﻿namespace DispatcherWeb.LeaseHaulerRequests.Dto
 {
     public class AvailableTrucksTruckEditDto
     {

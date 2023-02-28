@@ -5,7 +5,7 @@
         public int Id { get; set; }
 
         public string TruckCode { get; set; }
-        
+
         public string OfficeName { get; set; }
 
         public string VehicleCategoryName { get; set; }

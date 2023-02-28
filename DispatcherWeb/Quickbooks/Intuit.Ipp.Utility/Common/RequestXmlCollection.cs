@@ -19,10 +19,8 @@
 ////********************************************************************
 namespace Intuit.Ipp.Utility
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Xml;
-    using Intuit.Ipp.Utility.Properties;
 
     /// <summary>
     /// A helper class to build API requests.
@@ -68,7 +66,7 @@ namespace Intuit.Ipp.Utility
                 return this.qdbapiElement;
             }
         }
-       
+
         /// <summary>
         /// Add an API parameter of type Text
         /// </summary>

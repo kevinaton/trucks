@@ -1,13 +1,10 @@
-﻿using Abp.Dependency;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp.Dependency;
 using DispatcherWeb.Invoices.Dto;
 using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Invoices.Reports
 {
@@ -152,7 +149,7 @@ namespace DispatcherWeb.Invoices.Reports
                 paragraph = document.LastSection.AddParagraph();
                 paragraph.Format.Font.Size = Unit.FromPoint(1);
                 paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.4);
-                
+
 
                 table = document.LastSection.AddTable();
                 table.Style = "Table";

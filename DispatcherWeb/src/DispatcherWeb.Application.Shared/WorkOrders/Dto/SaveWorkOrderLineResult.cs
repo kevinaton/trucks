@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.WorkOrders.Dto
+﻿namespace DispatcherWeb.WorkOrders.Dto
 {
     public class SaveWorkOrderLineResult
     {

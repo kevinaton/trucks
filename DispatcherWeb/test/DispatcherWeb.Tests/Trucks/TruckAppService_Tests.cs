@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Application.Services.Dto;
@@ -19,7 +17,6 @@ using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.VehicleMaintenance;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using Xunit;
 
@@ -71,7 +68,7 @@ namespace DispatcherWeb.Tests.Trucks
                 TruckId = truckEntity.Id,
             });
 
-            var orderLineTrucks = await UsingDbContextAsync(async context => 
+            var orderLineTrucks = await UsingDbContextAsync(async context =>
                 await context.OrderLineTrucks.Where(ol => ol.IsDeleted == false).ToListAsync()
             );
             orderLineTrucks.Count.ShouldBe(1);
@@ -83,12 +80,12 @@ namespace DispatcherWeb.Tests.Trucks
             var truck = await CreateTruckEntity();
             var today = DateTime.Today;
             var order = await CreateOrder(truck, today);
-			var orderLine = order.OrderLines.First();
-			var driver = await SetDefaultDriverForTruck(truck.Id);
-			var dispatch = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, DispatchStatus.Created);
-			var dispatch2 = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, DispatchStatus.Sent);
+            var orderLine = order.OrderLines.First();
+            var driver = await SetDefaultDriverForTruck(truck.Id);
+            var dispatch = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, DispatchStatus.Created);
+            var dispatch2 = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, DispatchStatus.Sent);
 
-			// Act
+            // Act
             var result = await _truckAppService.SetTruckIsOutOfService(new SetTruckIsOutOfServiceInput()
             {
                 Date = today,
@@ -97,15 +94,15 @@ namespace DispatcherWeb.Tests.Trucks
                 TruckId = truck.Id,
             });
 
-			// Assert
-			result.ThereWereCanceledDispatches.ShouldBeTrue();
-			result.ThereWereNotCanceledDispatches.ShouldBeFalse();
+            // Assert
+            result.ThereWereCanceledDispatches.ShouldBeTrue();
+            result.ThereWereNotCanceledDispatches.ShouldBeFalse();
             var updatedDispatch = await UsingDbContextAsync(async context => await context.Dispatches.FindAsync(dispatch.Id));
-			updatedDispatch.IsDeleted.ShouldBeFalse();
-			updatedDispatch.Status.ShouldBe(DispatchStatus.Canceled);
-			var updatedDispatch2 = await UsingDbContextAsync(async context => await context.Dispatches.FindAsync(dispatch2.Id));
-			updatedDispatch2.IsDeleted.ShouldBeFalse();
-			updatedDispatch2.Status.ShouldBe(DispatchStatus.Canceled);
+            updatedDispatch.IsDeleted.ShouldBeFalse();
+            updatedDispatch.Status.ShouldBe(DispatchStatus.Canceled);
+            var updatedDispatch2 = await UsingDbContextAsync(async context => await context.Dispatches.FindAsync(dispatch2.Id));
+            updatedDispatch2.IsDeleted.ShouldBeFalse();
+            updatedDispatch2.Status.ShouldBe(DispatchStatus.Canceled);
         }
 
         [Fact]
@@ -114,12 +111,12 @@ namespace DispatcherWeb.Tests.Trucks
             var truck = await CreateTruckEntity();
             var today = DateTime.Today;
             var order = await CreateOrder(truck, today);
-			var orderLine = order.OrderLines.First();
-			var driver = await SetDefaultDriverForTruck(truck.Id);
-			var dispatch = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, DispatchStatus.Acknowledged);
-			var dispatch2 = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, DispatchStatus.Loaded);
+            var orderLine = order.OrderLines.First();
+            var driver = await SetDefaultDriverForTruck(truck.Id);
+            var dispatch = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, DispatchStatus.Acknowledged);
+            var dispatch2 = await CreateDispatch(truck.Id, driver.Id, orderLine.Id, DispatchStatus.Loaded);
 
-			// Act
+            // Act
             var result = await _truckAppService.SetTruckIsOutOfService(new SetTruckIsOutOfServiceInput()
             {
                 Date = today,
@@ -128,18 +125,18 @@ namespace DispatcherWeb.Tests.Trucks
                 TruckId = truck.Id,
             });
 
-			// Assert
-			result.ThereWereCanceledDispatches.ShouldBeFalse();
-			result.ThereWereNotCanceledDispatches.ShouldBeTrue();
+            // Assert
+            result.ThereWereCanceledDispatches.ShouldBeFalse();
+            result.ThereWereNotCanceledDispatches.ShouldBeTrue();
             var updatedDispatch = await UsingDbContextAsync(async context => await context.Dispatches.FindAsync(dispatch.Id));
-			updatedDispatch.IsDeleted.ShouldBeFalse();
-			updatedDispatch.Status.ShouldBe(DispatchStatus.Acknowledged);
-			var updatedDispatch2 = await UsingDbContextAsync(async context => await context.Dispatches.FindAsync(dispatch2.Id));
-			updatedDispatch2.IsDeleted.ShouldBeFalse();
-			updatedDispatch2.Status.ShouldBe(DispatchStatus.Loaded);
+            updatedDispatch.IsDeleted.ShouldBeFalse();
+            updatedDispatch.Status.ShouldBe(DispatchStatus.Acknowledged);
+            var updatedDispatch2 = await UsingDbContextAsync(async context => await context.Dispatches.FindAsync(dispatch2.Id));
+            updatedDispatch2.IsDeleted.ShouldBeFalse();
+            updatedDispatch2.Status.ShouldBe(DispatchStatus.Loaded);
         }
 
-		[Fact]
+        [Fact]
         public async Task Test_CanDeleteTruck_should_return_true_when_there_are_no_dependencies()
         {
             var truckEntity = await CreateTruckEntity();
@@ -187,8 +184,8 @@ namespace DispatcherWeb.Tests.Trucks
             DateTime today = Clock.Now.Date;
             var truckEntity = await CreateTruckEntity();
             var order = await CreateOrder(truckEntity, today);
-			order = await UpdateEntity(order, o => o.Shift = Shift.Shift1);
-			((AbpServiceBase)_truckAppService).SubstituteSetting(AppSettings.General.UseShifts, "true");
+            order = await UpdateEntity(order, o => o.Shift = Shift.Shift1);
+            ((AbpServiceBase)_truckAppService).SubstituteSetting(AppSettings.General.UseShifts, "true");
             var office = await CreateOffice();
 
             // Act, Assert
@@ -198,7 +195,7 @@ namespace DispatcherWeb.Tests.Trucks
                 OfficeId = office.Id,
                 StartDate = today,
                 EndDate = today,
-				Shifts = new []{Shift.Shift1},
+                Shifts = new[] { Shift.Shift1 },
             }).ShouldThrowAsync(typeof(UserFriendlyException));
         }
 
@@ -209,8 +206,8 @@ namespace DispatcherWeb.Tests.Trucks
             DateTime today = Clock.Now.Date;
             var truckEntity = await CreateTruckEntity();
             var order = await CreateOrder(truckEntity, today);
-			order = await UpdateEntity(order, o => o.Shift = Shift.Shift1);
-			((AbpServiceBase)_truckAppService).SubstituteSetting(AppSettings.General.UseShifts, "true");
+            order = await UpdateEntity(order, o => o.Shift = Shift.Shift1);
+            ((AbpServiceBase)_truckAppService).SubstituteSetting(AppSettings.General.UseShifts, "true");
             var office = await CreateOffice();
 
             // Act
@@ -220,27 +217,27 @@ namespace DispatcherWeb.Tests.Trucks
                 OfficeId = office.Id,
                 StartDate = today,
                 EndDate = today,
-				Shifts = new []{Shift.Shift2},
+                Shifts = new[] { Shift.Shift2 },
             });
 
-			// Assert
-			var sharedTrucks = await UsingDbContextAsync(async context => await context.SharedTrucks.ToListAsync());
-			sharedTrucks.Count.ShouldBe(1);
-			var sharedTruck = sharedTrucks[0];
-			sharedTruck.TruckId.ShouldBe(truckEntity.Id);
-			sharedTruck.OfficeId.ShouldBe(office.Id);
-			sharedTruck.Date.ShouldBe(today);
-			sharedTruck.Shift.ShouldBe(Shift.Shift2);
-		}
+            // Assert
+            var sharedTrucks = await UsingDbContextAsync(async context => await context.SharedTrucks.ToListAsync());
+            sharedTrucks.Count.ShouldBe(1);
+            var sharedTruck = sharedTrucks[0];
+            sharedTruck.TruckId.ShouldBe(truckEntity.Id);
+            sharedTruck.OfficeId.ShouldBe(office.Id);
+            sharedTruck.Date.ShouldBe(today);
+            sharedTruck.Shift.ShouldBe(Shift.Shift2);
+        }
 
-		private async Task<Order> CreateOrder(Truck truckEntity, DateTime? orderDate = null)
+        private async Task<Order> CreateOrder(Truck truckEntity, DateTime? orderDate = null)
         {
             return await UsingDbContextAsync(async context =>
             {
                 Order order = new Order()
                 {
                     TenantId = 1,
-                    Customer = new Customer() {TenantId = 1, Name = "Cust"},
+                    Customer = new Customer() { TenantId = 1, Name = "Cust" },
                     LocationId = truckEntity.Office.Id,
                     DeliveryDate = orderDate,
                 };

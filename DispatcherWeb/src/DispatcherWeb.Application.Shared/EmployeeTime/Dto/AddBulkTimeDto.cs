@@ -1,7 +1,7 @@
-﻿using DispatcherWeb.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.EmployeeTime.Dto
 {

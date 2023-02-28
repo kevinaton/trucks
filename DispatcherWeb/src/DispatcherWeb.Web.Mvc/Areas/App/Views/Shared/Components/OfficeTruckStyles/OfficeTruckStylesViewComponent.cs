@@ -1,8 +1,8 @@
-﻿using Abp.Domain.Uow;
+﻿using System.Threading.Tasks;
+using Abp.Domain.Uow;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Web.Areas.App.Models.Layout;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.OfficeTruckStyles
 {

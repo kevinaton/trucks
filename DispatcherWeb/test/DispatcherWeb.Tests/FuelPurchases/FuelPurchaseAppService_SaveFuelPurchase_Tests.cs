@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Abp.Runtime.Session;
 using Abp.Timing;
-using DispatcherWeb.FuelPurchases;
 using DispatcherWeb.FuelPurchases.Dto;
 using DispatcherWeb.Tests.TestInfrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -84,7 +79,7 @@ namespace DispatcherWeb.Tests.FuelPurchases
         {
             // Arrange
             DateTime date = new DateTime(2019, 8, 8);
-            ((DispatcherWebAppServiceBase) _fuelPurchaseAppService).SubstituteSetting(TimingSettingNames.TimeZone, "India Standard Time");
+            ((DispatcherWebAppServiceBase)_fuelPurchaseAppService).SubstituteSetting(TimingSettingNames.TimeZone, "India Standard Time");
             var truck = await CreateTruck();
 
             // Act

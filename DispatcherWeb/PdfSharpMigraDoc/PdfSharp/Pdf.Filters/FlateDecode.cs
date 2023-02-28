@@ -27,9 +27,7 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.IO;
-using PdfSharp.Internal;
 #if NET_ZIP
 using System.IO.Compression;
 #else

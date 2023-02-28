@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Abp.AspNetZeroCore.Web.Authentication.External;
-using Abp.AspNetZeroCore.Web.Authentication.External.Microsoft;
 using Abp.AspNetZeroCore.Web.Authentication.External.OpenIdConnect;
 using Abp.Configuration;
 using Abp.Dependency;

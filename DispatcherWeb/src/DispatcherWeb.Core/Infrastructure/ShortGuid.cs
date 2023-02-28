@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Infrastructure
 {
@@ -62,7 +58,7 @@ namespace DispatcherWeb.Infrastructure
             get { return _guid; }
             set
             {
-                if(value != _guid)
+                if (value != _guid)
                 {
                     _guid = value;
                     _value = Encode(value);
@@ -78,7 +74,7 @@ namespace DispatcherWeb.Infrastructure
             get { return _value; }
             set
             {
-                if(value != _value)
+                if (value != _value)
                 {
                     _value = value;
                     _guid = Decode(value);
@@ -111,11 +107,11 @@ namespace DispatcherWeb.Infrastructure
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            if(obj is ShortGuid)
+            if (obj is ShortGuid)
                 return _guid.Equals(((ShortGuid)obj)._guid);
-            if(obj is Guid)
+            if (obj is Guid)
                 return _guid.Equals((Guid)obj);
-            if(obj is string)
+            if (obj is string)
                 return _guid.Equals(((ShortGuid)obj)._guid);
             return false;
         }
@@ -208,7 +204,7 @@ namespace DispatcherWeb.Infrastructure
         /// <returns></returns>
         public static bool operator ==(ShortGuid x, ShortGuid y)
         {
-            if((object)x == null) return (object)y == null;
+            if ((object)x == null) return (object)y == null;
             return x._guid == y._guid;
         }
 
@@ -264,19 +260,19 @@ namespace DispatcherWeb.Infrastructure
             return new ShortGuid(guid);
         }
 
-		public static bool TryParse(string value, out ShortGuid shortGuid)
-		{
-			try
-			{
-				shortGuid = new ShortGuid(value);
-				return true;
-			}
-			catch (Exception)
-			{
-				shortGuid = ShortGuid.Empty;
-				return false;
-			}
-		}
+        public static bool TryParse(string value, out ShortGuid shortGuid)
+        {
+            try
+            {
+                shortGuid = new ShortGuid(value);
+                return true;
+            }
+            catch (Exception)
+            {
+                shortGuid = ShortGuid.Empty;
+                return false;
+            }
+        }
 
         #endregion
     }

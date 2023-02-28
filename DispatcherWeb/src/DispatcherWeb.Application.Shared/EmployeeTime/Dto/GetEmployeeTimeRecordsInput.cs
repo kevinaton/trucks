@@ -1,7 +1,7 @@
-﻿using Abp.Extensions;
+﻿using System;
+using Abp.Extensions;
 using Abp.Runtime.Validation;
 using DispatcherWeb.Dto;
-using System;
 
 namespace DispatcherWeb.EmployeeTime.Dto
 {

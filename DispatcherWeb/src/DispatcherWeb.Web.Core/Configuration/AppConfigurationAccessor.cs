@@ -1,11 +1,11 @@
 ﻿using Abp.Dependency;
+using DispatcherWeb.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using DispatcherWeb.Configuration;
 
 namespace DispatcherWeb.Web.Configuration
 {
-    public class AppConfigurationAccessor: IAppConfigurationAccessor, ISingletonDependency
+    public class AppConfigurationAccessor : IAppConfigurationAccessor, ISingletonDependency
     {
         public IConfigurationRoot Configuration { get; }
 

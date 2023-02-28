@@ -149,7 +149,7 @@ namespace DispatcherWeb.FuelSurchargeCalculations
                 var freightRatePercent = calculation?.FreightRatePercent ?? 0;
                 var increment = calculation?.Increment ?? 1;
                 var credit = calculation?.Credit == true;
-                
+
                 if (!invoicedTicketIds.Any(ticketId => orderLine.Tickets.Any(ticket => ticket.Id == ticketId)))
                 {
                     orderLine.FuelSurchargeRate = LimitByCredit(credit, orderLine.FreightPricePerUnit * (currentFuelCost - baseFuelCost) * freightRatePercent / (100 * increment));

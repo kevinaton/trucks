@@ -53,7 +53,8 @@ namespace DispatcherWeb.Notifications
                     "NewUserRegisteredNotificationMessage",
                     DispatcherWebConsts.LocalizationSourceName
                 )
-            ) {["userName"] = user.UserName, ["emailAddress"] = user.EmailAddress};
+            )
+            { ["userName"] = user.UserName, ["emailAddress"] = user.EmailAddress };
 
 
             await _notificationPublisher.PublishAsync(AppNotificationNames.NewUserRegistered, notificationData, tenantIds: new[] { user.TenantId });
@@ -172,7 +173,7 @@ namespace DispatcherWeb.Notifications
             );
         }
 
-        public Task SendMessageAsync(UserIdentifier user, 
+        public Task SendMessageAsync(UserIdentifier user,
             LocalizableString localizableMessage,
             IDictionary<string, object> localizableMessageData = null,
             NotificationSeverity severity = NotificationSeverity.Info)
@@ -299,7 +300,7 @@ namespace DispatcherWeb.Notifications
             }
 
             await _notificationPublisher.PublishAsync(notificationName, notificationData, severity: severity,
-                userIds: new[] {user});
+                userIds: new[] { user });
         }
 
         public Task TenantsMovedToEdition(UserIdentifier user, string sourceEditionName, string targetEditionName)
@@ -324,11 +325,11 @@ namespace DispatcherWeb.Notifications
 
         public Task SomeUsersCouldntBeImported(UserIdentifier user, string fileToken, string fileType, string fileName)
         {
-            return SendNotificationAsync(AppNotificationNames.DownloadInvalidImportUsers, user, 
+            return SendNotificationAsync(AppNotificationNames.DownloadInvalidImportUsers, user,
                 new LocalizableString(
                     "ClickToSeeInvalidUsers",
                     DispatcherWebConsts.LocalizationSourceName
-                ), 
+                ),
                 new Dictionary<string, object>
                 {
                     { "fileToken", fileToken },

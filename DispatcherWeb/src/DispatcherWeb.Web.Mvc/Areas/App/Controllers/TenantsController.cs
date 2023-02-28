@@ -2,7 +2,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Common;
 using DispatcherWeb.Editions;
@@ -10,6 +9,7 @@ using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Security;
 using DispatcherWeb.Web.Areas.App.Models.Tenants;
 using DispatcherWeb.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
 {

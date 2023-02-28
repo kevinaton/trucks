@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Auditing;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
-using Abp.EntityFrameworkCore.Repositories;
 using Abp.Timing;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Customers;
-using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Sms;
 using DispatcherWeb.Trucks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.DailyHistory
 {
@@ -35,7 +30,7 @@ namespace DispatcherWeb.DailyHistory
         private readonly IRepository<SentSms> _sentSmsRepository;
 
         public DailyHistoryAppService(
-            IRepository<TenantDailyHistory> tenantDailyHistoryRepository, 
+            IRepository<TenantDailyHistory> tenantDailyHistoryRepository,
             IRepository<UserDailyHistory> userDailyHistoryRepository,
             IRepository<TransactionDailyHistory> transactionDailyHistoryRepository,
             IRepository<Truck> truckRepository,
@@ -120,21 +115,21 @@ namespace DispatcherWeb.DailyHistory
                 foreach (var tenant in tenants)
                 {
                     _tenantDailyHistoryRepository.Insert(new TenantDailyHistory
-                        {
-                            TenantId = tenant,
-                            Date = yesterdayUtc,
-                            ActiveTrucks = activeTrucks.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            ActiveUsers = activeUsers.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            UsersWithActivity = usersWithActivity.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            OrderLinesScheduled = orderLinesScheduled.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            OrderLinesCreated = orderLinesCreated.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            ActiveCustomers = activeCustomers.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            InternalTrucksScheduled = internalTrucksScheduled.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            InternalScheduledDeliveries = internalScheduledDeliveries.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            LeaseHaulerScheduledDeliveries = leaseHaulerScheduledDeliveries.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            TicketsCreated = ticketsCreated.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
-                            SmsSent = smsSent.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0
-                        }
+                    {
+                        TenantId = tenant,
+                        Date = yesterdayUtc,
+                        ActiveTrucks = activeTrucks.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        ActiveUsers = activeUsers.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        UsersWithActivity = usersWithActivity.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        OrderLinesScheduled = orderLinesScheduled.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        OrderLinesCreated = orderLinesCreated.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        ActiveCustomers = activeCustomers.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        InternalTrucksScheduled = internalTrucksScheduled.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        InternalScheduledDeliveries = internalScheduledDeliveries.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        LeaseHaulerScheduledDeliveries = leaseHaulerScheduledDeliveries.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        TicketsCreated = ticketsCreated.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0,
+                        SmsSent = smsSent.SingleOrDefault(x => x.TenantId == tenant)?.Value ?? 0
+                    }
                     );
                 }
                 unitOfWork.Complete();
@@ -170,7 +165,7 @@ namespace DispatcherWeb.DailyHistory
                 _auditLogRepository.GetAll()
                     .Where(al => al.ExecutionTime >= yesterdayUtc && al.ExecutionTime < todayUtc && al.TenantId != null && al.ImpersonatorUserId == null)
                     .GroupBy(al => new { al.TenantId, al.UserId })
-                    .Select(g => new 
+                    .Select(g => new
                     {
                         g.Key.TenantId,
                         g.Key.UserId,

@@ -21,10 +21,10 @@
 
 namespace Intuit.Ipp.Core.Configuration
 {
-   
+
     //using Intuit.Ipp.Retry;  
     using Intuit.Ipp.Security;
-    
+
 
 
     /// <summary>
@@ -74,6 +74,6 @@ namespace Intuit.Ipp.Core.Configuration
         /// </summary>
         public MinorVersion MinorVersion { get; set; }
 
-       
+
     }
 }

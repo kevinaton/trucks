@@ -29,12 +29,12 @@
 #endregion
 
 using System;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.Rendering.Resources;
-using PdfSharp.Pdf;
 using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 
 namespace MigraDoc.Rendering
 {

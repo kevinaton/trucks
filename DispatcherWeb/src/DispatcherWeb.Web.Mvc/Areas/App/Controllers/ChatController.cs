@@ -3,10 +3,10 @@ using System.Net;
 using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Runtime.Session;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Chat;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
@@ -38,7 +38,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
         public async Task<ActionResult> GetFile(int id, string contentType)
         {
-            var message =await ChatMessageManager.FindMessageAsync(id, AbpSession.GetUserId());
+            var message = await ChatMessageManager.FindMessageAsync(id, AbpSession.GetUserId());
             var jsonMessage = JObject.Parse(message.Message.Substring("[file]".Length));
             using (CurrentUnitOfWork.SetTenantId(null))
             {

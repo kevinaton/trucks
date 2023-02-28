@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Web.Session;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Views.Shared.Components.TenantChange
 {

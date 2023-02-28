@@ -15,7 +15,6 @@ using Abp.Runtime.Session;
 using Abp.TestBase;
 using Abp.Timing;
 using AutoFixture;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Customers;
@@ -24,16 +23,17 @@ using DispatcherWeb.Drivers;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.LeaseHaulerRequests;
 using DispatcherWeb.LeaseHaulers;
+using DispatcherWeb.Locations;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
+using DispatcherWeb.Payments;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
 using DispatcherWeb.Tests.TestDatas;
 using DispatcherWeb.Trucks;
+using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using DispatcherWeb.Payments;
 
 namespace DispatcherWeb.Tests
 {
@@ -402,7 +402,7 @@ namespace DispatcherWeb.Tests
             {
                 var office = await context.Offices.Where(o => o.Id == officeId).FirstAsync();
                 vehicleCategory = await CreateVehicleCategory(vehicleCategory);
-                
+
                 Truck truck = new Truck()
                 {
                     TenantId = tenantId,

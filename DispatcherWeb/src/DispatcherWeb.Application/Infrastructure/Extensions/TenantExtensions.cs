@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DispatcherWeb.Infrastructure.AzureBlobs;
+﻿using System.Threading.Tasks;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Storage;
 
@@ -16,5 +11,5 @@ namespace DispatcherWeb.Infrastructure.Extensions
             return await binaryObjectManager.GetImageAsBase64StringAsync(tenant.ReportsLogoId);
         }
 
-	}
+    }
 }

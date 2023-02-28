@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.MultiTenancy.Payments.Stripe;
 using DispatcherWeb.MultiTenancy.Payments.Stripe.Dto;
+using Microsoft.AspNetCore.Mvc;
 using Stripe;
 
 namespace DispatcherWeb.Web.Controllers

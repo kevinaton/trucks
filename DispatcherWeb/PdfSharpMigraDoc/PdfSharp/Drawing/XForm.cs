@@ -29,7 +29,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 #if GDI
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -41,7 +40,6 @@ using System.Windows.Media;
 using PdfSharp.Drawing.Pdf;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.Advanced;
-using PdfSharp.Pdf.Filters;
 
 namespace PdfSharp.Drawing
 {

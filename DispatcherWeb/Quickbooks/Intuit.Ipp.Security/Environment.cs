@@ -19,13 +19,6 @@
 // <summary>This file contains Security environments.</summary>
 ////*********************************************************
 
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Intuit.Ipp.Security
 {
     /// <summary>
@@ -36,12 +29,12 @@ namespace Intuit.Ipp.Security
         /// <summary>
         /// Sandbox environment
         /// </summary>
-        Sandbox=0,
+        Sandbox = 0,
 
         /// <summary>
         /// Production environment
         /// </summary>
-        Production=1
+        Production = 1
 
     }
 }

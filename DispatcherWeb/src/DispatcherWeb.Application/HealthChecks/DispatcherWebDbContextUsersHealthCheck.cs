@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Abp.Domain.Uow;
 using Abp.EntityFrameworkCore;
+using DispatcherWeb.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using DispatcherWeb.EntityFrameworkCore;
 
 namespace DispatcherWeb.HealthChecks
 {

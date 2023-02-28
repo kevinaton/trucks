@@ -1,7 +1,7 @@
 ﻿using Abp.Dependency;
 using Castle.Windsor.MsDependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using DispatcherWeb.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DispatcherWeb.Migrator.DependencyInjection
 {

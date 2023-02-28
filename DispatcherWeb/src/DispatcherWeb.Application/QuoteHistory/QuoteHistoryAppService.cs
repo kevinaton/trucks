@@ -30,7 +30,7 @@ namespace DispatcherWeb.QuoteHistory
             _quoteHistoryRepository = quoteHistoryRepository;
             _timeZoneConverter = timeZoneConverter;
         }
-        
+
         public async Task<PagedResultDto<QuoteHistoryDto>> GetQuoteHistory(GetQuoteHistoryInput input)
         {
             input.StartDate = GetLocalDateTime(input.StartDate);

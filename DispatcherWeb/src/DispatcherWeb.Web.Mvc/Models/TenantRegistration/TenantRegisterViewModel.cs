@@ -1,7 +1,7 @@
 ﻿using DispatcherWeb.Editions;
 using DispatcherWeb.Editions.Dto;
-using DispatcherWeb.Security;
 using DispatcherWeb.MultiTenancy.Payments;
+using DispatcherWeb.Security;
 
 namespace DispatcherWeb.Web.Models.TenantRegistration
 {

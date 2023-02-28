@@ -6,10 +6,10 @@ namespace DispatcherWeb.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-			string sql = "update [Order] set [Directions] = SUBSTRING([Directions], 0, 1000) where len([Directions]) > 1000";
-			migrationBuilder.Sql(sql);
+            string sql = "update [Order] set [Directions] = SUBSTRING([Directions], 0, 1000) where len([Directions]) > 1000";
+            migrationBuilder.Sql(sql);
 
-			migrationBuilder.AlterColumn<string>(
+            migrationBuilder.AlterColumn<string>(
                 name: "Directions",
                 table: "Order",
                 maxLength: 1000,

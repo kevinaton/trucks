@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Abp;
 using Abp.UI;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Authorization.Users.Dto;
@@ -11,6 +9,8 @@ using DispatcherWeb.Configuration;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Tests.TestInfrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -81,14 +81,14 @@ namespace DispatcherWeb.Tests.Authorization.Users
                     new CreateOrUpdateUserInput
                     {
                         User = new UserEditDto
-                               {
-                                   Id = jnashUser.Id,
-                                   EmailAddress = "jnsh2000@testdomain.com",
-                                   Name = "John",
-                                   Surname = "Nash",
-                                   UserName = "adams_d", //Changed user name to an existing user
-                                   Password = "123qwE*"
-                               },
+                        {
+                            Id = jnashUser.Id,
+                            EmailAddress = "jnsh2000@testdomain.com",
+                            Name = "John",
+                            Surname = "Nash",
+                            UserName = "adams_d", //Changed user name to an existing user
+                            Password = "123qwE*"
+                        },
                         AssignedRoleNames = new string[0]
                     }));
 
@@ -100,14 +100,14 @@ namespace DispatcherWeb.Tests.Authorization.Users
                     new CreateOrUpdateUserInput
                     {
                         User = new UserEditDto
-                               {
-                                   Id = jnashUser.Id,
-                                   EmailAddress = "adams_d@gmail.com", //Changed email to an existing user
-                                   Name = "John",
-                                   Surname = "Nash",
-                                   UserName = "jnash",
-                                   Password = "123qwE*"
-                               },
+                        {
+                            Id = jnashUser.Id,
+                            EmailAddress = "adams_d@gmail.com", //Changed email to an existing user
+                            Name = "John",
+                            Surname = "Nash",
+                            UserName = "jnash",
+                            Password = "123qwE*"
+                        },
                         AssignedRoleNames = new string[0]
                     }));
 
@@ -140,7 +140,7 @@ namespace DispatcherWeb.Tests.Authorization.Users
                         UserName = adminUser.UserName,
                         Password = null
                     },
-                    AssignedRoleNames = new[]{ StaticRoleNames.Host.Admin } //Just deleting all roles expect admin
+                    AssignedRoleNames = new[] { StaticRoleNames.Host.Admin } //Just deleting all roles expect admin
                 });
 
             //Assert

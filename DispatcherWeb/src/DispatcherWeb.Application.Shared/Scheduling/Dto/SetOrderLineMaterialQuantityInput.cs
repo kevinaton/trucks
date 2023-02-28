@@ -2,7 +2,7 @@
 {
     public class SetOrderLineMaterialQuantityInput
     {
-		public int OrderLineId { get; set; }
-		public decimal? MaterialQuantity { get; set; }
+        public int OrderLineId { get; set; }
+        public decimal? MaterialQuantity { get; set; }
     }
 }

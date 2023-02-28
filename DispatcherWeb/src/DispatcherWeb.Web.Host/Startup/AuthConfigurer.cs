@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Runtime.Security;
+using DispatcherWeb.Configuration;
+using DispatcherWeb.Web.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,8 +15,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.Web.Authentication.JwtBearer;
 
 namespace DispatcherWeb.Web.Startup
 {
@@ -23,7 +23,7 @@ namespace DispatcherWeb.Web.Startup
         public static void Configure(IServiceCollection services, IConfiguration configuration)
         {
             var authenticationBuilder = services.AddAuthentication();
-            
+
             if (bool.Parse(configuration["Authentication:JwtBearer:IsEnabled"]))
             {
                 authenticationBuilder.AddJwtBearer(options =>
@@ -102,10 +102,10 @@ namespace DispatcherWeb.Web.Startup
                 {
                     return Task.CompletedTask;
                 }
-                    
-                return SetToken(context, false);  
+
+                return SetToken(context, false);
             }
-            
+
             return Task.CompletedTask;
         }
 

@@ -31,8 +31,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
 using MigraDoc.DocumentObjectModel.publics;
 
 #pragma warning disable 1591

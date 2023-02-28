@@ -1,5 +1,4 @@
-﻿using DispatcherWeb.Infrastructure;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace DispatcherWeb.Quotes.Dto
@@ -37,7 +36,7 @@ namespace DispatcherWeb.Quotes.Dto
 
         [StringLength(20)]
         public string PONumber { get; set; }
-        
+
         [StringLength(20)]
         public string SpectrumNumber { get; set; }
 

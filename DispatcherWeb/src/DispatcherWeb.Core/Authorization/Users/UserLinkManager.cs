@@ -22,14 +22,14 @@ namespace DispatcherWeb.Authorization.Users
         private readonly UserManager _userManager;
         private readonly UserClaimsPrincipalFactory _principalFactory;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
-        
+
         public IAbpSession AbpSession { get; set; }
 
         public UserLinkManager(
             IRepository<UserAccount, long> userAccountRepository,
-            ICacheManager cacheManager, 
+            ICacheManager cacheManager,
             UserManager userManager,
-            UserClaimsPrincipalFactory principalFactory, 
+            UserClaimsPrincipalFactory principalFactory,
             IUnitOfWorkManager unitOfWorkManager)
         {
             _userAccountRepository = userAccountRepository;
@@ -40,7 +40,7 @@ namespace DispatcherWeb.Authorization.Users
 
             AbpSession = NullAbpSession.Instance;
         }
-        
+
         public virtual async Task Link(User firstUser, User secondUser)
         {
             await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>
@@ -66,7 +66,7 @@ namespace DispatcherWeb.Authorization.Users
 
         }
 
-       
+
         public virtual async Task<bool> AreUsersLinked(UserIdentifier firstUserIdentifier, UserIdentifier secondUserIdentifier)
         {
             return await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>
@@ -82,7 +82,7 @@ namespace DispatcherWeb.Authorization.Users
                 return firstUserAccount.UserLinkId == secondUserAccount.UserLinkId;
             });
         }
-        
+
         public virtual async Task Unlink(UserIdentifier userIdentifier)
         {
             await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>
@@ -93,7 +93,7 @@ namespace DispatcherWeb.Authorization.Users
                 await CurrentUnitOfWork.SaveChangesAsync();
             });
         }
-        
+
         public virtual async Task<UserAccount> GetUserAccountAsync(UserIdentifier userIdentifier)
         {
             return await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>

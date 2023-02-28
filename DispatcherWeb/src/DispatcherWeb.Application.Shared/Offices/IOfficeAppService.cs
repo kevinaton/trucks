@@ -16,6 +16,6 @@ namespace DispatcherWeb.Offices
         Task EditOffice(OfficeEditDto model);
         Task<bool> CanDeleteOffice(EntityDto input);
         Task DeleteOffice(EntityDto input);
-		Task<int> GetOfficesNumber();
-	}
+        Task<int> GetOfficesNumber();
+    }
 }

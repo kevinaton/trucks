@@ -6,12 +6,12 @@ using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Extensions;
 using Abp.Localization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Localization;
 using DispatcherWeb.Web.Areas.App.Models.Languages;
 using DispatcherWeb.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
 {
@@ -54,10 +54,10 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
         [AbpMvcAuthorize(AppPermissions.Pages_Administration_Languages_ChangeTexts)]
         public ActionResult Texts(
-            string languageName, 
-            string sourceName = "", 
-            string baseLanguageName = "", 
-            string targetValueFilter = "ALL", 
+            string languageName,
+            string sourceName = "",
+            string baseLanguageName = "",
+            string targetValueFilter = "ALL",
             string filterText = "")
         {
             //Normalize arguments
@@ -73,18 +73,18 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
             //Create view model
             var viewModel = new LanguageTextsViewModel();
-            
+
             viewModel.LanguageName = languageName;
 
             viewModel.Languages = _languageManager.GetLanguages().ToList();
 
             viewModel.Sources = LocalizationManager
                 .GetAllSources()
-                .Where(s => s.GetType() == typeof (MultiTenantLocalizationSource))
+                .Where(s => s.GetType() == typeof(MultiTenantLocalizationSource))
                 .Select(s => new SelectListItem()
                 {
-                    Value = s.Name, 
-                    Text = s.Name, 
+                    Value = s.Name,
+                    Text = s.Name,
                     Selected = s.Name == sourceName
                 })
                 .ToList();
@@ -94,13 +94,13 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             viewModel.TargetValueFilter = targetValueFilter;
             viewModel.FilterText = filterText;
 
-            return View(viewModel);            
+            return View(viewModel);
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_Administration_Languages_ChangeTexts)]
         public PartialViewResult EditTextModal(
-            string sourceName, 
-            string baseLanguageName, 
+            string sourceName,
+            string baseLanguageName,
             string languageName,
             string key)
         {

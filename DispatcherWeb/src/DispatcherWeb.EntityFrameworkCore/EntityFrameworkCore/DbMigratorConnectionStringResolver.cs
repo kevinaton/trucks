@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using Abp.Configuration.Startup;
+﻿using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Domain.Uow;
 using Abp.MultiTenancy;
@@ -19,10 +18,10 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public DbMigratorConnectionStringResolver(
             IWebHostEnvironment env,
-            IAbpStartupConfiguration startupConfiguration, 
-            ICurrentUnitOfWorkProvider currentUnitOfWorkProvider, 
+            IAbpStartupConfiguration startupConfiguration,
+            ICurrentUnitOfWorkProvider currentUnitOfWorkProvider,
             ITenantCache tenantCache,
-            ILogger logger) 
+            ILogger logger)
             : base(startupConfiguration, currentUnitOfWorkProvider, tenantCache)
         {
             _appConfiguration = env.GetAppConfiguration();

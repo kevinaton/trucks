@@ -10,9 +10,9 @@ using Abp.Authorization.Users;
 using Abp.Domain.Repositories;
 using Abp.Runtime.Session;
 using Abp.UI;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.MultiTenancy;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Authorization.Users
 {
@@ -73,7 +73,7 @@ namespace DispatcherWeb.Authorization.Users
             var query = CreateLinkedUsersQuery(currentUserAccount, input.Sorting);
 
             var totalCount = await query.CountAsync();
-            
+
             var linkedUsers = await query
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount)

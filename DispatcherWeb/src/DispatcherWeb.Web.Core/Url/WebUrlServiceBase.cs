@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Abp.Extensions;
-using Microsoft.Extensions.Configuration;
 using DispatcherWeb.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace DispatcherWeb.Web.Url
 {

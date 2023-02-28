@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders;
-using DispatcherWeb.Sms;
 using DispatcherWeb.Trucks;
 
 namespace DispatcherWeb.Dispatching

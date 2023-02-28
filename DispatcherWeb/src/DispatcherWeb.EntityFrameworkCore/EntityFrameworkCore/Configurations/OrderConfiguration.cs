@@ -1,7 +1,4 @@
-﻿using DispatcherWeb.Customers;
-using DispatcherWeb.Offices;
-using DispatcherWeb.Orders;
-using DispatcherWeb.Locations;
+﻿using DispatcherWeb.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

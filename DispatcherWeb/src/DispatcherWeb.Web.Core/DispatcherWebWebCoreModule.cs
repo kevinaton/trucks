@@ -1,38 +1,28 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using Abp.AspNetCore;
 using Abp.AspNetCore.Configuration;
 using Abp.AspNetCore.SignalR;
-using Abp.AspNetZeroCore.Licensing;
 using Abp.AspNetZeroCore.Web;
 using Abp.Configuration.Startup;
-using Abp.Dependency;
 using Abp.Hangfire;
 using Abp.Hangfire.Configuration;
-using Abp.IO;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Runtime.Caching.Redis;
-using Abp.Timing;
 using Abp.Zero.Configuration;
-using Castle.Core.Internal;
+using DispatcherWeb.Authentication.TwoFactor;
+using DispatcherWeb.Configuration;
+using DispatcherWeb.DriverApp;
+using DispatcherWeb.EntityFrameworkCore;
+//using DispatcherWeb.Startup;
+using DispatcherWeb.Web.Authentication.JwtBearer;
+using DispatcherWeb.Web.Common;
+using DispatcherWeb.Web.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using DispatcherWeb.Authentication.TwoFactor;
-using DispatcherWeb.Chat;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.EntityFrameworkCore;
-//using DispatcherWeb.Startup;
-using DispatcherWeb.Web.Authentication.JwtBearer;
-using DispatcherWeb.Web.Authentication.TwoFactor;
-using DispatcherWeb.Web.Chat.SignalR;
-using DispatcherWeb.Web.Common;
-using DispatcherWeb.Web.Configuration;
-using DispatcherWeb.Web.DashboardCustomization;
-using DispatcherWeb.DriverApp;
 
 namespace DispatcherWeb.Web
 {
@@ -93,10 +83,10 @@ namespace DispatcherWeb.Web
             Configuration.ReplaceService<IAppConfigurationAccessor, AppConfigurationAccessor>();
 
             Configuration.ReplaceService<IAppConfigurationWriter, AppConfigurationWriter>();
-            
+
             if (WebConsts.HangfireDashboardEnabled)
             {
-                Configuration.BackgroundJobs.UseHangfire();   
+                Configuration.BackgroundJobs.UseHangfire();
             }
 
             //Uncomment this line to use Redis cache instead of in-memory cache.

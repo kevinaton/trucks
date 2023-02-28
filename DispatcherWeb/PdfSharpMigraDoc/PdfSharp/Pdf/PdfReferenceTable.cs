@@ -28,9 +28,9 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using PdfSharp.Pdf.Advanced;
 using PdfSharp.Pdf.IO;
 

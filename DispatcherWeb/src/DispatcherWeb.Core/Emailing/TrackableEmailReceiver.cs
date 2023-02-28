@@ -35,7 +35,7 @@ namespace DispatcherWeb.Emailing
         public virtual TrackableEmail TrackableEmail { get; set; }
 
         public virtual ICollection<TrackableEmailEvent> Events { get; set; }
-        
+
         public void TruncateFieldsIfNeeded()
         {
             if (Email?.Length > FieldLengthes.Email)

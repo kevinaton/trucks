@@ -28,7 +28,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 #if GDI
 using System.Drawing;
 #endif

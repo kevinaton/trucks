@@ -2,7 +2,7 @@
 {
     public class HostDashboardViewModel
     {
-        public int ReportOnLoadDayCount { get; set; } 
+        public int ReportOnLoadDayCount { get; set; }
 
         public HostDashboardViewModel(int reportOnLoadDayCount)
         {

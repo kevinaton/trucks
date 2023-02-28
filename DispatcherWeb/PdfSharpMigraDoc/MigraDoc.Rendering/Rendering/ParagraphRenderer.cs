@@ -33,11 +33,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using MigraDoc.DocumentObjectModel;
-using PdfSharp.Pdf;
-using PdfSharp.Drawing;
 using MigraDoc.DocumentObjectModel.Fields;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.Rendering.Resources;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
 
 namespace MigraDoc.Rendering
 {
@@ -621,7 +621,7 @@ namespace MigraDoc.Rendering
             }
             //Automatic tab stop: FirstLineIndent < 0 => automatic tab stop at LeftIndent.
 
-            if (format.FirstLineIndent < 0 || 
+            if (format.FirstLineIndent < 0 ||
                 (format._listInfo != null && !format._listInfo.IsNull() && format.ListInfo.NumberPosition < format.LeftIndent))
             {
                 XUnit leftIndent = format.LeftIndent.Point;
@@ -857,8 +857,8 @@ namespace MigraDoc.Rendering
                 case "Image":
                     RenderImage((Image)docObj);
                     break;
-                //        default:
-                //          throw new NotImplementedException(typeName + " is coming soon...");
+                    //        default:
+                    //          throw new NotImplementedException(typeName + " is coming soon...");
             }
         }
 
@@ -2346,11 +2346,11 @@ namespace MigraDoc.Rendering
                 {
                     DocumentObject parent = DocumentRelations.GetParent(_currentLeaf.Current);
                     parent = DocumentRelations.GetParent(parent);
-                    
+
                     FormattedText formattedText = parent as FormattedText;
                     if (formattedText != null)
                         return formattedText.Font;
-                    
+
                     Hyperlink hyperlink = parent as Hyperlink;
                     if (hyperlink != null)
                         return hyperlink.Font;

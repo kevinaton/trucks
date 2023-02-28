@@ -1,7 +1,5 @@
-﻿using System;
+﻿using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
@@ -10,8 +8,8 @@ using Abp.Linq.Extensions;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.LeaseHaulerRequests.Dto;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Orders;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.LeaseHaulerRequests
 {

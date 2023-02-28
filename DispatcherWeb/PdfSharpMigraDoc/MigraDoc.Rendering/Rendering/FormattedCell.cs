@@ -31,8 +31,8 @@
 using System;
 using System.Collections.Generic;
 using MigraDoc.DocumentObjectModel;
-using PdfSharp.Drawing;
 using MigraDoc.DocumentObjectModel.Tables;
+using PdfSharp.Drawing;
 
 namespace MigraDoc.Rendering
 {
@@ -190,7 +190,7 @@ namespace MigraDoc.Rendering
         /// </summary>
         public Cell Cell
         {
-            get { return _cell;}
+            get { return _cell; }
         }
         readonly Cell _cell;
         TopDownFormatter _formatter;

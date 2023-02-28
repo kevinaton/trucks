@@ -58,10 +58,10 @@ namespace DispatcherWeb.Configuration.Host
                 Security = await GetSecuritySettingsAsync(),
                 Billing = await GetBillingSettingsAsync(),
 
-           	OtherSettings = await GetOtherSettingsAsync(),
+                OtherSettings = await GetOtherSettingsAsync(),
                 ExternalLoginProviderSettings = await GetExternalLoginProviderSettings(),
- 		Sms = await SettingManager.GetSmsSettingsAsync()
-};
+                Sms = await SettingManager.GetSmsSettingsAsync()
+            };
         }
 
         private async Task<GeneralSettingsEditDto> GetGeneralSettingsAsync()

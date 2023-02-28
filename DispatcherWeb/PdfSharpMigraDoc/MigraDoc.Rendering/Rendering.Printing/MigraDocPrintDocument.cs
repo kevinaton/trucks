@@ -30,14 +30,11 @@
 
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Runtime.InteropServices;
 using PdfSharp;
 using PdfSharp.Drawing;
-using MigraDoc.DocumentObjectModel.publics;
-using MigraDoc.DocumentObjectModel.Visitors;
-using MigraDoc.DocumentObjectModel.IO;
 
 namespace MigraDoc.Rendering.Printing
 {

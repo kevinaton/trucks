@@ -28,17 +28,17 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using PdfSharp.Drawing;
-using PdfSharp.Pdf.IO;
-using PdfSharp.Pdf.Filters;
 using PdfSharp.Pdf.Advanced;
+using PdfSharp.Pdf.Filters;
 using PdfSharp.Pdf.Internal;
+using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf
 {
@@ -1899,8 +1899,8 @@ namespace PdfSharp.Pdf
             get
             {
 #if true
-                return String.Format(CultureInfo.InvariantCulture, "dictionary({0},[{1}])={2}", 
-                    ObjectID.DebuggerDisplay, 
+                return String.Format(CultureInfo.InvariantCulture, "dictionary({0},[{1}])={2}",
+                    ObjectID.DebuggerDisplay,
                     Elements.Count,
                     _elements.DebuggerDisplay);
 #else

@@ -100,7 +100,7 @@ namespace Intuit.Ipp.Utility
         /// <returns>True if 'inputString' is a valid xml</returns>
         public static bool IsValidXml(string inputString)
         {
-            if (!inputString.StartsWith("<",StringComparison.Ordinal))
+            if (!inputString.StartsWith("<", StringComparison.Ordinal))
             {
                 return false;
             }

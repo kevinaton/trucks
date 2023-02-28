@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services;
-using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using DispatcherWeb.Dispatching;
@@ -38,7 +35,7 @@ namespace DispatcherWeb.Orders
             scheduledTrucks = scheduledTrucks.Round(2);
 
             await EnsureNumberOfTrucksIsNotLessCurrentUtilization();
-            
+
             orderLine.ScheduledTrucks = scheduledTrucks;
 
             // Local functions

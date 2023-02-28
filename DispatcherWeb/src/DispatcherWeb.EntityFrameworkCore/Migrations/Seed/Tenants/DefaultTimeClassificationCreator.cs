@@ -1,11 +1,8 @@
-﻿using Abp.Timing;
+﻿using System.Linq;
+using Abp.Timing;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.TimeClassifications;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DispatcherWeb.Migrations.Seed.Tenants
 {

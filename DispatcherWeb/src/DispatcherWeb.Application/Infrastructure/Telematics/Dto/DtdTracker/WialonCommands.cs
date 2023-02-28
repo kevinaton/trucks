@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Infrastructure.Telematics.Dto.DtdTracker
+﻿namespace DispatcherWeb.Infrastructure.Telematics.Dto.DtdTracker
 {
     public static class WialonCommands
     {

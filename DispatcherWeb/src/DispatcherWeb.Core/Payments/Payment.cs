@@ -1,11 +1,10 @@
-﻿using Abp.Domain.Entities;
-using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.Authorization.Users;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
+using DispatcherWeb.Authorization.Users;
 
 namespace DispatcherWeb.Payments
 {
@@ -28,7 +27,7 @@ namespace DispatcherWeb.Payments
         public long? AuthorizationUserId { get; set; }
 
         public DateTime? AuthorizationDateTime { get; set; }
-        
+
         [Column(TypeName = DispatcherWebConsts.DbTypeDecimal19_4)]
         public decimal? AuthorizationAmount { get; set; }
 

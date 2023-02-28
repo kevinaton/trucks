@@ -1,8 +1,6 @@
-﻿using DispatcherWeb.Orders.TaxDetails;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
+using DispatcherWeb.Orders.TaxDetails;
 
 namespace DispatcherWeb.Invoices.Dto
 {

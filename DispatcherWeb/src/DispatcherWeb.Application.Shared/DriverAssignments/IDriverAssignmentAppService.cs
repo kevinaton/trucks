@@ -1,6 +1,6 @@
-﻿using Abp.Application.Services.Dto;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp.Application.Services;
+using Abp.Application.Services.Dto;
 using DispatcherWeb.DriverAssignments.Dto;
 
 namespace DispatcherWeb.DriverAssignments
@@ -14,8 +14,8 @@ namespace DispatcherWeb.DriverAssignments
         Task SetDefaultDriverForTruck(SetDefaultDriverForTruckInput input);
         Task<byte[]> GetDriverAssignmentReport(GetDriverAssignmentsInput input);
         Task SetDriverForTruck(SetDriverForTruckInput input);
-		Task<ThereAreOpenDispatchesForTruckOnDateResult> ThereAreOpenDispatchesForTruckOnDate(ThereAreOpenDispatchesForTruckOnDateInput input);
-		Task<int> AddUnscheduledTrucks(AddUnscheduledTrucksInput input);
+        Task<ThereAreOpenDispatchesForTruckOnDateResult> ThereAreOpenDispatchesForTruckOnDate(ThereAreOpenDispatchesForTruckOnDateInput input);
+        Task<int> AddUnscheduledTrucks(AddUnscheduledTrucksInput input);
         Task AddDefaultStartTime(AddDefaultStartTimeInput input);
     }
 }

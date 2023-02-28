@@ -29,8 +29,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Text;
 #if GDI
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -76,7 +74,6 @@ using SysRect = Windows.Foundation.Rect;
 #endif
 using PdfSharp.Pdf;
 using PdfSharp.Drawing.Pdf;
-using PdfSharp.Internal;
 using PdfSharp.Pdf.Advanced;
 
 #pragma warning disable 1587

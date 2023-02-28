@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Abp.Extensions;
 using Abp.Runtime.Validation;
 using Abp.Timing;
 using DispatcherWeb.Configuration.Dto;
 using DispatcherWeb.Configuration.Host.Dto;
-using Abp.Extensions;
 
 namespace DispatcherWeb.Configuration.Tenants.Dto
 {
@@ -30,7 +30,7 @@ namespace DispatcherWeb.Configuration.Tenants.Dto
         public TenantOtherSettingsEditDto OtherSettings { get; set; }
 
         public ExternalLoginProviderSettingsEditDto ExternalLoginProviderSettings { get; set; }
-        
+
         public GpsIntegrationSettingsEditDto GpsIntegration { get; set; }
 
         public PaymentSettingsEditDto Payment { get; set; }

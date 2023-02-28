@@ -19,7 +19,7 @@ namespace DispatcherWeb.Emailing.Dto
         public DateTime? EmailFailedTime => GetEventTime(x => x.EmailDeliveryStatus?.IsFailed() == true);
         public string EmailCreatorUserName { get; set; }
         public EmailDeliveryStatus ReceiverDeliveryStatus { get; set; }
-        
+
         public string ReceiverDeliveryStatusFormatted => ReceiverDeliveryStatus.GetDisplayName();
         public List<EmailHistoryEventDto> Events { get; set; }
 

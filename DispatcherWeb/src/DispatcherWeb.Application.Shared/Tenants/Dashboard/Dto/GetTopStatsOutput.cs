@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Tenants.Dashboard.Dto
+﻿namespace DispatcherWeb.Tenants.Dashboard.Dto
 {
     public class GetTopStatsOutput
     {

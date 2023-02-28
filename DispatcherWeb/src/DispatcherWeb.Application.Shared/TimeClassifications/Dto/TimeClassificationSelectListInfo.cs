@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.TimeClassifications.Dto
+﻿namespace DispatcherWeb.TimeClassifications.Dto
 {
     public class TimeClassificationSelectListInfo
     {

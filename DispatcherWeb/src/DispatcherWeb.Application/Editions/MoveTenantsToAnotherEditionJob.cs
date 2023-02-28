@@ -18,7 +18,7 @@ namespace DispatcherWeb.Editions
         private readonly EditionManager _editionManager;
         private readonly IAppNotifier _appNotifier;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
-        
+
         public IEventBus EventBus { get; set; }
 
         public MoveTenantsToAnotherEditionJob(
@@ -50,7 +50,7 @@ namespace DispatcherWeb.Editions
                     .Where(t => t.EditionId == args.SourceEditionId)
                     .Select(t => t.Id)
                     .ToList();
-                
+
                 await uow.CompleteAsync();
             }
 

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Application.Features;
-using Abp.Configuration;
 using Abp.Timing;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Features;
@@ -131,7 +127,7 @@ namespace DispatcherWeb.Tests.Orders
                 DateBegin = today.AddDays(1),
                 DateEnd = today.AddDays(2),
                 OrderId = order.Id,
-                Shifts = new Shift[] {Shift.Shift1, Shift.Shift2},
+                Shifts = new Shift[] { Shift.Shift1, Shift.Shift2 },
             });
 
             // Assert

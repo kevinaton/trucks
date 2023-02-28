@@ -19,7 +19,6 @@
 // query generated and return the result.</summary>
 ////********************************************************************
 
-using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Intuit.Ipp.QueryFilter
@@ -27,7 +26,6 @@ namespace Intuit.Ipp.QueryFilter
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Net;
     using System.Reflection;
     using System.Text;
@@ -35,11 +33,10 @@ namespace Intuit.Ipp.QueryFilter
     using Intuit.Ipp.Core.Rest;
     using Intuit.Ipp.Data;
     using Intuit.Ipp.Exception;
-    using Intuit.Ipp.QueryFilter.Properties;
     using Intuit.Ipp.Utility;
-   // using Intuit.Ipp.LinqExtender;
+    // using Intuit.Ipp.LinqExtender;
 
-    
+
     /// <summary>
     /// Contains methods used to parse the expression tree and execute the query generated and return the result.
     /// </summary>
@@ -153,9 +150,9 @@ namespace Intuit.Ipp.QueryFilter
 
             // Creates request parameters
             RequestParameters parameters = null;
-           
-                parameters = new RequestParameters(uri, HttpVerbType.POST, CoreConstants.CONTENTTYPE_APPLICATIONTEXT);
-        
+
+            parameters = new RequestParameters(uri, HttpVerbType.POST, CoreConstants.CONTENTTYPE_APPLICATIONTEXT);
+
 
             // Prepares request
             HttpWebRequest request = this.restHandler.PrepareRequest(parameters, idsQuery);
@@ -192,9 +189,9 @@ namespace Intuit.Ipp.QueryFilter
 
             List<T> entities = new List<T>();
 
-        
-            if(queryResponse.maxResults > 0 )
-            
+
+            if (queryResponse.maxResults > 0)
+
             {
                 object tempEntities = queryResponse.AnyIntuitObjects;
                 if (tempEntities != null)
@@ -304,9 +301,9 @@ namespace Intuit.Ipp.QueryFilter
 
             // Creates request parameters
             RequestParameters parameters = null;
-         
-                parameters = new RequestParameters(uri, HttpVerbType.POST, CoreConstants.CONTENTTYPE_APPLICATIONTEXT);
-    
+
+            parameters = new RequestParameters(uri, HttpVerbType.POST, CoreConstants.CONTENTTYPE_APPLICATIONTEXT);
+
 
             // Prepares request
             HttpWebRequest request = this.restHandler.PrepareRequest(parameters, idsQuery);
@@ -546,7 +543,7 @@ namespace Intuit.Ipp.QueryFilter
         //    Type t = new ReferenceType().GetType();
         //    if (expression.DeclaringType == t && name.Contains(".Value"))
         //        name = name.Replace(".Value", "");
-            
+
         //    this.whereBuilder.Append(name);
         //    return expression;
         //}
@@ -627,7 +624,7 @@ namespace Intuit.Ipp.QueryFilter
         //        {
         //            this.whereBuilder.Append(" NOT ");
         //        }
-            
+
         //        this.whereBuilder.Append(string.Format(CultureInfo.InvariantCulture, " {0} {1} ({2}) ", methodCallExpression.Target, "IN", inValues));
         //    }
 

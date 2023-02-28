@@ -1,56 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Abp;
-using Abp.Application.Features;
 using Abp.Application.Services;
-using Abp.Authorization;
-using Abp.BackgroundJobs;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
-using Abp.Notifications;
-using Abp.Configuration;
-using Abp.Threading;
-using Abp.Timing;
-using Abp.UI;
-using DispatcherWeb.Authorization;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Features;
-using DispatcherWeb.Infrastructure.BackgroundJobs;
 using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.Infrastructure.Telematics;
-using DispatcherWeb.Infrastructure.Telematics.Dto;
 using DispatcherWeb.MultiTenancy;
-using DispatcherWeb.Notifications;
-using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Infrastructure.Telematics.Dto.DtdTracker;
-using Abp.Application.Services.Dto;
-using DispatcherWeb.Dto;
-using DispatcherWeb.Trucks.Dto;
-using Abp.Extensions;
-using DispatcherWeb.Infrastructure.Utilities;
 using DispatcherWeb.Orders;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Trucks
 {
     public class TruckMileageAndHoursAppService : DispatcherWebAppServiceBase, ITruckMileageAndHoursAppService
-    {        
+    {
         private readonly IRepository<VehicleUsage> _vehicleUsageRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
-        private readonly IRepository<Tenant> _tenantRepository;        
+        private readonly IRepository<Tenant> _tenantRepository;
 
-        public TruckMileageAndHoursAppService(            
+        public TruckMileageAndHoursAppService(
             IRepository<VehicleUsage> vehicleUsageRepository,
             IRepository<OrderLine> orderLineRepository,
-            IRepository<Tenant> tenantRepository            
+            IRepository<Tenant> tenantRepository
         )
-        {                        
+        {
             _vehicleUsageRepository = vehicleUsageRepository;
             _orderLineRepository = orderLineRepository;
-            _tenantRepository = tenantRepository;            
+            _tenantRepository = tenantRepository;
         }
 
         [RemoteService(false)]
@@ -159,7 +137,7 @@ namespace DispatcherWeb.Trucks
                         Reading = (decimal)hours,
                     });
                 }
-            }      
-        }      
+            }
+        }
     }
 }

@@ -19,18 +19,14 @@
 // <summary>This file contains Request Log configuration.</summary>
 // -----------------------------------------------------------------------
 
-using System;
-
 namespace Intuit.Ipp.Core.Rest
 {
-    using System.IO;
-    using Intuit.Ipp.Exception;
     using System;
+    using System.Globalization;
+    using System.IO;
     using Serilog;
-    using Serilog.Sinks;
     using Serilog.Core;
     using Serilog.Events;
-    using System.Globalization;
 
     /// <summary>
     /// Contains properties used to indicate whether request and response messages are to be logged.
@@ -183,9 +179,9 @@ namespace Intuit.Ipp.Core.Rest
         /// <summary>
         /// Initializes a new instance of AdvanceLogging
         /// </summary>
- 
+
         public AdvancedLogging()
-            : this(enableSerilogRequestResponseLoggingForDebug: true, enableSerilogRequestResponseLoggingForTrace: true, enableSerilogRequestResponseLoggingForConsole: true, enableSerilogRequestResponseLoggingForRollingFile: false,  serviceRequestLoggingLocationForFile: null)
+            : this(enableSerilogRequestResponseLoggingForDebug: true, enableSerilogRequestResponseLoggingForTrace: true, enableSerilogRequestResponseLoggingForConsole: true, enableSerilogRequestResponseLoggingForRollingFile: false, serviceRequestLoggingLocationForFile: null)
         {
         }
 
@@ -204,7 +200,7 @@ namespace Intuit.Ipp.Core.Rest
             this.EnableSerilogRequestResponseLoggingForConsole = enableSerilogRequestResponseLoggingForConsole;
             this.EnableSerilogRequestResponseLoggingForRollingFile = enableSerilogRequestResponseLoggingForRollingFile;
             //this.EnableSerilogRequestResponseLoggingForAzureDocumentDB = enableSerilogRequestResponseLoggingForAzureDocumentDB;
-           
+
             this.ServiceRequestLoggingLocationForFile = serviceRequestLoggingLocationForFile;
             //this.ServiceRequestAzureDocumentDBUrl = serviceRequestAzureDocumentDBUrl;
             //this.ServiceRequestAzureDocumentDBSecureKey = serviceRequestAzureDocumentDBSecureKey;
@@ -225,13 +221,13 @@ namespace Intuit.Ipp.Core.Rest
 
                 //Log file path for widows n ios
                 filePath = Path.Combine(this.ServiceRequestLoggingLocationForFile, "QBOApiLogs-" + DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture) + ".txt");
-           
+
             }
 
             //Setting logger config for Serilog
             var loggerConfig = new LoggerConfiguration()
                  .MinimumLevel.Verbose();
-                 
+
 
             //Enabling console log
             if (this.EnableSerilogRequestResponseLoggingForConsole == true)

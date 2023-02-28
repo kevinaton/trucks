@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace DispatcherWeb.Orders.RevenueAnalysisReport.Dto
+﻿namespace DispatcherWeb.Orders.RevenueAnalysisReport.Dto
 {
     public class RevenueAnalysisReportDataItem
-	{
+    {
         public decimal RevenueValue => FreightRevenueValue + MaterialRevenueValue + FuelSurchargeValue;
         public decimal FreightRevenueValue { get; set; }
         public decimal MaterialRevenueValue { get; set; }

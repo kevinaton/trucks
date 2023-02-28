@@ -22,7 +22,6 @@
 namespace Intuit.Ipp.Exception
 {
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Runtime.Serialization;
     using Intuit.Ipp.Exception.Properties;
 
@@ -32,7 +31,7 @@ namespace Intuit.Ipp.Exception
     [System.Serializable]
     public class SecurityException : IdsException
     {
-       
+
 
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace Intuit.Ipp.Exception
             : base(errorMessage, errorCode, source, innerException)
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the SecurityException class.
         /// </summary>

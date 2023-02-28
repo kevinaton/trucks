@@ -18,7 +18,7 @@
 // <summary>This file contains SdkException.</summary>
 // <summary>This file contains class that encapsulates subscriber information as returend by API_GetAdminsForAllProducts.</summary>
 ////*********************************************************
-namespace Intuit.Ipp.Data 
+namespace Intuit.Ipp.Data
 {
     using System.Collections.ObjectModel;
     using System.Reflection;
@@ -27,7 +27,7 @@ namespace Intuit.Ipp.Data
     /// <summary>
     /// Encapsulates Trial Subscription information as returend by API_IPPDevCustomerDetail.
     /// </summary>
-    public class TrialSubscription 
+    public class TrialSubscription
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TrialSubscription"/> class.

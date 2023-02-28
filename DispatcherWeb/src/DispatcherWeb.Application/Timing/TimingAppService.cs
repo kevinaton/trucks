@@ -90,11 +90,11 @@ namespace DispatcherWeb.Timing
             }
 
             var tenants = await TenantManager.Tenants.Select(x => x.Id).ToListAsync();
-            
+
             foreach (var tenantId in tenants)
             {
                 var timezone = await SettingManager.GetSettingValueForTenantAsync(TimingSettingNames.TimeZone, tenantId);
-                
+
                 //Driver Assignments
                 var updatedRowCount = 0;
                 do

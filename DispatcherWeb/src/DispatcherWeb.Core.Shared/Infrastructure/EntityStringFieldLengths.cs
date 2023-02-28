@@ -35,7 +35,7 @@
             public const int Transmission = General.Medium;
             public const int Engine = General.Medium;
             public const int RearEnd = General.Medium;
-            public const int Make  = General.Medium;
+            public const int Make = General.Medium;
             public const int Model = General.Medium;
             public const int Vin = General.Medium;
             public const int Plate = General.Short;
@@ -70,7 +70,7 @@
             public const int IncomeAccount = General.Long;
         }
 
-       
+
 
         public static class DriverMessage
         {

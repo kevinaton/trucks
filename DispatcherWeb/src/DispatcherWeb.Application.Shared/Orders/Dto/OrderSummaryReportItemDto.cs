@@ -1,9 +1,8 @@
-﻿using DispatcherWeb.Common.Dto;
+﻿using System;
+using System.Collections.Generic;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Orders.TaxDetails;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace DispatcherWeb.Orders.Dto
 {
@@ -24,10 +23,10 @@ namespace DispatcherWeb.Orders.Dto
         public double? NumberOfTrucks { get; set; }
         public string TrucksString => string.Join(", ", Trucks);
         public List<string> Trucks { get; set; }
-		public Shift? OrderShift { get; set; }
-		public string OrderShiftName { get; set; }
+        public Shift? OrderShift { get; set; }
+        public string OrderShiftName { get; set; }
 
-		public class ItemOrderLine : IOrderLineTaxTotalDetails
+        public class ItemOrderLine : IOrderLineTaxTotalDetails
         {
             public string ServiceName { get; set; }
             public bool IsTaxable { get; set; }
@@ -46,13 +45,13 @@ namespace DispatcherWeb.Orders.Dto
             decimal IOrderLineTaxTotalDetails.Tax { get => OrderLineTax; set => OrderLineTax = value; }
             decimal IOrderLineTaxTotalDetails.TotalAmount { get => OrderLineTotal; set => OrderLineTotal = value; }
 
-            public string GetDisplayValue() 
+            public string GetDisplayValue()
             {
-                if(Designation == DesignationEnum.MaterialOnly)
+                if (Designation == DesignationEnum.MaterialOnly)
                 {
                     return $"{ServiceName}   {MaterialQuantity:f2} {MaterialUom}";
                 }
-                if(Designation == DesignationEnum.FreightOnly)
+                if (Designation == DesignationEnum.FreightOnly)
                 {
                     return $"{ServiceName}   {FreightQuantity:f2} {FreightUom}";
                 }
@@ -74,7 +73,7 @@ namespace DispatcherWeb.Orders.Dto
                 }
                 if (hasFreight)
                 {
-                    result += $"{FreightQuantity:f2} {FreightUom}"; 
+                    result += $"{FreightQuantity:f2} {FreightUom}";
                 }
 
                 return result;

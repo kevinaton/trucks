@@ -20,7 +20,7 @@ namespace DispatcherWeb.Web.Startup.ExternalLoginInfoProviders
         public TenantBasedFacebookExternalLoginInfoProvider(
             ISettingManager settingManager,
             IAbpSession abpSession,
-            ICacheManager cacheManager):base(abpSession, cacheManager)
+            ICacheManager cacheManager) : base(abpSession, cacheManager)
         {
             _settingManager = settingManager;
             _abpSession = abpSession;
@@ -30,7 +30,7 @@ namespace DispatcherWeb.Web.Startup.ExternalLoginInfoProviders
         {
             return new ExternalLoginProviderInfo(Name, settings.AppId, settings.AppSecret, typeof(FacebookAuthProviderApi));
         }
-        
+
         protected override bool TenantHasSettings()
         {
             var settingValue = _settingManager.GetSettingValueForTenant(AppSettings.ExternalLoginProvider.Tenant.Facebook, _abpSession.TenantId.Value);

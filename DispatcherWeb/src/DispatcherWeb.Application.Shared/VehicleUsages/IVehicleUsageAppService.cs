@@ -1,6 +1,6 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using DispatcherWeb.VehicleUsages.Dto;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.VehicleUsages
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.DriverApp.Settings.Dto
+﻿namespace DispatcherWeb.DriverApp.Settings.Dto
 {
     public class SettingsDto
     {

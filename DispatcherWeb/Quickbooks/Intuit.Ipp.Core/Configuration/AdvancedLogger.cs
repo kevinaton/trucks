@@ -21,8 +21,6 @@
 
 namespace Intuit.Ipp.Core.Configuration
 {
-    using Intuit.Ipp.Diagnostics;
-
     /// <summary>
     /// Contains properties used to set the Logging mechanism.
     /// </summary>

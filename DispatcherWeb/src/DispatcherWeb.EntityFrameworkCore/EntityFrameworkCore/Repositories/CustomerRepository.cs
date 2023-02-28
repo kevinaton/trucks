@@ -1,15 +1,12 @@
-﻿using Abp.EntityFrameworkCore;
-using DispatcherWeb.Customers;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Abp.Collections.Extensions;
-using DispatcherWeb.Quotes;
-using DispatcherWeb.Projects;
-using DispatcherWeb.Orders;
+using Abp.EntityFrameworkCore;
+using DispatcherWeb.Customers;
 using DispatcherWeb.Invoices;
+using DispatcherWeb.Orders;
+using DispatcherWeb.Quotes;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.EntityFrameworkCore.Repositories
 {

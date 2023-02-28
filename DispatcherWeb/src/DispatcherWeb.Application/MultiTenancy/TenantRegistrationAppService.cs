@@ -13,7 +13,6 @@ using Abp.Timing;
 using Abp.UI;
 using Abp.Zero.Configuration;
 using DispatcherWeb.Configuration;
-using DispatcherWeb.Debugging;
 using DispatcherWeb.Editions;
 using DispatcherWeb.Editions.Dto;
 using DispatcherWeb.Features;
@@ -182,7 +181,7 @@ namespace DispatcherWeb.MultiTenancy
                 {
                     editionWithFeatures = editionWithFeatures.Where(e => e.Edition.Id != currentEditionId).ToList();
 
-                    var currentEdition = (SubscribableEdition) (await _editionManager.GetByIdAsync(currentEditionId.Value));
+                    var currentEdition = (SubscribableEdition)(await _editionManager.GetByIdAsync(currentEditionId.Value));
                     if (!currentEdition.IsFree)
                     {
                         var lastPayment = await _subscriptionPaymentRepository.GetLastCompletedPaymentOrDefaultAsync(

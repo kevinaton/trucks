@@ -2,7 +2,7 @@ using System;
 
 namespace DispatcherWeb.MultiTenancy.HostDashboard.Dto
 {
-    public class IncomeStastistic 
+    public class IncomeStastistic
     {
         public string Label { get; set; }
         public DateTime Date { get; set; }
@@ -14,8 +14,8 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard.Dto
 
         }
 
-        public IncomeStastistic( DateTime date)
-        { 
+        public IncomeStastistic(DateTime date)
+        {
             Date = date;
         }
 

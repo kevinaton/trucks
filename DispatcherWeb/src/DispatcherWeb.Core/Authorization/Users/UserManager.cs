@@ -14,11 +14,11 @@ using Abp.Runtime.Caching;
 using Abp.Threading;
 using Abp.UI;
 using Abp.Zero.Configuration;
+using DispatcherWeb.Authorization.Roles;
+using DispatcherWeb.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using DispatcherWeb.Authorization.Roles;
-using DispatcherWeb.Security;
 
 namespace DispatcherWeb.Authorization.Users
 {
@@ -50,7 +50,7 @@ namespace DispatcherWeb.Authorization.Users
             IRepository<OrganizationUnit, long> organizationUnitRepository,
             IRepository<UserOrganizationUnit, long> userOrganizationUnitRepository,
             IOrganizationUnitSettings organizationUnitSettings,
-            ISettingManager settingManager, 
+            ISettingManager settingManager,
             ILocalizationManager localizationManager)
             : base(
                   roleManager,
@@ -75,7 +75,7 @@ namespace DispatcherWeb.Authorization.Users
             _settingManager = settingManager;
             _localizationManager = localizationManager;
         }
-        
+
         public virtual async Task<User> GetUserOrNullAsync(UserIdentifier userIdentifier)
         {
             return await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>
@@ -114,7 +114,7 @@ namespace DispatcherWeb.Authorization.Users
             {
                 return base.SetRolesAsync(user, roleNames);
             }
-            
+
             // Always keep admin role for admin user
             var roles = roleNames.ToList();
             roles.Add(StaticRoleNames.Host.Admin);

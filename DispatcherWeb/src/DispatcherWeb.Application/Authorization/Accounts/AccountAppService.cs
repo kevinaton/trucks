@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web;
-using Abp.Application.Services;
 using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Extensions;
 using Abp.Runtime.Security;
 using Abp.Runtime.Session;
-using Abp.Timing;
 using Abp.UI;
 using Abp.Zero.Configuration;
-using Microsoft.AspNetCore.Identity;
 using DispatcherWeb.Authorization.Accounts.Dto;
+using DispatcherWeb.Authorization.Delegation;
 using DispatcherWeb.Authorization.Impersonation;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
@@ -19,8 +17,7 @@ using DispatcherWeb.Debugging;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Security.Recaptcha;
 using DispatcherWeb.Url;
-using DispatcherWeb.Authorization.Delegation;
-using Abp.Domain.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace DispatcherWeb.Authorization.Accounts
 {
@@ -44,7 +41,7 @@ namespace DispatcherWeb.Authorization.Accounts
             IImpersonationManager impersonationManager,
             IUserLinkManager userLinkManager,
             IPasswordHasher<User> passwordHasher,
-            IWebUrlService webUrlService, 
+            IWebUrlService webUrlService,
             IUserDelegationManager userDelegationManager)
         {
             _userEmailer = userEmailer;
@@ -126,7 +123,7 @@ namespace DispatcherWeb.Authorization.Accounts
             {
                 return;
             }
-            
+
             user.SetNewPasswordResetCode();
             await _userEmailer.SendPasswordResetLinkAsync(
                 user,
@@ -200,7 +197,7 @@ namespace DispatcherWeb.Authorization.Accounts
                 TenancyName = await GetTenancyNameOrNullAsync(input.TenantId)
             };
         }
-        
+
         [AbpAuthorize(AppPermissions.Pages_Tenants_Impersonation)]
         public virtual async Task<ImpersonateOutput> ImpersonateTenant(ImpersonateTenantInput input)
         {

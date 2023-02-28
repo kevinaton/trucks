@@ -638,7 +638,7 @@ namespace PdfSharp.Pdf.IO
         {
             if (symbol == Symbol.EndStream)
             {
-                Skip:
+            Skip:
                 char ch = _lexer.MoveToNonWhiteSpace();
 
                 if (ch == Chars.EOF)

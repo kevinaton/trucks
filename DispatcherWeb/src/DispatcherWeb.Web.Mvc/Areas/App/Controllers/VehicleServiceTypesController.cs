@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.VehicleServiceTypes;
@@ -11,23 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.app.Controllers
 {
-	[Area("App")]
-	[AbpMvcAuthorize(AppPermissions.Pages_VehicleServiceTypes_View)]
+    [Area("App")]
+    [AbpMvcAuthorize(AppPermissions.Pages_VehicleServiceTypes_View)]
     public class VehicleServiceTypesController : DispatcherWebControllerBase
-	{
-		private readonly IVehicleServiceTypeAppService _vehicleServiceTypeAppService;
+    {
+        private readonly IVehicleServiceTypeAppService _vehicleServiceTypeAppService;
 
-		public VehicleServiceTypesController(
-			IVehicleServiceTypeAppService vehicleServiceTypeAppService
-		)
-		{
-			_vehicleServiceTypeAppService = vehicleServiceTypeAppService;
-		}
-		public async Task<IActionResult> Index()
-		{
-			var model = await _vehicleServiceTypeAppService.GetList();
-			return View(model);
-		}
+        public VehicleServiceTypesController(
+            IVehicleServiceTypeAppService vehicleServiceTypeAppService
+        )
+        {
+            _vehicleServiceTypeAppService = vehicleServiceTypeAppService;
+        }
+        public async Task<IActionResult> Index()
+        {
+            var model = await _vehicleServiceTypeAppService.GetList();
+            return View(model);
+        }
 
-	}
+    }
 }

@@ -8,7 +8,7 @@ namespace DispatcherWeb.Url
 
         private NullAppUrlService()
         {
-            
+
         }
 
         public string CreateEmailActivationUrlFormat(int? tenantId)

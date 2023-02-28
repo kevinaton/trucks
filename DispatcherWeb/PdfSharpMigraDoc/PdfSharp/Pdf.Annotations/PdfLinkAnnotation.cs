@@ -28,8 +28,8 @@
 #endregion
 
 using System;
-using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf.Internal;
+using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf.Annotations
 {

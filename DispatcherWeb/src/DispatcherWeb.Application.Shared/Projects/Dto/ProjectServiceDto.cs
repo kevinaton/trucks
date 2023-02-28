@@ -1,6 +1,5 @@
 ﻿using DispatcherWeb.Common.Dto;
 using Newtonsoft.Json;
-using System;
 
 namespace DispatcherWeb.Projects.Dto
 {

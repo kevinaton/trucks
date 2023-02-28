@@ -28,5 +28,5 @@ namespace DispatcherWeb.Editions.Dto
         public string ExpiringEditionDisplayName { get; set; }
         public DateTime CreationTime { get; set; }
 
-   }
+    }
 }

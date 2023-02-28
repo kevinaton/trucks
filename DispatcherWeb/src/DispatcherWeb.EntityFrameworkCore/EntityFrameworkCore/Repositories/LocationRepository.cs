@@ -1,13 +1,13 @@
-﻿using Abp.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp.EntityFrameworkCore;
 using Abp.UI;
 using DispatcherWeb.Locations;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Projects;
 using DispatcherWeb.Quotes;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.EntityFrameworkCore.Repositories
 {

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoFixture;
 using DispatcherWeb.DailyHistory;
@@ -33,7 +30,7 @@ namespace DispatcherWeb.Tests.MultiTenancy.HostDashboard
             var tenantToDelete = await CreateTenant("tenant404");
             await UsingDbContextAsync(async context => await CreateTenantDailyHistory(new Fixture(), context, tenantToDelete.Id, _yesterday));
             await UpdateEntity(tenantToDelete, t => t.IsDeleted = true);
-            
+
             LoginAsHostAdmin();
 
             // Act

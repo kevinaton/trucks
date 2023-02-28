@@ -22,13 +22,13 @@ namespace Intuit.Ipp.XsdExtension
         /// <param name="appInfoValue">value of AppInfo tag</param>
         public void HandleAppInfo(System.CodeDom.CodeMemberProperty memberProperty, string appInfoValue)
         {
-            if (string.Equals(appInfoValue.Trim(), "IGNORE", System.StringComparison.OrdinalIgnoreCase))                
+            if (string.Equals(appInfoValue.Trim(), "IGNORE", System.StringComparison.OrdinalIgnoreCase))
             {
-            // Add [XmlIgnore] attribute
-            memberProperty.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(System.Xml.Serialization.XmlIgnoreAttribute))));
+                // Add [XmlIgnore] attribute
+                memberProperty.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference(typeof(System.Xml.Serialization.XmlIgnoreAttribute))));
 
-            // Add [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)] attribute
-            CodeDomHelper.AddEditorBrowsableAttribute(memberProperty);
+                // Add [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)] attribute
+                CodeDomHelper.AddEditorBrowsableAttribute(memberProperty);
             }
         }
     }

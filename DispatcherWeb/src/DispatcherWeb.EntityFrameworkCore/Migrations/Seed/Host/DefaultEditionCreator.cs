@@ -1,9 +1,9 @@
 using System.Linq;
 using Abp.Application.Features;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Editions;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.Features;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Migrations.Seed.Host
 {
@@ -47,7 +47,7 @@ namespace DispatcherWeb.Migrations.Seed.Host
             }
 
             int liteEditionId = CreateEditionIfNotExists(EditionManager.LiteEditionName);
-            if(liteEditionId > 0)
+            if (liteEditionId > 0)
             {
                 CreateFeatureIfNotExists(liteEditionId, AppFeatures.ChatFeature, true);
                 CreateFeatureIfNotExists(liteEditionId, AppFeatures.TenantToTenantChatFeature, true);
@@ -64,7 +64,7 @@ namespace DispatcherWeb.Migrations.Seed.Host
             }
 
             int premiumEditionId = CreateEditionIfNotExists(EditionManager.PremiumEditionName);
-            if(premiumEditionId > 0)
+            if (premiumEditionId > 0)
             {
                 CreateFeatureIfNotExists(premiumEditionId, AppFeatures.ChatFeature, true);
                 CreateFeatureIfNotExists(premiumEditionId, AppFeatures.TenantToTenantChatFeature, true);
@@ -142,7 +142,7 @@ namespace DispatcherWeb.Migrations.Seed.Host
         private int CreateEditionIfNotExists(string editionName)
         {
             var edition = _context.Editions.IgnoreQueryFilters().OfType<SubscribableEdition>().FirstOrDefault(e => e.Name == editionName);
-            if(edition == null)
+            if (edition == null)
             {
                 edition = new SubscribableEdition { Name = editionName, DisplayName = editionName };
                 _context.Editions.Add(edition);

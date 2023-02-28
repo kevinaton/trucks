@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.Application.Services;
-using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
 using DispatcherWeb.Imports.DataResolvers.OfficeResolvers;
 using DispatcherWeb.Imports.RowReaders;
-using DispatcherWeb.Offices;
 using DispatcherWeb.Trucks;
-using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Imports.Services
 {
@@ -30,8 +24,8 @@ namespace DispatcherWeb.Imports.Services
             _vehicleUsageRepository = vehicleUsageRepository;
         }
 
-        protected override bool IsRowEmpty(ImportVehicleUsageRow row) => 
-            row.TruckNumber.IsNullOrWhiteSpace() || row.ReadingDateTime == null || 
+        protected override bool IsRowEmpty(ImportVehicleUsageRow row) =>
+            row.TruckNumber.IsNullOrWhiteSpace() || row.ReadingDateTime == null ||
                 row.EngineHours == null && row.OdometerReading == null;
 
         protected override bool ImportRow(ImportVehicleUsageRow row, int truckId)
@@ -57,8 +51,8 @@ namespace DispatcherWeb.Imports.Services
                 var utcReadingDateTime = ConvertLocalDateTimeToUtcDateTime(row.ReadingDateTime.Value);
 
                 VehicleUsage entity = _vehicleUsageRepository.GetAll()
-                    .FirstOrDefault(vu => 
-                        vu.TruckId == truckId && 
+                    .FirstOrDefault(vu =>
+                        vu.TruckId == truckId &&
                         vu.ReadingDateTime == utcReadingDateTime &&
                         vu.ReadingType == readingType
                     );

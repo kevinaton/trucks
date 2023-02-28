@@ -11,12 +11,11 @@ using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Runtime.Session;
 using Abp.UI;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Editions.Dto;
 using DispatcherWeb.Dto;
-
+using DispatcherWeb.Editions.Dto;
 using DispatcherWeb.MultiTenancy;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Editions
 {
@@ -144,7 +143,7 @@ namespace DispatcherWeb.Editions
             });
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Editions,AppPermissions.Pages_Tenants)]
+        [AbpAuthorize(AppPermissions.Pages_Editions, AppPermissions.Pages_Tenants)]
         public async Task<List<SubscribableEditionComboboxItemDto>> GetEditionComboboxItems(int? selectedEditionId = null, bool addAllItem = false, bool onlyFreeItems = false)
         {
             var editions = await _editionManager.Editions.ToListAsync();

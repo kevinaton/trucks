@@ -4,6 +4,6 @@ namespace DispatcherWeb.Trucks
 {
     public interface ITruckMileageAndHoursAppService
     {
-        Task AddTrucksMileageAndHourForDayBeforeTickets();                   
+        Task AddTrucksMileageAndHourForDayBeforeTickets();
     }
 }

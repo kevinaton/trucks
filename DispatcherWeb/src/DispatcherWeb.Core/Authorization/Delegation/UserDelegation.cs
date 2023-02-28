@@ -1,8 +1,8 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Abp.Timing;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DispatcherWeb.Authorization.Delegation
 {
@@ -34,15 +34,18 @@ namespace DispatcherWeb.Authorization.Delegation
         /// </summary>
         public DateTime EndTime { get; set; }
 
-        public bool IsCreatedByUser(long userId){
+        public bool IsCreatedByUser(long userId)
+        {
             return SourceUserId == userId;
         }
 
-        public bool IsExpired(){
+        public bool IsExpired()
+        {
             return EndTime <= Clock.Now;
         }
 
-        public bool IsValid(){
+        public bool IsValid()
+        {
             return StartTime <= Clock.Now && !IsExpired();
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
@@ -42,7 +41,7 @@ namespace DispatcherWeb.UnitTests.Application.Trucks
             var vehicleCategoryRepository = Substitute.For<IRepository<VehicleCategory>>();
             IRepository<TruckFile> truckFileRepository = Substitute.For<IRepository<TruckFile>>();
             //var truckFilesMockSet = new List<TruckFile>{}.CreateMockSet();
-            truckFileRepository.GetAllListAsync(x => true).ReturnsForAnyArgs(new List<TruckFile>{});
+            truckFileRepository.GetAllListAsync(x => true).ReturnsForAnyArgs(new List<TruckFile> { });
             IRepository<SharedTruck> sharedTruckRepository = Substitute.For<IRepository<SharedTruck>>();
             IRepository<Order> orderRepository = Substitute.For<IRepository<Order>>();
             IRepository<OrderLineTruck> orderLineTruckRepository = Substitute.For<IRepository<OrderLineTruck>>();
@@ -95,7 +94,7 @@ namespace DispatcherWeb.UnitTests.Application.Trucks
         {
             // Arrange
 
-            var dto = new TruckEditDto { Id = _truckId, IsOutOfService = true, OfficeId = 1, Files = new List<TruckFileEditDto>(), IsActive = true};
+            var dto = new TruckEditDto { Id = _truckId, IsOutOfService = true, OfficeId = 1, Files = new List<TruckFileEditDto>(), IsActive = true };
             Truck truck = new Truck() { Id = _truckId, IsOutOfService = false, LocationId = 1 };
             _truckRepository.GetAsync(_truckId).Returns(truck);
 

@@ -2,8 +2,8 @@
 
 namespace DispatcherWeb.Sms
 {
-	public interface ISmsAppService
-	{
-		Task SetSmsStatus(string sid, string smsStatus);
-	}
+    public interface ISmsAppService
+    {
+        Task SetSmsStatus(string sid, string smsStatus);
+    }
 }

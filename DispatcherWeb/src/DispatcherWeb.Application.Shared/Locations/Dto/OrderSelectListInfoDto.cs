@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Locations.Dto
+﻿namespace DispatcherWeb.Locations.Dto
 {
     public class OrderSelectListInfoDto
     {

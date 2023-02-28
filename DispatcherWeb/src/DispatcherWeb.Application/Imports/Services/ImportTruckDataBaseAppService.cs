@@ -1,27 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.Collections.Extensions;
-using Abp.Configuration;
 using Abp.Domain.Repositories;
-using Abp.Domain.Uow;
 using Abp.Linq.Extensions;
-using Abp.Runtime.Validation;
-using Abp.Timing;
 using Castle.Core.Internal;
 using DispatcherWeb.Imports.DataResolvers.OfficeResolvers;
-using DispatcherWeb.Imports.Dto;
 using DispatcherWeb.Imports.RowReaders;
-using DispatcherWeb.Offices;
 using DispatcherWeb.Trucks;
-using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Imports.Services
 {
-    public abstract class ImportTruckDataBaseAppService<T> : ImportDataBaseAppService<T>, IImportDataBaseAppService where T: ITruckImportRow
+    public abstract class ImportTruckDataBaseAppService<T> : ImportDataBaseAppService<T>, IImportDataBaseAppService where T : ITruckImportRow
     {
         private readonly IRepository<Truck> _truckRepository;
         private readonly IOfficeResolver _officeResolver;

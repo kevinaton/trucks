@@ -7,51 +7,51 @@ using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
-using Abp.Configuration;
 using Abp.Collections.Extensions;
+using Abp.Configuration;
 using Abp.Domain.Entities;
-using Abp.Linq.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.Extensions;
+using Abp.Linq.Extensions;
 using Abp.Notifications;
+using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.Timing.Timezone;
 using Abp.UI;
 using Castle.Core.Internal;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Authorization.Roles;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching.Dto;
 using DispatcherWeb.Dispatching.Exporting;
+using DispatcherWeb.Dispatching.Reports;
+using DispatcherWeb.DriverApplication;
+using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.DriverMessages.Dto;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
+using DispatcherWeb.Features;
+using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.Notifications;
+using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
+using DispatcherWeb.Storage;
+using DispatcherWeb.SyncRequests;
+using DispatcherWeb.SyncRequests.Entities;
+using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.UnitsOfMeasure;
 using DispatcherWeb.Url;
+using DispatcherWeb.WebPush;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Twilio.Exceptions;
-using DispatcherWeb.Storage;
-using DispatcherWeb.WebPush;
-using DispatcherWeb.DriverApplication;
-using Abp.Extensions;
-using DispatcherWeb.Offices;
-using DispatcherWeb.Features;
-using DispatcherWeb.Authorization.Roles;
 using Microsoft.Extensions.Logging;
-using DispatcherWeb.DriverApplication.Dto;
 using MigraDoc.DocumentObjectModel;
-using DispatcherWeb.Dispatching.Reports;
-using DispatcherWeb.SyncRequests;
-using DispatcherWeb.TimeClassifications;
-using DispatcherWeb.SyncRequests.Entities;
-using DispatcherWeb.Common.Dto;
-using DispatcherWeb.FuelSurchargeCalculations;
-using Abp.Runtime.Session;
+using Twilio.Exceptions;
 
 namespace DispatcherWeb.Dispatching
 {
@@ -3025,7 +3025,7 @@ namespace DispatcherWeb.Dispatching
             });
         }
 
-        
+
         [AbpAuthorize(AppPermissions.Pages_Dispatches)]
         public async Task<SetDispatchTimeOnJobDto> GetDispatchTimeOnJob(int dispatchId)
         {
@@ -3042,7 +3042,7 @@ namespace DispatcherWeb.Dispatching
 
             return dispatch;
         }
-        
+
         [AbpAuthorize(AppPermissions.Pages_Dispatches)]
         public async Task<SetDispatchTimeOnJobDto> SetDispatchTimeOnJob(SetDispatchTimeOnJobDto input)
         {
@@ -3058,7 +3058,7 @@ namespace DispatcherWeb.Dispatching
                 })
                 .FirstAsync();
 
-            input.TimeOnJob = input.TimeOnJob == null ? null 
+            input.TimeOnJob = input.TimeOnJob == null ? null
                 : (orderLine.DeliveryDate ?? await GetToday()).Date.Add(input.TimeOnJob.Value.TimeOfDay);
 
             dispatch.TimeOnJob = input.TimeOnJob?.ConvertTimeZoneFrom(await GetTimezone());

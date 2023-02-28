@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Abp.Auditing;
 using Abp.Extensions;
 using Abp.MimeTypes;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Storage;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -46,7 +46,7 @@ namespace DispatcherWeb.Web.Controllers
             var fileObject = await _binaryObjectManager.GetOrNullAsync(id);
             if (fileObject == null)
             {
-                return StatusCode((int) HttpStatusCode.NotFound);
+                return StatusCode((int)HttpStatusCode.NotFound);
             }
 
             if (fileName.IsNullOrEmpty())
@@ -58,7 +58,7 @@ namespace DispatcherWeb.Web.Controllers
                 }
                 else
                 {
-                    return StatusCode((int) HttpStatusCode.BadRequest);
+                    return StatusCode((int)HttpStatusCode.BadRequest);
                 }
             }
 
@@ -70,7 +70,7 @@ namespace DispatcherWeb.Web.Controllers
                 }
                 else
                 {
-                    return StatusCode((int) HttpStatusCode.BadRequest);
+                    return StatusCode((int)HttpStatusCode.BadRequest);
                 }
             }
 

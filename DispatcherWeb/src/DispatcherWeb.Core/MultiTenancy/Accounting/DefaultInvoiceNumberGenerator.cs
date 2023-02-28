@@ -12,15 +12,15 @@ namespace DispatcherWeb.MultiTenancy.Accounting
     {
         private readonly IRepository<Invoice> _invoiceRepository;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
-        
+
         public DefaultInvoiceNumberGenerator(
-            IRepository<Invoice> invoiceRepository, 
+            IRepository<Invoice> invoiceRepository,
             IUnitOfWorkManager unitOfWorkManager)
         {
             _invoiceRepository = invoiceRepository;
             _unitOfWorkManager = unitOfWorkManager;
         }
-        
+
         public async Task<string> GetNewInvoiceNumber()
         {
             return await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>

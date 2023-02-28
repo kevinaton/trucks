@@ -4,9 +4,9 @@ using DispatcherWeb.ScheduledReports.Dto;
 
 namespace DispatcherWeb.ScheduledReports
 {
-	public interface IScheduledReportAppService
-	{
-		Task<PagedResultDto<ScheduledReportDto>> GetScheduledReportPagedList(GetScheduledReportPagedListInput input);
-		Task<ScheduledReportEditDto> GetScheduledReportForEdit(NullableIdDto input);
-	}
+    public interface IScheduledReportAppService
+    {
+        Task<PagedResultDto<ScheduledReportDto>> GetScheduledReportPagedList(GetScheduledReportPagedListInput input);
+        Task<ScheduledReportEditDto> GetScheduledReportForEdit(NullableIdDto input);
+    }
 }

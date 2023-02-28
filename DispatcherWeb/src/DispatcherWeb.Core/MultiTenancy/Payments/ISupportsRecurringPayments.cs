@@ -2,8 +2,8 @@
 
 namespace DispatcherWeb.MultiTenancy.Payments
 {
-    public interface ISupportsRecurringPayments : 
-        IEventHandler<RecurringPaymentsDisabledEventData>, 
+    public interface ISupportsRecurringPayments :
+        IEventHandler<RecurringPaymentsDisabledEventData>,
         IEventHandler<RecurringPaymentsEnabledEventData>,
         IEventHandler<TenantEditionChangedEventData>
     {

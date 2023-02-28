@@ -1,5 +1,4 @@
 ﻿using DispatcherWeb.Emailing;
-using DispatcherWeb.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

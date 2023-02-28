@@ -1,31 +1,28 @@
-﻿using Abp.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Extensions;
-using Abp.Timing;
 using Abp.UI;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Features;
 using DispatcherWeb.Imports.Dto;
 using DispatcherWeb.Imports.RowReaders;
 using DispatcherWeb.Infrastructure.AzureBlobs;
-using DispatcherWeb.Features;
-using DispatcherWeb.TimeClassifications;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
+using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trux;
 using DispatcherWeb.UnitsOfMeasure;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Imports.Services
 {
@@ -222,7 +219,7 @@ namespace DispatcherWeb.Imports.Services
                     return false;
                 }
             }
-            
+
 
             _truxCustomerId = SettingManager.GetSettingValueForTenant<int>(AppSettings.Trux.TruxCustomerId, _tenantId);
             if (!_customerRepository.GetAll().Any(x => x.Id == _truxCustomerId))
@@ -298,8 +295,8 @@ namespace DispatcherWeb.Imports.Services
 
         protected override bool ImportRow(TruxImportRow row)
         {
-            if (row.Hours == null || row.JobId == null || row.ShiftAssignment == null || row.Loads == null || row.PunchInDatetime == null 
-                || row.PunchOutDatetime == null || row.Rate == null || row.StartDateTime == null || row.Tons == null || row.Total == null 
+            if (row.Hours == null || row.JobId == null || row.ShiftAssignment == null || row.Loads == null || row.PunchInDatetime == null
+                || row.PunchOutDatetime == null || row.Rate == null || row.StartDateTime == null || row.Tons == null || row.Total == null
                 || row.Unit == null || string.IsNullOrEmpty(row.JobName))
             {
                 LogWarning("The row was skipped because one of the required values were empty: " + Infrastructure.Utilities.Utility.Serialize(row));
@@ -423,7 +420,7 @@ namespace DispatcherWeb.Imports.Services
                             MaterialPrice = isFreight ? 0 : row.Total,
                             FreightPrice = isFreight ? row.Total : 0,
                             MaterialUomId = isFreight ? (int?)null : GetUomId(row),
-                            FreightUomId = isFreight ? GetUomId(row): (int?)null,
+                            FreightUomId = isFreight ? GetUomId(row) : (int?)null,
                             Designation = isFreight ? DesignationEnum.FreightOnly : DesignationEnum.MaterialOnly,
                             LoadAtId = GetLoadAtId(row),
                             DeliverToId = GetDeliverToId(row),
@@ -524,7 +521,7 @@ namespace DispatcherWeb.Imports.Services
                                                         && x.Shift == driverAssignment.Shift
                                     );
                             }
-                            
+
                             if (existing == null)
                             {
                                 _driverAssignmentRepository.Insert(driverAssignment);
@@ -601,7 +598,7 @@ namespace DispatcherWeb.Imports.Services
         {
             var parts = row.JobName.Split(" to ").SkipLast(1);
             int? locationId;
-            
+
             if (parts.Count() > 1)
             {
                 locationId = GetLocationIdByNameOrNull(string.Join(" to ", parts));
@@ -610,7 +607,7 @@ namespace DispatcherWeb.Imports.Services
                     return locationId;
                 }
             }
-            
+
             locationId = GetLocationIdByNameOrNull(parts.First());
             if (locationId != null)
             {
@@ -624,7 +621,7 @@ namespace DispatcherWeb.Imports.Services
         {
             var parts = row.JobName.Split(" to ").Skip(1);
             int? locationId;
-            
+
             locationId = GetLocationIdByNameOrNull(parts.Last());
             if (locationId != null)
             {

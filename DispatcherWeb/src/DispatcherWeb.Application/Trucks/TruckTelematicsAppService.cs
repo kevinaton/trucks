@@ -1,4 +1,9 @@
-﻿using Abp;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
@@ -27,11 +32,6 @@ using DispatcherWeb.Notifications;
 using DispatcherWeb.Trucks.Dto;
 using Microsoft.EntityFrameworkCore;
 using NUglify.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using TruckPosition = DispatcherWeb.TruckPositions.TruckPosition;
 
 namespace DispatcherWeb.Trucks

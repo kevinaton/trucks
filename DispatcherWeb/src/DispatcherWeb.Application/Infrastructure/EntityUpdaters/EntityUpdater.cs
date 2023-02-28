@@ -1,7 +1,7 @@
-﻿using Abp.Localization;
-using System;
+﻿using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Abp.Localization;
 
 namespace DispatcherWeb.Infrastructure.EntityUpdaters
 {

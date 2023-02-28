@@ -28,10 +28,8 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using System.IO;
+using System.Text;
 using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf.Advanced

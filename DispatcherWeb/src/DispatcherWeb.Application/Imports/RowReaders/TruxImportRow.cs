@@ -1,10 +1,7 @@
-﻿using CsvHelper;
-using DispatcherWeb.Imports.Columns;
-using DispatcherWeb.Infrastructure;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
+using CsvHelper;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.Imports.RowReaders
 {

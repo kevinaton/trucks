@@ -1,8 +1,5 @@
-﻿using DispatcherWeb.VehicleUsages.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using DispatcherWeb.VehicleUsages.Dto;
 
 namespace DispatcherWeb.Web.Areas.App.Models.VehicleUsages
 {

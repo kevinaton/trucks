@@ -20,17 +20,14 @@
 namespace Intuit.Ipp.GlobalTaxService
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Net;
-    using System.Reflection;
     using Intuit.Ipp.Core;
     using Intuit.Ipp.Core.Rest;
     using Intuit.Ipp.Data;
-    using Intuit.Ipp.GlobalTaxService.Properties;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
+    using Intuit.Ipp.GlobalTaxService.Properties;
     using Intuit.Ipp.Utility;
 
     /// <summary>
@@ -88,9 +85,9 @@ namespace Intuit.Ipp.GlobalTaxService
             asyncRestHandler.OnCallCompleted += new EventHandler<AsyncCallCompletedEventArgs>(this.AddTaxCodeAsyncCompleted);
             GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService> taxServiceCallCompletedEventArgs = new GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService>();
             string resourceString = taxCode.GetType().Name.ToLower(CultureInfo.InvariantCulture);
-          
 
-           
+
+
             try
             {
                 // Builds resource Uri

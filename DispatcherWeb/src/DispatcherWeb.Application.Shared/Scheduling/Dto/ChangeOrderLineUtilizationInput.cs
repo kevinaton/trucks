@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Scheduling.Dto
+﻿namespace DispatcherWeb.Scheduling.Dto
 {
     public class ChangeOrderLineUtilizationInput
     {

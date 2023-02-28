@@ -1,25 +1,22 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
-using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.UI;
 using Castle.Core.Internal;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Dto;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Locations.Dto;
+using DispatcherWeb.Locations.Exporting;
 using DispatcherWeb.Orders;
+using DispatcherWeb.Projects;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Projects;
-using DispatcherWeb.Locations.Exporting;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.Locations
 {
@@ -284,7 +281,7 @@ namespace DispatcherWeb.Locations
                 Abbreviation = model.Abbreviation?.WithMaxLength(10),
                 Notes = model.Notes?.WithMaxLength(1000)
             });
-            
+
             return result;
         }
 
@@ -296,11 +293,11 @@ namespace DispatcherWeb.Locations
             var addressIsSpecified = !string.IsNullOrEmpty(model.StreetAddress) || !string.IsNullOrEmpty(model.City) || !string.IsNullOrEmpty(model.State);
             var coordinatesAreSpecified = model.Latitude != null && model.Longitude != null;
             var result = await _locationRepository.GetAll()
-                    .Where(x => 
+                    .Where(x =>
                         !string.IsNullOrEmpty(model.PlaceId) && x.PlaceId == model.PlaceId
                         || addressIsSpecified && coordinatesAreSpecified && x.StreetAddress == model.StreetAddress && x.City == model.City && x.State == model.State && x.Latitude == model.Latitude && x.Longitude == model.Longitude
-                        || (!string.IsNullOrEmpty(model.Name) && addressIsSpecified && coordinatesAreSpecified 
-                            && x.StreetAddress == model.StreetAddress && x.City == model.City && x.State == model.State 
+                        || (!string.IsNullOrEmpty(model.Name) && addressIsSpecified && coordinatesAreSpecified
+                            && x.StreetAddress == model.StreetAddress && x.City == model.City && x.State == model.State
                             && (x.Name == model.Name || x.Latitude == model.Latitude && x.Longitude == x.Longitude)
                             )
                         || !coordinatesAreSpecified && x.Name == model.Name && x.StreetAddress == model.StreetAddress && x.City == model.City && x.State == model.State

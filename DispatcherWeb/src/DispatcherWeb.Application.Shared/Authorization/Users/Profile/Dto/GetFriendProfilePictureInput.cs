@@ -1,5 +1,4 @@
-﻿using System;
-using Abp;
+﻿using Abp;
 
 namespace DispatcherWeb.Authorization.Users.Profile.Dto
 {

@@ -1,4 +1,8 @@
-﻿using Abp.Domain.Repositories;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Extensions;
 using Abp.Localization;
@@ -15,10 +19,6 @@ using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.SyncRequests;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Orders
 {
@@ -60,7 +60,7 @@ namespace DispatcherWeb.Orders
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IFuelSurchargeCalculator fuelSurchargeCalculator,
             ICrossTenantOrderSender crossTenantOrderSender
-            ) : base (
+            ) : base(
                 localizationManager
                 )
         {
@@ -118,7 +118,7 @@ namespace DispatcherWeb.Orders
 
             _updatedFields.Add(fieldName);
 
-            switch(fieldName)
+            switch (fieldName)
             {
                 case nameof(orderLine.Note):
                     await ForEachDispatchWhereAsync(
@@ -256,8 +256,8 @@ namespace DispatcherWeb.Orders
                     HasMultipleDispatches = x.Dispatches.Count(x => x.Status != DispatchStatus.Canceled) > 1,
                 }).FirstAsync();
 
-            var hasMultipleTicketsOrDispatchesOrTrucks = orderLineData.HasMultipleTickets 
-                || orderLineData.HasMultipleTrucks 
+            var hasMultipleTicketsOrDispatchesOrTrucks = orderLineData.HasMultipleTickets
+                || orderLineData.HasMultipleTrucks
                 || orderLineData.HasMultipleDispatches;
 
             if (hasMultipleTicketsOrDispatchesOrTrucks)

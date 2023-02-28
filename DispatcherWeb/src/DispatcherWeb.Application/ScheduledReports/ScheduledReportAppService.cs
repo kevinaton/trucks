@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
@@ -47,7 +47,7 @@ namespace DispatcherWeb.ScheduledReports
 
             var totalCount = await query.CountAsync();
             var rawItems = await query
-                .Select(x => new 
+                .Select(x => new
                 {
                     x.Id,
                     ReportName = x.ReportType,
@@ -83,10 +83,10 @@ namespace DispatcherWeb.ScheduledReports
         public async Task<ScheduledReportEditDto> GetScheduledReportForEdit(NullableIdDto input)
         {
             ScheduledReportEditDto dto;
-            if(input.Id.HasValue)
+            if (input.Id.HasValue)
             {
                 var entity = await _scheduledReportRepository.GetAll()
-                    .Select(x => new 
+                    .Select(x => new
                     {
                         x.Id,
                         x.ReportType,
@@ -100,14 +100,14 @@ namespace DispatcherWeb.ScheduledReports
                 var todayUtc = Clock.Now.Date;
 
                 dto = new ScheduledReportEditDto()
-                    {
-                        Id = entity.Id,
-                        ReportType = entity.ReportType,
-                        ReportFormat = entity.ReportFormat,
-                        ScheduleTime = todayUtc.Add(entity.ScheduleTime).ConvertTimeZoneTo(await GetTimezone()).ToString("HH:mm"),
-                        SendOnDaysOfWeek = entity.SendOnDaysOfWeek.ToDayOfWeekEnumerable().Select(d => (int)d).ToArray(),
-                        SendTo = entity.SendTo,
-                    };
+                {
+                    Id = entity.Id,
+                    ReportType = entity.ReportType,
+                    ReportFormat = entity.ReportFormat,
+                    ScheduleTime = todayUtc.Add(entity.ScheduleTime).ConvertTimeZoneTo(await GetTimezone()).ToString("HH:mm"),
+                    SendOnDaysOfWeek = entity.SendOnDaysOfWeek.ToDayOfWeekEnumerable().Select(d => (int)d).ToArray(),
+                    SendTo = entity.SendTo,
+                };
             }
             else
             {
@@ -165,14 +165,14 @@ namespace DispatcherWeb.ScheduledReports
             ScheduledReportGeneratorInput scheduledReportGeneratorInput = new ScheduledReportGeneratorInput();
             scheduledReportGeneratorInput.ReportFormat = scheduledReport.ReportFormat;
             scheduledReportGeneratorInput.ReportType = scheduledReport.ReportType;
-            scheduledReportGeneratorInput.EmailAddresses = scheduledReport.SendTo.Split(new [] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            scheduledReportGeneratorInput.EmailAddresses = scheduledReport.SendTo.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             Debug.Assert(AbpSession.TenantId != null, "AbpSession.TenantId != null");
             Debug.Assert(AbpSession.UserId != null, "AbpSession.UserId != null");
             scheduledReportGeneratorInput.CustomSession = new CustomSession(AbpSession.TenantId.Value, AbpSession.UserId.Value);
 
             RecurringJob.AddOrUpdate<IScheduledReportGeneratorAppService>(
                 GetJobId(scheduledReport.Id),
-                x => x.GenerateReport(scheduledReportGeneratorInput), 
+                x => x.GenerateReport(scheduledReportGeneratorInput),
                 Utility.GetCronString(scheduledReport.SendOnDaysOfWeek, scheduledReport.ScheduleTime)
             );
         }

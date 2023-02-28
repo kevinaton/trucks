@@ -1,7 +1,4 @@
 ﻿using DispatcherWeb.Tickets;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DispatcherWeb.Dashboard.RevenueGraph.Dto
 {

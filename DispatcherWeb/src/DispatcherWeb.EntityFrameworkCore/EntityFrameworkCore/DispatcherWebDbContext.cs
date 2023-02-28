@@ -1,5 +1,4 @@
-﻿using System;
-using Abp.IdentityServer4vNext;
+﻿using Abp.IdentityServer4vNext;
 using Abp.Zero.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Delegation;
 using DispatcherWeb.Authorization.Roles;
@@ -18,7 +17,6 @@ using DispatcherWeb.EntityFrameworkCore.Configurations;
 using DispatcherWeb.Friendships;
 using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Invoices;
-using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.LeaseHaulerRequests;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.LeaseHaulerStatements;
@@ -37,6 +35,7 @@ using DispatcherWeb.SecureFiles;
 using DispatcherWeb.Services;
 using DispatcherWeb.Sms;
 using DispatcherWeb.Storage;
+using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.TimeOffs;
 using DispatcherWeb.TruckPositions;
 using DispatcherWeb.Trucks;
@@ -225,7 +224,7 @@ namespace DispatcherWeb.EntityFrameworkCore
         public virtual DbSet<OutOfServiceHistory> OutOfServiceHistory { get; set; }
         public virtual DbSet<ScheduledReport> ScheduledReports { get; set; }
         //public virtual DbSet<VehicleMileageHistory> VehicleMileageHistory { get; set; }
-        
+
         public virtual DbSet<Dispatch> Dispatches { get; set; }
         public virtual DbSet<Load> Loads { get; set; }
         public virtual DbSet<SecureFileDefinition> SecureFileDefinitions { get; set; }

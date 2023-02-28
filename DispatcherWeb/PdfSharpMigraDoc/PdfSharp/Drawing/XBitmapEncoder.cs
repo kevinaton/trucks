@@ -34,8 +34,6 @@ using PdfSharp.Internal;
 #if CORE
 #endif
 #if CORE_WITH_GDI
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 #endif
 #if GDI

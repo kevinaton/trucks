@@ -1,6 +1,6 @@
-using DispatcherWeb.Dto;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Configuration.Tenants.Dto
 {
@@ -19,10 +19,10 @@ namespace DispatcherWeb.Configuration.Tenants.Dto
         public InvoiceTemplateEnum InvoiceTemplate { get; set; }
 
         public QuickbooksIntegrationKind? QuickbooksIntegrationKind { get; set; }
-        
+
         [StringLength(4)]
         public string QuickbooksInvoiceNumberPrefix { get; set; }
-        
+
         public bool IsQuickbooksConnected { get; set; }
 
         //QuickBooksDesktop

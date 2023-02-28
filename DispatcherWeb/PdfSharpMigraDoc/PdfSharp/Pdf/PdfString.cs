@@ -30,8 +30,8 @@
 using System;
 using System.Diagnostics;
 using System.Text;
-using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf.Internal;
+using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf
 {

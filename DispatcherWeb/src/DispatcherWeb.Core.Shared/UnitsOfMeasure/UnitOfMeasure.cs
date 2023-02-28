@@ -7,10 +7,10 @@ namespace DispatcherWeb.UnitsOfMeasure
 {
     [Table("UnitOfMeasure")]
     public class UnitOfMeasure : FullAuditedEntity, IMustHaveTenant
-	{
-		public int TenantId { get; set; }
+    {
+        public int TenantId { get; set; }
 
-		[Required]
+        [Required]
         [StringLength(20)]
         public string Name { get; set; }
 

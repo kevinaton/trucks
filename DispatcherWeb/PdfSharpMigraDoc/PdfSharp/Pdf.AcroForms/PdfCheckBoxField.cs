@@ -27,8 +27,8 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using PdfSharp.Pdf.Annotations;
 using PdfSharp.Pdf.Advanced;
+using PdfSharp.Pdf.Annotations;
 
 namespace PdfSharp.Pdf.AcroForms
 {

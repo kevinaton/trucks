@@ -28,13 +28,13 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.ComponentModel;
-using PdfSharp.Pdf.IO;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf.Advanced;
 using PdfSharp.Pdf.Annotations;
+using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf
 {
@@ -394,7 +394,7 @@ namespace PdfSharp.Pdf
         }
         PdfContents _contents;
 
-#region Annotations
+        #region Annotations
 
         /// <summary>
         /// Gets the annotations array of this page.
@@ -467,7 +467,7 @@ namespace PdfSharp.Pdf
             return annotation;
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Gets or sets the custom values.

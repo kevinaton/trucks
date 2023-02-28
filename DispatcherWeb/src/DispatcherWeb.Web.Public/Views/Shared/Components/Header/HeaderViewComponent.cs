@@ -6,12 +6,12 @@ using Abp.Configuration.Startup;
 using Abp.Extensions;
 using Abp.Localization;
 using Abp.Runtime.Session;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Url;
 using DispatcherWeb.Web.Public.Startup;
 using DispatcherWeb.Web.Session;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Public.Views.Shared.Components.Header
 {
@@ -27,13 +27,13 @@ namespace DispatcherWeb.Web.Public.Views.Shared.Components.Header
         private readonly TenantManager _tenantManager;
 
         public HeaderViewComponent(
-            IUserNavigationManager userNavigationManager, 
+            IUserNavigationManager userNavigationManager,
             IMultiTenancyConfig multiTenancyConfig,
             IAbpSession abpSession,
-            ILanguageManager languageManager, 
-            ISettingManager settingManager, 
+            ILanguageManager languageManager,
+            ISettingManager settingManager,
             IPerRequestSessionCache sessionCache,
-            IWebUrlService webUrlService, 
+            IWebUrlService webUrlService,
             TenantManager tenantManager)
         {
             _userNavigationManager = userNavigationManager;
