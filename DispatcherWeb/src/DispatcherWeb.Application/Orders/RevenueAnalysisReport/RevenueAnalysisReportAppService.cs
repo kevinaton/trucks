@@ -3,29 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
-using Abp.Dependency;
 using Abp.Extensions;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
 using DispatcherWeb.Dashboard.RevenueGraph.Dto;
-using DispatcherWeb.Dashboard.RevenueGraph.Factories;
 using DispatcherWeb.Orders.RevenueAnalysisReport.Dto;
 
 namespace DispatcherWeb.Orders.RevenueAnalysisReport
 {
     public class RevenueAnalysisReportAppService : DispatcherWebAppServiceBase, IRevenueAnalysisReportAppService
     {
-        private readonly IIocResolver _iocResolver;
+        private readonly IRevenueGraphByTicketsDataItemsQueryService _revenueGraphDataItemsQueryService;
 
-        public RevenueAnalysisReportAppService(IIocResolver iocResolver)
+        public RevenueAnalysisReportAppService(
+            IRevenueGraphByTicketsDataItemsQueryService revenueGraphDataItemsQueryService
+            )
         {
-            _iocResolver = iocResolver;
+            _revenueGraphDataItemsQueryService = revenueGraphDataItemsQueryService;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Reports_RevenueAnalysis)]
         public async Task<RevenueAnalysisReportOutput> GetRevenueAnalysis(RevenueAnalysisReportInput input)
         {
-            var revenueGraphDataItemsQueryService = RevenueGraphDataItemsQueryServiceFactory.CreateRevenueGraphDataItemsQueryService(_iocResolver, RevenueCalculateType.ByTickets);
-
             var queryInput = new PeriodInput
             {
                 PeriodBegin = input.DeliveryDateBegin,
@@ -35,7 +34,7 @@ namespace DispatcherWeb.Orders.RevenueAnalysisReport
                     : Dashboard.Dto.TicketType.Both
             };
 
-            var data = await revenueGraphDataItemsQueryService.GetRevenueGraphDataItemsAsync(queryInput);
+            var data = await _revenueGraphDataItemsQueryService.GetRevenueGraphDataItemsAsync(queryInput);
             IEnumerable<IGrouping<string, RevenueGraphDataItem>> grouping;
 
             switch (input.AnalyzeBy)

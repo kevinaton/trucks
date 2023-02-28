@@ -62,8 +62,6 @@ namespace DispatcherWeb.Authorization
             organizationUnits.CreateChildPermission(AppPermissions.Pages_Administration_OrganizationUnits_ManageMembers, L("ManagingMembers"));
             organizationUnits.CreateChildPermission(AppPermissions.Pages_Administration_OrganizationUnits_ManageRoles, L("ManagingRoles"));
 
-            administration.CreateChildPermission(AppPermissions.Pages_Administration_RecalculateHasAllActualAmountsValues, L("RecalculateHasAllActualAmountsValues"));
-
             //TENANT-SPECIFIC PERMISSIONS
             var dashboard = pages.CreateChildPermission(AppPermissions.Pages_Dashboard, L("Dashboard"), multiTenancySides: MultiTenancySides.Tenant);
             dashboard.CreateChildPermission(AppPermissions.Pages_Dashboard_Dispatching, L("Dispatching"), multiTenancySides: MultiTenancySides.Tenant);

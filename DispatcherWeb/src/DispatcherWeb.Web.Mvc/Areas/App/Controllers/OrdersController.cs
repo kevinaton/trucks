@@ -101,14 +101,6 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
 
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<PartialViewResult> CreateOrEditOrderLineOfficeAmountModal(int orderLineId)
-        {
-            var model = await _orderAppService.GetOrderLineOfficeAmountForEdit(new GetOrderLineOfficeAmountForEditInput(orderLineId));
-            return PartialView("_CreateOrEditOrderLineOfficeAmountModal", model);
-        }
-
-        [Modal]
-        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<PartialViewResult> SetStaggeredTimesModal(int? orderLineId)
         {
             var model = await _orderAppService.GetStaggeredTimesForEdit(new NullableIdDto(orderLineId));

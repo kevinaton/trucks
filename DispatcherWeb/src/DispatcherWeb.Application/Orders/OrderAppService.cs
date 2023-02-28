@@ -61,11 +61,9 @@ namespace DispatcherWeb.Orders
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
-        private readonly IRepository<OrderLineOfficeAmount> _orderLineOfficeAmountRepository;
         private readonly IRepository<SharedOrder> _sharedOrderRepository;
         private readonly IRepository<SharedOrderLine> _sharedOrderLineRepository;
         private readonly IRepository<BilledOrder> _billedOrderRepository;
-        private readonly IRepository<Location> _locationRepository;
         private readonly IRepository<QuoteService> _quoteServiceRepository;
         private readonly IRepository<Office> _officeRepository;
         private readonly IRepository<User, long> _userRepository;
@@ -98,11 +96,9 @@ namespace DispatcherWeb.Orders
             IRepository<Order> orderRepository,
             IRepository<OrderLine> orderLineRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
-            IRepository<OrderLineOfficeAmount> orderLineOfficeAmountRepository,
             IRepository<SharedOrder> sharedOrderRepository,
             IRepository<SharedOrderLine> sharedOrderLineRepository,
             IRepository<BilledOrder> billedOrderRepository,
-            IRepository<Location> locationRepository,
             IRepository<QuoteService> quoteServiceRepository,
             IRepository<Office> officeRepository,
             IRepository<User, long> userRepository,
@@ -135,11 +131,9 @@ namespace DispatcherWeb.Orders
             _orderRepository = orderRepository;
             _orderLineRepository = orderLineRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
-            _orderLineOfficeAmountRepository = orderLineOfficeAmountRepository;
             _sharedOrderRepository = sharedOrderRepository;
             _sharedOrderLineRepository = sharedOrderLineRepository;
             _billedOrderRepository = billedOrderRepository;
-            _locationRepository = locationRepository;
             _quoteServiceRepository = quoteServiceRepository;
             _officeRepository = officeRepository;
             _userRepository = userRepository;
@@ -286,11 +280,6 @@ namespace DispatcherWeb.Orders
                         FuelSurchargeCalculationName = order.FuelSurchargeCalculation.Name,
                         CanChangeBaseFuelCost = order.FuelSurchargeCalculation.CanChangeBaseFuelCost,
                         HasSharedOrderLines = order.OrderLines.Any(ol => ol.SharedOrderLines.Any(s => s.OfficeId == OfficeId)),
-                        OrderLineHasTicketsOrActualAmountOrOpenDispatches = order.OrderLines.Any(ol =>
-                            ol.Tickets.Any() ||
-                            ol.OfficeAmounts.Any() ||
-                            ol.Dispatches.Any(d => !Dispatch.ClosedDispatchStatuses.Contains(d.Status))
-                        ),
                         Receipts = order.Receipts
                             .Where(x => x.OfficeId == OfficeId)
                             .Select(r => new ReceiptDto
@@ -427,7 +416,7 @@ namespace DispatcherWeb.Orders
                     || order.LocationId != model.LocationId
                     || order.QuoteId != model.QuoteId)
                 {
-                    await ThrowIfOrderLinesHaveTicketsOrActualAmounts(model.Id.Value);
+                    await ThrowIfOrderLinesHaveTickets(model.Id.Value);
                 }
 
                 if (order.LocationId != model.LocationId)
@@ -672,21 +661,13 @@ namespace DispatcherWeb.Orders
         {
             if (model.Id.HasValue && model.IsPending && order.IsPending != model.IsPending)
             {
-                await ThrowUserFriendlyExceptionIfThereArePrerequisites();
-            }
-
-            // Local functions
-            async Task ThrowUserFriendlyExceptionIfThereArePrerequisites()
-            {
-                bool prerequisitesExist = await _orderLineRepository.GetAll()
+                if (await _orderLineRepository.GetAll()
                     .AnyAsync(ol => ol.OrderId == order.Id && (
                                     ol.IsComplete ||
                                     ol.Tickets.Any() ||
-                                    ol.OfficeAmounts.Any() ||
                                     ol.OrderLineTrucks.Any()
                                     )
-                    );
-                if (prerequisitesExist)
+                    ))
                 {
                     throw new UserFriendlyException("Cannot change status to Pending.");
                 }
@@ -701,18 +682,17 @@ namespace DispatcherWeb.Orders
             }
         }
 
-        private async Task ThrowIfOrderLinesHaveTicketsOrActualAmounts(int orderId)
+        private async Task ThrowIfOrderLinesHaveTickets(int orderId)
         {
             var orderLineDetails = await _orderLineRepository.GetAll()
                 .Where(x => x.OrderId == orderId)
                 .Select(x => new
                 {
-                    HasTickets = x.Tickets.Any(),
-                    HasActualAmounts = x.OfficeAmounts.Any()
+                    HasTickets = x.Tickets.Any()
                 })
                 .ToListAsync();
 
-            if (orderLineDetails.Any(x => x.HasTickets || x.HasActualAmounts))
+            if (orderLineDetails.Any(x => x.HasTickets))
             {
                 throw new UserFriendlyException(L("Order_Edit_Error_HasTickets"));
             }
@@ -754,22 +734,6 @@ namespace DispatcherWeb.Orders
                 .AnyAsync())
             {
                 throw new UserFriendlyException(L("Order_ChangeOffice_Error_HasReceipts"));
-            }
-        }
-
-        private async Task ThrowIfOrderLineHasOpenDispatches(int orderLineId)
-        {
-            var orderLineDetails = await _orderLineRepository.GetAll()
-                .Where(x => x.Id == orderLineId)
-                .Select(x => new
-                {
-                    HasOpenDispatches = x.Dispatches.Any(d => !Dispatch.ClosedDispatchStatuses.Contains(d.Status)),
-                })
-                .FirstAsync();
-
-            if (orderLineDetails.HasOpenDispatches)
-            {
-                throw new UserFriendlyException(L("OrderLine_Edit_Error_HasDispatches"));
             }
         }
 
@@ -844,7 +808,7 @@ namespace DispatcherWeb.Orders
                 }
 
                 await CheckOpenDispatchesForOrder(input.OrderId);
-                await ThrowIfOrderLinesHaveTicketsOrActualAmounts(input.OrderId);
+                await ThrowIfOrderLinesHaveTickets(input.OrderId);
 
                 if (!input.KeepTrucks)
                 {
@@ -1179,7 +1143,7 @@ namespace DispatcherWeb.Orders
             if (input.OrderLineId == null)
             {
                 await CheckOrderPrerequisites(input.OrderId);
-                await ThrowIfOrderLinesHaveTicketsOrActualAmounts(input.OrderId);
+                await ThrowIfOrderLinesHaveTickets(input.OrderId);
                 await ThrowIfOrderHasReceiptsForOwnerOfficeId(input.OrderId);
                 order.LocationId = input.OfficeId;
 
@@ -1192,7 +1156,17 @@ namespace DispatcherWeb.Orders
             }
             else
             {
-                await CheckOrderLinePrerequisites(input.OrderLineId.Value);
+                if (await _orderLineRepository.GetAll()
+                    .AnyAsync(ol => ol.Id == input.OrderLineId && (
+                                    ol.SharedOrderLines.Any() ||
+                                    ol.IsComplete ||
+                                    ol.Tickets.Any() ||
+                                    ol.OrderLineTrucks.Any()
+                    ))
+                )
+                {
+                    throw new UserFriendlyException("The Order Line cannot be transferred!");
+                }
                 await ThrowIfOrderLineHasTicketsOrActualAmounts(input.OrderLineId.Value);
                 await ThrowIfOrderLineHasReceiptsForOwnerOfficeId(input.OrderLineId.Value);
                 Order newOrder = await CreateOrderCopyAndAssignOrderLineToIt(order, input.OrderLineId.Value);
@@ -1200,23 +1174,6 @@ namespace DispatcherWeb.Orders
                 await CurrentUnitOfWork.SaveChangesAsync();
                 await _orderTaxCalculator.CalculateTotalsAsync(newOrder.Id);
                 await _orderTaxCalculator.CalculateTotalsAsync(order.Id);
-            }
-
-            // Local functions
-            async Task CheckOrderLinePrerequisites(int orderLineId)
-            {
-                if (await _orderLineRepository.GetAll()
-                    .AnyAsync(ol => ol.Id == orderLineId && (
-                                    ol.SharedOrderLines.Any() ||
-                                    ol.IsComplete ||
-                                    ol.Tickets.Any() ||
-                                    ol.OfficeAmounts.Any() ||
-                                    ol.OrderLineTrucks.Any()
-                    ))
-                )
-                {
-                    throw new UserFriendlyException("The Order Line cannot be transferred!");
-                }
             }
         }
         private async Task CheckOrderPrerequisites(int orderId)
@@ -1226,7 +1183,6 @@ namespace DispatcherWeb.Orders
                                    o.OrderLines.Any(ol => ol.SharedOrderLines.Any()) ||
                                    o.OrderLines.Any(ol => ol.IsComplete) ||
                                    o.OrderLines.Any(ol => ol.Tickets.Any()) ||
-                                   o.OrderLines.Any(ol => ol.OfficeAmounts.Any()) ||
                                    o.OrderLines.Any(ol => ol.OrderLineTrucks.Any())
                                ))
             )
@@ -1618,7 +1574,6 @@ namespace DispatcherWeb.Orders
                         o.OrderLines.Any(ol => ol.ReceiptLines.Any()) ||
                         o.OrderLines.Any(ol => ol.Dispatches.Any()) ||
                         o.OrderLines.Any(ol => ol.OrderLineTrucks.Any()) ||
-                        o.OrderLines.Any(ol => ol.OfficeAmounts.Any()) ||
                         o.OrderLines.Any(ol => ol.SharedOrderLines.Any()) ||
                         o.HasLinkedHaulingCompanyOrders ||
                         o.OrderLines.Any(ol => ol.HaulingCompanyOrderLineId != null)
@@ -1713,7 +1668,6 @@ namespace DispatcherWeb.Orders
                         x.LocationId
                     }).SingleOrDefaultAsync();
 
-                bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
 
                 var orderLines = await query
@@ -1741,7 +1695,6 @@ namespace DispatcherWeb.Orders
                         //    MaterialQuantity = t.MaterialQuantity,
                         //    FreightQuantity = t.FreightQuantity
                         //}).ToList(),
-                        //OfficeAmounts = x.OfficeAmounts.Select(o => new OfficeAmountDto { OfficeId = o.OfficeId, ActualQuantity = o.ActualQuantity }).ToList(),
                         //SharedOrderLines = x.SharedOrderLines.Select(s => new OrderLineShareDto { OfficeId = s.OfficeId }).ToList(),
                         MaterialPricePerUnit = x.MaterialPricePerUnit,
                         FreightPricePerUnit = x.FreightPricePerUnit,
@@ -1802,7 +1755,7 @@ namespace DispatcherWeb.Orders
                 {
                     if (orderLine.Id.HasValue)
                     {
-                        orderLine.CanOverrideTotals = await _orderLineRepository.CanOverrideTotals(SettingManager, orderLine.Id.Value, OfficeId);
+                        orderLine.CanOverrideTotals = await _orderLineRepository.CanOverrideTotals(orderLine.Id.Value, OfficeId);
                         orderLine.QuoteId = order.QuoteId;
                     }
 
@@ -1891,7 +1844,7 @@ namespace DispatcherWeb.Orders
 
             if (input.Id.HasValue)
             {
-                var canOverrideTotals = await _orderLineRepository.CanOverrideTotals(SettingManager, input.Id.Value, OfficeId);
+                var canOverrideTotals = await _orderLineRepository.CanOverrideTotals(input.Id.Value, OfficeId);
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
 
                 orderLineEditDto = await _orderLineRepository.GetAll()
@@ -2152,7 +2105,6 @@ namespace DispatcherWeb.Orders
                     IsComplete = ol.IsComplete,
                     HasRelatedData =
                         ol.Order.IsClosed ||
-                        ol.OfficeAmounts.Any() ||
                         ol.OrderLineTrucks.Any() ||
                         ol.SharedOrderLines.Any() ||
                         ol.Tickets.Any() ||
@@ -2210,7 +2162,7 @@ namespace DispatcherWeb.Orders
             };
         }
 
-        public async Task<IOrderTaxDetailsWithActualAmounts> CalculateOrderTotals(OrderTaxDetailsDto orderTaxDetails)
+        public async Task<IOrderTaxDetails> CalculateOrderTotals(OrderTaxDetailsDto orderTaxDetails)
         {
             List<OrderLineTaxDetailsDto> orderLines;
 
@@ -2238,46 +2190,6 @@ namespace DispatcherWeb.Orders
             await _orderTaxCalculator.CalculateTotalsAsync(orderTaxDetails, orderLines);
 
             return orderTaxDetails;
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Orders_View)]
-        public async Task<OrderLineOfficeAmountEditDto> GetOrderLineOfficeAmountForEdit(GetOrderLineOfficeAmountForEditInput input)
-        {
-            await _orderLineRepository.EnsureCanAddActualAmount(input.OrderLineId, OfficeId);
-
-            var orderLineOfficeAmountEditDto = await _orderLineOfficeAmountRepository.GetAll()
-                .Where(x => x.OrderLineId == input.OrderLineId && x.OfficeId == OfficeId)
-                .Select(x => new OrderLineOfficeAmountEditDto
-                {
-                    Id = x.Id,
-                    OrderLineId = x.OrderLineId,
-                    ActualQuantity = x.ActualQuantity
-                })
-                .FirstOrDefaultAsync();
-
-            if (orderLineOfficeAmountEditDto == null)
-            {
-                orderLineOfficeAmountEditDto = new OrderLineOfficeAmountEditDto
-                {
-                    OrderLineId = input.OrderLineId
-                };
-            }
-
-            return orderLineOfficeAmountEditDto;
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<EditOrderLineOfficeAmountOutput> EditOrderLineOfficeAmount(OrderLineOfficeAmountEditDto model)
-        {
-            await _orderLineRepository.EnsureCanAddActualAmount(model.OrderLineId, OfficeId);
-
-            var id = await _orderLineOfficeAmountRepository.SetOrderLineOfficeAmountAsync(model, Session);
-            await CurrentUnitOfWork.SaveChangesAsync();
-            var taxDetails = await _orderTaxCalculator.CalculateTotalsForOrderLineAsync(model.OrderLineId);
-            return new EditOrderLineOfficeAmountOutput
-            {
-                OrderTaxDetails = new OrderTaxDetailsDto(taxDetails)
-            };
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_View)]
@@ -2355,8 +2267,6 @@ namespace DispatcherWeb.Orders
 
             var totalCount = await query.CountAsync();
 
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
             var items = await query
                 .Select(x => new ReceiptReportDto
                 {
@@ -2400,8 +2310,6 @@ namespace DispatcherWeb.Orders
         public async Task<FileDto> ExportReceiptsToExcel(GetReceiptReportInput input)
         {
             var query = GetReceiptsQuery(input);
-
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
 
             var items = await query
                 .Select(x => new ReceiptExcelReportDto
@@ -2476,7 +2384,7 @@ namespace DispatcherWeb.Orders
                     x => x.CustomerId == input.CustomerId)
                 .Where(x => input.IsBilled == x.BilledOrders.Any(b => b.OfficeId == OfficeId))
                 //.Where(x => x.OrderLines.Any(l => l.Tickets.Any(a => a.OfficeId == OfficeId)) || x.Receipts.Any(r => r.OfficeId == OfficeId)); //&& a.ActualQuantity != null
-                .Where(x => x.OrderLines.Any(l => l.OfficeAmounts.Any(a => a.OfficeId == OfficeId && a.ActualQuantity != null)));
+                .Where(x => false); //.Where(x => x.OrderLines.Any(l => l.OfficeAmounts.Any(a => a.OfficeId == OfficeId && a.ActualQuantity != null)));
         }
 
         [AbpAuthorize(AppPermissions.Pages_Reports_BillingReconciliation)]
@@ -2485,8 +2393,6 @@ namespace DispatcherWeb.Orders
             var query = GetBillingReconciliationQuery(input);
 
             var totalCount = await query.CountAsync();
-
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
 
             var items = await query
                 .Select(x => new BillingReconciliationDto
@@ -2503,13 +2409,7 @@ namespace DispatcherWeb.Orders
                     IsShared = x.SharedOrders.Any(so => so.OfficeId != x.LocationId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
                     Items = x.OrderLines.Select(l => new BillingReconciliationItemDto
                     {
-                        AllowAddingTickets = allowAddingTickets,
-                        TicketQuantity = allowAddingTickets
-                            ? l.Tickets.Sum(t => t.Quantity) : 0,
-                        //ReceiptLinesMaterialTotal = allowAddingTickets
-                        //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.MaterialAmount),
-                        //ReceiptLinesFreightTotal = allowAddingTickets
-                        //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.FreightAmount),
+                        TicketQuantity = l.Tickets.Sum(t => t.Quantity),
                         FreightPricePerUnit = l.FreightPricePerUnit,
                         MaterialPricePerUnit = l.MaterialPricePerUnit,
                         IsTaxable = l.Service.IsTaxable,
@@ -2535,8 +2435,6 @@ namespace DispatcherWeb.Orders
         {
             var query = GetBillingReconciliationQuery(input);
 
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
             var items = await query
                 .Select(x => new BillingReconciliationReportDto
                 {
@@ -2552,13 +2450,7 @@ namespace DispatcherWeb.Orders
                     IsShared = x.SharedOrders.Any(so => so.OfficeId != x.LocationId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
                     Items = x.OrderLines.Select(l => new BillingReconciliationReportItemDto
                     {
-                        AllowAddingTickets = allowAddingTickets,
-                        TicketQuantity = allowAddingTickets
-                            ? l.Tickets.Sum(t => t.Quantity) : 0,
-                        //ReceiptLinesMaterialTotal = allowAddingTickets
-                        //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.MaterialAmount),
-                        //ReceiptLinesFreightTotal = allowAddingTickets
-                        //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.FreightAmount),
+                        TicketQuantity = l.Tickets.Sum(t => t.Quantity),
                         FreightPricePerUnit = l.FreightPricePerUnit,
                         MaterialPricePerUnit = l.MaterialPricePerUnit,
                         IsTaxable = l.Service.IsTaxable,
@@ -2666,7 +2558,6 @@ namespace DispatcherWeb.Orders
             var staggeredTimeImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "Common/Images/far-clock.png");
             var timeZone = await GetTimezone();
             var showDriverNamesOnPrintedOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ShowDriverNamesOnPrintedOrder);
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
             var spectrumNumberLabel = await SettingManager.GetSettingValueAsync(AppSettings.General.UserDefinedField1);
             var showSignatureColumn = (DispatchVia)await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DispatchVia) == DispatchVia.DriverApplication
                     && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp);

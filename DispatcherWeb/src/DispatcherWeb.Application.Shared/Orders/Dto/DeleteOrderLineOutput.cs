@@ -4,6 +4,6 @@ namespace DispatcherWeb.Orders.Dto
 {
     public class DeleteOrderLineOutput
     {
-        public IOrderTaxDetailsWithActualAmounts OrderTaxDetails { get; set; }
+        public IOrderTaxDetails OrderTaxDetails { get; set; }
     }
 }

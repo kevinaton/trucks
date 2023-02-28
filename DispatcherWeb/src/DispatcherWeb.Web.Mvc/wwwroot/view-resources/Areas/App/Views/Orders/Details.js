@@ -15,15 +15,8 @@
         var _permissions = {
             edit: abp.auth.hasPermission('Pages.Orders.Edit')
         };
-        var _settings = {
-            allowAddingTickets: abp.setting.getBoolean('App.General.AllowAddingTickets')
-        };
 
         abp.helper.ui.initControls();
-
-        if (!_settings.allowAddingTickets) {
-            $("#PrintOrderForBackOffice, #PrintOrderWithDeliveryInfo").hide();
-        }
 
         //Init modals
 
@@ -39,12 +32,6 @@
             modalClass: 'AddQuoteBasedOrderLinesModal',
             modalSize: 'lg'
         });
-
-        //var _createOrEditOrderLineOfficeAmountModal = new app.ModalManager({
-        //    viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderLineOfficeAmountModal',
-        //    scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderLineOfficeAmountModal.js',
-        //    modalClass: 'CreateOrEditOrderLineOfficeAmountModal'
-        //});
 
         var _createOrEditTicketModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Orders/CreateOrEditTicketModal',
@@ -976,10 +963,8 @@
                                 + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
                                 + '<ul class="dropdown-menu dropdown-menu-right">' 
                                 + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
-                                + (_settings.allowAddingTickets
-                                    ? '<li><a class="btnOpenTicketsModalForRow"><i class="fa fa-edit"></i> Tickets</a></li>'
-                                    : '')
-                                + ' <li> <a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li >'
+                                + '<li><a class="btnOpenTicketsModalForRow"><i class="fa fa-edit"></i> Tickets</a></li>'
+                                + '<li><a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li>'
                                 + '</ul>' 
                                 + '</div>'
                                 ;
@@ -1029,10 +1014,6 @@
         });
 
         abp.event.on('app.ticketDeletedModal', function (e) {
-            handleOrderTaxDetailsExternalChange(e);
-        });
-
-        abp.event.on('app.createOrEditOrderLineOfficeAmountModalSaved', function (e) {
             handleOrderTaxDetailsExternalChange(e);
         });
 
@@ -1365,25 +1346,15 @@
                             return;
                         }
                     }
-                    openTicketOrOfficeAmountModal(orderLine.id);
+                    openTicketModal(orderLine.id);
                 });
             } else {
-                openTicketOrOfficeAmountModal(orderLine.id);
+                openTicketModal(orderLine.id);
             }
         });
 
-        function openTicketOrOfficeAmountModal(orderLineId) {
-            if (_settings.allowAddingTickets) {
-                _createOrEditTicketModal
-                    .open({ orderLineId: orderLineId })
-                    ;
-            } else {
-                //_createOrEditOrderLineOfficeAmountModal
-                //    .open({ orderLineId: orderLineId })
-                //    .fail(function (failResult) {
-                //        handleOrderLinePopupError(failResult);
-                //    });
-            }
+        function openTicketModal(orderLineId) {
+            _createOrEditTicketModal.open({ orderLineId: orderLineId });
         }
 
         orderLinesTable.on('click', '.btnDeleteRow', async function (e) {

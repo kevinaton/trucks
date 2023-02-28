@@ -107,7 +107,6 @@ namespace DispatcherWeb.Orders.Dto
         public bool IsShared { get; set; }
 
         public OrderPriority Priority { get; set; }
-        public bool OrderLineHasTicketsOrActualAmountOrOpenDispatches { get; set; }
         public bool HasSharedOrderLines { get; set; }
         public bool CanEditAnyOrderDirections { get; set; }
         public List<ReceiptDto> Receipts { get; set; }

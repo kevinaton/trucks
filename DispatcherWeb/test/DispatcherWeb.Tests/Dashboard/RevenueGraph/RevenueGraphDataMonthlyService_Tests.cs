@@ -17,7 +17,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         public async Task Test_GetRevenueGraphData_should_return_RevenueGraphData_by_Monthly_by_Tickets()
         {
             // Arrange
-            await CreateOrdersAndOrderLinesAndTicketsOrOfficeAmounts(_startDate, _startDate.AddDays(30), true);
+            await CreateOrdersAndOrderLinesAndTickets(_startDate, _startDate.AddDays(30));
             IRevenueGraphDataItemsQueryService revenueGraphDataItemsQueryService = Resolve<IRevenueGraphByTicketsDataItemsQueryService>();
             var revenueGraphDataService = Resolve<IRevenueGraphDataMonthlyService>(new { revenueGraphDataItemsQueryService });
 
@@ -38,7 +38,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         public async Task Test_GetRevenueGraphData_should_return_RevenueGraphData_by_Monthly_by_Tickets_for_each_day_of_period()
         {
             // Arrange
-            await CreateOrdersAndOrderLinesAndTicketsOrOfficeAmounts(_startDate, _startDate.AddDays(30), true);
+            await CreateOrdersAndOrderLinesAndTickets(_startDate, _startDate.AddDays(30));
             IRevenueGraphDataItemsQueryService revenueGraphDataItemsQueryService = Resolve<IRevenueGraphByTicketsDataItemsQueryService>();
             var revenueGraphDataService = Resolve<IRevenueGraphDataMonthlyService>(new { revenueGraphDataItemsQueryService });
 

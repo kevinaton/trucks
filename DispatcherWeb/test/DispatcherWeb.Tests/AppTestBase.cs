@@ -736,23 +736,6 @@ namespace DispatcherWeb.Tests
             return ticketEntity;
         }
 
-        protected async Task<OrderLineOfficeAmount> CreateOrderLineOfficeAmount(OrderLine orderLine, int officeId, decimal? actualQuantity)
-        {
-            var officeAmount = await UsingDbContextAsync(async context =>
-            {
-                OrderLineOfficeAmount oloa = new OrderLineOfficeAmount()
-                {
-                    TenantId = 1,
-                    OrderLineId = orderLine.Id,
-                    OfficeId = officeId,
-                    ActualQuantity = actualQuantity,
-                };
-                await context.OrderLineOfficeAmounts.AddAsync(oloa);
-                return oloa;
-            });
-            return officeAmount;
-        }
-
 
 
         protected async Task<T> UpdateEntity<T>(T entity, Action<T> action) where T : class

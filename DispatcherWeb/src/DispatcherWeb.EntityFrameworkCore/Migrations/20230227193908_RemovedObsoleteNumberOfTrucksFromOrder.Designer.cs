@@ -4,6 +4,7 @@ using DispatcherWeb.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    partial class DispatcherWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230227193908_RemovedObsoleteNumberOfTrucksFromOrder")]
+    partial class RemovedObsoleteNumberOfTrucksFromOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4814,6 +4816,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<int?>("FuelSurchargeCalculationId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("HasAllActualAmounts")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("HasInternalNotes")
                         .HasColumnType("bit");
 
@@ -4968,6 +4973,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<decimal?>("FuelSurchargeRate")
                         .HasColumnType("money");
 
+                    b.Property<bool>("HasAllActualAmounts")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("HaulingCompanyOrderLineId")
                         .HasColumnType("int");
 
@@ -5098,6 +5106,56 @@ namespace DispatcherWeb.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("OrderLine");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.Orders.OrderLineOfficeAmount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal?>("ActualQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("OfficeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OfficeId");
+
+                    b.HasIndex("OrderLineId");
+
+                    b.ToTable("OrderLineOfficeAmount");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Orders.OrderLineTruck", b =>
@@ -9505,6 +9563,25 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.Orders.OrderLineOfficeAmount", b =>
+                {
+                    b.HasOne("DispatcherWeb.Offices.Office", "Office")
+                        .WithMany()
+                        .HasForeignKey("OfficeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.Orders.OrderLine", "OrderLine")
+                        .WithMany("OfficeAmounts")
+                        .HasForeignKey("OrderLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Office");
+
+                    b.Navigation("OrderLine");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Orders.OrderLineTruck", b =>
                 {
                     b.HasOne("DispatcherWeb.Drivers.Driver", "Driver")
@@ -10605,6 +10682,8 @@ namespace DispatcherWeb.Migrations
             modelBuilder.Entity("DispatcherWeb.Orders.OrderLine", b =>
                 {
                     b.Navigation("Dispatches");
+
+                    b.Navigation("OfficeAmounts");
 
                     b.Navigation("OrderLineTrucks");
 

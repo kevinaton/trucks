@@ -26,9 +26,7 @@ namespace DispatcherWeb.Orders
         Task<EditOrderLineOutput> EditOrderLine(OrderLineEditDto model);
         Task<DeleteOrderLineOutput> DeleteOrderLine(DeleteOrderLineInput input);
 
-        Task<OrderLineOfficeAmountEditDto> GetOrderLineOfficeAmountForEdit(GetOrderLineOfficeAmountForEditInput input);
         Task<StaggeredTimesDto> GetStaggeredTimesForEdit(NullableIdDto input);
-        Task<EditOrderLineOfficeAmountOutput> EditOrderLineOfficeAmount(OrderLineOfficeAmountEditDto model);
 
         Task<PagedResultDto<ReceiptReportDto>> GetReceipts(GetReceiptReportInput input);
         Task<FileDto> ExportReceiptsToExcel(GetReceiptReportInput input);

@@ -2,15 +2,12 @@
 using System.Threading.Tasks;
 using Abp.Application.Navigation;
 using Abp.Runtime.Session;
-using Abp.Configuration;
-using DispatcherWeb.Configuration;
 using DispatcherWeb.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Web.Areas.App.Models.Layout;
 using DispatcherWeb.Web.Areas.App.Startup;
 using DispatcherWeb.Web.Views;
-using Abp.Application.Features;
 using DispatcherWeb.Features;
 
 namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppMenu
@@ -44,9 +41,12 @@ namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppMenu
                 return GetView(model, isLeftMenuUsed);
             }
 
-			await HideDispatchMenuItemsIfSettingIsDisabled();
-
-            await HideVehicleUsageIfGPSFeatureIsEnabled();
+            //this was moved to AppNavigationProvider for consistency
+            //if (!await SettingManager.DispatchViaAny())
+            //{
+            //    HideMenuItem(model, AppPageNames.Tenant.Dispatches);
+            //    HideMenuItem(model, AppPageNames.Tenant.TruckDispatchList);
+            //}
 
             var tenant = await _tenantManager.GetByIdAsync(AbpSession.TenantId.Value);
             if (tenant.EditionId.HasValue)
@@ -61,42 +61,14 @@ namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppMenu
             }
 
             return GetView(model, isLeftMenuUsed);
+        }
 
-			// Local functions
-			async Task HideDispatchMenuItemsIfSettingIsDisabled()
-			{
-				if (!await SettingManager.DispatchViaAny())
-				{
-					HideMenuItem(AppPageNames.Tenant.Dispatches);
-					HideMenuItem(AppPageNames.Tenant.TruckDispatchList);
-				}
-
-				if (!await SettingManager.DispatchViaAny() && !await SettingManager.AllowSmsMessages())
-				{
-					HideMenuItem(AppPageNames.Tenant.SendOrdersToDrivers);
-				}
-
-                if (!await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets))
-                {
-                    HideMenuItem(AppPageNames.Tenant.RevenueBreakdownByTruck);
-                }
-			}
-
-            async Task HideVehicleUsageIfGPSFeatureIsEnabled()
+        private void HideMenuItem(MenuViewModel model, string menuItemName)
+        {
+            var menuItem = FindMenuItemOrNull(model.Menu.Items, menuItemName);
+            if (menuItem != null)
             {
-                if(await FeatureChecker.IsEnabledAsync(AppFeatures.GpsIntegrationFeature))
-                {
-                    HideMenuItem(AppPageNames.Tenant.ImportVehicleUsage);
-                }
-            }
-
-            void HideMenuItem(string menuItemName)
-            {
-                var dispatches = FindMenuItemOrNull(model.Menu.Items, menuItemName);
-                if (dispatches != null)
-                {
-                    dispatches.IsVisible = false;
-                }
+                menuItem.IsVisible = false;
             }
         }
 

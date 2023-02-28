@@ -7,6 +7,6 @@ namespace DispatcherWeb.Tickets.Dto
 {
     public class DeleteTicketOutput
     {
-        public IOrderTaxDetailsWithActualAmounts OrderTaxDetails { get; set; }
+        public IOrderTaxDetails OrderTaxDetails { get; set; }
     }
 }

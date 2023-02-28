@@ -31,17 +31,14 @@
                 Print Daily Detail with Separate Prices
             </label>
         </div>
-        @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets))
-        {
-            <div class="form-group">
-                <input type="radio" name="PrintOrdersOption" class="minimal" id="PrintDailyDetailForBackOffice" />
-                <label for="PrintDailyDetailForBackOffice">Print Daily Detail for Back Office</label>
-            </div>
-            <div class="form-group">
-                <input type="radio" name="PrintOrdersOption" class="minimal" id="PrintOrdersWithDeliveryInfo" />
-                <label for="PrintOrdersWithDeliveryInfo">@L("PrintOrdersWithDeliveryInfo")</label>
-            </div>
-        }
+        <div class="form-group">
+            <input type="radio" name="PrintOrdersOption" class="minimal" id="PrintDailyDetailForBackOffice" />
+            <label for="PrintDailyDetailForBackOffice">Print Daily Detail for Back Office</label>
+        </div>
+        <div class="form-group">
+            <input type="radio" name="PrintOrdersOption" class="minimal" id="PrintOrdersWithDeliveryInfo" />
+            <label for="PrintOrdersWithDeliveryInfo">@L("PrintOrdersWithDeliveryInfo")</label>
+        </div>
         <div class="form-group" id="HidePricesBlock" style="display: none">
             <input type="checkbox" class="minimal" id="HidePrices">
             <label for="HidePrices">Hide Prices</label>

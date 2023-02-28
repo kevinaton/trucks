@@ -165,7 +165,6 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.General.DefaultMapLocation, "", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.CurrencySymbol, "$", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.UserDefinedField1, "", scopes: SettingScopes.Tenant),
-                new SettingDefinition(AppSettings.General.AllowAddingTickets, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.ValidateDriverAndTruckOnTickets, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.ShowDriverNamesOnPrintedOrder, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.SplitBillingByOffices, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),

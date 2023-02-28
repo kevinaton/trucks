@@ -52,8 +52,6 @@ namespace DispatcherWeb.Orders.Dto
 
         //public ICollection<TicketDto> Tickets { get; set; }
 
-        //public ICollection<OfficeAmountDto> OfficeAmounts { get; set; }
-
         //public ICollection<OrderLineShareDto> SharedOrderLines { get; set; }
     }
 }

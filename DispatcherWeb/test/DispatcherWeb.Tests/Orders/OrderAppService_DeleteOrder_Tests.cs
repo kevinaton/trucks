@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.UI;
@@ -9,7 +8,6 @@ using DispatcherWeb.Customers;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Emailing;
-using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Services;
@@ -169,26 +167,6 @@ namespace DispatcherWeb.Tests.Orders
                         TenantId = 1,
                         TruckId = 1,
                         DriverId = null,
-                    }
-                };
-            });
-
-            // Act & Assert
-            await DeleteOrderShouldThrowUserFriendlyException();
-        }
-
-        [Fact]
-        public async Task Test_DeleteOrder_should_throw_UserFriendlyException_when_there_is_OrderLineOfficeAmount()
-        {
-            // Assign
-            await UpdateOrder(order =>
-            {
-                order.OrderLines.First().OfficeAmounts = new List<OrderLineOfficeAmount>
-                {
-                    new OrderLineOfficeAmount
-                    {
-                        TenantId = 1,
-                        OfficeId = 1,
                     }
                 };
             });

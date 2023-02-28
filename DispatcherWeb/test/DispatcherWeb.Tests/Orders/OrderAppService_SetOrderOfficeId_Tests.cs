@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.UI;
 using DispatcherWeb.Offices;
@@ -171,58 +169,6 @@ namespace DispatcherWeb.Tests.Orders
         {
             // Arrange
             await AddTicketToOrderLine(_orderLine.Id);
-            int anotherOrderLineId = _order.OrderLines.First(ol => ol.Id != _orderLine.Id).Id;
-            anotherOrderLineId.ShouldNotBe(_orderLine.Id);
-
-            // Act
-            await _orderAppService.SetOrderOfficeId(new SetOrderOfficeIdInput()
-            {
-                OrderId = _order.Id,
-                OfficeId = _office2.Id,
-                OrderLineId = anotherOrderLineId,
-            });
-
-            // Assert
-            var transferedOrder = await UsingDbContextAsync(async context => await context.Orders.Include(o => o.OrderLines).FirstAsync(o => o.LocationId == _office2.Id));
-            transferedOrder.OrderLines.Count.ShouldBe(1);
-            transferedOrder.OrderLines.First().Id.ShouldBe(anotherOrderLineId);
-        }
-
-
-        [Fact]
-        public async Task Test_SetOrderOfficeId_should_throw_UserFriendlyException_when_Order_has_OrderLine_with_OfficeAmount_and_transfer_entire_order()
-        {
-            // Arrange
-            await AddOfficeAmountToOrderLine(_orderLine.Id);
-
-            // Act, Assert
-            await _orderAppService.SetOrderOfficeId(new SetOrderOfficeIdInput()
-            {
-                OrderId = _order.Id,
-                OfficeId = _office2.Id,
-            }).ShouldThrowAsync(typeof(UserFriendlyException));
-        }
-
-        [Fact]
-        public async Task Test_SetOrderOfficeId_should_throw_UserFriendlyException_when_Order_has_OrderLine_with_OfficeAmount_and_transfer_this_OrderLine()
-        {
-            // Arrange
-            await AddOfficeAmountToOrderLine(_orderLine.Id);
-
-            // Act, Assert
-            await _orderAppService.SetOrderOfficeId(new SetOrderOfficeIdInput()
-            {
-                OrderId = _order.Id,
-                OfficeId = _office2.Id,
-                OrderLineId = _orderLine.Id,
-            }).ShouldThrowAsync(typeof(UserFriendlyException));
-        }
-
-        [Fact]
-        public async Task Test_SetOrderOfficeId_should_transfer_OrderLine_when_Order_has_OrderLine_with_OfficeAmount_and_transfer_another_OrderLine()
-        {
-            // Arrange
-            await AddOfficeAmountToOrderLine(_orderLine.Id);
             int anotherOrderLineId = _order.OrderLines.First(ol => ol.Id != _orderLine.Id).Id;
             anotherOrderLineId.ShouldNotBe(_orderLine.Id);
 
@@ -483,21 +429,6 @@ namespace DispatcherWeb.Tests.Orders
                 var orderLine = await context.OrderLines.FindAsync(orderLineId);
                 orderLine.Tickets = new List<Ticket> {
                     new Ticket()
-                    {
-                        TenantId = 1,
-                        OfficeId = _office2.Id,
-                    }
-                };
-            });
-        }
-
-        private async Task AddOfficeAmountToOrderLine(int orderLineId)
-        {
-            await UsingDbContextAsync(async context =>
-            {
-                var orderLine = await context.OrderLines.FindAsync(orderLineId);
-                orderLine.OfficeAmounts = new List<OrderLineOfficeAmount> {
-                    new OrderLineOfficeAmount()
                     {
                         TenantId = 1,
                         OfficeId = _office2.Id,

@@ -80,9 +80,6 @@
         public const string Pages_Administration_DynamicEntityPropertyValue_Edit = "Pages.Administration.DynamicEntityPropertyValue.Edit";
         public const string Pages_Administration_DynamicEntityPropertyValue_Delete = "Pages.Administration.DynamicEntityPropertyValue.Delete";
 
-
-        public const string Pages_Administration_RecalculateHasAllActualAmountsValues = "Pages.Administration.RecalculateHasAllActualAmountsValues";
-
         //TENANT-SPECIFIC PERMISSIONS
         public const string Pages_Tenant_Dashboard = "Pages.Tenant.Dashboard";
         public const string Pages_Dashboard = "Pages.Dashboard";

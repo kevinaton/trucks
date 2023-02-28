@@ -14,7 +14,6 @@ namespace DispatcherWeb.Configuration
             public const string DefaultMapLocation = "App.General.DefaultMapLocation";
             public const string CurrencySymbol = "App.General.CurrencySymbol";
             public const string UserDefinedField1 = "App.General.UserDefinedField1";
-            public const string AllowAddingTickets = "App.General.AllowAddingTickets";
             public const string ValidateDriverAndTruckOnTickets = "App.General.ValidateDriverAndTruckOnTickets";
             public const string ShowDriverNamesOnPrintedOrder = "App.General.ShowDriverNamesOnPrintedOrder";
             public const string SplitBillingByOffices = "App.General.SplitBillingByOffices";

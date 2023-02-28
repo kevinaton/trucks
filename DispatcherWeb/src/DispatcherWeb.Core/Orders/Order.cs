@@ -18,7 +18,7 @@ using DispatcherWeb.Quotes;
 namespace DispatcherWeb.Orders
 {
     [Table("Order")]
-    public class Order : FullAuditedEntity, IMustHaveTenant, IOrderTaxDetailsWithActualAmounts
+    public class Order : FullAuditedEntity, IMustHaveTenant, IOrderTaxDetails
     {
         public Order()
         {
@@ -64,8 +64,6 @@ namespace DispatcherWeb.Orders
         [Column(TypeName = "money")]
         public decimal CODTotal { get; set; }
 
-        public bool HasAllActualAmounts { get; set; }
-
         [StringLength(EntityStringFieldLengths.Order.ChargeTo)]
         public string ChargeTo { get; set; }
 
@@ -83,9 +81,6 @@ namespace DispatcherWeb.Orders
         public string EncryptedInternalNotes { get; set; }
 
         public bool HasInternalNotes { get; set; }
-
-        [Obsolete("TODO check if we are still using this NumberOfTrucks in any meaningful way")]
-        public double? NumberOfTrucks { get; set; }
 
         [Required(ErrorMessage = "Office is a required field")]
         public int LocationId { get; set; }

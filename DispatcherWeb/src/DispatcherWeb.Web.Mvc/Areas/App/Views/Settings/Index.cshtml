@@ -152,8 +152,6 @@
                     </li>
                 </ul>
                 <div class="tab-content col-9 col-md-9 col-xl-10">
-                    @*@if (Clock.SupportsMultipleTimezone)
-                    {*@
                     <div class="tab-pane active" id="SettingsGeneralTab">
                         <form id="GeneralSettingsForm" class="m-form">
                             @if (!ViewBag.IsMultiTenancyEnabled)
@@ -192,13 +190,6 @@
                                     <span></span>
                                 </label>
                                 <input class="form-control" style="display: none;" id="Setting_UserDefinedField1" type="text" value="@Model.Settings.General.UserDefinedField1" name="UserDefinedField1" />
-                            </div>
-                            <div class="form-group">
-                                <label for="Setting_AllowAddingTickets" class="m-checkbox col-lg-12">
-                                    <input id="Setting_AllowAddingTickets" type="checkbox" name="AllowAddingTickets" value="true" checked=@(Model.Settings.General.AllowAddingTickets ? "checked" : null)>
-                                    @L("Setting_AllowAddingTickets")
-                                    <span></span>
-                                </label>
                             </div>
                             <div class="form-group">
                                 <label for="DontValidateDriverAndTruckOnTickets" class="m-checkbox col-lg-12">
@@ -246,12 +237,6 @@
                                 <textarea class="form-control" name="DriverOrderEmailBody" rows="3">@Model.Settings.General.DriverOrderEmailBody</textarea>
                             </div>
 
-                            @* Removed by #7741 *@
-                            @*<div class="form-group">
-                            <label for="DriverOrderSms">@L("DriverOrderSms")</label>
-                            <textarea class="form-control" name="DriverOrderSms" rows="3">@Model.Settings.General.DriverOrderSms</textarea>
-                            </div>*@
-
                             <div class="form-group">
                                 <label for="Setting_UseShifts" class="m-checkbox col-lg-12">
                                     <input id="Setting_UseShifts" type="checkbox" name="UseShifts" value="true"
@@ -281,17 +266,8 @@
                                            required="@(Model.Settings.General.ShiftName3.IsNullOrEmpty() ? null : "required")" />
                                 </div>
                             </div>
-
-                            @*@if (await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Administration_RecalculateHasAllActualAmountsValues))
-                            {
-                            <div class="form-group">
-                            <button type="button" class="btn btn-default" id="RecalculateHasAllActualAmountsValuesButton">@L("RecalculateHasAllActualAmountsValues")</button>
-                            </div>
-                            }*@
                         </form>
                     </div>
-                    @*}
-                    <div class="tab-pane @((!Clock.SupportsMultipleTimezone) ? "active" : "")" id="SettingsAppearanceTab">*@
                     <div class="tab-pane" id="SettingsAppearanceTab">
                         <form id="SettingsLogoUploadForm" method="POST" class="m-form mb-5" action="@Url.Action("UploadLogo", "TenantCustomization", new {area = string.Empty, TenantCustomizationController.LogoType.ApplicationLogo})">
                             <h5>@L("ApplicationLogo")</h5>

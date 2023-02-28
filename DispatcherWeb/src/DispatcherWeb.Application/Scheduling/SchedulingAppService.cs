@@ -287,10 +287,9 @@ namespace DispatcherWeb.Scheduling
 
         private async Task CalculateOrderLineProgress(List<ScheduleOrderLineDto> items)
         {
-            var allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
             var dispatchVia = (DispatchVia)await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DispatchVia);
 
-            if (!allowAddingTickets || dispatchVia != DispatchVia.DriverApplication)
+            if (dispatchVia != DispatchVia.DriverApplication)
             {
                 return;
             }
@@ -1045,15 +1044,6 @@ namespace DispatcherWeb.Scheduling
             return await readonlyChecker.IsFieldReadonlyAsync(input.FieldName);
         }
 
-        public async Task<bool> OrderLineHasTicketsOrActualAmountOrOpenDispatches(int orderLineId) =>
-            await _orderLineRepository.GetAll()
-                .Where(ol => ol.Id == orderLineId)
-                .AnyAsync(ol =>
-                    ol.Tickets.Any() ||
-                    ol.OfficeAmounts.Any() ||
-                    ol.Dispatches.Any(d => !Dispatch.ClosedDispatchStatuses.Contains(d.Status))
-                );
-
 
         private class RemainingTruckUtilizationAndNumber
         {
@@ -1107,12 +1097,24 @@ namespace DispatcherWeb.Scheduling
 
         private async Task<CopyOrderTrucksResult> CopyOrderTrucksInternal(CopyOrderTrucksInput input)
         {
+            var result = new CopyOrderTrucksResult();
             var timezone = await GetTimezone();
 
             var newOrder = await _orderRepository.GetAll()
                 .Where(x => x.Id == input.NewOrderId)
-                .GetScheduleOrders()
+                .Select(x => new
+                {
+                    OfficeId = x.LocationId,
+                    Date = x.DeliveryDate,
+                    x.Shift
+                })
                 .FirstAsync();
+
+            if (!newOrder.Date.HasValue)
+            {
+                result.Completed = false;
+                return result;
+            }
 
             var originalOrderLines = await _orderLineRepository.GetAll()
                 .Where(ol => ol.OrderId == input.OriginalOrderId)
@@ -1154,7 +1156,7 @@ namespace DispatcherWeb.Scheduling
                 .GetScheduleTrucks(new GetScheduleInput
                 {
                     OfficeId = newOrder.OfficeId,
-                    Date = newOrder.Date,
+                    Date = newOrder.Date.Value,
                     Shift = newOrder.Shift,
                 },
                 await SettingManager.UseShifts(),
@@ -1175,8 +1177,6 @@ namespace DispatcherWeb.Scheduling
                 .ToListAsync();
 
             var passedOrderLineTrucks = new List<OrderLineTruck>();
-
-            var result = new CopyOrderTrucksResult();
 
             var truckRemainingUtilizationQuery =
                 from olt in originalOrderLineTrucks
@@ -1219,7 +1219,7 @@ namespace DispatcherWeb.Scheduling
                         newDriverId = truckInfo.DefaultDriverId;
                         DriverAssignment newDriverAssignment = new DriverAssignment
                         {
-                            Date = newOrder.Date,
+                            Date = newOrder.Date.Value,
                             Shift = newOrder.Shift,
                             DriverId = truckInfo.DefaultDriverId,
                             TruckId = truck.Id,
@@ -1277,12 +1277,10 @@ namespace DispatcherWeb.Scheduling
                     DriverId = newDriverId,
                     ParentOrderLineTruckId = originalOrderLineTruck.ParentOrderLineTruckId,
                     Utilization = utilizationToAssign,
-                    TimeOnJob = newOrder.Date.AddTimeOrNull(originalOrderLineTruck.TimeOnJob?.ConvertTimeZoneTo(timezone))?.ConvertTimeZoneFrom(timezone),
+                    TimeOnJob = newOrder.Date.Value.AddTimeOrNull(originalOrderLineTruck.TimeOnJob?.ConvertTimeZoneTo(timezone))?.ConvertTimeZoneFrom(timezone),
                 });
 
                 originalOrderLineTrucks.Remove(originalOrderLineTruck);
-
-                newOrder.Utilization += truck.VehicleCategory.IsPowered ? utilizationToAssign : 0;
             }
 
             if (originalOrderLineTrucks.Any())
@@ -2220,12 +2218,6 @@ namespace DispatcherWeb.Scheduling
             }
         }
 
-
-        private async Task<decimal> GetRemainingTruckUtilizationForOrderAsync(ScheduleOrderDto order, ScheduleTruckDto truck)
-        {
-            return await GetRemainingTruckUtilizationForOrderAsync(GetRemainingTruckUtilizationForOrderInput.From(order, truck));
-        }
-
         private async Task<decimal> GetRemainingTruckUtilizationForOrderLineAsync(ScheduleOrderLineDto orderLine, ScheduleTruckDto truck)
         {
             return await GetRemainingTruckUtilizationForOrderAsync(GetRemainingTruckUtilizationForOrderInput.From(orderLine, truck));
@@ -2750,80 +2742,66 @@ namespace DispatcherWeb.Scheduling
                     }
 
                     // to Load site
-                    try
+                    var tripCycleDto = new TripCycleDto()
                     {
-                        var tripCycleDto = new TripCycleDto()
-                        {
-                            CycleId = $"{thisLoad.LoadId}-0-{ctr + 1}",
-                            TruckTripType = TruckTripTypesEnum.TripToLoadSite,
-                            DriverId = thisLoad.DriverId,
-                            SourceCoordinates = thisLoad.SourceCoordinates,
-                            DestinationCoordinates = thisLoad.DestinationCoordinates,
-                            Label = $"#{orderTruckDto.TripCycles.Count + 1}"
-                        };
+                        CycleId = $"{thisLoad.LoadId}-0-{ctr + 1}",
+                        TruckTripType = TruckTripTypesEnum.TripToLoadSite,
+                        DriverId = thisLoad.DriverId,
+                        SourceCoordinates = thisLoad.SourceCoordinates,
+                        DestinationCoordinates = thisLoad.DestinationCoordinates,
+                        Label = $"#{orderTruckDto.TripCycles.Count + 1}"
+                    };
 
-                        if (ctr == 0 || (checkTimeEntry == null && timeEntriesQueue.Any()))
-                        {
-                            checkTimeEntry ??= timeEntriesQueue.Dequeue();
-
-                            tripCycleDto.StartDateTime = checkTimeEntry.StartDateTime;
-
-                            if (timeEntriesQueue.Any())
-                                checkTimeEntry = timeEntriesQueue.Dequeue();
-                            else checkTimeEntry = null;
-                        }
-                        else
-                        {
-                            tripCycleDto.StartDateTime = orderTruck.Loads[ctr - 1].DestinationDateTime;
-                        }
-
-                        tripCycleDto.EndDateTime = thisLoad.SourceDateTime;
-
-                        orderTruckDto.TripCycles.Add(tripCycleDto);
-                    }
-                    catch (Exception ex)
+                    if (ctr == 0 || (checkTimeEntry == null && timeEntriesQueue.Any()))
                     {
-                        throw;
+                        checkTimeEntry ??= timeEntriesQueue.Dequeue();
+
+                        tripCycleDto.StartDateTime = checkTimeEntry.StartDateTime;
+
+                        if (timeEntriesQueue.Any())
+                            checkTimeEntry = timeEntriesQueue.Dequeue();
+                        else checkTimeEntry = null;
                     }
+                    else
+                    {
+                        tripCycleDto.StartDateTime = orderTruck.Loads[ctr - 1].DestinationDateTime;
+                    }
+
+                    tripCycleDto.EndDateTime = thisLoad.SourceDateTime;
+
+                    orderTruckDto.TripCycles.Add(tripCycleDto);
 
                     // to Dump site
-                    try
+                    if (!thisLoad.DestinationDateTime.HasValue)
+                        continue;
+
+                    tripCycleDto = new TripCycleDto()
                     {
-                        if (!thisLoad.DestinationDateTime.HasValue)
-                            continue;
+                        CycleId = $"{thisLoad.LoadId}-1-{ctr + 1}",
+                        TruckTripType = TruckTripTypesEnum.TripToDeliverySite,
+                        DriverId = thisLoad.DriverId,
+                        SourceCoordinates = thisLoad.SourceCoordinates,
+                        DestinationCoordinates = thisLoad.DestinationCoordinates,
+                        Label = $"#{orderTruckDto.TripCycles.Count + 1}"
+                    };
 
-                        var tripCycleDto = new TripCycleDto()
-                        {
-                            CycleId = $"{thisLoad.LoadId}-1-{ctr + 1}",
-                            TruckTripType = TruckTripTypesEnum.TripToDeliverySite,
-                            DriverId = thisLoad.DriverId,
-                            SourceCoordinates = thisLoad.SourceCoordinates,
-                            DestinationCoordinates = thisLoad.DestinationCoordinates,
-                            Label = $"#{orderTruckDto.TripCycles.Count + 1}"
-                        };
-
-                        if (checkTimeEntry != null &&
-                            thisLoad.SourceDateTime <= checkTimeEntry.EndDateTime &&
-                            (checkTimeEntry.EndDateTime <= thisLoad.DestinationDateTime || nextLoad != null && checkTimeEntry.EndDateTime <= nextLoad.SourceDateTime))
-                        {
-                            tripCycleDto.StartDateTime = checkTimeEntry.EndDateTime;
-
-                            if (timeEntriesQueue.Any())
-                                checkTimeEntry = timeEntriesQueue.Dequeue();
-                        }
-                        else
-                        {
-                            tripCycleDto.StartDateTime = thisLoad.SourceDateTime;
-                        }
-
-                        tripCycleDto.EndDateTime = thisLoad.DestinationDateTime;
-
-                        orderTruckDto.TripCycles.Add(tripCycleDto);
-                    }
-                    catch (Exception ex)
+                    if (checkTimeEntry != null &&
+                        thisLoad.SourceDateTime <= checkTimeEntry.EndDateTime &&
+                        (checkTimeEntry.EndDateTime <= thisLoad.DestinationDateTime || nextLoad != null && checkTimeEntry.EndDateTime <= nextLoad.SourceDateTime))
                     {
-                        throw;
+                        tripCycleDto.StartDateTime = checkTimeEntry.EndDateTime;
+
+                        if (timeEntriesQueue.Any())
+                            checkTimeEntry = timeEntriesQueue.Dequeue();
                     }
+                    else
+                    {
+                        tripCycleDto.StartDateTime = thisLoad.SourceDateTime;
+                    }
+
+                    tripCycleDto.EndDateTime = thisLoad.DestinationDateTime;
+
+                    orderTruckDto.TripCycles.Add(tripCycleDto);
                 }
                 orderTrucksDto.OrderTrucks.Add(orderTruckDto);
             }

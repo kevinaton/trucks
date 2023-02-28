@@ -940,7 +940,6 @@
 		<text name="CompanyName">Company Name</text>
 		<text name="CurrencySymbolSettingLabel">Currency - symbol or abbreviation (For example in US it could be '$' or 'USD')</text>
 		<text name="Setting_UserDefinedField1Checkbox">User defined field 1</text>
-		<text name="Setting_AllowAddingTickets">Allow associating tickets with order items</text>
 		<text name="Setting_ShowDriverNamesOnPrintedOrder">Show driver names on printed order</text>
 		<text name="PromptForDisplayingQuarryInfoOnQuotes">Prompt for whether or not to display quarry info on quotes</text>
 		<text name="SplitBillingByOffices">Split billing by offices</text>
@@ -1379,7 +1378,6 @@
 		<text name="OrderWithDeliveryInfo">Delivery Report</text>
 		<text name="CantDeactivateUserBecauseOfDispatches">This user has dispatches in their name. If you want to inactivate them, you will first need to remove their dispatches.</text>
 		<text name="CantRemoveDriverRoleBecauseOfDispatches">This user has dispatches in their name. If you want to remove their driver role, you will first need to remove their dispatches.</text>
-		<text name="RecalculateHasAllActualAmountsValues">Recalculate HasAllActualAmounts values</text>
 		<text name="ReceiptNumber">Receipt Number</text>
 		<text name="CustomerEmail">Customer Email</text>
 		<text name="BalanceDue">Balance Due</text>
@@ -1402,7 +1400,7 @@
 		<text name="Order_Delete_Error_HasCompletedOrderLines">This order has 1 or more line items marked as complete or cancelled and can't be deleted</text>
 		<text name="Order_Edit_Error_HasCompletedOrderLines">This order has 1 or more line items marked as complete or cancelled and can't be edited</text>
 		<text name="Order_Edit_Error_HasDispatches">This order has 1 or more open dispatches and can't be edited</text>
-		<text name="Order_Edit_Error_HasTickets">We are unable to save these changes because this order has tickets or actual amounts associated with it.</text>
+		<text name="Order_Edit_Error_HasTickets">We are unable to save these changes because this order has tickets associated with it.</text>
 		<text name="Order_ChangeOffice_Error_HasReceipts">This order has 1 or more Receipts for the current office and Office value can't be changed</text>
 		<text name="OrderLine_Edit_Error_HasTickets">Either tickets or dispatches are associated with this order line item, so the changes you requested can't be saved.</text>
 		<text name="BillingReconciliation">Billing Reconciliation</text>
