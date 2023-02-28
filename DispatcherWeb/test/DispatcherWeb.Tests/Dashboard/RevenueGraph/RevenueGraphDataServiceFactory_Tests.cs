@@ -28,7 +28,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         {
             // Act
             var instance1 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Daily, RevenueCalculateType.ByTickets);
-            var instance2 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Daily, RevenueCalculateType.ByOfficeAmount);
+            var instance2 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Daily, RevenueCalculateType.ByReceipts);
 
             // Assert
             Assert.True(instance1 is RevenueGraphDataDailyService);
@@ -40,7 +40,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         {
             // Act
             var instance1 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Weekly, RevenueCalculateType.ByTickets);
-            var instance2 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Weekly, RevenueCalculateType.ByOfficeAmount);
+            var instance2 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Weekly, RevenueCalculateType.ByReceipts);
 
             // Assert
             Assert.True(instance1 is RevenueGraphDataWeeklyService);
@@ -52,7 +52,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         {
             // Act
             var instance1 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Monthly, RevenueCalculateType.ByTickets);
-            var instance2 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Monthly, RevenueCalculateType.ByOfficeAmount);
+            var instance2 = RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(_iocResolver, RevenueGraphDatePeriod.Monthly, RevenueCalculateType.ByReceipts);
 
             // Assert
             Assert.True(instance1 is RevenueGraphDataMonthlyService);

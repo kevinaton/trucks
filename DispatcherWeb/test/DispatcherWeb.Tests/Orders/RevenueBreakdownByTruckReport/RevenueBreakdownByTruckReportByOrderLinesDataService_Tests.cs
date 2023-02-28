@@ -36,8 +36,6 @@ namespace DispatcherWeb.Tests.Orders.RevenueBreakdownByTruckReport
             var driver1 = await CreateDriver();
             await CreateOrderLineTruck(truck1.Id, driver1.Id, orderLine11.Id, .5m);
             await CreateOrderLineTruck(truck1.Id, driver1.Id, orderLine12.Id, .5m);
-            await CreateOrderLineOfficeAmount(orderLine11, _officeId, 10);
-            await CreateOrderLineOfficeAmount(orderLine12, _officeId, 20);
 
             // Act
             var items = await _revenueBreakdownByTruckReportDataService.GetRevenueBreakdownItems(new RevenueBreakdownByTruckReportInput()
@@ -71,7 +69,6 @@ namespace DispatcherWeb.Tests.Orders.RevenueBreakdownByTruckReport
             var truck1 = await CreateTruck();
             var driver1 = await CreateDriver();
             await CreateOrderLineTruck(truck1.Id, driver1.Id, orderLine11.Id, 1);
-            await CreateOrderLineOfficeAmount(orderLine11, _officeId, 10);
 
             // Act
             var items = await _revenueBreakdownByTruckReportDataService.GetRevenueBreakdownItems(new RevenueBreakdownByTruckReportInput()
@@ -105,7 +102,6 @@ namespace DispatcherWeb.Tests.Orders.RevenueBreakdownByTruckReport
             var truck1 = await CreateTruck();
             var driver1 = await CreateDriver();
             await CreateOrderLineTruck(truck1.Id, driver1.Id, orderLine11.Id, 1);
-            await CreateOrderLineOfficeAmount(orderLine11, _officeId, 10);
 
             // Act
             var items = await _revenueBreakdownByTruckReportDataService.GetRevenueBreakdownItems(new RevenueBreakdownByTruckReportInput()

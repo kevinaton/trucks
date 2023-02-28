@@ -545,7 +545,7 @@ namespace DispatcherWeb
     public enum RevenueCalculateType
     {
         ByTickets = 1,
-        ByOfficeAmount = 2,
+        ByReceipts = 2,
     }
 
     public enum DispatchVia

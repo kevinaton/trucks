@@ -40,12 +40,6 @@
             modalSize: 'lg'
         });
 
-        //var _createOrEditOrderLineOfficeAmountModal = new app.ModalManager({
-        //    viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderLineOfficeAmountModal',
-        //    scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderLineOfficeAmountModal.js',
-        //    modalClass: 'CreateOrEditOrderLineOfficeAmountModal'
-        //});
-
         var _createOrEditTicketModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Orders/CreateOrEditTicketModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditTicketModal.js',
@@ -1032,10 +1026,6 @@
             handleOrderTaxDetailsExternalChange(e);
         });
 
-        abp.event.on('app.createOrEditOrderLineOfficeAmountModalSaved', function (e) {
-            handleOrderTaxDetailsExternalChange(e);
-        });
-
         abp.event.on('app.orderLineNoteModalSaved', function (e) {
             reloadOrderLinesGridAsync();
             updateLastModifiedDates();
@@ -1365,24 +1355,16 @@
                             return;
                         }
                     }
-                    openTicketOrOfficeAmountModal(orderLine.id);
+                    openTicketModal(orderLine.id);
                 });
             } else {
-                openTicketOrOfficeAmountModal(orderLine.id);
+                openTicketModal(orderLine.id);
             }
         });
 
-        function openTicketOrOfficeAmountModal(orderLineId) {
+        function openTicketModal(orderLineId) {
             if (_settings.allowAddingTickets) {
-                _createOrEditTicketModal
-                    .open({ orderLineId: orderLineId })
-                    ;
-            } else {
-                //_createOrEditOrderLineOfficeAmountModal
-                //    .open({ orderLineId: orderLineId })
-                //    .fail(function (failResult) {
-                //        handleOrderLinePopupError(failResult);
-                //    });
+                _createOrEditTicketModal.open({ orderLineId: orderLineId });
             }
         }
 

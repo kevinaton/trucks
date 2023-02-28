@@ -181,20 +181,6 @@
             modalId: 'JobSummaryModal'
         });
 
-        _jobSummaryModal.onClose(() => {
-            
-        });
-
-        _jobSummaryModal.onOpen(() => {
-            
-        });
-
-        //var _createOrEditOrderLineOfficeAmountModal = new app.ModalManager({
-        //    viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderLineOfficeAmountModal',
-        //    scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderLineOfficeAmountModal.js',
-        //    modalClass: 'CreateOrEditOrderLineOfficeAmountModal'
-        //});
-
         var _createOrEditTicketModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Orders/CreateOrEditTicketModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditTicketModal.js',
@@ -844,57 +830,6 @@
             };
         }
 
-        //might be usefull for future textarea controls
-        //function renderDeliverToControlOnCellCreation(cell, cellData, rowData, rowIndex, colIndex) {
-        //    $(cell).text(rowData.jobSite);
-        //    var cellIsActive = false;
-        //    $(cell).click(function () {
-        //        if (cellIsActive || !hasOrderEditPermissions() || !isAllowedToEditOrder(rowData)) return;
-        //        _schedulingService.orderLineHasTicketsOrActualAmountOrOpenDispatches(rowData.id)
-        //            .done(function (result) {
-        //                if (result) {
-        //                    return;
-        //                }
-        //                cellIsActive = true;
-        //                var cellHeight = $(cell).outerHeight();
-        //                $(cell).text('');
-        //                $(cell).addClass('cell-editable');
-        //                var editor = $('<textarea>').height(cellHeight - 6).appendTo($(cell));
-        //                editor.val(rowData.jobSite);
-        //                var closeEditor = function () {
-        //                    editor.remove();
-        //                    $(cell).text(rowData.jobSite);
-        //                    $(cell).removeClass('cell-editable');
-        //                    cellIsActive = false;
-        //                };
-        //                editor.focusout(function () {
-        //                    var newValue = $(this).val();
-        //                    if (newValue === (rowData.jobSite || "")) {
-        //                        closeEditor();
-        //                        return;
-        //                    }
-        //                    if (newValue.length > 500) {
-        //                        abp.message.error('The "Job site" value cannot be more than 500 characters!');
-        //                        $(this).val(rowData.jobSite);
-        //                        return;
-        //                    }
-        //                    abp.ui.setBusy(cell);
-        //                    _schedulingService.setOrderJobSite({
-        //                        orderId: rowData.orderId,
-        //                        jobSite: newValue
-        //                    }).done(function () {
-        //                        rowData.jobSite = newValue;
-        //                        abp.notify.info('Saved successfully.');
-        //                    }).always(function () {
-        //                        abp.ui.clearBusy(cell);
-        //                        closeEditor();
-        //                    });
-        //                });
-        //                editor.focus();
-        //            });
-        //    });
-        //}
-
         function refreshLeaseHaulerButtonVisibility() {
             //var date = moment($('#DateFilter').val(), 'MM/DD/YYYY');
             //if (isLeaseHaulerEnabled && date >= moment().startOf('day')) {
@@ -1171,8 +1106,6 @@
             var orderLineId = _dtHelper.getRowData(element).id;
             if (allowAddingTickets) {
                 _createOrEditTicketModal.open({ orderLineId: orderLineId });
-            } else {
-                //_createOrEditOrderLineOfficeAmountModal.open({ orderLineId: orderLineId });
             }
         };
         menuFunctions.isVisible.showMap = function (rowData) {

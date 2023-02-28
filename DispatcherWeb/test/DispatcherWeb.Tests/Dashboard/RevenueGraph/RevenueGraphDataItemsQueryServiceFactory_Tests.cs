@@ -37,10 +37,10 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         public void Test_CreateRevenueGraphDataService_should_return_IRevenueGraphByOfficeAmountDataItemsQueryService_instance()
         {
             // Act
-            var instance = RevenueGraphDataItemsQueryServiceFactory.CreateRevenueGraphDataItemsQueryService(_iocResolver, RevenueCalculateType.ByOfficeAmount);
+            var instance = RevenueGraphDataItemsQueryServiceFactory.CreateRevenueGraphDataItemsQueryService(_iocResolver, RevenueCalculateType.ByReceipts);
 
             // Assert
-            Assert.True(instance is IRevenueGraphByOfficeAmountDataItemsQueryService);
+            Assert.True(instance is IRevenueGraphByReceiptsDataItemsQueryService);
         }
 
         public override void Dispose()

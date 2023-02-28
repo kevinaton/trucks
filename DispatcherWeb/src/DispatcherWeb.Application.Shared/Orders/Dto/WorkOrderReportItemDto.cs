@@ -35,7 +35,6 @@ namespace DispatcherWeb.Orders.Dto
         public double NumberOfTrucks { get; set; }
         public DateTime? TimeOnJob { get; set; }
         public bool IsTimeStaggered { get; set; }
-        public bool HasAllActualAmounts { get; set; }
 
 
         public string ActualQuantityFormatted => GetQuantityFormatted(ActualQuantity, ActualQuantity);

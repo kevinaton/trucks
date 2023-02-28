@@ -154,11 +154,6 @@ namespace DispatcherWeb
                             LineNumber = s.LineNumber,
                             MaterialQuantity = s.MaterialQuantity,
                             FreightQuantity = s.FreightQuantity,
-                            //ActualMaterialQuantity = allowAddingTickets ? 
-                            // s.Tickets.Sum(t => t.MaterialQuantity) :
-                            // s.OfficeAmounts.Where(a => a.OfficeId == officeId).Select(a => a.ActualQuantity).FirstOrDefault(),
-                            //ActualMaterialQuantity = s.Receipts.Sum(r => r.MaterialTotal),
-                            //ActualFreightQuantity = s.Receipts.Sum(r => r.FreightTotal),
                             MaterialUomName = s.MaterialUom.Name,
                             FreightUomName = s.FreightUom.Name,
                             FreightPricePerUnit = s.FreightRate,
@@ -722,17 +717,6 @@ namespace DispatcherWeb
             return result;
         }
 
-        public static async Task EnsureCanAddActualAmount(this IRepository<OrderLine> orderLineRepository, int orderLineId, int officeId)
-        {
-            if (await orderLineRepository.GetAll()
-                .AnyAsync(x => x.Id == orderLineId
-                    && (x.IsMaterialPriceOverridden || x.IsFreightPriceOverridden)
-                    && x.OfficeAmounts.Any(a => a.OfficeId != officeId)))
-            {
-                throw new UserFriendlyException("You can't add actual amount to a line item with overridden totals for which another office already added actual amount");
-            }
-        }
-
         public static async Task EnsureCanEditTicket(this IRepository<Ticket> ticketRepository, int? ticketId)
         {
             var cannotEditReason = await ticketRepository.GetCannotEditTicketReason(ticketId);
@@ -823,30 +807,6 @@ namespace DispatcherWeb
             }
 
             return null;
-        }
-
-        public static async Task<int> SetOrderLineOfficeAmountAsync(this IRepository<OrderLineOfficeAmount> orderLineOfficeAmountRepository, OrderLineOfficeAmountEditDto model, AspNetZeroAbpSession session)
-        {
-            var officeId = session.GetOfficeIdOrThrow();
-
-            return await SetOrderLineOfficeAmountAsync(orderLineOfficeAmountRepository, model, session, officeId);
-        }
-
-
-        public static async Task<int> SetOrderLineOfficeAmountAsync(this IRepository<OrderLineOfficeAmount> orderLineOfficeAmountRepository, OrderLineOfficeAmountEditDto model, AspNetZeroAbpSession session, int officeId)
-        {
-            var orderLineOfficeAmount = await orderLineOfficeAmountRepository.GetAll()
-                                            .FirstOrDefaultAsync(x => x.OrderLineId == model.OrderLineId && x.OfficeId == officeId)
-                                        ?? new OrderLineOfficeAmount
-                                        {
-                                            OfficeId = officeId,
-                                            OrderLineId = model.OrderLineId,
-                                            TenantId = session.TenantId ?? 0
-                                        };
-
-            orderLineOfficeAmount.ActualQuantity = model.ActualQuantity;
-
-            return await orderLineOfficeAmountRepository.InsertOrUpdateAndGetIdAsync(orderLineOfficeAmount);
         }
 
         public static async Task<CultureInfo> GetCurrencyCultureAsync(this ISettingManager settingManager)

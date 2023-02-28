@@ -69,7 +69,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         {
             // Arrange
             await CreateOrdersAndOrderLinesAndTicketsOrOfficeAmounts(_startDate, _startDate.AddDays(30), false);
-            IRevenueGraphDataItemsQueryService revenueGraphDataItemsQueryService = Resolve<IRevenueGraphByOfficeAmountDataItemsQueryService>();
+            IRevenueGraphDataItemsQueryService revenueGraphDataItemsQueryService = Resolve<IRevenueGraphByReceiptsDataItemsQueryService>();
             var revenueGraphDataService = Resolve<IRevenueGraphDataDailyService>(new { revenueGraphDataItemsQueryService });
 
             // Act
