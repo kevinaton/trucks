@@ -993,8 +993,7 @@ namespace DispatcherWeb.Quotes
                 {
                     x.QuoteId,
                     x.ServiceId,
-                    Tickets = x.Quote.Orders.SelectMany(o => o.OrderLines)
-                        .Where(ol => ol.ServiceId == x.ServiceId && ol.LoadAtId == x.LoadAtId && ol.DeliverToId == x.DeliverToId && ol.Designation == x.Designation)
+                    Tickets = x.OrderLines
                         .SelectMany(ol => ol.Tickets)
                         .Select(t => new QuoteDeliveryRawDto
                         {
