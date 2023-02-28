@@ -665,7 +665,6 @@ namespace DispatcherWeb.Orders
                     .AnyAsync(ol => ol.OrderId == order.Id && (
                                     ol.IsComplete ||
                                     ol.Tickets.Any() ||
-                                    ol.OfficeAmounts.Any() ||
                                     ol.OrderLineTrucks.Any()
                                     )
                     ))
@@ -1162,7 +1161,6 @@ namespace DispatcherWeb.Orders
                                     ol.SharedOrderLines.Any() ||
                                     ol.IsComplete ||
                                     ol.Tickets.Any() ||
-                                    ol.OfficeAmounts.Any() ||
                                     ol.OrderLineTrucks.Any()
                     ))
                 )
@@ -1185,7 +1183,6 @@ namespace DispatcherWeb.Orders
                                    o.OrderLines.Any(ol => ol.SharedOrderLines.Any()) ||
                                    o.OrderLines.Any(ol => ol.IsComplete) ||
                                    o.OrderLines.Any(ol => ol.Tickets.Any()) ||
-                                   o.OrderLines.Any(ol => ol.OfficeAmounts.Any()) ||
                                    o.OrderLines.Any(ol => ol.OrderLineTrucks.Any())
                                ))
             )
@@ -1577,7 +1574,6 @@ namespace DispatcherWeb.Orders
                         o.OrderLines.Any(ol => ol.ReceiptLines.Any()) ||
                         o.OrderLines.Any(ol => ol.Dispatches.Any()) ||
                         o.OrderLines.Any(ol => ol.OrderLineTrucks.Any()) ||
-                        o.OrderLines.Any(ol => ol.OfficeAmounts.Any()) ||
                         o.OrderLines.Any(ol => ol.SharedOrderLines.Any()) ||
                         o.HasLinkedHaulingCompanyOrders ||
                         o.OrderLines.Any(ol => ol.HaulingCompanyOrderLineId != null)
@@ -2109,7 +2105,6 @@ namespace DispatcherWeb.Orders
                     IsComplete = ol.IsComplete,
                     HasRelatedData =
                         ol.Order.IsClosed ||
-                        ol.OfficeAmounts.Any() ||
                         ol.OrderLineTrucks.Any() ||
                         ol.SharedOrderLines.Any() ||
                         ol.Tickets.Any() ||
@@ -2389,7 +2384,7 @@ namespace DispatcherWeb.Orders
                     x => x.CustomerId == input.CustomerId)
                 .Where(x => input.IsBilled == x.BilledOrders.Any(b => b.OfficeId == OfficeId))
                 //.Where(x => x.OrderLines.Any(l => l.Tickets.Any(a => a.OfficeId == OfficeId)) || x.Receipts.Any(r => r.OfficeId == OfficeId)); //&& a.ActualQuantity != null
-                .Where(x => x.OrderLines.Any(l => l.OfficeAmounts.Any(a => a.OfficeId == OfficeId && a.ActualQuantity != null)));
+                .Where(x => false); //.Where(x => x.OrderLines.Any(l => l.OfficeAmounts.Any(a => a.OfficeId == OfficeId && a.ActualQuantity != null)));
         }
 
         [AbpAuthorize(AppPermissions.Pages_Reports_BillingReconciliation)]

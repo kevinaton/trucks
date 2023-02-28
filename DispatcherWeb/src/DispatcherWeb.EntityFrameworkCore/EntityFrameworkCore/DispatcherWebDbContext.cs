@@ -107,8 +107,6 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<OrderLine> OrderLines { get; set; }
 
-        public virtual DbSet<OrderLineOfficeAmount> OrderLineOfficeAmounts { get; set; }
-
         public virtual DbSet<OrderPayment> OrderPayments { get; set; }
 
         public virtual DbSet<OrderTruck> OrderTrucks { get; set; }
@@ -342,7 +340,6 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderEmailConfiguration());
             modelBuilder.ApplyConfiguration(new OrderLineConfiguration());
-            modelBuilder.ApplyConfiguration(new OrderLineOfficeAmountConfiguration());
             modelBuilder.ApplyConfiguration(new OrderPaymentConfiguration());
             modelBuilder.ApplyConfiguration(new OrderTruckConfiguration());
             modelBuilder.ApplyConfiguration(new PaymentConfiguration());

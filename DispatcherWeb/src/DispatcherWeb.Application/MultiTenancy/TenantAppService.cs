@@ -6,7 +6,6 @@ using Abp;
 using Abp.Application.Features;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
-using Abp.Authorization.Users;
 using Abp.Domain.Uow;
 using Abp.Events.Bus;
 using Abp.Extensions;
@@ -56,7 +55,6 @@ namespace DispatcherWeb.MultiTenancy
         private readonly IRepository<InvoiceBatch> _invoiceBatchRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
-        private readonly IRepository<OrderLineOfficeAmount> _orderLineOfficeAmountRepository;
         private readonly IRepository<Payment> _paymentsRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
         private readonly IRepository<OrderEmail> _orderEmailRepository;
@@ -93,7 +91,6 @@ namespace DispatcherWeb.MultiTenancy
             IRepository<InvoiceBatch> invoiceBatchRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
-            IRepository<OrderLineOfficeAmount> orderLineOfficeAmountRepository,
             IRepository<Payment> paymentsRepository,
             IRepository<OrderLine> orderLineRepository,
             IRepository<OrderEmail> orderEmailRepository,
@@ -130,7 +127,6 @@ namespace DispatcherWeb.MultiTenancy
             _invoiceBatchRepository = invoiceBatchRepository;
             _dispatchRepository = dispatchRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
-            _orderLineOfficeAmountRepository = orderLineOfficeAmountRepository;
             _paymentsRepository = paymentsRepository;
             _orderLineRepository = orderLineRepository;
             _orderEmailRepository = orderEmailRepository;
@@ -269,7 +265,6 @@ namespace DispatcherWeb.MultiTenancy
                     await _dispatchRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _orderLineTruckRepository.HardDeleteInBatchesAsync(x => x.ParentOrderLineTruckId.HasValue, CurrentUnitOfWork, batchSize);
                     await _orderLineTruckRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
-                    await _orderLineOfficeAmountRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _orderPaymentRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _paymentsRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _receiptLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);

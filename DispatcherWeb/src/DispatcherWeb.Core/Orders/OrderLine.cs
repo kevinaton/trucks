@@ -21,7 +21,6 @@ namespace DispatcherWeb.Orders
 
         public OrderLine()
         {
-            OfficeAmounts = new HashSet<OrderLineOfficeAmount>();
             OrderLineTrucks = new HashSet<OrderLineTruck>();
             SharedOrderLines = new HashSet<SharedOrderLine>();
             Tickets = new HashSet<Ticket>();
@@ -154,8 +153,6 @@ namespace DispatcherWeb.Orders
         public virtual Service Service { get; set; }
 
         public bool ProductionPay { get; set; }
-
-        public virtual ICollection<OrderLineOfficeAmount> OfficeAmounts { get; set; }
 
         public virtual ICollection<OrderLineTruck> OrderLineTrucks { get; set; }
 
