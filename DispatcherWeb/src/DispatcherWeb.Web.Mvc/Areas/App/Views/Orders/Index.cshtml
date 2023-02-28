@@ -46,10 +46,6 @@
         </div>
     </div>
 </div>
-@if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets))
-{
-    <input type="hidden" id="AllowAddingTickets" value="true" />
-}
 
 <div class="m-content">
     <div class="m-portlet m-portlet--mobile">

@@ -112,8 +112,6 @@ namespace DispatcherWeb.Orders
 
         private async Task UpdateHasAllActualAmountsAsync(Order order, List<OrderLine> orderLines)
         {
-            bool allowAddingTickets = await _settingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
             foreach (var orderLine in orderLines)
             {
                 orderLine.HasAllActualAmounts = true;
@@ -123,21 +121,10 @@ namespace DispatcherWeb.Orders
                     .Union(new[] { order.LocationId })
                     .Distinct().ToList())
                 {
-                    if (allowAddingTickets)
+                    if (!orderLine.Tickets.Any(x => x.OfficeId == officeId && x.Quantity > 0))
                     {
-                        if (!orderLine.Tickets.Any(x => x.OfficeId == officeId && x.Quantity > 0))
-                        {
-                            orderLine.HasAllActualAmounts = false;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if (!orderLine.OfficeAmounts.Any(x => x.OfficeId == officeId && x.ActualQuantity > 0))
-                        {
-                            orderLine.HasAllActualAmounts = false;
-                            break;
-                        }
+                        orderLine.HasAllActualAmounts = false;
+                        break;
                     }
                 }
             }
@@ -177,8 +164,6 @@ namespace DispatcherWeb.Orders
 
         public async Task UpdateHasAllActualAmountsValues(params int[] orderIds)
         {
-            bool allowAddingTickets = await _settingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
             var orders = await _orderRepository.GetAll()
                 .Include(x => x.OrderLines)
                     .ThenInclude(o => o.Tickets)
@@ -200,21 +185,10 @@ namespace DispatcherWeb.Orders
                         .Union(new[] { order.LocationId })
                         .Distinct().ToList())
                     {
-                        if (allowAddingTickets)
+                        if (!orderLine.Tickets.Any(x => x.OfficeId == officeId && x.Quantity > 0))
                         {
-                            if (!orderLine.Tickets.Any(x => x.OfficeId == officeId && x.Quantity > 0))
-                            {
-                                orderLine.HasAllActualAmounts = false;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            if (!orderLine.OfficeAmounts.Any(x => x.OfficeId == officeId && x.ActualQuantity > 0))
-                            {
-                                orderLine.HasAllActualAmounts = false;
-                                break;
-                            }
+                            orderLine.HasAllActualAmounts = false;
+                            break;
                         }
                     }
                 }

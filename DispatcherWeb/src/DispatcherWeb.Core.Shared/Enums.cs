@@ -542,12 +542,6 @@ namespace DispatcherWeb
         Hours = 1,
     }
 
-    public enum RevenueCalculateType
-    {
-        ByTickets = 1,
-        ByReceipts = 2,
-    }
-
     public enum DispatchVia
     {
         None = 0,

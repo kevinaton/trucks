@@ -31,7 +31,6 @@
         var isSmsIntegrationEnabled = abp.features.isEnabled('App.SmsIntegrationFeature');
         var isDispatchViaGeotabEnabled = false;
 
-        var allowAddingTickets = abp.setting.getBoolean('App.General.AllowAddingTickets');
         var dispatchVia = abp.setting.getInt('App.DispatchingAndMessaging.DispatchVia');
         var allowSmsMessages = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowSmsMessages');
         var hasDispatchPermissions = abp.auth.hasPermission('Pages.Dispatches.Edit');
@@ -1096,7 +1095,7 @@
             _printOrderWithDeliveryInfoModal.open({ id: orderId });
         };
         menuFunctions.isVisible.tickets = function (rowData) {
-            return allowAddingTickets && hasTicketEditPermissions() && (
+            return hasTicketEditPermissions() && (
                 rowData.officeId === abp.session.officeId
                 || rowData.sharedOfficeIds.indexOf(abp.session.officeId) !== -1
                 || !abp.setting.getBoolean('App.General.SplitBillingByOffices')
@@ -1104,9 +1103,7 @@
         };
         menuFunctions.fn.tickets = function (element) {
             var orderLineId = _dtHelper.getRowData(element).id;
-            if (allowAddingTickets) {
-                _createOrEditTicketModal.open({ orderLineId: orderLineId });
-            }
+            _createOrEditTicketModal.open({ orderLineId: orderLineId });
         };
         menuFunctions.isVisible.showMap = function (rowData) {
             return showDispatchViaGeotabItems && isOrderLineBelongToOrSharedWithUsersOffice(rowData);
@@ -1788,7 +1785,7 @@
                     name: "progress",
                     visible: showDispatchItems && showProgressColumn && !$('#HideProgressBar').is(':checked'),
                     responsivePriority: getResponsivePriorityByName('progress'),
-                    title: allowAddingTickets ? "Progress" : "Loads",
+                    title: "Progress",
                     render: function (data, type, full, meta) {
                         if (full.isCancelled) {
                             return app.localize('Cancel');
@@ -1800,11 +1797,6 @@
                         let shouldRenderProgressBar = true;
                         let shouldShowAmountsTooltip = true;
                         let shouldShowNumberOfLoads = false;
-
-                        if (!allowAddingTickets) {
-                            shouldRenderProgressBar = false;
-                            shouldShowAmountsTooltip = false;
-                        }
 
                         let designationIsFreightOnly = abp.enums.designations.freightOnly.includes(full.designation);
                         let designationHasMaterial = abp.enums.designations.hasMaterial.includes(full.designation);
@@ -2395,7 +2387,7 @@
                         printForBackOffice: {
                             name: app.localize('Schedule_DataTable_MenuItems_BackOfficeDetail'),
                             visible: function () {
-                                return allowAddingTickets;
+                                return true;
                             },
                             callback: function () {
                                 menuFunctions.fn.printBackOfficeDetail(this);
@@ -2404,7 +2396,7 @@
                         printWithDeliveryInfo: {
                             name: app.localize('Schedule_DataTable_MenuItems_WithDeliveryInfo'),
                             visible: function () {
-                                return allowAddingTickets;
+                                return true;
                             },
                             callback: function () {
                                 menuFunctions.fn.printWithDeliveryInfo(this);

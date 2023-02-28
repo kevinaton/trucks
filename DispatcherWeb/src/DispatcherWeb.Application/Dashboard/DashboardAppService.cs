@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
-using Abp.Configuration;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
@@ -13,7 +12,7 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.DailyHistory;
 using DispatcherWeb.Dashboard.Dto;
-using DispatcherWeb.Dashboard.RevenueGraph.DataServices;
+using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
 using DispatcherWeb.Dashboard.RevenueGraph.Dto;
 using DispatcherWeb.Dashboard.RevenueGraph.Factories;
 using DispatcherWeb.Drivers;
@@ -34,12 +33,12 @@ namespace DispatcherWeb.Dashboard
         private readonly IRepository<Ticket> _ticketRepository;
         private readonly IRepository<EmployeeTimeClassification> _employeeTimeClassificationRepository;
         private readonly IRepository<Drivers.EmployeeTime> _employeeTimeRepository;
-        private readonly IIocResolver _iocResolver;
         private readonly IRepository<TenantDailyHistory> _tenantDailyHistoryRepository;
         private readonly IRepository<FuelPurchase> _fuelPurchaseRepository;        
         private readonly IRepository<VehicleUsage> _vehicleUsageRepository;                   
         private readonly ITruckTelematicsAppService _truckTelematicsAppService;
         private readonly IDashboardSettingManager _dashboardSettingManager;
+        private readonly IRevenueGraphByTicketsDataItemsQueryService _revenueGraphByTicketsDataItemsQueryService;
 
         public DashboardAppService(
             IRepository<OrderLine> orderLineRepository,
@@ -49,12 +48,12 @@ namespace DispatcherWeb.Dashboard
             IRepository<Ticket> ticketRepository,
             IRepository<EmployeeTimeClassification> employeeTimeClassificationRepository,
             IRepository<Drivers.EmployeeTime> employeeTimeRepository,
-            IIocResolver iocResolver,
             IRepository<TenantDailyHistory> tenantDailyHistory,
             IRepository<FuelPurchase> fuelPurchaseRepository,            
             IRepository<VehicleUsage> vehicleUsageRepository,                                  
             ITruckTelematicsAppService truckTelematicsAppService,
-            IDashboardSettingManager dashboardSettingManager
+            IDashboardSettingManager dashboardSettingManager,
+            IRevenueGraphByTicketsDataItemsQueryService revenueGraphByTicketsDataItemsQueryService
         )
         {
             _orderLineRepository = orderLineRepository;
@@ -64,12 +63,12 @@ namespace DispatcherWeb.Dashboard
             _ticketRepository = ticketRepository;
             _employeeTimeClassificationRepository = employeeTimeClassificationRepository;
             _employeeTimeRepository = employeeTimeRepository;
-            _iocResolver = iocResolver;
             _tenantDailyHistoryRepository = tenantDailyHistory;
             _fuelPurchaseRepository = fuelPurchaseRepository;            
             _vehicleUsageRepository = vehicleUsageRepository;                               
             _truckTelematicsAppService = truckTelematicsAppService;
             _dashboardSettingManager = dashboardSettingManager;
+            _revenueGraphByTicketsDataItemsQueryService = revenueGraphByTicketsDataItemsQueryService;
         }
 
         public async Task<ScheduledTruckCountDto> GetScheduledTruckCountDto()
@@ -112,12 +111,10 @@ namespace DispatcherWeb.Dashboard
         [AbpAuthorize(AppPermissions.Pages_Dashboard_Revenue)]
         public async Task<GetRevenueGraphDataOutput> GetRevenueByDateGraphData(GetRevenueByDateGraphDataInput input)
         {
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-            IRevenueGraphDataService revenueGraphDataService =
+            var revenueGraphDataService =
                 RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(
-                    _iocResolver,
                     input.DatePeriod,
-                    allowAddingTickets ? RevenueCalculateType.ByTickets : RevenueCalculateType.ByReceipts
+                    _revenueGraphByTicketsDataItemsQueryService
                 );
             return await revenueGraphDataService.GetRevenueGraphData(input);
         }

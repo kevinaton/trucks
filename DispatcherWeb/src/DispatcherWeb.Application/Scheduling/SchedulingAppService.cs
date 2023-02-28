@@ -287,10 +287,9 @@ namespace DispatcherWeb.Scheduling
 
         private async Task CalculateOrderLineProgress(List<ScheduleOrderLineDto> items)
         {
-            var allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
             var dispatchVia = (DispatchVia)await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DispatchVia);
 
-            if (!allowAddingTickets || dispatchVia != DispatchVia.DriverApplication)
+            if (dispatchVia != DispatchVia.DriverApplication)
             {
                 return;
             }

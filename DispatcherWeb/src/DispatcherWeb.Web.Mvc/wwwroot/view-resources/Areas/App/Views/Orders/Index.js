@@ -11,9 +11,6 @@
             editQuotes: abp.auth.isGranted('Pages.Quotes.Edit'),
             manageAllOffices: abp.auth.isGranted('Pages.OfficeAccess.All')
         };
-        var _settings = {
-            allowAddingTickets: $("#AllowAddingTickets").val() === "true"
-        };
         var _isFilterReady = false;
         var _isGridInitialized = false;
 
@@ -483,7 +480,7 @@
                     name: "Print Order for Back Office",
                     icon: "fas fa-print",
                     visible: function () {
-                        return _permissions.print && _settings.allowAddingTickets;
+                        return _permissions.print;
                     },
                     callback: function () {
                         var orderId = _dtHelper.getRowData(this).id;
@@ -495,7 +492,7 @@
                     name: app.localize('PrintOrderWithDeliveryInfo'),
                     icon: "fas fa-print",
                     visible: function () {
-                        return _permissions.print && _settings.allowAddingTickets;
+                        return _permissions.print;
                     },
                     callback: function () {
                         var orderId = _dtHelper.getRowData(this).id;

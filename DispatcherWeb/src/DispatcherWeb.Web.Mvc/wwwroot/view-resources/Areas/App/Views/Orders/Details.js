@@ -15,15 +15,8 @@
         var _permissions = {
             edit: abp.auth.hasPermission('Pages.Orders.Edit')
         };
-        var _settings = {
-            allowAddingTickets: abp.setting.getBoolean('App.General.AllowAddingTickets')
-        };
 
         abp.helper.ui.initControls();
-
-        if (!_settings.allowAddingTickets) {
-            $("#PrintOrderForBackOffice, #PrintOrderWithDeliveryInfo").hide();
-        }
 
         //Init modals
 
@@ -970,10 +963,8 @@
                                 + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
                                 + '<ul class="dropdown-menu dropdown-menu-right">' 
                                 + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
-                                + (_settings.allowAddingTickets
-                                    ? '<li><a class="btnOpenTicketsModalForRow"><i class="fa fa-edit"></i> Tickets</a></li>'
-                                    : '')
-                                + ' <li> <a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li >'
+                                + '<li><a class="btnOpenTicketsModalForRow"><i class="fa fa-edit"></i> Tickets</a></li>'
+                                + '<li><a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li>'
                                 + '</ul>' 
                                 + '</div>'
                                 ;
@@ -1363,9 +1354,7 @@
         });
 
         function openTicketModal(orderLineId) {
-            if (_settings.allowAddingTickets) {
-                _createOrEditTicketModal.open({ orderLineId: orderLineId });
-            }
+            _createOrEditTicketModal.open({ orderLineId: orderLineId });
         }
 
         orderLinesTable.on('click', '.btnDeleteRow', async function (e) {

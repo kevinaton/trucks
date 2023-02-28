@@ -116,7 +116,7 @@ namespace DispatcherWeb.Receipts
             }
 
             int tenantId = orders.First().TenantId;
-            bool allowAddingTickets = await _settingManager.GetSettingValueForTenantAsync<bool>(AppSettings.General.AllowAddingTickets, tenantId);
+            bool allowAddingTickets = true; //await _settingManager.GetSettingValueForTenantAsync<bool>(AppSettings.General.AllowAddingTickets, tenantId);
             var taxCalculationType = await _orderTaxCalculator.GetTaxCalculationTypeAsync(tenantId);
 
             foreach (var order in orders)
@@ -124,7 +124,7 @@ namespace DispatcherWeb.Receipts
                 if (order.TenantId != tenantId)
                 {
                     tenantId = order.TenantId;
-                    allowAddingTickets = await _settingManager.GetSettingValueForTenantAsync<bool>(AppSettings.General.AllowAddingTickets, tenantId);
+                    //allowAddingTickets = await _settingManager.GetSettingValueForTenantAsync<bool>(AppSettings.General.AllowAddingTickets, tenantId);
                     taxCalculationType = await _orderTaxCalculator.GetTaxCalculationTypeAsync(tenantId);
                 }
 

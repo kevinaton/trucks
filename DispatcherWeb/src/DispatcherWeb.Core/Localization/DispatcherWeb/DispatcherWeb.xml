@@ -940,7 +940,6 @@
 		<text name="CompanyName">Company Name</text>
 		<text name="CurrencySymbolSettingLabel">Currency - symbol or abbreviation (For example in US it could be '$' or 'USD')</text>
 		<text name="Setting_UserDefinedField1Checkbox">User defined field 1</text>
-		<text name="Setting_AllowAddingTickets">Allow associating tickets with order items</text>
 		<text name="Setting_ShowDriverNamesOnPrintedOrder">Show driver names on printed order</text>
 		<text name="PromptForDisplayingQuarryInfoOnQuotes">Prompt for whether or not to display quarry info on quotes</text>
 		<text name="SplitBillingByOffices">Split billing by offices</text>

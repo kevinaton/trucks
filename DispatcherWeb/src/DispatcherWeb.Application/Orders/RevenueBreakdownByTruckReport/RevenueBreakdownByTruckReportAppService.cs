@@ -51,7 +51,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownByTruckReport
 
         private async Task<bool> CreateReport(
             IReport report,
-			RevenueBreakdownByTruckReportInput input,
+            RevenueBreakdownByTruckReportInput input,
             Func<IRevenueBreakdownByTruckTable> createRevenueBreakdownTable
         )
         {
@@ -72,23 +72,23 @@ namespace DispatcherWeb.Orders.RevenueBreakdownByTruckReport
                 "Delivery Date",
                 await SettingManager.UseShifts() ? "Shift" : null,
                 "Truck",
-				"Material Revenue",
-				"Freight Revenue",
+                "Material Revenue",
+                "Freight Revenue",
                 showFuelSurcharge ? "Fuel Surcharge" : null,
-				"Total Revenue",
-			    "Driver Time",
-			    "Revenue/hr"
+                "Total Revenue",
+                "Driver Time",
+                "Revenue/hr"
             );
-			var shiftDictionary = await SettingManager.GetShiftDictionary();
+            var shiftDictionary = await SettingManager.GetShiftDictionary();
             var currencyCulture = await SettingManager.GetCurrencyCultureAsync();
 
             foreach (var item in revenueBreakdownItems)
             {
                 revenueBreakdownTable.AddRow(
                     item.DeliveryDate?.ToString("d") ?? "",
-					item.Shift.HasValue && shiftDictionary.ContainsKey(item.Shift.Value) ? shiftDictionary[item.Shift.Value] : null,
+                    item.Shift.HasValue && shiftDictionary.ContainsKey(item.Shift.Value) ? shiftDictionary[item.Shift.Value] : null,
                     item.Truck,
-					item.MaterialRevenue.ToString("C", currencyCulture),
+                    item.MaterialRevenue.ToString("C", currencyCulture),
                     item.FreightRevenue.ToString("C", currencyCulture),
                     showFuelSurcharge ? item.FuelSurcharge.ToString("C", currencyCulture) : null,
                     item.TotalRevenue.ToString("C", currencyCulture),
@@ -102,10 +102,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownByTruckReport
 
         private async Task<List<RevenueBreakdownByTruckItem>> GetRevenueBreakdownItems(RevenueBreakdownByTruckReportInput input)
         {
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-            IRevenueBreakdownByTruckReportDataService reportDataService = allowAddingTickets
-                ? _iocResolver.Resolve<IRevenueBreakdownByTruckReportByTicketsDataService>()
-                : _iocResolver.Resolve<IRevenueBreakdownByTruckReportByOrderLinesDataService>();
+            IRevenueBreakdownByTruckReportDataService reportDataService = _iocResolver.Resolve<IRevenueBreakdownByTruckReportByTicketsDataService>();
             var items = await reportDataService.GetRevenueBreakdownItems(input);
             _iocResolver.Release(reportDataService);
 

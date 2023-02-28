@@ -759,22 +759,11 @@ namespace DispatcherWeb
             return null;
         }
 
-        public static async Task<bool> CanOverrideTotals(this IRepository<OrderLine> orderLineRepository, ISettingManager settingManager, int orderLineId, int officeId)
+        public static async Task<bool> CanOverrideTotals(this IRepository<OrderLine> orderLineRepository, int orderLineId, int officeId)
         {
-            var allowAddingTickets = await settingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-            if (allowAddingTickets)
-            {
-                return !(await orderLineRepository.GetAll()
-                    .AnyAsync(x => x.Id == orderLineId
-                        && x.Tickets.Any(a => a.OfficeId != officeId)));
-            }
-
-            return true;
-            //else
-            //{
-            //    return !(await orderLineRepository.GetAll()
-            //        .AnyAsync(x => x.Order.Receipts.Any(r => r.ReceiptLines.Any(l => l.OrderLineId == orderLineId && l.Receipt.OfficeId != officeId))));
-            //}
+            return !await orderLineRepository.GetAll()
+                .AnyAsync(x => x.Id == orderLineId
+                    && x.Tickets.Any(a => a.OfficeId != officeId));
         }
 
         public static async Task<bool> IsEntityDeleted<T>(this IRepository<T> repository, EntityDto input, IActiveUnitOfWork uow) where T : Entity<int>, ISoftDelete

@@ -1672,7 +1672,6 @@ namespace DispatcherWeb.Orders
                         x.LocationId
                     }).SingleOrDefaultAsync();
 
-                bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
 
                 var orderLines = await query
@@ -1760,7 +1759,7 @@ namespace DispatcherWeb.Orders
                 {
                     if (orderLine.Id.HasValue)
                     {
-                        orderLine.CanOverrideTotals = await _orderLineRepository.CanOverrideTotals(SettingManager, orderLine.Id.Value, OfficeId);
+                        orderLine.CanOverrideTotals = await _orderLineRepository.CanOverrideTotals(orderLine.Id.Value, OfficeId);
                         orderLine.QuoteId = order.QuoteId;
                     }
 
@@ -1849,7 +1848,7 @@ namespace DispatcherWeb.Orders
 
             if (input.Id.HasValue)
             {
-                var canOverrideTotals = await _orderLineRepository.CanOverrideTotals(SettingManager, input.Id.Value, OfficeId);
+                var canOverrideTotals = await _orderLineRepository.CanOverrideTotals(input.Id.Value, OfficeId);
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
 
                 orderLineEditDto = await _orderLineRepository.GetAll()
@@ -2273,8 +2272,6 @@ namespace DispatcherWeb.Orders
 
             var totalCount = await query.CountAsync();
 
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
             var items = await query
                 .Select(x => new ReceiptReportDto
                 {
@@ -2318,8 +2315,6 @@ namespace DispatcherWeb.Orders
         public async Task<FileDto> ExportReceiptsToExcel(GetReceiptReportInput input)
         {
             var query = GetReceiptsQuery(input);
-
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
 
             var items = await query
                 .Select(x => new ReceiptExcelReportDto
@@ -2404,8 +2399,6 @@ namespace DispatcherWeb.Orders
 
             var totalCount = await query.CountAsync();
 
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
             var items = await query
                 .Select(x => new BillingReconciliationDto
                 {
@@ -2421,13 +2414,7 @@ namespace DispatcherWeb.Orders
                     IsShared = x.SharedOrders.Any(so => so.OfficeId != x.LocationId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
                     Items = x.OrderLines.Select(l => new BillingReconciliationItemDto
                     {
-                        AllowAddingTickets = allowAddingTickets,
-                        TicketQuantity = allowAddingTickets
-                            ? l.Tickets.Sum(t => t.Quantity) : 0,
-                        //ReceiptLinesMaterialTotal = allowAddingTickets
-                        //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.MaterialAmount),
-                        //ReceiptLinesFreightTotal = allowAddingTickets
-                        //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.FreightAmount),
+                        TicketQuantity = l.Tickets.Sum(t => t.Quantity),
                         FreightPricePerUnit = l.FreightPricePerUnit,
                         MaterialPricePerUnit = l.MaterialPricePerUnit,
                         IsTaxable = l.Service.IsTaxable,
@@ -2453,8 +2440,6 @@ namespace DispatcherWeb.Orders
         {
             var query = GetBillingReconciliationQuery(input);
 
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
             var items = await query
                 .Select(x => new BillingReconciliationReportDto
                 {
@@ -2470,13 +2455,7 @@ namespace DispatcherWeb.Orders
                     IsShared = x.SharedOrders.Any(so => so.OfficeId != x.LocationId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
                     Items = x.OrderLines.Select(l => new BillingReconciliationReportItemDto
                     {
-                        AllowAddingTickets = allowAddingTickets,
-                        TicketQuantity = allowAddingTickets
-                            ? l.Tickets.Sum(t => t.Quantity) : 0,
-                        //ReceiptLinesMaterialTotal = allowAddingTickets
-                        //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.MaterialAmount),
-                        //ReceiptLinesFreightTotal = allowAddingTickets
-                        //    ? 0 : l.ReceiptLines.Where(a => a.Receipt.OfficeId == OfficeId).Sum(a => a.FreightAmount),
+                        TicketQuantity = l.Tickets.Sum(t => t.Quantity),
                         FreightPricePerUnit = l.FreightPricePerUnit,
                         MaterialPricePerUnit = l.MaterialPricePerUnit,
                         IsTaxable = l.Service.IsTaxable,
@@ -2584,7 +2563,6 @@ namespace DispatcherWeb.Orders
             var staggeredTimeImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "Common/Images/far-clock.png");
             var timeZone = await GetTimezone();
             var showDriverNamesOnPrintedOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ShowDriverNamesOnPrintedOrder);
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
             var spectrumNumberLabel = await SettingManager.GetSettingValueAsync(AppSettings.General.UserDefinedField1);
             var showSignatureColumn = (DispatchVia)await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DispatchVia) == DispatchVia.DriverApplication
                     && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp);

@@ -600,15 +600,6 @@
                 $defaultAccountLockoutCtrl.removeAttr('required');
             }
 
-            let dispatchVia = parseInt($('input[name="DispatchVia"]:checked').val());
-            if (dispatchVia === abp.enums.dispatchVia.driverApplication && !$('#Setting_AllowAddingTickets').is(':checked')) {
-                if (await abp.message.confirm(
-                    'You have not chosen to track tickets. Would you like us to enable tracking tickets from the dispatch?'
-                )) {
-                    $('#Setting_AllowAddingTickets').prop('checked', true);
-                }
-            }
-
             var gpsIntegration = $('form#GpsIntegrationSettingsForm').length ? $('#GpsIntegrationSettingsForm').serializeFormToObject() : {};
             gpsIntegration.geotab = $('form#GeotabSettingsForm').length ? $('#GeotabSettingsForm').serializeFormToObject() : {};
             gpsIntegration.samsara = $('form#SamsaraSettingsForm').length ? $('#SamsaraSettingsForm').serializeFormToObject() : {};
