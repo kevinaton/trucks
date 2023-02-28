@@ -53,6 +53,7 @@ namespace DispatcherWeb.Receipts
             Session = session;
         }
 
+        [Obsolete]
         public async Task SeedReceiptsFromActualAmounts(SeedReceiptsFromActualAmountsInput input)
         {
             //var existingReceipts = _receiptRepository

@@ -559,47 +559,6 @@ namespace DispatcherWeb
             return trucks;
         }
 
-        public static IQueryable<ScheduleOrderDto> GetScheduleOrders(this IQueryable<Order> query)
-        {
-            return query
-                .Select(o => new ScheduleOrderDto
-                {
-                    Id = o.Id,
-                    // ReSharper disable once MergeConditionalExpression
-                    Date = o.DeliveryDate.HasValue ? o.DeliveryDate.Value : new DateTime(),
-                    Shift = o.Shift,
-                    OfficeId = o.LocationId,
-                    CustomerId = o.CustomerId,
-                    CustomerName = o.Customer.Name,
-                    CustomerIsCod = o.Customer.IsCod,
-                    NumberOfTrucks = o.NumberOfTrucks,
-                    IsClosed = o.IsClosed,
-                    Priority = o.Priority,
-                    IsShared = o.SharedOrders.Any(so => so.OfficeId != o.LocationId),
-                    Utilization = o.OrderLines.SelectMany(ol => ol.OrderLineTrucks).Where(t => t.Truck.VehicleCategory.IsPowered).Select(t => t.Utilization).Sum(),
-                    Trucks = o.OrderLines.SelectMany(ol => ol.OrderLineTrucks).Select(olt => new ScheduleOrderLineTruckDto
-                    {
-                        Id = olt.Id,
-                        ParentId = olt.ParentOrderLineTruckId,
-                        TruckId = olt.TruckId,
-                        TruckCode = olt.Truck.TruckCode,
-                        OrderId = o.Id,
-                        OfficeId = olt.Truck.LocationId,
-                        Utilization = olt.Utilization,
-                        VehicleCategory = new VehicleCategoryDto
-                        {
-                            Id = olt.Truck.VehicleCategory.Id,
-                            Name = olt.Truck.VehicleCategory.Name,
-                            AssetType = olt.Truck.VehicleCategory.AssetType,
-                            IsPowered = olt.Truck.VehicleCategory.IsPowered,
-                            SortOrder = olt.Truck.VehicleCategory.SortOrder
-                        },
-                        AlwaysShowOnSchedule = olt.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule == true,
-                        CanPullTrailer = olt.Truck.CanPullTrailer,
-                    }).ToList()
-                });
-        }
-
         public static IQueryable<ScheduleOrderLineDto> GetScheduleOrders(this IQueryable<OrderLine> query)
         {
             return query

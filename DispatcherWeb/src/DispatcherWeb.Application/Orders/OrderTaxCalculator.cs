@@ -8,7 +8,6 @@ using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.UI;
 using DispatcherWeb.Configuration;
-using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Orders.TaxDetails;
 using Microsoft.EntityFrameworkCore;
 

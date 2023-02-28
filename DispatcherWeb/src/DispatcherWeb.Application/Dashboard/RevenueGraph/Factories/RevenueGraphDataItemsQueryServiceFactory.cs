@@ -15,8 +15,8 @@ namespace DispatcherWeb.Dashboard.RevenueGraph.Factories
             {
                 case RevenueCalculateType.ByTickets:
                     return iocResolver.Resolve<IRevenueGraphByTicketsDataItemsQueryService>();
-                case RevenueCalculateType.ByOfficeAmount:
-                    return iocResolver.Resolve<IRevenueGraphByOfficeAmountDataItemsQueryService>();
+                case RevenueCalculateType.ByReceipts:
+                    return iocResolver.Resolve<IRevenueGraphByReceiptsDataItemsQueryService>();
                 default:
                     throw new ArgumentOutOfRangeException($"The unknown RevenueCalculateType: {revenueCalculateType}!");
             }

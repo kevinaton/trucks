@@ -722,29 +722,6 @@ namespace DispatcherWeb.Configuration.Tenants
         #endregion
 
         #region Update Settings
-        [AbpAuthorize(AppPermissions.Pages_Administration_RecalculateHasAllActualAmountsValues)]
-        public async Task RecalculateHasAllActualAmountsValues()
-        {
-            var jobArgs = new RecalculateHasAllActualAmountsValuesBackgroundJobArgs
-            {
-                RequestorUser = AbpSession.ToUserIdentifier()
-            };
-            await _backgroundJobManager.EnqueueAsync<RecalculateHasAllActualAmountsValuesBackgroundJob, RecalculateHasAllActualAmountsValuesBackgroundJobArgs>(jobArgs);
-            await _appNotifier.SendMessageAsync(jobArgs.RequestorUser, "Recalculation of HasAllActualAmounts values started");
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Administration_RecalculateHasAllActualAmountsValues)]
-        public async Task CopyReceiptsFromActualAmounts(SeedReceiptsFromActualAmountsInput input)
-        {
-            var jobArgs = new CopyReceiptsFromActualAmountsBackgroundJobArgs
-            {
-                RequestorUser = AbpSession.ToUserIdentifier(),
-                TenantId = input.TenantId
-            };
-            await _backgroundJobManager.EnqueueAsync<CopyReceiptsFromActualAmountsBackgroundJob, CopyReceiptsFromActualAmountsBackgroundJobArgs>(jobArgs);
-            await _appNotifier.SendMessageAsync(jobArgs.RequestorUser, "Copying of Receipts from ActualAmounts started");
-        }
-
         public async Task UpdateAllSettings(TenantSettingsEditDto input)
         {
             await UpdateUserManagementSettingsAsync(input.UserManagement);

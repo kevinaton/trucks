@@ -117,7 +117,7 @@ namespace DispatcherWeb.Dashboard
                 RevenueGraphDataServiceFactory.CreateRevenueGraphDataService(
                     _iocResolver,
                     input.DatePeriod,
-                    allowAddingTickets ? RevenueCalculateType.ByTickets : RevenueCalculateType.ByOfficeAmount
+                    allowAddingTickets ? RevenueCalculateType.ByTickets : RevenueCalculateType.ByReceipts
                 );
             return await revenueGraphDataService.GetRevenueGraphData(input);
         }

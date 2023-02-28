@@ -84,9 +84,6 @@ namespace DispatcherWeb.Orders
 
         public bool HasInternalNotes { get; set; }
 
-        [Obsolete("TODO check if we are still using this NumberOfTrucks in any meaningful way")]
-        public double? NumberOfTrucks { get; set; }
-
         [Required(ErrorMessage = "Office is a required field")]
         public int LocationId { get; set; }
 
