@@ -175,7 +175,7 @@ namespace DispatcherWeb.Receipts
                 if (model.ReceiptLines != null)
                 {
                     var ticketIds = model.ReceiptLines.SelectMany(x => x.TicketIds ?? new List<int>()).Distinct().ToList();
-                    var tickets = await _ticketRepository.GetAll().Where(x => ticketIds.Contains(x.Id) && x.ReceiptLineId == null).ToListAsync();
+                    var tickets = await _ticketRepository.GetAll().Where(x => ticketIds.Contains(x.Id) && x.ReceiptLineId == null && x.IsBilled == false).ToListAsync();
 
                     foreach (var receiptLineModel in model.ReceiptLines)
                     {
@@ -188,6 +188,7 @@ namespace DispatcherWeb.Receipts
                                 .ForEach(x => x.ReceiptLine = receiptLine);
                         }
                     }
+                    tickets.ForEach(x => x.IsBilled = true);
 
                     var serviceIds = model.ReceiptLines.Select(x => x.ServiceId).Distinct().ToList();
                     var services = await _serviceRepository.GetAll()
@@ -344,7 +345,8 @@ namespace DispatcherWeb.Receipts
                                     t.Id,
                                     t.Quantity,
                                     t.UnitOfMeasureId,
-                                    t.ReceiptLineId
+                                    t.ReceiptLineId,
+                                    t.IsBilled
                                 }).ToList(),
                             HasPreviousReceiptLines = x.ReceiptLines.Any(r => r.Receipt.OfficeId == OfficeId)
                         })
@@ -360,70 +362,70 @@ namespace DispatcherWeb.Receipts
                         return true;
                     })
                     .Select(x =>
+                    {
+                        x.ReceiptLine.TicketIds = new List<int>();
+                        if (x.ReceiptLine.IsMaterialAmountOverridden || x.ReceiptLine.IsFreightAmountOverridden)
                         {
-                            x.ReceiptLine.TicketIds = new List<int>();
-                            if (x.ReceiptLine.IsMaterialAmountOverridden || x.ReceiptLine.IsFreightAmountOverridden)
+                            //only one ticket is allowed for the overridden values
+                            var ticket = x.Tickets.OrderBy(t => t.Id).FirstOrDefault();
+                            if (ticket != null)
                             {
-                                //only one ticket is allowed for the overridden values
-                                var ticket = x.Tickets.OrderBy(t => t.Id).FirstOrDefault();
-                                if (ticket != null)
+                                var ticketAmount = new TicketQuantityDto(ticket.Quantity, x.ReceiptLine.Designation, x.ReceiptLine.MaterialUomId, x.ReceiptLine.FreightUomId, ticket.UnitOfMeasureId);
+                                //the single allowed ticket hasn't been used up by another receipt line yet
+                                if (ticket.ReceiptLineId == null && !ticket.IsBilled)
                                 {
-                                    var ticketAmount = new TicketQuantityDto(ticket.Quantity, x.ReceiptLine.Designation, x.ReceiptLine.MaterialUomId, x.ReceiptLine.FreightUomId, ticket.UnitOfMeasureId);
-                                    //the single allowed ticket hasn't been used up by another receipt line yet
-                                    if (ticket.ReceiptLineId == null)
+                                    x.ReceiptLine.TicketIds.Add(ticket.Id);
+                                    if (x.ReceiptLine.IsMaterialAmountOverridden)
                                     {
-                                        x.ReceiptLine.TicketIds.Add(ticket.Id);
-                                        if (x.ReceiptLine.IsMaterialAmountOverridden)
-                                        {
-                                            x.ReceiptLine.MaterialQuantity = ticketAmount.GetMaterialQuantity();
-                                        }
-                                        if (x.ReceiptLine.IsFreightAmountOverridden)
-                                        {
-                                            x.ReceiptLine.FreightQuantity = ticketAmount.GetFreightQuantity();
-                                        }
+                                        x.ReceiptLine.MaterialQuantity = ticketAmount.GetMaterialQuantity();
                                     }
-                                    else
+                                    if (x.ReceiptLine.IsFreightAmountOverridden)
                                     {
-                                        if (x.ReceiptLine.IsMaterialAmountOverridden)
-                                        {
-                                            x.ReceiptLine.MaterialQuantity = 0;
-                                            x.ReceiptLine.MaterialAmount = 0;
-                                        }
-                                        if (x.ReceiptLine.IsFreightAmountOverridden)
-                                        {
-                                            x.ReceiptLine.FreightQuantity = 0;
-                                            x.ReceiptLine.FreightAmount = 0;
-                                        }
+                                        x.ReceiptLine.FreightQuantity = ticketAmount.GetFreightQuantity();
+                                    }
+                                }
+                                else
+                                {
+                                    if (x.ReceiptLine.IsMaterialAmountOverridden)
+                                    {
+                                        x.ReceiptLine.MaterialQuantity = 0;
+                                        x.ReceiptLine.MaterialAmount = 0;
+                                    }
+                                    if (x.ReceiptLine.IsFreightAmountOverridden)
+                                    {
+                                        x.ReceiptLine.FreightQuantity = 0;
+                                        x.ReceiptLine.FreightAmount = 0;
                                     }
                                 }
                             }
-                            if (!x.ReceiptLine.IsMaterialAmountOverridden || !x.ReceiptLine.IsFreightAmountOverridden)
+                        }
+                        if (!x.ReceiptLine.IsMaterialAmountOverridden || !x.ReceiptLine.IsFreightAmountOverridden)
+                        {
+                            //all new tickets are allowed for non-overridden values
+                            var tickets = x.Tickets.Where(t => t.ReceiptLineId == null && !t.IsBilled).ToList();
+                            x.ReceiptLine.TicketIds.AddRange(tickets.Select(t => t.Id).Except(x.ReceiptLine.TicketIds));
+                            if (!x.ReceiptLine.IsMaterialAmountOverridden)
                             {
-                                //all new tickets are allowed for non-overridden values
-                                var tickets = x.Tickets.Where(t => t.ReceiptLineId == null).ToList();
-                                x.ReceiptLine.TicketIds.AddRange(tickets.Select(t => t.Id).Except(x.ReceiptLine.TicketIds));
-                                if (!x.ReceiptLine.IsMaterialAmountOverridden)
-                                {
-                                    x.ReceiptLine.MaterialQuantity = tickets.Any()
-                                        ? tickets
-                                            .Select(t => new TicketQuantityDto(t.Quantity, x.ReceiptLine.Designation, x.ReceiptLine.MaterialUomId, x.ReceiptLine.FreightUomId, t.UnitOfMeasureId))
-                                            .Sum(t => t.GetMaterialQuantity())
-                                        : (decimal?)null;
-                                    x.ReceiptLine.MaterialAmount = (x.ReceiptLine.MaterialQuantity ?? 0) * x.ReceiptLine.MaterialRate;
-                                }
-                                if (!x.ReceiptLine.IsFreightAmountOverridden)
-                                {
-                                    x.ReceiptLine.FreightQuantity = tickets.Any()
-                                        ? tickets
-                                            .Select(t => new TicketQuantityDto(t.Quantity, x.ReceiptLine.Designation, x.ReceiptLine.MaterialUomId, x.ReceiptLine.FreightUomId, t.UnitOfMeasureId))
-                                            .Sum(t => t.GetFreightQuantity())
-                                        : (decimal?)null;
-                                    x.ReceiptLine.FreightAmount = (x.ReceiptLine.FreightQuantity ?? 0) * x.ReceiptLine.FreightRate;
-                                }
+                                x.ReceiptLine.MaterialQuantity = tickets.Any()
+                                    ? tickets
+                                        .Select(t => new TicketQuantityDto(t.Quantity, x.ReceiptLine.Designation, x.ReceiptLine.MaterialUomId, x.ReceiptLine.FreightUomId, t.UnitOfMeasureId))
+                                        .Sum(t => t.GetMaterialQuantity())
+                                    : (decimal?)null;
+                                x.ReceiptLine.MaterialAmount = (x.ReceiptLine.MaterialQuantity ?? 0) * x.ReceiptLine.MaterialRate;
                             }
-                            return x.ReceiptLine;
-                        })
-                .ToList();
+                            if (!x.ReceiptLine.IsFreightAmountOverridden)
+                            {
+                                x.ReceiptLine.FreightQuantity = tickets.Any()
+                                    ? tickets
+                                        .Select(t => new TicketQuantityDto(t.Quantity, x.ReceiptLine.Designation, x.ReceiptLine.MaterialUomId, x.ReceiptLine.FreightUomId, t.UnitOfMeasureId))
+                                        .Sum(t => t.GetFreightQuantity())
+                                    : (decimal?)null;
+                                x.ReceiptLine.FreightAmount = (x.ReceiptLine.FreightQuantity ?? 0) * x.ReceiptLine.FreightRate;
+                            }
+                        }
+                        return x.ReceiptLine;
+                    })
+                    .ToList();
 
                 return new PagedResultDto<ReceiptLineEditDto>(
                     receiptLines.Count,
@@ -605,6 +607,7 @@ namespace DispatcherWeb.Receipts
         {
             var receipts = await _receiptRepository.GetAll()
                 .Include(x => x.ReceiptLines)
+                    .ThenInclude(x => x.Tickets)
                 .Where(x => x.ReceiptLines.Any(r => input.Ids.Contains(r.Id)))
                 .ToListAsync();
 
@@ -612,7 +615,12 @@ namespace DispatcherWeb.Receipts
 
             foreach (var receiptLine in receiptLinesToDelete)
             {
-                await _receiptLineRepository.DeleteAsync(receiptLine.Id);
+                await _receiptLineRepository.DeleteAsync(receiptLine);
+                foreach (var ticket in receiptLine.Tickets)
+                {
+                    ticket.IsBilled = false;
+                    ticket.ReceiptLineId = null;
+                }
             }
 
             await CurrentUnitOfWork.SaveChangesAsync();
