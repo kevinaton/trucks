@@ -380,14 +380,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Reports_Receipts)
                         )
                     ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.BillingReconciliation,
-                            L("BillingReconciliation"),
-                            customData: new MenuItemCustomData { Id = "BillingReconciliationNavbarItem" },
-                            url: "app/orders/billingreconciliation",
-                            icon: "fas fa-calendar-check",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Reports_BillingReconciliation)
-                        )
-                    ).AddItem(new MenuItemDefinition(
                             AppPageNames.Tenant.PaymentReconciliation,
                             L("PaymentReconciliation"),
                             customData: new MenuItemCustomData { Id = "PrintPaymentReconciliationReportNavbarItem" },

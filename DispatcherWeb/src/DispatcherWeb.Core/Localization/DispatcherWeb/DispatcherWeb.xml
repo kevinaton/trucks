@@ -1403,7 +1403,6 @@
 		<text name="Order_Edit_Error_HasTickets">We are unable to save these changes because this order has tickets associated with it.</text>
 		<text name="Order_ChangeOffice_Error_HasReceipts">This order has 1 or more Receipts for the current office and Office value can't be changed</text>
 		<text name="OrderLine_Edit_Error_HasTickets">Either tickets or dispatches are associated with this order line item, so the changes you requested can't be saved.</text>
-		<text name="BillingReconciliation">Billing Reconciliation</text>
 		<text name="PaymentReconciliation">Payment Reconciliation</text>
 		<text name="ThereWereCanceledDispatches">There were unacknowledged dispatches assigned to this truck and they have been canceled.</text>
 		<text name="ThereWereNotCanceledDispatches">There were acknowledged or loaded dispatches assigned to this truck and they have not been canceled.</text>

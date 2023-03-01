@@ -568,14 +568,6 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
 
-                // Reports_BillingReconciliation
-                {
-                    AppPermissions.Pages_Reports_BillingReconciliation, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                    }
-                },
-
                 // Reports_PaymentReconciliation
                 {
                     AppPermissions.Pages_Reports_PaymentReconciliation, new[]

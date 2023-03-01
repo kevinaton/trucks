@@ -83,7 +83,6 @@
             public const string Index = "Orders";
             public const string Detail = "Order";
             public const string Receipts = "Receipts";
-            public const string BillingReconciliation = "Billing Reconciliation";
         }
 
         public static class OrganizationUnits
