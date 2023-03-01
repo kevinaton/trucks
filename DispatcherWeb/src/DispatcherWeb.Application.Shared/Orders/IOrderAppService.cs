@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
+using DispatcherWeb.Dispatching.Dto;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Scheduling.Dto;
@@ -49,5 +50,6 @@ namespace DispatcherWeb.Orders
         Task<SetOrderDateResult> SetOrderDate(SetOrderDateInput input);
 
         Task<ListResultDto<SelectListDto>> GetOrderIdsSelectList(GetSelectListInput input);
+        Task<JobEditDto> GetJobForEdit(GetJobForEditInput input);
     }
 }

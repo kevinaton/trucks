@@ -94,9 +94,9 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
 
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public PartialViewResult AddQuoteBasedOrderLinesModal()
+        public PartialViewResult AddQuoteBasedOrderLinesModal(QuoteBasedOrderLinesModalInput input)
         {
-            return PartialView("_AddQuoteBasedOrderLinesModal");
+            return PartialView("_AddQuoteBasedOrderLinesModal", input);
         }
 
         [Modal]
@@ -260,6 +260,13 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         public PartialViewResult SelectOrderQuoteModal()
         {
             return PartialView("_SelectOrderQuoteModal");
+        }
+
+        [Modal]
+        public async Task<PartialViewResult> CreateOrEditJobModal(GetJobForEditInput input)
+        {
+            var model = await _orderAppService.GetJobForEdit(input);
+            return PartialView("_CreateOrEditJobModal", model);
         }
        
     }

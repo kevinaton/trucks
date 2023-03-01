@@ -7,14 +7,20 @@
         var _filter = null;
         var _grid = null;
         var _gridOptions = null;
-
+        var _modalOptions = null;
 
         this.init = function(modalManager) {
             _modalManager = modalManager;
+            _modalOptions = _modalManager.getArgs();
             
             let saveButton = _modalManager.getModal().find('.save-button');
-            saveButton.find('span').text('Add selected items');
-            saveButton.find('i').removeClass('fa-save').addClass('fa-plus');
+            if (_modalOptions.saveButtonText) {
+                saveButton.find('span').text(_modalOptions.saveButtonText);
+                saveButton.find('i').remove();
+            } else {
+                saveButton.find('span').text('Add selected items');
+                saveButton.find('i').removeClass('fa-save').addClass('fa-plus');
+            }
 
             var table = _modalManager.getModal().find('#QuoteItemsTable');
             _gridOptions = {
@@ -79,10 +85,13 @@
             _filter = filter;
             reloadGrid();
         };
-
         
         this.save = async function () {
             var selectedRows = _gridOptions.selectionColumnOptions.getSelectedRows();
+            if (_modalOptions.limitSelectionToSingleOrderLine && selectedRows.length !== 1) {
+                abp.message.error("Please select 1 desired line item");
+                return;
+            }
             abp.event.trigger('app.quoteBasedOrderLinesSelectedModal', {
                 selectedLines: selectedRows
             });

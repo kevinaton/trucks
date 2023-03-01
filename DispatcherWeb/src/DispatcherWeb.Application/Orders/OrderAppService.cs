@@ -16,6 +16,7 @@ using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching;
+using DispatcherWeb.Dispatching.Dto;
 using DispatcherWeb.DriverApplication;
 using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.Drivers;
@@ -375,6 +376,70 @@ namespace DispatcherWeb.Orders
             }
 
             return orderEditDto;
+        }
+
+        [UnitOfWork(IsDisabled = true)]
+        [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<EditOrderResult> EditJob(JobEditDto model)
+        {
+            OrderEditDto editOrderModal;
+            using (var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
+            {
+                editOrderModal = await GetOrderForEdit(new NullableIdDto(model.OrderId));
+                await unitOfWork.CompleteAsync();
+            }
+            editOrderModal.DeliveryDate = model.DeliveryDate;
+            editOrderModal.CustomerId = model.CustomerId;
+            editOrderModal.QuoteId = model.QuoteId;
+            editOrderModal.ChargeTo = model.ChargeTo;
+            editOrderModal.Priority = model.Priority;
+            editOrderModal.Shift = model.Shift;
+            editOrderModal.OfficeId = model.OfficeId;
+            editOrderModal.ProjectId = model.ProjectId;
+            editOrderModal.ContactId = model.ContactId;
+
+            var editOrderResult = await EditOrder(editOrderModal);
+            if (!editOrderResult.Completed)
+            {
+                return editOrderResult;
+            }
+
+            using (var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
+            {
+                var editOrderLineModal = await GetOrderLineForEdit(new GetOrderLineForEditInput(model.OrderLineId, editOrderResult.Id));
+                editOrderLineModal.JobNumber = model.JobNumber;
+                editOrderLineModal.Designation = model.Designation;
+                editOrderLineModal.LoadAtId = model.LoadAtId;
+                editOrderLineModal.DeliverToId = model.DeliverToId;
+                editOrderLineModal.ServiceId = model.ServiceId;
+                editOrderLineModal.FreightUomId = model.FreightUomId;
+                editOrderLineModal.MaterialUomId = model.MaterialUomId;
+                editOrderLineModal.FreightPricePerUnit = model.FreightPricePerUnit;
+                editOrderLineModal.MaterialPricePerUnit = model.MaterialPricePerUnit;
+                editOrderLineModal.FreightQuantity = model.FreightQuantity;
+                editOrderLineModal.MaterialQuantity = model.MaterialQuantity;
+                editOrderLineModal.FreightPrice = model.FreightPrice;
+                editOrderLineModal.MaterialPrice = model.MaterialPrice;
+                editOrderLineModal.LeaseHaulerRate = model.LeaseHaulerRate;
+                editOrderLineModal.NumberOfTrucks = model.NumberOfTrucks;
+                editOrderLineModal.IsMultipleLoads = model.IsMultipleLoads;
+                editOrderLineModal.TimeOnJob = model.TimeOnJob;
+                editOrderLineModal.ProductionPay = model.ProductionPay;
+                editOrderLineModal.Note = model.Note;
+
+                var orderLine = await EditOrderLine(editOrderLineModal);
+
+                await unitOfWork.CompleteAsync();
+
+                return new EditJobResult
+                {
+                    Id = editOrderResult.Id,
+                    Completed = editOrderResult.Completed,
+                    HasZeroQuantityItems = editOrderResult.HasZeroQuantityItems,
+                    NotAvailableTrucks = editOrderResult.NotAvailableTrucks,
+                    OrderLineId = orderLine.OrderLineId
+                };
+            }
         }
 
         [UnitOfWork(IsDisabled = true)]
@@ -2017,6 +2082,93 @@ namespace DispatcherWeb.Orders
         public async Task<bool> IsOrderDeleted(EntityDto input)
         {
             return await _orderRepository.IsEntityDeleted(input, CurrentUnitOfWork);
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_Orders_View)]
+        public async Task<JobEditDto> GetJobForEdit(GetJobForEditInput input)
+        {
+            var orderLine = await GetOrderLineForEdit(new GetOrderLineForEditInput
+            {
+                Id = input.OrderLineId
+            });
+
+            var order = await GetOrderForEdit(new NullableIdDto
+            {
+                Id = orderLine.OrderId == 0 ? null : orderLine.OrderId
+            });
+
+            if (input.OrderLineId == null)
+            {
+                if (input.DeliveryDate.HasValue)
+                {
+                    order.DeliveryDate = input.DeliveryDate;
+                }
+                if (input.Shift.HasValue)
+                {
+                    order.Shift = input.Shift;
+                }
+                if (input.OfficeId.HasValue)
+                {
+                    order.OfficeId = input.OfficeId.Value;
+                    order.OfficeName = input.OfficeName;
+                }
+            }
+
+            return new JobEditDto
+            {
+                OrderId = order.Id,
+                OrderLineId = orderLine.Id,
+                DeliveryDate = order.DeliveryDate,
+                CustomerId = order.CustomerId,
+                CustomerName = order.CustomerName,
+                ChargeTo = order.ChargeTo,
+                Priority = order.Priority,
+                QuoteId = order.QuoteId,
+                QuoteName = order.QuoteName,
+                Shift = order.Shift,
+                OfficeId = order.OfficeId,
+                
+                DeliverToId = orderLine.DeliverToId,
+                DeliverTo = orderLine.DeliverTo,
+                DeliverToNamePlain = orderLine.DeliverToNamePlain,
+                LoadAtId = orderLine.LoadAtId,
+                LoadAt = orderLine.LoadAt,
+                LoadAtNamePlain = orderLine.LoadAtNamePlain,
+                CanOverrideTotals = orderLine.CanOverrideTotals,
+                IsTimeStaggeredForTrucks = orderLine.IsTimeStaggeredForTrucks,
+                IsTaxable = orderLine.IsTaxable,
+                JobNumber = orderLine.JobNumber,
+                IsFreightPriceOverridden = orderLine.IsFreightPriceOverridden,
+                Designation = orderLine.Designation,
+                MaterialPrice = orderLine.MaterialPrice,
+                MaterialUomId = orderLine.MaterialUomId,
+                MaterialUomName = orderLine.MaterialUomName,
+                MaterialQuantity = orderLine.MaterialQuantity,
+                MaterialPricePerUnit = orderLine.MaterialPricePerUnit,
+                IsMaterialPriceOverridden = orderLine.IsMaterialPriceOverridden,
+                IsMaterialPricePerUnitOverridden = orderLine.IsMaterialPricePerUnitOverridden,
+                FreightPrice = orderLine.FreightPrice,
+                FreightUomId = orderLine.FreightUomId,
+                FreightUomName = orderLine.FreightUomName,
+                FreightQuantity = orderLine.FreightQuantity,
+                FreightPricePerUnit = orderLine.FreightPricePerUnit,
+                IsFreightPricePerUnitOverridden = orderLine.IsFreightPricePerUnitOverridden,
+                FirstStaggeredTimeOnJob = orderLine.FirstStaggeredTimeOnJob,
+                HasOpenDispatches = orderLine.HasOpenDispatches,
+                HasQuoteBasedPricing = orderLine.HasQuoteBasedPricing,
+                HasTickets = orderLine.HasTickets,
+                IsMultipleLoads = orderLine.IsMultipleLoads,
+                LeaseHaulerRate = orderLine.LeaseHaulerRate,
+                Note = orderLine.Note,
+                NumberOfTrucks = orderLine.NumberOfTrucks,
+                ProductionPay = orderLine.ProductionPay,
+                ServiceId = orderLine.ServiceId,
+                ServiceName = orderLine.ServiceName,
+                StaggeredTimeInterval = orderLine.StaggeredTimeInterval,
+                StaggeredTimeKind = orderLine.StaggeredTimeKind,
+                TimeOnJob = orderLine.TimeOnJob,
+                UpdateStaggeredTime = orderLine.UpdateStaggeredTime
+            };
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]

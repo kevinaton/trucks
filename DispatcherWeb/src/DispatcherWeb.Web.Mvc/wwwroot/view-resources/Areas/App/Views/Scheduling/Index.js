@@ -235,6 +235,13 @@
             //modalSize: 'sm'
         });
 
+        var _createOrEditJobModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditJobModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditJobModal.js',
+            modalClass: 'CreateOrEditJobModal',
+            modalSize: 'lg'
+        });
+
         var _reassignTrucksModal = abp.helper.createModal('ReassignTrucks', 'Scheduling');
 
         var _createOrEditLeaseHaulerRequestModal = abp.helper.createModal('CreateOrEditLeaseHaulerRequest', 'LeaseHaulerRequests');
@@ -2229,6 +2236,12 @@
             reloadDriverAssignments();
         });
 
+        abp.event.on('app.createOrEditJobModalSaved', function () {
+            reloadMainGrid(null, false);
+            //reloadTruckTiles();
+            //reloadDriverAssignments();
+        });
+
         function actionMenuHasItems() {
             return _permissions.edit ||
                 _permissions.editTickets ||
@@ -2304,6 +2317,17 @@
             });
         });
 
+        $('#AddJobButton').click(function (e) {
+            e.preventDefault();
+            var filterData = _dtHelper.getFilterData();
+            _createOrEditJobModal.open({
+                deliveryDate: filterData.date,
+                shift: filterData.shift,
+                officeId: filterData.officeId,
+                officeName: filterData.officeName
+            });
+        });
+
         $('#ScheduleTable tbody tr').contextmenu({ 'target': '#context-menu' });
 
         scheduleTable.contextMenu({
@@ -2319,6 +2343,19 @@
                 }
             },
             items: {
+                editJob: {
+                    name: app.localize('EditJob'),
+                    visible: function () {
+                        var rowData = _dtHelper.getRowData(this);
+                        return true; //TODO compare with Edit button on Order List view
+                    },
+                    callback: function () {
+                        var orderLine = _dtHelper.getRowData(this);
+                        _createOrEditJobModal.open({
+                            orderLineId: orderLine.id
+                        });
+                    }
+                },
                 orderGroup: {
                     name: app.localize('Schedule_DataTable_MenuItems_Order'),
                     visible: function () {
