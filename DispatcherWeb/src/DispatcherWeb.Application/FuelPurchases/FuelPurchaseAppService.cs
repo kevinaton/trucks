@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
-using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
-using Abp.Runtime.Session;
-using Abp.Timing;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.FuelPurchases.Dto;
 using DispatcherWeb.Trucks;
-using DispatcherWeb.WorkOrders.Dto;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.FuelPurchases
@@ -49,7 +42,9 @@ namespace DispatcherWeb.FuelPurchases
             var items = await query
                 .Select(fp => new FuelPurchaseDto
                 {
-                    Id = fp.Id, TruckCode = fp.Truck.TruckCode, FuelDateTime = fp.FuelDateTime,
+                    Id = fp.Id,
+                    TruckCode = fp.Truck.TruckCode,
+                    FuelDateTime = fp.FuelDateTime,
                     Amount = fp.Amount,
                     Rate = fp.Rate,
                     Odometer = fp.Odometer,
@@ -62,7 +57,7 @@ namespace DispatcherWeb.FuelPurchases
             return new PagedResultDto<FuelPurchaseDto>(totalCount, items);
         }
 
-        private async Task<DateTime> ConvertFromLocalTimeZoneToUtc(DateTime dateTime) => 
+        private async Task<DateTime> ConvertFromLocalTimeZoneToUtc(DateTime dateTime) =>
             dateTime.ConvertTimeZoneFrom(await GetTimezone());
 
         private async Task<DateTime> ConvertFromUtcToLocalTimeZone(DateTime dateTime) =>
@@ -117,7 +112,7 @@ namespace DispatcherWeb.FuelPurchases
         }
 
         [AbpAuthorize(AppPermissions.Pages_FuelPurchases_Edit)]
-        public async Task DeleteFuelPurchase(EntityDto input) => 
+        public async Task DeleteFuelPurchase(EntityDto input) =>
             await _fuelPurchaseRepository.DeleteAsync(input.Id);
     }
 }

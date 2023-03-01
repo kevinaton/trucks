@@ -119,7 +119,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 if (!response.IsSuccessStatusCode)
                 {
 
-                   
+
 
 
                     if (headers.WwwAuthenticate != null)

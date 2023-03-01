@@ -3,23 +3,18 @@
 // Modified for Intuit's Oauth2 implementation.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Configuration;
 using Intuit.Ipp.OAuth2PlatformClient.Helpers;
-using System.Reflection;
-using System.IO;
 
 namespace Intuit.Ipp.OAuth2PlatformClient
 {
     /// <summary>
     /// Discovery Client ot get details from Discovery Url
     /// </summary>
-    public class DiscoveryClient 
+    public class DiscoveryClient
     {
         /// <summary>
         /// GetAsync call for Discovery Url
@@ -36,7 +31,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// </summary>
         private readonly HttpClient _client;
 
-  
+
 
 
         /// <summary>
@@ -52,7 +47,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// <summary>
         /// Policy
         /// </summary>
-        public DiscoveryPolicy Policy { get; set; }= new DiscoveryPolicy();
+        public DiscoveryPolicy Policy { get; set; } = new DiscoveryPolicy();
 
         /// <summary>
         /// Timeout
@@ -115,7 +110,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
             Policy.SetAuthority(appEnvironment);//Issuer url set, used in DiscoverResponse too for validation
             var handler = new HttpClientHandler();
             string url = "";
-         
+
 
             string discoveryUrl = "";
             string discoveryAuthority = "";
@@ -123,10 +118,10 @@ namespace Intuit.Ipp.OAuth2PlatformClient
             {
                 discoveryUrl = OidcConstants.Discovery.ProdDiscoveryEndpoint;
                 discoveryAuthority = OidcConstants.Discovery.ProdAuthority;
-                
+
 
             }
-          
+
             //else if (appEnvironment == AppEnvironment.E2EProduction)
             //{
             //    discoveryUrl = OidcConstants.Discovery.E2EProdDiscoveryEndpoint;
@@ -142,9 +137,9 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 discoveryUrl = OidcConstants.Discovery.SandboxDiscoveryEndpoint;
                 discoveryAuthority = OidcConstants.Discovery.ProdAuthority;
             }
-          
 
-                url = discoveryAuthority + discoveryUrl;
+
+            url = discoveryAuthority + discoveryUrl;
             Url = url;
             _client = new HttpClient(handler);
         }
@@ -156,7 +151,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         public DiscoveryClient(string discoveryUrl)
         {
             var handler = new HttpClientHandler();
-           
+
             Url = discoveryUrl;
             _client = new HttpClient(handler);
         }
@@ -190,10 +185,10 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                         errorDetail = headers.WwwAuthenticate.ToString();
                     }
 
-                  
+
                     if (errorDetail != null && errorDetail != "")
                     {
-                        return new DiscoveryResponse(response.StatusCode, $"Error connecting to {Url}: {response.ReasonPhrase}: { errorDetail}");
+                        return new DiscoveryResponse(response.StatusCode, $"Error connecting to {Url}: {response.ReasonPhrase}: {errorDetail}");
 
                     }
                     else
@@ -208,7 +203,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                     return disco;
                 }
 
-                
+
                 try
                 {
                     jwkUrl = disco.JwksUri;
@@ -245,7 +240,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// <returns></returns>
         public DiscoveryResponse Get(CancellationToken cancellationToken = default(CancellationToken))
         {
-           
+
 
             if (!DiscoveryUrlHelper.IsSecureScheme(new Uri(Url), Policy))
             {
@@ -256,7 +251,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
             {
                 //Policy.Authority = Authority;
                 string jwkUrl = "";
-                var response =  _client.GetAsync(Url, cancellationToken).Result;
+                var response = _client.GetAsync(Url, cancellationToken).Result;
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -270,7 +265,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
 
                     if (errorDetail != null && errorDetail != "")
                     {
-                        return new DiscoveryResponse(response.StatusCode, $"Error connecting to {Url}: {response.ReasonPhrase}: { errorDetail}");
+                        return new DiscoveryResponse(response.StatusCode, $"Error connecting to {Url}: {response.ReasonPhrase}: {errorDetail}");
 
                     }
                     else

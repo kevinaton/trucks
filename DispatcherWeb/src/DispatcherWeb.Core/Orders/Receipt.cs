@@ -1,4 +1,8 @@
-﻿using Abp.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Infrastructure;
@@ -6,11 +10,6 @@ using DispatcherWeb.Offices;
 using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Payments;
 using DispatcherWeb.Quotes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace DispatcherWeb.Orders
 {
@@ -29,7 +28,7 @@ namespace DispatcherWeb.Orders
 
         [ForeignKey("OrderId")]
         public virtual Order Order { get; set; }
-        
+
         public bool IsFreightTotalOverridden { get; set; }
 
         public bool IsMaterialTotalOverridden { get; set; }

@@ -4,20 +4,18 @@ using Abp.Application.Services;
 using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.IdentityFramework;
-using Abp.MultiTenancy;
 using Abp.Runtime.Session;
 using Abp.Threading;
 using Abp.Timing;
-using Abp.UI;
-using Microsoft.AspNetCore.Identity;
+using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Exceptions;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Sessions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Authorization.Roles;
 
 namespace DispatcherWeb
 {
@@ -106,16 +104,16 @@ namespace DispatcherWeb
 
         protected async Task CheckUseShiftSettingCorrespondsInput(Shift? shift)
         {
-            if(await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.UseShifts))
+            if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.UseShifts))
             {
-                if(!shift.HasValue)
+                if (!shift.HasValue)
                 {
                     throw new ArgumentException("UseShifts is turned on but there are no shifts in the input.");
                 }
             }
             else
             {
-                if(shift.HasValue)
+                if (shift.HasValue)
                 {
                     throw new ArgumentException("UseShifts is turned off but there are shifts in the input.");
                 }

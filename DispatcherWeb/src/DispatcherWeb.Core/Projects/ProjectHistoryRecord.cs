@@ -9,10 +9,10 @@ namespace DispatcherWeb.Projects
 {
     [Table("ProjectHistory")]
     public class ProjectHistoryRecord : FullAuditedEntity, IMustHaveTenant
-	{
-		public int TenantId { get; set; }
+    {
+        public int TenantId { get; set; }
 
-		public int ProjectId { get; set; }
+        public int ProjectId { get; set; }
         public DateTime DateTime { get; set; }
         public long? UserId { get; set; }
         public int? OfficeId { get; set; }

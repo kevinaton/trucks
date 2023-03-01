@@ -1,9 +1,9 @@
-﻿using Abp.Authorization;
+﻿using Abp.Application.Features;
+using Abp.Authorization;
 using Abp.Configuration.Startup;
 using Abp.Localization;
 using Abp.MultiTenancy;
 using DispatcherWeb.Features;
-using Abp.Application.Features;
 
 namespace DispatcherWeb.Authorization
 {
@@ -34,7 +34,7 @@ namespace DispatcherWeb.Authorization
 
             var administration = pages.CreateChildPermission(AppPermissions.Pages_Administration, L("Administration"));
 
-            
+
             var roles = administration.CreateChildPermission(AppPermissions.Pages_Administration_Roles, L("Roles"));
             roles.CreateChildPermission(AppPermissions.Pages_Administration_Roles_Create, L("CreatingNewRole"));
             roles.CreateChildPermission(AppPermissions.Pages_Administration_Roles_Edit, L("EditingRole"));
@@ -54,15 +54,13 @@ namespace DispatcherWeb.Authorization
             languages.CreateChildPermission(AppPermissions.Pages_Administration_Languages_Delete, L("DeletingLanguages"), multiTenancySides: _isMultiTenancyEnabled ? MultiTenancySides.Host : MultiTenancySides.Tenant);
             languages.CreateChildPermission(AppPermissions.Pages_Administration_Languages_ChangeTexts, L("ChangingTexts"));
             languages.CreateChildPermission(AppPermissions.Pages_Administration_Languages_ChangeDefaultLanguage, L("ChangeDefaultLanguage"));
-            
+
             administration.CreateChildPermission(AppPermissions.Pages_Administration_AuditLogs, L("AuditLogs"));
 
             var organizationUnits = administration.CreateChildPermission(AppPermissions.Pages_Administration_OrganizationUnits, L("OrganizationUnits"));
             organizationUnits.CreateChildPermission(AppPermissions.Pages_Administration_OrganizationUnits_ManageOrganizationTree, L("ManagingOrganizationTree"));
             organizationUnits.CreateChildPermission(AppPermissions.Pages_Administration_OrganizationUnits_ManageMembers, L("ManagingMembers"));
             organizationUnits.CreateChildPermission(AppPermissions.Pages_Administration_OrganizationUnits_ManageRoles, L("ManagingRoles"));
-
-            administration.CreateChildPermission(AppPermissions.Pages_Administration_RecalculateHasAllActualAmountsValues, L("RecalculateHasAllActualAmountsValues"));
 
             //TENANT-SPECIFIC PERMISSIONS
             var dashboard = pages.CreateChildPermission(AppPermissions.Pages_Dashboard, L("Dashboard"), multiTenancySides: MultiTenancySides.Tenant);
@@ -81,7 +79,7 @@ namespace DispatcherWeb.Authorization
             leaseHauler.CreateChildPermission(AppPermissions.Pages_LeaseHaulers_Edit, L("LeaseHaulersEdit"), multiTenancySides: MultiTenancySides.Tenant);
             leaseHauler.CreateChildPermission(AppPermissions.Pages_LeaseHaulers_SetHaulingCompanyTenantId, L("SetTenantId"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowSendingOrdersToDifferentTenant));
-            leaseHauler.CreateChildPermission(AppPermissions.Pages_LeaseHaulerStatements, L("LeaseHaulerStatements"), multiTenancySides: MultiTenancySides.Tenant, 
+            leaseHauler.CreateChildPermission(AppPermissions.Pages_LeaseHaulerStatements, L("LeaseHaulerStatements"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowLeaseHaulersFeature));
             var leaseHaulerRequests = leaseHauler.CreateChildPermission(AppPermissions.Pages_LeaseHaulerRequests, L("LeaseHaulerRequests"), multiTenancySides: MultiTenancySides.Tenant);
             leaseHaulerRequests.CreateChildPermission(AppPermissions.Pages_LeaseHaulerRequests_Edit, L("LeaseHaulerRequestsEdit"), multiTenancySides: MultiTenancySides.Tenant);
@@ -104,9 +102,9 @@ namespace DispatcherWeb.Authorization
             pages.CreateChildPermission(AppPermissions.Pages_TicketsByDriver, L("TicketsByDriver"), multiTenancySides: MultiTenancySides.Tenant);
             var tickets = pages.CreateChildPermission(AppPermissions.Pages_Tickets_View, L("Tickets"), multiTenancySides: MultiTenancySides.Tenant);
             tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Edit, L("EditingTicket"), multiTenancySides: MultiTenancySides.Tenant);
-            pages.CreateChildPermission(AppPermissions.Pages_Invoices, L("Invoices"), multiTenancySides: MultiTenancySides.Tenant, 
+            pages.CreateChildPermission(AppPermissions.Pages_Invoices, L("Invoices"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature));
-            pages.CreateChildPermission(AppPermissions.DriverProductionPay, L("DriverProductionPay"), multiTenancySides: MultiTenancySides.Tenant, 
+            pages.CreateChildPermission(AppPermissions.DriverProductionPay, L("DriverProductionPay"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.DriverProductionPayFeature));
             pages.CreateChildPermission(AppPermissions.AllowImportingTruxEarnings, L("AllowImportingTruxEarnings"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingTruxEarnings));
@@ -150,7 +148,6 @@ namespace DispatcherWeb.Authorization
             reports.CreateChildPermission(AppPermissions.Pages_Reports_RevenueBreakdown, L("RevenueBreakdownReport"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_RevenueBreakdownByTruck, L("RevenueBreakdownByTruckReport"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_Receipts, L("Receipts"), multiTenancySides: MultiTenancySides.Tenant);
-            reports.CreateChildPermission(AppPermissions.Pages_Reports_BillingReconciliation, L("BillingReconciliation"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_PaymentReconciliation, L("PaymentReconciliation"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowPaymentProcessingFeature));
             reports.CreateChildPermission(AppPermissions.Pages_Reports_DriverActivityDetail, L("DriverActivityReport"), multiTenancySides: MultiTenancySides.Tenant);
@@ -203,7 +200,7 @@ namespace DispatcherWeb.Authorization
 
             var vehicleServiceTypes = pages.CreateChildPermission(AppPermissions.Pages_VehicleServiceTypes_View, L("VehicleServiceTypes"), multiTenancySides: _isMultiTenancyEnabled ? MultiTenancySides.Host : MultiTenancySides.Tenant);
             vehicleServiceTypes.CreateChildPermission(AppPermissions.Pages_VehicleServiceTypes_Edit, L("EditingVehicleServiceTypes"), multiTenancySides: _isMultiTenancyEnabled ? MultiTenancySides.Host : MultiTenancySides.Tenant);
-            
+
             pages.CreateChildPermission(AppPermissions.Pages_DemoUiComponents, L("DemoUiComponents"), multiTenancySides: MultiTenancySides.Host);
         }
 

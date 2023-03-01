@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 // Modified for Intuit's Oauth2 implementation
 
-using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace Intuit.Ipp.OAuth2PlatformClient
 {
@@ -18,8 +18,8 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         public bool IsError { get; }
         public HttpStatusCode HttpStatusCode { get; }
         public string HttpErrorReason { get; }
-        public ResponseErrorType ErrorType { get;  }
-        public System.Exception Exception { get;  }
+        public ResponseErrorType ErrorType { get; }
+        public System.Exception Exception { get; }
 
         /// <summary>
         /// Handles successful raw response from Token Revoke api call
@@ -104,7 +104,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 {
                     return HttpErrorReason;
                 }
-                else if(ErrorType == ResponseErrorType.Exception)
+                else if (ErrorType == ResponseErrorType.Exception)
                 {
                     return Exception.Message;
                 }

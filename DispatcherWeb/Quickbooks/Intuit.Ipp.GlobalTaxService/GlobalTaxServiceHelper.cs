@@ -22,12 +22,6 @@
 
 namespace Intuit.Ipp.GlobalTaxService
 {
-    using System;
-    using Intuit.Ipp.Data;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
     /// Class contains Helper Methods for Services.
     /// </summary>

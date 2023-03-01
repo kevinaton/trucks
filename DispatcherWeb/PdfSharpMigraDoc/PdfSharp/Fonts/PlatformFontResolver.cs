@@ -27,12 +27,8 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
 using System.Diagnostics;
 #if CORE || GDI
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using GdiFontFamily = System.Drawing.FontFamily;
 using GdiFont = System.Drawing.Font;
 using GdiFontStyle = System.Drawing.FontStyle;
 #endif

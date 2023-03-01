@@ -3,18 +3,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Authorization.Users;
-using Abp.AutoMapper;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.ObjectMapping;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Chat;
 using DispatcherWeb.Chat.Dto;
 using DispatcherWeb.Chat.Exporting;
 using DispatcherWeb.Dto;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.MultiTenancy;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Gdpr
 {
@@ -105,7 +104,7 @@ namespace DispatcherWeb.Gdpr
                     .Where(message => message.UserId == userId && message.TenantId == tenantId)
                     .ToListAsync()
                 )
-                .GroupBy(message => new {message.TargetTenantId, message.TargetUserId})
+                .GroupBy(message => new { message.TargetTenantId, message.TargetUserId })
                 .Select(messageGrouped => new
                 {
                     TargetTenantId = messageGrouped.Key.TargetTenantId,

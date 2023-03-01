@@ -49,7 +49,7 @@ namespace DispatcherWeb.Friendships
                 }
             });
         }
-        
+
         public async Task<Friendship> GetFriendshipOrNullAsync(UserIdentifier user, UserIdentifier probableFriend)
         {
             return await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>
@@ -64,7 +64,7 @@ namespace DispatcherWeb.Friendships
                 }
             });
         }
-        
+
         public async Task BanFriendAsync(UserIdentifier userIdentifier, UserIdentifier probableFriend)
         {
             await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>
@@ -80,7 +80,7 @@ namespace DispatcherWeb.Friendships
             });
         }
 
-        
+
 
         public async Task AcceptFriendshipRequestAsync(UserIdentifier userIdentifier, UserIdentifier probableFriend)
         {

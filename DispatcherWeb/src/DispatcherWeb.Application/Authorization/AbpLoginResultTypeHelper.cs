@@ -1,6 +1,5 @@
 ﻿using System;
 using Abp.Authorization;
-using Abp.Authorization.Users;
 using Abp.Dependency;
 using Abp.UI;
 

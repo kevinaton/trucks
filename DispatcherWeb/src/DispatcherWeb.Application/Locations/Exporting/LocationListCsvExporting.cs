@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using DispatcherWeb.DataExporting.Csv;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.Storage;
 using DispatcherWeb.Locations.Dto;
+using DispatcherWeb.Storage;
 
 namespace DispatcherWeb.Locations.Exporting
 {

@@ -28,8 +28,8 @@ namespace DispatcherWeb.Infrastructure.Sms
         {
             Logger.Info($"NullSmsSender: Sending a message with text: '{text}' to number: '{toPhoneNumber}'");
 #if DEBUG
-                var smsLogger = Logger.CreateChildLogger("SmsLogger");
-                smsLogger.Info($"SMS message:\n Body: {text}\n To: {toPhoneNumber}\n");
+            var smsLogger = Logger.CreateChildLogger("SmsLogger");
+            smsLogger.Info($"SMS message:\n Body: {text}\n To: {toPhoneNumber}\n");
 #endif
 
             var sid = Guid.NewGuid().ToString();

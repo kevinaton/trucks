@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Abp.Auditing;
-using Abp.Authorization.Users;
 using Abp.Domain.Entities.Auditing;
 using Abp.Timing;
 using AutoFixture;
-using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Customers;
 using DispatcherWeb.DailyHistory;
 using DispatcherWeb.MultiTenancy;
@@ -148,7 +144,7 @@ namespace DispatcherWeb.Tests.DailyHistory
             tenantDailyHistories.First(x => x.TenantId == _tenant2Id).UsersWithActivity.ShouldBe(0);
 
         }
-        
+
         [Fact]
         public async Task Test_FillTenantDailyHistory_should_fill_OrderLinesScheduled()
         {

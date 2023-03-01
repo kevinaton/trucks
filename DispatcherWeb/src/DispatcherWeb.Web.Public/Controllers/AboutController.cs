@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using DispatcherWeb.Web.Controllers;
+﻿using DispatcherWeb.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Public.Controllers
 {

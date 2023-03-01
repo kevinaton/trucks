@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using DispatcherWeb.Authentication.TwoFactor.Google;
+﻿using DispatcherWeb.Authentication.TwoFactor.Google;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Editions;
 using DispatcherWeb.MultiTenancy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DispatcherWeb.Identity
 {

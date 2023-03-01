@@ -2,7 +2,7 @@
 
 namespace DispatcherWeb.Authorization.Users.Dto
 {
-    public interface IGetLoginAttemptsInput: ISortedResultRequest
+    public interface IGetLoginAttemptsInput : ISortedResultRequest
     {
         string Filter { get; set; }
     }

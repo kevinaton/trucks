@@ -2,11 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 // Modified for Intuit's Oauth2 implementation
 
-using Intuit.Ipp.OAuth2PlatformClient;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Newtonsoft.Json.Linq;
 
 
 namespace Intuit.Ipp.OAuth2PlatformClient
@@ -109,10 +108,10 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         public IEnumerable<string> IdTokenSigningAlgValuesSupported => TryGetStringArray(OidcConstants.Discovery.IdTokenSigningAlgValuesSupported);
         public IEnumerable<string> TokenEndpointAuthenticationMethodsSupported => TryGetStringArray(OidcConstants.Discovery.TokenEndpointAuthenticationMethodsSupported);
         public IEnumerable<string> ClaimsSupported => TryGetStringArray(OidcConstants.Discovery.ClaimsSupported);
-       
-        
-        
-    
+
+
+
+
         /// <summary>
         /// Generic getters
         /// </summary> 
@@ -192,7 +191,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                         return $"Endpoint does not use HTTPS: {endpoint}";
                     }
 
-                    
+
                 }
             }
 

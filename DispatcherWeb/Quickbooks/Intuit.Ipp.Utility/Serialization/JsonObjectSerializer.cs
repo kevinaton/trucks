@@ -21,12 +21,9 @@
 namespace Intuit.Ipp.Utility
 {
     using System;
-    using System.Reflection;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using System.Linq;
 
     /// <summary>
     /// JSON Serialize(r) to serialize and de serialize.
@@ -68,7 +65,7 @@ namespace Intuit.Ipp.Utility
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new ObjectToEnumConverter());
             settings.Converters.Add(new IntuitConverter());
-        
+
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.MissingMemberHandling = MissingMemberHandling.Error;
             settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
@@ -105,16 +102,16 @@ namespace Intuit.Ipp.Utility
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.Converters.Add(new ObjectToEnumConverter());
             settings.Converters.Add(new IntuitConverter());
-           
+
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.MissingMemberHandling = MissingMemberHandling.Ignore;
 
             try
             {
                 // de serialization of message.
-              /*  JObject o = JObject.Parse(message);
-                string key = o.Properties().Select(p => p.Name).Single();
-                string entityString = o[key].ToString();*/
+                /*  JObject o = JObject.Parse(message);
+                  string key = o.Properties().Select(p => p.Name).Single();
+                  string entityString = o[key].ToString();*/
                 deserializedObject = JsonConvert.DeserializeObject<T>(message, settings);
             }
             catch (SystemException ex)

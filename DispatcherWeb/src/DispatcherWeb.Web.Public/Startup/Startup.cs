@@ -5,10 +5,11 @@ using Abp.AspNetCore.Mvc.Extensions;
 using Abp.AspNetCore.SignalR.Hubs;
 using Abp.Castle.Logging.Log4Net;
 using Castle.Facilities.Logging;
+using DispatcherWeb.Configuration;
+using DispatcherWeb.Identity;
 //using HealthChecks.UI.Client;
 //using HealthChecks.UI.Configuration;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
@@ -16,9 +17,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.Identity;
-using DispatcherWeb.Web.HealthCheck;
 
 namespace DispatcherWeb.Web.Public.Startup
 {

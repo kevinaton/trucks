@@ -2,9 +2,7 @@
 using System.Threading.Tasks;
 using Abp;
 using Abp.Collections.Extensions;
-using Abp.Domain.Repositories;
 using Abp.UI;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Authorization.Users.Dto;
@@ -13,6 +11,7 @@ using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Tests.TestInfrastructure;
+using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -51,13 +50,13 @@ namespace DispatcherWeb.Tests.Authorization.Users
                         new CreateOrUpdateUserInput
                         {
                             User = new UserEditDto
-                                   {
-                                       EmailAddress = "john@nash.com",
-                                       Name = "John",
-                                       Surname = "Nash",
-                                       UserName = "jnash", //Same username is added before (in CreateTestUsers)
-                                       Password = "123qwe"
-                                   },
+                            {
+                                EmailAddress = "john@nash.com",
+                                Name = "John",
+                                Surname = "Nash",
+                                UserName = "jnash", //Same username is added before (in CreateTestUsers)
+                                Password = "123qwe"
+                            },
                             AssignedRoleNames = new string[0]
                         }));
         }
@@ -80,7 +79,7 @@ namespace DispatcherWeb.Tests.Authorization.Users
                     EmailAddress = driver.EmailAddress,
                     Name = "John",
                     Surname = "Nash",
-                    UserName = "driver1", 
+                    UserName = "driver1",
                     Password = "123qwe",
                 },
                 AssignedRoleNames = new string[] { StaticRoleNames.Tenants.Driver }
@@ -131,7 +130,7 @@ namespace DispatcherWeb.Tests.Authorization.Users
             ((AbpServiceBase)userAppService).SubstituteSetting(AppSettings.DispatchingAndMessaging.DispatchVia, DispatchVia.DriverApplication.ToIntString());
             var defaultTenantId = (await GetTenantAsync(Tenant.DefaultTenantName)).Id;
             ((AbpServiceBase)userAppService).SubstituteSettingForTenant(AppSettings.DispatchingAndMessaging.DispatchVia, DispatchVia.DriverApplication.ToIntString(), defaultTenantId);
-            
+
 
             // Act
             await userAppService.CreateOrUpdateUser(GetCreateOrUpdateUserInput(roles: new[] { StaticRoleNames.Tenants.Driver }));

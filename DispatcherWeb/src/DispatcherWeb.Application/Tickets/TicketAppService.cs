@@ -1,43 +1,40 @@
 ﻿using System;
-using System.Linq;
-using System.Linq.Dynamic.Core;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
-using DispatcherWeb.Trucks;
-using DispatcherWeb.Authorization;
-using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Orders;
-using DispatcherWeb.Tickets.Dto;
-using System.Collections.Generic;
-using Abp.Application.Services;
 using Abp.UI;
-using DispatcherWeb.Infrastructure.Extensions;
-using IdentityServer4.Extensions;
-using DispatcherWeb.Orders.TaxDetails;
-using DispatcherWeb.Receipts;
-using DispatcherWeb.Invoices;
-using DispatcherWeb.Storage;
-using DispatcherWeb.Tickets.Exporting;
-using DispatcherWeb.Dto;
-using Microsoft.AspNetCore.Mvc;
+using DispatcherWeb.Authorization;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
-using DispatcherWeb.Drivers;
+using DispatcherWeb.DailyFuelCosts;
 using DispatcherWeb.Dispatching;
+using DispatcherWeb.Drivers;
+using DispatcherWeb.Dto;
+using DispatcherWeb.FuelSurchargeCalculations;
+using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Invoices;
+using DispatcherWeb.LeaseHaulers;
+using DispatcherWeb.Orders;
+using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Services;
 using DispatcherWeb.Services.Dto;
+using DispatcherWeb.Storage;
+using DispatcherWeb.Tickets.Dto;
+using DispatcherWeb.Tickets.Exporting;
 using DispatcherWeb.TimeOffs;
-using DispatcherWeb.LeaseHaulers;
-using DispatcherWeb.LeaseHaulerRequests;
-using DispatcherWeb.Common.Dto;
-using DispatcherWeb.DailyFuelCosts;
-using DispatcherWeb.FuelSurchargeCalculations;
+using DispatcherWeb.Trucks;
 using DispatcherWeb.UnitsOfMeasure;
+using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Tickets
 {
@@ -47,22 +44,16 @@ namespace DispatcherWeb.Tickets
         private readonly IRepository<Ticket> _ticketRepository;
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
-        private readonly IRepository<OrderLineOfficeAmount> _orderLineOfficeAmountRepository;
-        private readonly IRepository<InvoiceLine> _invoiceLineRepository;
         private readonly IRepository<DriverAssignment> _driverAssignmentRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<Driver> _driverRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<LeaseHauler> _leaseHaulerRepository;
-        private readonly IRepository<AvailableLeaseHaulerTruck> _availableLeaseHaulerTrucksRepository;
         private readonly IRepository<DailyFuelCost> _dailyFuelCostRepository;
-        private readonly IRepository<FuelPurchase> _fuelPurchaseRepository;
         private readonly IRepository<UnitOfMeasure> _uomRepository;
         private readonly OrderTaxCalculator _orderTaxCalculator;
         private readonly IBinaryObjectManager _binaryObjectManager;
-        private readonly ReceiptSeeder _receiptSeeder;
         private readonly ITicketListCsvExporter _ticketListCsvExporter;
-        private readonly IDriverAppService _driverAppService;
         private readonly IServiceAppService _serviceAppService;
         private readonly IRepository<TimeOff> _timeOffRepository;
         private readonly IRepository<Invoice> _invoiceRepository;
@@ -72,22 +63,16 @@ namespace DispatcherWeb.Tickets
             IRepository<Ticket> ticketRepository,
             IRepository<Truck> truckRepository,
             IRepository<OrderLine> orderLineRepository,
-            IRepository<OrderLineOfficeAmount> orderLineOfficeAmountRepository,
-            IRepository<InvoiceLine> invoiceLineRepository,
             IRepository<DriverAssignment> driverAssignmentRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<Driver> driverRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<LeaseHauler> leaseHaulerRepository,
-            IRepository<AvailableLeaseHaulerTruck> availableLeaseHaulerTrucksRepository,
             IRepository<DailyFuelCost> dailyFuelCostRepository,
-            IRepository<FuelPurchase> fuelPurchaseRepository,
-            IRepository<UnitsOfMeasure.UnitOfMeasure> uomRepository,
+            IRepository<UnitOfMeasure> uomRepository,
             OrderTaxCalculator orderTaxCalculator,
             IBinaryObjectManager binaryObjectManager,
-            ReceiptSeeder receiptSeeder,
             ITicketListCsvExporter ticketListCsvExporter,
-            IDriverAppService driverAppService,
             IServiceAppService serviceAppService,
             IRepository<TimeOff> timeOffRepository,
             IRepository<Invoice> invoiceRepository,
@@ -97,22 +82,16 @@ namespace DispatcherWeb.Tickets
             _ticketRepository = ticketRepository;
             _truckRepository = truckRepository;
             _orderLineRepository = orderLineRepository;
-            _orderLineOfficeAmountRepository = orderLineOfficeAmountRepository;
-            _invoiceLineRepository = invoiceLineRepository;
             _driverAssignmentRepository = driverAssignmentRepository;
             _dispatchRepository = dispatchRepository;
             _driverRepository = driverRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
             _leaseHaulerRepository = leaseHaulerRepository;
-            _availableLeaseHaulerTrucksRepository = availableLeaseHaulerTrucksRepository;
             _dailyFuelCostRepository = dailyFuelCostRepository;
-            _fuelPurchaseRepository = fuelPurchaseRepository;
             _uomRepository = uomRepository;
             _orderTaxCalculator = orderTaxCalculator;
             _binaryObjectManager = binaryObjectManager;
-            _receiptSeeder = receiptSeeder;
             _ticketListCsvExporter = ticketListCsvExporter;
-            _driverAppService = driverAppService;
             _serviceAppService = serviceAppService;
             _timeOffRepository = timeOffRepository;
             _invoiceRepository = invoiceRepository;
@@ -1475,8 +1454,7 @@ namespace DispatcherWeb.Tickets
                             ServiceId = orderLine.ServiceId,
                             MaterialUomId = orderLine.MaterialUomId,
                             FreightUomId = orderLine.FreightUomId,
-                            LoadAtId = orderLine.LoadAtId,
-                            QuoteId = orderLine.Order.QuoteId
+                            QuoteServiceId = orderLine.QuoteServiceId
                         });
                         if (!(orderLine.MaterialPricePerUnit > 0) && orderLineModel.MaterialRate > 0
                             && orderLine.Designation.FreightOnly())

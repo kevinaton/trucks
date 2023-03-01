@@ -27,9 +27,6 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Diagnostics;
-using System.IO;
 #if GDI
 using System.Drawing;
 using System.Drawing.Drawing2D;

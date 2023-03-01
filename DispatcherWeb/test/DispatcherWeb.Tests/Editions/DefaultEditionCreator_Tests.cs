@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using DispatcherWeb.Editions;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.Features;
@@ -15,7 +11,7 @@ namespace DispatcherWeb.Tests.Editions
     {
         public DefaultEditionCreator_Tests()
         {
-            
+
         }
 
         [MultiTenantFact]

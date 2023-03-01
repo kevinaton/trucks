@@ -8,7 +8,7 @@ namespace DispatcherWeb.MultiTenancy.Accounting.Dto
         public decimal Amount { get; set; }
 
         public string EditionDisplayName { get; set; }
-        
+
         public string InvoiceNo { get; set; }
 
         public DateTime InvoiceDate { get; set; }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Timing;
@@ -42,7 +41,7 @@ namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
             report.AddSection();
             return CreateReport(
                 report,
-                () => new InactiveTrucksTablePdf(report.Section), 
+                () => new InactiveTrucksTablePdf(report.Section),
                 () => new OutOfServiceTrucksTablePdf(report.Section)
             );
         }
@@ -50,8 +49,8 @@ namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
         protected override Task<bool> CreateCsvReport(CsvReport report, EmptyInput input)
         {
             return CreateReport(
-                report, 
-                () => new InactiveTrucksTableCsv(report.CsvWriter), 
+                report,
+                () => new InactiveTrucksTableCsv(report.CsvWriter),
                 () => new OutOfServiceTrucksTableCsv(report.CsvWriter)
             );
         }
@@ -59,7 +58,7 @@ namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
         [UnitOfWork]
         private async Task<bool> CreateReport(
             IReport report,
-            Func<IInactiveTrucksTable> createInactiveTrucksTable, 
+            Func<IInactiveTrucksTable> createInactiveTrucksTable,
             Func<IOutOfServiceTrucksTable> createOutOfServiceTrucksTable
         )
         {
@@ -76,7 +75,7 @@ namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
             report.AddEmptyLine();
 
             var outOfServiceTrucks = await GetOutOfServiceTrucks(today);
-            foreach(var office in outOfServiceTrucks)
+            foreach (var office in outOfServiceTrucks)
             {
                 report.AddEmptyLine();
                 report.AddHeader(office.OfficeName);
@@ -88,7 +87,7 @@ namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
 
                 var outOfServiceTrucksTable = createOutOfServiceTrucksTable();
                 outOfServiceTrucksTable.AddColumnHeaders("Truck number", "Out of service date", "# of days out of service", "Reason");
-                foreach(var row in office.OutOfServiceTrucks)
+                foreach (var row in office.OutOfServiceTrucks)
                 {
                     outOfServiceTrucksTable.AddRow(
                         row.TruckCode,
@@ -155,7 +154,7 @@ namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
                     OfficeName = g.FirstOrDefault().Office.Name,
                     OutOfService = g.Where(t =>
                         t.OutOfServiceHistories.Any(oosh => oosh.OutOfServiceDate < tomorrowInUtc && oosh.InServiceDate == null))
-                        .Select(t => new 
+                        .Select(t => new
                         {
                             TruckCode = t.TruckCode,
                             OutOfServiceHistory = t.OutOfServiceHistories

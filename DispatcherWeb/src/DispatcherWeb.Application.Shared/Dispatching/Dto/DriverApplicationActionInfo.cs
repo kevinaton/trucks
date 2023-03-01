@@ -1,5 +1,5 @@
-﻿using DispatcherWeb.DriverApplication.Dto;
-using System;
+﻿using System;
+using DispatcherWeb.DriverApplication.Dto;
 
 namespace DispatcherWeb.Dispatching.Dto
 {
@@ -30,7 +30,7 @@ namespace DispatcherWeb.Dispatching.Dto
         public long UserId { get; set; }
         public int? DeviceId { get; set; }
         public Guid? DeviceGuid { get; set; }
-        
+
         [Obsolete("Use ActionTimeInUtc instead")]
         public DateTime? ActionTime { get; set; }
 

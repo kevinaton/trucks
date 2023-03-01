@@ -6,7 +6,7 @@ using DispatcherWeb.DemoUiComponents.Dto;
 
 namespace DispatcherWeb.DemoUiComponents
 {
-    public interface IDemoUiComponentsAppService: IApplicationService
+    public interface IDemoUiComponentsAppService : IApplicationService
     {
         DateToStringOutput SendAndGetDate(DateTime? date);
 

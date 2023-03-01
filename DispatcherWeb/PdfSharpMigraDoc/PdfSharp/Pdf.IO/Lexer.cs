@@ -28,10 +28,10 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.Diagnostics;
-using System.Text;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using PdfSharp.Internal;
 using PdfSharp.Pdf.Internal;
 
@@ -86,7 +86,7 @@ namespace PdfSharp.Pdf.IO
         // /// <param name="testReference">Indicates whether to test the next token if it is a reference.</param>
         public Symbol ScanNextToken()
         {
-            Again:
+        Again:
             _token = new StringBuilder();
 
             char ch = MoveToNonWhiteSpace();
@@ -510,9 +510,9 @@ namespace PdfSharp.Pdf.IO
                 ch = ScanNextChar(false);
             }
 
-            // Phase 2: deal with UTF-16BE if necessary.
-            // UTF-16BE Unicode strings start with U+FEFF ("þÿ"). There can be empty strings with UTF-16BE prefix.
-            Phase2:
+        // Phase 2: deal with UTF-16BE if necessary.
+        // UTF-16BE Unicode strings start with U+FEFF ("þÿ"). There can be empty strings with UTF-16BE prefix.
+        Phase2:
             if (_token.Length >= 2 && _token[0] == '\xFE' && _token[1] == '\xFF')
             {
                 // Combine two ANSI characters to get one Unicode character.
@@ -690,7 +690,7 @@ namespace PdfSharp.Pdf.IO
             Position = positon;
             return true;
 
-            False:
+        False:
             Position = positon;
             return false;
         }

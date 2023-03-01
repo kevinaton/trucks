@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 
 namespace DispatcherWeb.Authorization.Roles
 {
@@ -566,14 +565,6 @@ namespace DispatcherWeb.Authorization.Roles
                     {
                         StaticRoleNames.Tenants.Admin,
                         StaticRoleNames.Tenants.Administrative,
-                    }
-                },
-
-                // Reports_BillingReconciliation
-                {
-                    AppPermissions.Pages_Reports_BillingReconciliation, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
                     }
                 },
 

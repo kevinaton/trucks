@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Abp.AspNetZeroCore.Web.Authentication.External;
+﻿using Abp.AspNetZeroCore.Web.Authentication.External;
 using Abp.AspNetZeroCore.Web.Authentication.External.Twitter;
 using Abp.Configuration;
 using Abp.Dependency;
@@ -55,7 +54,7 @@ namespace DispatcherWeb.Web.Startup.ExternalLoginInfoProviders
                 AppSettings.ExternalLoginProvider.Tenant.Twitter,
                 _abpSession.GetTenantId()
             );
-            
+
             var settings = settingValue.FromJsonString<TwitterExternalLoginProviderSettings>();
             return CreateExternalLoginInfo(settings);
         }

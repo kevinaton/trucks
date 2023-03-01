@@ -3,12 +3,12 @@ using Abp.Runtime.Caching;
 using Abp.Runtime.Session;
 namespace DispatcherWeb.Web.Startup.ExternalLoginInfoProviders
 {
-    public abstract class TenantBasedExternalLoginInfoProviderBase: IExternalLoginInfoProvider
+    public abstract class TenantBasedExternalLoginInfoProviderBase : IExternalLoginInfoProvider
     {
         private readonly IAbpSession _abpSession;
         private readonly ICacheManager _cacheManager;
         public abstract string Name { get; }
-        
+
         protected TenantBasedExternalLoginInfoProviderBase(
             IAbpSession abpSession,
             ICacheManager cacheManager)
@@ -16,13 +16,13 @@ namespace DispatcherWeb.Web.Startup.ExternalLoginInfoProviders
             _abpSession = abpSession;
             _cacheManager = cacheManager;
         }
-        
+
         protected abstract bool TenantHasSettings();
-        
+
         protected abstract ExternalLoginProviderInfo GetTenantInformation();
-        
+
         protected abstract ExternalLoginProviderInfo GetHostInformation();
-        
+
         public virtual ExternalLoginProviderInfo GetExternalLoginInfo()
         {
             if (_abpSession.TenantId.HasValue && TenantHasSettings())
@@ -30,11 +30,11 @@ namespace DispatcherWeb.Web.Startup.ExternalLoginInfoProviders
                 return _cacheManager.GetExternalLoginInfoProviderCache()
                     .Get(GetCacheKey(), GetTenantInformation);
             }
-            
+
             return _cacheManager.GetExternalLoginInfoProviderCache()
                     .Get(GetCacheKey(), GetHostInformation);
         }
-        
+
         private string GetCacheKey()
         {
             if (_abpSession.TenantId.HasValue)

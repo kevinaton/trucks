@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Abp.Application.Services.Dto;
 using Abp.UI;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
-using DispatcherWeb.Emailing;
-using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Dto;
@@ -45,7 +41,7 @@ namespace DispatcherWeb.Tests.Orders
         public async Task Test_DeleteOrder_should_delete_OrderLine()
         {
             // Act 
-            await _orderAppService.DeleteOrderLine(new DeleteOrderLineInput(_orderLineId) {OrderId = _orderId});
+            await _orderAppService.DeleteOrderLine(new DeleteOrderLineInput(_orderLineId) { OrderId = _orderId });
 
             // Assert
             var orderLine = await GetOrderLine();
@@ -122,26 +118,6 @@ namespace DispatcherWeb.Tests.Orders
         }
 
         [Fact]
-        public async Task Test_DeleteOrder_should_throw_UserFriendlyException_when_there_is_OrderLineOfficeAmount()
-        {
-            // Assign
-            await UpdateOrderLine(orderLine =>
-            {
-                orderLine.OfficeAmounts = new List<OrderLineOfficeAmount>
-                {
-                    new OrderLineOfficeAmount
-                    {
-                        TenantId = 1,
-                        OfficeId = 1,
-                    }
-                };
-            });
-
-            // Act & Assert
-            await DeleteOrderLineShouldThrowUserFriendlyException();
-        }
-
-        [Fact]
         public async Task Test_DeleteOrder_should_throw_UserFriendlyException_when_there_is_SharedOrderLine()
         {
             // Assign
@@ -192,7 +168,7 @@ namespace DispatcherWeb.Tests.Orders
 
         private async Task DeleteOrderLineShouldThrowUserFriendlyException()
         {
-            await _orderAppService.DeleteOrderLine(new DeleteOrderLineInput(_orderLineId) {OrderId = _orderId}).ShouldThrowAsync(typeof(UserFriendlyException));
+            await _orderAppService.DeleteOrderLine(new DeleteOrderLineInput(_orderLineId) { OrderId = _orderId }).ShouldThrowAsync(typeof(UserFriendlyException));
             var orderLine = await GetOrderLine();
             orderLine.IsDeleted.ShouldBeFalse();
         }

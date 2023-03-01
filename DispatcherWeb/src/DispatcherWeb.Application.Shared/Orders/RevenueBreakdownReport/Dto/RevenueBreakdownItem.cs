@@ -1,6 +1,6 @@
-﻿using DispatcherWeb.Common.Dto;
+﻿using System;
+using DispatcherWeb.Common.Dto;
 using Newtonsoft.Json;
-using System;
 
 namespace DispatcherWeb.Orders.RevenueBreakdownReport.Dto
 {

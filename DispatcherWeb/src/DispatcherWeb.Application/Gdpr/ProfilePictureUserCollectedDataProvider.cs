@@ -43,7 +43,7 @@ namespace DispatcherWeb.Gdpr
             var file = new FileDto("ProfilePicture.png", MimeTypeNames.ImagePng);
             _tempFileCacheManager.SetFile(file.FileToken, profilePicture.Bytes);
 
-            return new List<FileDto> {file};
+            return new List<FileDto> { file };
         }
     }
 }

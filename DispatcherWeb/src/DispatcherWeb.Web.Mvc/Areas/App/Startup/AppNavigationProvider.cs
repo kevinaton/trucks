@@ -1,14 +1,11 @@
-﻿using Abp.Application.Navigation;
+﻿using Abp.Application.Features;
+using Abp.Application.Navigation;
+using Abp.Authorization;
 using Abp.Localization;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Web.Models.Layout;
-using System.Collections.Generic;
-using Abp.Application.Features;
-using Abp.Configuration;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Features;
-using System.Threading.Tasks;
-using Abp.Authorization;
+using DispatcherWeb.Web.Models.Layout;
 
 namespace DispatcherWeb.Web.Areas.App.Startup
 {
@@ -146,7 +143,8 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         customData: new MenuItemCustomData { Id = "LoadHistoryNavbarItem" },
                         url: "app/Dispatches",
                         icon: "fa fa-calendar-check",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches)
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches),
+                        featureDependency: new DispatchSettingFeatureDependency()
                         )
                     ).AddItem(new MenuItemDefinition(
                         AppPageNames.Tenant.TruckDispatchList,
@@ -154,7 +152,8 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         customData: new MenuItemCustomData { Id = "TruckDispatchListNavbarItem" },
                         url: "app/Dispatches/TruckDispatchList",
                         icon: "fa fa-calendar-check",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches)
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches),
+                        featureDependency: new DispatchSettingFeatureDependency()
                         )
                     )
                 ).AddItem(new MenuItemDefinition(
@@ -212,8 +211,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             customData: new MenuItemCustomData { Id = "TicketsNavbarItem" },
                             url: "app/tickets",
                             icon: "fa fa-ticket-alt",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Tickets_View),
-                            featureDependency: new SimpleSettingFeatureDependency(AppSettings.General.AllowAddingTickets)
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Tickets_View)
                         )
                      ).AddItem(new MenuItemDefinition(
                             AppPageNames.Tenant.TicketsByDriver,
@@ -221,8 +219,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             customData: new MenuItemCustomData { Id = "TicketsByDriverNavbarItem" },
                             url: "app/tickets/TicketsByDriver",
                             icon: "fa fa-ticket-alt",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_TicketsByDriver),
-                            featureDependency: new SimpleSettingFeatureDependency(AppSettings.General.AllowAddingTickets)
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_TicketsByDriver)
                         )
                      ).AddItem(new MenuItemDefinition(
                             AppPageNames.Tenant.DriverPayStatements,
@@ -381,14 +378,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             url: "app/orders/receipts",
                             icon: "fas fa-receipt",
                             permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Reports_Receipts)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.BillingReconciliation,
-                            L("BillingReconciliation"),
-                            customData: new MenuItemCustomData { Id = "BillingReconciliationNavbarItem" },
-                            url: "app/orders/billingreconciliation",
-                            icon: "fas fa-calendar-check",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Reports_BillingReconciliation)
                         )
                     ).AddItem(new MenuItemDefinition(
                             AppPageNames.Tenant.PaymentReconciliation,
@@ -573,7 +562,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Administration_Tenant_Settings),
                             featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
                         )
-                    )                    
+                    )
                 );
         }
 

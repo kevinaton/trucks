@@ -3,6 +3,6 @@
 namespace DispatcherWeb.Infrastructure.SecureFiles.Dto
 {
     public class GetSecureFilesInput : PagedAndSortedInputDto
-	{
+    {
     }
 }

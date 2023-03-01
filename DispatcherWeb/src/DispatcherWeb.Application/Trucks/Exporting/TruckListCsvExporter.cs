@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using DispatcherWeb.DataExporting.Csv;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure.Extensions;
@@ -42,7 +38,7 @@ namespace DispatcherWeb.Trucks.Exporting
                         L("InServiceDate"),
                         L("VIN"),
                         L("Plate"),
-                        L("PlateExpiration"),                       
+                        L("PlateExpiration"),
                         "Ave Load(Tons)",
                         "Ave Load(Cyds)",
                         L("InsurancePolicyNumber"),

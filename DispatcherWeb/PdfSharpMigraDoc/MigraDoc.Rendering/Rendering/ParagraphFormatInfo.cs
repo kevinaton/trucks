@@ -29,9 +29,9 @@
 #endregion
 
 using System.Collections.Generic;
+using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
 using PdfSharp.Drawing;
-using MigraDoc.DocumentObjectModel;
 
 namespace MigraDoc.Rendering
 {

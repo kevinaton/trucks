@@ -44,11 +44,11 @@ namespace DispatcherWeb.Invoices.Dto
         public int? BatchId { get; set; }
 
         public string Message { get; set; }
-        
+
         public string JobNumber { get; set; }
-        
+
         public string PoNumber { get; set; }
-        
+
         public InvoicingMethodEnum? CustomerInvoicingMethod { get; set; }
 
         public ShowFuelSurchargeOnInvoiceEnum ShowFuelSurchargeOnInvoice { get; set; }

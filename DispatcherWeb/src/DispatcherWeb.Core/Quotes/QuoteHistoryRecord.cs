@@ -9,10 +9,10 @@ namespace DispatcherWeb.Quotes
 {
     [Table("QuoteHistory")]
     public class QuoteHistoryRecord : FullAuditedEntity, IMustHaveTenant
-	{
-		public int TenantId { get; set; }
+    {
+        public int TenantId { get; set; }
 
-		public int QuoteId { get; set; }
+        public int QuoteId { get; set; }
 
         public DateTime DateTime { get; set; }
 

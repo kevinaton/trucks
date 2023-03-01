@@ -4,12 +4,11 @@ using Abp.Configuration;
 using Abp.Configuration.Startup;
 using Abp.Localization;
 using Abp.Runtime.Session;
-using Microsoft.AspNetCore.Mvc;
-using DispatcherWeb.Authorization;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Web.Areas.App.Models.Layout;
 using DispatcherWeb.Web.Session;
 using DispatcherWeb.Web.Views;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppTopBar
 {
@@ -21,9 +20,9 @@ namespace DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppTopBar
         private readonly IAbpSession _abpSession;
 
         public AppTopBarViewComponent(
-            IMultiTenancyConfig multiTenancyConfig, 
+            IMultiTenancyConfig multiTenancyConfig,
             IAbpSession abpSession,
-            ILanguageManager languageManager, 
+            ILanguageManager languageManager,
             IPerRequestSessionCache sessionCache)
         {
             _multiTenancyConfig = multiTenancyConfig;

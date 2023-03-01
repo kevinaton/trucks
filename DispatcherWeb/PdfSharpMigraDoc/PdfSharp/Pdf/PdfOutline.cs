@@ -36,8 +36,8 @@ using System.Text;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf.Actions;
 using PdfSharp.Pdf.Advanced;
-using PdfSharp.Pdf.IO;
 using PdfSharp.Pdf.Internal;
+using PdfSharp.Pdf.IO;
 
 namespace PdfSharp.Pdf
 {

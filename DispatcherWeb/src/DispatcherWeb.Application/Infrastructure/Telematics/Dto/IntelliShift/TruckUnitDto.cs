@@ -136,15 +136,8 @@ namespace DispatcherWeb.Infrastructure.Telematics.Dto.IntelliShift
 
         public static TruckUnitsPage Parse(string jsonSource)
         {
-            try
-            {
-                var results = JsonConvert.DeserializeObject<TruckUnitsPage>(jsonSource);
-                return results;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            var results = JsonConvert.DeserializeObject<TruckUnitsPage>(jsonSource);
+            return results;
         }
 
         public bool HasMorePages => PageNumber < TotalPages;

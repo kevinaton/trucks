@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp.Domain.Uow;
 using DispatcherWeb.Sms;
 using DispatcherWeb.Web.Controllers;
@@ -14,27 +9,27 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
 {
     [Area("app")]
     public class SmsCallbackController : DispatcherWebControllerBase
-	{
-		private readonly ISmsAppService _smsAppService;
+    {
+        private readonly ISmsAppService _smsAppService;
 
-		public SmsCallbackController(
-			ISmsAppService smsAppService
-		)
-		{
-			_smsAppService = smsAppService;
-		}
+        public SmsCallbackController(
+            ISmsAppService smsAppService
+        )
+        {
+            _smsAppService = smsAppService;
+        }
 
-		[AllowAnonymous]
-		[IgnoreAntiforgeryToken(Order = 1000)] //Order is a workaround for a bug: https://github.com/aspnet/Mvc/issues/6306
-		[UnitOfWork(IsDisabled = true)]
-		[HttpPost]
+        [AllowAnonymous]
+        [IgnoreAntiforgeryToken(Order = 1000)] //Order is a workaround for a bug: https://github.com/aspnet/Mvc/issues/6306
+        [UnitOfWork(IsDisabled = true)]
+        [HttpPost]
         public async Task<ActionResult> Index()
-		{
-			var smsSid = Request.Form["SmsSid"];
-			var messageStatus = Request.Form["MessageStatus"];
-			await _smsAppService.SetSmsStatus(smsSid, messageStatus);
+        {
+            var smsSid = Request.Form["SmsSid"];
+            var messageStatus = Request.Form["MessageStatus"];
+            await _smsAppService.SetSmsStatus(smsSid, messageStatus);
 
-			return Content("Handled");
-		}
+            return Content("Handled");
+        }
     }
 }

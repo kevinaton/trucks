@@ -43,7 +43,7 @@ namespace DispatcherWeb.Quotes
             paragraph.AddNumPagesField();
             section.Headers.Primary.Add(paragraph);
             section.Headers.EvenPage.Add(paragraph.Clone());
-            
+
             if (model.LogoPath != null)
             {
                 var logo = section.AddImage(model.LogoPath);
@@ -99,13 +99,13 @@ namespace DispatcherWeb.Quotes
             paragraph.AddTab();
             paragraph.AddText(model.UserFullName ?? "");
 
-            paragraph = document.LastSection.AddParagraph(); 
+            paragraph = document.LastSection.AddParagraph();
             paragraph.Format.AddTabStop(Unit.FromCentimeter(10));
             paragraph.AddTab();
             paragraph.AddText(model.UserEmail ?? "");
             paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.7);
 
-            
+
 
             Table table = document.LastSection.AddTable();
             table.Style = "Table";
@@ -226,7 +226,7 @@ namespace DispatcherWeb.Quotes
             table.AddColumn(Unit.FromCentimeter(2));
             table.AddColumn(Unit.FromCentimeter(1.2));
             table.AddColumn(Unit.FromCentimeter(4.1));
-            
+
             row = table.AddRow();
             row.KeepWith = 1;
             //row.Height = Unit.FromCentimeter(1);
@@ -239,7 +239,7 @@ namespace DispatcherWeb.Quotes
             cell.Borders.Bottom.Visible = true;
             if (model.SignaturePath != null)
             {
-                #pragma warning disable CA1416 // Validate platform compatibility
+#pragma warning disable CA1416 // Validate platform compatibility
                 using (var signatureImage = System.Drawing.Image.FromFile(model.SignaturePath))
                 {
                     var signature = cell.AddImage(model.SignaturePath);
@@ -254,7 +254,7 @@ namespace DispatcherWeb.Quotes
                         signature.Height = Unit.FromCentimeter(2);
                     }
                 }
-                #pragma warning restore CA1416 // Validate platform compatibility
+#pragma warning restore CA1416 // Validate platform compatibility
             }
 
             cell = row.Cells[i++];
@@ -263,7 +263,7 @@ namespace DispatcherWeb.Quotes
             cell = row.Cells[i++];
             cell.Borders.Bottom.Visible = true;
             paragraph = cell.AddParagraph(model.Today.ToShortDateString());
-            
+
             row = table.AddRow();
             row.Height = Unit.FromCentimeter(2);
             row.VerticalAlignment = VerticalAlignment.Bottom;

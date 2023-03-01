@@ -103,7 +103,7 @@ namespace DispatcherWeb.Friendships.Cache
                 }
             });
         }
-        
+
         public virtual async Task IncreaseUnreadMessageCountAsync(UserIdentifier userIdentifier, UserIdentifier friendIdentifier, int change)
         {
             await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>

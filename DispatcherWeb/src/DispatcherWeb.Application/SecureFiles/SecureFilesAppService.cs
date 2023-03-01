@@ -1,31 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.SecureFiles.Dto;
-using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.SecureFiles
 {
-	public class SecureFilesAppService : DispatcherWebAppServiceBase, ISecureFilesAppService
-	{
-		private readonly IRepository<SecureFileDefinition, Guid> _secureFileDefinitionRepository;
-		private readonly ISecureFileBlobService _secureFileBlobService;
+    public class SecureFilesAppService : DispatcherWebAppServiceBase, ISecureFilesAppService
+    {
+        private readonly IRepository<SecureFileDefinition, Guid> _secureFileDefinitionRepository;
+        private readonly ISecureFileBlobService _secureFileBlobService;
 
-		public SecureFilesAppService(
-			IRepository<SecureFileDefinition, Guid> secureFileDefinitionRepository,
-			ISecureFileBlobService secureFileBlobService
-		)
-		{
-			_secureFileDefinitionRepository = secureFileDefinitionRepository;
-			_secureFileBlobService = secureFileBlobService;
-		}
+        public SecureFilesAppService(
+            IRepository<SecureFileDefinition, Guid> secureFileDefinitionRepository,
+            ISecureFileBlobService secureFileBlobService
+        )
+        {
+            _secureFileDefinitionRepository = secureFileDefinitionRepository;
+            _secureFileBlobService = secureFileBlobService;
+        }
 
         [AbpAuthorize(AppPermissions.Pages_Imports)]
         public async Task<SecureFileDefinitionDto> PostGetNewLink(SecureFileDefinitionDto dto)

@@ -606,7 +606,7 @@ namespace DispatcherWeb.Quotes
 
         private async Task UpdateDiffDisplayValues(int recordId, bool updateNewValues, List<QuoteFieldDiff> diffs)
         {
-            diffs.RemoveAll(x => (x.OldDisplayValue != null || x.NewDisplayValue != null) 
+            diffs.RemoveAll(x => (x.OldDisplayValue != null || x.NewDisplayValue != null)
                             && ((x.OldDisplayValue ?? string.Empty) == (x.NewDisplayValue ?? string.Empty)));
 
             var quoteFieldsWithDisplayValue = new[]
@@ -764,9 +764,9 @@ namespace DispatcherWeb.Quotes
         }
 
         [AbpAuthorize(
-            AppPermissions.Pages_Quotes_Edit, 
-            AppPermissions.Pages_Orders_Edit, 
-            AppPermissions.Pages_Projects, 
+            AppPermissions.Pages_Quotes_Edit,
+            AppPermissions.Pages_Orders_Edit,
+            AppPermissions.Pages_Projects,
             RequireAllPermissions = true
         )]
         public async Task<int> CreateQuoteFromOrder(CreateQuoteFromOrderInput input)
@@ -900,7 +900,7 @@ namespace DispatcherWeb.Quotes
             {
                 return false;
             }
-            
+
             return true;
         }
 
@@ -993,8 +993,7 @@ namespace DispatcherWeb.Quotes
                 {
                     x.QuoteId,
                     x.ServiceId,
-                    Tickets = x.Quote.Orders.SelectMany(o => o.OrderLines)
-                        .Where(ol => ol.ServiceId == x.ServiceId && ol.LoadAtId == x.LoadAtId && ol.DeliverToId == x.DeliverToId && ol.Designation == x.Designation)
+                    Tickets = x.OrderLines
                         .SelectMany(ol => ol.Tickets)
                         .Select(t => new QuoteDeliveryRawDto
                         {
@@ -1095,7 +1094,7 @@ namespace DispatcherWeb.Quotes
             {
                 quoteService.QuoteId = model.QuoteId;
             }
-            
+
             var fieldDiffs = await UpdateValuesAndGetDiff(quoteService, model);
 
             await UpdateDiffDisplayValues(quoteService.Id, false, fieldDiffs);
@@ -1115,14 +1114,22 @@ namespace DispatcherWeb.Quotes
         [AbpAuthorize(AppPermissions.Pages_Quotes_Edit)]
         public async Task DeleteQuoteServices(IdListInput input)
         {
-            var quoteServices = await _quoteServiceRepository.GetAll().AsNoTracking().Where(x => input.Ids.Contains(x.Id)).ToListAsync();
+            if (await _quoteServiceRepository.GetAll()
+                    .AnyAsync(x => input.Ids.Contains(x.Id) && x.OrderLines.Any()))
+            {
+                throw new UserFriendlyException(L("UnableToDeleteQuoteServiceWithAssociatedData"));
+            }
+
+            var quoteServices = await _quoteServiceRepository.GetAll()
+                .Where(x => input.Ids.Contains(x.Id))
+                .ToListAsync();
 
             foreach (var quoteService in quoteServices)
             {
-                var fieldDiffs = await UpdateValuesAndGetDiff(quoteService, new QuoteServiceEditDto());
+                var fieldDiffs = await UpdateValuesAndGetDiff(quoteService.Clone(), new QuoteServiceEditDto());
                 await UpdateDiffDisplayValues(quoteService.Id, false, fieldDiffs);
                 await InsertQuoteHistory(fieldDiffs, QuoteChangeType.LineItemDeleted, quoteService.QuoteId);
-                await _quoteServiceRepository.DeleteAsync(quoteService.Id);
+                await _quoteServiceRepository.DeleteAsync(quoteService);
             }
         }
 
@@ -1356,13 +1363,13 @@ namespace DispatcherWeb.Quotes
         private async Task<string> GetLogoBase64String()
         {
             var tenant = await TenantManager.GetByIdAsync(AbpSession.GetTenantId());
-            if(tenant.ReportsLogoId == null || tenant.ReportsLogoFileType == null)
+            if (tenant.ReportsLogoId == null || tenant.ReportsLogoFileType == null)
             {
                 return null;
             }
 
             var logoObject = await _binaryObjectManager.GetOrNullAsync(tenant.ReportsLogoId.Value);
-            if(logoObject == null)
+            if (logoObject == null)
             {
                 return null;
             }
@@ -1376,7 +1383,7 @@ namespace DispatcherWeb.Quotes
             {
                 return null;
             }
-            
+
             var tempFilePath = Path.Combine(_appFolders.TempFileDownloadFolder, signatureFile.Id.ToString());
             try
             {

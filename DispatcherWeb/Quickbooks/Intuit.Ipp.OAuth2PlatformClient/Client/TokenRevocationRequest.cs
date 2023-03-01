@@ -13,7 +13,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         /// Token
         /// </summary>
         public string Token { get; set; }
-       
+
         /// <summary>
         /// ClientId
         /// </summary>
@@ -30,7 +30,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         public TokenRevocationRequest()
         {
             //RefreshToken or Bearer Access Token 
-            Token = ""; 
+            Token = "";
             ClientId = "";
             ClientSecret = "";
         }

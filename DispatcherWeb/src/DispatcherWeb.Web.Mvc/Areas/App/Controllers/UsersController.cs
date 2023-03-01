@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Permissions;
 using DispatcherWeb.Authorization.Roles;
@@ -13,6 +12,7 @@ using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Security;
 using DispatcherWeb.Web.Areas.App.Models.Users;
 using DispatcherWeb.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
 {

@@ -111,7 +111,7 @@ namespace Intuit.Ipp.XsdExtension
         /// <summary>
         /// Name of AccountTypeEnum class
         /// </summary>
-        public const string ACCOUNTTYPEENUM="AccountTypeEnum";
+        public const string ACCOUNTTYPEENUM = "AccountTypeEnum";
 
         /// <summary>
         /// AccountTypeEnum member name
@@ -121,57 +121,57 @@ namespace Intuit.Ipp.XsdExtension
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string OTHERCURRENTASSET="OtherCurrentAsset";
+        public const string OTHERCURRENTASSET = "OtherCurrentAsset";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string FIXEDASSET="FixedAsset"; 
+        public const string FIXEDASSET = "FixedAsset";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string OTHERASSET="OtherAsset"; 
+        public const string OTHERASSET = "OtherAsset";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string ACCOUNTPAYABLE="AccountsPayable"; 
+        public const string ACCOUNTPAYABLE = "AccountsPayable";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string CREDITCARD="CreditCard"; 
+        public const string CREDITCARD = "CreditCard";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string OTHERCURRENTLIABILITY="OtherCurrentLiability"; 
+        public const string OTHERCURRENTLIABILITY = "OtherCurrentLiability";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string LONGTERMLIABILITY="LongTermLiability"; 
+        public const string LONGTERMLIABILITY = "LongTermLiability";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string COSTOFGOODSSOLD="CostofGoodsSold"; 
+        public const string COSTOFGOODSSOLD = "CostofGoodsSold";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string OTHERINCOME="OtherIncome"; 
+        public const string OTHERINCOME = "OtherIncome";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string OTHEREXPENSE="OtherExpense"; 
+        public const string OTHEREXPENSE = "OtherExpense";
 
         /// <summary>
         /// AccountTypeEnum member name
         /// </summary>
-        public const string NONPOSTING="NonPosting"; 
+        public const string NONPOSTING = "NonPosting";
 
         /// <summary>
         /// Summary class name

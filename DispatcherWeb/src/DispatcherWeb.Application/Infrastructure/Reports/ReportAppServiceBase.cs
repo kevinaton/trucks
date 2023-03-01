@@ -1,24 +1,18 @@
 ﻿using System;
 using System.Globalization;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Abp.Authorization;
-using Abp.Dependency;
 using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.Timing.Timezone;
-using DispatcherWeb.Configuration;
+using CsvHelper;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure.AzureBlobs;
-using DispatcherWeb.Net.MimeTypes;
-using CsvHelper;
-using DispatcherWeb.Authorization;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Reports.Dto;
+using DispatcherWeb.Net.MimeTypes;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.Rendering;
 
@@ -66,9 +60,9 @@ namespace DispatcherWeb.Infrastructure.Reports
             PdfReport report = new PdfReport(document, GetLocalDateTimeNow().ToString("g"));
             InitPdfReport(report);
 
-            if(await CreatePdfReport(report, input))
+            if (await CreatePdfReport(report, input))
             {
-                using(MemoryStream stream = new MemoryStream())
+                using (MemoryStream stream = new MemoryStream())
                 {
                     PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer(false) { Document = document };
                     pdfRenderer.RenderDocument();
@@ -84,25 +78,25 @@ namespace DispatcherWeb.Infrastructure.Reports
             return file;
         }
 
-		public async Task<FileDto> CreateCsv(TInput input)
-		{
-			await CheckPermissions();
-			var file = new FileDto(await GetReportFilename("csv", input), MimeTypeNames.TextCsv);
-			using(var stream = new MemoryStream())
-			using(var writer = new StreamWriter(stream, Encoding.UTF8))
-			using(var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-			{
-				CsvReport report = new CsvReport(csv);
-				if(await CreateCsvReport(report, input))
-				{
-					writer.Flush();
-					stream.Seek(0, SeekOrigin.Begin);
-					AttachmentHelper.UploadReportFile(stream, CustomSession.UserId.ToString(), file.FileToken);
-				}
-				else
-				{
-					file.FileName = "";
-				}
+        public async Task<FileDto> CreateCsv(TInput input)
+        {
+            await CheckPermissions();
+            var file = new FileDto(await GetReportFilename("csv", input), MimeTypeNames.TextCsv);
+            using (var stream = new MemoryStream())
+            using (var writer = new StreamWriter(stream, Encoding.UTF8))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                CsvReport report = new CsvReport(csv);
+                if (await CreateCsvReport(report, input))
+                {
+                    writer.Flush();
+                    stream.Seek(0, SeekOrigin.Begin);
+                    AttachmentHelper.UploadReportFile(stream, CustomSession.UserId.ToString(), file.FileToken);
+                }
+                else
+                {
+                    file.FileName = "";
+                }
 
             }
             return file;

@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Json;
-using IdentityModel.Client;
-using Abp.MultiTenancy;
 using Abp.Web.Models;
 using DispatcherWeb.Authorization.Users.Dto;
+using IdentityModel.Client;
 using Newtonsoft.Json;
 
 namespace DispatcherWeb.ConsoleApiClient

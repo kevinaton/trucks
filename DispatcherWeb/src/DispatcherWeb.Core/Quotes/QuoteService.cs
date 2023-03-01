@@ -1,12 +1,13 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
-using DispatcherWeb.UnitsOfMeasure;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Orders;
+using DispatcherWeb.Services;
+using DispatcherWeb.UnitsOfMeasure;
 
 namespace DispatcherWeb.Quotes
 {
@@ -48,6 +49,8 @@ namespace DispatcherWeb.Quotes
         [StringLength(EntityStringFieldLengths.OrderLine.Note)]
         public string Note { get; set; }
 
+        public virtual ICollection<OrderLine> OrderLines { get; set; }
+
         public virtual UnitOfMeasure MaterialUom { get; set; }
 
         public virtual UnitOfMeasure FreightUom { get; set; }
@@ -59,5 +62,35 @@ namespace DispatcherWeb.Quotes
         public virtual Location LoadAt { get; set; }
 
         public virtual Location DeliverTo { get; set; }
+
+        public QuoteService Clone()
+        {
+            return new QuoteService
+            {
+                CreationTime = CreationTime,
+                CreatorUserId = CreatorUserId,
+                DeleterUserId = DeleterUserId,
+                DeletionTime = DeletionTime,
+                DeliverToId = DeliverToId,
+                Designation = Designation,
+                FreightQuantity = FreightQuantity,
+                FreightRate = FreightRate,
+                FreightUomId = FreightUomId,
+                Id = Id,
+                IsDeleted = IsDeleted,
+                JobNumber = JobNumber,
+                LastModificationTime = LastModificationTime,
+                LastModifierUserId = LastModifierUserId,
+                LeaseHaulerRate = LeaseHaulerRate,
+                LoadAtId = LoadAtId,
+                MaterialQuantity = MaterialQuantity,
+                MaterialUomId = MaterialUomId,
+                Note = Note,
+                PricePerUnit = PricePerUnit,
+                QuoteId = QuoteId,
+                ServiceId = ServiceId,
+                TenantId = TenantId,
+            };
+        }
     }
 }

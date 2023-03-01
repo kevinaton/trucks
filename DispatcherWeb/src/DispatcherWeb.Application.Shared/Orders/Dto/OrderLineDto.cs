@@ -1,5 +1,4 @@
 ﻿using DispatcherWeb.Orders.TaxDetails;
-using System.Collections.Generic;
 
 namespace DispatcherWeb.Orders.Dto
 {
@@ -51,8 +50,6 @@ namespace DispatcherWeb.Orders.Dto
         public bool IsFreightPriceOverridden { get; set; }
 
         //public ICollection<TicketDto> Tickets { get; set; }
-
-        //public ICollection<OfficeAmountDto> OfficeAmounts { get; set; }
 
         //public ICollection<OrderLineShareDto> SharedOrderLines { get; set; }
     }

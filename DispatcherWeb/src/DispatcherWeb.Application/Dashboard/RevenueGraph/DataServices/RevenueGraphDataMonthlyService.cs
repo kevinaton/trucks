@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
-using DispatcherWeb.Dashboard.Dto;
 using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
 using DispatcherWeb.Dashboard.RevenueGraph.Dto;
 using DispatcherWeb.Infrastructure.Extensions;
@@ -28,15 +27,15 @@ namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
                     (from item in await _revenueGraphDataItemsQueryService.GetRevenueGraphDataItemsAsync(input)
                      group item by new { item.DeliveryDate.Value.Month, item.DeliveryDate.Value.Year }
                         into g
-                        select new
-                        {
-                            BeginOfPeriod = new DateTime(g.Key.Year, g.Key.Month, 1),
-                            MaterialRevenue = g.Sum(olt => olt.IsMaterialPriceOverridden ? decimal.Round(olt.MaterialPriceOriginal, 2) : decimal.Round((olt.MaterialPricePerUnit ?? 0) * olt.MaterialQuantity, 2)),
-                            FreightRevenue = g.Sum(olt => olt.IsFreightPriceOverridden ? decimal.Round(olt.FreightPriceOriginal, 2) : decimal.Round((olt.FreightPricePerUnit ?? 0) * olt.FreightQuantity, 2)),
-                            FuelSurcharge = g.Sum(olt => decimal.Round(olt.FuelSurcharge, 2)),
-                            InternalTrucksFuelSurcharge = g.Sum(olt => decimal.Round(olt.InternalTruckFuelSurcharge, 2)),
-                            LeaseHaulersFuelSurcharge = g.Sum(olt => decimal.Round(olt.LeaseHaulerFuelSurcharge, 2)),
-                        })
+                     select new
+                     {
+                         BeginOfPeriod = new DateTime(g.Key.Year, g.Key.Month, 1),
+                         MaterialRevenue = g.Sum(olt => olt.IsMaterialPriceOverridden ? decimal.Round(olt.MaterialPriceOriginal, 2) : decimal.Round((olt.MaterialPricePerUnit ?? 0) * olt.MaterialQuantity, 2)),
+                         FreightRevenue = g.Sum(olt => olt.IsFreightPriceOverridden ? decimal.Round(olt.FreightPriceOriginal, 2) : decimal.Round((olt.FreightPricePerUnit ?? 0) * olt.FreightQuantity, 2)),
+                         FuelSurcharge = g.Sum(olt => decimal.Round(olt.FuelSurcharge, 2)),
+                         InternalTrucksFuelSurcharge = g.Sum(olt => decimal.Round(olt.InternalTruckFuelSurcharge, 2)),
+                         LeaseHaulersFuelSurcharge = g.Sum(olt => decimal.Round(olt.LeaseHaulerFuelSurcharge, 2)),
+                     })
                     .ToList()
                 ;
             var allMonthsOfPeriod = Enumerable.Range(0, DateUtility.NumberOfMonthsBetweenDates(input.PeriodBegin, input.PeriodEnd) + 1);
@@ -60,8 +59,8 @@ namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
             return new GetRevenueGraphDataOutput(revenueGraphData);
 
             // Local functions
-            int GetDateOffsetInMonths(DateTime date) => 
-                (date.Year - input.PeriodBegin.Year) * 12 + 
+            int GetDateOffsetInMonths(DateTime date) =>
+                (date.Year - input.PeriodBegin.Year) * 12 +
                     date.Year == input.PeriodBegin.Year ? date.Month - input.PeriodBegin.Month : 12 - input.PeriodBegin.Month + date.Month;
             DateTime GetPeriodBegin(int m) => DateUtility.Max(input.PeriodBegin, input.PeriodBegin.AddMonths(m).StartOfMonth());
             DateTime GetPeriodEnd(int m) => DateUtility.Min(input.PeriodEnd, input.PeriodBegin.AddMonths(m).EndOfMonth());

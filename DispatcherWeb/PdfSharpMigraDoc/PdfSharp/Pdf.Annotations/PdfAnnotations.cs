@@ -28,13 +28,10 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Collections;
-using System.Text;
-using System.IO;
-using PdfSharp.Pdf.Advanced;
-using PdfSharp.Pdf.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
+using PdfSharp.Pdf.Advanced;
 
 namespace PdfSharp.Pdf.Annotations
 {
@@ -181,10 +178,10 @@ namespace PdfSharp.Pdf.Annotations
         }
         // THHO4STLA: AnnotationsIterator: Implementation does not work http://forum.pdfsharp.net/viewtopic.php?p=3285#p3285
         // Code using the enumerator like this will crash:
-            //foreach (var annotation in page.Annotations)
-            //{
-            //    annotation.GetType();
-            //}
+        //foreach (var annotation in page.Annotations)
+        //{
+        //    annotation.GetType();
+        //}
 
         //!!!new 2015-10-15: use PdfItem instead of PdfAnnotation. 
         // TODO Should we change this to "public new IEnumerator<PdfAnnotation> GetEnumerator()"?

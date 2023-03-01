@@ -29,7 +29,7 @@ namespace Intuit.Ipp.QueryFilter
         /// Entity query.
         /// </summary>
         query,
-        
+
         /// <summary>
         /// Report query.
         /// </summary>

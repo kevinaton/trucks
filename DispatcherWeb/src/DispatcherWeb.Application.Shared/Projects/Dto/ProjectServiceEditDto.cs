@@ -1,7 +1,7 @@
-﻿using DispatcherWeb.Common.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Infrastructure;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 
 namespace DispatcherWeb.Projects.Dto
 {
@@ -44,7 +44,7 @@ namespace DispatcherWeb.Projects.Dto
         public LocationNameDto DeliverTo { get; set; }
 
         public decimal? PricePerUnit { get; set; }
-        
+
         public decimal? FreightRate { get; set; }
 
         public decimal? LeaseHaulerRate { get; set; }

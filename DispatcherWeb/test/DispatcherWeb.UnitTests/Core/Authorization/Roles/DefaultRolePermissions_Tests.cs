@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Roles;
 using Shouldly;
@@ -68,7 +66,6 @@ namespace DispatcherWeb.UnitTests.Core.Authorization.Roles
                 AppPermissions.Pages_Reports_RevenueBreakdownByTruck,
                 AppPermissions.Pages_Reports_ScheduledReports,
                 AppPermissions.Pages_Reports_Receipts,
-                AppPermissions.Pages_Reports_BillingReconciliation,
                 AppPermissions.Pages_Reports_PaymentReconciliation,
                 AppPermissions.Pages_Services,
                 AppPermissions.Pages_Services_Merge,
@@ -279,11 +276,11 @@ namespace DispatcherWeb.UnitTests.Core.Authorization.Roles
         private void AssertRoleHasPermissions(string roleName, string[] permissions)
         {
             string[] allPermissions = permissions.Concat(DefaultRolePermissions.DefaultPermissions).Distinct().ToArray();
-            foreach(string permissionName in allPermissions)
+            foreach (string permissionName in allPermissions)
             {
                 bool isPermissionsGranted = DefaultRolePermissions.IsPermissionsGrantedToRole(roleName, permissionName);
                 bool isPermissionShouldBeGranted = permissions.Contains(permissionName);
-                isPermissionsGranted.ShouldBe(isPermissionShouldBeGranted, 
+                isPermissionsGranted.ShouldBe(isPermissionShouldBeGranted,
                     $"Permission {permissionName} is{(isPermissionsGranted ? "" : "n't")} granted, but it should{(isPermissionShouldBeGranted ? "" : "n't")} be."
                 );
             }

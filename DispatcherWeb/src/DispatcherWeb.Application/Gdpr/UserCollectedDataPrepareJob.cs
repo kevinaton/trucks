@@ -10,7 +10,6 @@ using Abp.Configuration;
 using Abp.Dependency;
 using Abp.Domain.Uow;
 using Abp.Localization;
-using Abp.Threading;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Localization;
 using DispatcherWeb.Notifications;
@@ -25,12 +24,12 @@ namespace DispatcherWeb.Gdpr
         private readonly IAppNotifier _appNotifier;
         private readonly ISettingManager _settingManager;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
-        
+
         public UserCollectedDataPrepareJob(
             IBinaryObjectManager binaryObjectManager,
             ITempFileCacheManager tempFileCacheManager,
             IAppNotifier appNotifier,
-            ISettingManager settingManager, 
+            ISettingManager settingManager,
             IUnitOfWorkManager unitOfWorkManager)
         {
             _binaryObjectManager = binaryObjectManager;
@@ -39,7 +38,7 @@ namespace DispatcherWeb.Gdpr
             _settingManager = settingManager;
             _unitOfWorkManager = unitOfWorkManager;
         }
-        
+
         public override async Task ExecuteAsync(UserIdentifier args)
         {
             await _unitOfWorkManager.WithUnitOfWorkAsync(async () =>
@@ -51,7 +50,7 @@ namespace DispatcherWeb.Gdpr
                         args.TenantId,
                         args.UserId
                     );
-                
+
                     var culture = CultureHelper.GetCultureInfoByChecking(userLanguage);
 
                     using (CultureInfoHelper.Use(culture))

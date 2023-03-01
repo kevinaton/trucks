@@ -1,11 +1,7 @@
-﻿using Abp.Dependency;
-using Abp.Domain.Repositories;
-using DispatcherWeb.Authorization.Users;
-using DispatcherWeb.Offices;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Abp.Dependency;
+using DispatcherWeb.Authorization.Users;
 
 namespace DispatcherWeb.Imports.DataResolvers.OfficeResolvers
 {

@@ -1,8 +1,8 @@
-﻿using DispatcherWeb.Orders.TaxDetails;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using DispatcherWeb.Orders.TaxDetails;
 
 namespace DispatcherWeb.Orders.Dto
 {

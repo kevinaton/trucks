@@ -121,10 +121,7 @@
                                                     <a class="dropdown-item" href="#" id="PrintOrderWithCombinedPrices"><i class="la la-folder"></i>Order with combined prices</a>
                                                     <a class="dropdown-item" href="#" id="PrintOrderWithSeparatePrices"><i class="la la-copy"></i>Order with separate prices</a>
                                                     <a class="dropdown-item" href="#" id="PrintOrderForBackOffice"><i class="la la-undo"></i>Order for Back Office</a>
-                                                    @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets))
-                                                    {
-                                                        <a class="dropdown-item" href="#" id="PrintOrderWithDeliveryInfo"><i class="la la-truck"></i>@L("OrderWithDeliveryInfo")</a>
-                                                    }
+                                                    <a class="dropdown-item" href="#" id="PrintOrderWithDeliveryInfo"><i class="la la-truck"></i>@L("OrderWithDeliveryInfo")</a>
                                                 </div>
                                             </div>
                                         }

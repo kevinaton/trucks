@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DispatcherWeb.CspReports.Dto;
-using Microsoft.AspNetCore.Mvc;
+﻿using DispatcherWeb.CspReports.Dto;
 
 namespace DispatcherWeb.CspReports
 {
@@ -12,7 +6,7 @@ namespace DispatcherWeb.CspReports
     {
         public void PostReport(PostReportDto postReport)
         {
-           // Nothing here. Look Audit Logs for data
+            // Nothing here. Look Audit Logs for data
         }
     }
 }

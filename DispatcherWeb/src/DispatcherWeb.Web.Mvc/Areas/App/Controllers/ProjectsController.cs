@@ -31,14 +31,14 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             var model = await _projectAppService.GetProjectForEdit(new NullableIdDto(id));
             return View(model);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Details(ProjectEditDto model)
         {
             var id = await _projectAppService.EditProject(model);
             return RedirectToAction("Details", new { id });
         }
-        
+
         public async Task<PartialViewResult> CreateOrEditProjectServiceModal(int? id, int? projectId)
         {
             var model = await _projectAppService.GetProjectServiceForEdit(new GetProjectServiceForEditInput(id, projectId));

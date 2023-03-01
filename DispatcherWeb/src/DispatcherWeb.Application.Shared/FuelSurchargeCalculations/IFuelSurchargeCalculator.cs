@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DispatcherWeb.Tickets.Dto;
 
 namespace DispatcherWeb.FuelSurchargeCalculations
 {

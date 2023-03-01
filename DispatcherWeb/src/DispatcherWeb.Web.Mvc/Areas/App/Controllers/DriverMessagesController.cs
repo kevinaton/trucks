@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.DriverMessages;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Drivers.Dto;
-using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Web.Areas.App.Models.DriverMessages;
 using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.Web.Utils;
@@ -39,7 +34,7 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         [Modal]
         public async Task<PartialViewResult> SendMessageModal(int? orderLineId, int? selectedDriverId)
         {
-            var model = new SendMessageModalViewModel 
+            var model = new SendMessageModalViewModel
             {
                 OrderLineId = orderLineId,
                 SelectedDriverId = selectedDriverId

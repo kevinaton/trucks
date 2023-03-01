@@ -19,7 +19,7 @@
 // <summary>This file contains logic for REST request handler.</summary>
 ////********************************************************************
 
-namespace Intuit.Ipp.Core    
+namespace Intuit.Ipp.Core
 {
     using Intuit.Ipp.Exception;
 

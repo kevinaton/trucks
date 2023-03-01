@@ -11,7 +11,6 @@ using Abp.AspNetCore.SignalR.Hubs;
 using Abp.AspNetZeroCore.Web.Authentication.JwtBearer;
 using Abp.Castle.Logging.Log4Net;
 using Abp.Dependency;
-using Abp.Domain.Repositories;
 using Abp.Hangfire;
 using Abp.PlugIns;
 using Abp.Timing;
@@ -22,7 +21,6 @@ using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.Identity;
 using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.RecurringJobs;
-using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Web.Chat.SignalR;
 using DispatcherWeb.Web.Common;
 using DispatcherWeb.Web.Extensions;
@@ -209,9 +207,9 @@ namespace DispatcherWeb.Web.Startup
                 options.IocManager.IocContainer.AddFacility<LoggingFacility>(
                     f => f.UseAbpLog4Net().WithConfig(
                         "log4net.config"
-                        //_hostingEnvironment.IsDevelopment()
-                        //    ? "log4net.config"
-                        //    : "log4net.Production.config"
+                    //_hostingEnvironment.IsDevelopment()
+                    //    ? "log4net.config"
+                    //    : "log4net.Production.config"
                     )
                 );
 
@@ -223,7 +221,7 @@ namespace DispatcherWeb.Web.Startup
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             var policyCollection = new HeaderPolicyCollection()
-                .AddContentSecurityPolicy(builder => 
+                .AddContentSecurityPolicy(builder =>
                 //.AddContentSecurityPolicyReportOnly(builder => // report-only
                 {
                     builder.AddReportUri()

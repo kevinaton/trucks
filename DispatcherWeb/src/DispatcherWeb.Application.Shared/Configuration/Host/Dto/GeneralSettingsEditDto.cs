@@ -17,7 +17,7 @@ namespace DispatcherWeb.Configuration.Host.Dto
         public string OrderEmailBodyTemplate { get; set; }
 
         public string OrderEmailSubjectTemplate { get; set; }
-        
+
         public string ReceiptEmailBodyTemplate { get; set; }
 
         public string ReceiptEmailSubjectTemplate { get; set; }
@@ -31,7 +31,6 @@ namespace DispatcherWeb.Configuration.Host.Dto
         public string DefaultMapLocationAddress { get; set; }
         public string CurrencySymbol { get; set; }
         public string UserDefinedField1 { get; set; }
-        public bool AllowAddingTickets { get; set; }
         public bool DontValidateDriverAndTruckOnTickets { get; set; }
         public bool ShowDriverNamesOnPrintedOrder { get; set; }
         public bool SplitBillingByOffices { get; set; }

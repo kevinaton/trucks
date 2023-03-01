@@ -1,10 +1,4 @@
-﻿using MigraDoc.DocumentObjectModel;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace DispatcherWeb.PayStatements.Dto
+﻿namespace DispatcherWeb.PayStatements.Dto
 {
     public class DriverPayStatementReport
     {

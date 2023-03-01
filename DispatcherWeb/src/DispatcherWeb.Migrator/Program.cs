@@ -1,10 +1,9 @@
 ﻿using System;
 using Abp;
+using Abp.Castle.Logging.Log4Net;
 using Abp.Collections.Extensions;
 using Abp.Dependency;
 using Castle.Facilities.Logging;
-using Abp.Castle.Logging.Log4Net;
-using Abp.PlugIns;
 
 namespace DispatcherWeb.Migrator
 {
@@ -31,7 +30,7 @@ namespace DispatcherWeb.Migrator
                 }
 
                 if (_skipConnVerification) return;
-                
+
                 Console.WriteLine("Press ENTER to exit...");
                 Console.ReadLine();
             }

@@ -1,34 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using NSubstitute;
 
 namespace DispatcherWeb.UnitTests.TestUtilities
 {
-	public static class ExtensionsMethods
-	{
-		public static DbSet<T> Initialize<T>(this DbSet<T> dbSet, IQueryable<T> data) where T : class
-		{
-			((IQueryable<T>)dbSet).Provider.Returns(new TestDbAsyncQueryProvider<T>(data.Provider));
+    public static class ExtensionsMethods
+    {
+        public static DbSet<T> Initialize<T>(this DbSet<T> dbSet, IQueryable<T> data) where T : class
+        {
+            ((IQueryable<T>)dbSet).Provider.Returns(new TestDbAsyncQueryProvider<T>(data.Provider));
 
-			((IQueryable<T>)dbSet).Expression.Returns(data.Expression);
-			((IQueryable<T>)dbSet).ElementType.Returns(data.ElementType);
-			((IQueryable<T>)dbSet).GetEnumerator().Returns(data.GetEnumerator());
+            ((IQueryable<T>)dbSet).Expression.Returns(data.Expression);
+            ((IQueryable<T>)dbSet).ElementType.Returns(data.ElementType);
+            ((IQueryable<T>)dbSet).GetEnumerator().Returns(data.GetEnumerator());
 
-			return dbSet;
-		}
+            return dbSet;
+        }
 
-		public static DbSet<T> CreateMockSet<T>(this IList<T> data) where T : class
-		{
-			return CreateMockSet(data.AsQueryable());
-		}
+        public static DbSet<T> CreateMockSet<T>(this IList<T> data) where T : class
+        {
+            return CreateMockSet(data.AsQueryable());
+        }
 
-		public static DbSet<T> CreateMockSet<T>(this IQueryable<T> data) where T : class
-		{
-			return Substitute.For<DbSet<T>, IQueryable<T>, IAsyncEnumerable<T>>().Initialize(data);
-		}
-	}
+        public static DbSet<T> CreateMockSet<T>(this IQueryable<T> data) where T : class
+        {
+            return Substitute.For<DbSet<T>, IQueryable<T>, IAsyncEnumerable<T>>().Initialize(data);
+        }
+    }
 }

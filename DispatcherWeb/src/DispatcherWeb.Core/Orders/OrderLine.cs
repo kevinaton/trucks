@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Dispatching;
-using DispatcherWeb.Orders.TaxDetails;
-using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
-using DispatcherWeb.UnitsOfMeasure;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Quotes;
+using DispatcherWeb.Services;
+using DispatcherWeb.UnitsOfMeasure;
 
 namespace DispatcherWeb.Orders
 {
@@ -21,7 +21,6 @@ namespace DispatcherWeb.Orders
 
         public OrderLine()
         {
-            OfficeAmounts = new HashSet<OrderLineOfficeAmount>();
             OrderLineTrucks = new HashSet<OrderLineTruck>();
             SharedOrderLines = new HashSet<SharedOrderLine>();
             Tickets = new HashSet<Ticket>();
@@ -52,7 +51,7 @@ namespace DispatcherWeb.Orders
         public bool IsMaterialPricePerUnitOverridden { get; set; }
 
         public bool IsFreightPricePerUnitOverridden { get; set; }
-        
+
         [Required(ErrorMessage = "Service/Product Item is a required field")]
         public int ServiceId { get; set; }
 
@@ -141,6 +140,10 @@ namespace DispatcherWeb.Orders
         /// </summary>
         public int? HaulingCompanyTenantId { get; set; }
 
+        public int? QuoteServiceId { get; set; }
+
+        public virtual QuoteService QuoteService { get; set; }
+
         public virtual Order Order { get; set; }
 
         public virtual Location LoadAt { get; set; }
@@ -149,11 +152,7 @@ namespace DispatcherWeb.Orders
 
         public virtual Service Service { get; set; }
 
-        public bool HasAllActualAmounts { get; set; }
-
         public bool ProductionPay { get; set; }
-
-        public virtual ICollection<OrderLineOfficeAmount> OfficeAmounts { get; set; }
 
         public virtual ICollection<OrderLineTruck> OrderLineTrucks { get; set; }
 

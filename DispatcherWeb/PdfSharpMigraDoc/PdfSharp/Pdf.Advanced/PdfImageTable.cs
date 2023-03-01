@@ -28,9 +28,8 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 using PdfSharp.Drawing;
 
 namespace PdfSharp.Pdf.Advanced
@@ -65,7 +64,7 @@ namespace PdfSharp.Pdf.Advanced
                 //pdfImage.Document = _document;
                 Debug.Assert(pdfImage.Owner == Owner);
                 _images[selector] = pdfImage;
- }
+            }
             return pdfImage;
         }
 

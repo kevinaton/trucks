@@ -5,6 +5,6 @@ namespace DispatcherWeb.Orders.Dto
     public class EditOrderLineOutput
     {
         public int OrderLineId { get; set; }
-        public IOrderTaxDetailsWithActualAmounts OrderTaxDetails { get; set; }
+        public IOrderTaxDetails OrderTaxDetails { get; set; }
     }
 }

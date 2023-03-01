@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Timing;
-using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.Scheduling;
 using DispatcherWeb.Scheduling.Dto;
 using Shouldly;
@@ -42,7 +39,7 @@ namespace DispatcherWeb.Tests.Scheduling
             var result = await _schedulingAppService.ActivateClosedTrucks(new ActivateClosedTrucksInput()
             {
                 OrderLineId = orderLines[0].Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert
@@ -71,7 +68,7 @@ namespace DispatcherWeb.Tests.Scheduling
             var result = await _schedulingAppService.ActivateClosedTrucks(new ActivateClosedTrucksInput()
             {
                 OrderLineId = orderLines[0].Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert
@@ -98,7 +95,7 @@ namespace DispatcherWeb.Tests.Scheduling
             var result = await _schedulingAppService.ActivateClosedTrucks(new ActivateClosedTrucksInput()
             {
                 OrderLineId = orderLines[0].Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert
@@ -125,7 +122,7 @@ namespace DispatcherWeb.Tests.Scheduling
             var result = await _schedulingAppService.ActivateClosedTrucks(new ActivateClosedTrucksInput()
             {
                 OrderLineId = orderLines[0].Id,
-                TruckIds = new []{ truck.Id },
+                TruckIds = new[] { truck.Id },
             });
 
             // Assert

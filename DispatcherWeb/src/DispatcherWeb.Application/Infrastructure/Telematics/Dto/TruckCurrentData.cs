@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DispatcherWeb.Infrastructure.Telematics.Dto
+﻿namespace DispatcherWeb.Infrastructure.Telematics.Dto
 {
     public class TruckCurrentData
     {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DispatcherWeb.Infrastructure.Extensions
+﻿namespace DispatcherWeb.Infrastructure.Extensions
 {
     public static class ListExtensions
     {

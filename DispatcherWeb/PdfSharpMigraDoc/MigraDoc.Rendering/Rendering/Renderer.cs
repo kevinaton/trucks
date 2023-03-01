@@ -29,10 +29,10 @@
 #endregion
 
 using MigraDoc.DocumentObjectModel;
-using PdfSharp.Drawing;
-using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
+using MigraDoc.DocumentObjectModel.Tables;
+using PdfSharp.Drawing;
 
 namespace MigraDoc.Rendering
 {

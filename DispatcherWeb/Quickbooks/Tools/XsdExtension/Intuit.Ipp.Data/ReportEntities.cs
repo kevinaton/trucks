@@ -27,7 +27,7 @@ namespace Intuit.Ipp.Data
 
 
 
-  
+
 
     /// <summary>
     /// Customer Balance
@@ -189,20 +189,20 @@ namespace Intuit.Ipp.Data
     /// </summary>
     public partial class TransactionList : ReportQueryBase
     {
-    }   
+    }
 
 
 
     #endregion
 
     #region Base class
-    
+
     /// <summary>
     /// Report Query Base. Base class for all reports.
     /// </summary>
     public abstract partial class ReportQueryBase
     {
-        
+
 
         /// <summary>
         /// time
@@ -218,7 +218,7 @@ namespace Intuit.Ipp.Data
         /// report Name
         /// </summary>
         private string reportNameField;
- 
+
 
         /// <summary>
         /// report basis specified
@@ -280,7 +280,7 @@ namespace Intuit.Ipp.Data
         /// </summary>
         private NameValue[] optionField;
 
-  
+
 
         /// <summary>
         /// start page
@@ -406,7 +406,7 @@ namespace Intuit.Ipp.Data
 
 
 
-    
+
 
         /// <summary>
         /// time
@@ -635,7 +635,7 @@ namespace Intuit.Ipp.Data
             }
         }
 
-     
+
 
 
 

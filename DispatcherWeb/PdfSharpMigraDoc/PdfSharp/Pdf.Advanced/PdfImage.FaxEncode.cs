@@ -350,7 +350,7 @@ namespace PdfSharp.Pdf.Advanced
         private static uint CountOneBits(BitReader reader, uint bitsLeft)
         {
             uint found = 0;
-            for (;;)
+            for (; ; )
             {
                 uint bits;
                 int @byte = reader.PeekByte(out bits);
@@ -377,7 +377,7 @@ namespace PdfSharp.Pdf.Advanced
         private static uint CountZeroBits(BitReader reader, uint bitsLeft)
         {
             uint found = 0;
-            for (;;)
+            for (; ; )
             {
                 uint bits;
                 int @byte = reader.PeekByte(out bits);
@@ -470,7 +470,7 @@ namespace PdfSharp.Pdf.Advanced
             uint a2, b2;
             // ReSharper restore TooWideLocalVariableScope
 
-            for (;;)
+            for (; ; )
             {
                 b2 = FindDifferenceWithCheck(readerReference, b1, width, readerReference.GetBit(b1));
                 if (b2 >= a1)
@@ -751,13 +751,13 @@ namespace PdfSharp.Pdf.Advanced
         internal void WriteBits(uint value, uint bits)
         {
 #if true
-            // TODO: Try to make this faster!
+        // TODO: Try to make this faster!
 
-            // If we have to write more bits than fit into the buffer, we fill
-            // the buffer and call the same routine recursively for the rest.
+        // If we have to write more bits than fit into the buffer, we fill
+        // the buffer and call the same routine recursively for the rest.
 #if USE_GOTO
-            // Use GOTO instead of end recursion: (is this faster?)
-            SimulateRecursion:
+        // Use GOTO instead of end recursion: (is this faster?)
+        SimulateRecursion:
 #endif
             if (bits + _bitsInBuffer > 8)
             {

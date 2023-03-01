@@ -27,7 +27,6 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Collections.Generic;
 
 namespace PdfSharp.Pdf.Internal
 {

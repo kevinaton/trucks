@@ -35,7 +35,7 @@ namespace DispatcherWeb.Authorization.Users.Dto
         public string PhoneNumber { get; set; }
 
         public int? OfficeId { get; set; }
-        
+
         public string OfficeName { get; set; }
 
         // Not used "Required" attribute since empty value is used to 'not change password'
@@ -50,9 +50,9 @@ namespace DispatcherWeb.Authorization.Users.Dto
         public virtual bool IsTwoFactorEnabled { get; set; }
 
         public virtual bool IsLockoutEnabled { get; set; }
-        
+
         public bool IsSingleOffice { get; set; }
-        
+
         int IOfficeIdNameDto.OfficeId { get => OfficeId ?? 0; set => OfficeId = value; }
     }
 }

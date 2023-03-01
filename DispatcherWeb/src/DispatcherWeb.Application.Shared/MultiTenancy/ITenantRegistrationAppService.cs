@@ -5,7 +5,7 @@ using DispatcherWeb.MultiTenancy.Dto;
 
 namespace DispatcherWeb.MultiTenancy
 {
-    public interface ITenantRegistrationAppService: IApplicationService
+    public interface ITenantRegistrationAppService : IApplicationService
     {
         Task<RegisterTenantOutput> RegisterTenant(RegisterTenantInput input);
 

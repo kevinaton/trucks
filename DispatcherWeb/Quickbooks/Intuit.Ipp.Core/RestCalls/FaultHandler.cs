@@ -53,7 +53,7 @@ namespace Intuit.Ipp.Core.Rest
             : this()
         {
             this.context = context;
-    
+
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace Intuit.Ipp.Core.Rest
                             idsException = new IdsException(statusCodeDescription, statusCode.ToString(CultureInfo.InvariantCulture), webException.Source, new EndpointNotFoundException("Call to the endpoint returned a 404 - Endpoint not found response"));
                             break;
                         // Throttle Exceeded: 429
-                       case (HttpStatusCode)429:
+                        case (HttpStatusCode)429:
                             idsException = new IdsException(statusCodeDescription, statusCode.ToString(CultureInfo.InvariantCulture), webException.Source, new ThrottleExceededException());
                             break;
 
@@ -250,7 +250,7 @@ namespace Intuit.Ipp.Core.Rest
                 ////    errorString = errorString.Insert(0, "<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
                 ////}
 
-                
+
                 if (errorString.Contains("EntitlementsResponse"))
                 {
                     EntitlementsResponse entitlements = (EntitlementsResponse)CoreHelper.GetSerializer(this.context, false).Deserialize<EntitlementsResponse>(errorString);

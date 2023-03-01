@@ -14,13 +14,13 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .HasForeignKey(e => e.ProjectId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder    
+            builder
                 .HasOne(e => e.User)
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder    
+            builder
                 .HasOne(e => e.Office)
                 .WithMany()
                 .HasForeignKey(e => e.OfficeId)

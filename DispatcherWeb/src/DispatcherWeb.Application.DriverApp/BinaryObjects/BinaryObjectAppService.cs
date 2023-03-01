@@ -1,10 +1,10 @@
-﻿using DispatcherWeb.Storage;
+﻿using Abp.Domain.Repositories;
+using Abp.UI;
+using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverApp.BinaryObjects.Dto;
 using DispatcherWeb.Infrastructure.Extensions;
-using Abp.UI;
-using Abp.Domain.Repositories;
 using DispatcherWeb.Orders;
-using DispatcherWeb.Dispatching;
+using DispatcherWeb.Storage;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.DriverApp.BinaryObjects
@@ -29,7 +29,7 @@ namespace DispatcherWeb.DriverApp.BinaryObjects
         public async Task<Guid> Post(BinaryObjectDto input)
         {
             var id = await _binaryObjectManager.UploadDataUriStringAsync(input.Base64String, AbpSession.TenantId, 12000000);
-            
+
             if (id == null)
             {
                 throw new UserFriendlyException("Input was empty or in an unexpected format. Expected format: \"data:image/png;base64,iVBORw0K...\"");
@@ -44,7 +44,7 @@ namespace DispatcherWeb.DriverApp.BinaryObjects
             {
                 throw new UserFriendlyException("Binary Object cannot be deleted because it is already associated with a ticket");
             }
-            
+
             if (await _loadRepository.GetAll().AnyAsync(x => x.SignatureId == id))
             {
                 throw new UserFriendlyException("Binary Object cannot be deleted because it is already associated with a load");

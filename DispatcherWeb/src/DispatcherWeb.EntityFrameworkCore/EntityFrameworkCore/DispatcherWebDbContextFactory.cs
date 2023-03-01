@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DispatcherWeb.Configuration;
+using DispatcherWeb.Web;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using DispatcherWeb.Configuration;
-using DispatcherWeb.Web;
 
 namespace DispatcherWeb.EntityFrameworkCore
 {

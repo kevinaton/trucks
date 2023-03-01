@@ -29,8 +29,8 @@
 
 using System;
 using System.Diagnostics;
-using System.Resources;
 using System.Reflection;
+using System.Resources;
 using PdfSharp.Drawing;
 using PdfSharp.Internal;
 using PdfSharp.Pdf;

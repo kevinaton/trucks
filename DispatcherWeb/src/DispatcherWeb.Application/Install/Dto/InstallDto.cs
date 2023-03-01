@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Abp.Auditing;
-using DispatcherWeb.Configuration.Dto;
 using DispatcherWeb.Configuration.Host.Dto;
 
 namespace DispatcherWeb.Install.Dto

@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
-using Abp.Configuration.Startup;
-using Abp.MultiTenancy;
-using Abp.Runtime;
-using Abp.Runtime.Session;
-using Abp.UI;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Services;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -122,7 +112,7 @@ namespace DispatcherWeb.Tests.Orders
             await _orderAppService.SetSharedOrderLines(new SetSharedOrderLineInput()
             {
                 OrderLineId = orderLineId,
-                CheckedOfficeIds = new int[] {},
+                CheckedOfficeIds = new int[] { },
             });
 
             // Assert

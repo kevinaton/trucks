@@ -1,16 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
+using Abp.Application.Features;
 using Abp.Authorization;
+using Abp.BackgroundJobs;
 using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.Configuration.Startup;
+using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Json;
 using Abp.Net.Mail;
 using Abp.Runtime.Security;
 using Abp.Runtime.Session;
 using Abp.Timing;
+using Abp.UI;
 using Abp.Zero.Configuration;
 using Abp.Zero.Ldap.Configuration;
 using DispatcherWeb.Authentication;
@@ -18,28 +24,20 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.Configuration.Dto;
 using DispatcherWeb.Configuration.Host.Dto;
 using DispatcherWeb.Configuration.Tenants.Dto;
-using DispatcherWeb.Security;
-using DispatcherWeb.Storage;
-using DispatcherWeb.Timing;
-using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.Features;
-using Abp.Application.Features;
-using Abp.BackgroundJobs;
-using DispatcherWeb.BackgroundJobs;
-using DispatcherWeb.Notifications;
-using DispatcherWeb.Receipts.Dto;
-using DispatcherWeb.TimeClassifications;
-using Abp.Domain.Repositories;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using Abp.UI;
-using DispatcherWeb.Drivers;
 using DispatcherWeb.Customers;
+using DispatcherWeb.Drivers;
+using DispatcherWeb.Features;
+using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Telematics;
-using DispatcherWeb.Orders;
-using System.Collections.Generic;
-using DispatcherWeb.Services;
+using DispatcherWeb.Notifications;
 using DispatcherWeb.Offices;
+using DispatcherWeb.Orders;
+using DispatcherWeb.Security;
+using DispatcherWeb.Services;
+using DispatcherWeb.Storage;
+using DispatcherWeb.TimeClassifications;
+using DispatcherWeb.Timing;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Configuration.Tenants
 {
@@ -241,7 +239,6 @@ namespace DispatcherWeb.Configuration.Tenants
             settings.DefaultMapLocation = await SettingManager.GetSettingValueAsync(AppSettings.General.DefaultMapLocation);
             settings.CurrencySymbol = await SettingManager.GetSettingValueAsync(AppSettings.General.CurrencySymbol);
             settings.UserDefinedField1 = await SettingManager.GetSettingValueAsync(AppSettings.General.UserDefinedField1);
-            settings.AllowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
             settings.DontValidateDriverAndTruckOnTickets = !await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ValidateDriverAndTruckOnTickets);
             settings.ShowDriverNamesOnPrintedOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ShowDriverNamesOnPrintedOrder);
             settings.SplitBillingByOffices = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.SplitBillingByOffices);
@@ -722,29 +719,6 @@ namespace DispatcherWeb.Configuration.Tenants
         #endregion
 
         #region Update Settings
-        [AbpAuthorize(AppPermissions.Pages_Administration_RecalculateHasAllActualAmountsValues)]
-        public async Task RecalculateHasAllActualAmountsValues()
-        {
-            var jobArgs = new RecalculateHasAllActualAmountsValuesBackgroundJobArgs
-            {
-                RequestorUser = AbpSession.ToUserIdentifier()
-            };
-            await _backgroundJobManager.EnqueueAsync<RecalculateHasAllActualAmountsValuesBackgroundJob, RecalculateHasAllActualAmountsValuesBackgroundJobArgs>(jobArgs);
-            await _appNotifier.SendMessageAsync(jobArgs.RequestorUser, "Recalculation of HasAllActualAmounts values started");
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Administration_RecalculateHasAllActualAmountsValues)]
-        public async Task CopyReceiptsFromActualAmounts(SeedReceiptsFromActualAmountsInput input)
-        {
-            var jobArgs = new CopyReceiptsFromActualAmountsBackgroundJobArgs
-            {
-                RequestorUser = AbpSession.ToUserIdentifier(),
-                TenantId = input.TenantId
-            };
-            await _backgroundJobManager.EnqueueAsync<CopyReceiptsFromActualAmountsBackgroundJob, CopyReceiptsFromActualAmountsBackgroundJobArgs>(jobArgs);
-            await _appNotifier.SendMessageAsync(jobArgs.RequestorUser, "Copying of Receipts from ActualAmounts started");
-        }
-
         public async Task UpdateAllSettings(TenantSettingsEditDto input)
         {
             await UpdateUserManagementSettingsAsync(input.UserManagement);
@@ -841,7 +815,6 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.DefaultMapLocation, input.General.DefaultMapLocation);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.CurrencySymbol, input.General.CurrencySymbol);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.UserDefinedField1, input.General.UserDefinedField1);
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.AllowAddingTickets, input.General.AllowAddingTickets.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ValidateDriverAndTruckOnTickets, (!input.General.DontValidateDriverAndTruckOnTickets).ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ShowDriverNamesOnPrintedOrder, input.General.ShowDriverNamesOnPrintedOrder.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.SplitBillingByOffices, input.General.SplitBillingByOffices.ToLowerCaseString());

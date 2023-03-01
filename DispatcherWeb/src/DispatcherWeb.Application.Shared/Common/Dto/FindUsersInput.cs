@@ -4,7 +4,7 @@ using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Common.Dto
 {
-    public class FindUsersInput :PagedSortedAndFilteredInputDto, IShouldNormalize
+    public class FindUsersInput : PagedSortedAndFilteredInputDto, IShouldNormalize
     {
         public int? TenantId { get; set; }
         public void Normalize()

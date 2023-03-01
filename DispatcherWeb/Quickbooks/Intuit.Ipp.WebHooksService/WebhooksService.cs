@@ -20,24 +20,13 @@
 
 namespace Intuit.Ipp.WebhooksService
 {
-
-
-    using Intuit.Ipp.Core;
     using System;
+    using System.Security.Cryptography;
+    using System.Text;
     using Intuit.Ipp.Core.Configuration;
-    using Intuit.Ipp.Core.Rest;
-    using Intuit.Ipp.Data;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
-    using Intuit.Ipp.Utility;
-    using System.Text;
-    using System.Threading;
     using Newtonsoft.Json;
-    using System.Security.Cryptography;
-    using System.Configuration;
-    using System.Collections.Specialized;
-    using System.Runtime.Serialization;
-    using System.IO;
 
 
     /// <summary>
@@ -85,7 +74,7 @@ namespace Intuit.Ipp.WebhooksService
         /// <summary>
         /// Initializes a new instance of the <see cref="WebhooksService"/> class.
         /// </summary>
-        
+
         public WebhooksService()
         {
 
@@ -137,7 +126,7 @@ namespace Intuit.Ipp.WebhooksService
                     return false;
                 }
             }
-            catch(ValidationException)
+            catch (ValidationException)
             {
                 return false;
 

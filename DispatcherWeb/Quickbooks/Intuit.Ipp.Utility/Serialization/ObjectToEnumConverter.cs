@@ -40,7 +40,7 @@ namespace Intuit.Ipp.Utility
             FieldInfo[] fields = value.GetType().GetFields();
             foreach (var field in fields)
             {
-                if (String.Compare(field.Name, value.ToString(),StringComparison.Ordinal) == 0)
+                if (String.Compare(field.Name, value.ToString(), StringComparison.Ordinal) == 0)
                 {
                     object[] attr = field.GetCustomAttributes(typeof(System.Xml.Serialization.XmlEnumAttribute), false);
                     if (attr.Length > 0)
@@ -77,7 +77,7 @@ namespace Intuit.Ipp.Utility
                         if (attrItem.GetType() == typeof(System.Xml.Serialization.XmlEnumAttribute))
                         {
                             System.Xml.Serialization.XmlEnumAttribute xmlAttribute = (System.Xml.Serialization.XmlEnumAttribute)attr[0];
-                            if (String.Compare(xmlAttribute.Name, reader.Value.ToString(),StringComparison.Ordinal) == 0)
+                            if (String.Compare(xmlAttribute.Name, reader.Value.ToString(), StringComparison.Ordinal) == 0)
                             {
                                 return Enum.Parse(objectType, field.Name);
                             }

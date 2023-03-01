@@ -37,7 +37,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         {
             if (policy.RequireHttps == true)
             {
-          
+
                 return string.Equals(url.Scheme, "https", StringComparison.OrdinalIgnoreCase);
             }
 

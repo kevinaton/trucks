@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Authorization.Users.Profile.Dto
+﻿namespace DispatcherWeb.Authorization.Users.Profile.Dto
 {
     public class CurrentUserOptionsEditDto
     {

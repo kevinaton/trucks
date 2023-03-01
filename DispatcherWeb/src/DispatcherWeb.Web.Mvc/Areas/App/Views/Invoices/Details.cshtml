@@ -160,7 +160,7 @@
                 <div class="row">
                     <div class="col-sm-12 col-md-4 form-group">
                         <label for="Message" class="col-form-label">@L("MessageOnInvoice"):</label>
-                        <textarea type="text" class="form-control" rows="5" maxlength="@Invoice.MaxMessageLength" asp-for="Message"></textarea>
+                        <textarea type="text" class="form-control" rows="5" maxlength="@EntityStringFieldLengths.Invoice.Message" asp-for="Message"></textarea>
                     </div>
                     <div class="col-md-6"></div>
                     <div class="col-sm-12 col-md-2">

@@ -66,9 +66,9 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                .HasMany(e => e.OfficeAmounts)
-                .WithOne(e => e.OrderLine)
-                .HasForeignKey(e => e.OrderLineId)
+                .HasOne(e => e.QuoteService)
+                .WithMany(e => e.OrderLines)
+                .HasForeignKey(e => e.QuoteServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

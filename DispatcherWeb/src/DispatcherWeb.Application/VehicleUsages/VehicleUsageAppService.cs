@@ -1,15 +1,15 @@
-﻿using Abp.Application.Services.Dto;
-using Abp.Authorization;
-using Abp.Collections.Extensions;
-using Abp.Domain.Repositories;
-using DispatcherWeb.Authorization;
-using DispatcherWeb.Trucks;
-using DispatcherWeb.VehicleUsages.Dto;
-using System;
-using Abp.Linq.Extensions;
+﻿using System;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
+using Abp.Authorization;
+using Abp.Collections.Extensions;
+using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
+using DispatcherWeb.Authorization;
+using DispatcherWeb.Trucks;
+using DispatcherWeb.VehicleUsages.Dto;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.VehicleUsages

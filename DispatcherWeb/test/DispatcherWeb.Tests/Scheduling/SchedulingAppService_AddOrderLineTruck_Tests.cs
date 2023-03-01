@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Timing;
@@ -20,86 +19,86 @@ using Xunit;
 namespace DispatcherWeb.Tests.Scheduling
 {
     public class SchedulingAppService_AddOrderLineTruck_Tests : AppTestBase, IAsyncLifetime
-	{
-		private ISchedulingAppService _schedulingAppService;
-		private ISmsSender _smsSender;
-		private int _officeId;
+    {
+        private ISchedulingAppService _schedulingAppService;
+        private ISmsSender _smsSender;
+        private int _officeId;
 
-		public async Task InitializeAsync()
-		{
-			var office = await CreateOfficeAndAssignUserToIt();
-			_officeId = office.Id;
-			_smsSender = Substitute.For<ISmsSender>();
-			var dispatchingAppService = Resolve<IDispatchingAppService>(new { smsSender = _smsSender });
-			_schedulingAppService = Resolve<ISchedulingAppService>(new { smsSender = _smsSender, dispatchingAppService = dispatchingAppService });
-			((DispatcherWebAppServiceBase)_schedulingAppService).Session = CreateSession();
-		}
+        public async Task InitializeAsync()
+        {
+            var office = await CreateOfficeAndAssignUserToIt();
+            _officeId = office.Id;
+            _smsSender = Substitute.For<ISmsSender>();
+            var dispatchingAppService = Resolve<IDispatchingAppService>(new { smsSender = _smsSender });
+            _schedulingAppService = Resolve<ISchedulingAppService>(new { smsSender = _smsSender, dispatchingAppService = dispatchingAppService });
+            ((DispatcherWebAppServiceBase)_schedulingAppService).Session = CreateSession();
+        }
 
-		[Fact]
-		public async Task Test_AddOrderLineTruck_should_add_Trailer_when_it_added_to_another_OrderLine()
-		{
-			// Arrange
-			DateTime date = Clock.Now.Date;
-			var order = await CreateOrderWithOrderLines(date);
-			var orderLine1 = order.OrderLines.ToArray()[0];
-			var orderLine2 = order.OrderLines.ToArray()[1];
+        [Fact]
+        public async Task Test_AddOrderLineTruck_should_add_Trailer_when_it_added_to_another_OrderLine()
+        {
+            // Arrange
+            DateTime date = Clock.Now.Date;
+            var order = await CreateOrderWithOrderLines(date);
+            var orderLine1 = order.OrderLines.ToArray()[0];
+            var orderLine2 = order.OrderLines.ToArray()[1];
             var tractors = await CreateTractorVehicleCategory();
             var trailers = await CreateTrailerVehicleCategory();
-			var tractorTruck = await CreateTruck("301", tractors, _officeId, canPullTrailer: true);
-			var trailerTruck = await CreateTruck("201", trailers, _officeId);
+            var tractorTruck = await CreateTruck("301", tractors, _officeId, canPullTrailer: true);
+            var trailerTruck = await CreateTruck("201", trailers, _officeId);
             var driver = await CreateDriver();
             await CreateOrderLineTruck(tractorTruck.Id, driver.Id, orderLine1.Id, .5m);
-			await CreateOrderLineTruck(trailerTruck.Id, null, orderLine1.Id, 1);
-			var parentOrderLineTruck = await CreateOrderLineTruck(tractorTruck.Id, driver.Id, orderLine2.Id, .5m);
+            await CreateOrderLineTruck(trailerTruck.Id, null, orderLine1.Id, 1);
+            var parentOrderLineTruck = await CreateOrderLineTruck(tractorTruck.Id, driver.Id, orderLine2.Id, .5m);
 
-			// Act
-			var result = await _schedulingAppService.AddOrderLineTruck(new AddOrderLineTruckInput
-			{
-				OrderLineId = orderLine2.Id,
-				ParentId = parentOrderLineTruck.Id,
-				TruckId = trailerTruck.Id,
-			});
+            // Act
+            var result = await _schedulingAppService.AddOrderLineTruck(new AddOrderLineTruckInput
+            {
+                OrderLineId = orderLine2.Id,
+                ParentId = parentOrderLineTruck.Id,
+                TruckId = trailerTruck.Id,
+            });
 
-			// Assert
-			result.IsFailed.ShouldBeFalse();
-		}
+            // Assert
+            result.IsFailed.ShouldBeFalse();
+        }
 
-		[Fact]
-		public async Task Test_AddOrderLineTruck_should_throw_Exception_when_NotLeasedTruck_has_no_driver()
-		{
-			// Arrange
-			DateTime date = Clock.Now.Date;
-			var order = await CreateOrderWithOrderLines(date);
-			var orderLine = order.OrderLines.ToArray()[0];
-			var truck = await CreateTruck(alwaysShowOnSchedule: false);
+        [Fact]
+        public async Task Test_AddOrderLineTruck_should_throw_Exception_when_NotLeasedTruck_has_no_driver()
+        {
+            // Arrange
+            DateTime date = Clock.Now.Date;
+            var order = await CreateOrderWithOrderLines(date);
+            var orderLine = order.OrderLines.ToArray()[0];
+            var truck = await CreateTruck(alwaysShowOnSchedule: false);
 
-			// Act, Assert
-			await _schedulingAppService.AddOrderLineTruck(new AddOrderLineTruckInput
-			{
-				OrderLineId = orderLine.Id,
-				TruckId = truck.Id,
-			}).ShouldThrowAsync(typeof(UserFriendlyException));
-		}
+            // Act, Assert
+            await _schedulingAppService.AddOrderLineTruck(new AddOrderLineTruckInput
+            {
+                OrderLineId = orderLine.Id,
+                TruckId = truck.Id,
+            }).ShouldThrowAsync(typeof(UserFriendlyException));
+        }
 
-		[Fact]
-		public async Task Test_AddOrderLineTruck_should_add_LeaseTruck_with_no_driver()
-		{
-			// Arrange
-			DateTime date = Clock.Now.Date;
-			var order = await CreateOrderWithOrderLines(date);
-			var orderLine = order.OrderLines.ToArray()[0];
-			var truck = await CreateTruck(alwaysShowOnSchedule: true);
+        [Fact]
+        public async Task Test_AddOrderLineTruck_should_add_LeaseTruck_with_no_driver()
+        {
+            // Arrange
+            DateTime date = Clock.Now.Date;
+            var order = await CreateOrderWithOrderLines(date);
+            var orderLine = order.OrderLines.ToArray()[0];
+            var truck = await CreateTruck(alwaysShowOnSchedule: true);
 
-			// Act
-			var result = await _schedulingAppService.AddOrderLineTruck(new AddOrderLineTruckInput
-			{
-				OrderLineId = orderLine.Id,
-				TruckId = truck.Id,
-			});
+            // Act
+            var result = await _schedulingAppService.AddOrderLineTruck(new AddOrderLineTruckInput
+            {
+                OrderLineId = orderLine.Id,
+                TruckId = truck.Id,
+            });
 
-			// Assert
-			result.OrderUtilization.ShouldBe(1);
-		}
+            // Assert
+            result.OrderUtilization.ShouldBe(1);
+        }
 
         [Fact]
         public async Task Test_AddOrderLineTruck_should_throw_Exception_when_there_is_DriverAssignment_with_no_driver()
@@ -303,8 +302,8 @@ namespace DispatcherWeb.Tests.Scheduling
 
 
         public Task DisposeAsync()
-		{
-			return Task.CompletedTask;
-		}
-	}
+        {
+            return Task.CompletedTask;
+        }
+    }
 }

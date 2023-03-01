@@ -12,7 +12,7 @@ namespace DispatcherWeb.Authorization.Users
         private readonly IFeatureChecker _featureChecker;
         private readonly IRepository<User, long> _userRepository;
 
-        public UserPolicy(IFeatureChecker featureChecker,IRepository<User, long> userRepository)
+        public UserPolicy(IFeatureChecker featureChecker, IRepository<User, long> userRepository)
         {
             _featureChecker = featureChecker;
             _userRepository = userRepository;

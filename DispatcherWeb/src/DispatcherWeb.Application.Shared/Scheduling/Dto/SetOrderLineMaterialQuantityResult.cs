@@ -2,6 +2,6 @@
 {
     public class SetOrderLineMaterialQuantityResult
     {
-		public decimal? MaterialQuantity { get; set; }
+        public decimal? MaterialQuantity { get; set; }
     }
 }

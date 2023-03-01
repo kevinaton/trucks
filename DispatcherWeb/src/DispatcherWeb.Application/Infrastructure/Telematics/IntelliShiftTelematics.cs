@@ -1,4 +1,12 @@
-﻿using Abp.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Abp.Configuration;
 using Abp.Dependency;
 using Abp.Localization;
 using Abp.Runtime.Session;
@@ -12,14 +20,6 @@ using DispatcherWeb.Infrastructure.Utilities;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NUglify.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Infrastructure.Telematics
 {
@@ -154,8 +154,8 @@ namespace DispatcherWeb.Infrastructure.Telematics
             return results;
         }
 
-        public async Task<bool> UpdateUnit(int remoteVehicleId, 
-                                            TokenLoginResult tokenLoginResult = null, 
+        public async Task<bool> UpdateUnit(int remoteVehicleId,
+                                            TokenLoginResult tokenLoginResult = null,
                                             params (string PropertyName, object PropertyValue)[] fieldsToUpdate)
         {
             if (tokenLoginResult == null)

@@ -1,37 +1,20 @@
 ﻿using System;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Abp;
 using Abp.AspNetZeroCore;
 using Abp.AspNetZeroCore.Timing;
 using Abp.AutoMapper;
-using Abp.BackgroundJobs;
+using Abp.Configuration.Startup;
 using Abp.Dependency;
+using Abp.MailKit;
 using Abp.Modules;
 using Abp.Net.Mail;
+using Abp.Net.Mail.Smtp;
 using Abp.Reflection.Extensions;
 using Abp.Timing;
-using Abp.Configuration.Startup;
-using Abp.Domain.Uow;
-using Abp.Events.Bus;
-using Abp.Events.Bus.Exceptions;
-using Abp.Json;
-using Abp.Localization.Dictionaries.Xml;
-using Abp.Localization.Sources;
-using Abp.MailKit;
-using Abp.Net.Mail.Smtp;
-using Abp.Threading;
-using Abp.Threading.BackgroundWorkers;
-using Abp.Threading.Timers;
 using Abp.Zero;
 using Abp.Zero.Configuration;
 using Abp.Zero.Ldap;
-using Abp.Zero.Ldap.Configuration;
 using Castle.MicroKernel.Registration;
-using MailKit.Security;
 using DispatcherWeb.Authorization.Delegation;
-using DispatcherWeb.Authorization.Ldap;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Chat;
@@ -47,7 +30,7 @@ using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Net.Emailing;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.WebHooks;
-using Newtonsoft.Json;
+using MailKit.Security;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
@@ -128,7 +111,7 @@ namespace DispatcherWeb
                              .LifestyleTransient()
                 );
             });
-            
+
             Configuration.ReplaceService<Abp.Runtime.Session.IAbpSession, Runtime.Session.AspNetZeroAbpSession>();
             Configuration.ReplaceService<Abp.Notifications.INotificationStore, DispatcherWebNotificationStore>();
 

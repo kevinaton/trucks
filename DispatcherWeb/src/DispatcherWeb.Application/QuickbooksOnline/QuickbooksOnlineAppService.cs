@@ -1,4 +1,9 @@
-﻿using Abp.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Extensions;
@@ -9,7 +14,6 @@ using DispatcherWeb.Configuration;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Encryption;
 using DispatcherWeb.QuickbooksOnline.Dto;
-using DispatcherWeb.Services;
 using DispatcherWeb.Url;
 using Intuit.Ipp.Core;
 using Intuit.Ipp.Data;
@@ -18,16 +22,7 @@ using Intuit.Ipp.Exception;
 using Intuit.Ipp.OAuth2PlatformClient;
 using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.Security;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreadingTask = System.Threading.Tasks.Task;
 
 namespace DispatcherWeb.QuickbooksOnline
@@ -752,9 +747,9 @@ namespace DispatcherWeb.QuickbooksOnline
             var environment = _appConfiguration["Quickbooks:Environment"];
             switch (environment)
             {
-                case "sandbox": 
+                case "sandbox":
                     return "https://sandbox-quickbooks.api.intuit.com";
-                case "production": 
+                case "production":
                     return "https://quickbooks.api.intuit.com/";
                 default:
                     throw new ApplicationException("Unexpected 'Quickbooks:Environment' value: " + environment);
@@ -767,5 +762,5 @@ namespace DispatcherWeb.QuickbooksOnline
             return $"{siteUrl}app/quickbooks/callback";
         }
     }
-    
+
 }

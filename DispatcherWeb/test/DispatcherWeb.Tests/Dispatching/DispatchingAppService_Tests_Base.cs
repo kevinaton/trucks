@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Configuration;
@@ -10,14 +8,13 @@ using DispatcherWeb.Customers;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure.Sms;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
 using DispatcherWeb.Tests.TestInfrastructure;
 using DispatcherWeb.Trucks;
-using IdentityServer4.Extensions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Xunit;
@@ -57,7 +54,7 @@ namespace DispatcherWeb.Tests.Dispatching
                 Load loadEntity = await context.Loads.Include(d => d.Tickets).Where(l => l.DispatchId == dispatch.Id).OrderByDescending(l => l.Id).FirstOrDefaultAsync();
                 if (loadEntity == null || loadEntity.Tickets.Any())
                 {
-                    loadEntity = new Load() {DispatchId = dispatch.Id, SourceDateTime = Clock.Now};
+                    loadEntity = new Load() { DispatchId = dispatch.Id, SourceDateTime = Clock.Now };
                 }
                 Ticket ticket = new Ticket()
                 {

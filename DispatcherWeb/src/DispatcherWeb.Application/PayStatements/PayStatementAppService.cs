@@ -1,4 +1,9 @@
-﻿using Abp.Application.Services.Dto;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.Configuration;
@@ -9,20 +14,14 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Drivers;
-using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Reports;
 using DispatcherWeb.Orders.RevenueBreakdownReport;
 using DispatcherWeb.Orders.RevenueBreakdownReport.Dto;
 using DispatcherWeb.PayStatements.Dto;
+using DispatcherWeb.TimeClassifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.PayStatements
 {
@@ -337,7 +336,7 @@ namespace DispatcherWeb.PayStatements
                     payStatementDetail.Total += payStatementDetail.ProductionBasedTotal;
                 }
             }
-            
+
             //if (input.IncludeSalary)
             //{
             //    foreach (var driver in drivers.Where(x => x.PayMethod == PayMethod.Salary))
@@ -433,7 +432,7 @@ namespace DispatcherWeb.PayStatements
                         _employeeTimePayStatementTimeRepository.Insert(employeeTimePayStatementTime);
                         processedEmployeeTimeIds.Add(e.EmployeeTimeId);
                     }
-                    
+
                     timeRecord.Quantity += e.HoursToAdd;
                 });
                 addedTimeRecords.ForEach(t => t.Quantity = Math.Round(t.Quantity, 2));

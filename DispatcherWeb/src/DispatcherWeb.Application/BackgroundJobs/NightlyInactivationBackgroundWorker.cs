@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Abp.Configuration;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
@@ -38,7 +37,7 @@ namespace DispatcherWeb.BackgroundJobs
         protected override void DoWork()
         {
             var timeZone = SettingManager.GetSettingValue(TimingSettingNames.TimeZone);
-            
+
             var lastMidnightDate = DateTime.Now.ConvertTimeZoneTo(timeZone).Date;
 
             var lastRun = _backgroundJobHistoryRepository.GetAll()
@@ -46,7 +45,7 @@ namespace DispatcherWeb.BackgroundJobs
                 .OrderByDescending(x => x.StartTime)
                 .Select(x => x.StartTime)
                 .FirstOrDefault();
-            
+
             if (lastRun >= lastMidnightDate)
             {
                 return;
@@ -64,7 +63,7 @@ namespace DispatcherWeb.BackgroundJobs
                 .Where(x => x.Status != ProjectStatus.Inactive
                         && x.EndDate < lastMidnightDate)
                 .ToList();
-            
+
             var totalProjectsDeactivated = 0;
             var totalChildQuotesDeactivated = 0;
             var i = 0;

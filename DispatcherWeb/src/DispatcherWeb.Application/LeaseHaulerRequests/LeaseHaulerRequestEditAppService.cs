@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
+using Abp.Linq.Extensions;
+using Abp.Notifications;
+using Abp.Timing;
+using Abp.UI;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Dto;
+using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Configuration;
+using DispatcherWeb.Dispatching;
+using DispatcherWeb.Dto;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.LeaseHaulerRequests.Dto;
-using Microsoft.EntityFrameworkCore;
-using Abp.Timing;
-using DispatcherWeb.Infrastructure;
-using Abp.UI;
-using Abp.Notifications;
-using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Orders;
-using Abp.Domain.Uow;
-using DispatcherWeb.Dispatching;
-using Abp.Linq.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.LeaseHaulerRequests
 {
@@ -70,7 +69,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     Approved = lhr.Approved,
                     Comments = lhr.Comments
                 })
-                .FirstAsync() 
+                .FirstAsync()
                 : new LeaseHaulerRequestEditDto();
 
             if (model.Id != 0)
@@ -125,7 +124,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
                 .Where(x => x.OrderLine.Order.DeliveryDate == input.Date
                     && x.OrderLine.Order.Shift == input.Shift
                     && x.OrderLine.Order.LocationId == input.OfficeId)
-                .WhereIf(input.TruckIds.Any(), 
+                .WhereIf(input.TruckIds.Any(),
                     x => input.TruckIds.Contains(x.TruckId))
                 .Select(x => new AvailableTruckUsageDto
                 {
@@ -167,20 +166,20 @@ namespace DispatcherWeb.LeaseHaulerRequests
                 .Union(tickets)
                 .GroupBy(x => new { x.TruckId, x.DriverId })
                 .Select(x => new AvailableTruckUsageDto
-            {
-                TruckId = x.Key.TruckId,
-                DriverId = x.Key.DriverId
-            }).ToList();
+                {
+                    TruckId = x.Key.TruckId,
+                    DriverId = x.Key.DriverId
+                }).ToList();
         }
 
         public async Task<LeaseHaulerRequestEditModel> EditLeaseHaulerRequest(LeaseHaulerRequestEditModel model)
         {
-            var leaseHaulerRequest = model.Id != 0 ? 
-                await _leaseHaulerRequestRepository.GetAll().Where(lhr => lhr.Id == model.Id).FirstAsync() : 
+            var leaseHaulerRequest = model.Id != 0 ?
+                await _leaseHaulerRequestRepository.GetAll().Where(lhr => lhr.Id == model.Id).FirstAsync() :
                 new LeaseHaulerRequest { Guid = Guid.NewGuid() };
 
             EnsureApprovedIsNotGreaterThanAvailable(model.Approved, model.Available);
-            
+
             leaseHaulerRequest.OfficeId = OfficeId;
             leaseHaulerRequest.Date = model.Date.Date;
             leaseHaulerRequest.Shift = model.Shift;
@@ -319,7 +318,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
             }
 
             leaseHaulerRequest.Available = model.Available;
-            
+
             if (leaseHaulerRequest.Approved > 0)
             {
                 //the field is only shown when 'approved' was set
@@ -435,19 +434,19 @@ namespace DispatcherWeb.LeaseHaulerRequests
         private async Task NotifyDispatchersAboutChangedAvailableTrucksNumber(LeaseHaulerRequest leaseHaulerRequest, int newValue)
         {
             var userIds = new List<Abp.UserIdentifier>();
-            
+
             using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.MustHaveTenant))
             using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.MayHaveTenant))
             {
                 var dispatchingRoleIds = _roleManager.Roles
-                    .Where(x => x.TenantId == leaseHaulerRequest.TenantId 
+                    .Where(x => x.TenantId == leaseHaulerRequest.TenantId
                         && x.Name == StaticRoleNames.Tenants.Dispatching)
                     .Select(x => x.Id)
                     .ToList();
 
                 var users = await UserManager.Users
                     .Include(x => x.Roles)
-                    .Where(x => x.OfficeId == leaseHaulerRequest.OfficeId 
+                    .Where(x => x.OfficeId == leaseHaulerRequest.OfficeId
                         && x.TenantId == leaseHaulerRequest.TenantId
                         && x.Roles.Any(r => dispatchingRoleIds.Contains(r.RoleId)))
                     .ToListAsync();

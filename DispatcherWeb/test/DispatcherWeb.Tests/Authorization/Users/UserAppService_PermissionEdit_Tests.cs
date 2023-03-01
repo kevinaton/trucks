@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Authorization.Users;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Authorization.Users.Dto;
+using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;
 
@@ -22,7 +22,7 @@ namespace DispatcherWeb.Tests.Authorization.Users
 
             //Act
             var output = await UserAppService.GetUserPermissionsForEdit(new EntityDto<long>(admin.Id));
-            
+
             //Assert
             output.GrantedPermissionNames.ShouldNotBe(null);
             output.Permissions.ShouldNotBe(null);
@@ -37,7 +37,7 @@ namespace DispatcherWeb.Tests.Authorization.Users
                 .GetAllPermissions()
                 .Where(p => p.MultiTenancySides.HasFlag(AbpSession.MultiTenancySide))
                 .ToList();
-            
+
             //Act
             await UserAppService.UpdateUserPermissions(
                 new UpdateUserPermissionsInput

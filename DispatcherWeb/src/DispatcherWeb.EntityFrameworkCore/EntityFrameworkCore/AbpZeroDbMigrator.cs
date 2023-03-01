@@ -49,9 +49,9 @@ namespace DispatcherWeb.EntityFrameworkCore
                 _connectionStringResolver.GetNameOrConnectionString(args)
             );
 
-            using(var uow = _unitOfWorkManager.Begin(TransactionScopeOption.Suppress))
+            using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.Suppress))
             {
-                using(var context = _dbContextResolver.Resolve<DispatcherWebDbContext>(nameOrConnectionString, null))
+                using (var context = _dbContextResolver.Resolve<DispatcherWebDbContext>(nameOrConnectionString, null))
                 {
                     Debug.Assert(tenant != null, nameof(tenant) + " != null");
                     new DefaultLocationsCreator(context, tenant.Id).Create();

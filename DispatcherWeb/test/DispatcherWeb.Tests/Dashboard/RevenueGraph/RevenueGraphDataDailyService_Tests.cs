@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
 using DispatcherWeb.Dashboard.RevenueGraph.DataServices;
 using DispatcherWeb.Dashboard.RevenueGraph.Dto;
@@ -18,7 +14,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         public async Task Test_GetRevenueGraphData_should_return_RevenueGraphData_by_Daily_by_Tickets()
         {
             // Arrange
-            await CreateOrdersAndOrderLinesAndTicketsOrOfficeAmounts(_startDate, _startDate.AddDays(30), true);
+            await CreateOrdersAndOrderLinesAndTickets(_startDate, _startDate.AddDays(30));
             IRevenueGraphDataItemsQueryService revenueGraphDataItemsQueryService = Resolve<IRevenueGraphByTicketsDataItemsQueryService>();
             var revenueGraphDataService = Resolve<IRevenueGraphDataDailyService>(new { revenueGraphDataItemsQueryService });
 
@@ -39,7 +35,7 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
         public async Task Test_GetRevenueGraphData_should_return_RevenueGraphData_by_Daily_by_Tickets_for_each_day_of_period()
         {
             // Arrange
-            await CreateOrdersAndOrderLinesAndTicketsOrOfficeAmounts(_startDate, _startDate.AddDays(0), true);
+            await CreateOrdersAndOrderLinesAndTickets(_startDate, _startDate.AddDays(0));
             IRevenueGraphDataItemsQueryService revenueGraphDataItemsQueryService = Resolve<IRevenueGraphByTicketsDataItemsQueryService>();
             var revenueGraphDataService = Resolve<IRevenueGraphDataDailyService>(new { revenueGraphDataItemsQueryService });
 
@@ -62,27 +58,6 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
                 result.RevenueGraphData[i].Period.ShouldBe(_startDate.AddDays(i).ToString("yyyy-MM-dd"));
                 result.RevenueGraphData[i].RevenueValue.ShouldBe(0);
             }
-        }
-
-        [Fact]
-        public async Task Test_GetRevenueGraphData_should_return_RevenueGraphData_by_Daily_by_OfficeAmounts()
-        {
-            // Arrange
-            await CreateOrdersAndOrderLinesAndTicketsOrOfficeAmounts(_startDate, _startDate.AddDays(30), false);
-            IRevenueGraphDataItemsQueryService revenueGraphDataItemsQueryService = Resolve<IRevenueGraphByOfficeAmountDataItemsQueryService>();
-            var revenueGraphDataService = Resolve<IRevenueGraphDataDailyService>(new { revenueGraphDataItemsQueryService });
-
-            // Act
-            var result = await revenueGraphDataService.GetRevenueGraphData(new PeriodInput()
-            {
-                PeriodBegin = _startDate,
-                PeriodEnd = _startDate.AddDays(30),
-            });
-
-            // Assert
-            result.RevenueGraphData.Count.ShouldBe(31);
-            result.RevenueGraphData[0].Period.ShouldBe(_startDate.ToString("yyyy-MM-dd"));
-            result.RevenueGraphData[0].RevenueValue.ShouldBe((2 + 3) * 10);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace DispatcherWeb.Dashboard.Dto
+﻿namespace DispatcherWeb.Dashboard.Dto
 {
     public class GetTruckAvailabilityDataOutput
     {

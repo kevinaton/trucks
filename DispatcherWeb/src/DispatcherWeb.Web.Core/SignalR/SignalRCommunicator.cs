@@ -1,11 +1,11 @@
-﻿using Abp.Dependency;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Abp.Dependency;
 using Abp.RealTime;
 using Castle.Core.Logging;
 using DispatcherWeb.SignalR;
 using DispatcherWeb.SyncRequests;
 using Microsoft.AspNetCore.SignalR;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Web.SignalR
 {

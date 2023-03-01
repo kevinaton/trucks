@@ -1,4 +1,8 @@
-﻿using Abp.Authorization;
+﻿using System;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+using Abp.Authorization;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
@@ -8,12 +12,6 @@ using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.DriverApplication
 {

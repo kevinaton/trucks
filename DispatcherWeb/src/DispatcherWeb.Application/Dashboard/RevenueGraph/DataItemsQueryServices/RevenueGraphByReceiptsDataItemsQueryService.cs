@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices
 {
-    public class RevenueGraphByOfficeAmountDataItemsQueryService : IRevenueGraphByOfficeAmountDataItemsQueryService
+    public class RevenueGraphByReceiptsDataItemsQueryService : IRevenueGraphByReceiptsDataItemsQueryService
     {
         private readonly IRepository<ReceiptLine> _receiptLineRepository;
         public readonly AspNetZeroAbpSession _session;
 
-        public RevenueGraphByOfficeAmountDataItemsQueryService(
+        public RevenueGraphByReceiptsDataItemsQueryService(
             IRepository<ReceiptLine> receiptLineRepository,
             AspNetZeroAbpSession session
         )

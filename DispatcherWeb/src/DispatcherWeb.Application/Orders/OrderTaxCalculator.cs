@@ -8,7 +8,6 @@ using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.UI;
 using DispatcherWeb.Configuration;
-using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Orders.TaxDetails;
 using Microsoft.EntityFrameworkCore;
 
@@ -71,7 +70,7 @@ namespace DispatcherWeb.Orders
             return receipt;
         }
 
-        public async Task<IOrderTaxDetailsWithActualAmounts> CalculateTotalsForOrderLineAsync(int orderLineId)
+        public async Task<IOrderTaxDetails> CalculateTotalsForOrderLineAsync(int orderLineId)
         {
             var orderDetails = await _orderLineRepository.GetAll()
                 .Where(x => x.Id == orderLineId)
@@ -81,20 +80,15 @@ namespace DispatcherWeb.Orders
             return await CalculateTotalsAsync(orderDetails.OrderId);
         }
 
-        public async Task<IOrderTaxDetailsWithActualAmounts> CalculateTotalsAsync(int orderId)
+        public async Task<IOrderTaxDetails> CalculateTotalsAsync(int orderId)
         {
             var order = await _orderRepository.GetAll()
                 .Where(x => x.Id == orderId)
                 .FirstOrDefaultAsync();
 
             var orderLinesRaw = await _orderLineRepository.GetAll()
-                .Include(x => x.Tickets)
-                .Include(x => x.OfficeAmounts) //todo change to receipts?
-                .Include(x => x.SharedOrderLines)
                 .Where(x => x.OrderId == orderId)
                 .ToListAsync();
-
-            await UpdateHasAllActualAmountsAsync(order, orderLinesRaw);
 
             var orderLineDtos = await _orderLineRepository.GetAll()
                 .Where(x => x.OrderId == orderId)
@@ -109,119 +103,6 @@ namespace DispatcherWeb.Orders
             await CalculateTotalsAsync(order, orderLineDtos);
 
             return order;
-        }
-
-        private async Task UpdateHasAllActualAmountsAsync(Order order, List<OrderLine> orderLines)
-        {
-            bool allowAddingTickets = await _settingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
-            foreach (var orderLine in orderLines)
-            {
-                orderLine.HasAllActualAmounts = true;
-
-                foreach (var officeId in orderLine.SharedOrderLines
-                    .Select(x => x.OfficeId)
-                    .Union(new[] { order.LocationId })
-                    .Distinct().ToList())
-                {
-                    if (allowAddingTickets)
-                    {
-                        if (!orderLine.Tickets.Any(x => x.OfficeId == officeId && x.Quantity > 0))
-                        {
-                            orderLine.HasAllActualAmounts = false;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if (!orderLine.OfficeAmounts.Any(x => x.OfficeId == officeId && x.ActualQuantity > 0))
-                        {
-                            orderLine.HasAllActualAmounts = false;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            order.HasAllActualAmounts = orderLines.Any() && orderLines.All(x => x.HasAllActualAmounts);
-        }
-
-        public async Task<UpdateHasAllActualAmountsValuesResult> UpdateHasAllActualAmountsValues()
-        {
-            List<int> allOrderIds;
-            using (var unitOfWork = UnitOfWorkManager.Begin())
-            using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.MustHaveTenant, AbpDataFilters.MayHaveTenant))
-            {
-                allOrderIds = _orderRepository.GetAll().Select(x => x.Id).ToList();
-            }
-            var totalOrderCount = allOrderIds.Count;
-            while (allOrderIds.Any())
-            {
-                var idsToProcess = allOrderIds.Take(100).ToArray();
-                if (!idsToProcess.Any())
-                {
-                    break;
-                }
-                allOrderIds.RemoveRange(0, idsToProcess.Length);
-                using (var unitOfWork = UnitOfWorkManager.Begin())
-                using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.MustHaveTenant, AbpDataFilters.MayHaveTenant))
-                {
-                    await UpdateHasAllActualAmountsValues(idsToProcess);
-                    await unitOfWork.CompleteAsync();
-                }
-            }
-            return new UpdateHasAllActualAmountsValuesResult
-            {
-                ProcessedOrdersCount = totalOrderCount
-            };
-        }
-
-        public async Task UpdateHasAllActualAmountsValues(params int[] orderIds)
-        {
-            bool allowAddingTickets = await _settingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-
-            var orders = await _orderRepository.GetAll()
-                .Include(x => x.OrderLines)
-                    .ThenInclude(o => o.Tickets)
-                .Include(x => x.OrderLines)
-                    .ThenInclude(o => o.OfficeAmounts)
-                .Include(x => x.OrderLines)
-                    .ThenInclude(o => o.SharedOrderLines)
-                .Where(x => orderIds.Contains(x.Id))
-                .ToListAsync();
-
-            foreach (var order in orders)
-            {
-                foreach (var orderLine in order.OrderLines)
-                {
-                    orderLine.HasAllActualAmounts = true;
-
-                    foreach (var officeId in orderLine.SharedOrderLines
-                        .Select(x => x.OfficeId)
-                        .Union(new[] { order.LocationId })
-                        .Distinct().ToList())
-                    {
-                        if (allowAddingTickets)
-                        {
-                            if (!orderLine.Tickets.Any(x => x.OfficeId == officeId && x.Quantity > 0))
-                            {
-                                orderLine.HasAllActualAmounts = false;
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            if (!orderLine.OfficeAmounts.Any(x => x.OfficeId == officeId && x.ActualQuantity > 0))
-                            {
-                                orderLine.HasAllActualAmounts = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                order.HasAllActualAmounts = order.OrderLines.Any() && order.OrderLines.All(x => x.HasAllActualAmounts);
-            }
         }
 
         public async Task<TaxCalculationType> GetTaxCalculationTypeAsync(int tenantId)
@@ -310,10 +191,6 @@ namespace DispatcherWeb.Orders
             order.FreightTotal = Math.Round(orderLines.Sum(ol => ol.FreightPrice), 2);
             order.MaterialTotal = Math.Round(orderLines.Sum(ol => ol.MaterialPrice), 2);
             //order.FuelSurcharge = Math.Round(order.FreightTotal * (order.FuelSurchargeRate / 100), 2);
-            if (order is IOrderTaxDetailsWithActualAmounts orderWithAmounts && orderLines.All(o => o is IOrderLineTaxDetailsWithMultipleActualAmounts))
-            {
-                orderWithAmounts.HasAllActualAmounts = orderLines.Any() && orderLines.All(x => ((IOrderLineTaxDetailsWithMultipleActualAmounts)x).HasAllActualAmounts);
-            }
             var subtotal = order.MaterialTotal + order.FreightTotal; //+ order.FuelSurcharge;
             var taxableTotal = 0M;
             var taxRate = order.SalesTaxRate / 100;

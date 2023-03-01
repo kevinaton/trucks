@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.UI;
@@ -77,12 +76,6 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         {
             return View();
         }
-        
-        [AbpMvcAuthorize(AppPermissions.Pages_Reports_BillingReconciliation)]
-        public IActionResult BillingReconciliation()
-        {
-            return View();
-        }
 
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
@@ -97,14 +90,6 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         public PartialViewResult AddQuoteBasedOrderLinesModal(QuoteBasedOrderLinesModalInput input)
         {
             return PartialView("_AddQuoteBasedOrderLinesModal", input);
-        }
-
-        [Modal]
-        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<PartialViewResult> CreateOrEditOrderLineOfficeAmountModal(int orderLineId)
-        {
-            var model = await _orderAppService.GetOrderLineOfficeAmountForEdit(new GetOrderLineOfficeAmountForEditInput(orderLineId));
-            return PartialView("_CreateOrEditOrderLineOfficeAmountModal", model);
         }
 
         [Modal]
@@ -148,7 +133,7 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             var model = await _orderAppService.GetSharedOrders(new EntityDto(id));
             return PartialView("_ShareOrderModal", model);
         }
-        
+
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<PartialViewResult> ShareOrderLineModal(int id)
@@ -156,14 +141,14 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             var model = await _orderAppService.GetSharedOrderLines(new EntityDto(id));
             return PartialView("_ShareOrderLineModal", model);
         }
-        
+
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
         public PartialViewResult SetNoDriverForTruckModal(SetNoDriverForTruckInput model)
         {
             return PartialView("_SetNoDriverForTruckModal", model);
         }
-        
+
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
         public PartialViewResult SetDefaultDriverForTruckModal(SetDefaultDriverForTruckInput model)

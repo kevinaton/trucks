@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace DispatcherWeb
 {
@@ -369,7 +368,7 @@ namespace DispatcherWeb
 
     public enum FuelType
     {
-        Diesel, 
+        Diesel,
         Gas
     }
 
@@ -513,12 +512,12 @@ namespace DispatcherWeb
         PercentOfFreight = 3
     }
 
-    public enum Shift: byte
+    public enum Shift : byte
     {
         Shift1,
         Shift2,
         Shift3,
-        NoShift = Byte.MaxValue, 
+        NoShift = Byte.MaxValue,
     }
 
     public enum ImportType
@@ -540,12 +539,6 @@ namespace DispatcherWeb
         Miles = 0,
         [Display(Name = "Engine Hours")]
         Hours = 1,
-    }
-
-    public enum RevenueCalculateType
-    {
-        ByTickets = 1,
-        ByOfficeAmount = 2,
     }
 
     public enum DispatchVia

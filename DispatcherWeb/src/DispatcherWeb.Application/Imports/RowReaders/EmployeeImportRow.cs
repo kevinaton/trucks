@@ -1,11 +1,8 @@
-﻿using CsvHelper;
+﻿using System.Linq;
+using CsvHelper;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Imports.Columns;
 using DispatcherWeb.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DispatcherWeb.Imports.RowReaders
 {
@@ -20,7 +17,7 @@ namespace DispatcherWeb.Imports.RowReaders
         public string Email => GetString(EmployeeColumn.Email, EntityStringFieldLengths.General.Email);
         public bool SendEmail => GetString(EmployeeColumn.SendEmail, 10) == "true";
         public OrderNotifyPreferredFormat? NotifyPreferredFormat
-        { 
+        {
             get
             {
                 var value = GetString(EmployeeColumn.NotifyPreferredFormat, 100);

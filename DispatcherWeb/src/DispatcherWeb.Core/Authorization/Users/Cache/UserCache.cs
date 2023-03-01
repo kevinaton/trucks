@@ -77,7 +77,7 @@ namespace DispatcherWeb.Authorization.Users.Cache
             {
                 var cachedUser = await GetUserCacheInternal()
                     .GetOrDefaultAsync(userId);
-                    
+
                 if (cachedUser != null)
                 {
                     userIds.Remove(userId);

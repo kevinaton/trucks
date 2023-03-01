@@ -29,20 +29,20 @@ namespace Intuit.Ipp.Core
     using Intuit.Ipp.Core.Rest;
     using Intuit.Ipp.Exception;
     using Intuit.Ipp.Utility;
-   
+
 
     /// <summary>
     /// Helper class.
     /// </summary>
     public static class CoreHelper
-    { 
+    {
 
 
         /// <summary>
         /// Gets or sets Serilog Request Logging.
         /// </summary>
         internal static AdvancedLogging AdvancedLogging;
-    
+
         /// <summary>
         /// Gets the serializer mechanism using the service context and the depending on the request and response.
         /// </summary>
@@ -196,7 +196,7 @@ namespace Intuit.Ipp.Core
                     serviceContext.IppConfiguration.AdvancedLogger.RequestAdvancedLog.EnableSerilogRequestResponseLoggingForConsole,
                     serviceContext.IppConfiguration.AdvancedLogger.RequestAdvancedLog.EnableSerilogRequestResponseLoggingForRollingFile,
                     serviceContext.IppConfiguration.AdvancedLogger.RequestAdvancedLog.ServiceRequestLoggingLocationForFile);
-              
+
 
             }
             else

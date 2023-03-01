@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.QuickbooksDesktop.Dto
+﻿namespace DispatcherWeb.QuickbooksDesktop.Dto
 {
     public class ExportInvoicesToIIFResult
     {

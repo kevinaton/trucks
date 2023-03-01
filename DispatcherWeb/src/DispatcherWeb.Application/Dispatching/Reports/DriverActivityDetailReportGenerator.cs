@@ -1,12 +1,8 @@
-﻿using Abp.Dependency;
+﻿using System;
+using System.Linq;
 using DispatcherWeb.Dispatching.Dto;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Dispatching.Reports
 {
@@ -219,7 +215,7 @@ namespace DispatcherWeb.Dispatching.Reports
                     summaryTable.AddColumn(Unit.FromCentimeter(2.62));
                     //Load Time
                     summaryTable.AddColumn(Unit.FromCentimeter(1.95)); //1.9 is still too small to fit 12:34 PM on one line
-                    
+
                     Row summaryRow = summaryTable.AddRow();
                     summaryRow.Shading.Color = Colors.LightGray;
                     summaryRow.Format.Font.Size = Unit.FromPoint(9);
@@ -241,12 +237,12 @@ namespace DispatcherWeb.Dispatching.Reports
                     summaryCell.AddParagraph("Quantity");
                     summaryCell = summaryRow.Cells[i++];
                     summaryCell.AddParagraph("Job Time");
-                    
+
                     foreach (var jobLoads in model.Loads.GroupBy(l => l.OrderLineId))
                     {
                         i = 0;
                         summaryRow = summaryTable.AddRow();
-                        summaryCell = summaryRow.Cells[i++]; 
+                        summaryCell = summaryRow.Cells[i++];
 
                         var job = jobLoads.First();
                         var jobNumber = job.JobNumber;
@@ -271,7 +267,7 @@ namespace DispatcherWeb.Dispatching.Reports
                         summaryCell = summaryRow.Cells[i++];
                         paragraph = summaryCell.AddParagraph(new TimeSpan(jobLoads.Where(s => s.CycleTime.HasValue).Sum(s => s.CycleTime.Value.Ticks)).ToString("h\\:mm") ?? "", tm);
                         paragraph.Format.Alignment = ParagraphAlignment.Center;
-                        
+
                     }
                 }
                 else

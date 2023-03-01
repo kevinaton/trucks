@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoFixture;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Customers.Dto;
@@ -62,7 +58,7 @@ namespace DispatcherWeb.Tests.Customers
         {
             return await UsingDbContextAsync(async context =>
             {
-                var customer = new Customer() {TenantId = 1, Name = name, AccountNumber = accountNumber};
+                var customer = new Customer() { TenantId = 1, Name = name, AccountNumber = accountNumber };
                 await context.Customers.AddAsync(customer);
                 return customer;
             });

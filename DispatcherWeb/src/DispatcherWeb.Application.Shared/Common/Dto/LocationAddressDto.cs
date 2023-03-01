@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Common.Dto
+﻿namespace DispatcherWeb.Common.Dto
 {
     public class LocationAddressDto
     {

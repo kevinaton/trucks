@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Timing;
 using Abp.UI;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.Locations;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;
@@ -93,21 +91,21 @@ namespace DispatcherWeb.Tests.Orders
                 await context.OrderLineTrucks.Where(olt => !olt.IsDeleted && olt.OrderLineId == _orderLineId).ToListAsync()
             );
             orderLineTrucks.Count.ShouldBe(1);
-			await UsingDbContextAsync(async context =>
-			{
-				var orderLine = await context.OrderLines.FindAsync(_orderLineId);
-				orderLine.Tickets = new List<Ticket> {
-					new Ticket()
-					{
-						TenantId = 1,
-						OfficeId = _officeId,
-					}
-				};
-			});
-			var office2 = await CreateOffice();
+            await UsingDbContextAsync(async context =>
+            {
+                var orderLine = await context.OrderLines.FindAsync(_orderLineId);
+                orderLine.Tickets = new List<Ticket> {
+                    new Ticket()
+                    {
+                        TenantId = 1,
+                        OfficeId = _officeId,
+                    }
+                };
+            });
+            var office2 = await CreateOffice();
 
-			// Act
-			await _orderAppService.EditOrder(new OrderEditDto
+            // Act
+            await _orderAppService.EditOrder(new OrderEditDto
             {
                 Id = _order.Id,
                 DeliveryDate = _order.DeliveryDate,
@@ -129,16 +127,16 @@ namespace DispatcherWeb.Tests.Orders
                 await context.OrderLineTrucks.Where(olt => !olt.IsDeleted && olt.OrderLineId == _orderLineId).ToListAsync()
             );
             orderLineTrucks.Count.ShouldBe(1);
-			await CreateDispatch(truck.Id, driver.Id, _orderLineId, DispatchStatus.Sent);
-			var customer2 = await UsingDbContextAsync(async context =>
-			{
-				var c = new Customer() { TenantId = 1, Name = "Cust2" };
-				await context.Customers.AddAsync(c);
-				return c;
-			});
+            await CreateDispatch(truck.Id, driver.Id, _orderLineId, DispatchStatus.Sent);
+            var customer2 = await UsingDbContextAsync(async context =>
+            {
+                var c = new Customer() { TenantId = 1, Name = "Cust2" };
+                await context.Customers.AddAsync(c);
+                return c;
+            });
 
-			// Act
-			await _orderAppService.EditOrder(new OrderEditDto
+            // Act
+            await _orderAppService.EditOrder(new OrderEditDto
             {
                 Id = _order.Id,
                 DeliveryDate = _order.DeliveryDate,
@@ -218,7 +216,7 @@ namespace DispatcherWeb.Tests.Orders
             var orderLines = _order.OrderLines.ToList();
             await UpdateEntity(orderLines[0], ol => ol.TimeOnJob = olTimeOnJob);
             await UpdateEntity(orderLines[1], ol => ol.TimeOnJob = olTimeOnJob);
-            
+
             // Act
             await _orderAppService.EditOrder(new OrderEditDto
             {

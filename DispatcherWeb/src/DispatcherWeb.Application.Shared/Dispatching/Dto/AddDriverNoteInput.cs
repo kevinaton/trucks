@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DispatcherWeb.Dispatching.Dto
+﻿namespace DispatcherWeb.Dispatching.Dto
 {
     public class AddDriverNoteInput
     {

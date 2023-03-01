@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using DispatcherWeb.Authorization.Users.Importing.Dto;
 using Abp.Dependency;
+using DispatcherWeb.Authorization.Users.Importing.Dto;
 
 namespace DispatcherWeb.Authorization.Users.Importing
 {
-    public interface IUserListExcelDataReader: ITransientDependency
+    public interface IUserListExcelDataReader : ITransientDependency
     {
         List<ImportUserDto> GetUsersFromExcel(byte[] fileBytes);
     }

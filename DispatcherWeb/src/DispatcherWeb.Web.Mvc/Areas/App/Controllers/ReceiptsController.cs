@@ -1,20 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Abp.Application.Services.Dto;
+﻿using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
-using Abp.UI;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.DriverAssignments.Dto;
-using DispatcherWeb.Exceptions;
 using DispatcherWeb.OrderPayments;
 using DispatcherWeb.Orders;
-using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.Orders.SendOrdersToDrivers;
-using DispatcherWeb.Quotes.Dto;
 using DispatcherWeb.Receipts;
 using DispatcherWeb.Receipts.Dto;
-using DispatcherWeb.Web.Areas.App.Models.Orders;
-using DispatcherWeb.Web.Areas.App.Models.Shared;
 using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.Web.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +45,6 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             var model = await _receiptAppService.GetReceiptLineForEdit(new GetReceiptLineForEditInput(id, receiptId));
             return PartialView("_CreateOrEditReceiptLineModal", model);
         }
-       
+
     }
 }

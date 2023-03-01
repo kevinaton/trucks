@@ -9,15 +9,15 @@ using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
-using DispatcherWeb.Emailing.Dto;
 using Abp.Linq.Extensions;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Customers;
+using DispatcherWeb.Emailing.Dto;
+using DispatcherWeb.Invoices;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Quotes;
 using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Invoices;
 
 namespace DispatcherWeb.Emailing
 {
@@ -196,7 +196,7 @@ namespace DispatcherWeb.Emailing
             var trackableEmail = CreateTrackableEmail(mail);
             var id = await _emailRepository.InsertAndGetIdAsync(trackableEmail);
             var receivers = mail.GetTrackableEmailReceivers(id).SetTenantId(Session.TenantId);
-            receivers.ForEach(async x => await _receiverRepository.InsertAsync(x)); 
+            receivers.ForEach(async x => await _receiverRepository.InsertAsync(x));
             return id;
         }
 
@@ -242,7 +242,7 @@ namespace DispatcherWeb.Emailing
                 input.CustomerName = quote.CustomerName;
                 input.QuoteName = quote.QuoteName;
             }
-            else if(input.CustomerId.HasValue)
+            else if (input.CustomerId.HasValue)
             {
                 input.CustomerName = await _customerRepository.GetAll()
                     .Where(x => x.Id == input.CustomerId)
@@ -267,7 +267,7 @@ namespace DispatcherWeb.Emailing
                 .WhereIf(input.OrderId.HasValue, x => x.TrackableEmail.OrderEmails.Any(o => o.OrderId == input.OrderId));
 
             var totalCount = await query.CountAsync();
-            
+
             var items = await query
                 .Select(x => new EmailHistoryDto
                 {

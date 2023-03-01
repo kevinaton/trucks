@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.EntityFrameworkCore;
-using Abp.UI;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Projects;
 using DispatcherWeb.Quotes;
@@ -13,7 +12,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Repositories
 {
     public class ServiceRepository : DispatcherWebRepositoryBase<Service>, IServiceRepository
     {
-        public ServiceRepository(IDbContextProvider<DispatcherWebDbContext> dbContextProvider) 
+        public ServiceRepository(IDbContextProvider<DispatcherWebDbContext> dbContextProvider)
             : base(dbContextProvider)
         {
         }
@@ -21,7 +20,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Repositories
         public async Task MergeServicesAsync(List<int> recordIds, int mainRecordId, int? tenantId)
         {
             recordIds.RemoveAll(x => x == mainRecordId);
-            
+
             var allRecordIds = recordIds.Union(new[] { mainRecordId }).Distinct().ToList();
             var records = await GetAll()
                 .Include(x => x.OfficeServicePrices)
@@ -65,7 +64,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Repositories
             await context.MergeEntitiesAsync(nameof(Ticket), nameof(Ticket.ServiceId), tenantId, mainRecordId, allRecordIds);
             //await context.MergeEntitiesAsync(nameof(OfficeServicePrice), nameof(OfficeServicePrice.ServiceId), tenantId, mainRecordId, allRecordIds);
 
-            foreach(var record in records)
+            foreach (var record in records)
             {
                 foreach (var price in record.OfficeServicePrices.ToList())
                 {

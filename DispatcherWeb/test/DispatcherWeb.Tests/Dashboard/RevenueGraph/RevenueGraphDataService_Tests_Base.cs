@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using AutoFixture;
 using DispatcherWeb.Customers;
-using DispatcherWeb.Dashboard.RevenueGraph;
-using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
-using DispatcherWeb.Dashboard.RevenueGraph.DataServices;
-using DispatcherWeb.Dashboard.RevenueGraph.Dto;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
-using Shouldly;
 using Xunit;
 
 namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
@@ -29,12 +22,12 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
             _startDate = new DateTime(2019, 3, 1);
         }
 
-        protected async Task CreateOrdersAndOrderLinesAndTicketsOrOfficeAmounts(DateTime startDate, DateTime endDate, bool tickets)
+        protected async Task CreateOrdersAndOrderLinesAndTickets(DateTime startDate, DateTime endDate)
         {
             var truck = await CreateTruck();
             await UsingDbContextAsync(async context =>
             {
-                var customer = context.Customers.FirstOrDefault() ?? new Customer() {TenantId = 1, Name = "Cust"};
+                var customer = context.Customers.FirstOrDefault() ?? new Customer() { TenantId = 1, Name = "Cust" };
 
                 var currentDate = _startDate;
                 int i = 0;
@@ -75,33 +68,20 @@ namespace DispatcherWeb.Tests.Dashboard.RevenueGraph
                     };
                     order.OrderLines.Add(orderLine);
 
-                    if (tickets)
+                    Ticket ticket = new Ticket()
                     {
-                        Ticket ticket = new Ticket()
-                        {
-                            TenantId = 1,
-                            OfficeId = order.LocationId,
-                            TruckId = truck.Id,
-                            TruckCode = truck.TruckCode,
-                            Customer = order.Customer,
-                            Service = orderLine.Service,
-                            TicketDateTime = order.DeliveryDate,
-                            TicketNumber = $"ticket_{++i:N3}",
-                            Quantity = 10,
-                            UnitOfMeasureId = 1
-                        };
-                        orderLine.Tickets = new List<Ticket>() { ticket };
-                    }
-                    else
-                    {
-                        OrderLineOfficeAmount officeAmount = new OrderLineOfficeAmount()
-                        {
-                            TenantId = 1,
-                            OfficeId = order.LocationId,
-                            ActualQuantity = 10,
-                        };
-                        orderLine.OfficeAmounts = new List<OrderLineOfficeAmount>() { officeAmount };
-                    }
+                        TenantId = 1,
+                        OfficeId = order.LocationId,
+                        TruckId = truck.Id,
+                        TruckCode = truck.TruckCode,
+                        Customer = order.Customer,
+                        Service = orderLine.Service,
+                        TicketDateTime = order.DeliveryDate,
+                        TicketNumber = $"ticket_{++i:N3}",
+                        Quantity = 10,
+                        UnitOfMeasureId = 1
+                    };
+                    orderLine.Tickets = new List<Ticket>() { ticket };
 
                     await context.Orders.AddAsync(order);
 

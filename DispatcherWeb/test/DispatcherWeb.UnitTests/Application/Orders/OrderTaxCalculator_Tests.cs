@@ -4,7 +4,6 @@ using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Orders;
-using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Orders.TaxDetails;
 using NSubstitute;
 using Shouldly;
@@ -28,8 +27,8 @@ namespace DispatcherWeb.UnitTests.Application.Orders
             var receiptLineRepository = Substitute.For<IRepository<ReceiptLine>>();
 
             _orderTaxCalculator = new OrderTaxCalculator(
-                _settingManager, 
-                orderRepository, 
+                _settingManager,
+                orderRepository,
                 orderLineRepository,
                 receiptRepository,
                 receiptLineRepository,
@@ -228,7 +227,7 @@ namespace DispatcherWeb.UnitTests.Application.Orders
             {
                 new OrderLineTaxDetailsDto { FreightPrice = 1936.2M, IsTaxable = true }
             };
-            
+
             // Act
             OrderTaxCalculator.CalculateTotals(TaxCalculationType.FreightAndMaterialTotal, order, orderLines);
 

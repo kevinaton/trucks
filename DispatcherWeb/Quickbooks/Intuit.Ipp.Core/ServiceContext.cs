@@ -22,17 +22,12 @@
 namespace Intuit.Ipp.Core
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
-    using System.Net;
-    using System.Xml;
     using Configuration;
-    using Rest;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
     using Intuit.Ipp.Security;
-    using System.Collections.Generic;
-
-    using System.Configuration;
 #if NETCORE
     using Microsoft.Extensions.Configuration;
 #endif
@@ -185,7 +180,7 @@ namespace Intuit.Ipp.Core
             this.realmId = realmId;
             this.serviceType = serviceType;
             this.appToken = appToken;
-            
+
             if (requestValidator != null)
             {
                 this.IppConfiguration.Security = requestValidator;
@@ -287,10 +282,11 @@ namespace Intuit.Ipp.Core
         /// <summary>
         /// Gets Unique requestId for the API call.
         /// </summary>
-        public string RequestId {
+        public string RequestId
+        {
             get
             {
-                if (this.requestId ==null)
+                if (this.requestId == null)
                 {
                     this.requestId = Guid.NewGuid().ToString("N");
                 }

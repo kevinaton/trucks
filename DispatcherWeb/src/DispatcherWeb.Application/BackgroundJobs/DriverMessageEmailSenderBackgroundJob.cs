@@ -1,4 +1,7 @@
-﻿using Abp.BackgroundJobs;
+﻿using System;
+using System.Net.Mail;
+using System.Threading.Tasks;
+using Abp.BackgroundJobs;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
@@ -12,9 +15,6 @@ using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Runtime.Session;
-using System;
-using System.Net.Mail;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.BackgroundJobs
 {

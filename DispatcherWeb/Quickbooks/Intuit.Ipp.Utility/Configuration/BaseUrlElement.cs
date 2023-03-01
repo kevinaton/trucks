@@ -27,7 +27,7 @@ namespace Intuit.Ipp.Utility
     /// </summary>
     public class BaseUrlElement : ConfigurationElement
     {
-       
+
         /// <summary>
         /// Gets Url for QuickBooks Online Rest Service.
         /// </summary>

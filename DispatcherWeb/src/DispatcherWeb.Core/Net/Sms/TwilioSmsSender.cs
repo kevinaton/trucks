@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Abp.Dependency;
-using DispatcherWeb.Identity;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
@@ -9,7 +8,7 @@ namespace DispatcherWeb.Net.Sms
     public class TwilioSmsSender : ISmsSender, ITransientDependency
     {
         private TwilioSmsSenderConfiguration _twilioSmsSenderConfiguration;
-        
+
         public TwilioSmsSender(TwilioSmsSenderConfiguration twilioSmsSenderConfiguration)
         {
             _twilioSmsSenderConfiguration = twilioSmsSenderConfiguration;

@@ -91,7 +91,7 @@ namespace Intuit.Ipp.Exception
             : base(errorMessage, errorCode, source, innerException)
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the ServiceException class.
         /// </summary>

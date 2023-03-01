@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Abp.Application.Services;
 using Abp.Domain.Repositories;
-using Abp.Domain.Uow;
 using Abp.Runtime.Validation;
 using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;

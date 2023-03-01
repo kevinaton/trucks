@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.MultiTenancy.HostDashboard.Dto;
 using DispatcherWeb.MultiTenancy.Payments;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.MultiTenancy.HostDashboard
 {
@@ -33,10 +32,10 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard
                 .ToListAsync())
                 .GroupBy(s => new DateTime(s.CreationTime.Year, s.CreationTime.Month, s.CreationTime.Day))
                 .Select(s => new IncomeStastistic
-                 {
-                     Date = s.Key.Date,
-                     Amount = s.Sum(c => c.Amount)
-                 })
+                {
+                    Date = s.Key.Date,
+                    Amount = s.Sum(c => c.Amount)
+                })
                 .ToList();
 
             FillGapsInDailyIncomeStatistics(dailyRecords, startDate, endDate);

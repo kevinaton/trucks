@@ -21,10 +21,8 @@
 
 namespace Intuit.Ipp.Data
 {
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Xml;
-    using Intuit.Ipp.Utility;
 
     /// <summary>
     /// Encapsulates the information about a given role.

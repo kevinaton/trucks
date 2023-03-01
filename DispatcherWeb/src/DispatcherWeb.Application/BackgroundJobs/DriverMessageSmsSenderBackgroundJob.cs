@@ -1,4 +1,6 @@
-﻿using Abp.BackgroundJobs;
+﻿using System;
+using System.Threading.Tasks;
+using Abp.BackgroundJobs;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
@@ -10,9 +12,6 @@ using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.Infrastructure.Sms.Dto;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Runtime.Session;
-using DispatcherWeb.Sms;
-using System;
-using System.Threading.Tasks;
 using Twilio.Exceptions;
 
 namespace DispatcherWeb.BackgroundJobs

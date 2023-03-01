@@ -1,10 +1,8 @@
-﻿using Intuit.Ipp.Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Intuit.Ipp.Core;
 using Intuit.Ipp.Data;
 using Intuit.Ipp.QueryFilter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace DispatcherWeb.QuickbooksOnline
 {

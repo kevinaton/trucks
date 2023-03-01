@@ -5,19 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Auditing;
-using Abp.Runtime.Session;
-using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Authentication.TwoFactor;
-using DispatcherWeb.Editions;
-using DispatcherWeb.MultiTenancy.Payments;
-using DispatcherWeb.Sessions.Dto;
-using DispatcherWeb.Authorization.Delegation;
-using DispatcherWeb.Authorization.Users;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Localization;
+using Abp.Runtime.Session;
+using DispatcherWeb.Authentication.TwoFactor;
+using DispatcherWeb.Authorization.Delegation;
+using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.Editions;
 using DispatcherWeb.Features;
+using DispatcherWeb.MultiTenancy.Payments;
+using DispatcherWeb.Sessions.Dto;
 using DispatcherWeb.Trucks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Sessions
 {
@@ -34,7 +34,7 @@ namespace DispatcherWeb.Sessions
             ISubscriptionPaymentRepository subscriptionPaymentRepository,
             IUserDelegationConfiguration userDelegationConfiguration,
             IUnitOfWorkManager unitOfWorkManager,
-            EditionManager editionManager, 
+            EditionManager editionManager,
             ILocalizationContext localizationContext,
             IRepository<Truck> truckRepository
             )
@@ -125,13 +125,13 @@ namespace DispatcherWeb.Sessions
             {
                 return tenantLoginInfo;
             }
-            
+
             var features = FeatureManager
                 .GetAll()
                 .Where(feature => (feature[FeatureMetadata.CustomFeatureKey] as FeatureMetadata)?.IsVisibleOnPricingTable ?? false);
-            
+
             var featureDictionary = features.ToDictionary(feature => feature.Name, f => f);
-            
+
             tenantLoginInfo.FeatureValues = (await _editionManager.GetFeatureValuesAsync(tenant.EditionId.Value))
                 .Where(featureValue => featureDictionary.ContainsKey(featureValue.Name))
                 .Select(fv => new NameValueDto(

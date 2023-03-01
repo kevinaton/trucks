@@ -35,7 +35,7 @@
             public const int Transmission = General.Medium;
             public const int Engine = General.Medium;
             public const int RearEnd = General.Medium;
-            public const int Make  = General.Medium;
+            public const int Make = General.Medium;
             public const int Model = General.Medium;
             public const int Vin = General.Medium;
             public const int Plate = General.Short;
@@ -70,7 +70,7 @@
             public const int IncomeAccount = General.Long;
         }
 
-       
+
 
         public static class DriverMessage
         {
@@ -129,6 +129,10 @@
 
         public static class Dispatch
         {
+            public const int PhoneNumber = General.PhoneNumber;
+            public const int Email = General.Email;
+            public const int Message = 4000;
+            public const int SmsMessageLimit = 550;
             public const int Note = 1000;
         }
 

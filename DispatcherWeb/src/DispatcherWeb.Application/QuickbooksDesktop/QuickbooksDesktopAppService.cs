@@ -1,4 +1,9 @@
-﻿using Abp.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Timing;
@@ -6,18 +11,13 @@ using DispatcherWeb.Configuration;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.QuickbooksOnline;
 using DispatcherWeb.QuickbooksDesktop.Dto;
 using DispatcherWeb.QuickbooksDesktop.Models;
+using DispatcherWeb.QuickbooksOnline;
 using DispatcherWeb.Services;
 using DispatcherWeb.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.QuickbooksDesktop
 {

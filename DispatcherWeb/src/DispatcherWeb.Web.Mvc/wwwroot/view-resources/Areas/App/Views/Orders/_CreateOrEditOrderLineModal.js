@@ -5,6 +5,7 @@
         var _orderAppService = abp.services.app.order;
         var _$form = null;
         var _quoteId = null;
+        var _quoteServiceId = null;
         var _pricing = null;
         var _orderLine = null;
         var _initializing = false;
@@ -104,6 +105,7 @@
             
 
             _quoteId = _$form.find("#QuoteId").val();
+            _quoteServiceId = _$form.find("#QuoteServiceId").val();
 
             _loadAtDropdown = _$form.find("#LoadAtId");
             _deliverToDropdown = _$form.find("#DeliverToId");
@@ -194,16 +196,6 @@
             reloadPricing();
             refreshHighlighting();
 
-            _loadAtDropdown.add(_deliverToDropdown).change(function () {
-                var sender = $(this);
-                var val = sender.val();
-                if (val && val.startsWith(abp.helper.googlePlacesHelper.googlePlaceIdPrefix)) {
-                    return;
-                }
-                reloadPricing(function () {
-                    recalculate(sender);
-                });
-            });
             _serviceDropdown.change(function () {
                 var sender = $(this);
                 reloadPricing(function () {
@@ -260,7 +252,7 @@
             if (_quoteId) {
                 _designationDropdown
                     .add(_loadAtDropdown)
-                    .add(_deliverToDropdown)
+                    //.add(_deliverToDropdown)
                     .add(_serviceDropdown)
                     .add(_freightUomDropdown)
                     .add(_materialUomDropdown)
@@ -338,9 +330,7 @@
                 serviceId: _serviceDropdown.val(),
                 materialUomId: _materialUomDropdown.val(),
                 freightUomId: _freightUomDropdown.val(),
-                loadAtId: _loadAtDropdown.val(),
-                deliverToId: _deliverToDropdown.val(),
-                quoteId: _quoteId
+                quoteServiceId: _quoteServiceId
             }).done(function (pricing) {
                 _pricing = pricing;
                 refreshHighlighting();
@@ -351,14 +341,10 @@
 
         function refreshHighlighting() {
             if (_pricing && _pricing.quoteBasedPricing) {
-                _loadAtDropdown.addClass("quote-based-pricing");
-                _deliverToDropdown.addClass("quote-based-pricing");
                 _serviceDropdown.addClass("quote-based-pricing");
                 _materialUomDropdown.addClass("quote-based-pricing");
                 _freightUomDropdown.addClass("quote-based-pricing");
             } else {
-                _loadAtDropdown.removeClass("quote-based-pricing");
-                _deliverToDropdown.removeClass("quote-based-pricing");
                 _serviceDropdown.removeClass("quote-based-pricing");
                 _materialUomDropdown.removeClass("quote-based-pricing");
                 _freightUomDropdown.removeClass("quote-based-pricing");
@@ -537,7 +523,7 @@
                 }
             } else {
                 //no freight pricing
-                if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
+                if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown))) {
                     _freightPricePerUnitInput.val('');
                 }
             }
@@ -550,7 +536,7 @@
                 }
             } else {
                 //no material pricing
-                if (!getIsMaterialPricePerUnitOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown) || sender.is(_loadAtDropdown) || sender.is(_deliverToDropdown))) {
+                if (!getIsMaterialPricePerUnitOverridden() && (sender.is(_materialUomDropdown) || sender.is(_serviceDropdown))) {
                     _materialPricePerUnitInput.val('');
                 }
             }
@@ -645,6 +631,7 @@
             orderLine.Id = orderLine.Id ? Number(orderLine.Id) : null;
             orderLine.OrderId = orderLine.OrderId ? Number(orderLine.OrderId) : 0;
             orderLine.QuoteId = orderLine.QuoteId ? Number(orderLine.QuoteId) : null;
+            orderLine.QuoteServiceId = orderLine.QuoteServiceId ? Number(orderLine.QuoteServiceId) : null;
 
             if (!parseFloat(orderLine.MaterialQuantity) && parseFloat(orderLine.MaterialPrice)
                 || !parseFloat(orderLine.FreightQuantity) && parseFloat(orderLine.FreightPrice)) {
@@ -664,6 +651,7 @@
             _orderLine.id = orderLine.Id;
             _orderLine.orderId = orderLine.OrderId;
             _orderLine.quoteId = orderLine.QuoteId;
+            _orderLine.quoteServiceId = orderLine.QuoteServiceId;
             _orderLine.isMaterialPricePerUnitOverridden = orderLine.IsMaterialPricePerUnitOverridden === "True";
             _orderLine.isFreightPricePerUnitOverridden = orderLine.IsFreightPricePerUnitOverridden === "True";
             _orderLine.isMaterialPriceOverridden = orderLine.IsMaterialPriceOverridden === "True";
@@ -775,6 +763,7 @@
             _$form.find("#Id").val(_orderLine.id);
             _$form.find("#OrderId").val(_orderLine.orderId);
             _$form.find("#QuoteId").val(_orderLine.quoteId);
+            _$form.find("#QuoteServiceId").val(_orderLine.quoteServiceId);
             _$form.find("#IsMaterialPricePerUnitOverridden").val(_orderLine.isMaterialPricePerUnitOverridden ? "True" : "False");
             _$form.find("#IsFreightPricePerUnitOverridden").val(_orderLine.isFreightPricePerUnitOverridden ? "True" : "False");
             _$form.find("#IsMaterialPriceOverridden").val(_orderLine.isMaterialPriceOverridden ? "True" : "False");
@@ -803,6 +792,7 @@
             _$form.find("#Note").val(_orderLine.note);
 
             _quoteId = _$form.find("#QuoteId").val();
+            _quoteServiceId = _$form.find("#QuoteServiceId").val();
 
             updateStaggeredTimeControls();
             updateTimeOnJobInput();

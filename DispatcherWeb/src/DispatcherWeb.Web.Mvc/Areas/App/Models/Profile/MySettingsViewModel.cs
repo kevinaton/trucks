@@ -2,8 +2,8 @@
 using Abp.Application.Services.Dto;
 using Abp.Authorization.Users;
 using Abp.AutoMapper;
-using IdentityServer4.Extensions;
 using DispatcherWeb.Authorization.Users.Profile.Dto;
+using IdentityServer4.Extensions;
 
 namespace DispatcherWeb.Web.Areas.App.Models.Profile
 {

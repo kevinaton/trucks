@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Abp;
+﻿using Abp;
 using Abp.Application.Features;
 using Abp.Application.Services;
 using Abp.Configuration;
@@ -18,43 +13,43 @@ namespace DispatcherWeb.Tests.TestInfrastructure
     public static class AbpServiceBaseExtensions
     {
         public static ISettingManager SubstituteSetting(this AbpServiceBase service, string settingName, string settingValue)
-		{
-			var settingManager = GetSettingManager();
-			settingManager.GetSettingValueAsync(settingName).Returns(settingValue);
-			service.SettingManager = settingManager;
-			return settingManager;
-		}
+        {
+            var settingManager = GetSettingManager();
+            settingManager.GetSettingValueAsync(settingName).Returns(settingValue);
+            service.SettingManager = settingManager;
+            return settingManager;
+        }
 
         public static ISettingManager SubstituteSettingForUser(this AbpServiceBase service, string settingName, string settingValue, UserIdentifier userIdentifier)
-		{
-			var settingManager = GetSettingManager();
-			settingManager.GetSettingValueForUserAsync(settingName, userIdentifier).Returns(settingValue);
-			service.SettingManager = settingManager;
-			return settingManager;
-		}
+        {
+            var settingManager = GetSettingManager();
+            settingManager.GetSettingValueForUserAsync(settingName, userIdentifier).Returns(settingValue);
+            service.SettingManager = settingManager;
+            return settingManager;
+        }
 
-		public static ISettingManager SubstituteSettingForTenant(this AbpServiceBase service, string settingName, string settingValue, int tenantId)
-		{
-			var settingManager = GetSettingManager();
-			settingManager.GetSettingValueForTenantAsync(settingName, tenantId).Returns(settingValue);
-			service.SettingManager = settingManager;
-			return settingManager;
-		}
+        public static ISettingManager SubstituteSettingForTenant(this AbpServiceBase service, string settingName, string settingValue, int tenantId)
+        {
+            var settingManager = GetSettingManager();
+            settingManager.GetSettingValueForTenantAsync(settingName, tenantId).Returns(settingValue);
+            service.SettingManager = settingManager;
+            return settingManager;
+        }
 
-		public static ISettingManager SubstituteDispatchSettings(this AbpServiceBase service, DispatchVia dispatchVia)
-		{
-			var settingManager = GetSettingManager();
-			settingManager.GetSettingValueAsync(AppSettings.DispatchingAndMessaging.DispatchVia).Returns(((int)dispatchVia).ToString());
-			service.SettingManager = settingManager;
-			return settingManager;
-		}
+        public static ISettingManager SubstituteDispatchSettings(this AbpServiceBase service, DispatchVia dispatchVia)
+        {
+            var settingManager = GetSettingManager();
+            settingManager.GetSettingValueAsync(AppSettings.DispatchingAndMessaging.DispatchVia).Returns(((int)dispatchVia).ToString());
+            service.SettingManager = settingManager;
+            return settingManager;
+        }
 
-		private static ISettingManager GetSettingManager()
-		{
-			var settingManager = Substitute.For<ISettingManager>();
-			settingManager.GetSettingValueAsync(TimingSettingNames.TimeZone).Returns("UTC");
-			return settingManager;
-		}
+        private static ISettingManager GetSettingManager()
+        {
+            var settingManager = Substitute.For<ISettingManager>();
+            settingManager.GetSettingValueAsync(TimingSettingNames.TimeZone).Returns("UTC");
+            return settingManager;
+        }
 
         public static IFeatureChecker SubstituteAllowLeaseHaulersFeature(this ApplicationService service, bool value)
         {

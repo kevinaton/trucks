@@ -1,5 +1,4 @@
 ﻿using Abp.Domain.Repositories;
-using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.MultiTenancy;
 
 namespace DispatcherWeb.Infrastructure.General

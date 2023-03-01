@@ -8,13 +8,13 @@ namespace DispatcherWeb.Web.Models.Layout
     public class HeaderViewModel
     {
         public GetCurrentLoginInformationsOutput LoginInformations { get; set; }
-        
+
         public IReadOnlyList<LanguageInfo> Languages { get; set; }
 
         public LanguageInfo CurrentLanguage { get; set; }
-        
+
         public UserMenu Menu { get; set; }
-        
+
         public string CurrentPageName { get; set; }
 
         public bool IsMultiTenancyEnabled { get; set; }

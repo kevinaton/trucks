@@ -270,7 +270,7 @@ namespace DispatcherWeb.LeaseHaulers
                 return await _leaseHaulerRepository.InsertAndGetIdAsync(leaseHauler);
             }
         }
-        
+
         //*************************************************//
 
         [AbpAuthorize(AppPermissions.Pages_LeaseHauler)]

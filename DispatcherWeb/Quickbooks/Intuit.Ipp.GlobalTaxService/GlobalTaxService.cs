@@ -23,22 +23,15 @@ namespace Intuit.Ipp.GlobalTaxService
 {
 
     using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Globalization;
-    using System.Linq;
     using System.Net;
-    using System.Reflection;
     using Intuit.Ipp.Core;
     using Intuit.Ipp.Core.Rest;
-    using Intuit.Ipp.Data; 
+    using Intuit.Ipp.Data;
     using Intuit.Ipp.Diagnostics;
     using Intuit.Ipp.Exception;
-    using Intuit.Ipp.Utility;
-    using System.Text;
-    using System.IO;
     using Intuit.Ipp.GlobalTaxService.Properties;
-    using Intuit.Ipp.GlobalTaxService;
+    using Intuit.Ipp.Utility;
 
 
     /// <summary>
@@ -47,7 +40,7 @@ namespace Intuit.Ipp.GlobalTaxService
     public class GlobalTaxService
     {
 
-        
+
         /// <summary>
         /// The Service context object.
         /// </summary>
@@ -90,7 +83,7 @@ namespace Intuit.Ipp.GlobalTaxService
 
         #endregion
 
-       
+
         #region Async handlers
         /// <summary>
         /// Gets or sets the call back event for AddTaxCode method in asynchronous call.
@@ -112,7 +105,7 @@ namespace Intuit.Ipp.GlobalTaxService
         {
             this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method AddTaxCode for TaxService.");
 
-       
+
             // Validate parameter
             if (!GlobalTaxServiceHelper.IsTypeNull(taxCode))
             {
@@ -121,9 +114,9 @@ namespace Intuit.Ipp.GlobalTaxService
                 IdsExceptionManager.HandleException(exception);
             }
 
-          
+
             string resourceString = taxCode.GetType().Name.ToLower(CultureInfo.InvariantCulture);
-          
+
 
             // Builds resource Uri
             string uri = string.Format(CultureInfo.InvariantCulture, "{0}/company/{1}/{2}/taxcode", CoreConstants.VERSION, this.serviceContext.RealmId, resourceString);
@@ -140,7 +133,7 @@ namespace Intuit.Ipp.GlobalTaxService
             }
 
             // Prepares request
-            HttpWebRequest request = this.restHandler.PrepareRequest(parameters, taxCode );
+            HttpWebRequest request = this.restHandler.PrepareRequest(parameters, taxCode);
 
             string response = string.Empty;
             try
@@ -156,11 +149,11 @@ namespace Intuit.Ipp.GlobalTaxService
             CoreHelper.CheckNullResponseAndThrowException(response);
 
             // de serialize object
-            IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);             
+            IntuitResponse restResponse = (IntuitResponse)CoreHelper.GetSerializer(this.serviceContext, false).Deserialize<IntuitResponse>(response);
             this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Finished Executing Method Add.");
             return (Intuit.Ipp.Data.TaxService)(restResponse.AnyIntuitObject as Intuit.Ipp.Data.TaxService);
-            
-            
+
+
         }
 
         #endregion
@@ -178,7 +171,7 @@ namespace Intuit.Ipp.GlobalTaxService
             this.serviceContext.IppConfiguration.Logger.CustomLogger.Log(Diagnostics.TraceLevel.Info, "Called Method Add Asynchronously.");
             GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService> callCompletedEventArgs = new GlobalTaxServiceCallCompletedEventArgs<Intuit.Ipp.Data.TaxService>();
             Console.Write("callCompletedEventArgs instantiated \n");
-           
+
             if (!GlobalTaxServiceHelper.IsTypeNull(taxCode))
             {
                 IdsException exception = new IdsException(Resources.ParameterNotNullMessage, new ArgumentNullException(Resources.EntityString));
@@ -191,7 +184,7 @@ namespace Intuit.Ipp.GlobalTaxService
             {
                 try
                 {
-                    GlobalAsyncTaxService asyncService = new GlobalAsyncTaxService(this.serviceContext);                    
+                    GlobalAsyncTaxService asyncService = new GlobalAsyncTaxService(this.serviceContext);
                     asyncService.OnAddTaxCodeAsyncCompleted += new GlobalTaxServiceCallback<Intuit.Ipp.Data.TaxService>.GlobalTaxServiceCallCompletedEventHandler(this.AddTaxCodeAsyncCompleted);
                     asyncService.AddTaxCodeAsync(taxCode as Intuit.Ipp.Data.TaxService);
                 }

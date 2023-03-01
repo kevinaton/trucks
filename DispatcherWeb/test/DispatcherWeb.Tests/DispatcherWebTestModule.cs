@@ -7,13 +7,10 @@ using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Modules;
 using Abp.Net.Mail;
-using Abp.Organizations;
 using Abp.TestBase;
 using Abp.Zero.Configuration;
 using Castle.Core.Logging;
 using Castle.MicroKernel.Registration;
-using Microsoft.Extensions.Configuration;
-using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.EntityFrameworkCore;
@@ -26,6 +23,7 @@ using DispatcherWeb.Tests.Url;
 using DispatcherWeb.Tests.Web;
 using DispatcherWeb.Url;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using NSubstitute;
 
 namespace DispatcherWeb.Tests
@@ -37,7 +35,7 @@ namespace DispatcherWeb.Tests
     public class DispatcherWebTestModule : AbpModule
     {
         public DispatcherWebTestModule(
-            DispatcherWebEntityFrameworkCoreModule abpZeroTemplateEntityFrameworkCoreModule, 
+            DispatcherWebEntityFrameworkCoreModule abpZeroTemplateEntityFrameworkCoreModule,
             IIocManager iocManager
         )
         {

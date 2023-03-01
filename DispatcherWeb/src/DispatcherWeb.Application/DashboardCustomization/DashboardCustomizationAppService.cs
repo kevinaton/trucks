@@ -144,7 +144,7 @@ namespace DispatcherWeb.DashboardCustomization
                     ).ToList()
             );
         }
-        
+
         public List<WidgetOutput> GetAllWidgetDefinitions(GetDashboardInput input)
         {
             var dashboardDefinition = _dashboardConfiguration.DashboardDefinitions.FirstOrDefault(d => d.Name == input.DashboardName);

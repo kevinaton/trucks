@@ -1,7 +1,7 @@
-﻿using DispatcherWeb.Infrastructure.Telematics.Dto;
-using DispatcherWeb.Infrastructure.Telematics.Dto.IntelliShift;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DispatcherWeb.Infrastructure.Telematics.Dto;
+using DispatcherWeb.Infrastructure.Telematics.Dto.IntelliShift;
 
 namespace DispatcherWeb.Infrastructure.Telematics
 {

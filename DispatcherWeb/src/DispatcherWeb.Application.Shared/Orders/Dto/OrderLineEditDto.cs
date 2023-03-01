@@ -1,9 +1,9 @@
-﻿using DispatcherWeb.Common.Dto;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders.TaxDetails;
 using Newtonsoft.Json;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace DispatcherWeb.Orders.Dto
 {
@@ -44,7 +44,7 @@ namespace DispatcherWeb.Orders.Dto
 
         [JsonIgnore]
         public LocationNameDto LoadAt { get; set; }
-        
+
         [JsonIgnore]
         public string LoadAtNamePlain { get; set; }
 
@@ -54,7 +54,7 @@ namespace DispatcherWeb.Orders.Dto
 
         [JsonIgnore]
         public LocationNameDto DeliverTo { get; set; }
-        
+
         [JsonIgnore]
         public string DeliverToNamePlain { get; set; }
 
@@ -74,7 +74,7 @@ namespace DispatcherWeb.Orders.Dto
         public string DesignationName => Designation.GetDisplayName();
 
         public decimal MaterialPrice { get; set; }
-        
+
         public decimal FreightPrice { get; set; }
 
         [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
@@ -105,5 +105,6 @@ namespace DispatcherWeb.Orders.Dto
         public DateTime? FirstStaggeredTimeOnJob { get; set; }
         public int? StaggeredTimeInterval { get; set; }
         public bool UpdateStaggeredTime { get; set; }
+        public int? QuoteServiceId { get; set; }
     }
 }

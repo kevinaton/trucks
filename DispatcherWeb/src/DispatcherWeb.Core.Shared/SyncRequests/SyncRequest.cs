@@ -1,7 +1,7 @@
-﻿using DispatcherWeb.SyncRequests.Entities;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using DispatcherWeb.SyncRequests.Entities;
+using Newtonsoft.Json;
 
 namespace DispatcherWeb.SyncRequests
 {

@@ -26,7 +26,7 @@ namespace DispatcherWeb.HealthChecks
                 var testKey = "Test-" + Guid.NewGuid();
 
                 await cacheManager.SetAsync(testKey, "123");
-                
+
                 await cacheManager.GetOrDefaultAsync(testKey);
 
                 return HealthCheckResult.Healthy("The cache check is healthy. (If you are using Redis, Redis is also checked)");

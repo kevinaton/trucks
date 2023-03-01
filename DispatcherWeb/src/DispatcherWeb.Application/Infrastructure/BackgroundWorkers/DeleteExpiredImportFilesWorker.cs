@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Linq;
-using Abp.Collections.Extensions;
 using Abp.Dependency;
-using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Threading.BackgroundWorkers;
 using Abp.Threading.Timers;
-using Abp.Timing;
 using DispatcherWeb.Infrastructure.AzureBlobs;
 
 namespace DispatcherWeb.Infrastructure.BackgroundWorkers
@@ -31,7 +27,7 @@ namespace DispatcherWeb.Infrastructure.BackgroundWorkers
         }
 
         private void DeleteExpiredImportFiles()
-        {   
+        {
             Logger.Info("Start DeleteExpiredImportFiles()");
             _secureFileBlobService.DeleteExpiredFiles(TimeSpan.FromDays(AppConsts.ImportFilesExpireDayNumber));
         }

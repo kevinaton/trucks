@@ -3,7 +3,6 @@ using Abp.Auditing;
 using Abp.Authorization.Users;
 using Abp.MultiTenancy;
 using DispatcherWeb.MultiTenancy.Payments;
-using DispatcherWeb.MultiTenancy.Payments.Dto;
 
 namespace DispatcherWeb.MultiTenancy.Dto
 {

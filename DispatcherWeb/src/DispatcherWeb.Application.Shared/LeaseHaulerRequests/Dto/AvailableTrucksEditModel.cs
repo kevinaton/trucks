@@ -6,7 +6,7 @@ namespace DispatcherWeb.LeaseHaulerRequests.Dto
     public class AvailableTrucksEditModel
     {
         public string Id { get; set; }
-        
+
         [Required(ErrorMessage = "Number of trucks available is required")]
         public int Available { get; set; }
 

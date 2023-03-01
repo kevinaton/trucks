@@ -1,7 +1,6 @@
-﻿using DispatcherWeb.Offices.Dto;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Offices.Dto;
 
 namespace DispatcherWeb.Receipts.Dto
 {

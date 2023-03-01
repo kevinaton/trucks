@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abp;
@@ -27,7 +26,7 @@ namespace DispatcherWeb.Notifications
         Task SendMessageAsync(UserIdentifier user, string message, NotificationSeverity severity = NotificationSeverity.Info);
 
         Task SendMessageAsync(UserIdentifier[] users, string message, NotificationSeverity severity = NotificationSeverity.Info);
-        
+
         Task SendMessageAsync(UserIdentifier user, LocalizableString localizableMessage, IDictionary<string, object> localizableMessageData = null, NotificationSeverity severity = NotificationSeverity.Info);
 
         Task SendPriorityNotification(SendPriorityNotificationInput input);

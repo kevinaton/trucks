@@ -38,10 +38,10 @@
             });
 
             function formatOrderLineTruck(item) {
-                if (!isDispatchViaSimplifiedSmsEnabled || !item.id || $(item.element).data('hasphone')) {
+                if (!isDispatchViaSimplifiedSmsEnabled || !item.id || $(item.element).data('hascontactinfo')) {
                     return item.text;
                 }
-                var $result = $('<span class="driver-without-phone">').text(item.text).add('<i title="The designated driver does not have an SMS number configured." class="fas fa-exclamation-circle"></i>');
+                var $result = $('<span class="driver-without-phone">').text(item.text).add('<i title="The designated driver does not have an SMS number or email address configured." class="fas fa-exclamation-circle"></i>');
                 return $result;
             }
 

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Dependency;
-using Abp.Extensions;
 using Abp.Runtime.Session;
 
 namespace DispatcherWeb.Authorization.Users.Profile
@@ -35,7 +34,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
                 }
             }
         }
-        
+
         private static string GetMd5Hash(string input)
         {
             // Convert the input string to a byte array and compute the hash.

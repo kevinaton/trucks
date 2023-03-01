@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Abp;
 using Abp.AspNetCore.SignalR.Hubs;
-using Abp.Auditing;
 using Abp.Localization;
 using Abp.RealTime;
 using Abp.Runtime.Session;

@@ -21,7 +21,6 @@
 namespace Intuit.Ipp.Exception
 {
     using System.Runtime.Serialization;
-    using Intuit.Ipp.Exception.Properties;
 
     /// <summary>
     /// Represents an Exception raised when ServiceContext is Null.
@@ -78,7 +77,7 @@ namespace Intuit.Ipp.Exception
             : base(errorMessage, errorCode, source, innerException)
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the ServiceReturnedNoInformationException class.
         /// </summary>

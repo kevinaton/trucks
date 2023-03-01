@@ -16,7 +16,7 @@ namespace DispatcherWeb.Authorization.Delegation
             _userDelegationRepository = userDelegationRepository;
             _unitOfWorkManager = unitOfWorkManager;
         }
-    
+
         public async Task<bool> HasActiveDelegationAsync(long sourceUserId, long targetUserId)
         {
             var activeUserDelegationExpression = new ActiveUserDelegationSpecification(sourceUserId, targetUserId)

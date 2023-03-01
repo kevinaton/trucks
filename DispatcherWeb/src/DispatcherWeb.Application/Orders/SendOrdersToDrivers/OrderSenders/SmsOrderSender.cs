@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -10,7 +9,6 @@ using Abp.Extensions;
 using Abp.UI;
 using Castle.Core.Logging;
 using DispatcherWeb.Configuration;
-using DispatcherWeb.Exceptions;
 using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.Orders.SendOrdersToDrivers.Dto;
 
@@ -35,7 +33,7 @@ namespace DispatcherWeb.Orders.SendOrdersToDrivers.OrderSenders
         [Obsolete("Use dispatcher functionality")]
         public async Task SendAsync(DriverOrderDto driverOrder)
         {
-            if(String.IsNullOrEmpty(driverOrder.CellPhoneNumber))
+            if (String.IsNullOrEmpty(driverOrder.CellPhoneNumber))
             {
                 throw new ApplicationException("Email Address is null or empty!");
             }
@@ -117,6 +115,6 @@ namespace DispatcherWeb.Orders.SendOrdersToDrivers.OrderSenders
             return Utilities.ReplaceTemplateVariables(templateString, varReplacements);
         }
 
-        
+
     }
 }

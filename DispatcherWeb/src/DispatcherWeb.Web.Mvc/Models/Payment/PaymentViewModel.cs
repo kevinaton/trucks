@@ -13,7 +13,7 @@ namespace DispatcherWeb.Web.Models.Payment
         public decimal? AdditionalPrice { get; set; }
 
         public EditionPaymentType EditionPaymentType { get; set; }
-        
+
         public string GetAdditionalData(SubscriptionPaymentGatewayType gateway, string key)
         {
             return Edition.AdditionalData[gateway][key];
@@ -25,7 +25,7 @@ namespace DispatcherWeb.Web.Models.Payment
             {
                 return "";
             }
-                   
+
             return "App";
         }
 

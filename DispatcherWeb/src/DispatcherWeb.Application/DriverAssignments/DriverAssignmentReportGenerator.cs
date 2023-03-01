@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using System.Linq;
 using DispatcherWeb.DriverAssignments.Dto;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
@@ -52,18 +49,18 @@ namespace DispatcherWeb.DriverAssignments
             paragraph = document.LastSection.AddParagraph();
             paragraph.Format.Font.Size = Unit.FromPoint(12);
             paragraph.AddText("Date: " + model.Date.ToShortDateString());
-			if (model.Shift.HasValue)
-			{
-				paragraph.Format.AddTabStop(Unit.FromCentimeter(6), TabAlignment.Right);
-				paragraph.AddTab();
-				paragraph.AddText("Shift: " + model.ShiftName);
-			}
-			else
-			{
-				paragraph.Format.AddTabStop(Unit.FromCentimeter(12), TabAlignment.Right);
-			}
-			paragraph.AddTab();
-			paragraph.AddText("Office: " + model.OfficeName);
+            if (model.Shift.HasValue)
+            {
+                paragraph.Format.AddTabStop(Unit.FromCentimeter(6), TabAlignment.Right);
+                paragraph.AddTab();
+                paragraph.AddText("Shift: " + model.ShiftName);
+            }
+            else
+            {
+                paragraph.Format.AddTabStop(Unit.FromCentimeter(12), TabAlignment.Right);
+            }
+            paragraph.AddTab();
+            paragraph.AddText("Office: " + model.OfficeName);
 
             Table table = document.LastSection.AddTable();
             table.Style = "Table";

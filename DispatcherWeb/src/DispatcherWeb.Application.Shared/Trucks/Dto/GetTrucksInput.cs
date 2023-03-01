@@ -12,10 +12,10 @@ namespace DispatcherWeb.Trucks.Dto
 
         public FilterActiveStatus Status { get; set; }
 
-		public bool? IsOutOfService { get; set; }
-		public bool PlatesExpiringThisMonth { get; set; }
+        public bool? IsOutOfService { get; set; }
+        public bool PlatesExpiringThisMonth { get; set; }
 
-		public void Normalize()
+        public void Normalize()
         {
             if (Sorting.IsNullOrEmpty())
             {

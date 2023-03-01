@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Dashboard.Dto
+﻿namespace DispatcherWeb.Dashboard.Dto
 {
     public class ScheduledTruckCountDto
     {

@@ -30,7 +30,7 @@ namespace DispatcherWeb.Localization
         public string TargetValueFilter { get; set; }
 
         public string FilterText { get; set; }
-        
+
         public void Normalize()
         {
             if (TargetValueFilter.IsNullOrEmpty())

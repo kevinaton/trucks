@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Abp;
-using Abp.AutoMapper;
 using Abp.Dependency;
 using Abp.Events.Bus.Entities;
 using Abp.Events.Bus.Handlers;

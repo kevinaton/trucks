@@ -10,7 +10,6 @@ using Abp.Net.Mail;
 using Abp.TestBase;
 using Abp.Zero.Configuration;
 using Castle.MicroKernel.Registration;
-using Microsoft.Extensions.Configuration;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.EntityFrameworkCore;
@@ -20,6 +19,7 @@ using DispatcherWeb.Test.Base.DependencyInjection;
 using DispatcherWeb.Test.Base.Url;
 using DispatcherWeb.Test.Base.Web;
 using DispatcherWeb.Url;
+using Microsoft.Extensions.Configuration;
 using NSubstitute;
 
 namespace DispatcherWeb.Test.Base

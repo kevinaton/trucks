@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
@@ -9,10 +8,9 @@ using Abp.Linq.Extensions;
 using Abp.UI;
 using Castle.Core.Internal;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Dto;
 using DispatcherWeb.Customers.Dto;
 using DispatcherWeb.Customers.Exporting;
-using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Orders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -98,7 +96,7 @@ namespace DispatcherWeb.Customers
         public async Task<PagedResultDto<SelectListDto>> GetActiveCustomersSelectList(GetActiveCustomersSelectListInput input)
         {
             var query = _customerRepository.GetAll()
-                .Where(x => x.IsActive 
+                .Where(x => x.IsActive
                     || input.IncludeInactiveWithInvoices && x.Invoices.Any())
                 .Select(x => new SelectListDto<CustomerSelectListInfoDto>
                 {
@@ -129,8 +127,8 @@ namespace DispatcherWeb.Customers
         public async Task<PagedResultDto<SelectListDto>> GetCustomersWithOrdersSelectList(GetCustomersWithOrdersSelectListInput input)
         {
             var query = _customerRepository.GetAll()
-                .Where(c => 
-                    c.Orders.Any(o => 
+                .Where(c =>
+                    c.Orders.Any(o =>
                         (!input.DateBegin.HasValue || o.DeliveryDate >= input.DateBegin) &&
                         (!input.DateEnd.HasValue || o.DeliveryDate <= input.DateEnd)
                     )
@@ -243,7 +241,7 @@ namespace DispatcherWeb.Customers
         {
             var customer = await _customerRepository.GetAll()
                 .Where(c => c.Name == input.Name)
-                .Select(c => new 
+                .Select(c => new
                 {
                     c.Id,
                     c.Name,

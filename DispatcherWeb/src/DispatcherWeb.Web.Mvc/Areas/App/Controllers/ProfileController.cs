@@ -2,13 +2,13 @@
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Configuration;
 using Abp.MultiTenancy;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Authorization.Users.Profile;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Timing;
 using DispatcherWeb.Timing.Dto;
 using DispatcherWeb.Web.Areas.App.Models.Profile;
 using DispatcherWeb.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
 {
@@ -22,7 +22,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
 
         public ProfileController(
             IProfileAppService profileAppService,
-            ITimingAppService timingAppService, 
+            ITimingAppService timingAppService,
             ITenantCache tenantCache)
         {
             _profileAppService = profileAppService;
@@ -38,7 +38,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
                 DefaultTimezoneScope = SettingScopes.User,
                 SelectedTimezoneId = output.Timezone
             });
-           
+
 
             var viewModel = new MySettingsViewModel(output)
             {
@@ -59,7 +59,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             return PartialView("_ChangePasswordModal");
         }
 
-        
+
 
         public PartialViewResult SmsVerificationModal()
         {

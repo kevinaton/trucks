@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Intuit.Ipp.OAuth2PlatformClient
+﻿namespace Intuit.Ipp.OAuth2PlatformClient
 {
-    using System.IO;
     using System;
+    using System.Globalization;
+    using System.IO;
     using Serilog;
-    using Serilog.Sinks;
     using Serilog.Core;
     using Serilog.Events;
-    using System.Globalization;
 
     /// <summary>
     /// Contains properties used to indicate whether request and response messages are to be logged.

@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Editions;
 using DispatcherWeb.Editions.Dto;
 using DispatcherWeb.Features;
+using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
 namespace DispatcherWeb.Tests.Editions

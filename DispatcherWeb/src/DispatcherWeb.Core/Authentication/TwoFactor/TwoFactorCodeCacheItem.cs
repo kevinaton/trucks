@@ -13,7 +13,7 @@ namespace DispatcherWeb.Authentication.TwoFactor
 
         public TwoFactorCodeCacheItem()
         {
-            
+
         }
 
         public TwoFactorCodeCacheItem(string code)

@@ -9,6 +9,6 @@ namespace DispatcherWeb.Organizations.Dto
 
         [Required]
         [StringLength(OrganizationUnit.MaxDisplayNameLength)]
-        public string DisplayName { get; set; } 
+        public string DisplayName { get; set; }
     }
 }

@@ -5,11 +5,11 @@ using Abp.Dependency;
 using Abp.ObjectMapping;
 using Abp.RealTime;
 using Castle.Core.Logging;
-using Microsoft.AspNetCore.SignalR;
 using DispatcherWeb.Chat;
 using DispatcherWeb.Chat.Dto;
 using DispatcherWeb.Friendships;
 using DispatcherWeb.Friendships.Dto;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DispatcherWeb.Web.Chat.SignalR
 {

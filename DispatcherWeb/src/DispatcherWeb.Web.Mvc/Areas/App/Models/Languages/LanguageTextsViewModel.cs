@@ -9,13 +9,13 @@ namespace DispatcherWeb.Web.Areas.App.Models.Languages
         public string LanguageName { get; set; }
 
         public List<SelectListItem> Sources { get; set; }
-        
+
         public List<LanguageInfo> Languages { get; set; }
 
         public string BaseLanguageName { get; set; }
 
         public string TargetValueFilter { get; set; }
-        
+
         public string FilterText { get; set; }
     }
 }

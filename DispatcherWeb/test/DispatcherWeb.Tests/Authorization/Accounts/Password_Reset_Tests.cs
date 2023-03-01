@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Castle.MicroKernel.Registration;
-using Microsoft.AspNetCore.Identity;
 using DispatcherWeb.Authorization.Accounts;
 using DispatcherWeb.Authorization.Accounts.Dto;
 using DispatcherWeb.Authorization.Users;
+using Microsoft.AspNetCore.Identity;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -31,7 +31,7 @@ namespace DispatcherWeb.Tests.Authorization.Accounts
             });
 
             LocalIocManager.IocContainer.Register(Component.For<IUserEmailer>().Instance(fakeUserEmailer).IsDefault());
-            
+
             var accountAppService = Resolve<IAccountAppService>();
 
             //Act

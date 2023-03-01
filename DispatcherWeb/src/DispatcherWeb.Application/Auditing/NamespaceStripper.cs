@@ -1,6 +1,6 @@
-﻿using Abp.Dependency;
+﻿using System.Linq;
+using Abp.Dependency;
 using Abp.Extensions;
-using System.Linq;
 
 namespace DispatcherWeb.Auditing
 {

@@ -28,8 +28,8 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.ComponentModel;
+using System.Globalization;
 using System.Threading;
 #if GDI
 using System.Drawing;

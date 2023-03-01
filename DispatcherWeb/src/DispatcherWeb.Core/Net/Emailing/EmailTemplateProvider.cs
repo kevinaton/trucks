@@ -6,7 +6,6 @@ using Abp.Extensions;
 using Abp.IO.Extensions;
 using Abp.MultiTenancy;
 using Abp.Reflection.Extensions;
-using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Url;
 
 namespace DispatcherWeb.Net.Emailing

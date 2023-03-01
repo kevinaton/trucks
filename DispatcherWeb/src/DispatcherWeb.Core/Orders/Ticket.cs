@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Invoices;
+using DispatcherWeb.LeaseHaulers;
+using DispatcherWeb.LeaseHaulerStatements;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Offices;
-using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.PayStatements;
 using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.UnitsOfMeasure;
-using DispatcherWeb.LeaseHaulerStatements;
-using DispatcherWeb.LeaseHaulers;
 
 namespace DispatcherWeb.Orders
 {
@@ -118,7 +114,7 @@ namespace DispatcherWeb.Orders
         /// MaterialCompany's tenant id. Only set for HaulingCompany tickets when a copy of this ticket exists on another MaterialCompany tenant.
         /// </summary>
         public int? MaterialCompanyTenantId { get; set; }
-        
+
         /// <summary>
         /// HaulingCompany's ticket id. Only set for MaterialCompany tickets when a copy of this ticket exists on another HaulingCompany tenant.
         /// </summary>
@@ -128,7 +124,7 @@ namespace DispatcherWeb.Orders
         /// </summary>
         public int? HaulingCompanyTenantId { get; set; }
 
-        public virtual LeaseHaulerStatementTicket LeaseHaulerStatementTicket { get;set;}
+        public virtual LeaseHaulerStatementTicket LeaseHaulerStatementTicket { get; set; }
 
         public virtual ICollection<PayStatementTicket> PayStatementTickets { get; set; }
 

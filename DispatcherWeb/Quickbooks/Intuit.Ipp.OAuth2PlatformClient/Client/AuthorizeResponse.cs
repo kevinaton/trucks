@@ -25,16 +25,16 @@ namespace Intuit.Ipp.OAuth2PlatformClient
 
         public string Raw { get; }
         public Dictionary<string, string> Values { get; } = new Dictionary<string, string>();
-        
-        public string Code             => TryGet(OidcConstants.AuthorizeResponse.Code);
-        public string RealmId          => TryGet(OidcConstants.AuthorizeResponse.RealmId);
-        public string Error            => TryGet(OidcConstants.AuthorizeResponse.Error);   
-        public string State            => TryGet(OidcConstants.AuthorizeResponse.State);
-        public string Url              => TryGet(OidcConstants.AuthorizeResponse.Url);
-        public string ErrorDescription => TryGet(OidcConstants.AuthorizeResponse.ErrorDescription);
-        public bool IsError            => !string.IsNullOrEmpty(Error);
 
-     
+        public string Code => TryGet(OidcConstants.AuthorizeResponse.Code);
+        public string RealmId => TryGet(OidcConstants.AuthorizeResponse.RealmId);
+        public string Error => TryGet(OidcConstants.AuthorizeResponse.Error);
+        public string State => TryGet(OidcConstants.AuthorizeResponse.State);
+        public string Url => TryGet(OidcConstants.AuthorizeResponse.Url);
+        public string ErrorDescription => TryGet(OidcConstants.AuthorizeResponse.ErrorDescription);
+        public bool IsError => !string.IsNullOrEmpty(Error);
+
+
 
         private void ParseRaw()
         {
@@ -74,7 +74,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 }
                 else if (parts.Length == 3)
                 {
-                    Values.Add(parts[0], parts[1]+'='+parts[2]);
+                    Values.Add(parts[0], parts[1] + '=' + parts[2]);
                 }
                 else
                 {

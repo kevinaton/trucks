@@ -30,7 +30,6 @@
 #if CORE
 #endif
 
-using System.Diagnostics;
 using PdfSharp.Internal;
 
 #if GDI

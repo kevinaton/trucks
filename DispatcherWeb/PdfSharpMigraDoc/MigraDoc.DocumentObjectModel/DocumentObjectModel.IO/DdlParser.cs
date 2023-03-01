@@ -34,9 +34,9 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using MigraDoc.DocumentObjectModel.publics;
-using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
+using MigraDoc.DocumentObjectModel.Tables;
 
 namespace MigraDoc.DocumentObjectModel.IO
 {

@@ -32,9 +32,9 @@
 
 using System;
 using MigraDoc.DocumentObjectModel.publics;
-using MigraDoc.DocumentObjectModel.Visitors;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
+using MigraDoc.DocumentObjectModel.Visitors;
 
 namespace MigraDoc.DocumentObjectModel.Tables
 {

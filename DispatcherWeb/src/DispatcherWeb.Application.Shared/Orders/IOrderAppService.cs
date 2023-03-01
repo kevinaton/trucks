@@ -1,11 +1,11 @@
-﻿using Abp.Application.Services;
+﻿using System.Threading.Tasks;
+using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using DispatcherWeb.Dispatching.Dto;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Orders.Dto;
 using DispatcherWeb.Scheduling.Dto;
 using MigraDoc.DocumentObjectModel;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Orders
 {
@@ -27,14 +27,10 @@ namespace DispatcherWeb.Orders
         Task<EditOrderLineOutput> EditOrderLine(OrderLineEditDto model);
         Task<DeleteOrderLineOutput> DeleteOrderLine(DeleteOrderLineInput input);
 
-        Task<OrderLineOfficeAmountEditDto> GetOrderLineOfficeAmountForEdit(GetOrderLineOfficeAmountForEditInput input);
         Task<StaggeredTimesDto> GetStaggeredTimesForEdit(NullableIdDto input);
-        Task<EditOrderLineOfficeAmountOutput> EditOrderLineOfficeAmount(OrderLineOfficeAmountEditDto model);
 
         Task<PagedResultDto<ReceiptReportDto>> GetReceipts(GetReceiptReportInput input);
         Task<FileDto> ExportReceiptsToExcel(GetReceiptReportInput input);
-        Task<PagedResultDto<BillingReconciliationDto>> GetBillingReconciliation(GetBillingReconciliationInput input);
-        Task<FileDto> ExportBillingReconciliationToExcel(GetBillingReconciliationInput input);
         Task SetOrderIsBilled(SetOrderIsBilledInput input);
 
         Task<Document> GetWorkOrderReport(GetWorkOrderReportInput input);

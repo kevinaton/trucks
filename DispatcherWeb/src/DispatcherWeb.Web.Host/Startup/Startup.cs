@@ -13,31 +13,31 @@ using Abp.Extensions;
 using Abp.Hangfire;
 using Abp.PlugIns;
 using Castle.Facilities.Logging;
-using Hangfire;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.Identity;
 using DispatcherWeb.Web.Chat.SignalR;
 using DispatcherWeb.Web.Common;
+using DispatcherWeb.Web.HealthCheck;
 using DispatcherWeb.Web.IdentityServer;
 using DispatcherWeb.Web.Swagger;
-using Stripe;
-using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
+using Hangfire;
 using HealthChecks.UI.Client;
 using IdentityServer4.Configuration;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using DispatcherWeb.Web.HealthCheck;
 using Owl.reCAPTCHA;
+using Stripe;
 using HealthChecksUISettings = HealthChecks.UI.Configuration.Settings;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace DispatcherWeb.Web.Startup
 {
@@ -226,25 +226,25 @@ namespace DispatcherWeb.Web.Startup
                 StripeConfiguration.ApiKey = _appConfiguration["Payment:Stripe:SecretKey"];
             }
 
-             app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<AbpCommonHub>("/signalr");
-                endpoints.MapHub<ChatHub>("/signalr-chat");
+            app.UseEndpoints(endpoints =>
+           {
+               endpoints.MapHub<AbpCommonHub>("/signalr");
+               endpoints.MapHub<ChatHub>("/signalr-chat");
 
-                endpoints.MapControllerRoute("defaultWithArea", "{area}/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+               endpoints.MapControllerRoute("defaultWithArea", "{area}/{controller=Home}/{action=Index}/{id?}");
+               endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
-                if (bool.Parse(_appConfiguration["HealthChecks:HealthChecksEnabled"]))
-                {
-                    endpoints.MapHealthChecks("/health", new HealthCheckOptions()
-                    {
-                        Predicate = _ => true,
-                        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                    });
-                }
-                
-                app.ApplicationServices.GetRequiredService<IAbpAspNetCoreConfiguration>().EndpointConfiguration.ConfigureAllEndpoints(endpoints);
-            });
+               if (bool.Parse(_appConfiguration["HealthChecks:HealthChecksEnabled"]))
+               {
+                   endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+                   {
+                       Predicate = _ => true,
+                       ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                   });
+               }
+
+               app.ApplicationServices.GetRequiredService<IAbpAspNetCoreConfiguration>().EndpointConfiguration.ConfigureAllEndpoints(endpoints);
+           });
 
             if (bool.Parse(_appConfiguration["HealthChecks:HealthChecksEnabled"]))
             {
@@ -288,19 +288,19 @@ namespace DispatcherWeb.Web.Startup
                     });
             });
         }
-        
+
         private void ConfigureSwagger(IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo() {Title = "DispatcherWeb API", Version = "v1"});
+                options.SwaggerDoc("v1", new OpenApiInfo() { Title = "DispatcherWeb API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
                 options.ParameterFilter<SwaggerEnumParameterFilter>();
                 options.SchemaFilter<SwaggerEnumSchemaFilter>();
                 options.OperationFilter<SwaggerOperationIdFilter>();
                 options.OperationFilter<SwaggerOperationFilter>();
                 options.CustomDefaultSchemaIdSelector();
-                    
+
                 //add summaries to swagger
                 bool canShowSummaries = _appConfiguration.GetValue<bool>("Swagger:ShowSummaries");
                 if (canShowSummaries)

@@ -13,7 +13,7 @@
         public bool UseCaptchaOnLogin { get; set; }
 
         public bool AllowUsingGravatarProfilePicture { get; set; }
-        
+
         public SessionTimeOutSettingsEditDto SessionTimeOutSettings { get; set; }
     }
 }

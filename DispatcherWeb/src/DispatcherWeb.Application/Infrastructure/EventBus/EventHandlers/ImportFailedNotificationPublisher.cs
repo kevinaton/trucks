@@ -32,9 +32,9 @@ namespace DispatcherWeb.Infrastructure.EventBus.EventHandlers
         }
         private async Task PublishNotificationAsync(UserIdentifier user)
         {
-            await _notificationPublisher.PublishAsync(AppNotificationNames.SimpleMessage, 
-                new MessageNotificationData("Import failed because of unknown error."), 
-                userIds: new[] { user }, 
+            await _notificationPublisher.PublishAsync(AppNotificationNames.SimpleMessage,
+                new MessageNotificationData("Import failed because of unknown error."),
+                userIds: new[] { user },
                 severity: NotificationSeverity.Error);
         }
 

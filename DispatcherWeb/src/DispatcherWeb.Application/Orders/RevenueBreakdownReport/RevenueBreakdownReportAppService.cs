@@ -1,41 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Abp.Linq.Extensions;
-using Abp.Configuration;
 using System.Threading.Tasks;
 using Abp.Collections.Extensions;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
 using Abp.Timing.Timezone;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Reports;
 using DispatcherWeb.Orders.RevenueBreakdownReport.Dto;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Tickets;
-using DispatcherWeb.Common.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Orders.RevenueBreakdownReport
 {
     public class RevenueBreakdownReportAppService : ReportAppServiceBase<RevenueBreakdownReportInput>
     {
-        private readonly IRepository<Ticket> _ticketRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
-        private readonly IRepository<ReceiptLine> _receiptLineRepository;
         private readonly IRevenueBreakdownTimeCalculator _revenueBreakdownTimeCalculator;
 
         public RevenueBreakdownReportAppService(
             ITimeZoneConverter timeZoneConverter,
-            IRepository<Ticket> ticketRepository,
             IRepository<OrderLine> orderLineRepository,
-            IRepository<ReceiptLine> receiptLineRepository,
             IRevenueBreakdownTimeCalculator revenueBreakdownTimeCalculator
         ) : base(timeZoneConverter)
         {
-            _ticketRepository = ticketRepository;
             _orderLineRepository = orderLineRepository;
-            _receiptLineRepository = receiptLineRepository;
             _revenueBreakdownTimeCalculator = revenueBreakdownTimeCalculator;
         }
 
@@ -139,111 +133,13 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
 
         private async Task<List<RevenueBreakdownItem>> GetRevenueBreakdownItems(RevenueBreakdownReportInput input)
         {
-            bool allowAddingTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-            var items = allowAddingTickets ? await GetRevenueBreakdownItemsFromTickets(input) : await GetRevenueBreakdownItemsFromOrderLines(input);
-            //var items = await GetRevenueBreakdownItemsFromReceiptLines(input);
+            var items = await GetRevenueBreakdownItemsFromTickets(input);
 
             await _revenueBreakdownTimeCalculator.FillDriversTimeForOrderLines(items, input);
 
             return items;
         }
 
-        private async Task<List<RevenueBreakdownItem>> GetRevenueBreakdownItemsFromReceiptLines(RevenueBreakdownReportInput input)
-        {
-            return await _receiptLineRepository.GetAll()
-                .WhereIf(input.CustomerId.HasValue, rl => rl.Receipt.CustomerId == input.CustomerId.Value)
-                .WhereIf(input.OfficeId.HasValue, rl => rl.Receipt.OfficeId == input.OfficeId.Value)
-                .WhereIf(input.LoadAtId.HasValue, rl => rl.LoadAtId == input.LoadAtId.Value)
-                .WhereIf(input.DeliverToId.HasValue, rl => rl.DeliverToId == input.DeliverToId.Value)
-                .WhereIf(input.ServiceId.HasValue, rl => rl.ServiceId == input.ServiceId.Value)
-                .WhereIf(!input.Shifts.IsNullOrEmpty() && !input.Shifts.Contains(Shift.NoShift), rl => rl.Receipt.Shift.HasValue && input.Shifts.Contains(rl.Receipt.Shift.Value))
-                .WhereIf(!input.Shifts.IsNullOrEmpty() && input.Shifts.Contains(Shift.NoShift), rl => !rl.Receipt.Shift.HasValue || input.Shifts.Contains(rl.Receipt.Shift.Value))
-                .Where(rl => rl.Receipt.DeliveryDate >= input.DeliveryDateBegin)
-                .Where(rl => rl.Receipt.DeliveryDate <= input.DeliveryDateEnd)
-                .Select(rl => new RevenueBreakdownItem
-                {
-                    Customer = rl.Receipt.Customer.Name,
-                    DeliveryDate = rl.Receipt.DeliveryDate,
-                    Shift = rl.Receipt.Shift,
-                    LoadAt = rl.LoadAt == null ? null : new LocationNameDto
-                    {
-                        Name = rl.LoadAt.Name,
-                        StreetAddress = rl.LoadAt.StreetAddress,
-                        City = rl.LoadAt.City,
-                        State = rl.LoadAt.State
-                    },
-                    DeliverTo = rl.DeliverTo == null ? null : new LocationNameDto
-                    {
-                        Name = rl.DeliverTo.Name,
-                        StreetAddress = rl.DeliverTo.StreetAddress,
-                        City = rl.DeliverTo.City,
-                        State = rl.DeliverTo.State
-                    },
-                    Item = rl.Service.Service1,
-                    MaterialUom = rl.MaterialUom.Name,
-                    FreightUom = rl.FreightUom.Name,
-                    FreightRate = rl.FreightRate,
-                    MaterialRate = rl.MaterialRate,
-                    PlannedMaterialQuantity = rl.OrderLine == null ? 0 : rl.OrderLine.MaterialQuantity,
-                    PlannedFreightQuantity = rl.OrderLine == null ? 0 : rl.OrderLine.FreightQuantity,
-                    ActualMaterialQuantity = rl.MaterialQuantity ?? 0,
-                    ActualFreightQuantity = rl.FreightQuantity ?? 0,
-                    FreightPriceOriginal = rl.FreightAmount,
-                    MaterialPriceOriginal = rl.MaterialAmount,
-                    IsFreightPriceOverridden = rl.IsFreightAmountOverridden,
-                    IsMaterialPriceOverridden = rl.IsMaterialAmountOverridden
-                })
-                .ToListAsync();
-        }
-
-        private async Task<List<RevenueBreakdownItem>> GetRevenueBreakdownItemsFromOrderLines(RevenueBreakdownReportInput input)
-        {
-            return await _orderLineRepository.GetAll()
-                .WhereIf(input.CustomerId.HasValue, ol => ol.Order.CustomerId == input.CustomerId.Value)
-                .WhereIf(input.OfficeId.HasValue, ol => ol.Order.LocationId == input.OfficeId.Value)
-                .WhereIf(input.LoadAtId.HasValue, ol => ol.LoadAtId == input.LoadAtId.Value)
-                .WhereIf(input.DeliverToId.HasValue, ol => ol.DeliverToId == input.DeliverToId.Value)
-                .WhereIf(input.ServiceId.HasValue, ol => ol.ServiceId == input.ServiceId.Value)
-                .WhereIf(!input.Shifts.IsNullOrEmpty() && !input.Shifts.Contains(Shift.NoShift), ol => ol.Order.Shift.HasValue && input.Shifts.Contains(ol.Order.Shift.Value))
-                .WhereIf(!input.Shifts.IsNullOrEmpty() && input.Shifts.Contains(Shift.NoShift), ol => !ol.Order.Shift.HasValue || input.Shifts.Contains(ol.Order.Shift.Value))
-                .Where(ol => ol.Order.DeliveryDate >= input.DeliveryDateBegin)
-                .Where(ol => ol.Order.DeliveryDate <= input.DeliveryDateEnd)
-                .Select(ol => new RevenueBreakdownItem
-                {
-                    Customer = ol.Order.Customer.Name,
-                    DeliveryDate = ol.Order.DeliveryDate,
-                    Shift = ol.Order.Shift,
-                    LoadAt = ol.LoadAt == null ? null : new LocationNameDto
-                    {
-                        Name = ol.LoadAt.Name,
-                        StreetAddress = ol.LoadAt.StreetAddress,
-                        City = ol.LoadAt.City,
-                        State = ol.LoadAt.State
-                    },
-                    DeliverTo = ol.DeliverTo == null ? null : new LocationNameDto
-                    {
-                        Name = ol.DeliverTo.Name,
-                        StreetAddress = ol.DeliverTo.StreetAddress,
-                        City = ol.DeliverTo.City,
-                        State = ol.DeliverTo.State
-                    },
-                    Item = ol.Service.Service1,
-                    MaterialUom = ol.MaterialUom.Name,
-                    FreightUom = ol.FreightUom.Name,
-                    FreightRate = ol.FreightPricePerUnit,
-                    MaterialRate = ol.MaterialPricePerUnit,
-                    PlannedMaterialQuantity = ol.MaterialQuantity,
-                    PlannedFreightQuantity = ol.FreightQuantity,
-                    //TODO are we changing office amounts to receipts?
-                    ActualMaterialQuantity = ol.OfficeAmounts.FirstOrDefault(oa => oa.OfficeId == input.OfficeId).ActualQuantity ?? 0,
-                    ActualFreightQuantity = ol.OfficeAmounts.FirstOrDefault(oa => oa.OfficeId == input.OfficeId).ActualQuantity ?? 0,
-                    FreightPriceOriginal = ol.FreightPrice,
-                    MaterialPriceOriginal = ol.MaterialPrice,
-                    IsFreightPriceOverridden = ol.IsFreightPriceOverridden,
-                    IsMaterialPriceOverridden = ol.IsMaterialPriceOverridden
-                })
-                .ToListAsync();
-        }
         private async Task<List<RevenueBreakdownItem>> GetRevenueBreakdownItemsFromTickets(RevenueBreakdownReportInput input)
         {
             return await _orderLineRepository.GetAll()

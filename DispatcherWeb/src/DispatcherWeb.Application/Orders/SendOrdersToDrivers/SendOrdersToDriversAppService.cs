@@ -93,7 +93,7 @@ namespace DispatcherWeb.Orders.SendOrdersToDrivers
                             await _smsOrderSender.SendAsync(driverOrder);
                         }
                     }
-                    catch(UserFriendlyException)
+                    catch (UserFriendlyException)
                     {
                         throw;
                     }

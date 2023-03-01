@@ -47,7 +47,7 @@ namespace DispatcherWeb.Orders.Reports
             paragraph = document.LastSection.AddParagraph($"Payment Reconciliation Report for {model.StartDate.ToShortDateString()} through {model.EndDate.ToShortDateString()}");
             paragraph.Format.Font.Size = Unit.FromPoint(18);
             paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.0);
-            
+
             var itemGroups = model.Items.OrderBy(x => x.TransactionDate).GroupBy(x => x.OfficeId).ToList();
 
             if (itemGroups.Any())
@@ -69,7 +69,7 @@ namespace DispatcherWeb.Orders.Reports
                     table.Style = "Table";
                     table.Borders.Width = Unit.FromPoint(1);
                     var tm = new TextMeasurement(document.Styles["Table"].Font.Clone());
-                    
+
                     //Job Site was removed, so now 3.8 cm can be added to the remaining columns
                     //Customer
                     table.AddColumn(Unit.FromCentimeter(3.7));

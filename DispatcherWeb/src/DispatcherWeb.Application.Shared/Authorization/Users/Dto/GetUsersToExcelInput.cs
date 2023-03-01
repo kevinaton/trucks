@@ -3,7 +3,7 @@ using Abp.Runtime.Validation;
 
 namespace DispatcherWeb.Authorization.Users.Dto
 {
-    public class GetUsersToExcelInput: IShouldNormalize, IGetUsersInput
+    public class GetUsersToExcelInput : IShouldNormalize, IGetUsersInput
     {
         public string Filter { get; set; }
 

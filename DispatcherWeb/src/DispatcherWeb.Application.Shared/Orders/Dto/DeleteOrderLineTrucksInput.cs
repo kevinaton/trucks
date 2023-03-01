@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DispatcherWeb.Orders.Dto
+﻿namespace DispatcherWeb.Orders.Dto
 {
     public class DeleteOrderLineTrucksInput
     {

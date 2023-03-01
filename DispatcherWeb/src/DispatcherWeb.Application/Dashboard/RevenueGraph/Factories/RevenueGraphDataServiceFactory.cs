@@ -1,5 +1,4 @@
 ﻿using System;
-using Abp.Dependency;
 using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
 using DispatcherWeb.Dashboard.RevenueGraph.DataServices;
 using DispatcherWeb.Dashboard.RevenueGraph.Dto;
@@ -9,12 +8,10 @@ namespace DispatcherWeb.Dashboard.RevenueGraph.Factories
     public static class RevenueGraphDataServiceFactory
     {
         public static IRevenueGraphDataService CreateRevenueGraphDataService(
-            IIocResolver iocResolver,
             RevenueGraphDatePeriod revenueGraphDatePeriod,
-            RevenueCalculateType revenueCalculateType
+            IRevenueGraphByTicketsDataItemsQueryService revenueGraphDataItemsQueryService
         )
         {
-            IRevenueGraphDataItemsQueryService revenueGraphDataItemsQueryService = RevenueGraphDataItemsQueryServiceFactory.CreateRevenueGraphDataItemsQueryService(iocResolver, revenueCalculateType);
             switch (revenueGraphDatePeriod)
             {
                 case RevenueGraphDatePeriod.Daily:

@@ -10,7 +10,7 @@ namespace DispatcherWeb.MultiTenancy.Payments.Paypal
     public class PayPalGatewayManager : DispatcherWebServiceBase, ITransientDependency
     {
         private readonly PayPalHttpClient _client;
-        
+
         public PayPalGatewayManager(PayPalPaymentGatewayConfiguration configuration)
         {
             var environment = GetEnvironment(configuration);

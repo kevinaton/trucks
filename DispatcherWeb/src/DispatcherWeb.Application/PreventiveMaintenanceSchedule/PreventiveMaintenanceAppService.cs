@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Linq.Dynamic;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
+using Abp.UI;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Dto;
 using DispatcherWeb.PreventiveMaintenanceSchedule.Dto;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.VehicleMaintenance;
 using Microsoft.EntityFrameworkCore;
-using Abp.UI;
 
 namespace DispatcherWeb.PreventiveMaintenanceSchedule
 {
@@ -49,7 +45,7 @@ namespace DispatcherWeb.PreventiveMaintenanceSchedule
                 .WhereIf(input.DueDateBegin.HasValue, x => x.DueDate >= input.DueDateBegin.Value)
                 .WhereIf(input.DueDateEnd.HasValue, x => x.DueDate <= input.DueDateEnd.Value)
                 .WhereIf(input.Status == GetPreventiveMaintenancePagedListInput.PreventiveMaintenanceStatus.Overdue,
-                        x => x.DueDate < today || 
+                        x => x.DueDate < today ||
                         x.DueMileage < x.Truck.CurrentMileage)
                 .WhereIf(input.VehicleServiceId.HasValue, x => x.VehicleServiceId == input.VehicleServiceId.Value)
                 .WhereIf(input.DueForService, pm =>
@@ -57,7 +53,7 @@ namespace DispatcherWeb.PreventiveMaintenanceSchedule
                         pm.WarningMileage < pm.Truck.CurrentMileage)
                 ;
 
-           
+
             var totalCount = await query.CountAsync();
             var items = await query
                 .Select(x => new PreventiveMaintenanceDto()
@@ -70,14 +66,14 @@ namespace DispatcherWeb.PreventiveMaintenanceSchedule
                     DueMileage = x.DueMileage,
                     WarningDate = x.WarningDate,
                     WarningMileage = x.WarningMileage,
-                    DaysUntilDue = EF.Functions.DateDiffDay(today, x.DueDate),                   
+                    DaysUntilDue = EF.Functions.DateDiffDay(today, x.DueDate),
                     MilesUntilDue = x.DueMileage - x.Truck.CurrentMileage,
                 })
                 .OrderBy(input.Sorting)
                 .PageBy(input)
                 .ToListAsync();
 
-          
+
 
             return new PagedResultDto<PreventiveMaintenanceDto>(totalCount, items);
 
@@ -179,11 +175,11 @@ namespace DispatcherWeb.PreventiveMaintenanceSchedule
         [AbpAuthorize(AppPermissions.Pages_PreventiveMaintenanceSchedule_Edit)]
         public async Task<PreventiveMaintenanceDefaultValuesDto> GetDefaultValues(int vehicleServiceId, int truckId)
         {
-            if(vehicleServiceId == 0) throw new ArgumentException(nameof(vehicleServiceId));
-            if(truckId == 0) throw new ArgumentException(nameof(truckId));
+            if (vehicleServiceId == 0) throw new ArgumentException(nameof(vehicleServiceId));
+            if (truckId == 0) throw new ArgumentException(nameof(truckId));
 
             var vehicleServiceValues = await _vehicleServiceRepository.GetAll()
-                .Select(x => new 
+                .Select(x => new
                 {
                     Id = x.Id,
                     RecommendedTimeInterval = x.RecommendedTimeInterval,

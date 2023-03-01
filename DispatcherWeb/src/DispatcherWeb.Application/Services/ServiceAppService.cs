@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
@@ -10,14 +10,12 @@ using Abp.UI;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Orders;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Dynamic.Core;
-using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Projects;
 using DispatcherWeb.Quotes;
 using DispatcherWeb.Services.Dto;
 using DispatcherWeb.Services.Exporting;
 using Microsoft.AspNetCore.Mvc;
-using DispatcherWeb.Projects;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Services
 {
@@ -177,33 +175,25 @@ namespace DispatcherWeb.Services
                     FreightRate = serviceMatchingBoth?.FreightRate ?? serviceMatchingFreight?.FreightRate,
                 } : new ServicePricingDto();
 
-            if (input.QuoteId.HasValue)
+            if (input.QuoteServiceId.HasValue)
             {
-                var quotePrices = await _quoteServiceRepository.GetAll()
-                    .Where(x => x.QuoteId == input.QuoteId
-                                && x.ServiceId == input.ServiceId
-                                && (x.MaterialUomId == input.MaterialUomId || x.FreightUomId == input.FreightUomId)
-                                && x.LoadAtId == input.LoadAtId
-                                && x.DeliverToId == input.DeliverToId)
+                var quotePricing = await _quoteServiceRepository.GetAll()
+                    .Where(x => x.Id == input.QuoteServiceId)
                     .Select(x => new
                     {
                         x.PricePerUnit,
                         x.FreightRate,
                         x.MaterialUomId,
-                        x.FreightUomId 
+                        x.FreightUomId
                     })
-                    .ToListAsync();
+                    .FirstOrDefaultAsync();
 
-                var quoteMatchingBoth = quotePrices.FirstOrDefault(x => x.MaterialUomId == input.MaterialUomId && x.FreightUomId == input.FreightUomId);
-                var quoteMatchingMaterial = quotePrices.FirstOrDefault(x => x.MaterialUomId == input.MaterialUomId);
-                var quoteMatchingFreight = quotePrices.FirstOrDefault(x => x.FreightUomId == input.FreightUomId);
-
-                if (servicePricing != null && quotePrices.Any())
+                if (quotePricing != null)
                 {
                     servicePricing.QuoteBasedPricing = new QuoteServicePricingDto
                     {
-                        PricePerUnit = quoteMatchingBoth?.PricePerUnit ?? quoteMatchingMaterial?.PricePerUnit,
-                        FreightRate = quoteMatchingBoth?.FreightRate ?? quoteMatchingFreight?.FreightRate
+                        PricePerUnit = quotePricing.PricePerUnit,
+                        FreightRate = quotePricing.FreightRate
                     };
                 }
             }

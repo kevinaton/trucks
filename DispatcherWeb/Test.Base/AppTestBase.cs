@@ -10,13 +10,12 @@ using Abp.Modules;
 using Abp.MultiTenancy;
 using Abp.Runtime.Session;
 using Abp.TestBase;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Test.Base.TestData;
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Test.Base
 {

@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using DispatcherWeb.EntityFrameworkCore;
-using DispatcherWeb.Services;
+﻿using DispatcherWeb.EntityFrameworkCore;
 
 namespace DispatcherWeb.Migrations.Seed.Tenants
 {

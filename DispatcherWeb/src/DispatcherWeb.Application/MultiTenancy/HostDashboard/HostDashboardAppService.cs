@@ -8,10 +8,9 @@ using Abp.Auditing;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.Timing;
-using Abp.Extensions;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.DailyHistory;
 using DispatcherWeb.Dto;
@@ -19,6 +18,7 @@ using DispatcherWeb.MultiTenancy.HostDashboard.Dto;
 using DispatcherWeb.MultiTenancy.HostDashboard.Exporting;
 using DispatcherWeb.MultiTenancy.Payments;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.MultiTenancy.HostDashboard
 {
@@ -216,21 +216,21 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard
                     .Select(g => new { g.Key.ServiceName, g.Key.MethodName })
                     .ToListAsync();
 
-                var yesterdayRequests = await 
+                var yesterdayRequests = await
                         (from tdh in _transactionDailyHistoryRepository.GetAll()
                          where tdh.Date == yesterdayUtc
                          group tdh by new { tdh.ServiceName, tdh.MethodName }
                         into g
                          select new { g.Key.ServiceName, g.Key.MethodName, NumberOfTransactions = g.Sum(x => x.NumberOfTransactions), AverageExecutionDuration = g.Sum(x => x.AverageExecutionDuration) }
                     ).ToListAsync();
-                var weekRequests = await 
+                var weekRequests = await
                         (from tdh in _transactionDailyHistoryRepository.GetAll()
                          where tdh.Date >= weekAgoUtc
                          group tdh by new { tdh.ServiceName, tdh.MethodName }
                         into g
                          select new { g.Key.ServiceName, g.Key.MethodName, NumberOfTransactions = g.Sum(x => x.NumberOfTransactions), AverageExecutionDuration = g.Sum(x => x.AverageExecutionDuration) }
                     ).ToListAsync();
-                var monthRequests = await 
+                var monthRequests = await
                         (from tdh in _transactionDailyHistoryRepository.GetAll()
                          where tdh.Date >= monthAgoUtc
                          group tdh by new { tdh.ServiceName, tdh.MethodName }
@@ -250,7 +250,7 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard
                     join mr in monthRequests on new { r.ServiceName, r.MethodName } equals new { mr.ServiceName, mr.MethodName } into jmr
                     from mr in jmr.DefaultIfEmpty(new { ServiceName = "", MethodName = "", NumberOfTransactions = jmr.Sum(x => x.NumberOfTransactions), AverageExecutionDuration = jmr.Sum(x => x.AverageExecutionDuration) })
 
-                    //orderby yr.NumberOfTransactions descending, wr.NumberOfTransactions descending, mr.NumberOfTransactions descending
+                        //orderby yr.NumberOfTransactions descending, wr.NumberOfTransactions descending, mr.NumberOfTransactions descending
                     select new RequestDto
                     {
                         ServiceName = r.ServiceName,

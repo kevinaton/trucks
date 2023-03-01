@@ -25,6 +25,6 @@ namespace Intuit.Ipp.Data
     /// </summary>
     public interface IEntity
     {
-        
+
     }
 }

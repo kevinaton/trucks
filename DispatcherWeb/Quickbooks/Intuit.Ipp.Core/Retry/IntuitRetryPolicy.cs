@@ -21,11 +21,11 @@
 namespace Intuit.Ipp.Core
 {
     using System;
+    using System.IO;
     using System.Net;
     using System.Threading;
     using Intuit.Ipp.Exception;
-    using System.IO;
-    using Intuit.Ipp.Utility; 
+    using Intuit.Ipp.Utility;
 
     /// <summary>
     /// Defines a delegate that will be invoked whenever a retry condition is encountered.
@@ -94,7 +94,7 @@ namespace Intuit.Ipp.Core
         private IntuitRetryPolicy()
         {
         }
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IntuitRetryPolicy"/> class.
         /// </summary>
@@ -111,7 +111,7 @@ namespace Intuit.Ipp.Core
             this.shouldRetry = this.GetShouldFixedRetry();
             this.context = context;
         }
-  
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IntuitRetryPolicy"/> class.
@@ -128,7 +128,7 @@ namespace Intuit.Ipp.Core
             this.shouldRetry = this.GetShouldFixedRetry();
         }
 
-       
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IntuitRetryPolicy"/> class.
         /// </summary>
@@ -149,7 +149,7 @@ namespace Intuit.Ipp.Core
             this.context = context;
         }
 
-   
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IntuitRetryPolicy"/> class.
@@ -194,7 +194,7 @@ namespace Intuit.Ipp.Core
             this.context = context;
         }
 
-       
+
 
 
         /// <summary>
@@ -350,34 +350,48 @@ namespace Intuit.Ipp.Core
                                     WebException webException = ex as WebException;
 
 
-                                    
+
                                     string errorString = string.Empty;
                                     if (webException != null)
                                     {
 
                                         // If not null then check the response property of the webException object.
                                         if (webException.Response != null)
-                                    {
-                                        // There is a response from the Ids server. Cast it to HttpWebResponse.
-                                        HttpWebResponse errorResponse = (HttpWebResponse)webException.Response;
-
-                                        // Get the status code description of the error response.
-                                        string statusCodeDescription = errorResponse.StatusCode.ToString();
-
-                                        // Get the status code of the error response.
-                                        int statusCode = (int)errorResponse.StatusCode;
-
-
-                                        ICompressor responseCompressor = CoreHelper.GetCompressor(this.context, false);
-                                        if (!string.IsNullOrWhiteSpace(errorResponse.ContentEncoding) && responseCompressor != null)
                                         {
-                                            using (var responseStream = errorResponse.GetResponseStream()) //Check for decompressing
+                                            // There is a response from the Ids server. Cast it to HttpWebResponse.
+                                            HttpWebResponse errorResponse = (HttpWebResponse)webException.Response;
+
+                                            // Get the status code description of the error response.
+                                            string statusCodeDescription = errorResponse.StatusCode.ToString();
+
+                                            // Get the status code of the error response.
+                                            int statusCode = (int)errorResponse.StatusCode;
+
+
+                                            ICompressor responseCompressor = CoreHelper.GetCompressor(this.context, false);
+                                            if (!string.IsNullOrWhiteSpace(errorResponse.ContentEncoding) && responseCompressor != null)
                                             {
-                                                using (var decompressedStream = responseCompressor.Decompress(responseStream))
+                                                using (var responseStream = errorResponse.GetResponseStream()) //Check for decompressing
+                                                {
+                                                    using (var decompressedStream = responseCompressor.Decompress(responseStream))
+                                                    {
+                                                        // Get the response stream.
+                                                        StreamReader reader = new StreamReader(decompressedStream);
+                                                        //StreamReader reader = new StreamReader(responseStream);
+
+                                                        // Read the Stream
+                                                        errorString = reader.ReadToEnd();
+                                                        // Close reader
+                                                        reader.Close();
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                using (Stream responseStream = errorResponse.GetResponseStream())
                                                 {
                                                     // Get the response stream.
-                                                    StreamReader reader = new StreamReader(decompressedStream);
-                                                    //StreamReader reader = new StreamReader(responseStream);
+                                                    StreamReader reader = new StreamReader(responseStream);
 
                                                     // Read the Stream
                                                     errorString = reader.ReadToEnd();
@@ -385,20 +399,6 @@ namespace Intuit.Ipp.Core
                                                     reader.Close();
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
-                                            using (Stream responseStream = errorResponse.GetResponseStream())
-                                            {
-                                                // Get the response stream.
-                                                StreamReader reader = new StreamReader(responseStream);
-
-                                                // Read the Stream
-                                                errorString = reader.ReadToEnd();
-                                                // Close reader
-                                                reader.Close();
-                                            }
-                                        }
                                             string response_intuit_tid_header = "";
                                             //get intuit_tid header
                                             for (int i = 0; i < errorResponse.Headers.Count; ++i)
@@ -428,7 +428,7 @@ namespace Intuit.Ipp.Core
                                         faultHandler(new RetryExceededException(webException.Message, webException.Status.ToString(), webException.Source, idsException));
                                         return false;
                                     }
-                                    else if(webException != null)
+                                    else if (webException != null)
                                     {
                                         faultHandler(new RetryExceededException(webException.Message, webException.Status.ToString(), webException.Source, webException));
                                         return false;
@@ -566,34 +566,48 @@ namespace Intuit.Ipp.Core
                     {
                         WebException webException = ex as WebException;
 
-                      
+
                         string errorString = string.Empty;
 
-                    if (webException != null)
-                    {
-                        // If not null then check the response property of the webException object.
-                        if (webException.Response != null)
+                        if (webException != null)
                         {
-                            // There is a response from the Ids server. Cast it to HttpWebResponse.
-                            HttpWebResponse errorResponse = (HttpWebResponse)webException.Response;
-
-                            // Get the status code description of the error response.
-                            string statusCodeDescription = errorResponse.StatusCode.ToString();
-
-                            // Get the status code of the error response.
-                            int statusCode = (int)errorResponse.StatusCode;
-
-
-                            ICompressor responseCompressor = CoreHelper.GetCompressor(this.context, false);
-                            if (!string.IsNullOrWhiteSpace(errorResponse.ContentEncoding) && responseCompressor != null)
+                            // If not null then check the response property of the webException object.
+                            if (webException.Response != null)
                             {
-                                using (var responseStream = errorResponse.GetResponseStream()) //Check for decompressing
+                                // There is a response from the Ids server. Cast it to HttpWebResponse.
+                                HttpWebResponse errorResponse = (HttpWebResponse)webException.Response;
+
+                                // Get the status code description of the error response.
+                                string statusCodeDescription = errorResponse.StatusCode.ToString();
+
+                                // Get the status code of the error response.
+                                int statusCode = (int)errorResponse.StatusCode;
+
+
+                                ICompressor responseCompressor = CoreHelper.GetCompressor(this.context, false);
+                                if (!string.IsNullOrWhiteSpace(errorResponse.ContentEncoding) && responseCompressor != null)
                                 {
-                                    using (var decompressedStream = responseCompressor.Decompress(responseStream))
+                                    using (var responseStream = errorResponse.GetResponseStream()) //Check for decompressing
+                                    {
+                                        using (var decompressedStream = responseCompressor.Decompress(responseStream))
+                                        {
+                                            // Get the response stream.
+                                            StreamReader reader = new StreamReader(decompressedStream);
+                                            //StreamReader reader = new StreamReader(responseStream);
+
+                                            // Read the Stream
+                                            errorString = reader.ReadToEnd();
+                                            // Close reader
+                                            reader.Close();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    using (Stream responseStream = errorResponse.GetResponseStream())
                                     {
                                         // Get the response stream.
-                                        StreamReader reader = new StreamReader(decompressedStream);
-                                        //StreamReader reader = new StreamReader(responseStream);
+                                        StreamReader reader = new StreamReader(responseStream);
 
                                         // Read the Stream
                                         errorString = reader.ReadToEnd();
@@ -601,20 +615,6 @@ namespace Intuit.Ipp.Core
                                         reader.Close();
                                     }
                                 }
-                            }
-                            else
-                            {
-                                using (Stream responseStream = errorResponse.GetResponseStream())
-                                {
-                                    // Get the response stream.
-                                    StreamReader reader = new StreamReader(responseStream);
-
-                                    // Read the Stream
-                                    errorString = reader.ReadToEnd();
-                                    // Close reader
-                                    reader.Close();
-                                }
-                            }
 
                                 // Log the error string to disk.
                                 string response_intuit_tid_header = "";
@@ -645,7 +645,7 @@ namespace Intuit.Ipp.Core
                         {
                             throw new RetryExceededException(webException.Message, webException.Status.ToString(), webException.Source, idsException);
                         }
-                        else if(webException != null)
+                        else if (webException != null)
                         {
                             throw new RetryExceededException(webException.Message, webException.Status.ToString(), webException.Source, webException);
                         }
@@ -678,14 +678,14 @@ namespace Intuit.Ipp.Core
         {
             if (this.retryCount == 0)
             {
-                return delegate(int currentRetryCount, Exception lastException, out TimeSpan interval)
+                return delegate (int currentRetryCount, Exception lastException, out TimeSpan interval)
                 {
                     interval = TimeSpan.Zero;
                     return false;
                 };
             }
 
-            return delegate(int currentRetryCount, Exception lastException, out TimeSpan interval)
+            return delegate (int currentRetryCount, Exception lastException, out TimeSpan interval)
             {
                 if (currentRetryCount < this.retryCount)
                 {
@@ -704,7 +704,7 @@ namespace Intuit.Ipp.Core
         /// <returns>The ShouldRetry delegate.</returns>
         private ShouldRetry GetShouldIncrementalRetry()
         {
-            return delegate(int currentRetryCount, Exception lastException, out TimeSpan retryInterval)
+            return delegate (int currentRetryCount, Exception lastException, out TimeSpan retryInterval)
             {
                 if (currentRetryCount < this.retryCount)
                 {
@@ -725,7 +725,7 @@ namespace Intuit.Ipp.Core
         /// <returns>The ShouldRetry delegate.</returns>
         private ShouldRetry GetShouldExponentialBackOffRetry()
         {
-            return delegate(int currentRetryCount, Exception lastException, out TimeSpan retryInterval)
+            return delegate (int currentRetryCount, Exception lastException, out TimeSpan retryInterval)
             {
                 if (currentRetryCount < this.retryCount)
                 {

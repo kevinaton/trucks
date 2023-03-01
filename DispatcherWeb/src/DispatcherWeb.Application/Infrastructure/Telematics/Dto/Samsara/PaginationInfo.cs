@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Infrastructure.Telematics.Dto.Samsara
+﻿namespace DispatcherWeb.Infrastructure.Telematics.Dto.Samsara
 {
     public class PaginationInfo
     {

@@ -8,15 +8,15 @@ namespace DispatcherWeb.Orders
 {
     [Table("OrderTruck")]
     public class OrderTruck : FullAuditedEntity, IMustHaveTenant
-	{
+    {
         public OrderTruck()
         {
             DependentOrderTrucks = new HashSet<OrderTruck>();
         }
 
-		public int TenantId { get; set; }
+        public int TenantId { get; set; }
 
-		public int OrderId { get; set; }
+        public int OrderId { get; set; }
 
         public int TruckId { get; set; }
 

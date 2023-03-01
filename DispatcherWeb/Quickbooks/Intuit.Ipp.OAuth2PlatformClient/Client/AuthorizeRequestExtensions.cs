@@ -40,10 +40,10 @@ namespace Intuit.Ipp.OAuth2PlatformClient
             string responseType,
             string scope = null,
             string redirectUri = null,
-            string state = null,        
+            string state = null,
             object extra = null
             )
-           {
+        {
             var values = new Dictionary<string, string>
             {
                 { OidcConstants.AuthorizeRequest.ClientId, clientId },
@@ -65,7 +65,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 values.Add(OidcConstants.AuthorizeRequest.State, state);
             }
 
-            
+
 
             return request.Create(Merge(values, ObjectToDictionary(extra)));
         }

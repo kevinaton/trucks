@@ -13,18 +13,13 @@ using Abp.Linq.Extensions;
 using Abp.UI;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
-using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Locations;
 using DispatcherWeb.Locations.Dto;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Scheduling.Dto;
-using DispatcherWeb.Sessions;
-using DispatcherWeb.SyncRequests.Entities;
-using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using Microsoft.EntityFrameworkCore;
@@ -154,11 +149,6 @@ namespace DispatcherWeb
                             LineNumber = s.LineNumber,
                             MaterialQuantity = s.MaterialQuantity,
                             FreightQuantity = s.FreightQuantity,
-                            //ActualMaterialQuantity = allowAddingTickets ? 
-                            // s.Tickets.Sum(t => t.MaterialQuantity) :
-                            // s.OfficeAmounts.Where(a => a.OfficeId == officeId).Select(a => a.ActualQuantity).FirstOrDefault(),
-                            //ActualMaterialQuantity = s.Receipts.Sum(r => r.MaterialTotal),
-                            //ActualFreightQuantity = s.Receipts.Sum(r => r.FreightTotal),
                             MaterialUomName = s.MaterialUom.Name,
                             FreightUomName = s.FreightUom.Name,
                             FreightPricePerUnit = s.FreightRate,
@@ -559,47 +549,6 @@ namespace DispatcherWeb
             return trucks;
         }
 
-        public static IQueryable<ScheduleOrderDto> GetScheduleOrders(this IQueryable<Order> query)
-        {
-            return query
-                .Select(o => new ScheduleOrderDto
-                {
-                    Id = o.Id,
-                    // ReSharper disable once MergeConditionalExpression
-                    Date = o.DeliveryDate.HasValue ? o.DeliveryDate.Value : new DateTime(),
-                    Shift = o.Shift,
-                    OfficeId = o.LocationId,
-                    CustomerId = o.CustomerId,
-                    CustomerName = o.Customer.Name,
-                    CustomerIsCod = o.Customer.IsCod,
-                    NumberOfTrucks = o.NumberOfTrucks,
-                    IsClosed = o.IsClosed,
-                    Priority = o.Priority,
-                    IsShared = o.SharedOrders.Any(so => so.OfficeId != o.LocationId),
-                    Utilization = o.OrderLines.SelectMany(ol => ol.OrderLineTrucks).Where(t => t.Truck.VehicleCategory.IsPowered).Select(t => t.Utilization).Sum(),
-                    Trucks = o.OrderLines.SelectMany(ol => ol.OrderLineTrucks).Select(olt => new ScheduleOrderLineTruckDto
-                    {
-                        Id = olt.Id,
-                        ParentId = olt.ParentOrderLineTruckId,
-                        TruckId = olt.TruckId,
-                        TruckCode = olt.Truck.TruckCode,
-                        OrderId = o.Id,
-                        OfficeId = olt.Truck.LocationId,
-                        Utilization = olt.Utilization,
-                        VehicleCategory = new VehicleCategoryDto
-                        {
-                            Id = olt.Truck.VehicleCategory.Id,
-                            Name = olt.Truck.VehicleCategory.Name,
-                            AssetType = olt.Truck.VehicleCategory.AssetType,
-                            IsPowered = olt.Truck.VehicleCategory.IsPowered,
-                            SortOrder = olt.Truck.VehicleCategory.SortOrder
-                        },
-                        AlwaysShowOnSchedule = olt.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule == true,
-                        CanPullTrailer = olt.Truck.CanPullTrailer,
-                    }).ToList()
-                });
-        }
-
         public static IQueryable<ScheduleOrderLineDto> GetScheduleOrders(this IQueryable<OrderLine> query)
         {
             return query
@@ -763,17 +712,6 @@ namespace DispatcherWeb
             return result;
         }
 
-        public static async Task EnsureCanAddActualAmount(this IRepository<OrderLine> orderLineRepository, int orderLineId, int officeId)
-        {
-            if (await orderLineRepository.GetAll()
-                .AnyAsync(x => x.Id == orderLineId
-                    && (x.IsMaterialPriceOverridden || x.IsFreightPriceOverridden)
-                    && x.OfficeAmounts.Any(a => a.OfficeId != officeId)))
-            {
-                throw new UserFriendlyException("You can't add actual amount to a line item with overridden totals for which another office already added actual amount");
-            }
-        }
-
         public static async Task EnsureCanEditTicket(this IRepository<Ticket> ticketRepository, int? ticketId)
         {
             var cannotEditReason = await ticketRepository.GetCannotEditTicketReason(ticketId);
@@ -816,22 +754,11 @@ namespace DispatcherWeb
             return null;
         }
 
-        public static async Task<bool> CanOverrideTotals(this IRepository<OrderLine> orderLineRepository, ISettingManager settingManager, int orderLineId, int officeId)
+        public static async Task<bool> CanOverrideTotals(this IRepository<OrderLine> orderLineRepository, int orderLineId, int officeId)
         {
-            var allowAddingTickets = await settingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowAddingTickets);
-            if (allowAddingTickets)
-            {
-                return !(await orderLineRepository.GetAll()
-                    .AnyAsync(x => x.Id == orderLineId
-                        && x.Tickets.Any(a => a.OfficeId != officeId)));
-            }
-
-            return true;
-            //else
-            //{
-            //    return !(await orderLineRepository.GetAll()
-            //        .AnyAsync(x => x.Order.Receipts.Any(r => r.ReceiptLines.Any(l => l.OrderLineId == orderLineId && l.Receipt.OfficeId != officeId))));
-            //}
+            return !await orderLineRepository.GetAll()
+                .AnyAsync(x => x.Id == orderLineId
+                    && x.Tickets.Any(a => a.OfficeId != officeId));
         }
 
         public static async Task<bool> IsEntityDeleted<T>(this IRepository<T> repository, EntityDto input, IActiveUnitOfWork uow) where T : Entity<int>, ISoftDelete
@@ -864,30 +791,6 @@ namespace DispatcherWeb
             }
 
             return null;
-        }
-
-        public static async Task<int> SetOrderLineOfficeAmountAsync(this IRepository<OrderLineOfficeAmount> orderLineOfficeAmountRepository, OrderLineOfficeAmountEditDto model, AspNetZeroAbpSession session)
-        {
-            var officeId = session.GetOfficeIdOrThrow();
-
-            return await SetOrderLineOfficeAmountAsync(orderLineOfficeAmountRepository, model, session, officeId);
-        }
-
-
-        public static async Task<int> SetOrderLineOfficeAmountAsync(this IRepository<OrderLineOfficeAmount> orderLineOfficeAmountRepository, OrderLineOfficeAmountEditDto model, AspNetZeroAbpSession session, int officeId)
-        {
-            var orderLineOfficeAmount = await orderLineOfficeAmountRepository.GetAll()
-                                            .FirstOrDefaultAsync(x => x.OrderLineId == model.OrderLineId && x.OfficeId == officeId)
-                                        ?? new OrderLineOfficeAmount
-                                        {
-                                            OfficeId = officeId,
-                                            OrderLineId = model.OrderLineId,
-                                            TenantId = session.TenantId ?? 0
-                                        };
-
-            orderLineOfficeAmount.ActualQuantity = model.ActualQuantity;
-
-            return await orderLineOfficeAmountRepository.InsertOrUpdateAndGetIdAsync(orderLineOfficeAmount);
         }
 
         public static async Task<CultureInfo> GetCurrencyCultureAsync(this ISettingManager settingManager)

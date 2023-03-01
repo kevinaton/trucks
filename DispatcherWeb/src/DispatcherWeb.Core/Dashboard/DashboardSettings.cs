@@ -8,7 +8,7 @@ namespace DispatcherWeb.Dashboard
     public static class DashboardSettings
     {
         public static class ScheduledTruckCounters
-        {            
+        {
             public static DashboardSetting TrucksRequestedToday = new DashboardSetting
             {
                 SettingName = AppSettings.Dashboard.TrucksRequestedToday,
@@ -157,7 +157,7 @@ namespace DispatcherWeb.Dashboard
                 PermissionName = AppPermissions.Pages_Dashboard_Revenue,
                 FeatureName = AppFeatures.PaidFunctionality,
             };
-            
+
             public static DashboardSetting[] All => new[]
             {
                 Revenue,
@@ -195,7 +195,7 @@ namespace DispatcherWeb.Dashboard
             FeatureName = AppFeatures.PaidFunctionality,
         };
 
-        public static DashboardSetting[] All => 
+        public static DashboardSetting[] All =>
             ScheduledTruckCounters.All
             .Union(new[]
             {

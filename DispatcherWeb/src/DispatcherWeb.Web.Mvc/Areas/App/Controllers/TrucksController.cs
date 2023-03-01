@@ -3,23 +3,22 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DispatcherWeb.Authorization;
-using DispatcherWeb.Trucks;
-using DispatcherWeb.Web.Controllers;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.IO.Extensions;
 using Abp.Web.Models;
+using DispatcherWeb.Authorization;
+using DispatcherWeb.Features;
 using DispatcherWeb.Images;
 using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.Web.Areas.App.Models.Trucks;
+using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.Web.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using DispatcherWeb.Features;
-using Abp.Application.Features;
 
 namespace DispatcherWeb.Web.Areas.app.Controllers
 {
@@ -40,9 +39,9 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         }
 
         public async Task<IActionResult> Index(
-            bool? filterIsOutOfService, 
-            bool? filterPlatesExpiringThisMonth, 
-            int? filterOfficeId, 
+            bool? filterIsOutOfService,
+            bool? filterPlatesExpiringThisMonth,
+            int? filterOfficeId,
             string filterOfficeName,
             int? filterStatus
         )
@@ -68,7 +67,7 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
 
         [Modal]
         public async Task<PartialViewResult> AddSharedTruckModal(GetAddSharedTruckModelInput input)
-        {            
+        {
             var model = await _truckAppService.GetAddSharedTruckModel(input);
             return PartialView("_AddSharedTruckModal", model);
         }
@@ -90,11 +89,11 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             var file = Request.Form.Files.Any() ? Request.Form.Files[0] : null;
             int truckId = Int32.Parse(Request.Form["id"].First());
 
-            if(file != null)
+            if (file != null)
             {
                 FileType fileType = GetFileType(file.FileName);
                 byte[] fileBytes;
-                using(var fileStream = file.OpenReadStream())
+                using (var fileStream = file.OpenReadStream())
                 {
                     fileBytes = fileStream.GetAllBytes();
                 }
@@ -103,7 +102,7 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
                 Guid? thumbnailId = null;
                 if (Utilities.IsImageFileType(fileType))
                 {
-                    using(var fileStream = file.OpenReadStream())
+                    using (var fileStream = file.OpenReadStream())
                     {
                         thumbnailId = CreateThumbnail(Image.FromStream(fileStream), truckId, file);
                     }
@@ -137,7 +136,7 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             Image thumbnailImage =
                 ImageHelper.ResizePreservingRatio(fileImage, AppConsts.TruckFileThumbnailSize, AppConsts.TruckFileThumbnailSize);
             byte[] fileBytes;
-            using(var saveStream = new MemoryStream())
+            using (var saveStream = new MemoryStream())
             {
                 thumbnailImage.Save(saveStream, fileImage.RawFormat);
                 saveStream.Position = 0;
@@ -152,7 +151,7 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         private FileType GetFileType(string fileName)
         {
             string fileExtension = fileName.Split('.').Last().ToLower();
-            switch(fileExtension)
+            switch (fileExtension)
             {
                 case "bmp":
                     return FileType.Bmp;

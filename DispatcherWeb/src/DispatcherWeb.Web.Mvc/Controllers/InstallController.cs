@@ -1,14 +1,12 @@
 ﻿using Abp.AspNetCore.Mvc.Controllers;
 using Abp.Auditing;
 using Abp.Domain.Uow;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.Install;
 using DispatcherWeb.Migrations.Seed.Host;
-using DispatcherWeb.Web.Models.Install;
-using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Linq;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -22,7 +20,7 @@ namespace DispatcherWeb.Web.Controllers
 
         public InstallController(
             IInstallAppService installAppService,
-            IHostApplicationLifetime applicationLifetime, 
+            IHostApplicationLifetime applicationLifetime,
             DatabaseCheckHelper databaseCheckHelper,
             DefaultLanguagesCreator defaultLanguagesCreator)
         {

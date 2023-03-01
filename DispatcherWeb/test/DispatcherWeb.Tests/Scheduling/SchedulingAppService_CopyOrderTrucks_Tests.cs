@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Application.Features;
 using Abp.Application.Services;
-using Abp.Configuration;
-using Abp.Net.Mail;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Features;
@@ -218,7 +214,7 @@ namespace DispatcherWeb.Tests.Scheduling
             {
                 DateBegin = originalDate,
                 DateEnd = originalDate,
-                Shifts = new []{Shift.Shift1},
+                Shifts = new[] { Shift.Shift1 },
                 OrderId = originalOrder.Id,
                 OrderLineId = orderLine1.Id,
             });
@@ -258,7 +254,7 @@ namespace DispatcherWeb.Tests.Scheduling
             await SetOrderLineNumberOfTrucks(orderLine1.Id, 1);
             var truck1 = await CreateTruck("101");
             var driver1 = await CreateDriver();
-            await CreateOrderLineTruck(truck1.Id, driver1.Id,  orderLine1.Id, 1);
+            await CreateOrderLineTruck(truck1.Id, driver1.Id, orderLine1.Id, 1);
 
             DateTime destinationDate = originalDate;
             Shift destinationShift = Shift.Shift2;

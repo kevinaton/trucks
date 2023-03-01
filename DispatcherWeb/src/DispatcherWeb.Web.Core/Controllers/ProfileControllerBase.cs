@@ -9,13 +9,13 @@ using Abp.Extensions;
 using Abp.IO.Extensions;
 using Abp.UI;
 using Abp.Web.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Authorization.Users.Profile;
 using DispatcherWeb.Authorization.Users.Profile.Dto;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Web.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -23,11 +23,11 @@ namespace DispatcherWeb.Web.Controllers
     {
         private readonly ITempFileCacheManager _tempFileCacheManager;
         private readonly IProfileAppService _profileAppService;
-        
+
         private const int MaxProfilePictureSize = 5242880; //5MB
 
         protected ProfileControllerBase(
-            ITempFileCacheManager tempFileCacheManager, 
+            ITempFileCacheManager tempFileCacheManager,
             IProfileAppService profileAppService)
         {
             _tempFileCacheManager = tempFileCacheManager;
@@ -98,7 +98,7 @@ namespace DispatcherWeb.Web.Controllers
 
             return File(Convert.FromBase64String(output.ProfilePicture), MimeTypeNames.ImageJpeg);
         }
-        
+
         protected FileResult GetDefaultProfilePictureInternal()
         {
             return File(Path.Combine("Common", "Images", "default-profile-picture.png"), MimeTypeNames.ImagePng);

@@ -2,7 +2,7 @@
 
 namespace DispatcherWeb.Orders.TaxDetails
 {
-    public class OrderTaxDetailsDto : IOrderTaxDetailsWithActualAmounts
+    public class OrderTaxDetailsDto : IOrderTaxDetails
     {
         public OrderTaxDetailsDto()
         {
@@ -18,12 +18,6 @@ namespace DispatcherWeb.Orders.TaxDetails
             MaterialTotal = source.MaterialTotal;
         }
 
-        public OrderTaxDetailsDto(IOrderTaxDetailsWithActualAmounts source)
-            : this((IOrderTaxDetails)source)
-        {
-            HasAllActualAmounts = source.HasAllActualAmounts;
-        }
-
         public int Id { get; set; }
         public decimal SalesTaxRate { get; set; }
         public decimal SalesTax { get; set; }
@@ -31,6 +25,5 @@ namespace DispatcherWeb.Orders.TaxDetails
         public decimal FreightTotal { get; set; }
         public decimal MaterialTotal { get; set; }
         public List<OrderLineTaxDetailsDto> OrderLines { get; set; }
-        public bool HasAllActualAmounts { get; set; }
     }
 }

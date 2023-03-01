@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.DriverApplication.Dto
+﻿namespace DispatcherWeb.DriverApplication.Dto
 {
     public class TimeClassificationDto
     {

@@ -1,7 +1,4 @@
-﻿using DispatcherWeb.Infrastructure;
-using System.ComponentModel.DataAnnotations;
-
-namespace DispatcherWeb.Services.Dto
+﻿namespace DispatcherWeb.Services.Dto
 {
     public class ServiceEditDto
     {

@@ -6,7 +6,7 @@
     /// </summary>
     public static class AppPermissions
     {
-        public static string[] ManualPermissionsList = new[] 
+        public static string[] ManualPermissionsList = new[]
         {
             AppPermissions.DriverProductionPay,
             AppPermissions.Pages_LeaseHaulerStatements,
@@ -20,7 +20,7 @@
         //COMMON PERMISSIONS (FOR BOTH OF TENANTS AND HOST)
         public const string Pages = "Pages";
 
-       // public const string Pages_DemoUiComponents= "Pages.DemoUiComponents";
+        // public const string Pages_DemoUiComponents= "Pages.DemoUiComponents";
         public const string Pages_Administration = "Pages.Administration";
 
         public const string Pages_Administration_Roles = "Pages.Administration.Roles";
@@ -79,9 +79,6 @@
         public const string Pages_Administration_DynamicEntityPropertyValue_Create = "Pages.Administration.DynamicEntityPropertyValue.Create";
         public const string Pages_Administration_DynamicEntityPropertyValue_Edit = "Pages.Administration.DynamicEntityPropertyValue.Edit";
         public const string Pages_Administration_DynamicEntityPropertyValue_Delete = "Pages.Administration.DynamicEntityPropertyValue.Delete";
-
-
-        public const string Pages_Administration_RecalculateHasAllActualAmountsValues = "Pages.Administration.RecalculateHasAllActualAmountsValues";
 
         //TENANT-SPECIFIC PERMISSIONS
         public const string Pages_Tenant_Dashboard = "Pages.Tenant.Dashboard";
@@ -144,7 +141,6 @@
         public const string Pages_Reports_RevenueBreakdown = "Pages.Reports.RevenueBreakdown";
         public const string Pages_Reports_RevenueBreakdownByTruck = "Pages.Reports.RevenueBreakdownByTruck";
         public const string Pages_Reports_Receipts = "Pages.Reports.Receipts";
-        public const string Pages_Reports_BillingReconciliation = "Pages.Reports.BillingReconciliation";
         public const string Pages_Reports_PaymentReconciliation = "Pages.Reports.PaymentReconciliation";
         public const string Pages_Reports_DriverActivityDetail = "Pages.Reports.DriverActivityDetail";
         public const string Pages_Reports_RevenueAnalysis = "Pages.Reports.RevenueAnalysis";

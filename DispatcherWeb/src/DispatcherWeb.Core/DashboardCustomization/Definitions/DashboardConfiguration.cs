@@ -52,7 +52,7 @@ namespace DispatcherWeb.DashboardCustomization.Definitions
                 DispatcherWebDashboardCustomizationConsts.Widgets.Tenant.GeneralStats,
                 "WidgetGeneralStats",
                 side: MultiTenancySides.Tenant,
-                permissions: tenantWidgetsDefaultPermission.Concat(new List<string>{ AppPermissions.Pages_Administration_AuditLogs }).ToList());
+                permissions: tenantWidgetsDefaultPermission.Concat(new List<string> { AppPermissions.Pages_Administration_AuditLogs }).ToList());
 
             var profitShare = new WidgetDefinition(
                 DispatcherWebDashboardCustomizationConsts.Widgets.Tenant.ProfitShare,

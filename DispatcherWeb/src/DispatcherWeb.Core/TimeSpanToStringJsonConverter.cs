@@ -1,7 +1,7 @@
 ﻿#nullable enable
-using Newtonsoft.Json;
 using System;
 using Abp.Extensions;
+using Newtonsoft.Json;
 
 namespace DispatcherWeb
 {

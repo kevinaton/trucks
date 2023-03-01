@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DispatcherWeb.DriverAssignments.Dto
+﻿namespace DispatcherWeb.DriverAssignments.Dto
 {
     public class DriverAssignmentReportItemDto : DriverAssignmentDto
     {

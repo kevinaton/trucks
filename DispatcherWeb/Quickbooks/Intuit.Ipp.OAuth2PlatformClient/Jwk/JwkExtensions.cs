@@ -5,8 +5,8 @@
 // Modified for Intuit's Oauth2 implementation
 
 
-using Newtonsoft.Json;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Intuit.Ipp.OAuth2PlatformClient
 {
@@ -18,7 +18,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
         //Encodes JWK
         public static string ToJwkString(this JsonWebKey key)
         {
-            var json = JsonConvert.SerializeObject(key);            
+            var json = JsonConvert.SerializeObject(key);
             return Base64Url.Encode(Encoding.UTF8.GetBytes(json));
         }
     }

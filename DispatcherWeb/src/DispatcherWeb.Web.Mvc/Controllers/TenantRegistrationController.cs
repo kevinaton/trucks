@@ -1,29 +1,29 @@
-﻿using Abp.Authorization;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Abp.Authorization;
 using Abp.Authorization.Users;
+using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.Configuration.Startup;
 using Abp.Domain.Uow;
 using Abp.Extensions;
 using Abp.UI;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Debugging;
+using DispatcherWeb.Editions;
 using DispatcherWeb.Identity;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.MultiTenancy.Dto;
 using DispatcherWeb.MultiTenancy.Payments;
 using DispatcherWeb.Security;
 using DispatcherWeb.Url;
-using DispatcherWeb.Web.Security.Recaptcha;
-using System.Threading.Tasks;
-using Abp.Collections.Extensions;
-using DispatcherWeb.Editions;
 using DispatcherWeb.Web.Models.TenantRegistration;
-using Microsoft.Extensions.Configuration;
+using DispatcherWeb.Web.Security.Recaptcha;
 using Microsoft.AspNetCore.Hosting;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -69,13 +69,13 @@ namespace DispatcherWeb.Web.Controllers
             if (output.EditionsWithFeatures.IsNullOrEmpty())
             {
                 return RedirectToAction("Register", "TenantRegistration");
-            }       
+            }
 
             var editionName = _appConfiguration["App:TenantSelfRegistrationEditionName"];
             var edition = output.EditionsWithFeatures.FirstOrDefault(x => x.Edition.Name == editionName);
             if (edition != null)
             {
-                return RedirectToAction("Register", "TenantRegistration", new 
+                return RedirectToAction("Register", "TenantRegistration", new
                 {
                     editionId = edition.Edition.Id,
                     subscriptionStartType = SubscriptionStartType.Free

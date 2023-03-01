@@ -8,7 +8,6 @@ using Abp.Extensions;
 using Abp.Net.Mail.Smtp;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Url;
-using DispatcherWeb.Web;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 
@@ -65,7 +64,7 @@ namespace DispatcherWeb.Emailing
             var receivers = mail.GetTrackableEmailReceivers(trackableEmailId);
             var receiverEmails = receivers.Select(x => x.Email).ToList();
 
-            var callbackUrl = _webUrlService.GetSiteRootAddress().EnsureEndsWith('/') 
+            var callbackUrl = _webUrlService.GetSiteRootAddress().EnsureEndsWith('/')
                               + "/app/Emails/TrackEvents";
 
             var apiMessage = new
@@ -93,7 +92,7 @@ namespace DispatcherWeb.Emailing
                 mail.IsBodyHtml = true;
             }
 
-            var trackOpenUrl = _webUrlService.GetSiteRootAddress().EnsureEndsWith('/') 
+            var trackOpenUrl = _webUrlService.GetSiteRootAddress().EnsureEndsWith('/')
                                + $"app/Emails/TrackEmailOpen/{trackableEmailId}?email=__email__";
             mail.Body += "<img src=\"" + trackOpenUrl + "\" height=\"1\" width=\"1\" />";
         }

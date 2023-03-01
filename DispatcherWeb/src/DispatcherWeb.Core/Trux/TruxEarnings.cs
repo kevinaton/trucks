@@ -1,11 +1,9 @@
-﻿using Abp.Domain.Entities;
-using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.Infrastructure;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.Trux
 {
@@ -16,7 +14,7 @@ namespace DispatcherWeb.Trux
 
         public int TenantId { get; set; }
 
-        
+
         public int JobId { get; set; }
 
         [StringLength(EntityStringFieldLengths.TruxEarnings.JobName)]

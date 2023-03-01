@@ -39,7 +39,7 @@ namespace Intuit.Ipp.OAuth2PlatformClient
                 { OidcConstants.TokenRequest.RedirectUri, redirectUri }
             };
 
-      
+
 
             return client.RequestAsync(Merge(client, fields, extra), cancellationToken);
         }

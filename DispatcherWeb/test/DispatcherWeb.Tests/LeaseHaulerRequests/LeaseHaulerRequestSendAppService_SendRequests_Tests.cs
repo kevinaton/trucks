@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Notifications;
@@ -48,7 +45,7 @@ namespace DispatcherWeb.Tests.LeaseHaulerRequests
                 Date = Clock.Now.Date,
                 Shift = Shift.Shift1,
                 OfficeId = _officeId,
-                LeaseHaulerIds = new []{ leaseHauler.Id },
+                LeaseHaulerIds = new[] { leaseHauler.Id },
                 Message = "message",
             };
             _emailMessageSender.SendEmailMessageAndNotifyErrors(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).ReturnsForAnyArgs(true);
@@ -89,7 +86,7 @@ namespace DispatcherWeb.Tests.LeaseHaulerRequests
                 Date = Clock.Now.Date,
                 Shift = Shift.Shift1,
                 OfficeId = _officeId,
-                LeaseHaulerIds = new []{ leaseHauler.Id },
+                LeaseHaulerIds = new[] { leaseHauler.Id },
                 Message = "message",
             };
             _emailMessageSender.SendEmailMessageAndNotifyErrors(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).ReturnsForAnyArgs(false, true);
@@ -118,7 +115,7 @@ namespace DispatcherWeb.Tests.LeaseHaulerRequests
                 Date = Clock.Now.Date,
                 Shift = Shift.Shift1,
                 OfficeId = _officeId,
-                LeaseHaulerIds = new []{ leaseHauler.Id },
+                LeaseHaulerIds = new[] { leaseHauler.Id },
                 Message = "message",
             };
             _emailMessageSender.SendEmailMessageAndNotifyErrors(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).ReturnsForAnyArgs(true);
@@ -147,7 +144,7 @@ namespace DispatcherWeb.Tests.LeaseHaulerRequests
                 Date = Clock.Now.Date,
                 Shift = Shift.Shift1,
                 OfficeId = _officeId,
-                LeaseHaulerIds = new []{ leaseHauler.Id },
+                LeaseHaulerIds = new[] { leaseHauler.Id },
                 Message = "message",
             };
             _emailMessageSender.SendEmailMessageAndNotifyErrors(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>()).ReturnsForAnyArgs(true);

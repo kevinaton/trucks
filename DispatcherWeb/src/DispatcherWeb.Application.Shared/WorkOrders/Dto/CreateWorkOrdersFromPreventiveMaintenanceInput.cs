@@ -2,6 +2,6 @@
 {
     public class CreateWorkOrdersFromPreventiveMaintenanceInput
     {
-		public int[] PreventiveMaintenanceIds { get; set; }
+        public int[] PreventiveMaintenanceIds { get; set; }
     }
 }

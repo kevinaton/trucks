@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using DispatcherWeb.Notifications;
+using DispatcherWeb.Notifications.Dto;
 using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.Web.Utils;
-using DispatcherWeb.Notifications.Dto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
 {

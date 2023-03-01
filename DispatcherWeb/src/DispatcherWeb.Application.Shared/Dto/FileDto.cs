@@ -15,7 +15,7 @@ namespace DispatcherWeb.Dto
 
         public FileDto()
         {
-            
+
         }
 
         public FileDto(string fileName, string fileType)

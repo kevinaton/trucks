@@ -13,7 +13,7 @@ namespace DispatcherWeb.Projects.Dto
 
         [StringLength(1000)]
         public string Description { get; set; }
-        
+
         [StringLength(500)]
         public string Location { get; set; }
 

@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services;
-using DispatcherWeb.Dashboard.Dto;
 using DispatcherWeb.Dashboard.RevenueGraph.DataItemsQueryServices;
 using DispatcherWeb.Dashboard.RevenueGraph.Dto;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Utilities;
-using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
 {
@@ -32,15 +27,15 @@ namespace DispatcherWeb.Dashboard.RevenueGraph.DataServices
             var revenueByWeek = (from item in await _revenueGraphDataItemsQueryService.GetRevenueGraphDataItemsAsync(input)
                                  group item by new { Week = (item.DeliveryDate.Value - firstDayOfTheWeek).Days / 7 }
                         into g
-                        select new
-                        {
-                            g.Key.Week,
-                            MaterialRevenue = g.Sum(olt => olt.IsMaterialPriceOverridden ? decimal.Round(olt.MaterialPriceOriginal, 2) : decimal.Round((olt.MaterialPricePerUnit ?? 0) * olt.MaterialQuantity, 2)),
-                            FreightRevenue = g.Sum(olt => olt.IsFreightPriceOverridden ? decimal.Round(olt.FreightPriceOriginal, 2) : decimal.Round((olt.FreightPricePerUnit ?? 0) * olt.FreightQuantity, 2)),
-                            FuelSurcharge = g.Sum(olt => decimal.Round(olt.FuelSurcharge, 2)),
-                            InternalTrucksFuelSurcharge = g.Sum(olt => decimal.Round(olt.InternalTruckFuelSurcharge, 2)),
-                            LeaseHaulersFuelSurcharge = g.Sum(olt => decimal.Round(olt.LeaseHaulerFuelSurcharge, 2)),
-                        })
+                                 select new
+                                 {
+                                     g.Key.Week,
+                                     MaterialRevenue = g.Sum(olt => olt.IsMaterialPriceOverridden ? decimal.Round(olt.MaterialPriceOriginal, 2) : decimal.Round((olt.MaterialPricePerUnit ?? 0) * olt.MaterialQuantity, 2)),
+                                     FreightRevenue = g.Sum(olt => olt.IsFreightPriceOverridden ? decimal.Round(olt.FreightPriceOriginal, 2) : decimal.Round((olt.FreightPricePerUnit ?? 0) * olt.FreightQuantity, 2)),
+                                     FuelSurcharge = g.Sum(olt => decimal.Round(olt.FuelSurcharge, 2)),
+                                     InternalTrucksFuelSurcharge = g.Sum(olt => decimal.Round(olt.InternalTruckFuelSurcharge, 2)),
+                                     LeaseHaulersFuelSurcharge = g.Sum(olt => decimal.Round(olt.LeaseHaulerFuelSurcharge, 2)),
+                                 })
                     .OrderBy(x => x.Week)
                     .ToList()
                 ;

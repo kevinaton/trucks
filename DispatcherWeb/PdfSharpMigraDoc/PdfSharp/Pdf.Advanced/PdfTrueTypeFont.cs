@@ -28,9 +28,9 @@
 #endregion
 
 using System.Diagnostics;
+using PdfSharp.Drawing;
 using PdfSharp.Fonts;
 using PdfSharp.Fonts.OpenType;
-using PdfSharp.Drawing;
 using PdfSharp.Pdf.Filters;
 
 namespace PdfSharp.Pdf.Advanced
@@ -63,7 +63,7 @@ namespace PdfSharp.Pdf.Advanced
             _cmapInfo = new CMapInfo(ttDescriptor);
 
             BaseFont = font.GlyphTypeface.GetBaseName();
-     
+
             if (_fontOptions.FontEmbedding == PdfFontEmbedding.Always)
                 BaseFont = PdfFont.CreateEmbeddedFontSubsetName(BaseFont);
             FontDescriptor.FontName = BaseFont;

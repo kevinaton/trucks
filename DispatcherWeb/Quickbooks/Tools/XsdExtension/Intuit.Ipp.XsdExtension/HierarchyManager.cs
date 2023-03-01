@@ -8,9 +8,7 @@
 
 namespace Intuit.Ipp.XsdExtension
 {
-    using System;
     using System.CodeDom;
-    using System.Collections.Generic;
     using System.Globalization;
 
     /// <summary>
@@ -248,43 +246,43 @@ namespace Intuit.Ipp.XsdExtension
                         {
 
                             case DataObjectConstants.ACCOUNTSRECEIVABLE:
-                                AddJsonAttribute(typeProperty,"Accounts Receivable");
+                                AddJsonAttribute(typeProperty, "Accounts Receivable");
                                 break;
                             case DataObjectConstants.OTHERCURRENTASSET:
-                                AddJsonAttribute(typeProperty,"Other Current Asset");
+                                AddJsonAttribute(typeProperty, "Other Current Asset");
                                 break;
                             case DataObjectConstants.FIXEDASSET:
-                                AddJsonAttribute(typeProperty,"Fixed Asset");
+                                AddJsonAttribute(typeProperty, "Fixed Asset");
                                 break;
                             case DataObjectConstants.OTHERASSET:
-                                AddJsonAttribute(typeProperty,"Other Asset");
+                                AddJsonAttribute(typeProperty, "Other Asset");
                                 break;
                             case DataObjectConstants.ACCOUNTPAYABLE:
-                                AddJsonAttribute(typeProperty,"Accounts Payable");
+                                AddJsonAttribute(typeProperty, "Accounts Payable");
                                 break;
                             case DataObjectConstants.CREDITCARD:
-                                AddJsonAttribute(typeProperty,"Credit Card");
+                                AddJsonAttribute(typeProperty, "Credit Card");
                                 break;
                             case DataObjectConstants.OTHERCURRENTLIABILITY:
-                                 AddJsonAttribute(typeProperty,"Other Current Liability");
+                                AddJsonAttribute(typeProperty, "Other Current Liability");
                                 break;
                             case DataObjectConstants.LONGTERMLIABILITY:
-                                 AddJsonAttribute(typeProperty,"Long Term Liability");
+                                AddJsonAttribute(typeProperty, "Long Term Liability");
                                 break;
                             case DataObjectConstants.COSTOFGOODSSOLD:
-                                 AddJsonAttribute(typeProperty,"Cost of Goods Sold");
+                                AddJsonAttribute(typeProperty, "Cost of Goods Sold");
                                 break;
                             case DataObjectConstants.OTHERINCOME:
-                                 AddJsonAttribute(typeProperty,"Other Income");
+                                AddJsonAttribute(typeProperty, "Other Income");
                                 break;
                             case DataObjectConstants.OTHEREXPENSE:
-                                 AddJsonAttribute(typeProperty,"Other Expense");
+                                AddJsonAttribute(typeProperty, "Other Expense");
                                 break;
                             case DataObjectConstants.NONPOSTING:
-                                 AddJsonAttribute(typeProperty,"Non-Posting");
+                                AddJsonAttribute(typeProperty, "Non-Posting");
                                 break;
                         }
-                        
+
                     }
                 }
             } // for class check
@@ -293,14 +291,14 @@ namespace Intuit.Ipp.XsdExtension
         /// <summary>
         /// This adds [JsonPropertyAttribute] attribute to the given field. 
         /// </summary>
-        private void AddJsonAttribute(CodeMemberField typeProperty,string attributeName)
+        private void AddJsonAttribute(CodeMemberField typeProperty, string attributeName)
         {
             CodeAttributeDeclaration codeAttrDec = new CodeAttributeDeclaration(new CodeTypeReference("JsonPropertyAttribute"));
             CodeAttributeArgument nameAttr = new CodeAttributeArgument(new CodePrimitiveExpression(attributeName));
             codeAttrDec.Arguments.Add(nameAttr);
             typeProperty.CustomAttributes.Add(codeAttrDec);
-        
-        } 
+
+        }
 
         /// <summary>
         /// Adds Query and Report enum types to OperationEnum
@@ -332,7 +330,7 @@ namespace Intuit.Ipp.XsdExtension
         private void AddJsonIgnore(CodeTypeDeclaration codedomElement)
         {
             bool xmlIgnoreFound = false;
-            
+
             CodeTypeMemberCollection typeMembers = codedomElement.Members;
 
             // Loop thru each member/property of the class

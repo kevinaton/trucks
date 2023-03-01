@@ -1,9 +1,9 @@
-﻿using Abp.Domain.Entities;
-using DispatcherWeb.Authorization.Users;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
+using DispatcherWeb.Authorization.Users;
+using Microsoft.Extensions.Logging;
 
 
 namespace DispatcherWeb.Drivers

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DispatcherWeb.DriverApplication.Dto
 {
@@ -8,7 +6,7 @@ namespace DispatcherWeb.DriverApplication.Dto
     {
         public long UserId { get; set; }
         public bool IsAdmin { get; set; }
-        public bool IsDriver { get; set; } 
+        public bool IsDriver { get; set; }
         public Guid DriverGuid { get; set; }
         public int DriverId { get; set; }
         public string DriverName { get; set; }

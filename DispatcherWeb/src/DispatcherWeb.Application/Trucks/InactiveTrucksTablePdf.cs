@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DispatcherWeb.Infrastructure.Reports;
+﻿using DispatcherWeb.Infrastructure.Reports;
 using MigraDoc.DocumentObjectModel;
 
 namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
 {
     public class InactiveTrucksTablePdf : StandardTablePdf, IInactiveTrucksTable
-	{
-		public InactiveTrucksTablePdf(Section section) : base(section, new []{ 8.0, 10.5 })
-		{
-		}
+    {
+        public InactiveTrucksTablePdf(Section section) : base(section, new[] { 8.0, 10.5 })
+        {
+        }
 
-		public void AddRow(string divisionName, string inactiveTrucks)
-		{
-			base.AddRow(divisionName, inactiveTrucks);
-		}
-	}
+        public void AddRow(string divisionName, string inactiveTrucks)
+        {
+            base.AddRow(divisionName, inactiveTrucks);
+        }
+    }
 }

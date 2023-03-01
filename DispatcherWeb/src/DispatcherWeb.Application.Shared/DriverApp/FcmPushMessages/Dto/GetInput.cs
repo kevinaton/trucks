@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.DriverApp.FcmPushMessages.Dto

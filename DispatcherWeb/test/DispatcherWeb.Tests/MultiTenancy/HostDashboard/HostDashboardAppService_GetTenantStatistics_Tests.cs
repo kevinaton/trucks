@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoFixture;
 using DispatcherWeb.DailyHistory;
@@ -44,10 +42,10 @@ namespace DispatcherWeb.Tests.MultiTenancy.HostDashboard
             // Arrange
             await CreateTenantDailyHistoryEntity(1, date.AddDays(-1)); // To check filtering by date
             var tenantDailyHistory = await CreateTenantDailyHistoryEntity(1, date);
-            var yesterdayTenantDailyHistory = date != _yesterday ? await CreateTenantDailyHistoryEntity(1, _yesterday) : tenantDailyHistory; 
+            var yesterdayTenantDailyHistory = date != _yesterday ? await CreateTenantDailyHistoryEntity(1, _yesterday) : tenantDailyHistory;
 
-        // Act
-        var tsList = await _hostDashboardAppService.GetTenantStatistics(new GetDashboardDataInput
+            // Act
+            var tsList = await _hostDashboardAppService.GetTenantStatistics(new GetDashboardDataInput
             {
                 StartDate = date,
                 EndDate = date.AddDays(1).AddMilliseconds(-1),

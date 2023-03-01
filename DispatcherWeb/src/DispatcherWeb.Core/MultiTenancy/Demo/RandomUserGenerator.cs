@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Abp;
 using Abp.Dependency;
-using Microsoft.AspNetCore.Identity;
 using DispatcherWeb.Authorization.Users;
+using Microsoft.AspNetCore.Identity;
 
 namespace DispatcherWeb.MultiTenancy.Demo
 {
@@ -106,7 +106,7 @@ namespace DispatcherWeb.MultiTenancy.Demo
 
         private User CreateUser(int? tenantId, string nameSurname)
         {
-            var user =  new User
+            var user = new User
             {
                 TenantId = tenantId,
                 UserName = GenerateUsername(nameSurname),

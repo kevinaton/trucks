@@ -7,8 +7,8 @@ using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Attributes;
-using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.LeaseHaulerRequests;
+using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.VehicleMaintenance;
@@ -78,7 +78,7 @@ namespace DispatcherWeb.Trucks
 
         public virtual ICollection<SharedTruck> SharedTrucks { get; set; }
 
-        public virtual ICollection<AvailableLeaseHaulerTruck> AvailableLeaseHaulerTrucks { get;set; }
+        public virtual ICollection<AvailableLeaseHaulerTruck> AvailableLeaseHaulerTrucks { get; set; }
 
         [MileageColumn]
         public decimal CurrentMileage { get; set; }

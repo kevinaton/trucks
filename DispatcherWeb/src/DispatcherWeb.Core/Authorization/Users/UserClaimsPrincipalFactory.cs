@@ -1,12 +1,12 @@
-﻿using Abp.Authorization;
-using Abp.Domain.Uow;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using DispatcherWeb.Authorization.Roles;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Abp.Authorization;
+using Abp.Domain.Uow;
+using DispatcherWeb.Authorization.Roles;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using Microsoft.Extensions.Options;
 
 namespace DispatcherWeb.Authorization.Users
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
@@ -10,9 +11,13 @@ using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
+using Abp.Net.Mail;
+using Abp.Notifications;
 using Abp.Timing;
 using Abp.UI;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Authorization.Roles;
+using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverApplication;
 using DispatcherWeb.DriverApplication.Dto;
@@ -20,23 +25,18 @@ using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Features;
 using DispatcherWeb.Infrastructure.AzureBlobs;
-using DispatcherWeb.Offices;
-using DispatcherWeb.Trucks.Dto;
-using DispatcherWeb.Orders;
 using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.LeaseHaulers;
+using DispatcherWeb.Notifications;
+using DispatcherWeb.Offices;
+using DispatcherWeb.Orders;
+using DispatcherWeb.SyncRequests;
+using DispatcherWeb.TimeOffs;
+using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.Trucks.Exporting;
 using DispatcherWeb.VehicleMaintenance;
-using DispatcherWeb.TimeOffs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Abp.Net.Mail;
-using DispatcherWeb.Notifications;
-using Abp.Notifications;
-using DispatcherWeb.Authorization.Roles;
-using DispatcherWeb.Configuration;
-using System.Net.Mail;
-using DispatcherWeb.LeaseHaulers;
-using DispatcherWeb.SyncRequests;
 
 namespace DispatcherWeb.Trucks
 {
@@ -154,7 +154,7 @@ namespace DispatcherWeb.Trucks
                 .WhereIf(input.Status == FilterActiveStatus.Active, x => x.IsActive)
                 .WhereIf(input.Status == FilterActiveStatus.Inactive, x => !x.IsActive)
                 .WhereIf(input.IsOutOfService.HasValue, x => x.IsOutOfService == input.IsOutOfService)
-                .WhereIf(input.PlatesExpiringThisMonth, t => 
+                .WhereIf(input.PlatesExpiringThisMonth, t =>
                     t.PlateExpiration.HasValue &&
                     t.PlateExpiration.Value.Year == today.Year &&
                     t.PlateExpiration.Value.Month == today.Month
@@ -249,11 +249,11 @@ namespace DispatcherWeb.Trucks
             }
             query = query
                 //.Where(x => x.LocationId.HasValue)
-                .WhereIf(!input.AllOffices && input.OfficeId == null, 
-                    x => x.LocationId == OfficeId 
+                .WhereIf(!input.AllOffices && input.OfficeId == null,
+                    x => x.LocationId == OfficeId
                         || input.IncludeLeaseHaulerTrucks && x.LocationId == null)
-                .WhereIf(input.OfficeId != null, 
-                    x => x.LocationId == input.OfficeId 
+                .WhereIf(input.OfficeId != null,
+                    x => x.LocationId == input.OfficeId
                         || input.IncludeLeaseHaulerTrucks && x.LocationId == null)
                 .WhereIf(!input.IncludeLeaseHaulerTrucks, x => x.LocationId.HasValue)
                 .WhereIf(input.InServiceOnly, x => !x.IsOutOfService)
@@ -551,7 +551,7 @@ namespace DispatcherWeb.Trucks
                 if (model.DefaultDriverId.HasValue)
                 {
                     var otherTrucksWithSameDefaultDriver = _truckRepository.GetAll()
-                        .Where(t => 
+                        .Where(t =>
                             t.LocationId != null
                             && t.Id != entity.Id && t.DefaultDriverId == model.DefaultDriverId)
                         .ToList();
@@ -564,7 +564,7 @@ namespace DispatcherWeb.Trucks
                 }
 
                 await SetDriverIdNullInDriverAssignments(entity.Id, entity.DefaultDriverId);
-                
+
                 entity.DefaultDriverId = model.DefaultDriverId;
 
                 if (entity.Id == 0 && model.DefaultDriverId.HasValue)
@@ -660,7 +660,7 @@ namespace DispatcherWeb.Trucks
             async Task ThrowUserFriendlyExceptionIfTruckWasTrailerAndCategoryChanged()
             {
                 if (model.Id != null
-                    && oldVehicleCategory.AssetType == AssetType.Trailer 
+                    && oldVehicleCategory.AssetType == AssetType.Trailer
                     && newVehicleCategory.AssetType != AssetType.Trailer)
                 {
                     if (model.IsActive)

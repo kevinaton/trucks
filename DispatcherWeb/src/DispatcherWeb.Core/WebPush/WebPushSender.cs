@@ -1,10 +1,10 @@
-﻿using Abp.Dependency;
+﻿using System;
+using System.Threading.Tasks;
+using Abp.Dependency;
 using DispatcherWeb.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Threading.Tasks;
 using WebPushLib = WebPush;
 
 namespace DispatcherWeb.WebPush

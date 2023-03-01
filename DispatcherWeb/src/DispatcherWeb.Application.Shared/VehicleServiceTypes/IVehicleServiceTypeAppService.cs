@@ -6,11 +6,11 @@ using DispatcherWeb.VehicleServiceTypes.Dto;
 
 namespace DispatcherWeb.VehicleServiceTypes
 {
-	public interface IVehicleServiceTypeAppService
-	{
-		Task<IList<VehicleServiceTypeDto>> GetList();
-		Task<VehicleServiceTypeDto> Save(VehicleServiceTypeDto model);
-		Task<bool> Delete(int id);
-		Task<PagedResultDto<SelectListDto>> GetSelectList(GetSelectListInput input);
-	}
+    public interface IVehicleServiceTypeAppService
+    {
+        Task<IList<VehicleServiceTypeDto>> GetList();
+        Task<VehicleServiceTypeDto> Save(VehicleServiceTypeDto model);
+        Task<bool> Delete(int id);
+        Task<PagedResultDto<SelectListDto>> GetSelectList(GetSelectListInput input);
+    }
 }

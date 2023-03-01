@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DispatcherWeb.Web.Areas.App.Startup
+﻿namespace DispatcherWeb.Web.Areas.App.Startup
 {
     public static class AppPageTitles
     {
@@ -89,7 +83,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
             public const string Index = "Orders";
             public const string Detail = "Order";
             public const string Receipts = "Receipts";
-            public const string BillingReconciliation = "Billing Reconciliation";
         }
 
         public static class OrganizationUnits

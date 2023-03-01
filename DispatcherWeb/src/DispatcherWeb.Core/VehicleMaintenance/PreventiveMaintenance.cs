@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Infrastructure.Attributes;
@@ -11,37 +7,37 @@ using DispatcherWeb.Trucks;
 
 namespace DispatcherWeb.VehicleMaintenance
 {
-	[Table("PreventiveMaintenance")]
+    [Table("PreventiveMaintenance")]
     public class PreventiveMaintenance : FullAuditedEntity, IMustHaveTenant
-	{
-		public int TenantId { get; set; }
+    {
+        public int TenantId { get; set; }
 
-		public int TruckId { get; set; }
-		public Truck Truck { get; set; }
+        public int TruckId { get; set; }
+        public Truck Truck { get; set; }
 
-		public int VehicleServiceId { get; set; }
-		public VehicleService VehicleService { get; set; }
+        public int VehicleServiceId { get; set; }
+        public VehicleService VehicleService { get; set; }
 
-		public DateTime LastDate { get; set; }
+        public DateTime LastDate { get; set; }
 
-		[MileageColumn]
+        [MileageColumn]
         public decimal LastMileage { get; set; }
 
         public decimal LastHour { get; set; }
 
-		public DateTime? DueDate { get; set; }
+        public DateTime? DueDate { get; set; }
 
         [MileageColumn]
         public decimal? DueMileage { get; set; }
 
         public decimal? DueHour { get; set; }
 
-		public DateTime? WarningDate { get; set; }
+        public DateTime? WarningDate { get; set; }
 
-		[MileageColumn]
+        [MileageColumn]
         public decimal? WarningMileage { get; set; }
 
         public decimal? WarningHour { get; set; }
 
-	}
+    }
 }

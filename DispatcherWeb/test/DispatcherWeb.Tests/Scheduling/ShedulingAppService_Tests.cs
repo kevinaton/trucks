@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Timing;
 using Abp.UI;
-using DispatcherWeb.Customers;
-using DispatcherWeb.Dispatching;
-using DispatcherWeb.Dispatching.Dto;
-using DispatcherWeb.Infrastructure.Sms;
 using DispatcherWeb.Infrastructure.Sms.Dto;
-using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
-using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.Scheduling;
 using DispatcherWeb.Scheduling.Dto;
-using DispatcherWeb.Services;
-using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using Shouldly;
@@ -133,8 +122,8 @@ namespace DispatcherWeb.Tests.Scheduling
 
             await _schedulingAppService.SetOrderLineLoads(new SetOrderLineLoadsInput()
             {
-                    OrderLineId = orderLineId,
-                    Loads = 1,
+                OrderLineId = orderLineId,
+                Loads = 1,
             }).ShouldThrowAsync(typeof(UserFriendlyException));
         }
 
@@ -221,7 +210,7 @@ namespace DispatcherWeb.Tests.Scheduling
         [Fact]
         public async Task Test_GetOrderTruckUtilizationForEdit_should_return_utilization_for_Truck_allocated_on_several_OrderLine()
         {
-            DateTime date = DateTime.Today; 
+            DateTime date = DateTime.Today;
             var orderEntity = await CreateOrder(date);
             orderEntity.OrderLines.Count.ShouldBe(2);
 

@@ -53,11 +53,11 @@ namespace DispatcherWeb.Infrastructure.Sms
             _accountSid = _settingManager.GetSettingValue(AppSettings.Sms.AccountSid);
             _authToken = _settingManager.GetSettingValue(AppSettings.Sms.AuthToken);
             _phoneNumber = AbpSession.TenantId.HasValue ? _settingManager.GetSettingValueForTenant(AppSettings.DispatchingAndMessaging.SmsPhoneNumber, AbpSession.TenantId.Value) : null;
-            if(!useTenantPhoneNumberOnly && _phoneNumber.IsNullOrEmpty())
+            if (!useTenantPhoneNumberOnly && _phoneNumber.IsNullOrEmpty())
             {
                 _phoneNumber = _settingManager.GetSettingValue(AppSettings.Sms.PhoneNumber);
             }
-            if(_accountSid.IsNullOrEmpty() || _authToken.IsNullOrEmpty() || _phoneNumber.IsNullOrEmpty())
+            if (_accountSid.IsNullOrEmpty() || _authToken.IsNullOrEmpty() || _phoneNumber.IsNullOrEmpty())
             {
                 throw new UserFriendlyException("There are no SMS settings. Please contact your administrator.");
             }
@@ -119,7 +119,7 @@ namespace DispatcherWeb.Infrastructure.Sms
                     await _sentSmsRepository.InsertAsync(sentSms);
                 }
             }
-            catch(ApiException e)
+            catch (ApiException e)
             {
                 Logger.Error($"Exception when sending the sms: {e.Message}");
                 throw;

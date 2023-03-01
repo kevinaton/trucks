@@ -1,11 +1,7 @@
-﻿using Abp.Extensions;
+﻿using System;
+using Abp.Extensions;
 using DispatcherWeb.Common.Dto;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Dispatching.Dto
 {
@@ -16,12 +12,12 @@ namespace DispatcherWeb.Dispatching.Dto
 
     public class DriverInfoNotFoundDto : DriverInfoBaseDto
     {
-        
+
     }
 
     public class DriverInfoDeletedDto : DriverInfoBaseDto
     {
-        
+
     }
 
     public class DriverInfoErrorAndRedirect : DriverInfoBaseDto

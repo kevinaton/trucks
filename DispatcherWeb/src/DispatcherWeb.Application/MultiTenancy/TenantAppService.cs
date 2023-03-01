@@ -6,29 +6,28 @@ using Abp;
 using Abp.Application.Features;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
-using Abp.Authorization.Users;
+using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Events.Bus;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Security;
-using Microsoft.EntityFrameworkCore;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Editions.Dto;
-using DispatcherWeb.MultiTenancy.Dto;
-using DispatcherWeb.Url;
-using Abp.Domain.Repositories;
-using DispatcherWeb.Drivers;
-using DispatcherWeb.PayStatements;
-using DispatcherWeb.LeaseHaulerStatements;
-using DispatcherWeb.Orders;
 using DispatcherWeb.Dispatching;
-using DispatcherWeb.Invoices;
-using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Drivers;
+using DispatcherWeb.Editions.Dto;
 using DispatcherWeb.Emailing;
+using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Invoices;
+using DispatcherWeb.LeaseHaulerStatements;
+using DispatcherWeb.MultiTenancy.Dto;
+using DispatcherWeb.Orders;
 using DispatcherWeb.Payments;
+using DispatcherWeb.PayStatements;
 using DispatcherWeb.Sms;
 using DispatcherWeb.TimeOffs;
+using DispatcherWeb.Url;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.MultiTenancy
 {
@@ -56,7 +55,6 @@ namespace DispatcherWeb.MultiTenancy
         private readonly IRepository<InvoiceBatch> _invoiceBatchRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
-        private readonly IRepository<OrderLineOfficeAmount> _orderLineOfficeAmountRepository;
         private readonly IRepository<Payment> _paymentsRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
         private readonly IRepository<OrderEmail> _orderEmailRepository;
@@ -93,7 +91,6 @@ namespace DispatcherWeb.MultiTenancy
             IRepository<InvoiceBatch> invoiceBatchRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
-            IRepository<OrderLineOfficeAmount> orderLineOfficeAmountRepository,
             IRepository<Payment> paymentsRepository,
             IRepository<OrderLine> orderLineRepository,
             IRepository<OrderEmail> orderEmailRepository,
@@ -130,7 +127,6 @@ namespace DispatcherWeb.MultiTenancy
             _invoiceBatchRepository = invoiceBatchRepository;
             _dispatchRepository = dispatchRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
-            _orderLineOfficeAmountRepository = orderLineOfficeAmountRepository;
             _paymentsRepository = paymentsRepository;
             _orderLineRepository = orderLineRepository;
             _orderEmailRepository = orderEmailRepository;
@@ -209,7 +205,7 @@ namespace DispatcherWeb.MultiTenancy
 
             input.ConnectionString = SimpleStringCipher.Instance.Encrypt(input.ConnectionString);
             var tenant = await TenantManager.GetByIdAsync(input.Id);
-             if (tenant.EditionId != input.EditionId)
+            if (tenant.EditionId != input.EditionId)
             {
                 await EventBus.TriggerAsync(new TenantEditionChangedEventData
                 {
@@ -218,7 +214,7 @@ namespace DispatcherWeb.MultiTenancy
                     NewEditionId = input.EditionId
                 });
             }
-           ObjectMapper.Map(input, tenant);
+            ObjectMapper.Map(input, tenant);
             tenant.SubscriptionEndDateUtc = tenant.SubscriptionEndDateUtc?.ToUniversalTime();
 
             await TenantManager.UpdateAsync(tenant);
@@ -269,7 +265,6 @@ namespace DispatcherWeb.MultiTenancy
                     await _dispatchRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _orderLineTruckRepository.HardDeleteInBatchesAsync(x => x.ParentOrderLineTruckId.HasValue, CurrentUnitOfWork, batchSize);
                     await _orderLineTruckRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
-                    await _orderLineOfficeAmountRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _orderPaymentRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _paymentsRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _receiptLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
@@ -328,7 +323,7 @@ namespace DispatcherWeb.MultiTenancy
         }
 
         public async Task AddMonthToDriverDOTRequirements(EntityDto input)
-        {            
+        {
             var driversQuery = _driverRepository.GetAll()
                 .Where(x => !x.IsExternal && x.TenantId == input.Id);
             var drivers = await driversQuery.ToListAsync();
@@ -351,7 +346,7 @@ namespace DispatcherWeb.MultiTenancy
 
                 await _driverRepository.UpdateAsync(item);
             }
-            
+
         }
     }
 }

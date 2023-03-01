@@ -3,7 +3,6 @@ using Abp.Configuration.Startup;
 using Abp.MultiTenancy;
 using Abp.Runtime;
 using Abp.Runtime.Session;
-using DispatcherWeb.MultiTenancy;
 
 namespace DispatcherWeb.Runtime.Session
 {

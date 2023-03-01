@@ -1,9 +1,9 @@
-﻿using Abp.Domain.Entities;
-using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.Infrastructure;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.LuckStone
 {
@@ -21,7 +21,7 @@ namespace DispatcherWeb.LuckStone
         public bool TicketDateTimeWasConverted { get; set; }
 
         public DateTime TicketDateTime { get; set; }
-        
+
         [StringLength(EntityStringFieldLengths.LuckStoneEarnings.Site)]
         public string Site { get; set; }
 

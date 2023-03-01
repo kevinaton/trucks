@@ -10,22 +10,22 @@ using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.UI;
-using DispatcherWeb.Dto;
-using DispatcherWeb.Drivers.Dto;
-using DispatcherWeb.Trucks;
 using Castle.Core.Internal;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching;
+using DispatcherWeb.Drivers.Dto;
 using DispatcherWeb.Drivers.Exporting;
-using DispatcherWeb.Infrastructure.Extensions;
-using DispatcherWeb.Orders;
-using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Offices;
-using DispatcherWeb.TimeClassifications;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Features;
+using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.LeaseHaulers;
+using DispatcherWeb.Offices;
+using DispatcherWeb.Orders;
 using DispatcherWeb.SyncRequests;
+using DispatcherWeb.TimeClassifications;
+using DispatcherWeb.Trucks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Drivers
 {
@@ -545,7 +545,7 @@ namespace DispatcherWeb.Drivers
                     existingToUpdate.PayRate = classification.PayRate ?? 0;
                     existingToUpdate.IsDefault = classification.IsDefault;
                     existingToUpdate.AllowForManualTime = classification.AllowForManualTime;
-                    
+
                     syncRequest
                         .AddChange(EntityEnum.EmployeeTimeClassification, existingToUpdate.ToChangedEntity(), ChangeType.Modified);
                 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DispatcherWeb.Customers.Dto
+﻿namespace DispatcherWeb.Customers.Dto
 {
     public class GetCustomerContactDuplicateCountInput
     {

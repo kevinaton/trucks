@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.Domain.Entities.Auditing;
-using Abp.Linq.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
-using Abp.Timing;
+using Abp.Linq.Extensions;
 using Abp.UI;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Dto;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.PreventiveMaintenanceSchedule;
@@ -24,7 +22,6 @@ using DispatcherWeb.Trucks;
 using DispatcherWeb.VehicleMaintenance;
 using DispatcherWeb.WorkOrders.Dto;
 using Microsoft.EntityFrameworkCore;
-using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.WorkOrders
 {
@@ -122,7 +119,7 @@ namespace DispatcherWeb.WorkOrders
         public async Task<WorkOrderEditDto> GetWorkOrderForEdit(NullableIdDto input)
         {
             WorkOrderEditDto dto;
-            if(input.Id.HasValue)
+            if (input.Id.HasValue)
             {
                 dto = await _workOrderRepository.GetAll()
                     .Select(x => new WorkOrderEditDto()
@@ -197,7 +194,7 @@ namespace DispatcherWeb.WorkOrders
             {
                 model.CompletionDate = null;
             }
-            if(model.Status == WorkOrderStatus.Complete && entity.Status != WorkOrderStatus.Complete)
+            if (model.Status == WorkOrderStatus.Complete && entity.Status != WorkOrderStatus.Complete)
             {
                 await OnWorkOrderCompleted(model);
             }
@@ -246,7 +243,7 @@ namespace DispatcherWeb.WorkOrders
                 }
             }
         }
-        
+
 
         private async Task OnWorkOrderCompleted(WorkOrderEditDto model)
         {
@@ -264,7 +261,7 @@ namespace DispatcherWeb.WorkOrders
         private async Task CreateOutOfServiceHistory(int truckId, DateTime issueDate, string note)
         {
             Truck truck = await _truckRepository.GetAsync(truckId);
-            if(!truck.IsOutOfService)
+            if (!truck.IsOutOfService)
             {
                 truck.IsOutOfService = true;
 
@@ -280,7 +277,7 @@ namespace DispatcherWeb.WorkOrders
         }
         private async Task SetInServiceDateForTruckAndOutOfServiceHistory(int truckId, DateTime inServiceDate, int completedWorkOrderId)
         {
-            if(await _workOrderRepository.GetAll().AnyAsync(wo => wo.Id != completedWorkOrderId))
+            if (await _workOrderRepository.GetAll().AnyAsync(wo => wo.Id != completedWorkOrderId))
             {
                 return;
             }
@@ -315,7 +312,7 @@ namespace DispatcherWeb.WorkOrders
                 })
                 .ToList();
 
-            foreach(PreventiveMaintenance preventiveMaintenance in preventiveMaintenanceToComplete)
+            foreach (PreventiveMaintenance preventiveMaintenance in preventiveMaintenanceToComplete)
             {
                 preventiveMaintenance.LastDate = model.CompletionDate ?? await GetToday();
                 preventiveMaintenance.LastMileage = model.Odometer;
@@ -358,11 +355,11 @@ namespace DispatcherWeb.WorkOrders
 
         private async Task EnsurePermissionsForEntity(FullAuditedEntity entity)
         {
-            if(entity.Id != 0 && !await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_PreventiveMaintenanceSchedule_Edit))
+            if (entity.Id != 0 && !await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_PreventiveMaintenanceSchedule_Edit))
             {
                 Debug.Assert(await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_WorkOrders_EditLimited));
                 Debug.Assert(AbpSession.UserId != null, "AbpSession.UserId != null");
-                if(entity.CreatorUserId != AbpSession.UserId.Value)
+                if (entity.CreatorUserId != AbpSession.UserId.Value)
                 {
                     throw new AbpAuthorizationException();
                 }
@@ -378,7 +375,7 @@ namespace DispatcherWeb.WorkOrders
                 .Include(x => x.WorkOrderLines)
                 .SingleAsync(x => x.Id == input.Id);
             await EnsurePermissionsForEntity(workOrder);
-            foreach(WorkOrderLine workOrderLine in workOrder.WorkOrderLines.ToList())
+            foreach (WorkOrderLine workOrderLine in workOrder.WorkOrderLines.ToList())
             {
                 await _workOrderLineRepository.DeleteAsync(workOrderLine);
             }
@@ -414,7 +411,7 @@ namespace DispatcherWeb.WorkOrders
         public async Task<WorkOrderLineEditDto> GetWorkOrderLineForEdit(GetWorkOrderLineForEditInput input)
         {
             WorkOrderLineEditDto dto;
-            if(input.Id.HasValue)
+            if (input.Id.HasValue)
             {
                 dto = await _workOrderLineRepository.GetAll()
                     .Select(x => new WorkOrderLineEditDto()
@@ -445,7 +442,7 @@ namespace DispatcherWeb.WorkOrders
         public async Task<SaveWorkOrderLineResult> SaveWorkOrderLine(WorkOrderLineEditDto model)
         {
             WorkOrderLine entity;
-            if(model.Id != 0)
+            if (model.Id != 0)
             {
                 entity = await _workOrderLineRepository.GetAsync(model.Id);
             }
@@ -564,7 +561,7 @@ namespace DispatcherWeb.WorkOrders
                 .Select(vst => vst.Id)
                 .FirstOrDefaultAsync();
 
-            foreach(var workOrderTruck in workOrderTrucks)
+            foreach (var workOrderTruck in workOrderTrucks)
             {
                 WorkOrderEditDto workOrderEditDto = new WorkOrderEditDto
                 {
@@ -575,7 +572,7 @@ namespace DispatcherWeb.WorkOrders
                 };
                 workOrderEditDto = await SaveWorkOrder(workOrderEditDto);
 
-                foreach(var preventiveMaintenance in workOrderTruck.PreventiveMaintenances)
+                foreach (var preventiveMaintenance in workOrderTruck.PreventiveMaintenances)
                 {
                     WorkOrderLineEditDto workOrderLineEditDto = new WorkOrderLineEditDto
                     {

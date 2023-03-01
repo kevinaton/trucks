@@ -1,5 +1,3 @@
-using System;
-
 namespace DispatcherWeb.MultiTenancy.Dto
 {
     public class DeleteDispatchDataForTenantInput

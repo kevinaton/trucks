@@ -2222,6 +2222,10 @@ namespace DispatcherWeb.Migrations
                     b.Property<int>("DriverId")
                         .HasColumnType("int");
 
+                    b.Property<string>("EmailAddress")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
@@ -2238,8 +2242,8 @@ namespace DispatcherWeb.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Message")
-                        .HasMaxLength(550)
-                        .HasColumnType("nvarchar(550)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("Note")
                         .HasMaxLength(1000)
@@ -4810,9 +4814,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<int?>("FuelSurchargeCalculationId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("HasAllActualAmounts")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("HasInternalNotes")
                         .HasColumnType("bit");
 
@@ -4861,9 +4862,6 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<decimal>("MaterialTotal")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<double?>("NumberOfTrucks")
-                        .HasColumnType("float");
 
                     b.Property<string>("PONumber")
                         .HasMaxLength(20)
@@ -4970,9 +4968,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<decimal?>("FuelSurchargeRate")
                         .HasColumnType("money");
 
-                    b.Property<bool>("HasAllActualAmounts")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("HaulingCompanyOrderLineId")
                         .HasColumnType("int");
 
@@ -5059,6 +5054,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<bool>("ProductionPay")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("QuoteServiceId")
+                        .HasColumnType("int");
+
                     b.Property<double?>("ScheduledTrucks")
                         .HasColumnType("float");
 
@@ -5095,59 +5093,11 @@ namespace DispatcherWeb.Migrations
 
                     b.HasIndex("OrderId");
 
+                    b.HasIndex("QuoteServiceId");
+
                     b.HasIndex("ServiceId");
 
                     b.ToTable("OrderLine");
-                });
-
-            modelBuilder.Entity("DispatcherWeb.Orders.OrderLineOfficeAmount", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<decimal?>("ActualQuantity")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("OfficeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderLineId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OfficeId");
-
-                    b.HasIndex("OrderLineId");
-
-                    b.ToTable("OrderLineOfficeAmount");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Orders.OrderLineTruck", b =>
@@ -9529,6 +9479,11 @@ namespace DispatcherWeb.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DispatcherWeb.Quotes.QuoteService", "QuoteService")
+                        .WithMany("OrderLines")
+                        .HasForeignKey("QuoteServiceId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("DispatcherWeb.Services.Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
@@ -9545,26 +9500,9 @@ namespace DispatcherWeb.Migrations
 
                     b.Navigation("Order");
 
+                    b.Navigation("QuoteService");
+
                     b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("DispatcherWeb.Orders.OrderLineOfficeAmount", b =>
-                {
-                    b.HasOne("DispatcherWeb.Offices.Office", "Office")
-                        .WithMany()
-                        .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DispatcherWeb.Orders.OrderLine", "OrderLine")
-                        .WithMany("OfficeAmounts")
-                        .HasForeignKey("OrderLineId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Office");
-
-                    b.Navigation("OrderLine");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Orders.OrderLineTruck", b =>
@@ -10668,8 +10606,6 @@ namespace DispatcherWeb.Migrations
                 {
                     b.Navigation("Dispatches");
 
-                    b.Navigation("OfficeAmounts");
-
                     b.Navigation("OrderLineTrucks");
 
                     b.Navigation("ReceiptLines");
@@ -10755,6 +10691,11 @@ namespace DispatcherWeb.Migrations
             modelBuilder.Entity("DispatcherWeb.Quotes.QuoteHistoryRecord", b =>
                 {
                     b.Navigation("FieldDiffs");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.Quotes.QuoteService", b =>
+                {
+                    b.Navigation("OrderLines");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Services.Service", b =>

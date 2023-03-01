@@ -1,10 +1,8 @@
-﻿using Abp.Domain.Entities;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Drivers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace DispatcherWeb.PayStatements
 {
@@ -21,7 +19,7 @@ namespace DispatcherWeb.PayStatements
         public virtual PayStatement PayStatement { get; set; }
         public int DriverId { get; set; }
         public virtual Driver Driver { get; set; }
-        
+
         public decimal ProductionBasedTotal { get; set; }
         public decimal TimeBasedTotal { get; set; }
 

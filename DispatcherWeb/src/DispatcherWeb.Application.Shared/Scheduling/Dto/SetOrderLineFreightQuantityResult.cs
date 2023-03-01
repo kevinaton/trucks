@@ -2,6 +2,6 @@
 {
     public class SetOrderLineFreightQuantityResult
     {
-		public decimal? FreightQuantity { get; set; }
+        public decimal? FreightQuantity { get; set; }
     }
 }

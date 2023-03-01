@@ -1,15 +1,12 @@
-﻿using Abp.Domain.Entities;
-using Abp.Domain.Entities.Auditing;
-using DispatcherWeb.Orders.TaxDetails;
-using DispatcherWeb.Services;
-using DispatcherWeb.Locations;
-using DispatcherWeb.UnitsOfMeasure;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Locations;
+using DispatcherWeb.Services;
+using DispatcherWeb.UnitsOfMeasure;
 
 namespace DispatcherWeb.Orders
 {
@@ -53,10 +50,10 @@ namespace DispatcherWeb.Orders
         public int? MaterialUomId { get; set; }
 
         public UnitOfMeasure MaterialUom { get; set; }
-        
+
         [Column(TypeName = "money")]
         public decimal MaterialRate { get; set; }
-                
+
         public decimal? MaterialQuantity { get; set; }
 
         [Column(TypeName = "money")]
