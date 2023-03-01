@@ -148,7 +148,6 @@ namespace DispatcherWeb.Authorization
             reports.CreateChildPermission(AppPermissions.Pages_Reports_RevenueBreakdown, L("RevenueBreakdownReport"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_RevenueBreakdownByTruck, L("RevenueBreakdownByTruckReport"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_Receipts, L("Receipts"), multiTenancySides: MultiTenancySides.Tenant);
-            reports.CreateChildPermission(AppPermissions.Pages_Reports_BillingReconciliation, L("BillingReconciliation"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_PaymentReconciliation, L("PaymentReconciliation"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowPaymentProcessingFeature));
             reports.CreateChildPermission(AppPermissions.Pages_Reports_DriverActivityDetail, L("DriverActivityReport"), multiTenancySides: MultiTenancySides.Tenant);

@@ -94,8 +94,8 @@
 
         var lastSortingString = "";
 
-        var billingReconciliationTable = $('#ReceiptsTable');
-        var billingReconciliationGrid = billingReconciliationTable.DataTableInit({
+        var receiptsTable = $('#ReceiptsTable');
+        var receiptsGrid = receiptsTable.DataTableInit({
             stateSave: true,
             stateDuration: 0,
             ajax: function (data, callback, settings) {
@@ -164,19 +164,19 @@
 
         function reloadMainGrid(callback, resetPaging) {
             resetPaging = resetPaging === undefined ? true : resetPaging;
-            billingReconciliationGrid.ajax.reload(callback, resetPaging);
+            receiptsGrid.ajax.reload(callback, resetPaging);
         }
 
         //$(".filter").change(function () {
         //    reloadMainGrid();
         //});
 
-        billingReconciliationTable.on('click', '.btnEditReceipt', function () {
+        receiptsTable.on('click', '.btnEditReceipt', function () {
             var receiptId = _dtHelper.getRowData(this).receiptId;
             window.location = abp.appPath + 'app/Receipts/Details/' + receiptId;
         });
 
-        billingReconciliationTable.on('click', '.btnEditOrder', function () {
+        receiptsTable.on('click', '.btnEditOrder', function () {
             var orderId = _dtHelper.getRowData(this).orderId;
             window.location = abp.appPath + 'app/Orders/Details/' + orderId;
         });

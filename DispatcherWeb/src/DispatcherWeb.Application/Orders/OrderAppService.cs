@@ -78,7 +78,6 @@ namespace DispatcherWeb.Orders
         private readonly IDriverApplicationPushSender _driverApplicationPushSender;
         private readonly ISyncRequestSender _syncRequestSender;
         private readonly IReceiptsExcelExporter _receiptsExcelExporter;
-        private readonly IBillingReconciliationExcelExporter _billingReconciliationExcelExporter;
         private readonly ITrackableEmailSender _trackableEmailSender;
         private readonly IAppNotifier _appNotifier;
         private readonly IWebHostEnvironment _hostingEnvironment;
@@ -113,7 +112,6 @@ namespace DispatcherWeb.Orders
             IDriverApplicationPushSender driverApplicationPushSender,
             ISyncRequestSender syncRequestSender,
             IReceiptsExcelExporter receiptsExcelExporter,
-            IBillingReconciliationExcelExporter billingReconciliationExcelExporter,
             ITrackableEmailSender trackableEmailSender,
             IAppNotifier appNotifier,
             IWebHostEnvironment hostingEnvironment,
@@ -148,7 +146,6 @@ namespace DispatcherWeb.Orders
             _driverApplicationPushSender = driverApplicationPushSender;
             _syncRequestSender = syncRequestSender;
             _receiptsExcelExporter = receiptsExcelExporter;
-            _billingReconciliationExcelExporter = billingReconciliationExcelExporter;
             _trackableEmailSender = trackableEmailSender;
             _appNotifier = appNotifier;
             _hostingEnvironment = hostingEnvironment;
@@ -2368,152 +2365,6 @@ namespace DispatcherWeb.Orders
             //await CalculateTotalsAsync<ReceiptsDto<ReceiptsReportItemDto>, ReceiptsReportItemDto>(items);
 
             return await _receiptsExcelExporter.ExportToFileAsync(items);
-        }
-
-        private IQueryable<Order> GetBillingReconciliationQuery(GetBillingReconciliationInput input)
-        {
-            return _orderRepository.GetAll()
-                .WhereIf(input.StartDate.HasValue,
-                    x => x.DeliveryDate >= input.StartDate)
-                .WhereIf(input.EndDate.HasValue,
-                    x => x.DeliveryDate <= input.EndDate)
-                .WhereIf(input.OfficeId.HasValue,
-                    x => x.LocationId == input.OfficeId || x.SharedOrders.Any(s => s.OfficeId == input.OfficeId))
-                .WhereIf(input.CustomerId.HasValue,
-                    x => x.CustomerId == input.CustomerId)
-                .Where(x => input.IsBilled == x.BilledOrders.Any(b => b.OfficeId == OfficeId))
-                //.Where(x => x.OrderLines.Any(l => l.Tickets.Any(a => a.OfficeId == OfficeId)) || x.Receipts.Any(r => r.OfficeId == OfficeId)); //&& a.ActualQuantity != null
-                .Where(x => false); //.Where(x => x.OrderLines.Any(l => l.OfficeAmounts.Any(a => a.OfficeId == OfficeId && a.ActualQuantity != null)));
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Reports_BillingReconciliation)]
-        public async Task<PagedResultDto<BillingReconciliationDto>> GetBillingReconciliation(GetBillingReconciliationInput input)
-        {
-            var query = GetBillingReconciliationQuery(input);
-
-            var totalCount = await query.CountAsync();
-
-            var items = await query
-                .Select(x => new BillingReconciliationDto
-                {
-                    Id = x.Id,
-                    IsBilled = x.BilledOrders.Any(b => b.OfficeId == OfficeId),
-                    DeliveryDate = x.DeliveryDate,
-                    CustomerName = x.Customer.Name,
-                    SalesTaxRate = x.SalesTaxRate,
-                    CODTotal = x.CODTotal,
-                    FreightTotal = x.FreightTotal,
-                    MaterialTotal = x.MaterialTotal,
-                    SalesTax = x.SalesTax,
-                    IsShared = x.SharedOrders.Any(so => so.OfficeId != x.LocationId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
-                    Items = x.OrderLines.Select(l => new BillingReconciliationItemDto
-                    {
-                        TicketQuantity = l.Tickets.Sum(t => t.Quantity),
-                        FreightPricePerUnit = l.FreightPricePerUnit,
-                        MaterialPricePerUnit = l.MaterialPricePerUnit,
-                        IsTaxable = l.Service.IsTaxable,
-                        OrderLineFreightPrice = l.FreightPrice,
-                        OrderLineMaterialPrice = l.MaterialPrice,
-                        IsOrderLineFreightPriceOverridden = l.IsFreightPriceOverridden,
-                        IsOrderLineMaterialPriceOverridden = l.IsMaterialPriceOverridden
-                    }).ToList()
-                })
-                .OrderBy(input.Sorting)
-                .PageBy(input)
-                .ToListAsync();
-
-            await CalculateTotalsAsync<BillingReconciliationDto<BillingReconciliationItemDto>, BillingReconciliationItemDto>(items);
-
-            return new PagedResultDto<BillingReconciliationDto>(
-                totalCount,
-                items);
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Reports_BillingReconciliation)]
-        public async Task<FileDto> ExportBillingReconciliationToExcel(GetBillingReconciliationInput input)
-        {
-            var query = GetBillingReconciliationQuery(input);
-
-            var items = await query
-                .Select(x => new BillingReconciliationReportDto
-                {
-                    Id = x.Id,
-                    IsBilled = x.BilledOrders.Any(b => b.OfficeId == OfficeId),
-                    DeliveryDate = x.DeliveryDate,
-                    CustomerName = x.Customer.Name,
-                    SalesTaxRate = x.SalesTaxRate,
-                    CODTotal = x.CODTotal,
-                    FreightTotal = x.FreightTotal,
-                    MaterialTotal = x.MaterialTotal,
-                    SalesTax = x.SalesTax,
-                    IsShared = x.SharedOrders.Any(so => so.OfficeId != x.LocationId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
-                    Items = x.OrderLines.Select(l => new BillingReconciliationReportItemDto
-                    {
-                        TicketQuantity = l.Tickets.Sum(t => t.Quantity),
-                        FreightPricePerUnit = l.FreightPricePerUnit,
-                        MaterialPricePerUnit = l.MaterialPricePerUnit,
-                        IsTaxable = l.Service.IsTaxable,
-                        OrderLineFreightPrice = l.FreightPrice,
-                        OrderLineMaterialPrice = l.MaterialPrice,
-                        IsOrderLineFreightPriceOverridden = l.IsFreightPriceOverridden,
-                        IsOrderLineMaterialPriceOverridden = l.IsMaterialPriceOverridden,
-                        Name = l.Service.Service1,
-                        Designation = l.Designation,
-                        LoadAt = l.LoadAt == null ? null : new LocationNameDto
-                        {
-                            Name = l.LoadAt.Name,
-                            StreetAddress = l.LoadAt.StreetAddress,
-                            City = l.LoadAt.City,
-                            State = l.LoadAt.State
-                        },
-                        DeliverTo = l.DeliverTo == null ? null : new LocationNameDto
-                        {
-                            Name = l.DeliverTo.Name,
-                            StreetAddress = l.DeliverTo.StreetAddress,
-                            City = l.DeliverTo.City,
-                            State = l.DeliverTo.State
-                        },
-                        MaterialUomName = l.MaterialUom.Name,
-                        FreightUomName = l.FreightUom.Name
-                    }).ToList()
-                })
-                .OrderBy(input.Sorting)
-                //.PageBy(input)
-                .ToListAsync();
-
-            if (items.Count == 0)
-            {
-                throw new UserFriendlyException("There is no data to export.");
-            }
-
-            await CalculateTotalsAsync<BillingReconciliationDto<BillingReconciliationReportItemDto>, BillingReconciliationReportItemDto>(items);
-
-            return await _billingReconciliationExcelExporter.ExportToFileAsync(items);
-        }
-
-        private async Task CalculateTotalsAsync<TL, TI>(IEnumerable<TL> items)
-            where TL : BillingReconciliationDto<TI>
-            where TI : BillingReconciliationItemDto
-        {
-            var taxCalculationType = await _orderTaxCalculator.GetTaxCalculationTypeAsync();
-
-            foreach (var item in items)
-            {
-                if (taxCalculationType == TaxCalculationType.NoCalculation)
-                {
-                    if (item.IsShared)
-                    {
-                        item.SalesTax = 0;
-                        //taxWarning = "Unable to calculate for shared orders";
-                    }
-                    else
-                    {
-                        //keep the full sales tax for the office
-                    }
-                }
-
-                await _orderTaxCalculator.CalculateTotalsAsync(item, item.Items);
-            }
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]

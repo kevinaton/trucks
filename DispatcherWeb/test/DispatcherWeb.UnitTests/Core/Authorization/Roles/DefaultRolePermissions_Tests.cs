@@ -66,7 +66,6 @@ namespace DispatcherWeb.UnitTests.Core.Authorization.Roles
                 AppPermissions.Pages_Reports_RevenueBreakdownByTruck,
                 AppPermissions.Pages_Reports_ScheduledReports,
                 AppPermissions.Pages_Reports_Receipts,
-                AppPermissions.Pages_Reports_BillingReconciliation,
                 AppPermissions.Pages_Reports_PaymentReconciliation,
                 AppPermissions.Pages_Services,
                 AppPermissions.Pages_Services_Merge,

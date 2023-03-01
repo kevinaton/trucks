@@ -30,8 +30,6 @@ namespace DispatcherWeb.Orders
 
         Task<PagedResultDto<ReceiptReportDto>> GetReceipts(GetReceiptReportInput input);
         Task<FileDto> ExportReceiptsToExcel(GetReceiptReportInput input);
-        Task<PagedResultDto<BillingReconciliationDto>> GetBillingReconciliation(GetBillingReconciliationInput input);
-        Task<FileDto> ExportBillingReconciliationToExcel(GetBillingReconciliationInput input);
         Task SetOrderIsBilled(SetOrderIsBilledInput input);
 
         Task<Document> GetWorkOrderReport(GetWorkOrderReportInput input);

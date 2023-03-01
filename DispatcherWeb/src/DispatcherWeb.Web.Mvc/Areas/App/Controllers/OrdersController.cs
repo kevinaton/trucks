@@ -77,12 +77,6 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             return View();
         }
 
-        [AbpMvcAuthorize(AppPermissions.Pages_Reports_BillingReconciliation)]
-        public IActionResult BillingReconciliation()
-        {
-            return View();
-        }
-
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<PartialViewResult> CreateOrEditOrderLineModal(int? id, int? orderId)
