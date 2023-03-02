@@ -411,6 +411,7 @@ namespace DispatcherWeb.Orders
                 editOrderLineModal.TimeOnJob = model.TimeOnJob;
                 editOrderLineModal.ProductionPay = model.ProductionPay;
                 editOrderLineModal.Note = model.Note;
+                editOrderLineModal.QuoteServiceId = model.QuoteServiceId;
 
                 var orderLine = await EditOrderLine(editOrderLineModal);
 
@@ -2120,7 +2121,8 @@ namespace DispatcherWeb.Orders
                 StaggeredTimeInterval = orderLine.StaggeredTimeInterval,
                 StaggeredTimeKind = orderLine.StaggeredTimeKind,
                 TimeOnJob = orderLine.TimeOnJob,
-                UpdateStaggeredTime = orderLine.UpdateStaggeredTime
+                UpdateStaggeredTime = orderLine.UpdateStaggeredTime,
+                QuoteServiceId = orderLine.QuoteServiceId
             };
         }
 
