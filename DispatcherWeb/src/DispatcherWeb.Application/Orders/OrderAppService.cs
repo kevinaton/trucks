@@ -1309,6 +1309,30 @@ namespace DispatcherWeb.Orders
             return createdOrderIds.ToArray();
         }
 
+        public async Task RecalculateStaggeredTimeForOrders(RecalculateStaggeredTimeForOrdersInput input)
+        {
+            var orderLines = await _orderLineRepository.GetAll()
+                .Where(x => input.OrderIds.Contains(x.OrderId))
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Order.DeliveryDate
+                })
+                .ToListAsync();
+
+            var today = await GetToday();
+            foreach (var orderLine in orderLines)
+            {
+                if (orderLine.DeliveryDate >= today)
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLine.Id);
+                    orderLineUpdater.UpdateStaggeredTimeOnTrucksOnSave();
+                    await orderLineUpdater.SaveChangesAsync();
+                }
+            }
+            await CurrentUnitOfWork.SaveChangesAsync();
+        }
+
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<OrderInternalNotesDto> GetOrderInternalNotes(EntityDto input)
         {
