@@ -11,6 +11,9 @@
         var _model = null;
         var _initializing = false;
         var _recalculating = false;
+        var _permissions = {
+            edit: abp.auth.hasPermission('Pages.Orders.Edit')
+        };
         var _saveEventArgs = {
             reloadMaterialTotalIfNotOverridden: false,
             reloadFreightTotalIfNotOverridden: false
@@ -163,22 +166,7 @@
                 leaseHaulerRateInput.closest('.form-group').hide();
             }
 
-            ////Init field editors
-            //if (abp.session.officeId !== undefined) {
-
-            //    if (abp.session.officeId === null || $("#LocationId").val() !== abp.session.officeId.toString()) {
-            //        //disableOrderEdit();
-            //    }
-            //}
-
-            //if (!_permissions.edit) {
-            //    disableOrderEdit();
-            //    $("#CopyOrderButton").hide();
-            //} else {
-            //    if ($("#MaterialCompanyOrderId").val()) {
-            //        disableOrderEditForHaulingCompany();
-            //    }
-            //}
+            //Init field editors
 
             _deliveryDateDropdown.datepickerInit();
 
@@ -465,7 +453,15 @@
             disableQuoteRelatedFieldsIfNeeded();
             disableFieldsIfEditingJob();
             updateDesignationRelatedFieldsVisibility();
+            disableJobEditIfNeeded();
         };
+
+        function disableJobEditIfNeeded() {
+            if (!_permissions.edit) {
+                _$form.find('input,select,textarea,button').attr('disabled', true);
+                _modalManager.getModal().find('.save-button').hide();
+            }
+        }
 
         function isNewOrder() {
             return _orderId === '';
