@@ -31,7 +31,8 @@
             },
             dataMergeOptions: {
                 enabled: _permissions.merge,
-                description: "The selected products or services are about to be merged into one entry. Select the entry that you would like them to be merged into. The other entries will be deleted. If you don't want this to happen, press cancel.",
+                description: "The selected products or services are about to be merged into one entry. Select the entry that you would like them to be merged into. The other entries will be deleted. There is no undoing this process. If you don't want this to happen, press cancel.",
+                entitiesName: 'entries',
                 dropdownServiceMethod: _serviceService.getServicesByIdsSelectList,
                 mergeServiceMethod: _serviceService.mergeServices
             },

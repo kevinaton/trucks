@@ -33,7 +33,8 @@
             },
             dataMergeOptions: {
                 enabled: _permissions.merge,
-                description: "The selected customers are about to be merged into one entry. Select the customer that you would like them to be merged into. The other customers will be deleted. If you don't want this to happen, press cancel.",
+                description: "The selected customers are about to be merged into one entry. Select the customer that you would like them to be merged into. The other customers will be deleted. There is no undoing this process. If you don't want this to happen, press cancel.",
+                entitiesName: 'customers',
                 dropdownServiceMethod: _customerService.getCustomersByIdsSelectList,
                 mergeServiceMethod: _customerService.mergeCustomers
             },

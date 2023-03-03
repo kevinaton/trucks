@@ -179,7 +179,8 @@
                 },
                 dataMergeOptions: {
                     enabled: _permissions.merge && _customerId !== '',
-                    description: "The selected customer contacts are about to be merged into one entry. Select the contact that you would like them to be merged into. The other contacts will be deleted. If you don't want this to happen, press cancel.",
+                    description: "The selected customer contacts are about to be merged into one entry. Select the contact that you would like them to be merged into. The other contacts will be deleted. There is no undoing this process. If you don't want this to happen, press cancel.",
+                    entitiesName: 'contacts',
                     dropdownServiceMethod: _customerService.getCustomerContactsByIdsSelectList,
                     mergeServiceMethod: _customerService.mergeCustomerContacts
                 },
