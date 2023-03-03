@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Domain.Repositories;
+using Abp.Extensions;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.SyncRequests.FcmPushMessages.ChangeDetails;
@@ -34,6 +35,7 @@ namespace DispatcherWeb.SyncRequests.DriverApp
                 {
                     Id = x.Id,
                     DeliveryDate = x.OrderLine.Order.DeliveryDate,
+                    Status = x.Status
                 }).ToListAsync();
         }
 
@@ -51,7 +53,7 @@ namespace DispatcherWeb.SyncRequests.DriverApp
                 return new FcmDispatchDetailsDto
                 {
                     Id = changedDispatch.Id,
-                    ChangeType = ChangeType.Modified, //override incoming changeType since deleted/canceled/completed dispatches could still be shown in the new driver app
+                    ChangeType = dispatchDetails.Status.IsIn(DispatchStatus.Canceled, DispatchStatus.Error) ? ChangeType.Removed : ChangeType.Modified,
                     DeliveryDate = dispatchDetails?.DeliveryDate?.ToString("yyyy-MM-dd")
                 };
             }
@@ -62,6 +64,7 @@ namespace DispatcherWeb.SyncRequests.DriverApp
         {
             public int Id { get; internal set; }
             public DateTime? DeliveryDate { get; internal set; }
+            public DispatchStatus Status { get; internal set; }
         }
     }
 }
