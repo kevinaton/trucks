@@ -1111,10 +1111,9 @@
     var dataMerge = function () {
         var mergeButtonClassName = "data-merge-button";
         var rowSelectionClassName = "data-merge-row-selection";
-        var rowSelectAllClassName = "data-merge-row-select-all";
         var mergeButtonClass = '.' + mergeButtonClassName;
         var rowSelectionClass = '.' + rowSelectionClassName;
-        var rowSelectAllClass = '.' + rowSelectAllClassName;
+        var mergeRecordCountLimit = 5;
 
         function addColumn(options) {
             options.columns.push({
@@ -1135,7 +1134,6 @@
             var oldHeaderCallback = options.headerCallback;
             options.headerCallback = function (thead, data, start, end, display) {
                 var headerCell = $(thead).find('th').eq(options.columns.length - 1).html('');
-                headerCell.append($('<div class="marge_checkbox"><label class="data-merge-select-all-label m-checkbox"><input type="checkbox" class="minimal ' + rowSelectAllClassName + '"><span></span></label></div>'));
                 headerCell.append($('<button type="button" class="btn btn-default btn-sm" disabled>Merge</button>').addClass(mergeButtonClassName));
                 if (oldHeaderCallback)
                     oldHeaderCallback(thead, data, start, end, display);
@@ -1144,23 +1142,11 @@
 
         function handleColumn(table, grid, options) {
 
-            table.on('change', rowSelectAllClass, function () {
-                if ($(this).is(":checked")) {
-                    table.find(rowSelectionClass).not(':checked').prop('checked', true).change();
-                } else {
-                    table.find(rowSelectionClass + ':checked').prop('checked', false).change();
-                }
-            });
-
             table.on('change', rowSelectionClass, function () {
                 if ($(this).is(":checked")) {
-                    if (table.find(rowSelectionClass).not(':checked').length === 0) {
-                        table.find(rowSelectAllClass).not(':checked').prop('checked', true).change();
-                    }
-                } else {
-                    if (table.find(rowSelectionClass + ':checked').length === 0) {
-
-                        table.find(rowSelectAllClass + ':checked').prop('checked', false).change();
+                    if (table.find(rowSelectionClass + ':checked').length > mergeRecordCountLimit) {
+                        $(this).prop('checked', false).change();
+                        abp.notify.warn(`You can only merge ${mergeRecordCountLimit} ${(options.dataMergeOptions.entitiesName || 'records')} at a time. Please change your selection.`);
                     }
                 }
                 table.find(mergeButtonClass).prop('disabled', table.find(rowSelectionClass + ':checked').length < 2);

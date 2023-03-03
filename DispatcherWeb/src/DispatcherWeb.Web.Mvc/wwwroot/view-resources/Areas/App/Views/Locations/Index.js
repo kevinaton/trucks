@@ -40,7 +40,8 @@
             },
             dataMergeOptions: {
                 enabled:_permissions.merge,
-                description: "The selected locations are about to be merged into one entry. Select the location that you would like them to be merged into. The other locations will be deleted. If you don't want this to happen, press cancel.",
+                description: "The selected locations are about to be merged into one entry. Select the location that you would like them to be merged into. The other locations will be deleted. There is no undoing this process. If you don't want this to happen, press cancel.",
+                entitiesName: 'locations',
                 dropdownServiceMethod: _locationService.getLocationsByIdsSelectList,
                 mergeServiceMethod: _locationService.mergeLocations
             },
