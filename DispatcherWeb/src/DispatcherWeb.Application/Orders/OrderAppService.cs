@@ -2081,6 +2081,7 @@ namespace DispatcherWeb.Orders
                 QuoteName = order.QuoteName,
                 Shift = order.Shift,
                 OfficeId = order.OfficeId,
+                FocusFieldId = input.FocusFieldId,
                 
                 DeliverToId = orderLine.DeliverToId,
                 DeliverTo = orderLine.DeliverTo,

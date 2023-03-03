@@ -9,5 +9,6 @@ namespace DispatcherWeb.Dispatching.Dto
         public Shift? Shift { get; set; }
         public int? OfficeId { get; set; }
         public string OfficeName { get; set; }
+        public string FocusFieldId { get; set; }
     }
 }

@@ -448,6 +448,13 @@
             disableJobEditIfNeeded();
         };
 
+        this.focusOnDefaultElement = function () {
+            var focusFieldId = _$form.find('#FocusFieldId').val();
+            if (focusFieldId !== '') {
+                _$form.find('#' + focusFieldId).focus();
+            }
+        }
+
         function disableJobEditIfNeeded() {
             if (!_permissions.edit) {
                 _$form.find('input,select,textarea,button').attr('disabled', true);
