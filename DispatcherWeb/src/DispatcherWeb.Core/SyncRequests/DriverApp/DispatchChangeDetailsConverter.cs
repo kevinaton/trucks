@@ -53,7 +53,7 @@ namespace DispatcherWeb.SyncRequests.DriverApp
                 return new FcmDispatchDetailsDto
                 {
                     Id = changedDispatch.Id,
-                    ChangeType = dispatchDetails.Status.IsIn(DispatchStatus.Canceled, DispatchStatus.Error) ? ChangeType.Removed : ChangeType.Modified,
+                    ChangeType = dispatchDetails?.Status.IsIn(DispatchStatus.Canceled, DispatchStatus.Error) == false ? ChangeType.Modified : ChangeType.Removed, //'Removed' for true and null
                     DeliveryDate = dispatchDetails?.DeliveryDate?.ToString("yyyy-MM-dd")
                 };
             }

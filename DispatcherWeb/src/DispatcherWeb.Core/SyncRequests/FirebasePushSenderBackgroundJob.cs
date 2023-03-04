@@ -58,7 +58,7 @@ namespace DispatcherWeb.SyncRequests
                     }
                     else
                     {
-                        if (ex.Message == "Requested entity was not found")
+                        if (ex.Message?.IsIn("Requested entity was not found.", "The registration token is not a valid FCM registration token") == true)
                         {
                             Logger.Info($"Removing registration token {args.RegistrationToken.Id} because it was rejected by FCM");
                             await _fcmRegistrationTokenRepository.DeleteAsync(x => x.Id == args.RegistrationToken.Id);
