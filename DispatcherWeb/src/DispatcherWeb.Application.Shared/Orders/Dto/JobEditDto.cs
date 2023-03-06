@@ -130,5 +130,6 @@ namespace DispatcherWeb.Orders.Dto
         public bool UpdateStaggeredTime { get; set; }
         public int? QuoteServiceId { get; set; }
         public string FocusFieldId { get; set; }
+        public int? MaterialCompanyOrderId { get; set; }
     }
 }

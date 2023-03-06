@@ -382,6 +382,7 @@ namespace DispatcherWeb.Orders
             editOrderModal.OfficeId = model.OfficeId;
             editOrderModal.ProjectId = model.ProjectId;
             editOrderModal.ContactId = model.ContactId;
+            editOrderModal.MaterialCompanyOrderId = model.MaterialCompanyOrderId;
 
             var editOrderResult = await EditOrder(editOrderModal);
             if (!editOrderResult.Completed)

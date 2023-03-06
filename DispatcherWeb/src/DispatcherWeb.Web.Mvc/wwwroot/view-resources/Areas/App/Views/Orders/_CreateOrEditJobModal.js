@@ -455,10 +455,19 @@
             }
         }
 
+        function disableOrderEditForHaulingCompany() {
+            $('input,select,textarea').not('#SalesTaxRate, #FuelSurchargeCalculationId, #BaseFuelCost, .order-line-field').attr('disabled', true);
+        }
+
         function disableJobEditIfNeeded() {
             if (!_permissions.edit) {
                 _$form.find('input,select,textarea,button').attr('disabled', true);
                 _modalManager.getModal().find('.save-button').hide();
+            } else {
+                if ($("#MaterialCompanyOrderId").val()) {
+                    disableOrderEditForHaulingCompany();
+                }
+                disableOrderEditForHaulingCompany();
             }
         }
 
