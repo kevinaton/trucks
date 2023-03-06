@@ -705,6 +705,8 @@ namespace DispatcherWeb
         Invoice3 = 3,
         [Display(Name = "Invoice 4")]
         Invoice4 = 4,
+        [Display(Name = "Invoice 5")]
+        Invoice5 = 5,
     }
 
     public enum ChildInvoiceLineKind
