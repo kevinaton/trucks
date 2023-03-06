@@ -48,6 +48,7 @@ namespace DispatcherWeb.Invoices
         private readonly InvoicePrintOutGenerator2 _invoicePrintOutGenerator2;
         private readonly InvoicePrintOutGenerator3 _invoicePrintOutGenerator3;
         private readonly InvoicePrintOutGenerator4 _invoicePrintOutGenerator4;
+        private readonly InvoicePrintOutGenerator5 _invoicePrintOutGenerator5;
         private readonly ITrackableEmailSender _trackableEmailSender;
         private readonly ICrossTenantOrderSender _crossTenantOrderSender;
 
@@ -65,6 +66,7 @@ namespace DispatcherWeb.Invoices
             InvoicePrintOutGenerator2 invoicePrintOutGenerator2,
             InvoicePrintOutGenerator3 invoicePrintOutGenerator3,
             InvoicePrintOutGenerator4 invoicePrintOutGenerator4,
+            InvoicePrintOutGenerator5 invoicePrintOutGenerator5,
             ITrackableEmailSender trackableEmailSender,
             ICrossTenantOrderSender crossTenantOrderSender
             )
@@ -82,6 +84,7 @@ namespace DispatcherWeb.Invoices
             _invoicePrintOutGenerator2 = invoicePrintOutGenerator2;
             _invoicePrintOutGenerator3 = invoicePrintOutGenerator3;
             _invoicePrintOutGenerator4 = invoicePrintOutGenerator4;
+            _invoicePrintOutGenerator5 = invoicePrintOutGenerator5;
             _trackableEmailSender = trackableEmailSender;
             _crossTenantOrderSender = crossTenantOrderSender;
         }
@@ -862,6 +865,10 @@ namespace DispatcherWeb.Invoices
 
                 case InvoiceTemplateEnum.Invoice4:
                     report = await _invoicePrintOutGenerator4.GenerateReport(data);
+                    break;
+
+                case InvoiceTemplateEnum.Invoice5:
+                    report = await _invoicePrintOutGenerator5.GenerateReport(data);
                     break;
 
                 default:
