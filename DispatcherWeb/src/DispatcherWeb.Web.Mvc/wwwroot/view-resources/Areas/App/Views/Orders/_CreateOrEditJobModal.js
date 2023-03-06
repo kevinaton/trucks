@@ -467,7 +467,6 @@
                 if ($("#MaterialCompanyOrderId").val()) {
                     disableOrderEditForHaulingCompany();
                 }
-                disableOrderEditForHaulingCompany();
             }
         }
 
@@ -1036,10 +1035,6 @@
             _model.jobNumber = model.JobNumber;
             _model.note = model.Note;
 
-            //if (this.saveCallback) {
-            //    this.saveCallback(_model);
-            //}
-
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
             let freightQuantity = model.FreightQuantity === "" ? null : abp.utils.round(parseFloat(model.FreightQuantity));
             let numberOfTrucks = model.NumberOfTrucks === "" ? null : abp.utils.round(parseFloat(model.NumberOfTrucks));
@@ -1109,8 +1104,6 @@
             }
             return true;
         }
-
-        //this.saveCallback = null;
 
     };
 })(jQuery);
