@@ -19,8 +19,6 @@ namespace DispatcherWeb.Scheduling
         Task<DeleteOrderLineTruckResult> DeleteOrderLineTruck(DeleteOrderLineTruckInput input);
         Task<CopyOrderTrucksResult> CopyOrderTrucks(CopyOrderTrucksInput input);
         Task SetOrderLineTime(SetOrderLineTimeInput input);
-        Task SetOrderLineLoadAtId(SetOrderLineLoadAtIdInput input);
-        Task SetOrderLineDeliverToId(SetOrderLineDeliverToIdInput input);
         Task SetOrderLineIsComplete(SetOrderLineIsCompleteInput input);
         Task<SetOrderOfficeIdInput> GetOrderOfficeIdForEdit(EntityDto input);
         Task<SetOrderDirectionsInput> GetOrderDirectionsForEdit(EntityDto input);
@@ -33,7 +31,6 @@ namespace DispatcherWeb.Scheduling
         Task<SetOrderDateInput> GetSetOrderDateInput(int orderLineId);
         Task<SetOrderLineLoadsResult> SetOrderLineLoads(SetOrderLineLoadsInput input);
         Task<HasDispatchesResult> HasDispatches(DeleteOrderLineTruckInput input);
-        Task<SetOrderNumberOfTrucksResult> SetOrderLineNumberOfTrucks(SetOrderLineNumberOfTrucksInput input);
         Task<DateTime?> GetStartTimeForTruckOrderLines(GetTruckOrdersInput input);
         Task<IList<SelectListDto>> GetClosedTrucksSelectList(int orderLineId);
         Task<bool> ActivateClosedTrucks(ActivateClosedTrucksInput input);
