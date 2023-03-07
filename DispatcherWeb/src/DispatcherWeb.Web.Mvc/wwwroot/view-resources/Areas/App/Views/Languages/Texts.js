@@ -84,17 +84,25 @@
             ]
         });
 
-        $('#TextBaseLanguageSelectionCombobox,#TextTargetLanguageSelectionCombobox')
-            .selectpicker({
-                iconBase: "famfamfam-flag",
-                tickIcon: "fa fa-check"
-            });
+        $('#TextBaseLanguageSelectionCombobox').select2Init({
+            showAll: true,
+            allowClear: false
+        });
 
-        $('#TextSourceSelectionCombobox,#TargetValueFilterSelectionCombobox')
-            .selectpicker({
-                iconBase: "fa",
-                tickIcon: "fa fa-check"
-            });
+        $('#TextTargetLanguageSelectionCombobox').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
+        $('#TextSourceSelectionCombobox').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
+        $('#TargetValueFilterSelectionCombobox').select2Init({
+            showAll: true,
+            allowClear: false
+        });
 
         $('#RefreshTextsButton').click(function (e) {
             e.preventDefault();
