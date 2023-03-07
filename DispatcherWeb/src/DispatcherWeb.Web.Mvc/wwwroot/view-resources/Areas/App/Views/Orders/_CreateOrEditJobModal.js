@@ -248,6 +248,8 @@
                     return;
                 }
                 _quoteId = quoteId;
+
+                disableQuoteRelatedFieldsIfNeeded();
                 
                 _projectInput.val(option.data('projectId'));
                 if (_quoteId !== '') {
@@ -265,14 +267,7 @@
                         if (quoteLinesData.items.length === 1) {
                             setOrderLine(quoteLinesData.items[0]);
                         } else if (quoteLinesData.items.length > 1) {
-                            _addQuoteBasedOrderLinesModal.open({
-                                titleText: "Select 1 desired line item you want to have added to the order",
-                                saveButtonText: "Select the desired line item",
-                                limitSelectionToSingleOrderLine: true
-                            }).done(function (modal, modalObject) {
-                                modalObject.setFilter({ quoteId: _quoteId });
-                            });
-                            //TODO what if they cancel this modal? on original order form we don't allow to add custom order lines, but here they will be able to do so
+                            openAddQuoteBasedOrderLinesModal();
                         }
                     }
                     finally {
@@ -280,6 +275,21 @@
                     }
                 }
             };
+
+            function openAddQuoteBasedOrderLinesModal() {
+                _addQuoteBasedOrderLinesModal.open({
+                    titleText: "Select 1 desired line item you want to have added to the order",
+                    saveButtonText: "Select the desired line item",
+                    limitSelectionToSingleOrderLine: true
+                }).done(function (modal, modalObject) {
+                    modalObject.setFilter({ quoteId: _quoteId });
+                    showSelectOrderLineButton();
+                });
+            }
+
+            _$form.find("#OpenQuoteBasedOrderLinesModalButton").click(function () {
+                openAddQuoteBasedOrderLinesModal();
+            });
         
             var quoteIdChanging = false;
             _quoteDropdown.change(async function () {
@@ -487,7 +497,7 @@
             _initializing = true;
             //_$form.find("#Id").val(_orderLine.id);
             //_$form.find("#OrderId").val(_orderLine.orderId);
-            _$form.find("#QuoteId").val(_orderLine.quoteId);
+            //_$form.find("#QuoteId").val(_orderLine.quoteId);
             _$form.find("#QuoteServiceId").val(_orderLine.quoteServiceId);
             _$form.find("#IsMaterialPricePerUnitOverridden").val(_orderLine.isMaterialPricePerUnitOverridden ? "True" : "False");
             _$form.find("#IsFreightPricePerUnitOverridden").val(_orderLine.isFreightPricePerUnitOverridden ? "True" : "False");
@@ -516,7 +526,7 @@
             _$form.find("#JobNumber").val(_orderLine.jobNumber);
             _$form.find("#Note").val(_orderLine.note);
 
-            _quoteId = _$form.find("#QuoteId").val();
+            //_quoteId = _$form.find("#QuoteId").val();
             _quoteServiceId = _$form.find("#QuoteServiceId").val();
 
             updateStaggeredTimeControls();
@@ -524,14 +534,24 @@
             updateProductionPay();
             disableProductionPayIfNeeded(false);
             disableQuoteRelatedFieldsIfNeeded();
+            showSelectOrderLineButton();
 
-            _modalManager.getModal().find('.modal-title').text(orderLine.isNew ? "Add new line" : "Edit line");
             _initializing = false;
             reloadPricing();
 
             refreshTotalFields();
             refreshOverrideButtons();
             refreshHighlighting();
+        }
+
+        function showSelectOrderLineButton() {
+            if (_quoteId && !_quoteServiceId) {
+                _$form.find("#Designation").parent().hide();
+                _$form.find("#OpenQuoteBasedOrderLinesModalButton").parent().show();
+            } else {
+                _$form.find("#Designation").parent().show();
+                _$form.find("#OpenQuoteBasedOrderLinesModalButton").parent().hide();
+            }
         }
 
         function disableQuoteRelatedFieldsIfNeeded() {
