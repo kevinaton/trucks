@@ -1312,7 +1312,7 @@
                     render: function (data, type, full, meta) { return _dtHelper.renderTime(full.time, '') + (full.isTimeStaggered ? staggeredIcon : ''); },
                     title: 'Time on Job',
                     titleHoverText: 'Time on Job',
-                    className: "cell-editable time-on-job-column",
+                    className: "time-on-job-column",
                     responsivePriority: getResponsivePriorityByName('time'),
                     width: "94px",
                     createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
@@ -1339,7 +1339,6 @@
                     render: function (data, type, full, meta) { return _dtHelper.renderText(full.deliverToName); },
                     title: "Deliver to",
                     className: 'deliver-to-column all',
-                    //className: "cell-editable",
                     createdCell: handleLocationCellClickForEdit('DeliverToId')
                 },
                 {
