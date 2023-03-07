@@ -40,8 +40,8 @@
                     <input type="hidden" name="Id" value="@Model.User.Id" />
                 }
 
-                <div class="row">
-                    <div class="col-sm-3 text-center margin-top-15 margin-bottom-15">
+                <div class="row m--margin-bottom-10">
+                    <div class="col-sm-3 text-center margin-top-15 margin-bottom-15 m--margin-right-15">
                         @if (Model.ProfilePictureId.HasValue)
                         {
                             <img src="@Url.Action("GetProfilePictureById", "Profile", new { area = string.Empty })?id=@(Model.ProfilePictureId.Value)" width="128" height="128" class="img-thumbnail img-rounded user-edit-dialog-profile-image" />
@@ -51,7 +51,7 @@
                             <img src="@Url.Content("~/Common/Images/default-profile-picture.png")" width="128" height="128" class="img-thumbnail img-rounded user-edit-dialog-profile-image" />
                         }
                     </div>
-                    <div class="col-sm-9">
+                    <div class="col-sm-8">
                         <div class="form-group">
                             <label class="required-label" for="Name">@L("FirstName")</label>
                             <input id="Name" class="form-control" value="@Model.User.Name" type="text" name="Name" required maxlength="@DispatcherWeb.Authorization.Users.User.MaxNameLength">
