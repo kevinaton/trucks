@@ -70,7 +70,7 @@
                         var $container = $("<span/>");
                         if (row.profilePictureId) {
                             var profilePictureUrl = "/Profile/GetProfilePictureById?id=" + row.profilePictureId;
-                            var $link = $("<a/>").attr("href", profilePictureUrl).attr("target", "_blank");
+                            var $link = $("<a/>").addClass("m--margin-right-10").attr("href", profilePictureUrl).attr("target", "_blank");
                             var $img = $("<img/>")
                                 .addClass("img-circle profileimage")
                                 .attr("src", profilePictureUrl);
