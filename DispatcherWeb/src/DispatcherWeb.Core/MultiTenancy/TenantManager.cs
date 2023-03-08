@@ -279,7 +279,7 @@ namespace DispatcherWeb.MultiTenancy
 
         protected override void ValidateTenancyName(string tenancyName)
         {
-            if (!Regex.IsMatch(tenancyName, "^[a-zA-Z0-9][a-zA-Z0-9_-]{1,}$"))
+            if (!Regex.IsMatch(tenancyName, Tenant.TenancyNameRegex))
             {
                 throw new UserFriendlyException(L("InvalidTenancyName"));
             }

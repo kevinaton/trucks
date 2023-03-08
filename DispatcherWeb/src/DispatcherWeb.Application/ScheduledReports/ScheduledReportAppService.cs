@@ -11,9 +11,11 @@ using Abp.Collections.Extensions;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
+using Abp.Runtime.Session;
 using Abp.Timing;
 using DispatcherWeb.Application.Infrastructure.Utilities;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Emailing;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Reports;
 using DispatcherWeb.Infrastructure.Reports.Dto;
@@ -162,13 +164,13 @@ namespace DispatcherWeb.ScheduledReports
             {
                 throw new AbpAuthorizationException($"You need have the {scheduledReport.ReportType.GetPermissionName()} permission for the {scheduledReport.ReportType} report.");
             }
-            ScheduledReportGeneratorInput scheduledReportGeneratorInput = new ScheduledReportGeneratorInput();
-            scheduledReportGeneratorInput.ReportFormat = scheduledReport.ReportFormat;
-            scheduledReportGeneratorInput.ReportType = scheduledReport.ReportType;
-            scheduledReportGeneratorInput.EmailAddresses = scheduledReport.SendTo.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            Debug.Assert(AbpSession.TenantId != null, "AbpSession.TenantId != null");
-            Debug.Assert(AbpSession.UserId != null, "AbpSession.UserId != null");
-            scheduledReportGeneratorInput.CustomSession = new CustomSession(AbpSession.TenantId.Value, AbpSession.UserId.Value);
+            var scheduledReportGeneratorInput = new ScheduledReportGeneratorInput
+            {
+                ReportFormat = scheduledReport.ReportFormat,
+                ReportType = scheduledReport.ReportType,
+                EmailAddresses = EmailHelper.SplitEmailAddresses(scheduledReport.SendTo),
+                CustomSession = new CustomSession(AbpSession.GetTenantId(), AbpSession.GetUserId())
+            };
 
             RecurringJob.AddOrUpdate<IScheduledReportGeneratorAppService>(
                 GetJobId(scheduledReport.Id),
