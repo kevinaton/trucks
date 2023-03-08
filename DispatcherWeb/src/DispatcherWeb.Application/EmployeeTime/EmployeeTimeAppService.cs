@@ -266,6 +266,7 @@ namespace DispatcherWeb.EmployeeTime
 
             await _employeeTimeRepository.InsertOrUpdateAndGetIdAsync(entity);
 
+            await CurrentUnitOfWork.SaveChangesAsync();
             await _syncRequestSender.SendSyncRequest(new SyncRequest()
                 .AddChange(EntityEnum.EmployeeTime, entity.ToChangedEntity()));
         }
