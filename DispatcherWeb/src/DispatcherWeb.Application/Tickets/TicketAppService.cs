@@ -1412,10 +1412,53 @@ namespace DispatcherWeb.Tickets
                         orderLine.ServiceId = orderLineModel.ServiceId;
                         orderLineTickets.ForEach(t => t.ServiceId = orderLineModel.ServiceId);
                     }
-                    if (orderLine.JobNumber != orderLineModel.JobNumber)
+
+                    orderLine.JobNumber = orderLineModel.JobNumber;
+
+                    var rateWasChanged = false;
+                    if (orderLine.Designation != orderLineModel.Designation)
                     {
-                        orderLine.JobNumber = orderLineModel.JobNumber;
+                        var oldDesignation = orderLine.Designation;
+                        orderLine.Designation = orderLineModel.Designation;
+                        if (orderLine.Designation.MaterialOnly())
+                        {
+                            orderLine.FreightUomId = null;
+                            if (orderLine.FreightPrice != 0 || orderLine.FreightPricePerUnit != 0 || orderLine.FreightQuantity != 0)
+                            {
+                                rateWasChanged = true;
+                            }
+                            orderLine.FreightPrice = 0;
+                            //orderLine.FreightPricePerUnit = 0; //Rate change will be handled below
+                            orderLine.FreightQuantity = 0;
+                        }
+                        else if (orderLine.Designation.FreightOnly())
+                        {
+                            orderLine.MaterialUomId = null;
+                            if (orderLine.MaterialPrice != 0 || orderLine.MaterialPricePerUnit != 0 || orderLine.MaterialQuantity != 0)
+                            {
+                                rateWasChanged = true;
+                            }
+                            orderLine.MaterialPrice = 0;
+                            //orderLine.MaterialPricePerUnit = 0; //Rate change will be handled below
+                            orderLine.MaterialQuantity = 0;
+                        }
+                        else
+                        {
+                            if (oldDesignation.MaterialOnly())
+                            {
+                                rateWasChanged = true;
+                                orderLine.FreightQuantity = orderLine.MaterialQuantity;
+                                //orderLine.FreightUomId = orderLine.MaterialUomId; //UOM change will be handled below
+                            }
+                            else if (oldDesignation.FreightOnly())
+                            {
+                                rateWasChanged = true;
+                                orderLine.MaterialQuantity = orderLine.FreightQuantity;
+                                //orderLine.MaterialUomId = orderLine.FreightUomId; //UOM change will be handled below
+                            }
+                        }
                     }
+
                     if (orderLine.Designation.FreightAndMaterial())
                     {
                         if (orderLine.MaterialUomId != orderLineModel.UomId || orderLine.FreightUomId != orderLineModel.UomId)
@@ -1444,7 +1487,6 @@ namespace DispatcherWeb.Tickets
                         }
                     }
 
-                    var rateWasChanged = false;
                     ServicePricingDto pricing = null;
                     if (orderLine.FreightPricePerUnit != orderLineModel.FreightRate || orderLine.MaterialPricePerUnit != orderLineModel.MaterialRate)
                     {
