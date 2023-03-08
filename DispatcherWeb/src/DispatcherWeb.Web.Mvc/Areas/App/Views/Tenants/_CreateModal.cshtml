@@ -12,7 +12,7 @@
     <form name="TenantInformationsForm">       
         <div class="form-group">
             <label for="CompanyName">@L("CompanyName")</label>
-            <input id="CompanyName" type="text" name="CompanyName" class="form-control" required maxlength="@Tenant.MaxTenancyNameLength" regex="@Tenant.TenancyNameRegex">
+            <input id="CompanyName" type="text" name="CompanyName" class="form-control" required maxlength="@Tenant.MaxTenancyNameLength" companyNameRegexValue="@Tenant.CompanyNameRegex">
         </div>
 
         <div class="row">

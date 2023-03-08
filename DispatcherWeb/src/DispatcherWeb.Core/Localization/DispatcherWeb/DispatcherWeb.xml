@@ -156,7 +156,8 @@
 		<text name="ExportToExcel">Export to excel</text>
 		<text name="ChangeProfilePicture">Change profile picture</text>
 		<text name="UploadSignaturePicture">Upload signature picture</text>
-		<text name="TenantName_Regex_Description">Tenant name must be at least 2 chars, starts with a letter and continue with letter, number, dash or underscore.</text>
+		<text name="TenantName_Regex_Description">Tenant name must be at least 2 chars, start with a letter and continue with letter, number, dash or underscore.</text>
+		<text name="CompanyName_Regex_Description">Company name must be at least 2 characters long, start with a letter or number and contain only letters, numbers, dashes, underscores and spaces.</text>
 		<text name="ProfilePicture_Change_Info">You can select a JPG/JPEG/PNG/GIF file with a maximum {0}MB size.</text>
 		<text name="ProfileSignature_Change_Info">You can select a JPG/JPEG/PNG/GIF file with a maximum {0}MB size.</text>
 		<text name="ProfilePicture_Change_Error">Your profile picture could not be changed.</text>

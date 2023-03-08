@@ -18,6 +18,7 @@ namespace DispatcherWeb.MultiTenancy
         public const int MaxLogoMimeTypeLength = 64;
 
         public new const string TenancyNameRegex = "^[a-zA-Z0-9][a-zA-Z0-9_-]{1,}$";
+        public const string CompanyNameRegex = "^[a-zA-Z0-9][a-zA-Z0-9_ -]{1,}$";
 
         //Can add application specific tenant properties here
 

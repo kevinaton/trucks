@@ -10,14 +10,14 @@
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-			$.validator.addMethod(
-				"regex",
-				function (value, element, regexp) {
-					var re = new RegExp(regexp, 'i');
-					return this.optional(element) || re.test(value);
-				},
-				"Please check your input."
-			);
+            $.validator.addMethod(
+                "regex",
+                function (value, element, regexp) {
+                    var re = new RegExp(regexp, 'i');
+                    return this.optional(element) || re.test(value);
+                },
+                "Please check your input."
+            );
             _$form.find('#Email').rules('add', { regex: app.regex.email });
 
             abp.helper.ui.initControls();
@@ -26,7 +26,7 @@
 
         this.save = async function () {
             if (!_$form.valid()) {
-				_$form.showValidateMessage();
+                _$form.showValidateMessage();
                 return;
             }
 
