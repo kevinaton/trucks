@@ -278,8 +278,8 @@
 
             function openAddQuoteBasedOrderLinesModal() {
                 _addQuoteBasedOrderLinesModal.open({
-                    titleText: "Select 1 desired line item you want to have added to the order",
-                    saveButtonText: "Select the desired line item",
+                    titleText: "Select the desired line item",
+                    saveButtonText: "Add Item",
                     limitSelectionToSingleOrderLine: true
                 }).done(function (modal, modalObject) {
                     modalObject.setFilter({ quoteId: _quoteId });
