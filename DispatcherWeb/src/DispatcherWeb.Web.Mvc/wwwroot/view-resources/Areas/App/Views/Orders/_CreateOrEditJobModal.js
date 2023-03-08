@@ -213,6 +213,7 @@
                         }
                     }
                 }
+                showSelectOrderLineButton();
             });
 
             quoteChildDropdown.onChildDropdownUpdated(function (data) {
