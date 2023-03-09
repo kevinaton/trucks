@@ -20,15 +20,15 @@
             );
             _$form.find('#SendTo').rules('add', { regex: app.regex.emails });
 
-			_$form.find('#ReportType').select2Init({
+            _$form.find('#ReportType').select2Init({
                 showAll: true,
                 allowClear: false
             });
-			_$form.find('#ReportFormat').select2Init({
+            _$form.find('#ReportFormat').select2Init({
                 showAll: true,
                 allowClear: false
             });
-			_$form.find('#SendOnDaysOfWeek').select2Init({
+            _$form.find('#SendOnDaysOfWeek').select2Init({
                 showAll: true,
                 allowClear: false
             });
@@ -36,11 +36,11 @@
 
         };
 
-		this.save = function () {
-			if (!_$form.valid()) {
-				_$form.showValidateMessage();
-				return;
-			}
+        this.save = function () {
+            if (!_$form.valid()) {
+                _$form.showValidateMessage();
+                return;
+            }
 
             var model = _$form.serializeFormWithMultipleToObject();
           
@@ -59,5 +59,5 @@
                 });
         };
 
-	};
+    };
 })(jQuery);
