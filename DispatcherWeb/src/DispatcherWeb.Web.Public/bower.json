@@ -23,7 +23,6 @@
     "morris.js": "morrisjs#^0.5.1",
     "bootstrap-daterangepicker": "^2.1.24",
     "bootstrap-switch": "^3.3.2",
-    "bootstrap-select": "^1.10.0",
     "Jcrop": "^2.0.4",
     "jquery-form": "^3.46.0",
     "jquery-timeago": "^1.5.3",
