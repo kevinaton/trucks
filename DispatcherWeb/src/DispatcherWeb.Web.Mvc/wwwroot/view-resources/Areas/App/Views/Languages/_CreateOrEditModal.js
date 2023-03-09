@@ -8,19 +8,15 @@
         this.init = function(modalManager) {
             _modalManager = modalManager;
 
-            _modalManager.getModal()
-                .find('#LanguageNameEdit')
-                .selectpicker({
-                    iconBase: "fa",
-                    tickIcon: "fa fa-check"
-                });
+            _modalManager.getModal().find('#LanguageNameEdit').select2Init({
+                showAll: false,
+                allowClear: false
+            });
 
-            _modalManager.getModal()
-                .find('#LanguageIconEdit')
-                .selectpicker({
-                    iconBase: "famfamfam-flag",
-                    tickIcon: "fa fa-check"
-                });
+            _modalManager.getModal().find('#LanguageIconEdit').select2Init({
+                showAll: false,
+                allowClear: false
+            });
 
             _$languageInformationForm = _modalManager.getModal().find('form[name=LanguageInformationsForm]');
         };

@@ -5,7 +5,10 @@
         var _dtHelper = abp.helper.dataTables;
 
         var _$targetValueFilterSelectionCombobox = $('#TargetValueFilterSelectionCombobox');
-        _$targetValueFilterSelectionCombobox.selectpicker();
+        _$targetValueFilterSelectionCombobox.select2Init({
+            showAll: true,
+            allowClear: true
+        });
 
         var _appUserNotificationHelper = new app.UserNotificationHelper();
 

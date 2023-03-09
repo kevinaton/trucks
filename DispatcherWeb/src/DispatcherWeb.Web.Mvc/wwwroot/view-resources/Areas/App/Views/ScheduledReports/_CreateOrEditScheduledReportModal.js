@@ -20,24 +20,21 @@
             );
             _$form.find('#SendTo').rules('add', { regex: app.regex.emails });
 
-            var select2Options = {
-                dropdownParent: $('#CreateOrEditScheduledReportModalContainer'),
-                placeholder: '',
-                width: 'auto',
+            _$form.find('#ReportType').select2Init({
+                showAll: true,
                 allowClear: false
-            };
-            _$form.find('#ReportType').selectpicker();
-            _$form.find('#ReportFormat').selectpicker();
-            _$form.find('#SendOnDaysOfWeek').selectpicker();
+            });
+            _$form.find('#ReportFormat').select2Init({
+                showAll: true,
+                allowClear: false
+            });
+            _$form.find('#SendOnDaysOfWeek').select2Init({
+                showAll: true,
+                allowClear: false
+            });
             _$form.find("#ScheduleTime").timepickerInit({ stepping: 1 });
 
         };
-
-        $('#SendOnDaysOfWeek').change(function () {
-            if (!$.isArray(_$form.find('#SendOnDaysOfWeek')) >= 0 ) {
-                $('#SendOnDaysOfWeek-error').hide();
-            }
-        });
 
         this.save = function () {
             if (!_$form.valid()) {
@@ -61,8 +58,6 @@
                     _modalManager.setBusy(false);
                 });
         };
-
-
 
     };
 })(jQuery);
