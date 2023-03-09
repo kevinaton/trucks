@@ -187,9 +187,9 @@
                 {
                     data: null,
                     orderable: false,
-                    autoWidth: false,                  
+                    autoWidth: false,
                     width: "10px",
-                    responsivePriority: 1,   
+                    responsivePriority: 1,
                     defaultContent: '<div class="dropdown action-button">'
                         + '<ul class="dropdown-menu dropdown-menu-right">'
                         + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
@@ -197,7 +197,7 @@
                         + '</ul>'
                         + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
                         + '</div>'
-                    
+
                 }
             ]
         });
@@ -228,41 +228,34 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
+                    }
                 },
                 {
-                    targets: 1,
                     data: "id",
                     visible: false
                 },
                 {
-                    targets: 2,
                     data: "customerName",
                     title: "Customer Name"
                 },
                 {
-                    targets: 3,
                     data: "contactName",
                     title: "Contact Name"
                 },
                 {
-                    targets: 4,
                     data: "contactPhone",
                     title: "Contact Phone"
                 },
                 {
-                    targets: 5,
                     data: "contactEmail",
                     title: "Contact Email"
                 },
                 {
-                    targets: 6,
                     data: null,
                     orderable: false,
-                    autoWidth: false,                  
+                    autoWidth: false,
                     width: "10px",
-                    responsivePriority: 1,   
+                    responsivePriority: 1,
                     defaultContent: '<div class="dropdown action-button">'
                         + '<ul class="dropdown-menu dropdown-menu-right">'
                         + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'

@@ -34,42 +34,37 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
+                    }
                 },
                 {
-                    targets: 1,
                     data: "key",
                     render: function (key) {
                         return '<span title="' + key + '">' + app.utils.string.truncate(key, 32) + '</span>';
                     }
                 },
                 {
-                    targets: 2,
                     data: "baseValue",
                     render: function (baseValue) {
                         return $("<span/>").attr("title", (baseValue || '')).text((app.utils.string.truncate(baseValue, 32) || ''))[0].outerHTML;
                     }
                 },
                 {
-                    targets: 3,
                     data: "targetValue",
                     render: function (targetValue) {
                         return $("<span/>").attr("title", (targetValue || '')).text((app.utils.string.truncate(targetValue, 32) || ''))[0].outerHTML;
                     }
-                },               
+                },
                 {
-                targets: 4,
-                data: null,
-                orderable: false,
-                autoWidth: false,
-				width: "10px",
-				defaultContent: '',
+                    data: null,
+                    orderable: false,
+                    autoWidth: false,
+                    width: "10px",
+                    defaultContent: '',
                     rowAction: {
                         items: [{
                             text: '<i class="fa fa-edit"></i> ' + app.localize('Edit'),
                             className: "btn btn-sm btn-default",
-                            action: function (data) {                              
+                            action: function (data) {
                                 _editTextModal.open({
                                     sourceName: $('#TextSourceSelectionCombobox').val(),
                                     baseLanguageName: $('#TextBaseLanguageSelectionCombobox').val(),

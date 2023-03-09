@@ -7,7 +7,7 @@
         var _leaseHaulerService = abp.services.app.leaseHauler;
         var _$form = null;
         var _isTruckReadonly = false;
-        
+
         this.init = function (modalManager) {
             _modalManager = modalManager;
             _modal = _modalManager.getModal();
@@ -41,11 +41,11 @@
             });
 
             _$form.find('.datepicker').datepickerInit();
-            
+
             var $defaultDriverId = _$form.find("#DefaultDriverId");
             var officeDropdown = _$form.find('#OfficeId');
             var vehicleCategoryDropdown = _$form.find("#VehicleCategoryId");
-            
+
             var canPullTrailerCheckbox = _$form.find('#CanPullTrailer');
             var alwaysShowOnScheduleCheckbox = _$form.find('#AlwaysShowOnSchedule');
 
@@ -79,13 +79,13 @@
                 abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulerDriversSelectList,
                 abpServiceParams: { leaseHaulerId: _$form.find('#LeaseHaulerId').val() },
                 showAll: false,
-                allowClear: true 
+                allowClear: true
             });
 
             vehicleCategoryDropdown.select2Init({
                 abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
                 showAll: true,
-                allowClear: true 
+                allowClear: true
             });
 
             officeDropdown.select2Init({

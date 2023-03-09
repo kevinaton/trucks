@@ -81,9 +81,9 @@
             var preventiveMaintenance = _$form.serializeFormToObject();
 
             if (!abp.helper.validateStartEndDates(
-                { value: $("#WarningDate").val(), title: $('label[for="WarningDate"]').text() },  
+                { value: $("#WarningDate").val(), title: $('label[for="WarningDate"]').text() },
                 { value: $("#DueDate").val(), title: $('label[for="DueDate"]').text() }
-                            
+
             )) {
                 return;
             }
@@ -127,17 +127,16 @@
 
             _modalManager.setBusy(true);
             _preventiveMaintenanceService.save(preventiveMaintenance).done(function () {
-                    abp.notify.info('Saved successfully.');
-                    _modalManager.close();
-                    abp.event.trigger('app.createOrEditPreventiveMaintenanceModal');
-                })
-            .always(function () {
+                abp.notify.info('Saved successfully.');
+                _modalManager.close();
+                abp.event.trigger('app.createOrEditPreventiveMaintenanceModal');
+            }).always(function () {
                 _modalManager.setBusy(false);
             });
 
             function showMessageBothAreRequired(name) {
                 abp.message.warn('Both "Due ' + name + '" and "Warning ' + name + '" are required.', 'Validation error');
-            }          
+            }
 
         };
 

@@ -1,22 +1,22 @@
 ﻿var FeaturesTree = (function ($) {
-    return function() {
+    return function () {
         var $tree;
 
         function init($treeContainer) {
             $tree = $treeContainer;
 
-            $tree.on('ready.jstree', function() {
+            $tree.on('ready.jstree', function () {
+                customizeTreeNodes();
+            })
+                .on('redraw.jstree', function () {
                     customizeTreeNodes();
                 })
-                .on('redraw.jstree', function() {
+                .on('after_open.jstree', function () {
                     customizeTreeNodes();
                 })
-                .on('after_open.jstree', function() {
+                .on('create_node.jstree', function () {
                     customizeTreeNodes();
-                })
-                .on('create_node.jstree', function() {
-                    customizeTreeNodes();
-                }).on("changed.jstree", function(e, data) {
+                }).on("changed.jstree", function (e, data) {
                     if (!data.node) {
                         return;
                     }
@@ -136,7 +136,7 @@
                 selectNodeAndAllParents(parent);
             }
         };
-        
+
         function isFeatureValueValid(feature, value) {
             if (!feature || !feature.inputType || !feature.inputType.validator) {
                 return true;
@@ -191,7 +191,7 @@
         function getFeatureValues() {
             var featureValues = [];
 
-            $tree.find('.jstree-node').each(function() {
+            $tree.find('.jstree-node').each(function () {
                 var $nodeLi = $(this);
                 var feature = JSON.parse($nodeLi.attr('data-feature'));
                 if (!feature.inputType || feature.inputType.name == 'CHECKBOX') {

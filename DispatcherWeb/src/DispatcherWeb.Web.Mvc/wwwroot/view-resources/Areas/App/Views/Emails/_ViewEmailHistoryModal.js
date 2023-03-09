@@ -88,20 +88,20 @@
                     //},
                     {
                         data: "emailDeliveryTime",
-						orderable: false,
-						render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(data); },
+                        orderable: false,
+                        render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(data); },
                         title: "Delivery Time"
                     },
                     {
                         data: "emailOpenedTime",
-						orderable: false,
-						render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(data); },
+                        orderable: false,
+                        render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(data); },
                         title: "Opened Time"
                     },
                     {
                         data: "emailFailedTime",
                         orderable: false,
-						render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(data); },
+                        render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(data); },
                         title: "Delivery Failed Time"
                     }
                 ]

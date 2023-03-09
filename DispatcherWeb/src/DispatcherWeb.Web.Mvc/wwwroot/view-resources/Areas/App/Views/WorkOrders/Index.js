@@ -66,54 +66,44 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
-                }, 
+                    }
+                },
                 {
-                    targets: 1,
                     data: "issueDate",
                     title: "Issue Date",
                     render: function (data, type, full, meta) { return _dtHelper.renderUtcDate(data); }
                 },
                 {
-                    targets: 2,
                     data: "startDate",
                     title: "Start Date",
                     render: function (data, type, full, meta) { return _dtHelper.renderUtcDate(data); }
                 },
                 {
-                    targets: 3,
                     data: "completionDate",
                     title: "Completion Date",
                     render: function (data, type, full, meta) { return _dtHelper.renderUtcDate(data); }
                 },
                 {
-                    targets: 4,
                     data: "status",
                     title: "Status"
                 },
                 {
-                    targets: 5,
                     data: "vehicle",
                     title: "Vehicle"
                 },
                 {
-                    targets: 6,
                     data: "note",
                     title: "Note"
                 },
                 {
-                    targets: 7,
                     data: "odometer",
                     title: "Odometer"
                 },
                 {
-                    targets: 8,
                     data: "assignedTo",
                     title: "Assigned to"
                 },
                 {
-                    targets: 9,
                     name: "Actions",
                     data: null,
                     orderable: false,
@@ -152,7 +142,7 @@
                         }]
                     }
                 }
-                
+
             ]
         });
 
@@ -183,7 +173,7 @@
             });
             $("#StatusFilter").select2Init({
                 showAll: true,
-                allowClear: true 
+                allowClear: true
             });
         }
 

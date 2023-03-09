@@ -38,8 +38,7 @@
             locale: {
                 cancelLabel: 'Clear'
             }
-        },
-        function (start, end, label) {
+        }, function (start, end, label) {
             $("#IssueDateStartFilter").val(start.format('MM/DD/YYYY'));
             $("#IssueDateEndFilter").val(end.format('MM/DD/YYYY'));
         });
@@ -81,7 +80,7 @@
                     render: function () {
                         return '';
                     }
-                }, 
+                },
                 {
                     data: "issueDate",
                     render: function (data, type, full, meta) { return _dtHelper.renderUtcDate(full.issueDate); },
@@ -157,7 +156,7 @@
             window.location = abp.appPath + 'app/Invoices/Details/';
         });
 
-        invoicesTable.on('click', '.btnEditRow', function () {           
+        invoicesTable.on('click', '.btnEditRow', function () {
             var invoiceId = _dtHelper.getRowData(this).id;
             window.location = abp.appPath + 'app/Invoices/Details/' + invoiceId;
         });

@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditServicePriceModal = function () {
 
         var _modalManager;
@@ -8,12 +8,12 @@
         var _freightUomDropdown = null;
         var _designationDropdown = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             //abp.helper.ui.initControls();
 
             _materialUomDropdown = _$form.find("#ServicePrice_MaterialUomId");

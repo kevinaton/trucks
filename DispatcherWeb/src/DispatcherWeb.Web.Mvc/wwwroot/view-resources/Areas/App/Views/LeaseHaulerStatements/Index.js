@@ -139,7 +139,7 @@
             e.preventDefault();
             _addLeaseHaulerStatementModal.open();
         });
-        
+
         $("#SearchButton").closest('form').submit(function (e) {
             e.preventDefault();
             reloadMainGrid();

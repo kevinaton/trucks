@@ -5,7 +5,7 @@
         var _dtHelper = abp.helper.dataTables;
         var _isFilterReady = false;
         var _isGridInitialized = false;
-        
+
         abp.helper.ui.initControls();
 
         //init the filter controls
@@ -20,15 +20,15 @@
                     officeName: abp.session.officeName
                 };
             }
-            
+
             var dateFilterIsEmpty = false;
-            
+
             if (!cachedFilter.startDate || cachedFilter.startDate === 'Invalid date') {
                 dateFilterIsEmpty = true;
                 //still need to init the daterangepicker with real dates first and clear the inputs only after the init.
                 cachedFilter.startDate = moment().format("MM/DD/YYYY");
             }
-            
+
             if (!cachedFilter.endDate || cachedFilter.endDate === 'Invalid date') {
                 dateFilterIsEmpty = true;
                 cachedFilter.endDate = moment().add(1, 'days').format("MM/DD/YYYY");
@@ -42,8 +42,7 @@
                 locale: {
                     cancelLabel: 'Clear'
                 }
-            },
-            function (start, end, label) {
+            }, function (start, end, label) {
                 $("#DateStartFilter").val(start.format('MM/DD/YYYY'));
                 $("#DateEndFilter").val(end.format('MM/DD/YYYY'));
             });
@@ -152,7 +151,7 @@
                         + '<li><a class="btnEditReceipt" title="Edit Receipt"><i class="fa fa-edit"></i> Edit</a></li>'
                         //+ '<li><a class="btnEditOrder" title="Edit Order"><i class="fa fa-edit"></i> Edit Order</a></li>'
                         + '</ul>'
-                        + '</div>'          
+                        + '</div>'
                 }
             ],
             createdRow: function (row, data, index) {

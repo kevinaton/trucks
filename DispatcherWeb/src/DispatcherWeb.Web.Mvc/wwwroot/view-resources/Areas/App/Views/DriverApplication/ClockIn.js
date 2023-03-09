@@ -4,7 +4,7 @@
 
         var _driverApplicationService = abp.services.app.driverApplication;
 
-        $('button').click(function(e) {
+        $('button').click(function (e) {
             e.preventDefault();
             var location = {};
             abp.helper.getLocation(function (locationResult) {

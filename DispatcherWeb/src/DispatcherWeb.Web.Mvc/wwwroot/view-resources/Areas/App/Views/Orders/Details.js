@@ -144,12 +144,12 @@
                 form.showValidateMessage();
                 return;
             }
-            
+
             var order = form.serializeFormToObject();
             if (isNewOrder()) {
                 order.OrderLines = _orderLines;
             }
-            
+
             order.IsPending = $("#IsPending").prop("checked");
             checkForOrderDuplicates(order, function () {
                 abp.ui.setBusy(form);
@@ -238,7 +238,7 @@
                     fieldNameForWarning = 'tax rate';
                     break;
             }
-            
+
             var isTaxRequired = false;
             $.each(_orderLines, function (ind, orderLine) {
                 if (orderLine.materialPrice) { //material total
@@ -269,7 +269,7 @@
         function showEditingBlocks() {
             $('.editing-only-block').not(":visible").slideDown();
         }
-        
+
         async function checkForOrderDuplicates(order, callback) {
             if (order.Id !== '') {
                 callback();
@@ -282,7 +282,7 @@
                 quoteId: order.QuoteId,
                 deliveryDate: order.DeliveryDate
             });
-            
+
             if (duplicateCount > 0) {
                 var customerName = $("#CustomerId").getSelectedDropdownOption().text();
                 if (!await abp.message.confirm(
@@ -355,7 +355,7 @@
                 _recalculateTotalsInProgressCount--;
             });
         }
-        
+
         //update Order MaterialTotal and FreightTotal values
         //be sure to call it after the callback from the grid has been returned
         //function updateMaterialTotal() {
@@ -365,7 +365,7 @@
         //function updateFreightTotal() {
         //    $("#FreightTotal").val(_freightTotal.toFixed(2)).change();
         //}
-            
+
         //calculate _materialTotal and _freightTotal values from order line data
         function calculateMaterialAndFreightTotal(data) {
             _materialTotal = round(data.map(function (x) { return round(x.materialPrice); }).reduce(function (a, b) { return a + b; }, 0)) || 0.00;
@@ -457,7 +457,7 @@
             showAll: true,
             allowClear: false
         });
-        
+
         $("#Time").timepickerInit({ stepping: 1 });
 
         $("#LocationId").select2Init({
@@ -614,7 +614,7 @@
             if (abp.session.officeCopyChargeTo) {
                 updateInputValue("#ChargeTo", option.data('chargeTo'));
             }
-            
+
             if (_quoteId !== '') {
                 let fuelSurchargeCalculationId = option.data('fuelSurchargeCalculationId');
                 if (fuelSurchargeCalculationId) {
@@ -654,7 +654,7 @@
                 }
             }
         };
-        
+
         var quoteIdChanging = false;
         $("#QuoteId").change(async function () {
             if (quoteIdChanging) {
@@ -959,19 +959,19 @@
                     responsivePriority: 1,
                     render: function (data, type, full, meta) {
                         if (!_isOrderReadonly) {
-                            return '<div class="dropdown">' 
+                            return '<div class="dropdown">'
                                 + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
-                                + '<ul class="dropdown-menu dropdown-menu-right">' 
+                                + '<ul class="dropdown-menu dropdown-menu-right">'
                                 + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
                                 + '<li><a class="btnOpenTicketsModalForRow"><i class="fa fa-edit"></i> Tickets</a></li>'
                                 + '<li><a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li>'
-                                + '</ul>' 
+                                + '</ul>'
                                 + '</div>'
                                 ;
                         } else {
-                            return '';                        
+                            return '';
                         }
-                    }               
+                    }
                 }
             ],
             drawCallback: function (settings) {
@@ -1113,7 +1113,7 @@
                 if (param && param.Kind === "EntityDeletedException") {
                     if (param.EntityKind === "Order") {
                         $("#OrderForm").dirtyForms('setClean');
-                        $("#OrderForm").uniform.update(); 
+                        $("#OrderForm").uniform.update();
                         location.href = abp.appPath + 'app/orders/';
                     } else if (param.EntityKind === "OrderLine") {
                         reloadOrderLinesGridAsync();
@@ -1299,7 +1299,7 @@
             var receiptId = $(this).attr('data-receiptId');
             saveOrderIfNeededAsync(function () {
                 abp.ui.setBusy();
-                window.location = abp.appPath + 'app/receipts/details/' + receiptId; 
+                window.location = abp.appPath + 'app/receipts/details/' + receiptId;
             });
         });
 
@@ -1392,7 +1392,7 @@
             await reloadOrderLinesGridAsync();
             updateOrderTaxDetails(deleteResult.orderTaxDetails);
             $("#OrderForm").dirtyForms('setClean');
-            $("#OrderForm").uniform.update(); 
+            $("#OrderForm").uniform.update();
         }
 
         function updateLineNumbers() {
@@ -1404,7 +1404,7 @@
 
         //Handle popup adding
 
-        abp.event.on('app.customerNameExists', function(e) {
+        abp.event.on('app.customerNameExists', function (e) {
             selectCustomerInControl(e);
         });
         abp.event.on('app.createOrEditCustomerModalSaved', function (e) {

@@ -1,11 +1,11 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.TenantChangeModal = function () {
 
         var _modalManager;
         var _accountService = abp.services.app.account;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
             _$form = _modalManager.getModal().find('form[name=TenantChangeForm]');
             var save = this.save;
@@ -25,7 +25,7 @@
                 location.reload();
                 return;
             }
-            
+
             _modalManager.setBusy(true);
             _accountService.isTenantAvailable({
                 tenancyName: tenancyName

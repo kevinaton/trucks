@@ -18,7 +18,7 @@
             $tree.jstree({
                 "types": {
                     "default": {
-                        "icon": "fa fa-folder m--font-warning" 
+                        "icon": "fa fa-folder m--font-warning"
                     },
                     "file": {
                         "icon": "fa fa-file  m--font-warning"

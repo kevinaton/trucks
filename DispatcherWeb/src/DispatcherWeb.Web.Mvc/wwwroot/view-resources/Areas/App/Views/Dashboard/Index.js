@@ -124,7 +124,7 @@
                 }),
             });
         };
-        
+
         var $truckUtilizationDateRange = $("#TruckUtilizationDateRange")
             .daterangepicker({ showDropDown: true })
             .val(moment().startOf('month').format('MM/DD/YYYY') + ' - ' + moment().endOf('month').format('MM/DD/YYYY'))
@@ -156,7 +156,7 @@
                 },
                 barOptions: {
                     xkey: 'period',
-                    ykeys: ['freightRevenueValue', 'materialRevenueValue','fuelSurchargeValue'],
+                    ykeys: ['freightRevenueValue', 'materialRevenueValue', 'fuelSurchargeValue'],
                     labels: ['Freight Revenue', 'Material Revenue', 'Fuel Surcharge'],
                     //labels: ['Revenue/Truck'],
                     barColors: [app.colors.freight, app.colors.material, app.colors.fuel],
@@ -172,7 +172,7 @@
                 chart.refresh();
             });
         }
-        
+
         async function initRevenueChart() {
             let chart = await abp.helper.graphs.initBarChart({
                 container: $("#revenueContainer"),
@@ -185,7 +185,7 @@
                 },
                 barOptions: {
                     xkey: 'period',
-                    ykeys: ['freightRevenueValue', 'materialRevenueValue','fuelSurchargeValue'],
+                    ykeys: ['freightRevenueValue', 'materialRevenueValue', 'fuelSurchargeValue'],
                     labels: ['Freight Revenue', 'Material Revenue', 'Fuel Surcharge'],
                     barColors: [app.colors.freight, app.colors.material, app.colors.fuel],
                     stacked: true,
@@ -283,7 +283,7 @@
                 $("#scheduledTruckCountLoading").hide();
                 container.show();
             });
-        }        
+        }
 
         function initRevenueChartsDateRange() {
 

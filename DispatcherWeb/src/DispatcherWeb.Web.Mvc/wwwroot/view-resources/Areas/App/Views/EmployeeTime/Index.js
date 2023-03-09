@@ -39,15 +39,13 @@
             locale: {
                 cancelLabel: 'Clear'
             }
-        })
-            .on('apply.daterangepicker', function (ev, picker) {
-                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-                reloadMainGrid();
-            })
-            .on('cancel.daterangepicker', function (ev, picker) {
-                $(this).val('');
-                reloadMainGrid();
-            });
+        }).on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            reloadMainGrid();
+        }).on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+            reloadMainGrid();
+        });
 
         $("#TimeClassificationIdFilter").select2Init({
             abpServiceMethod: abp.services.app.timeClassification.getTimeClassificationsSelectList,

@@ -45,17 +45,17 @@
                 },
                 {
                     data: "recommendedMileageInterval"
-                },               
+                },
                 {
                     data: "recommendedHourInterval"
-                },               
+                },
                 {
                     data: null,
                     orderable: false,
                     autoWidth: false,
                     defaultContent: '',
                     width: '10px',
-                    responsivePriority: 2,  
+                    responsivePriority: 2,
                     render: function (data, type, full, meta) {
                         return _permissions.edit ?
                             '<div class="dropdown">'
@@ -92,7 +92,7 @@
         $("#CreateNewServiceButton").click(function (e) {
             e.preventDefault();
             _createOrEditVehicleServiceModal.open();
-        });		
+        });
 
         async function deleteVehicleService(record) {
             if (await abp.message.confirm(

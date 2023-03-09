@@ -1,27 +1,27 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditOrderInternalNotesModal = function () {
 
         var _modalManager;
         var _orderService = abp.services.app.order;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             abp.helper.ui.initControls();
         };
 
         this.save = function () {
             if (!_$form.valid()) {
-            	_$form.showValidateMessage();
+                _$form.showValidateMessage();
                 return;
             }
-            
+
             var formData = _$form.serializeFormToObject();
-            
+
             _modalManager.setBusy(true);
             _orderService.setOrderInternalNotes({
                 orderId: formData.OrderId,

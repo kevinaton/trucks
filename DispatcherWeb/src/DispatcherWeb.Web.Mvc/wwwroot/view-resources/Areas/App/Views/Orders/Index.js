@@ -73,11 +73,10 @@
                 locale: {
                     cancelLabel: 'Clear'
                 }
-            },
-                function (start, end, label) {
-                    $("#DateStartFilter").val(start.format('MM/DD/YYYY'));
-                    $("#DateEndFilter").val(end.format('MM/DD/YYYY'));
-                });
+            }, function (start, end, label) {
+                $("#DateStartFilter").val(start.format('MM/DD/YYYY'));
+                $("#DateEndFilter").val(end.format('MM/DD/YYYY'));
+            });
 
             $("#DateFilter").on('apply.daterangepicker', function (ev, picker) {
                 $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));

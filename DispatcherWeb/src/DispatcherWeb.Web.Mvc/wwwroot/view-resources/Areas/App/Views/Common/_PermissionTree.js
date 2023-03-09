@@ -1,5 +1,5 @@
 ﻿var PermissionsTree = (function ($) {
-    return function() {
+    return function () {
         var $tree;
 
         function initFiltering() {

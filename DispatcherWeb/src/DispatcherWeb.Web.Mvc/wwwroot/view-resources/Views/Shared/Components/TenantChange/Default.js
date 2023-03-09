@@ -7,7 +7,7 @@
     });
 
     $('.tenant-change-component a')
-        .click(function(e) {
+        .click(function (e) {
             e.preventDefault();
             _tenantChangeModal.open();
         });

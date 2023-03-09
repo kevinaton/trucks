@@ -32,18 +32,14 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
+                    }
                 },
                 {
                     responsivePriority: 1,
-                    targets: 1,
                     data: 'name',
                     title: 'Name'
-                    
                 },
                 {
-                    targets: 2,
                     data: 'truckColor',
                     title: 'Truck Color',
                     width: '100px',
@@ -53,7 +49,6 @@
                     }
                 },
                 {
-                    targets: 3,
                     data: 'truckColor',
                     title: 'Samples',
                     //width: '310px',
@@ -63,15 +58,14 @@
                             + '<span class="tag truck-tag trailer truck-office-' + full.id + '">Trailer</span>'
                             + '<span class="tag truck-tag leased-dump-truck truck-office-' + full.id + '">Leased Dump Truck</span>';
                     }
-                },              
+                },
                 {
-                    targets: 4,
                     data: null,
                     orderable: false,
                     autoWidth: false,
                     defaultContent: '',
                     width: '10px',
-                    responsivePriority: 2,  
+                    responsivePriority: 2,
                     render: function (data, type, full, meta) {
                         return '<div class="dropdown">'
                             + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
@@ -100,7 +94,7 @@
         };
 
         abp.event.on('app.createOrEditOfficeModalSaved', function () {
-            reloadMainGrid();           
+            reloadMainGrid();
         });
 
         $("#CreateNewOfficeButton").click(function (e) {
@@ -122,7 +116,6 @@
         }
 
         function initTruckTilesSample() {
-            
             var container = $("#truckTilesSample");
             container.empty();
             var addSampleTile = function (colorClass, officeId) {

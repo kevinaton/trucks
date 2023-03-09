@@ -302,7 +302,7 @@
                 showAll: false,
                 allowClear: true
             });
-            
+
             dtdTrackerDeviceTypeInput.change(function () {
                 var dropdownData = dtdTrackerDeviceTypeInput.select2('data');
                 var serverAddress = '';
@@ -422,7 +422,7 @@
                 if (doneAction) {
                     doneAction(editResult.id);
                 }
-                
+
             } finally {
                 _modalManager.setBusy(false);
             }

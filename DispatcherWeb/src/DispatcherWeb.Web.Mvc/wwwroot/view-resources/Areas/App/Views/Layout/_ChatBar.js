@@ -141,10 +141,10 @@ var chat = {
     },
 
     initConversationScrollbar: function () {
-       
+
         var height = $('#m_quick_sidebar').outerHeight(true) - $(".selected-chat-user").outerHeight(true) - $('#chatMessageForm').outerHeight(true) - 150;
-        $('.m-messenger-conversation .m-messenger__messages').slimScroll({ destroy: true });       
-        
+        $('.m-messenger-conversation .m-messenger__messages').slimScroll({ destroy: true });
+
         $('.m-messenger-conversation .m-messenger__messages').slimScroll({
             height: height
         }).bind('slimscrolling', function (e, pos) {
@@ -162,7 +162,7 @@ var chat = {
                 function (position) {
                     return position > 0;
                 }).length;
-            
+
             if (count === 0) {
                 chat.user.loadMessages(chat.selectedUser);
             }
@@ -339,7 +339,7 @@ var chat = {
     },
 
     bindUiEvents: function () {
-        var quickSidebarOffCanvas = new mOffcanvas('m_quick_sidebar',{
+        var quickSidebarOffCanvas = new mOffcanvas('m_quick_sidebar', {
             baseClass: 'm-quick-sidebar',
             closeBy: 'm_quick_sidebar_close',
             toggleBy: 'm_quick_sidebar_toggle'
@@ -409,7 +409,7 @@ var chat = {
         $('#btnSendChatMessenger').click(function () {
             chat.sendMessage();
         });
-        
+
 
         $('#ChatUserSearchUserName').on('keyup', function () {
             var userName = $(this).val();
@@ -813,9 +813,9 @@ function reloadFriendListFriendsHeight() {
     $(function () {
         // Change this to the location of your server-side upload handler:
         var url = abp.appPath + 'App/Chat/UploadFile';
-        
+
         reloadFriendListFriendsHeight();
-        
+
         //image upload
         $('#chatImageUpload').fileupload({
             url: url,

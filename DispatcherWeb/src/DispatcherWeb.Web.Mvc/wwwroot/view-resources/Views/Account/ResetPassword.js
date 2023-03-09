@@ -2,7 +2,7 @@
 
     var _passwordComplexityHelper = new app.PasswordComplexityHelper();
 
-    var handleResetPassword = function() {
+    var handleResetPassword = function () {
 
         $('.pass-reset-form').validate({
             rules: {
@@ -11,12 +11,12 @@
                 }
             },
 
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 form.submit();
             }
         });
 
-        $('.pass-reset-form input').keypress(function(e) {
+        $('.pass-reset-form input').keypress(function (e) {
             if (e.which === 13) {
                 if ($('.pass-reset-form').valid()) {
                     $('.pass-reset-form').submit();

@@ -102,7 +102,7 @@
             reloadCustomerTicketsGrid();
         };
 
-        this.save = async function () {            
+        this.save = async function () {
             var selectedRows = _customerTicketsGridOptions.selectionColumnOptions.getSelectedRows();
             //console.log(selectedRows);
 

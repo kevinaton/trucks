@@ -34,7 +34,7 @@
         var _stateField = null;
         var _zipField = null;
         var _countryField = null;
-        
+
 
         var saveLocationAsync = async function (forceStopOnDuplicate) {
             if (!_$form.valid()) {
@@ -158,26 +158,21 @@
                         orderable: false,
                         render: function () {
                             return '';
-                        },
-                        targets: 0
+                        }
                     },
                     {
-                        targets: 1,
                         data: "name",
                         title: "Name"
                     },
                     {
-                        targets: 2,
                         data: "title",
                         title: "Title"
                     },
                     {
-                        targets: 3,
                         data: "phone",
                         title: "Phone"
                     },
                     {
-                        targets: 4,
                         data: "email",
                         title: "Email"
                     },
@@ -187,7 +182,7 @@
                         orderable: false,
                         autoWidth: false,
                         width: "10px",
-                        responsivePriority: 1,  
+                        responsivePriority: 1,
                         defaultContent: '',
                         rowAction: {
                             items: [{
@@ -197,14 +192,14 @@
                                     _createOrEditSupplierContactModal.open({ id: data.record.id });
                                 }
                             }, {
-                                text: '<i class="fa fa-trash"></i> ' +app.localize('Delete'),
+                                text: '<i class="fa fa-trash"></i> ' + app.localize('Delete'),
                                 className: "btn btn-sm btn-default",
                                 action: function (data) {
                                     deleteSupplierContact(data.record);
                                 }
                             }]
                         }
-                    }                   
+                    }
                 ]
             });
 

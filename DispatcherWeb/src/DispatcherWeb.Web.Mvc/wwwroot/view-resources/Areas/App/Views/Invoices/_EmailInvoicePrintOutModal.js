@@ -1,11 +1,11 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.EmailInvoicePrintOutModal = function () {
 
         var _modalManager;
         var _invoiceAppService = abp.services.app.invoice;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');

@@ -84,14 +84,14 @@
         };
 
         function saveData(saveAndNew = false) {
-            
+
             if (!_$form.valid()) {
                 _$form.showValidateMessage();
                 return;
             }
 
             var model = _$form.serializeFormToObject();
-            
+
             app.localStorage.setItem('vehicleusage_edit', { readingDateTime: model.ReadingDateTime, readingType: model.ReadingType, mileage: model.Mileage, engineHours: model.EngineHours });
 
             if (Number(model.ReadingType) === 0) {

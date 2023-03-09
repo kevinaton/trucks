@@ -2,7 +2,7 @@
     $(function () {
         var _userLoginService = abp.services.app.userLogin;
         var _dtHelper = abp.helper.dataTables;
-        
+
         $("#LoginResultFilter").select2Init({
             showAll: true,
             allowClear: false
@@ -13,8 +13,7 @@
             locale: {
                 cancelLabel: 'Clear'
             }
-        },
-        function (start, end, label) {
+        }, function (start, end, label) {
             $("#DateRangeStartFilter").val(start.format('MM/DD/YYYY'));
             $("#DateRangeEndFilter").val(end.format('MM/DD/YYYY'));
         });

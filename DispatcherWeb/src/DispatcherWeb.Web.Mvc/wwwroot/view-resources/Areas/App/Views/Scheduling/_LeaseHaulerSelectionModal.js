@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.LeaseHaulerSelectionModal = function () {
 
         var _modalManager;
@@ -10,16 +10,16 @@
             drivers: {}
         };
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             _$form.find("#AddAllTrucksRadioButton").click(function () {
                 _$form.find("#TruckSelectionBlock").slideUp();
             });
-            
+
             _$form.find("#AddSpecificTrucksRadioButton").click(function () {
                 _$form.find("#TruckSelectionBlock").slideDown();
             });
@@ -237,8 +237,8 @@
         };
 
         this.save = function () {
-            
-            
+
+
             var formData = _$form.serializeFormToObject();
 
             formData = {

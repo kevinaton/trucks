@@ -34,7 +34,7 @@
                     $('.register-form').submit();
                 }
                 return false;
-            } 
+            }
         });
 
         _passwordComplexityHelper.setPasswordComplexityRules($('input[name=Password], input[name=PasswordRepeat]'), window.passwordComplexitySetting);

@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditProjectServiceModal = function () {
 
         var _modalManager;
@@ -8,7 +8,7 @@
         var _freightUomDropdown = null;
         var _designationDropdown = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');

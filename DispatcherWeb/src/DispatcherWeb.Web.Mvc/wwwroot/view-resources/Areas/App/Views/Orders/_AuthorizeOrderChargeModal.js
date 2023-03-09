@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.AuthorizeOrderChargeModal = function () {
 
         var _modalManager;
@@ -28,17 +28,17 @@
             });
         };
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             abp.helper.ui.initControls();
 
             _creditCardTokenInput = _$form.find('#CreditCardToken');
             _newCreditCardTempTokenInput = _$form.find('#NewCreditCardTempToken');
-            
+
             var amountInput = _$form.find('#AuthorizationAmount');
             if (amountInput.val() !== "") {
                 amountInput.val(abp.utils.round(amountInput.val()).toFixed(2));
@@ -109,7 +109,7 @@
                 _$form.showValidateMessage();
                 return;
             }
-            
+
             if (!HeartlandPublicKey) {
                 abp.message.error('', 'The Heartland public key is not set for the office.');
                 return;

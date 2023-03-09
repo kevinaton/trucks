@@ -1,11 +1,11 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.EmailQuoteReportModal = function () {
 
         var _modalManager;
         var _quoteAppService = abp.services.app.quote;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');

@@ -1116,7 +1116,6 @@
         menuFunctions.fn.activateClosedTrucks = function (element) {
             var rowData = _dtHelper.getRowData(element);
             if (rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0) {
-                event.cancel = true;
                 abp.notify.error("Increase # of Trucks");
                 return;
             }
@@ -1926,7 +1925,6 @@
         async function sendDispatchMessage(options) {
             if (dispatchVia === abp.enums.dispatchVia.simplifiedSms //sendSmsOnDispatching is always set to dontSend when using simplifiedSms, so we're not checking that value in this case
                 || (dispatchVia === abp.enums.dispatchVia.driverApplication))
-                    //ref: 12224 > && abp.setting.getInt('App.DispatchingAndMessaging.SendSmsOnDispatchingEnum') !== abp.enums.sendSmsOnDispatching.dontSend))
             {
                 _sendDispatchMessageModal.open(options);
             } else if (dispatchVia === abp.enums.dispatchVia.driverApplication) {

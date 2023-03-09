@@ -153,7 +153,7 @@
 
             $("#ReadingTypeFilter").select2Init({
                 showAll: true,
-                allowClear: true 
+                allowClear: true
             });
         }
 

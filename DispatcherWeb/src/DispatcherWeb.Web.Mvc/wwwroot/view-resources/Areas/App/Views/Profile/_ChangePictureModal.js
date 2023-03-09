@@ -16,12 +16,12 @@
 
             $('#ChangeProfilePictureModalForm').ajaxForm({
                 beforeSubmit: function (formData, jqForm, options) {
-                   
+
                     var $fileInput = $('#ChangeProfilePictureModalForm input[name=ProfilePicture]');
                     var files = $fileInput.get()[0].files;
 
                     if (!files.length) {
-                        
+
                         return false;
                     }
 
@@ -41,7 +41,7 @@
                         return false;
                     }
 
-                    var mimeType = _.filter(formData, { name: 'ProfilePicture'})[0].value.type;
+                    var mimeType = _.filter(formData, { name: 'ProfilePicture' })[0].value.type;
 
                     formData.push({ name: 'FileType', value: mimeType });
                     formData.push({ name: 'FileName', value: 'ProfilePicture' });
@@ -92,7 +92,7 @@
             }
 
             if (!uploadedFileToken) {
-                
+
                 return;
             }
 

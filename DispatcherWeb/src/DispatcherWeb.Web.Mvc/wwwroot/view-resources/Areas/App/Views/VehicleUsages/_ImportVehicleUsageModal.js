@@ -24,7 +24,6 @@
 
         $('#ImportFile').fileupload({
             add: function add(e, data) {
-                
                 if (data.files.length > 0) {
                     var fileName = data.files[0].name;
                     var fileExt = fileName.split('.').pop().toLowerCase();

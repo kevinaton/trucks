@@ -18,7 +18,7 @@
             abp.helper.ui.initControls();
 
             _modal = _modalManager.getModal();
-            
+
             _modal.find("#StartDate").datepickerInit();
             _modal.find("#TimeClassificationId").select2Init({
                 abpServiceMethod: _timeClassificationService.getTimeClassificationsSelectList,

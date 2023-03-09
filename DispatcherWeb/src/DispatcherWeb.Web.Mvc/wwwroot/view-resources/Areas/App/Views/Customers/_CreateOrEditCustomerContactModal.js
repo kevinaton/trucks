@@ -21,7 +21,7 @@
             _$form.find('#Email').rules('add', { regex: app.regex.email });
 
             abp.helper.ui.initControls();
- 
+
         };
 
         this.save = async function () {
@@ -39,7 +39,7 @@
                     customerId: customerContact.CustomerId,
                     exceptId: customerContact.Id,
                     name: customerContact.Name
-                }); 
+                });
 
                 if (duplicateCount) {
                     _modalManager.setBusy(false);
@@ -52,7 +52,7 @@
 
                 _modalManager.setBusy(true);
                 let newId = await _customerService.editCustomerContact(customerContact);
-                
+
                 abp.notify.info('Saved successfully.');
                 _modalManager.close();
                 customerContact.Id = newId;

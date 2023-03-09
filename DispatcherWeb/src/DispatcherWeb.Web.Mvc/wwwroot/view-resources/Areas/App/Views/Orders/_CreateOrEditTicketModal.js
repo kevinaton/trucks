@@ -272,7 +272,7 @@
                     abp.message.error('You can\'t delete tickets associated with receipts');
                     return;
                 }
-                
+
                 if (!await abp.message.confirm('Are you sure you want to delete the item?')) {
                     return;
                 }
@@ -282,7 +282,7 @@
                     abp.event.trigger('app.ticketDeletedModal', e);
                     reloadGrid();
                 });
-                
+
             });
 
             ticketsTable.on('click', '.btnUploadTicketPhotoForRow', function () {
@@ -304,7 +304,7 @@
                 if (!await abp.message.confirm('Are you sure you want to delete the image?')) {
                     return;
                 }
-                
+
                 _modalManager.setBusy(true);
                 _ticketService.deleteTicketPhoto({
                     ticketId: ticket.id

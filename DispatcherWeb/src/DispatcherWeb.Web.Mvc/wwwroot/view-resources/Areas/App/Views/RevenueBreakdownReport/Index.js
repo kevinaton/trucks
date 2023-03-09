@@ -31,7 +31,7 @@
     $("#CustomerIdFilter").select2Init({
         abpServiceMethod: abp.services.app.customer.getCustomersSelectList,
         showAll: false,
-        allowClear: true 
+        allowClear: true
     });
 
     $("#OfficeIdFilter").select2Init({

@@ -1,4 +1,4 @@
-﻿var CurrentPage = function() {
+﻿var CurrentPage = function () {
 
     var handleEmailActivation = function () {
 
@@ -68,7 +68,7 @@
     };
 
     return {
-        init: function() {
+        init: function () {
             handleEmailActivation();
         }
     };

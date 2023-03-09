@@ -59,7 +59,7 @@
                 responsive: true,
                 paging: true,
                 serverSide: true,
-                processing: true,              
+                processing: true,
                 pageLength: _options.pageSize,
                 deferLoading: _options.loadOnStartup ? null : 0,
                 listAction: {
@@ -72,11 +72,10 @@
                 },
                 columns: [
                     {
-                        targets: 0,
                         data: null,
                         orderable: false,
                         defaultContent: '',
-                        className:'text-center',
+                        className: 'text-center',
                         rowAction: {
                             element: $("<button/>")
                                 .addClass("btn btn-metal m-btn m-btn--icon m-btn--icon-only")
@@ -88,7 +87,6 @@
                         }
                     },
                     {
-                        targets: 1,
                         data: "name",
                         className: "all"
                     }

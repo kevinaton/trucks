@@ -23,7 +23,7 @@
                     setNotificationAsRead(record, function () {
                         $button.find('i')
                             .removeClass('la-circle-o')
-                            .addClass('la-check');                       
+                            .addClass('la-check');
                         $td.closest("tr").addClass("notification-read");
                     });
                 }).appendTo($span);
@@ -39,7 +39,7 @@
             var $i = $('<i class="la" >').appendTo($button);
             var notificationState = _appUserNotificationHelper.format(record).state;
 
-            if (notificationState === 'READ') {              
+            if (notificationState === 'READ') {
                 $i.addClass('la-check');
             }
 

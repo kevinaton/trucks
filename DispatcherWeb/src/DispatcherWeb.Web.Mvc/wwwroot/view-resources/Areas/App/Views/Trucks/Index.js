@@ -53,7 +53,7 @@
                 _truckService.getTrucks(abpData).done(function (abpResult) {
                     callback(_dtHelper.fromAbpResult(abpResult));
                 });
-            },          
+            },
             columns: [
                 {
                     width: '20px',
@@ -96,13 +96,13 @@
                 {
                     data: "currentMileage",
                     title: app.localize('CurrentMileage')
-                },              
+                },
                 {
                     data: null,
                     orderable: false,
                     autoWidth: false,
                     width: "10px",
-                    responsivePriority: 2, 
+                    responsivePriority: 2,
                     render: function (data, type, full, meta) {
                         return '<div class="dropdown">'
                             + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
@@ -110,8 +110,8 @@
                             + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
                             + (
                                 full.isOutOfService
-                                ? '<li><a class="btnBackInService"><i class="fa fa-thumbs-up"></i> Return to service</a></li>'
-                                : '<li><a class="btnOutOfService"><i class="fa fa-wrench"></i> Place out of service</a></li>'
+                                    ? '<li><a class="btnBackInService"><i class="fa fa-thumbs-up"></i> Return to service</a></li>'
+                                    : '<li><a class="btnOutOfService"><i class="fa fa-wrench"></i> Place out of service</a></li>'
                             )
                             + '<li><a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li>'
                             + '</ul>'
@@ -224,7 +224,7 @@
                     if (result) {
                         abp.notify.info('Update mileage scheduled.');
                     }
-                }).always(function() {
+                }).always(function () {
                     abp.ui.clearBusy($('#UpdateMileageButton'));
                 });
         });

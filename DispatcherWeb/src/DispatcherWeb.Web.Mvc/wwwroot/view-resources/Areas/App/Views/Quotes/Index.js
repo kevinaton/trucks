@@ -88,7 +88,7 @@
                     render: function () {
                         return '';
                     }
-                }, 
+                },
                 {
                     data: 'id',
                     width: '25px',
@@ -143,7 +143,7 @@
                     data: null,
                     orderable: false,
                     autoWidth: false,
-                    width: "10px", 
+                    width: "10px",
                     render: function (data, type, full, meta) {
                         return '<div class="dropdown">'
                             + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
@@ -151,15 +151,15 @@
                             + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
 
                             + (_permissions.edit ? (full.status !== abp.enums.projectStatus.inactive ?
-                            '<li><a class="btnInactiveRow" title="Inactive"><i class="fa fa-minus-circle"></i> Inactivate</a></li>' :
-                            '<li><a class="btnreactiveRow" title="Re-active"><i class="fa fa-plus-circle"></i> Re-activate</a></li>') : '')
+                                '<li><a class="btnInactiveRow" title="Inactive"><i class="fa fa-minus-circle"></i> Inactivate</a></li>' :
+                                '<li><a class="btnreactiveRow" title="Re-active"><i class="fa fa-plus-circle"></i> Re-activate</a></li>') : '')
 
                             + (_permissions.edit ? '<li><a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li>' : '')
                             + '</ul>'
                             + '</div>'
                             ;
-                    }                   
-                }               
+                    }
+                }
             ]
         });
 
@@ -199,7 +199,7 @@
                 });
             }
         });
-        
+
         quotesTable.on('click', '.btnreactiveRow', async function () {
             var quoteId = _dtHelper.getRowData(this).id;
             if (await abp.message.confirm('Are you sure you want to activate the quote?')) {

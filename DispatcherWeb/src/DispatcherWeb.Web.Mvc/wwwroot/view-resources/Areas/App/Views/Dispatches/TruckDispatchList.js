@@ -33,7 +33,7 @@
         var $officeIdFilterSelect = $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
-            allowClear: true 
+            allowClear: true
         });
 
         abp.helper.ui.addAndSetDropdownValue($officeIdFilterSelect, abp.session.officeId, abp.session.officeName);
@@ -323,7 +323,7 @@
             reloadUpdatedDispatches(syncRequest);
         });
         abp.helper.signalr.startDispatcherConnection();
-       
+
         function waitForSyncOrReloadList() {
             //the sync request is received before the action is complete, so there's no need to wait or reload
         }

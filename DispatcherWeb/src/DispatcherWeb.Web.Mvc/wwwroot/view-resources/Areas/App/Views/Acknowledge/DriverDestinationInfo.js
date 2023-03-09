@@ -1,17 +1,17 @@
 ﻿(function () {
-	$(function () {
-		'use strict';
+    $(function () {
+        'use strict';
 
-		var _dispatchingService = abp.services.app.dispatching;
+        var _dispatchingService = abp.services.app.dispatching;
 
         $('#driverDestinationForm').submit(function (e) {
-			e.preventDefault();
+            e.preventDefault();
 
-			var form = $(this);
-			if (!form.valid()) {
-				form.showValidateMessage();
-				return;
-			}
+            var form = $(this);
+            if (!form.valid()) {
+                form.showValidateMessage();
+                return;
+            }
 
             var dispatchTicket = form.serializeFormToObject();
 
@@ -76,6 +76,6 @@
             });
         }
 
-	});
+    });
 })();
 

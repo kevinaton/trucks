@@ -53,7 +53,7 @@
         $('#AddSignatureButton').click(function (e) {
             e.preventDefault();
             var guid = $('#Guid').val();
-            _addSignatureModal.open({guid: guid});
+            _addSignatureModal.open({ guid: guid });
         });
 
         abp.event.on('app.signatureAddedModal', function () {

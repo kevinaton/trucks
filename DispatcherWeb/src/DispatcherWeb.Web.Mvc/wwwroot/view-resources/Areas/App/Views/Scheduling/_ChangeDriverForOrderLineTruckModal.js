@@ -30,7 +30,7 @@
             }
 
             var input = _$form.serializeFormToObject();
-            input.ReplaceExistingDriver = false; 
+            input.ReplaceExistingDriver = false;
 
             if (input.HasTicketsOrLoads === "False") {
                 var answer = await swal(

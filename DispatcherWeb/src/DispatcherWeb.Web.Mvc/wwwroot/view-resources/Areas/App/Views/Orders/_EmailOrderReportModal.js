@@ -1,11 +1,11 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.EmailOrderReportModal = function () {
 
         var _modalManager;
         var _orderAppService = abp.services.app.order;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');

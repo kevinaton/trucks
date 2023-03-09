@@ -1,9 +1,9 @@
 ﻿(function () {
     $(function () {
         var _quickbooksOnlineService = abp.services.app.quickbooksOnline;
-        
+
         $('#QboSettingsForm').validate();
-		
+
         $('#SaveButton').click(function (e) {
             e.preventDefault();
             saveSettings();
@@ -25,7 +25,7 @@
             }).fail(function () {
                 abp.ui.clearBusy(form);
             });
-		}
+        }
 
     });
 })();

@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.AddQuoteBasedOrderLinesModal = function () {
 
         var _modalManager;
@@ -9,10 +9,10 @@
         var _gridOptions = null;
         var _modalOptions = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
             _modalOptions = _modalManager.getArgs();
-            
+
             let saveButton = _modalManager.getModal().find('.save-button');
             if (_modalOptions.saveButtonText) {
                 saveButton.find('span').text(_modalOptions.saveButtonText);
@@ -85,7 +85,7 @@
             _filter = filter;
             reloadGrid();
         };
-        
+
         this.save = async function () {
             var selectedRows = _gridOptions.selectionColumnOptions.getSelectedRows();
             if (_modalOptions.limitSelectionToSingleOrderLine && selectedRows.length !== 1) {

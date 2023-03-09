@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.PrintOrderWithDeliveryInfoModal = function () {
 
         var _modalManager;
@@ -7,12 +7,12 @@
         var _hidePricesInput = null;
         var _includeTicketsInput = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             var saveButton = _modalManager.getModal().find('.save-button');
             saveButton.find('span').text('Print');
             saveButton.find('i.fa-save').removeClass('fa-save').addClass('fa-print');
@@ -24,7 +24,7 @@
             });
 
             abp.helper.ui.initControls();
-            
+
             _hidePricesInput = _$form.find("#HidePrices");
             _includeTicketsInput = _$form.find("#IncludeTickets");
         };
@@ -34,7 +34,7 @@
                 _$form.showValidateMessage();
                 return;
             }
-            
+
             var id = _idInput.val();
             var hidePrices = _hidePricesInput.is(":checked");
             var includeTickets = _includeTicketsInput.is(":checked");

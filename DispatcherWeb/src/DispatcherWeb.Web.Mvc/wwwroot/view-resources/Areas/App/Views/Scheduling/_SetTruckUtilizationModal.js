@@ -1,16 +1,16 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.SetTruckUtilizationModal = function () {
 
         var _modalManager;
         var _schedulingService = abp.services.app.scheduling;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             abp.helper.ui.initControls();
 
             _$form.find("#TimeOnJob").timepickerInit({ stepping: 1 });
@@ -35,7 +35,7 @@
                 _$form.showValidateMessage();
                 return;
             }
-            
+
             var formData = _$form.serializeFormToObject();
 
             await saveDetails(formData);
@@ -49,7 +49,7 @@
                     function () {
                         saveUtilization();
                     },
-                    function () {},
+                    function () { },
                     function () {
                         markAsDone();
                     }

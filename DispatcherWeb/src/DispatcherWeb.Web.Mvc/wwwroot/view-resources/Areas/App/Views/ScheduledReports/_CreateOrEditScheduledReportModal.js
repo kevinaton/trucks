@@ -43,7 +43,7 @@
             }
 
             var model = _$form.serializeFormWithMultipleToObject();
-          
+
             if (!$.isArray(model.SendOnDaysOfWeek)) {
                 model.SendOnDaysOfWeek = [model.SendOnDaysOfWeek];
             }

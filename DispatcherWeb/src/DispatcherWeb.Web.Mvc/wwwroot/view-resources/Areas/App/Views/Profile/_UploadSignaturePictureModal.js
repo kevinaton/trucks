@@ -17,8 +17,8 @@
                 beforeSubmit: function (formData, jqForm, options) {
 
                     var $fileInput = $('#UploadSignaturePictureModalForm input[name=SignaturePicture]');
-					var files = $fileInput.get()[0].files;
-					console.log(files);
+                    var files = $fileInput.get()[0].files;
+                    console.log(files);
 
                     if (!files.length) {
                         return false;
@@ -29,27 +29,27 @@
                     //File type check
                     var type = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
                     if ('|jpg|jpeg|png|gif|'.indexOf(type) === -1) {
-						abp.message.warn(app.localize('ProfilePicture_Warn_FileType'));
+                        abp.message.warn(app.localize('ProfilePicture_Warn_FileType'));
                         return false;
                     }
 
                     //File size check
                     if (file.size > 1048576) //1MB
                     {
-                        abp.message.warn(app.localize('ProfilePicture_Warn_SizeLimit',1));//app.maxSignaturePictureBytesUserFriendlyValue
+                        abp.message.warn(app.localize('ProfilePicture_Warn_SizeLimit', 1));//app.maxSignaturePictureBytesUserFriendlyValue
                         return false;
                     }
 
                     return true;
                 },
-				success: function (response) {
-					console.log(response);
+                success: function (response) {
+                    console.log(response);
                     if (response.success) {
                         var $signaturePictureResize = $('#SignaturePictureResize');
 
                         var signatureFilePath = abp.appPath + 'Temp/Downloads/' + response.result.fileName + '?v=' + new Date().valueOf();
                         uploadedFileName = response.result.fileName;
-                        
+
                         $signaturePictureResize.show();
                         $signaturePictureResize.attr('src', signatureFilePath);
 

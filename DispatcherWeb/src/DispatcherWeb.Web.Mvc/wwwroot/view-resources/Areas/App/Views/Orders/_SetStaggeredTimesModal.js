@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.SetStaggeredTimesModal = function () {
 
         var _modalManager;
@@ -7,9 +7,9 @@
         var _model = null;
         var _initializing = false;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
-            
+
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
 
@@ -54,7 +54,7 @@
                 _modalManager.close();
                 abp.event.trigger('app.staggeredTimesSetModal', _model);
             }
-            
+
         };
 
         this.setModel = function (model) {

@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditQuoteServiceModal = function () {
 
         var _modalManager;
@@ -7,7 +7,7 @@
         var _designationDropdown = null;
         var _addLocationTarget = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             var createOrEditServiceModal = new app.ModalManager({

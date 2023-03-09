@@ -1,5 +1,5 @@
 ﻿(function () {
-    app.modals.UserPermissionsModal = function() {
+    app.modals.UserPermissionsModal = function () {
 
         var _userService = abp.services.app.user;
 
@@ -21,7 +21,7 @@
             });
         }
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _permissionsTree = new PermissionsTree();
@@ -34,7 +34,7 @@
             });
         };
 
-        this.save = function() {
+        this.save = function () {
             _modalManager.setBusy(true);
             _userService.updateUserPermissions({
                 id: _modalManager.getArgs().id,
