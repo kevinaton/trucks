@@ -1,8 +1,7 @@
 ﻿(function ($) {
-    //Custom validation type for tenancy name
-    $.validator.addMethod("tenancyNameRegex", function (value, element, regexpr) {
+    $.validator.addMethod("companyNameRegex", function (value, element, regexpr) {
         return regexpr.test(value);
-    }, app.localize('TenantName_Regex_Description'));
+    }, app.localize('CompanyName_Regex_Description'));
 
     app.modals.CreateTenantModal = function () {
         var _tenantService = abp.services.app.tenant;
@@ -18,8 +17,8 @@
             _$tenantInformationForm = modal.find('form[name=TenantInformationsForm]');
             _$tenantInformationForm.validate({
                 rules: {
-                    TenancyName: {
-                        tenancyNameRegex: new RegExp(_$tenantInformationForm.find('input[name=TenancyName]').attr('regex'))
+                    CompanyName: {
+                        companyNameRegex: new RegExp(_$tenantInformationForm.find('input[name=CompanyName]').attr('companyNameRegexValue'))
                     }
                 }
             });

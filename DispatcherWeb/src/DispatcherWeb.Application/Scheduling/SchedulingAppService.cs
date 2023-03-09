@@ -1339,32 +1339,6 @@ namespace DispatcherWeb.Scheduling
                 await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature) && (truck.IsExternal || truck.AlwaysShowOnSchedule);
         }
 
-        public async Task<SetOrderNumberOfTrucksResult> SetOrderLineNumberOfTrucks(SetOrderLineNumberOfTrucksInput input)
-        {
-            var order = await _orderRepository.GetAll()
-                .FirstAsync(o => o.OrderLines.Any(ol => ol.Id == input.OrderLineId));
-
-            var orderLine = await _orderLineRepository.GetAll()
-                .FirstAsync(ol => ol.Id == input.OrderLineId);
-
-            orderLine.NumberOfTrucks = input.NumberOfTrucks;
-
-            orderLine.RemoveStaggeredTimeIfNeeded();
-
-            await DeleteOrderLineTrucksIfQuantityAndNumberOfTrucksAreZero(orderLine);
-
-            var hasTrucksWithStaggeredTimeOnJob = await _orderLineTruckRepository.GetAll().AnyAsync(olt => olt.OrderLineId == input.OrderLineId && olt.TimeOnJob != null);
-
-            return new SetOrderNumberOfTrucksResult
-            {
-                NumberOfTrucks = orderLine.NumberOfTrucks,
-                OrderUtilization = await _orderLineScheduledTrucksUpdater.GetOrderLineUtilization(orderLine.Id),
-                StaggeredTimeKind = orderLine.StaggeredTimeKind,
-                IsTimeStaggered = orderLine.StaggeredTimeKind != StaggeredTimeKind.None || hasTrucksWithStaggeredTimeOnJob,
-                IsTimeEditable = orderLine.StaggeredTimeKind == StaggeredTimeKind.None,
-            };
-        }
-
         private async Task DeleteOrderLineTrucksIfQuantityAndNumberOfTrucksAreZero(OrderLine orderLine)
         {
             if ((orderLine.MaterialQuantity ?? 0) == 0 && (orderLine.FreightQuantity ?? 0) == 0 && (orderLine.NumberOfTrucks ?? 0) < 0.01)
@@ -1541,20 +1515,6 @@ namespace DispatcherWeb.Scheduling
 
             await orderLineUpdater.UpdateFieldAsync(o => o.TimeOnJob, date.AddTimeOrNull(input.Time)?.ConvertTimeZoneFrom(timezone));
 
-            await orderLineUpdater.SaveChangesAsync();
-        }
-
-        public async Task SetOrderLineLoadAtId(SetOrderLineLoadAtIdInput input)
-        {
-            var orderLineUpdater = _orderLineUpdaterFactory.Create(input.OrderLineId);
-            await orderLineUpdater.UpdateFieldAsync(o => o.LoadAtId, input.LoadAtId);
-            await orderLineUpdater.SaveChangesAsync();
-        }
-
-        public async Task SetOrderLineDeliverToId(SetOrderLineDeliverToIdInput input)
-        {
-            var orderLineUpdater = _orderLineUpdaterFactory.Create(input.OrderLineId);
-            await orderLineUpdater.UpdateFieldAsync(o => o.DeliverToId, input.DeliverToId);
             await orderLineUpdater.SaveChangesAsync();
         }
 

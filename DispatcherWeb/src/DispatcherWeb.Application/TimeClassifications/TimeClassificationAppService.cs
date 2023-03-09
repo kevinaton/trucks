@@ -162,6 +162,7 @@ namespace DispatcherWeb.TimeClassifications
 
             if (nameHasChanged)
             {
+                await CurrentUnitOfWork.SaveChangesAsync();
                 var affectedDriverIds = await _employeeTimeClassificationRepository.GetAll()
                     .Where(x => x.TimeClassificationId == model.Id)
                     .Select(x => x.DriverId)

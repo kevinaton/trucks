@@ -1,5 +1,7 @@
-﻿@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
-@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Check all of the quoted line items you want to have added to this order"))
+﻿@using DispatcherWeb.Dispatching.Dto;
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@model QuoteBasedOrderLinesModalInput
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.TitleText ?? "Check all of the quoted line items you want to have added to this order"))
 
 <div class="modal-body">
     <div class="row">

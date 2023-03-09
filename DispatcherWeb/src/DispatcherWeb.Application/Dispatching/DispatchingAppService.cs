@@ -396,6 +396,7 @@ namespace DispatcherWeb.Dispatching
 
             var newActiveDispatch = await GetFirstOpenDispatch(dispatch.DriverId);
 
+            await CurrentUnitOfWork.SaveChangesAsync();
             await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatch.DriverId)
             {
                 LogMessage = $"Duplicated dispatch {input.DispatchId}, created dispatche(s) {string.Join(", ", affectedDispatches.Select(x => x.Id))}"

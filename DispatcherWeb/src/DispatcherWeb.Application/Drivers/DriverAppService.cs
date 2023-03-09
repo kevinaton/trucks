@@ -566,6 +566,7 @@ namespace DispatcherWeb.Drivers
                 }
             }
 
+            await CurrentUnitOfWork.SaveChangesAsync();
             await _syncRequestSender.SendSyncRequest(syncRequest
                 .AddLogMessage("Updated EmployeeTimeClassification records for driver"));
         }

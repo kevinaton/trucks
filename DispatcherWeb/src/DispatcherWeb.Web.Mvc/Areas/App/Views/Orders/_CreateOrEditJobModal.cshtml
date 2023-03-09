@@ -1,0 +1,253 @@
+﻿@using System.Threading.Tasks
+@using Abp.Configuration
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Features
+@using Abp.Application.Features
+@using DispatcherWeb.Infrastructure
+@using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Orders.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using Microsoft.EntityFrameworkCore
+@using DispatcherWeb.Authorization
+@model JobEditDto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.OrderId > 0 ? "Edit Job" : "Add Job"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation order-line-form">
+        <input type="hidden" asp-for="OrderId" />
+        <input type="hidden" asp-for="OrderLineId" />
+        <input type="hidden" asp-for="IsMaterialPricePerUnitOverridden" />
+        <input type="hidden" asp-for="IsFreightPricePerUnitOverridden" />   
+        <input type="hidden" asp-for="IsMaterialPriceOverridden" />
+        <input type="hidden" asp-for="IsFreightPriceOverridden" />
+        <input type="hidden" asp-for="IsTaxable" />
+        <input type="hidden" asp-for="StaggeredTimeKind" value="@((int)Model.StaggeredTimeKind)" />
+        <input type="hidden" asp-for="OfficeId" />
+        <input type="hidden" asp-for="Shift" value="@((int?)Model.Shift)" />
+        <input type="hidden" asp-for="QuoteServiceId" />
+        <input type="hidden" asp-for="FocusFieldId" />
+
+        @*<input type="hidden" asp-for="IsClosed" />*@
+        <input type="hidden" asp-for="ProjectId" />
+        <input type="hidden" asp-for="ContactId" />
+        <input type="hidden" asp-for="MaterialCompanyOrderId" />
+        
+        <div class="row">
+            <div class="col-6 form-group">                
+                <label class="required-label">@L("DeliveryDate")</label>
+                <input type="text" class="form-control order-field" asp-for="DeliveryDate" required autocomplete="off">
+            </div>
+            <div class="col-6 form-group">
+                <label class="required-label">@L("Customer")</label>
+                <select class="form-control order-field" asp-for="CustomerId">
+                    <option value="">Select a customer</option>
+                    @if (Model.CustomerId != 0)
+                    {
+                        <option selected value="@Model.CustomerId">@Model.CustomerName</option>
+                    }
+                </select>
+                <div class="d-none">
+                    <select class="form-control quote-dropdown order-field" asp-for="QuoteId">
+                        <option value=""
+                                data-placeholder-default="Not on a quote"
+                                data-placeholder-no-items="No quotes defined for the selected customer"
+                                data-placeholder-no-parent="Select a customer first">
+                            Select a quote
+                        </option>
+                        @if (Model.QuoteId.HasValue)
+                        {
+                            <option selected value="@Model.QuoteId">@Model.QuoteName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 form-group">
+                <label>@L("JobNumber")</label>
+                <input class="form-control order-line-field" type="text" asp-for="JobNumber" maxlength="@EntityStringFieldLengths.OrderLine.JobNumber">
+            </div>
+            <div class="col-6 form-group">
+                <label class="required-label">@L("Designation")</label>
+                <select class="form-control order-line-field" required asp-for="Designation" asp-items="Html.GetEnumSelectList<DesignationEnum>()">
+                    <option value="">Select a designation</option>
+                </select>
+            </div>
+            <div class="col-6 d-flex align-items-end">
+                <div class="form-group" style="display: none;">
+                    <button type="button" class="btn btn-primary" id="OpenQuoteBasedOrderLinesModalButton">Select a line item</button>
+                </div>
+            </div>
+        </div>
+        <div id="DesignationRelatedFields">
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>@L("LoadAt")</label>
+                    <select class="form-control order-line-field" asp-for="LoadAtId">
+                        <option value="">@L("SelectALocation")</option>
+                        @if (Model.LoadAtId.HasValue)
+                        {
+                            <option selected value="@Model.LoadAtId">@Model.LoadAtName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-6 form-group">
+                    <label>@L("DeliverTo")</label>
+                    <select class="form-control order-line-field" asp-for="DeliverToId">
+                        <option value="">@L("SelectALocation")</option>
+                        @if (Model.DeliverToId.HasValue)
+                        {
+                            <option selected value="@Model.DeliverToId">@Model.DeliverToName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label class="required-label">@L("Item")</label>
+                    <select class="form-control order-line-field" asp-for="ServiceId" required>
+                        <option value="">Select an item</option>
+                        @if (Model.ServiceId != 0)
+                        {
+                            <option selected value="@Model.ServiceId">@Model.ServiceName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label class="required-label" for="FreightUomId">@L("FreightUom")</label>
+                    <select class="form-control order-line-field" asp-for="FreightUomId">
+                        <option value=""
+                                data-placeholder-default="Select a UOM"
+                                data-placeholder-no-items="No Prices defined for the selected Item"
+                                data-placeholder-no-parent="Select an Item first">
+                            Select Freight UOM
+                        </option>
+                        @if (Model.FreightUomId != 0)
+                        {
+                            <option selected value="@Model.FreightUomId">@Model.FreightUomName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-6 form-group">
+                    <label class="required-label" for="MaterialUomId">@L("MaterialUom")</label>
+                    <select class="form-control order-line-field" asp-for="MaterialUomId">
+                        <option value=""
+                                data-placeholder-default="Select a UOM"
+                                data-placeholder-no-items="No Prices defined for the selected Item"
+                                data-placeholder-no-parent="Select an Item first">
+                            Select Material UOM
+                        </option>
+                        @if (Model.MaterialUomId != 0)
+                        {
+                            <option selected value="@Model.MaterialUomId">@Model.MaterialUomName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>@L("FreightRate")</label>
+                    <input class="form-control order-line-field" type="text" asp-for="FreightPricePerUnit" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
+                </div>
+                <div class="col-6 form-group">
+                    <label>@L("MaterialRate")</label>
+                    <input class="form-control order-line-field" type="text" asp-for="MaterialPricePerUnit" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>@L("FreightQuantity")</label>
+                    <input class="form-control order-line-field" type="text" asp-for="FreightQuantity" data-rule-number="true" data-rule-min="0" data-rule-max="1000000">
+                </div>
+                <div class="col-6 form-group">
+                    <label>@L("MaterialQuantity")</label>
+                    <input class="form-control order-line-field" type="text" asp-for="MaterialQuantity" data-rule-number="true" data-rule-min="0" data-rule-max="1000000">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>Freight</label>
+                    <div class="input-group">
+                        <input class="form-control order-line-field" type="text" asp-for="FreightPrice" disabled="@(Model.CanOverrideTotals && Model.IsFreightPriceOverridden ? null : "disabled")" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength" required>
+                        <span class="input-group-btn" @Html.StyleDisplayNone(!Model.CanOverrideTotals)>
+                            <button type="button" class="btn btn-default order-line-field" id="UnlockFreightTotalButton"><span class="fas fa-unlock"></span></button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-6 form-group">
+                    <label>Material</label>
+                    <div class="input-group">
+                        <input class="form-control order-line-field" type="text" asp-for="MaterialPrice" disabled="@(Model.CanOverrideTotals && Model.IsMaterialPriceOverridden ? null : "disabled")" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength" required>
+                        <span class="input-group-btn" @Html.StyleDisplayNone(!Model.CanOverrideTotals)>
+                            <button type="button" class="btn btn-default order-line-field" id="UnlockMaterialTotalButton"><span class="fas fa-unlock"></span></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>@L("SubContractorRate")</label>
+                    <input class="form-control order-line-field" type="text" asp-for="LeaseHaulerRate" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>@L("RequestedNumberOfTrucks")</label>
+                    <input class="form-control order-line-field" type="text" asp-for="NumberOfTrucks" data-rule-number="true" data-rule-min="0" data-rule-max="1000000">
+                </div>
+                @if (await SettingManager.DispatchViaAny())
+                {
+                    <div class="col-6 form-group d-flex align-items-end">
+                        <label asp-for="IsMultipleLoads" class="m-checkbox">
+                            <input type="checkbox" class="order-line-field" id="IsMultipleLoads" name="IsMultipleLoads" value="true" @Html.Raw(!Model.IsMultipleLoads ? "" : "checked=\"checked\"")>
+                            @L("RunUntilStopped")
+                            <span></span>
+                        </label>
+                    </div>
+                }
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>@L("TimeOnJob")</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control order-line-field" asp-for="TimeOnJob">
+                        <span class="input-group-btn" @Html.StyleDisplayNone(!(Model.NumberOfTrucks > 0))>
+                            <button type="button" class="btn btn-default order-line-field" id="SetStaggeredTimeButton" title="@L("SetStaggeredTimes")"><span class="far fa-clock"></span></button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-6 form-group">
+                    <label>@L("ChargeTo")</label>
+                    <input type="text" class="form-control order-field" asp-for="ChargeTo">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
+                    <label>@L("Priority")</label>
+                    <select class="form-control order-field" asp-for="Priority" asp-items="Html.GetEnumSelectList<OrderPriority>()"></select>
+                </div>
+                @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay) && await FeatureChecker.IsEnabledAsync(AppFeatures.DriverProductionPayFeature))
+                {
+                    <div class="col-6 form-group d-flex align-items-end" @*style="display: none"*@>
+                        <label asp-for="ProductionPay" class="m-checkbox">
+                            <input type="checkbox" class="order-line-field" id="ProductionPay" name="ProductionPay" value="true" checked="@(Model.ProductionPay ? "checked" : null)">
+                            @L("ProductionPay")
+                            <span></span>
+                        </label>
+                    </div>
+                }
+            </div>
+            <div class="row">
+                <div class="col-12 form-group">
+                    <label>@L("Note")</label>
+                    <textarea class="form-control order-line-field" rows="5" asp-for="Note"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

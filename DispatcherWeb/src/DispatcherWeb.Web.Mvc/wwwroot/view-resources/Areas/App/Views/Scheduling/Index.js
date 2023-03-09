@@ -66,12 +66,6 @@
             modalSize: 'sm'
         });
 
-        var _setOrderLineNoteModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Scheduling/SetOrderLineNoteModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetOrderLineNoteModal.js',
-            modalClass: 'SetOrderLineNoteModal'
-        });
-
         var _setOrderDateModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Scheduling/SetOrderDateModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetOrderDateModal.js',
@@ -218,6 +212,13 @@
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_SendOrdersToDriversModal.js',
             modalClass: 'SendOrdersToDriversModal',
             //modalSize: 'sm'
+        });
+
+        var _createOrEditJobModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditJobModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditJobModal.js',
+            modalClass: 'CreateOrEditJobModal',
+            modalSize: 'lg'
         });
 
         var _reassignTrucksModal = abp.helper.createModal('ReassignTrucks', 'Scheduling');
@@ -757,72 +758,18 @@
             };
         }
 
-        function handleLocationCellCreation(idField, nameField, saveMethod) {
+        function handleLocationCellClickForEdit(idField) {
             return function (cell, cellData, rowData, rowIndex, colIndex) {
-                var getCellText = function () {
-                    return rowData[nameField];
-                };
-                $(cell).text(getCellText());
-                var cellIsActive = false;
                 $(cell).click(function () {
-                    if (cellIsActive || !hasOrderEditPermissions()) return;
+                    if (!hasOrderEditPermissions()) return;
                     _schedulingService.isOrderLineFieldReadonly({ orderLineId: rowData.id, fieldName: abp.utils.toPascalCase(idField) })
                         .done(function (result) {
                             if (result) {
                                 return;
                             }
-                            cellIsActive = true;
-                            $(cell).text('');
-                            $(cell).addClass('cell-editable');
-                            var editor = $('<select></select>').appendTo($(cell));
-                            editor.append($('<option selected></option>').text(rowData[nameField]).attr("value", rowData[idField]));
-                            editor.focus();
-                            editor.select2Init({
-                                showAll: false,
-                                allowClear: true,
-                                abpServiceMethod: abp.services.app.location.getLocationsSelectList
-                            });
-                            editor.select2("open");
-
-                            var closeEditor = function () {
-                                setTimeout(function () {
-                                    editor.remove();
-                                    $(cell).text(getCellText());
-                                    $(cell).removeClass('cell-editable');
-                                    cellIsActive = false;
-                                }, 100);
-                            };
-                            var unselecting = false;
-                            editor.on('select2:unselecting', function () {
-                                unselecting = true;
-                            });
-                            editor.on('select2:unselect', function () {
-                                unselecting = false;
-                            });
-                            editor.on('select2:close', function () {
-                                var newValue = $(this).val();
-                                if (unselecting) {
-                                    return;
-                                }
-                                if (newValue === (rowData[idField] || "").toString()) {
-                                    closeEditor();
-                                    return;
-                                }
-                                abp.ui.setBusy(cell);
-                                //var editorData = editor.select2('data');
-                                //editorData && editorData.length && editorData[0].item && editorData[0].item.;
-                                var dataToSave = {
-                                    orderLineId: rowData.id
-                                };
-                                dataToSave[idField] = newValue;
-                                saveMethod(dataToSave).done(function () {
-                                    rowData[idField] = newValue;
-                                    rowData[nameField] = editor.getSelectedDropdownOption().text();
-                                    abp.notify.info('Saved successfully.');
-                                }).always(function () {
-                                    abp.ui.clearBusy(cell);
-                                    closeEditor();
-                                });
+                            _createOrEditJobModal.open({
+                                orderLineId: rowData.id,
+                                focusFieldId: idField
                             });
                         });
                 });
@@ -1340,7 +1287,10 @@
                             icon.prop('title', '<b>Click icon to add comments</b>');
                         }
                         icon.click(function () {
-                            _setOrderLineNoteModal.open({ id: rowData.id });
+                            _createOrEditJobModal.open({
+                                orderLineId: rowData.id,
+                                focusFieldId: 'Note'
+                            });
                         });
                         $(cell).append(icon);
                     }
@@ -1362,10 +1312,19 @@
                     render: function (data, type, full, meta) { return _dtHelper.renderTime(full.time, '') + (full.isTimeStaggered ? staggeredIcon : ''); },
                     title: 'Time on Job',
                     titleHoverText: 'Time on Job',
-                    className: "cell-editable time-on-job-column",
+                    className: "time-on-job-column",
                     responsivePriority: getResponsivePriorityByName('time'),
                     width: "94px",
-                    createdCell: handleTimepickerCellCreation("time", _schedulingService.setOrderLineTime, "isTimeEditable", "isTimeStaggered"),
+                    createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
+                        $(cell).click(function () {
+                            if (rowData["isTimeEditable"]) {
+                                _createOrEditJobModal.open({
+                                    orderLineId: rowData.id,
+                                    focusFieldId: 'TimeOnJob'
+                                });
+                            }
+                        });
+                    },
                     orderable: true
                 },
                 {
@@ -1373,15 +1332,14 @@
                     render: function (data, type, full, meta) { return _dtHelper.renderText(full.loadAtName); },
                     title: "Load at",
                     className: "load-at all",
-                    createdCell: handleLocationCellCreation('loadAtId', 'loadAtName', _schedulingService.setOrderLineLoadAtId)
+                    createdCell: handleLocationCellClickForEdit('LoadAtId')
                 },
                 {
                     data: "deliverToNamePlain",
                     render: function (data, type, full, meta) { return _dtHelper.renderText(full.deliverToName); },
                     title: "Deliver to",
                     className: 'deliver-to-column all',
-                    //className: "cell-editable",
-                    createdCell: handleLocationCellCreation('deliverToId', 'deliverToName', _schedulingService.setOrderLineDeliverToId)
+                    createdCell: handleLocationCellClickForEdit('DeliverToId')
                 },
                 {
                     data: "item",
@@ -1432,66 +1390,13 @@
                     title: '<span title="# of Trucks">Req. Truck</span>',
                     width: "65px",
                     //responsivePriority: 1,
-                    className: "cell-editable cell-number-of-trucks all",
+                    className: "cell-number-of-trucks all",
                     createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
-                        $(cell).empty();
-                        if (!hasOrderEditPermissions() || !isAllowedToEditOrder(rowData)) {
-                            $(cell).text(rowData.numberOfTrucks);
-                            $(cell).removeClass('cell-editable');
-                            return;
-                        }
-                        var editor = $('<input type="text">').appendTo($(cell));
-                        editor.val(rowData.numberOfTrucks);
-                        editor.focusout(async function () {
-                            var newValue = $(this).val();
-                            if (newValue === (rowData.numberOfTrucks || "").toString()) {
-                                return;
-                            }
-                            if (isNaN(newValue) || parseFloat(newValue) < 0) {
-                                abp.message.error('Please enter a valid number!');
-                                $(this).val(rowData.numberOfTrucks);
-                                return;
-                            }
-                            else if (parseFloat(newValue) > 999) {
-                                abp.message.error('Please enter a valid number less than 1,000!');
-                                $(this).val(rowData.numberOfTrucks);
-                                return;
-                            }
-
-                            newValue = newValue === "" ? null : abp.utils.round(parseFloat(newValue));
-                            $(this).val(newValue);
-
-                            if (!await abp.scheduling.checkExistingDispatchesBeforeSettingQuantityAndNumberOfTrucksZero(
-                                rowData.id, rowData.materialQuantity, rowData.freightQuantity, newValue
-                            )) {
-                                reloadMainGrid(null, false);
-                                return;
-                            }
-
-                            abp.ui.setBusy(cell);
-                            _schedulingService.setOrderLineNumberOfTrucks({
+                        $(cell).click(function () {
+                            if (!hasOrderEditPermissions()) return;
+                            _createOrEditJobModal.open({
                                 orderLineId: rowData.id,
-                                numberOfTrucks: newValue
-                            }).done(function (result) {
-                                rowData.numberOfTrucks = result.numberOfTrucks;
-                                rowData.utilization = result.orderUtilization;
-                                //rowData.maxUtilization = abp.utils.round(result.numberOfTrucks);
-                                if (rowData.isTimeStaggered !== result.isTimeStaggered || rowData.isTimeEditable !== result.isTimeEditable) {
-                                    reloadMainGrid(null, false);
-                                }
-                                rowData.staggeredTimeKind = result.staggeredTimeKind;
-                                rowData.isTimeStaggered = result.isTimeStaggered;
-                                rowData.isTimeEditable = result.isTimeEditable;
-
-                                updateRowAppearance(editor, rowData);
-                                //scheduleGrid.draw(false);
-                                recalculateFooterTotals();
-                                if (!newValue) {
-                                    reloadTruckTiles();
-                                }
-                                abp.notify.info('Saved successfully.');
-                            }).always(function () {
-                                abp.ui.clearBusy(cell);
+                                focusFieldId: 'NumberOfTrucks'
                             });
                         });
                     }
@@ -2154,6 +2059,12 @@
             reloadDriverAssignments();
         });
 
+        abp.event.on('app.createOrEditJobModalSaved', function () {
+            reloadMainGrid(null, false);
+            //reloadTruckTiles();
+            //reloadDriverAssignments();
+        });
+
         function actionMenuHasItems() {
             return _permissions.edit ||
                 _permissions.editTickets ||
@@ -2229,6 +2140,17 @@
             });
         });
 
+        $('#AddJobButton').click(function (e) {
+            e.preventDefault();
+            var filterData = _dtHelper.getFilterData();
+            _createOrEditJobModal.open({
+                deliveryDate: filterData.date,
+                shift: filterData.shift,
+                officeId: filterData.officeId,
+                officeName: filterData.officeName
+            });
+        });
+
         $('#ScheduleTable tbody tr').contextmenu({ 'target': '#context-menu' });
 
         scheduleTable.contextMenu({
@@ -2244,6 +2166,19 @@
                 }
             },
             items: {
+                editJob: {
+                    name: app.localize('EditJob'),
+                    visible: function () {
+                        var rowData = _dtHelper.getRowData(this);
+                        return _permissions.edit;
+                    },
+                    callback: function () {
+                        var orderLine = _dtHelper.getRowData(this);
+                        _createOrEditJobModal.open({
+                            orderLineId: orderLine.id
+                        });
+                    }
+                },
                 orderGroup: {
                     name: app.localize('Schedule_DataTable_MenuItems_Order'),
                     visible: function () {

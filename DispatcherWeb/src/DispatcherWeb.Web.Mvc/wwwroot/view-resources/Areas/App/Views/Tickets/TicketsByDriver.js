@@ -538,7 +538,6 @@
         affectedBlocks.forEach(function (affectedBlock) {
             affectedBlock.orderLine[field] = newVal;
             updateCardFromModel(affectedBlock);
-            refreshFieldHighlighting(affectedBlock);
         });
 
         return {
@@ -1242,17 +1241,77 @@
 
         block.ui.freightRate.add(
             block.ui.materialRate
-        ).focusout(function () {
+        ).focusout(async function () {
             if (_initializing) {
                 return;
             }
-            var field = $(this).attr('name');
-            if (parseFloat($(this).val()) === block.orderLine[field]) {
+            var input = $(this);
+            var field = input.attr('name');
+            if (parseFloat(input.val()) === block.orderLine[field]) {
                 return;
             }
-            handleBlockNumberChange(block, $(this));
+            if (!await validateNewRateAsync(field, input, block)) {
+                input.val(block.orderLine[field] || 0);
+                return;
+            }
+            handleBlockNumberChange(block, input);
             saveOrderLine(block.orderLine);
         });
+
+        var setDesignationForBlock = function (block, newDesignation) {
+            block.orderLine.designation = newDesignation;
+            var affectedBlocks = _orderLineBlocks.filter(o => o.orderLine.id === block.orderLine.id);
+            affectedBlocks.forEach(function (affectedBlock) {
+                affectedBlock.orderLine.designation = block.orderLine.designation;
+            });
+        };
+
+        var validateNewRateAsync = async function (field, input, block) {
+            let fieldIsFreight = field === 'freightRate';
+            let otherField = fieldIsFreight ? 'materialRate' : 'freightRate';
+            let otherFieldDisplayName = fieldIsFreight ? 'material' : 'freight';
+            let fieldDisplayName = fieldIsFreight ? 'freight' : 'material';
+            let newValue = Number(input.val()) || 0;
+            var oldValue = block.orderLine[field] || 0;
+            let otherValue = block.orderLine[otherField] || 0;
+            if (oldValue && !newValue) {
+                if (!otherValue) {
+                    //the designation can't be changed to 'nothing' when neither rate is specified
+                    abp.message.error('At least one rate has to be specified');
+                    return false;
+                } else {
+                    if (abp.enums.designations.freightOnly.includes(block.orderLine.designation)) {
+                        return true;
+                    }
+                    if (!await abp.message.confirm(`Changing this ${fieldDisplayName} rate to zero will change the designation to ${otherFieldDisplayName} only. Is this what you want to do?`)) {
+                        return false;
+                    }
+                    setDesignationForBlock(block, fieldIsFreight ? abp.enums.designation.materialOnly : abp.enums.designation.freightOnly);
+                    return true;
+                }
+            } else if (!oldValue && newValue) {
+                var allowedDesignations = [];
+                var newDesignation;
+                var newDesignationDisplayValue;
+                if (!otherValue) {
+                    allowedDesignations = fieldIsFreight ? abp.enums.designations.freightOnly : abp.enums.designations.materialOnly;
+                    newDesignation = fieldIsFreight ? abp.enums.designation.freightOnly : abp.enums.designation.materialOnly;
+                    newDesignationDisplayValue = fieldIsFreight ? "freight only" : "material only";
+                } else {
+                    allowedDesignations = abp.enums.designations.freightAndMaterial;
+                    newDesignation = abp.enums.designation.freightAndMaterial;
+                    newDesignationDisplayValue = "freight and material";
+                }
+                if (allowedDesignations.includes(block.orderLine.designation)) {
+                    return true;
+                }
+                if (!await abp.message.confirm(`Adding a ${fieldDisplayName} rate will change this designation to ${newDesignationDisplayValue}. Is this what you want to do?`)) {
+                    return false;
+                }
+                setDesignationForBlock(block, newDesignation);
+                return true;
+            }
+        };
 
         block.ui.destroyGrid = function () {
             if (!block.ui.grid) {
