@@ -19,8 +19,7 @@
             locale: {
                 cancelLabel: 'Clear'
             }
-        },
-        function (start, end, label) {
+        }, function (start, end, label) {
             $("#StartDateFilter").val(start.clone().tz('UTC').format());
             $("#EndDateFilter").val(end.clone().tz('UTC').format());
         });
@@ -44,7 +43,7 @@
             showAll: true
         });
 
-       
+
 
         $("#ProjectIdFilter").select2Init({
             abpServiceMethod: abp.services.app.project.getProjectsSelectList
@@ -69,23 +68,19 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
-                }, 
+                    }
+                },
                 {
                     responsivePriority: 1,
-                    targets: 1,
                     data: "projectName",
                     title: "Project"
 
                 },
                 {
-                    targets: 2,
                     data: "userName",
                     title: "User"
                 },
                 {
-                    targets: 3,
                     data: "dateTime",
                     //render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(full.dateTime); },
                     render: function (dateTime) {
@@ -94,13 +89,11 @@
                     title: "Date"
                 },
                 {
-                    targets: 4,
                     data: "action",
                     render: function (data, type, full, meta) { return _dtHelper.renderText(full.actionName); },
                     title: "Action"
                 },
                 {
-                    targets: 5,
                     data: null,
                     orderable: false,
                     name: "Actions",
@@ -112,7 +105,7 @@
                         + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> View Project</a></li>'
                         + '</ul>'
                         + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
-                        + '</div>' 
+                        + '</div>'
                 }
             ],
             order: [[2, "desc"]]

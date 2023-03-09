@@ -26,7 +26,7 @@
             if (!_$form.valid()) {
                 return;
             }
-            var supplierContact = _$form.serializeFormToObject();         
+            var supplierContact = _$form.serializeFormToObject();
 
             _modalManager.setBusy(true);
             _locationService.editSupplierContact(supplierContact).done(function (data) {

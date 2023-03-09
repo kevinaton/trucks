@@ -1,18 +1,18 @@
-﻿(function($) {
-    app.modals.EditLanguageTextModal = function() {
+﻿(function ($) {
+    app.modals.EditLanguageTextModal = function () {
 
         var _modalManager;
         var _languageService = abp.services.app.language;
         var _$editLanguageTextForm = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$editLanguageTextForm = _modalManager.getModal().find('form[name=EditLanguageTextForm]');
             _$editLanguageTextForm.validate();
         };
 
-        this.save = function() {
+        this.save = function () {
             if (!_$editLanguageTextForm.valid()) {
                 return;
             }
@@ -21,11 +21,11 @@
 
             _languageService
                 .updateLanguageText(_$editLanguageTextForm.serializeFormToObject())
-                .done(function() {
+                .done(function () {
                     abp.notify.info(app.localize('SavedSuccessfully'));
                     _modalManager.close();
                     abp.event.trigger('app.editLanguageTextModalSaved');
-                }).always(function() {
+                }).always(function () {
                     _modalManager.setBusy(false);
                 });
         };

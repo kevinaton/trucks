@@ -11,8 +11,8 @@
             .closest('.form-group');
 
         var _$tenantSettingsCheckboxes = _$tabPanel
-           .find('input[name=IsNewRegisteredTenantActiveByDefault],input[name=UseCaptchaOnRegistration]')
-           .closest('.form-group');
+            .find('input[name=IsNewRegisteredTenantActiveByDefault],input[name=UseCaptchaOnRegistration]')
+            .closest('.form-group');
 
         var _$userLockOutSettingsFormItems = $('#UserLockOutSettingsForm')
             .find('input')
@@ -124,8 +124,9 @@
 
                 var newTimezone = $('#GeneralSettingsForm [name=Timezone]').val();
                 if (abp.clock.provider.supportsMultipleTimezone &&
-                        _usingDefaultTimeZone &&
-                        _initialTimeZone !== newTimezone) {
+                    _usingDefaultTimeZone &&
+                    _initialTimeZone !== newTimezone
+                ) {
                     abp.message.info(app.localize('TimeZoneSettingChangedRefreshPageNotification')).done(function () {
                         window.location.reload();
                     });

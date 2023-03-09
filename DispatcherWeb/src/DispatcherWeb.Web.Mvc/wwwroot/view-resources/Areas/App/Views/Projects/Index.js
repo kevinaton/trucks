@@ -14,8 +14,7 @@
             locale: {
                 cancelLabel: 'Clear'
             }
-        },
-        function (start, end, label) {
+        }, function (start, end, label) {
             $("#StartDateStartFilter").val(start.format('MM/DD/YYYY'));
             $("#StartDateEndFilter").val(end.format('MM/DD/YYYY'));
         });
@@ -46,8 +45,7 @@
             locale: {
                 cancelLabel: 'Clear'
             }
-        },
-        function (start, end, label) {
+        }, function (start, end, label) {
             $("#EndDateStartFilter").val(start.format('MM/DD/YYYY'));
             $("#EndDateEndFilter").val(end.format('MM/DD/YYYY'));
         });
@@ -88,41 +86,34 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
+                    }
                 },
                 {
                     responsivePriority: 1,
-                    targets: 1,
                     data: "name",
                     title: "Name"
                 },
                 {
-                    targets: 2,
                     data: "description",
                     title: "Description"
                 },
                 {
-                    targets: 3,
                     data: "statusName",
                     render: function (data, type, full, meta) { return _dtHelper.renderText(full.statusName); },
                     title: "Status",
                     orderable: false
                 },
                 {
-                    targets: 4,
                     data: "startDate",
                     render: function (data, type, full, meta) { return _dtHelper.renderUtcDate(full.startDate); },
                     title: "Start date"
                 },
                 {
-                    targets: 5,
                     data: "endDate",
                     render: function (data, type, full, meta) { return _dtHelper.renderUtcDate(full.endDate); },
                     title: "End date"
                 },
                 {
-                    targets: 6,
                     data: null,
                     orderable: false,
                     autoWidth: false,

@@ -1,16 +1,16 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.AddOrderTruckModal = function () {
 
         var _modalManager;
         var _schedulingService = abp.services.app.scheduling;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             abp.helper.ui.initControls();
 
             var model = _$form.serializeFormToObject();
@@ -25,14 +25,14 @@
             }).done(function (result) {
                 $.each(result.items, function (ind, val) {
                     var optionTag = val.truckId === parseInt(model.DefaultTrailerId) ? '<option selected="selected"></option>' : '<option></option>';
-                        $(optionTag).text(val.truckCode).attr('value', val.truckId).appendTo($("#TruckId"));
+                    $(optionTag).text(val.truckCode).attr('value', val.truckId).appendTo($("#TruckId"));
                 });
             });
 
             $("#TruckId").select2Init({
                 showAll: true
             });
-            
+
         };
 
         this.save = async function () {
@@ -40,7 +40,7 @@
                 _$form.showValidateMessage();
                 return;
             }
-            
+
             var model = _$form.serializeFormToObject();
 
             if (model.OnlyTrailers) {

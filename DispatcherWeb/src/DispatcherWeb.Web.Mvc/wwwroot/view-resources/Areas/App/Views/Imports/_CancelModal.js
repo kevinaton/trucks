@@ -1,9 +1,9 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CancelModal = function () {
 
         var _modalManager;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
         };

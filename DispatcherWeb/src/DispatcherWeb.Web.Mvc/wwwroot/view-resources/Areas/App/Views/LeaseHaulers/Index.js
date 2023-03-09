@@ -14,7 +14,7 @@
         var reloadMainGrid = function () {
             leaseHaulersGrid.ajax.reload();
         };
-        
+
         var leaseHaulersTable = $('#LeaseHaulersTable');
         var leaseHaulersGrid = leaseHaulersTable.DataTableInit({
             paging: true,
@@ -35,37 +35,30 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
+                    }
                 },
                 {
-                    targets: 1,
                     className: 'cell-text-wrap',
                     data: "name",
                     title: "Name"
                 },
                 {
-                    targets: 2,
                     data: "accountNumber",
                     title: "Account #"
                 },
                 {
-                    targets: 3,
                     data: "streetAddress1",
                     title: "Address1"
                 },
                 {
-                    targets: 4,
                     data: "city",
                     title: "City"
                 },
                 {
-                    targets: 5,
                     data: "state",
                     title: "State"
                 },
                 {
-                    targets: 6,
                     data: "zipCode",
                     title: "Zip Code"
                 },
@@ -76,14 +69,14 @@
                 {
                     data: "phoneNumber",
                     title: "Phone Number"
-                },               
+                },
                 {
                     data: null,
                     orderable: false,
                     autoWidth: false,
                     defaultContent: '',
                     width: "10px;",
-                    responsivePriority: 1,                    
+                    responsivePriority: 1,
                     rowAction: {
                         items: [
                             {

@@ -1,16 +1,16 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CaptureOrderAuthorizationModal = function () {
 
         var _modalManager;
         var _orderPaymentService = abp.services.app.orderPayment;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             abp.helper.ui.initControls();
 
             var saveButton = _modalManager.getModal().find('.save-button');
@@ -21,10 +21,10 @@
 
         this.save = function () {
             if (!_$form.valid()) {
-            	_$form.showValidateMessage();
+                _$form.showValidateMessage();
                 return;
             }
-            
+
             var formData = _$form.serializeFormToObject();
 
             _modalManager.setBusy(true);

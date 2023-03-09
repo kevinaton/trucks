@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.ViewQuoteHistoryModal = function () {
 
         var _modalManager;
@@ -9,9 +9,9 @@
         this.init = function (modalManager) {
             _modalManager = modalManager;
             _$form = _modalManager.getModal().find('form');
-            
+
             abp.helper.ui.initControls();
-            
+
             _modalManager.getModal().find('.save-button').hide();
             _modalManager.getModal().find('.close-button').text('Close');
 
@@ -21,7 +21,7 @@
                 ordering: false,
                 info: false,
                 ajax: function (data, callback, settings) {
-                    _quoteHistoryService.getQuoteFieldDiffDtos({ id: _$form.find('#Id').val()}).done(function (abpResult) {
+                    _quoteHistoryService.getQuoteFieldDiffDtos({ id: _$form.find('#Id').val() }).done(function (abpResult) {
                         callback(_dtHelper.fromAbpResult(abpResult));
                     });
                 },
@@ -40,7 +40,7 @@
                     }
                 ]
             });
-            
+
             _modalManager.getModal().on('shown.bs.modal', function () {
                 fieldDiffsGrid
                     .columns.adjust()
@@ -53,7 +53,7 @@
         };
 
         this.save = function () {
-            
+
         };
     };
 })(jQuery);

@@ -1,11 +1,11 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditLanguageModal = function () {
 
         var _modalManager;
         var _languageService = abp.services.app.language;
         var _$languageInformationForm = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _modalManager.getModal().find('#LanguageNameEdit').select2Init({

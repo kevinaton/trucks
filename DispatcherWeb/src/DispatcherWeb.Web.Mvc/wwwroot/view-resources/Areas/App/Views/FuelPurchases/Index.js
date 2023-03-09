@@ -134,7 +134,7 @@
         });
 
         function initFilterControls() {
-             $("#OfficeIdFilter").select2Init({
+            $("#OfficeIdFilter").select2Init({
                 abpServiceMethod: abp.services.app.office.getOfficesSelectList,
                 showAll: true,
                 allowClear: false

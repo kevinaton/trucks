@@ -191,50 +191,42 @@
                         orderable: false,
                         render: function () {
                             return '';
-                        },
-                        targets: 0
+                        }
                     },
                     {
-                        targets: 1,
                         data: "name",
                         title: "Name"
                     },
                     {
-                        targets: 2,
                         data: "title",
                         title: "Title"
                     },
                     {
-                        targets: 3,
-                        width:"80px",
+                        width: "80px",
                         data: "phoneNumber",
                         title: "Phone"
                     },
                     {
-                        targets: 4,
                         data: "fax",
                         title: "Fax"
                     },
                     {
-                        targets: 5,
                         data: "email",
                         title: "Email"
                     },
                     {
-                        targets: 8,
                         data: "isActive",
                         render: function (isActive) { return _dtHelper.renderCheckbox(isActive); },
                         className: "checkmark text-center",
                         title: "Active"
                     },
                     {
-                        targets: 6,
                         data: null,
                         orderable: false,
                         autoWidth: false,
                         defaultContent: '',
                         width: "10px",
-                        responsivePriority: 1,  
+                        responsivePriority: 1,
                         rowAction: {
                             items: [{
                                 text: '<i class="fa fa-edit"></i> ' + app.localize('Edit'),
@@ -280,14 +272,14 @@
             });
 
             _modalManager.getModal().find("#IsUseSameAddressAsBillingAddress").click(function (e) {
-                if ($('#IsUseSameAddressAsBillingAddress').is(':checked')) {                    
+                if ($('#IsUseSameAddressAsBillingAddress').is(':checked')) {
                     $('#Address1').val($('#BillingAddress1').val());
                     $('#Address2').val($('#BillingAddress2').val());
                     $('#City').val($('#BillingCity').val());
                     $('#State').val($('#BillingState').val());
                     $('#ZipCode').val($('#BillingZipCode').val());
                     $('#CountryCode').val($('#BillingCountryCode').val());
-                    $('#Address1').prop('disabled',true);
+                    $('#Address1').prop('disabled', true);
                     $('#Address2').prop('disabled', true);
                     $('#City').prop('disabled', true);
                     $('#State').prop('disabled', true);
@@ -351,7 +343,7 @@
             _billingAddressAutocomplete = initAddressAutocomplete(_billingAddressFields);
             _physicalAddressAutocomplete = initAddressAutocomplete(_physicalAddressFields);
         }
-        
+
         function fillAddressFromPlace(addressFields, place) {
             var address = abp.helper.googlePlacesHelper.parseAddressComponents(place.address_components);
 

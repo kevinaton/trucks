@@ -47,7 +47,7 @@
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
-            
+
             var _createOrEditCustomerModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Customers/CreateOrEditCustomerModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Customers/_CreateOrEditCustomerModal.js',
@@ -68,7 +68,7 @@
                 modalClass: 'CreateOrEditLocationModal',
                 modalSize: 'lg'
             });
-            
+
             var setStaggeredTimesModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Orders/SetStaggeredTimesModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_SetStaggeredTimesModal.js',
@@ -129,7 +129,7 @@
                 updateTimeOnJobInput();
             });
             updateTimeOnJobInput();
-            
+
 
             _quoteId = _$form.find("#QuoteId").val();
             _quoteServiceId = _$form.find("#QuoteServiceId").val();
@@ -251,7 +251,7 @@
                 _quoteId = quoteId;
 
                 disableQuoteRelatedFieldsIfNeeded();
-                
+
                 _projectInput.val(option.data('projectId'));
                 if (_quoteId !== '') {
                     _$form.find("#ContactId").val(option.data('contactId')).change();
@@ -291,7 +291,7 @@
             _$form.find("#OpenQuoteBasedOrderLinesModalButton").click(function () {
                 openAddQuoteBasedOrderLinesModal();
             });
-        
+
             var quoteIdChanging = false;
             _quoteDropdown.change(async function () {
                 if (quoteIdChanging) {
@@ -340,7 +340,7 @@
                     //});
                 }
             });
-           
+
             _loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
                 addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
@@ -774,7 +774,7 @@
                         return;
                     }
                 }
-                
+
                 disableProductionPay();
             }
         }
@@ -836,8 +836,8 @@
 
             var materialRatePricing =
                 _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null ? _pricing.quoteBasedPricing.pricePerUnit
-                : _pricing && _pricing.hasPricing && _pricing.pricePerUnit !== null ? _pricing.pricePerUnit
-                    : null;
+                    : _pricing && _pricing.hasPricing && _pricing.pricePerUnit !== null ? _pricing.pricePerUnit
+                        : null;
 
             if (freightRatePricing !== null) {
                 if (sender.is(_freightPricePerUnitInput)) {
@@ -1009,7 +1009,7 @@
             if (Number(model.StaggeredTimeKind) !== abp.enums.staggeredTimeKind.none) {
                 model.TimeOnJob = null;
             }
-            
+
             _model = _model || {};
             _model.orderId = model.OrderId;
             _model.orderLineId = model.OrderLineId;
@@ -1070,7 +1070,7 @@
                     return;
                 }
             }
-            
+
             checkForOrderDuplicates(_model, function () {
                 _modalManager.setBusy(true);
                 _orderAppService.editJob(_model).done(function (result) {

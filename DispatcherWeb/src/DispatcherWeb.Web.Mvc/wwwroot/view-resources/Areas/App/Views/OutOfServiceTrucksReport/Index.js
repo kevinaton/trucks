@@ -1,7 +1,7 @@
 ﻿(function () {
-	'use strict';
+    'use strict';
 
 
-	abp.helper.reports.setReportService(abp.services.app.outOfServiceTrucksReport);
+    abp.helper.reports.setReportService(abp.services.app.outOfServiceTrucksReport);
 
 })();

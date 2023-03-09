@@ -20,13 +20,11 @@
                 },
                 showDropDown: true,
                 autoUpdateInput: false
-            })
-                .on('apply.daterangepicker', function (ev, picker) {
-                    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-                })
-                .on('cancel.daterangepicker', function (ev, picker) {
-                    $(this).val('');
-                });;
+            }).on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            }).on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
 
         };
 

@@ -1,6 +1,6 @@
 ﻿(function () {
     $(function () {
-        
+
         var _leaseHaulerRequestEditService = abp.services.app.leaseHaulerRequestEdit;
 
         var saveAvailableTrucksAsync = function (callback) {
@@ -26,7 +26,7 @@
                 abp.ui.clearBusy(form);
             });
         };
-                        
+
         $("#SaveAvailableTrucksButton").click(function (e) {
             e.preventDefault();
             saveAvailableTrucksAsync();
@@ -53,7 +53,7 @@
                 }
             });
         });
-        
+
         $('.lease-hauler-driver-select').each(function () {
             $(this).select2Init({
                 abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulerDriversSelectList,
@@ -61,7 +61,7 @@
                 showAll: true
             });
         });
-        
+
 
     });
 })();

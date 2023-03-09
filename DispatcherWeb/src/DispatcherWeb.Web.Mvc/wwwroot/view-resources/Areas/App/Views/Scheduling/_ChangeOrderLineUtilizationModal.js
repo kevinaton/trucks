@@ -1,11 +1,11 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.ChangeOrderLineUtilizationModal = function () {
 
         var _modalManager;
         var _schedulingService = abp.services.app.scheduling;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
@@ -21,7 +21,7 @@
                 _$form.showValidateMessage();
                 return;
             }
-            
+
             var formData = _$form.serializeFormToObject();
 
             if (formData.Utilization > 0) {

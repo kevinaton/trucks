@@ -11,7 +11,7 @@
 
             _$form = _modalManager.getModal().find('form[name=NotificationSettingsForm]');
             _$form.validate();
-            
+
             $('.make-switch').bootstrapSwitch().on('switchChange.bootstrapSwitch', function () {
                 var receiveNotifications = $(this).is(":checked");
                 var notificationCount = $("div.notification").length;

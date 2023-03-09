@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.AddSignatureModal = function () {
 
         var _modalManager;
@@ -7,14 +7,14 @@
         var _$form = null;
         var _canvas = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
             _canvas = _modalManager.getModal().find('canvas')[0];
             _signaturePad = new SignaturePad(_canvas);
-            
+
             abp.helper.ui.initControls();
 
             _modalManager.onOpen(function () {

@@ -1,16 +1,16 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.SetOrderDateModal = function () {
 
         var _modalManager;
         var _orderService = abp.services.app.order;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             _$form.find("#Date").datepicker();
 
             _$form.find('#Shift').select2Init({ allowClear: false });
@@ -21,9 +21,9 @@
                 _$form.showValidateMessage();
                 return;
             }
-            
+
             var formData = _$form.serializeFormToObject();
-            
+
             _modalManager.setBusy(true);
             var input = {
                 orderId: formData.OrderId,

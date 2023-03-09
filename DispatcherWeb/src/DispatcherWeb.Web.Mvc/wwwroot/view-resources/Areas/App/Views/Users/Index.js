@@ -32,9 +32,9 @@
 
         $("#RoleSelectionCombo").select2Init({
             showAll: true,
-            allowClear: true 
+            allowClear: true
         });
-        
+
         var dataTable = _$usersTable.DataTableInit({
             paging: true,
             serverSide: true,
@@ -61,7 +61,7 @@
                     render: function () {
                         return '';
                     }
-                }, 
+                },
                 {
                     title: "User Name",
                     data: "userName",
@@ -134,7 +134,7 @@
                 {
                     title: '<i class="fa fa-lock"></i>',
                     responsivePriority: 1,
-                 
+
                     data: "isLocked",
                     orderable: false,
                     render: function (isLocked) {
@@ -174,8 +174,8 @@
                             + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
                             + '<ul class="dropdown-menu dropdown-menu-right">'
                             + (_permissions.impersonation && full.id !== abp.session.userId
-                                    ? '<li><a class="btnLoginAsThisUser"> Login as this user</a></li>'
-                                    : '')
+                                ? '<li><a class="btnLoginAsThisUser"> Login as this user</a></li>'
+                                : '')
                             + (_permissions.edit ? '<li><a class="btnEditRow"><i class="fa fa-edit"></i> Edit</a></li>' : '')
                             + (_permissions.changePermissions ? '<li><a class="btnChangePermissionsRow"><i class="fa fa-edit"></i> Permissions</a></li>' : '')
                             + (_permissions.changePermissions && full.isLocked ? '<li><a class="btnUnlockRow"><i class="fa fa-unlock"></i> Unlock</a></li>' : '')

@@ -4,7 +4,7 @@
         var _locationService = abp.services.app.location;
         var _dtHelper = abp.helper.dataTables;
         var _permissions = {
-            merge: abp.auth.hasPermission('Pages.Locations.Merge')            
+            merge: abp.auth.hasPermission('Pages.Locations.Merge')
         };
 
         var _createOrEditLocationModal = new app.ModalManager({
@@ -25,64 +25,57 @@
             showAll: true
         });
 
-        var locationsTable = $('#LocationsTable');      
+        var locationsTable = $('#LocationsTable');
         var locationsGrid = locationsTable.DataTableInit({
             paging: true,
             serverSide: true,
-            processing: true,           
+            processing: true,
             ajax: function (data, callback, settings) {
-                var abpData = _dtHelper.toAbpData(data);           
-                $.extend(abpData, _dtHelper.getFilterData());   
+                var abpData = _dtHelper.toAbpData(data);
+                $.extend(abpData, _dtHelper.getFilterData());
                 _locationService.getLocations(abpData).done(function (abpResult) {
                     callback(_dtHelper.fromAbpResult(abpResult));
                     abp.helper.ui.initControls();
                 });
             },
             dataMergeOptions: {
-                enabled:_permissions.merge,
+                enabled: _permissions.merge,
                 description: "The selected locations are about to be merged into one entry. Select the location that you would like them to be merged into. The other locations will be deleted. There is no undoing this process. If you don't want this to happen, press cancel.",
                 entitiesName: 'locations',
                 dropdownServiceMethod: _locationService.getLocationsByIdsSelectList,
                 mergeServiceMethod: _locationService.mergeLocations
             },
-            columns: [   
+            columns: [
                 {
                     width: '20px',
                     className: 'control responsive',
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
+                    }
                 },
                 {
                     responsivePriority: 1,
-                    targets: 1,
                     data: "name",
                     title: "Name"
                 },
                 {
-                    targets: 2,
                     data: "categoryName",
                     title: "Category"
                 },
                 {
-                    targets: 3,
                     data: "streetAddress",
                     title: "Street Address"
                 },
                 {
-                    targets: 4,
                     data: "city",
                     title: "City"
                 },
                 {
-                    targets: 5,
                     data: "state",
                     title: "State"
                 },
                 {
-                    targets: 6,
                     data: "zipCode",
                     title: "Zip Code"
                 },
@@ -91,47 +84,43 @@
                     title: "Country Code"
                 },
                 {
-                    targets: 7,
                     data: "isActive",
                     render: function (isActive) { return _dtHelper.renderCheckbox(isActive); },
                     className: "checkmark",
                     title: "Active"
-                },               
+                },
                 {
-                    targets: 8,
                     data: "abbreviation",
                     title: "Abbreviation"
                 },
                 {
-                    targets: 9,
                     data: "notes",
                     title: "Notes"
-                },             
+                },
                 {
-                    targets: 10,
                     data: null,
                     orderable: false,
-                    autoWidth: false,                   
+                    autoWidth: false,
                     defaultContent: '',
                     width: "10px",
-                    responsivePriority: 2,                  
+                    responsivePriority: 2,
                     render: function (data, type, full, meta) {
                         if (full.predefinedLocationKind === null) {
                             return '<div class="dropdown">'
-                                +'<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
+                                + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
                                 + '<ul class="dropdown-menu dropdown-menu-right">'
-                                + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'                              
+                                + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
                                 + ' <li> <a class="btnDeleteRow" title="Delete"><i class="fa fa-trash"></i> Delete</a></li >'
                                 + '</ul>'
                                 + '</div>'
                                 ;
-                        } 
+                        }
                     }
                 }
             ]
-        });     
-        
-       
+        });
+
+
 
         var reloadMainGrid = function () {
             locationsGrid.ajax.reload();
@@ -165,7 +154,7 @@
                 });
             }
         });
- 
+
 
         $('#ShowAdvancedFiltersSpan').click(function () {
             $('#ShowAdvancedFiltersSpan').hide();
@@ -179,12 +168,12 @@
             $('#AdvacedAuditFiltersArea').slideUp();
         });
 
-        $("#SearchButton").click(function (e) {        
+        $("#SearchButton").click(function (e) {
             e.preventDefault();
             reloadMainGrid();
         });
-       
-        $("#ClearSearchButton").click(function () {        
+
+        $("#ClearSearchButton").click(function () {
             $("#LocationsFormFilter")[0].reset();
             $(".filter").change();
             reloadMainGrid();
@@ -208,5 +197,5 @@
     });
 
 
-   
+
 })();

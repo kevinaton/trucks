@@ -39,7 +39,7 @@
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
-            
+
             _options = $.extend(_options, _modalManager.getOptions().lookupOptions);
             _$table = _modalManager.getModal().find('.entity-type-history-table');
             _args = _modalManager.getArgs();
@@ -62,7 +62,6 @@
                 },
                 columns: [
                     {
-                        targets: 0,
                         data: null,
                         orderable: false,
                         defaultContent: '',
@@ -79,7 +78,6 @@
                         }
                     },
                     {
-                        targets: 1,
                         data: "changeTypeName",
                         orderable: false,
                         render: function (changeTypeName) {
@@ -87,11 +85,9 @@
                         }
                     },
                     {
-                        targets: 2,
                         data: "userName"
                     },
                     {
-                        targets: 3,
                         data: "changeTime",
                         render: function (changeTime) {
                             return moment(changeTime).format('L LT');

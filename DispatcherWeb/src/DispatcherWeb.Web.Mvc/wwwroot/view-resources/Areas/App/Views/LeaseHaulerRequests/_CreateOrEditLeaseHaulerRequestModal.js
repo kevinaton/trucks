@@ -41,12 +41,12 @@
             var $truckSelectionBlockTrucks = _$form.find('#truckSelectionBlockTrucks');
             var truckCount = $truckSelectionBlockTrucks.find('.truck-selection-row').length;
             var $approved = _$form.find('#Approved');
-            
+
             if ($approved.val() > 0) {
                 $truckSelectionBlock.show();
             }
-                       
-            
+
+
             function addTrucksToCache(records) {
                 if (records && records.length) {
                     for (var i = 0; i < records.length; i++) {
@@ -386,7 +386,7 @@
                     truckCount = newValue;
                     return;
                 }
-                
+
                 while (newValue < truckCount) {
                     var emptyRow = tryGetEmptyTruckRow();
                     if (!emptyRow) {

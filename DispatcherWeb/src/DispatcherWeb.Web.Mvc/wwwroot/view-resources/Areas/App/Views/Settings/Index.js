@@ -53,7 +53,7 @@
 
         $("#ItemIdToUseForFuelSurchargeOnInvoice").select2Init({
             abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
-            
+
             allowClear: true,
             showAll: true,
             addItemCallback: abp.auth.isGranted('Pages.Services') ? async function (newServiceOrProductName) {

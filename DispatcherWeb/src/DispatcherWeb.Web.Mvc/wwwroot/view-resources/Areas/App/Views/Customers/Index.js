@@ -99,7 +99,7 @@
                     orderable: false,
                     autoWidth: false,
                     width: "10px",
-                    responsivePriority: 2,  
+                    responsivePriority: 2,
                     render: function (data, type, full, meta) {
                         return '<div class="dropdown">'
                             + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
@@ -112,7 +112,7 @@
                 }
             ]
         });
-        
+
         var reloadMainGrid = function () {
             customersGrid.ajax.reload();
         };
@@ -148,7 +148,7 @@
                 });
             }
         }
-        
+
         $("#SearchButton").closest('form').submit(function (e) {
             e.preventDefault();
             reloadMainGrid();

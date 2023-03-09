@@ -60,10 +60,10 @@
             }
 
             var tenant = _$tenantInformationForm.serializeFormToObject();
-            
+
             //take selected date as UTC
             if ($('#CreateTenant_IsUnlimited').is(':visible') && !$('#CreateTenant_IsUnlimited').is(':checked')) {
-                tenant.SubscriptionEndDateUtc = $('.date-time-picker').data('DateTimePicker').date().format("YYYY-MM-DDTHH:mm:ss") + 'Z';    
+                tenant.SubscriptionEndDateUtc = $('.date-time-picker').data('DateTimePicker').date().format("YYYY-MM-DDTHH:mm:ss") + 'Z';
             } else {
                 tenant.SubscriptionEndDateUtc = null;
             }

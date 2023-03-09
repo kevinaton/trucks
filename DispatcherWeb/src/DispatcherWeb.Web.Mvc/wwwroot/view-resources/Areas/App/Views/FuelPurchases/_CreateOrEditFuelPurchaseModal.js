@@ -11,7 +11,7 @@
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
 
-            _$form.find('#Odometer').rules('add', {mileage: true});
+            _$form.find('#Odometer').rules('add', { mileage: true });
 
             _modalManager.getModal().on('shown.bs.modal', function () {
                 _modalManager.getModal().find('#TruckId').select2('focus');
@@ -43,7 +43,7 @@
                 _$form.find('#FuelDateTime').datetimepicker();
             }
 
-            _modalManager.getModal().find('.save-new-button').click(function(e) {
+            _modalManager.getModal().find('.save-new-button').click(function (e) {
                 e.preventDefault();
                 saveData(true);
             });

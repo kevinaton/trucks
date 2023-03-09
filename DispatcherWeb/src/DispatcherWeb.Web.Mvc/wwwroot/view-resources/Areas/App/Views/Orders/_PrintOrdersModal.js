@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.PrintOrdersModal = function () {
 
         var _modalManager;
@@ -16,7 +16,7 @@
         var _printDailyDetailForBackOffice = null;
         var _printOrdersWithDeliveryInfo = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
@@ -32,7 +32,7 @@
             });
 
             abp.helper.ui.initControls();
-            
+
             _truckDropdown = _$form.find("#TruckId");
             _truckDropdown.select2Init({
                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
@@ -57,8 +57,9 @@
             _printOrdersWithDeliveryInfo = _$form.find("#PrintOrdersWithDeliveryInfo");
             var printOrdersOptions = _$form.find('[name="PrintOrdersOption"]');
             printOrdersOptions.on('change', function (e) {
-                if (!$(this).is(_printDailyDetail) && !$(this).is(_printOrdersForTruck) && !$(this).is(_printOrdersWithDeliveryInfo) 
-                        && !$(this).is(_printDailySummary) && !$(this).is(_orderAndLoadSummaryReport)) {
+                if (!$(this).is(_printDailyDetail) && !$(this).is(_printOrdersForTruck) && !$(this).is(_printOrdersWithDeliveryInfo)
+                    && !$(this).is(_printDailySummary) && !$(this).is(_orderAndLoadSummaryReport)
+                ) {
                     _$form.find("#HidePricesBlock").hide();
                 } else {
                     _$form.find("#HidePricesBlock").show();
@@ -81,7 +82,7 @@
                 _$form.showValidateMessage();
                 return;
             }
-            
+
             var date = _dateInput.val();
 
             var dateValue = moment(date, "MM/DD/YYYY", true);

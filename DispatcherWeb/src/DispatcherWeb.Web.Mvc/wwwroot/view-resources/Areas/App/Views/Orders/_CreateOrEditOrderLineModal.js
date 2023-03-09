@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditOrderLineModal = function () {
 
         var _modalManager;
@@ -38,9 +38,9 @@
 
         var _addLocationTarget = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
-            
+
             var createOrEditServiceModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Services/CreateOrEditServiceModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Services/_CreateOrEditServiceModal.js',
@@ -54,7 +54,7 @@
                 modalClass: 'CreateOrEditLocationModal',
                 modalSize: 'lg'
             });
-            
+
             var setStaggeredTimesModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Orders/SetStaggeredTimesModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_SetStaggeredTimesModal.js',
@@ -102,7 +102,7 @@
                 updateTimeOnJobInput();
             });
             updateTimeOnJobInput();
-            
+
 
             _quoteId = _$form.find("#QuoteId").val();
             _quoteServiceId = _$form.find("#QuoteServiceId").val();
@@ -450,7 +450,7 @@
                         return;
                     }
                 }
-                
+
                 disableProductionPay();
             }
         }
@@ -512,8 +512,8 @@
 
             var materialRatePricing =
                 _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null ? _pricing.quoteBasedPricing.pricePerUnit
-                : _pricing && _pricing.hasPricing && _pricing.pricePerUnit !== null ? _pricing.pricePerUnit
-                    : null;
+                    : _pricing && _pricing.hasPricing && _pricing.pricePerUnit !== null ? _pricing.pricePerUnit
+                        : null;
 
             if (freightRatePricing !== null) {
                 if (sender.is(_freightPricePerUnitInput)) {

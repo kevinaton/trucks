@@ -44,23 +44,20 @@
                 },
                 columns: [
                     {
-						targets: 0,
                         data: null,
                         defaultContent: '',
                         render: function (data) {
                             return '<label for="checkbox_' + data.value + '" class="m-checkbox">' +
-                                        '<input type="checkbox" id="checkbox_' + data.value + '" />' +
-                                        '<span></span>' +
-                                    '</label>';
+                                '<input type="checkbox" id="checkbox_' + data.value + '" />' +
+                                '<span></span>' +
+                                '</label>';
                         }
                     },
                     {
-                        targets: 1,
-						data: "name", 
-						render: $.fn.dataTable.render.ellipsis(45)
+                        data: "name",
+                        render: $.fn.dataTable.render.ellipsis(45)
                     },
                     {
-                        targets: 2,
                         visible: false,
                         data: "value"
                     }
@@ -92,12 +89,12 @@
                 refreshTable();
             }
 
-			_modalManager.getModal().find('#btnAddUsersToOrganization').click(function () {
-				var users = dataTable.rows({ selected: true }).data().toArray();
-				if (users.length == 0) {
-					abp.message.error(app.localize('OrganizationUnits_SelectUser'));
-					return;
-				}
+            _modalManager.getModal().find('#btnAddUsersToOrganization').click(function () {
+                var users = dataTable.rows({ selected: true }).data().toArray();
+                if (users.length == 0) {
+                    abp.message.error(app.localize('OrganizationUnits_SelectUser'));
+                    return;
+                }
                 _modalManager.setResult(users);
                 _modalManager.close();
             });

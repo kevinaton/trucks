@@ -3,7 +3,7 @@
     $(function () {
         $('#FuelImportType').select2Init({
             showAll: true,
-            allowClear: false 
+            allowClear: false
         });
     });
 })();

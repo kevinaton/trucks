@@ -13,7 +13,7 @@
             _profileService.getPasswordComplexitySetting().done(function (result) {
                 _$form = _modalManager.getModal().find('form[name=ChangePasswordModalForm]');
                 _$form.validate();
-                
+
                 _passwordComplexityHelper.setPasswordComplexityRules(_$form.find("input[name=NewPassword],input[name=NewPasswordRepeat]"), result.setting);
             });
         };

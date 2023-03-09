@@ -1,16 +1,16 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.SendOrderLineToHaulingCompanyModal = function () {
 
         var _modalManager;
         var _schedulingService = abp.services.app.scheduling;
         var _$form = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
-            
+
             abp.helper.ui.initControls();
 
             _$form.find("#LeaseHaulerId").select2Init({
@@ -21,7 +21,7 @@
                 showAll: true,
                 allowClear: false
             });
-           
+
         };
 
         this.save = function () {
@@ -29,9 +29,9 @@
                 _$form.showValidateMessage();
                 return;
             }
-            
+
             var formData = _$form.serializeFormToObject();
-                        
+
             _modalManager.setBusy(true);
             _schedulingService.sendOrderLineToHaulingCompany(formData).done(function () {
                 abp.notify.info('Saved successfully.');

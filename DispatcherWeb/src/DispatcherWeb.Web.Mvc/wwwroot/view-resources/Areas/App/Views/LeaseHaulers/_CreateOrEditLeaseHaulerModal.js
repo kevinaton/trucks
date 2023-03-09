@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.CreateOrEditLeaseHaulerModal = function () {
 
         var _modalManager;
@@ -11,7 +11,7 @@
 
         var saveLeaseHaulerAsync = function (callback) {
             if (!_$form.valid()) {
-            	_$form.showValidateMessage();
+                _$form.showValidateMessage();
                 return;
             }
 
@@ -42,9 +42,9 @@
             _$form.validate();
 
             abp.helper.ui.initControls();
-            
+
             _leaseHaulerId = _$form.find("#Id").val();
-            
+
             var _createOrEditLeaseHaulerContactModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/LeaseHaulers/CreateOrEditLeaseHaulerContactModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/LeaseHaulers/_CreateOrEditLeaseHaulerContactModal.js',
@@ -64,7 +64,7 @@
             });
 
             var leaseHaulerContactsTable = $('#LeaseHaulerContactsTable');
-            var leaseHaulerContactsGrid = leaseHaulerContactsTable.DataTableInit({   
+            var leaseHaulerContactsGrid = leaseHaulerContactsTable.DataTableInit({
                 serverSide: true,
                 processing: true,
                 language: {
@@ -114,14 +114,14 @@
                     {
                         data: "email",
                         title: "Email"
-                    },                   
+                    },
                     {
                         data: null,
                         orderable: false,
                         autoWidth: false,
                         defaultContent: '',
                         width: "10px",
-                        responsivePriority: 1,   
+                        responsivePriority: 1,
                         rowAction: {
                             items: [
                                 {
@@ -141,7 +141,7 @@
                                 {
                                     text: '<i class="fas fa-comments"></i> ' + app.localize('SendSms'),
                                     className: "btn btn-sm btn-default",
-                                    visible: function(data) {
+                                    visible: function (data) {
                                         return data.record.cellPhoneNumber;
                                     },
                                     action: function (data) {
@@ -180,7 +180,7 @@
                                 }
                             ]
                         }
-                    }  
+                    }
                 ]
             });
 

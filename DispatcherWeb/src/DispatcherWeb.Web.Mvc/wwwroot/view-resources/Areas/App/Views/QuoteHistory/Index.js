@@ -21,8 +21,7 @@
             locale: {
                 cancelLabel: 'Clear'
             }
-        },
-        function (start, end, label) {
+        }, function (start, end, label) {
             $("#StartDateFilter").val(start.clone().tz('UTC').format());
             $("#EndDateFilter").val(end.clone().tz('UTC').format());
         });
@@ -74,34 +73,28 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
+                    }
                 },
                 {
-                    targets: 1,
                     data: "quoteName",
                     title: "Quote"
                 },
                 {
-                    targets: 2,
                     data: "dateTime",
                     render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(full.dateTime); },
                     title: "When changed"
                 },
                 {
-                    targets: 3,
                     data: "changedByUserName",
                     render: function (data, type, full, meta) { return _dtHelper.renderText(full.changedByUserName); },
                     title: "Changed by"
                 },
                 {
-                    targets: 4,
                     data: "changeType",
                     render: function (data, type, full, meta) { return _dtHelper.renderText(full.changeTypeName); },
                     title: "Type of change"
                 },
                 {
-                    targets: 5,
                     data: null,
                     orderable: false,
                     name: "Actions",
@@ -110,10 +103,10 @@
                     className: "actions",
                     defaultContent: '<div class="dropdown action-button">'
                         + '<ul class="dropdown-menu dropdown-menu-right">'
-                        + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Details</a></li>'                        
+                        + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Details</a></li>'
                         + '</ul>'
                         + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
-                        + '</div>'                    
+                        + '</div>'
                 }
             ],
             order: [[1, "desc"]]

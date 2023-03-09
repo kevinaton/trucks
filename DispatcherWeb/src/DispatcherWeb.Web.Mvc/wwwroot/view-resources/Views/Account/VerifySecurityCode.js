@@ -1,12 +1,12 @@
-﻿var CurrentPage = function() {
+﻿var CurrentPage = function () {
 
-    var handleValidationForm = function() {
+    var handleValidationForm = function () {
 
         var $form = $('.verify-security-code-form');
 
         $form.validate();
 
-        $form.find('input').keypress(function(e) {
+        $form.find('input').keypress(function (e) {
             if (e.which === 13) {
                 if ($('.forget-form').valid()) {
                     $('.forget-form').submit();
@@ -15,7 +15,7 @@
             }
         });
 
-        $form.submit(function(e) {
+        $form.submit(function (e) {
             e.preventDefault();
 
             if (!$form.valid()) {
@@ -28,7 +28,7 @@
                     contentType: app.consts.contentTypes.formUrlencoded,
                     url: $form.attr('action'),
                     data: $form.serialize()
-                }).done(function() {
+                }).done(function () {
                     //no need to handle result since redirects and errors are automatically handled
 
                 })
@@ -37,7 +37,7 @@
     };
 
     return {
-        init: function() {
+        init: function () {
             handleValidationForm();
         }
     };

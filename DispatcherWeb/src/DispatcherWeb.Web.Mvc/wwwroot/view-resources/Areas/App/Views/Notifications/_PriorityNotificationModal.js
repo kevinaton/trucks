@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.PriorityNotificationModal = function () {
 
         var _modalManager;
@@ -20,7 +20,7 @@
             }
         }
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             var modal = _modalManager.getModal();

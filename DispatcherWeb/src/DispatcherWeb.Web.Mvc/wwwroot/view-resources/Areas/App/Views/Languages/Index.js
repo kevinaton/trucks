@@ -33,7 +33,7 @@
                         return '';
                     },
                     targets: 0
-                },               
+                },
                 {
                     targets: 1,
                     data: "displayName",
@@ -41,7 +41,7 @@
                         var $span = $('<span/>')
                             .append($("<i/>").addClass(row.icon).css("margin-right", "5px"))
                             .append($("<span/>").attr("data-language-name", row.name).text(row.displayName));
-                        
+
                         if (meta.settings.rawServerResponse.defaultLanguageName === row.name) {
                             $span.addClass("text-bold").append(" (" + app.localize("Default") + ")");
                         }
@@ -91,7 +91,7 @@
                         return $span[0].outerHTML;
                     }
                 },
-                 {
+                {
                     targets: 6,
                     data: null,
                     orderable: false,
@@ -108,7 +108,7 @@
                                 _createOrEditModal.open({ id: data.record.id });
                             }
                         }, {
-                            text: '<i class="fa fa-edit"></i> ' +  app.localize('ChangeTexts'),
+                            text: '<i class="fa fa-edit"></i> ' + app.localize('ChangeTexts'),
                             visible: function () {
                                 return _permissions.changeTexts;
                             },
@@ -116,7 +116,7 @@
                                 document.location.href = abp.appPath + "App/Languages/Texts?languageName=" + data.record.name;
                             }
                         }, {
-                            text: '<i class="fa fa-edit"></i> ' +  app.localize('SetAsDefaultLanguage'),
+                            text: '<i class="fa fa-edit"></i> ' + app.localize('SetAsDefaultLanguage'),
                             visible: function () {
                                 return _permissions.edit;
                             },
@@ -124,7 +124,7 @@
                                 setAsDefaultLanguage(data.record);
                             }
                         }, {
-                             text: '<i class="fa fa-trash"></i> ' + app.localize('Delete'),
+                            text: '<i class="fa fa-trash"></i> ' + app.localize('Delete'),
                             visible: function (data) {
                                 return _permissions.delete && data.record.tenantId === abp.session.tenantId;
                             },

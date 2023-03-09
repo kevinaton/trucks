@@ -12,7 +12,7 @@
             var modal = _modalManager.getModal();
             _$form = modal.find('form');
             _$form.validate();
-            
+
             var saveButton = _modalManager.getModal().find('.save-button');
             saveButton.find('span').text('Print');
             saveButton.find('i.fa-save').removeClass('fa-save').addClass('fa-print');
@@ -32,7 +32,7 @@
             }
 
             //_$form.serializeFormToObject();
-            var reportParams = { 
+            var reportParams = {
                 id: _$form.find("#Id").val(),
                 splitByDriver: _$form.find('#PrintSeparatePdfs').is(':checked')
             };

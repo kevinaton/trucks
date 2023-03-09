@@ -1,11 +1,11 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.AddTicketPhotoModal = function () {
 
         var _modalManager;
         var _$form = null;
         var _$saveButton = null;
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
@@ -18,7 +18,7 @@
             $fileInput.change(function () {
                 _$saveButton.prop('disabled', !$fileInput.val());
             });
-            
+
             abp.helper.ui.initControls();
 
             _$form.ajaxForm({
@@ -79,7 +79,7 @@
             //    return;
             //}
 
-            _$form.submit();           
+            _$form.submit();
         };
     };
 })(jQuery);

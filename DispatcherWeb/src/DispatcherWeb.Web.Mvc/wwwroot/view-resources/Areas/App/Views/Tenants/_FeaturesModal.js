@@ -1,5 +1,5 @@
 ﻿(function () {
-    app.modals.TenantFeaturesModal = function() {
+    app.modals.TenantFeaturesModal = function () {
 
         var _tenantService = abp.services.app.tenant;
 
@@ -21,7 +21,7 @@
             });
         }
 
-        this.init = function(modalManager) {
+        this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _featuresTree = new FeaturesTree();

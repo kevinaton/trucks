@@ -1,4 +1,4 @@
-﻿(function($) {
+﻿(function ($) {
     app.modals.ViewQuoteDeliveriesModal = function () {
 
         var _modalManager;

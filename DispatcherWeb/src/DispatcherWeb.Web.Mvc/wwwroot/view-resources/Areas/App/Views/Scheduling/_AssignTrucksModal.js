@@ -45,7 +45,7 @@
 
             function initDriverNameTypeahead() {
                 $driverName.typeahead({
-                    },
+                },
                     {
                         source: getDriverNamesList,
                         display: function (d) {
@@ -79,8 +79,7 @@
 
                 query = (query || '').toLowerCase();
                 var matchedDrivers = cachedDriverNames
-                    .filter(function (d)
-                    {
+                    .filter(function (d) {
                         return d.firstName.toLowerCase().startsWith(query)
                             || d.lastName.toLowerCase().startsWith(query)
                             || (d.firstName.toLowerCase() + ' ' + d.lastName.toLowerCase()).startsWith(query)
@@ -165,10 +164,10 @@
                     {
                         data: "truckCode",
                         title: "Truck",
-                        
+
                         //className: "cell-editable all",
                         //width: "85px",
-                        
+
                     },
                     {
                         data: "driverName",

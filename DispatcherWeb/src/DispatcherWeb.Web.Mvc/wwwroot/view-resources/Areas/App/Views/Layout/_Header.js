@@ -64,20 +64,20 @@
         $('#UserProfileChangePictureLink').click(function (e) {
             e.preventDefault();
             changeProfilePictureModal.open();
-		});
+        });
 
-		//Upload signature picture
+        //Upload signature picture
 
-		var uploadSignaturePictureModal = new app.ModalManager({
-			viewUrl: abp.appPath + 'app/Profile/UploadSignaturePictureModal',
-			scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Profile/_UploadSignaturePictureModal.js',
-			modalClass: 'UploadSignaturePictureModal'
-		});
+        var uploadSignaturePictureModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Profile/UploadSignaturePictureModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Profile/_UploadSignaturePictureModal.js',
+            modalClass: 'UploadSignaturePictureModal'
+        });
 
-		$('#UserUploadSignaturePictureLink').click(function (e) {
-			e.preventDefault();
-			uploadSignaturePictureModal.open();
-		});
+        $('#UserUploadSignaturePictureLink').click(function (e) {
+            e.preventDefault();
+            uploadSignaturePictureModal.open();
+        });
 
         //Manage linked accounts
         var _userLinkService = abp.services.app.userLink;
