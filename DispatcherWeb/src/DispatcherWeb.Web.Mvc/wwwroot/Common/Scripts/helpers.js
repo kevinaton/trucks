@@ -1230,6 +1230,18 @@
         }
     });
 
+    abp.helperConfiguration.dataTables.afterInit.push((table, grid, options) => {
+        grid.on("draw", () => {
+            var pageSizeSelector = $(grid.containers()[0]).find('div.dataTables_length select');
+            if (!pageSizeSelector.data('select2')) {
+                pageSizeSelector.select2Init({
+                    showAll: true,
+                    allowClear: false
+                });
+            }
+        });
+    });
+
 })(jQuery);
 (function ($) {
 
