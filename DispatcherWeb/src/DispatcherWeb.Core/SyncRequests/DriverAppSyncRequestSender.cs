@@ -187,7 +187,7 @@ namespace DispatcherWeb.SyncRequests
                     };
                     newFcmPushMessages.Remove(pushMessageTouple);
                     newFcmPushMessages.Add((fallbackPushMessageEntity, entityType));
-                    _fcmPushMessageRepository.Insert(pushMessage);
+                    _fcmPushMessageRepository.Insert(fallbackPushMessageEntity);
                 }
                 else
                 {

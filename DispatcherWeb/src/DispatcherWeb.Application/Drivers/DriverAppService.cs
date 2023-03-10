@@ -488,8 +488,6 @@ namespace DispatcherWeb.Drivers
             }
             await _driverUserLinkService.UpdateUser(driver);
 
-            await UpdateEmployeeTimeClassifications(driver, model.EmployeeTimeClassifications);
-
             if (model.Id.HasValue)
             {
                 result.Id = model.Id.Value;
@@ -498,6 +496,8 @@ namespace DispatcherWeb.Drivers
             {
                 result.Id = await _driverRepository.InsertAndGetIdAsync(driver);
             }
+
+            await UpdateEmployeeTimeClassifications(driver, model.EmployeeTimeClassifications);
 
             await _crossTenantOrderSender.SyncMaterialCompanyDriversIfNeeded(driver.Id);
 
