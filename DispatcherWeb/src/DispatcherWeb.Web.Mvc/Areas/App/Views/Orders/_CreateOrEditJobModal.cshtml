@@ -203,12 +203,14 @@
                 </div>
                 @if (await SettingManager.DispatchViaAny())
                 {
-                    <div class="col-6 form-group d-flex align-items-end">
-                        <label asp-for="IsMultipleLoads" class="m-checkbox">
-                            <input type="checkbox" class="order-line-field" id="IsMultipleLoads" name="IsMultipleLoads" value="true" @Html.Raw(!Model.IsMultipleLoads ? "" : "checked=\"checked\"")>
-                            @L("RunUntilStopped")
-                            <span></span>
-                        </label>
+                    <div class="col-6 form-group">
+                        <div class="d-flex align-items-end h-100">
+                            <label asp-for="IsMultipleLoads" class="m-checkbox">
+                                <input type="checkbox" class="order-line-field" id="IsMultipleLoads" name="IsMultipleLoads" value="true" @Html.Raw(!Model.IsMultipleLoads ? "" : "checked=\"checked\"")>
+                                @L("RunUntilStopped")
+                                <span></span>
+                            </label>
+                        </div>
                     </div>
                 }
             </div>
@@ -234,12 +236,14 @@
                 </div>
                 @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay) && await FeatureChecker.IsEnabledAsync(AppFeatures.DriverProductionPayFeature))
                 {
-                    <div class="col-6 form-group d-flex align-items-end" @*style="display: none"*@>
-                        <label asp-for="ProductionPay" class="m-checkbox">
-                            <input type="checkbox" class="order-line-field" id="ProductionPay" name="ProductionPay" value="true" checked="@(Model.ProductionPay ? "checked" : null)">
-                            @L("ProductionPay")
-                            <span></span>
-                        </label>
+                    <div class="col-6 form-group" style="display: none">
+                        <div class="d-flex align-items-end h-100">
+                            <label asp-for="ProductionPay" class="m-checkbox">
+                                <input type="checkbox" class="order-line-field" id="ProductionPay" name="ProductionPay" value="true" checked="@(Model.ProductionPay ? "checked" : null)">
+                                @L("ProductionPay")
+                                <span></span>
+                            </label>
+                        </div>
                     </div>
                 }
             </div>
