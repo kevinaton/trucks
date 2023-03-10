@@ -459,6 +459,7 @@
             disableFieldsIfEditingJob();
             updateDesignationRelatedFieldsVisibility();
             disableJobEditIfNeeded();
+            disableTaxControls();
         };
 
         this.focusOnDefaultElement = function () {
@@ -480,6 +481,18 @@
                 if ($("#MaterialCompanyOrderId").val()) {
                     disableOrderEditForHaulingCompany();
                 }
+            }
+        }
+
+        function disableTaxControls() {
+            var taxCalculationType = abp.setting.getInt('App.Invoice.TaxCalculationType');
+            switch (taxCalculationType) {
+                case abp.enums.taxCalculationType.noCalculation:
+                    _$form.find("#SalesTaxRate").parent().hide();
+                    break;
+                default:
+                    _$form.find("#SalesTax").parent().hide();
+                    break;
             }
         }
 
@@ -1030,6 +1043,8 @@
             _model.poNumber = model.PONumber;
             _model.spectrumNumber = model.SpectrumNumber;
             _model.directions = model.Directions;
+            _model.salesTaxRate = model.SalesTaxRate;
+            _model.salesTax = model.SalesTax;
             _model.priority = model.Priority;
             _model.shift = model.Shift;
             _model.officeId = model.OfficeId;

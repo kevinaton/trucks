@@ -387,6 +387,15 @@ namespace DispatcherWeb.Orders
             editOrderModal.SpectrumNumber = model.SpectrumNumber;
             editOrderModal.Directions = model.Directions;
 
+            if ((TaxCalculationType)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.TaxCalculationType) == TaxCalculationType.NoCalculation)
+            {
+                editOrderModal.SalesTax = model.SalesTax;
+            }
+            else
+            {
+                editOrderModal.SalesTaxRate = model.SalesTaxRate;
+            }
+
             var editOrderResult = await EditOrder(editOrderModal);
             if (!editOrderResult.Completed)
             {
@@ -2112,6 +2121,8 @@ namespace DispatcherWeb.Orders
                 QuoteName = order.QuoteName,
                 Shift = order.Shift,
                 OfficeId = order.OfficeId,
+                SalesTaxRate = order.SalesTaxRate,
+                SalesTax = order.SalesTax,
                 FocusFieldId = input.FocusFieldId,
                 
                 DeliverToId = orderLine.DeliverToId,
