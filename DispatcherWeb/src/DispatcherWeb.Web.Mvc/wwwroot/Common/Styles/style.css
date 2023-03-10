@@ -2003,3 +2003,7 @@ a.btn-default:hover {
 .select2-selection.select2-selection--single.select2-selection--clearable {
     padding-right: 24px;
 }
+
+div.dataTables_wrapper div.dataTables_length select {
+    display: none;
+}
