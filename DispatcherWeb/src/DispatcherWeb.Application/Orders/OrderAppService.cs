@@ -383,6 +383,9 @@ namespace DispatcherWeb.Orders
             editOrderModal.ProjectId = model.ProjectId;
             editOrderModal.ContactId = model.ContactId;
             editOrderModal.MaterialCompanyOrderId = model.MaterialCompanyOrderId;
+            editOrderModal.PONumber = model.PONumber;
+            editOrderModal.SpectrumNumber = model.SpectrumNumber;
+            editOrderModal.Directions = model.Directions;
 
             var editOrderResult = await EditOrder(editOrderModal);
             if (!editOrderResult.Completed)
@@ -2101,6 +2104,9 @@ namespace DispatcherWeb.Orders
                 CustomerId = order.CustomerId,
                 CustomerName = order.CustomerName,
                 ChargeTo = order.ChargeTo,
+                PONumber = order.PONumber,
+                SpectrumNumber = order.SpectrumNumber,
+                Directions = order.Directions,
                 Priority = order.Priority,
                 QuoteId = order.QuoteId,
                 QuoteName = order.QuoteName,

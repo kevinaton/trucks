@@ -256,7 +256,9 @@
                 if (_quoteId !== '') {
                     _$form.find("#ContactId").val(option.data('contactId')).change();
                 }
-
+                updateInputValue("#PONumber", option.data('poNumber'));
+                updateInputValue("#SpectrumNumber", option.data('spectrumNumber'));
+                updateInputValue("#Directions", option.data('directions'));
                 if (abp.session.officeCopyChargeTo) {
                     updateInputValue("#ChargeTo", option.data('chargeTo'));
                 }
@@ -1025,6 +1027,9 @@
             _model.deliveryDate = model.DeliveryDate;
             _model.customerId = model.CustomerId;
             _model.chargeTo = model.ChargeTo;
+            _model.poNumber = model.PONumber;
+            _model.spectrumNumber = model.SpectrumNumber;
+            _model.directions = model.Directions;
             _model.priority = model.Priority;
             _model.shift = model.Shift;
             _model.officeId = model.OfficeId;

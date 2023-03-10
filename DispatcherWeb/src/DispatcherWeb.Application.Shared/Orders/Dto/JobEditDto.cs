@@ -25,6 +25,15 @@ namespace DispatcherWeb.Orders.Dto
         [StringLength(EntityStringFieldLengths.Order.ChargeTo)]
         public string ChargeTo { get; set; }
 
+        [StringLength(EntityStringFieldLengths.Order.PoNumber)]
+        public string PONumber { get; set; }
+
+        [StringLength(EntityStringFieldLengths.Order.SpectrumNumber)]
+        public string SpectrumNumber { get; set; }
+
+        [StringLength(EntityStringFieldLengths.Order.Directions)]
+        public string Directions { get; set; }
+
         public int? QuoteId { get; set; }
 
         public string QuoteName { get; set; }
