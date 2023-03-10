@@ -198,6 +198,16 @@
             </div>
             <div class="row">
                 <div class="col-6 form-group">
+                    <label>@L("SalesTaxRate"):</label>
+                    <input type="text" class="form-control" asp-for="SalesTaxRate" data-rule-number="true" data-rule-min="0" data-rule-max="1000000000">
+                </div>
+                <div class="col-6 form-group">
+                    <label>@L("SalesTax"):</label>
+                    <input type="text" class="form-control" asp-for="SalesTax" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group">
                     <label>@L("RequestedNumberOfTrucks")</label>
                     <input class="form-control order-line-field" type="text" asp-for="NumberOfTrucks" data-rule-number="true" data-rule-min="0" data-rule-max="1000000">
                 </div>

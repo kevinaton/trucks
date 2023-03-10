@@ -117,6 +117,10 @@ namespace DispatcherWeb.Orders.Dto
 
         public double? NumberOfTrucks { get; set; }
 
+        public decimal SalesTaxRate { get; set; }
+
+        public decimal SalesTax { get; set; }
+
         public DateTime? TimeOnJob { get; set; }
 
         public StaggeredTimeKind StaggeredTimeKind { get; set; }
