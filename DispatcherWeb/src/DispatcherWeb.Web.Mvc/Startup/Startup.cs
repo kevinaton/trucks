@@ -235,6 +235,7 @@ namespace DispatcherWeb.Web.Startup
                         .From("https://hps.github.io/token/")
                         .From("https://www.google.com/recaptcha/")
                         .From("https://www.youtube.com/")
+                        .From("https://dumptruckdispatcher.com/")
 #if DEBUG
                         .From("http://localhost:*") //browserLink
 #endif
@@ -248,7 +249,7 @@ namespace DispatcherWeb.Web.Startup
                         .From("https://www.google.com/recaptcha/")
                         .From("https://www.gstatic.com/recaptcha/")
                         .From("https://az416426.vo.msecnd.net/")  //appinsights
-                        .From("https://static.userguiding.com/")
+                        .From("https://*.userguiding.com/") //at least static.userguiding.com
 #if DEBUG
                         .From("http://localhost:*") //browserLink
 #endif
@@ -259,12 +260,9 @@ namespace DispatcherWeb.Web.Startup
                         .From($"wss://{Utilities.GetDomainFromUrl(_appConfiguration["App:WebSiteRootAddress"])}")
                         .From("https://maps.googleapis.com/")
                         .From("https://api2-c.heartlandportico.com")
-                        .From("https://hps.github.io/token/")
+                        .From("https://hps.github.io/token/") //heartland
                         .From("https://dc.services.visualstudio.com/v2/track") //appinsights
-                        .From("https://user.userguiding.com/sdk/")
-                        .From("https://nps.userguiding.com/api/")
-                        .From("https://api.userguiding.com/")
-                        .From("https://metrics.userguiding.com/")
+                        .From("https://*.userguiding.com/") //at least user., nps., api., metrics., search.userguiding.com
 #if DEBUG
                         .From("http://localhost:*") //browserLink
                         .From("ws://localhost:*")
@@ -277,7 +275,7 @@ namespace DispatcherWeb.Web.Startup
                         .From("https://*.googleapis.com/") //maps., khms0., khms1.googleapis.com
                         .From("https://*.mapbox.com")
                         .From("https://api-s.mqcdn.com")
-                        .From("https://static.userguiding.com/")
+                        .From("https://*.userguiding.com/") //at least static.userguiding.com
                         .Data();
                     builder.AddFontSrc()
                         .Self()
