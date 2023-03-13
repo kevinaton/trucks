@@ -97,6 +97,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                     },
                     MaterialQuantity = di.OrderLine.MaterialQuantity,
                     FreightQuantity = di.OrderLine.FreightQuantity,
+                    JobNumber = di.OrderLine.JobNumber,
                     Note = di.Note,
                     IsCOD = di.OrderLine.Order.Customer.IsCod,
                     ChargeTo = di.OrderLine.Order.ChargeTo,
