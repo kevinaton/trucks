@@ -515,10 +515,10 @@
                     links.append(renderLink('btnEndMultipleLoadsDispatch', app.localize('EndMultipleDispatches')));
                 }
                 if (firstActiveDispatch && (dispatch.status === abp.enums.dispatchStatus.created || dispatch.status === abp.enums.dispatchStatus.sent)) {
-                    links.append(renderLink('btnAddLoadInfo', app.localize('Acknowledge')));
+                    links.append(renderLink('btnAddLoadInfo', app.localize('Acknowledge'), 'fa fa-thumbs-up'));
                 }
                 if (firstActiveDispatch && dispatch.status === abp.enums.dispatchStatus.acknowledged) {
-                    links.append(renderLink('btnAddLoadInfo', app.localize('AddLoadInfo')));
+                    links.append(renderLink('btnAddLoadInfo', app.localize('AddLoadInfo'), 'fa fa-edit'));
                 }
                 if (firstActiveDispatch && (dispatch.status === abp.enums.dispatchStatus.loaded)) {
                     links.append(renderLink('btnMarkAsDelivered', app.localize('MarkAsDelivered')));
