@@ -1311,6 +1311,8 @@
                 setDesignationForBlock(block, newDesignation);
                 return true;
             }
+
+            return true;
         };
 
         block.ui.destroyGrid = function () {
