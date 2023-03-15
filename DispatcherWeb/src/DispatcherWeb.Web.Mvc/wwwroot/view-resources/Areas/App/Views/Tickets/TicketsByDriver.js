@@ -1280,7 +1280,8 @@
                     abp.message.error('At least one rate has to be specified');
                     return false;
                 } else {
-                    if (abp.enums.designations.freightOnly.includes(block.orderLine.designation)) {
+                    let allowedDesignations = fieldIsFreight ? abp.enums.designations.materialOnly : abp.enums.designations.freightOnly;
+                    if (allowedDesignations.includes(block.orderLine.designation)) {
                         return true;
                     }
                     if (!await abp.message.confirm(`Changing this ${fieldDisplayName} rate to zero will change the designation to ${otherFieldDisplayName} only. Is this what you want to do?`)) {
@@ -1290,7 +1291,7 @@
                     return true;
                 }
             } else if (!oldValue && newValue) {
-                var allowedDesignations = [];
+                let allowedDesignations = [];
                 var newDesignation;
                 var newDesignationDisplayValue;
                 if (!otherValue) {
