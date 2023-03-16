@@ -4,9 +4,8 @@ using Newtonsoft.Json;
 
 namespace DispatcherWeb.Tickets.Dto
 {
-    public class TicketListViewDto : ITicketQuantity
+    public class TicketListViewDto : EditTicketFromListInput, ITicketQuantity
     {
-        public int Id { get; set; }
         public DateTime? Date { get; set; }
         public DateTime? OrderDate { get; set; }
         public string CustomerName { get; set; }
@@ -44,7 +43,6 @@ namespace DispatcherWeb.Tickets.Dto
         public int? FreightUomId { get; set; }
 
         public int? TicketUomId { get; set; }
-        public bool IsVerified { get; set; }
         public bool IsImported { get; set; }
         public decimal Revenue { get; set; }
         public bool? ProductionPay { get; set; }

@@ -112,6 +112,18 @@
                     abp.ui.clearBusy();
                 });
         },
+        editable: {
+            saveCallback: async function (rowData, cell) {
+                try {
+                    await _ticketService.editTicketFromList({
+                        id: rowData.id,
+                        isVerified: rowData.isVerified
+                    });
+                } catch {
+                    reloadMainGrid();
+                }
+            }
+        },
         order: [[2, 'asc']],
         headerCallback: function (thead, data, start, end, display) {
             if (_permissions.invoices) {
@@ -227,7 +239,10 @@
                 title: "Ver",
                 titleHoverText: "Verified",
                 render: function (data, type, full, meta) { return _dtHelper.renderCheckbox(data); },
-                width: '30px'
+                width: '30px',
+                editable: {
+                    editor: _dtHelper.editors.checkbox
+                }
             },
             {
                 data: 'ticketPhotoId',
