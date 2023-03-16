@@ -924,7 +924,7 @@
         $element.data('options', options);
         let beforeInitCallbacks = abp.helperConfiguration.dataTables.beforeInit;
         if (beforeInitCallbacks) {
-            beforeInitCallbacks.forEach(x => x(options));
+            beforeInitCallbacks.forEach(x => x(options, $element));
         }
         if (options.selectionColumnOptions) {
             options.selectionColumnOptions = userOptions.selectionColumnOptions = getSelectionColumnObject(userOptions.selectionColumnOptions);
