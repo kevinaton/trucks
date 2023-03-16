@@ -11,7 +11,7 @@ let useLocalDebug = false;
 let treatDriverAsAdminGuid = 'd9b04af2-9518-4394-87d5-e59783b1309d';
 
 function isAdminOrDebug() {
-    return _info && (_info.isAdmin || useLocalDebug && _info.driverGuid === treatDriverAsAdminGuid);
+    return _info && (_info.isAdmin || useLocalDebug && _info.driverGuid === treatDriverAsAdminGuid) || false;
 }
 
 window.addEventListener('error', async function (e) {
@@ -227,7 +227,7 @@ async function updateCurrentView() {
         $(".isMultipleLoads").text(_currentDispatch.isMultipleLoads ? "Yes" : "No");
         let pickupAt = formatDispatchLoadAt(_currentDispatch);
         $(".pickupAt").text(pickupAt);
-        $(".pickupAtContainer")[pickupAt ? "show" : "hide"]();
+        $(".pickupAtContainer").toggle(!!pickupAt);
         $(".materialQuantity").text(_currentDispatch.materialQuantity);
         $(".materialUomName").text(_currentDispatch.materialUomName);
         $(".freightQuantity").text(_currentDispatch.freightQuantity);
@@ -235,9 +235,10 @@ async function updateCurrentView() {
         $(".itemName").text(_currentDispatch.item);
         $(".chargeTo").text(_currentDispatch.chargeTo);
         $(".note").text(_currentDispatch.note);
+        $(".jobNumber").text(_currentDispatch.jobNumber).closest('.form-group').toggle(!!_currentDispatch.jobNumber);
         let customerAddress = formatDispatchDeliverTo(_currentDispatch);
         $(".customerAddress").text(customerAddress);
-        $(".customerAddressContainer")[customerAddress ? "show" : "hide"]();
+        $(".customerAddressContainer").toggle(!!customerAddress);
         $("#Designation").val(_currentDispatch.designation);
         $("#TicketNumber").val(_currentDispatch.ticketNumber);
         $("#Amount").val(getAmountToEdit(_currentDispatch.amount));
@@ -318,9 +319,9 @@ async function updateCurrentView() {
         $signatureViewText.hide();
     }
 
-    $('#changeAssociatedTruck, #setTenancy').closest('li')[isAdminOrDebug() && _info.dispatchesLockedToTruck ? 'show' : 'hide']();
-    $('#showPendingChanges').closest('li')[isAdminOrDebug() ? 'show' : 'hide']();
-    $('#showErrorLogs').closest('li')[isAdminOrDebug() ? 'show' : 'hide']();
+    $('#changeAssociatedTruck, #setTenancy').closest('li').toggle(isAdminOrDebug() && _info.dispatchesLockedToTruck);
+    $('#showPendingChanges').closest('li').toggle(isAdminOrDebug());
+    $('#showErrorLogs').closest('li').toggle(isAdminOrDebug());
 
     let showClockInView = !_info.isClockStarted /*&& !clockWasStartedSincePageLoad*/ && !_info.driverLeaseHaulerId || !_info.isDriver;
     $("#loadingDiv").hide();

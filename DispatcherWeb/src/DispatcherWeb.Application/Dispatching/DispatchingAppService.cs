@@ -1371,6 +1371,7 @@ namespace DispatcherWeb.Dispatching
                 FreightUomName = di.OrderLine.FreightUom.Name,
                 MaterialQuantity = di.OrderLine.MaterialQuantity,
                 FreightQuantity = di.OrderLine.FreightQuantity,
+                JobNumber = di.OrderLine.JobNumber,
                 Note = di.Note,
                 IsMultipleLoads = di.IsMultipleLoads,
                 WasMultipleLoads = di.WasMultipleLoads,
