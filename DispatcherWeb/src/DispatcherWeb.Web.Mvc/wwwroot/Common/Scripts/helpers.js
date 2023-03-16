@@ -1230,17 +1230,35 @@
         }
     });
 
-    abp.helperConfiguration.dataTables.afterInit.push((table, grid, options) => {
-        grid.on("draw", () => {
-            var pageSizeSelector = $(grid.containers()[0]).find('div.dataTables_length select');
+    abp.helperConfiguration.dataTables.beforeInit.push((options, table) => {
+        var lastRequestedPageSize;
+        table.on("draw.dt", () => {
+            var pageSizeSelector = findPageSizeDropdownForTable(table);
+
+            if (lastRequestedPageSize && parseInt(pageSizeSelector.val()) !== lastRequestedPageSize) {
+                pageSizeSelector.val(lastRequestedPageSize).trigger('change.select2');
+            }
+
             if (!pageSizeSelector.data('select2')) {
                 pageSizeSelector.select2Init({
                     showAll: true,
                     allowClear: false
                 });
+            } else {
+                pageSizeSelector.trigger('change.select2');
+            }
+        });
+
+        table.on('preXhr.dt', (e, settings, data) => {
+            if (data && data.length > 0) {
+                lastRequestedPageSize = data.length;
             }
         });
     });
+
+    function findPageSizeDropdownForTable(table) {
+        return $(table).closest('.dataTables_wrapper').find('div.dataTables_length select');
+    }
 
 })(jQuery);
 (function ($) {
