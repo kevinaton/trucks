@@ -1260,6 +1260,11 @@
         });
     });
 
+    abp.helperConfiguration.dataTables.beforeInit.push((options, table) => {
+        table.on('preXhr.dt', () => abp.ui.setBusy(table.closest('.dataTables_wrapper')));
+        table.on('xhr.dt', () => abp.ui.clearBusy(table.closest('.dataTables_wrapper')));
+    });
+
     function findPageSizeDropdownForTable(table) {
         return $(table).closest('.dataTables_wrapper').find('div.dataTables_length select');
     }
