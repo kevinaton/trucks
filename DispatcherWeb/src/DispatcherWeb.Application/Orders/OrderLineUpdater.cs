@@ -136,6 +136,7 @@ namespace DispatcherWeb.Orders
                 case nameof(orderLine.MaterialUomId):
                 case nameof(orderLine.FreightUomId):
                 case nameof(orderLine.ProductionPay):
+                case nameof(orderLine.JobNumber):
                     await MarkAffectedDispatchesWhereAsync(d => !d.Status.IsIn(DispatchStatus.Completed));
                     break;
             }
