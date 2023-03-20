@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.UI;
 using Castle.Core.Internal;
@@ -266,20 +267,20 @@ namespace DispatcherWeb.Locations
 
             var result = await EditLocation(new LocationEditDto
             {
-                Name = model.Name?.WithMaxLength(100),
+                Name = model.Name?.Truncate(100),
                 CategoryId = category.Id,
                 CategoryName = category.Name,
-                StreetAddress = model.StreetAddress?.WithMaxLength(EntityStringFieldLengths.GeneralAddress.MaxStreetAddressLength),
-                City = model.City?.WithMaxLength(EntityStringFieldLengths.GeneralAddress.MaxCityLength),
-                State = model.State?.WithMaxLength(EntityStringFieldLengths.GeneralAddress.MaxStateLength),
-                ZipCode = model.ZipCode?.WithMaxLength(EntityStringFieldLengths.GeneralAddress.MaxZipCodeLength),
-                CountryCode = model.CountryCode?.WithMaxLength(EntityStringFieldLengths.GeneralAddress.MaxCountryCodeLength),
+                StreetAddress = model.StreetAddress?.Truncate(EntityStringFieldLengths.GeneralAddress.MaxStreetAddressLength),
+                City = model.City?.Truncate(EntityStringFieldLengths.GeneralAddress.MaxCityLength),
+                State = model.State?.Truncate(EntityStringFieldLengths.GeneralAddress.MaxStateLength),
+                ZipCode = model.ZipCode?.Truncate(EntityStringFieldLengths.GeneralAddress.MaxZipCodeLength),
+                CountryCode = model.CountryCode?.Truncate(EntityStringFieldLengths.GeneralAddress.MaxCountryCodeLength),
                 Latitude = model.Latitude,
                 Longitude = model.Longitude,
                 PlaceId = model.PlaceId,
                 IsActive = model.IsActive,
-                Abbreviation = model.Abbreviation?.WithMaxLength(10),
-                Notes = model.Notes?.WithMaxLength(1000)
+                Abbreviation = model.Abbreviation?.Truncate(10),
+                Notes = model.Notes?.Truncate(1000)
             });
 
             return result;

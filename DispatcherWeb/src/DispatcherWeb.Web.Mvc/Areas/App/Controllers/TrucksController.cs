@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
+using Abp.Extensions;
 using Abp.IO.Extensions;
 using Abp.Web.Models;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Features;
 using DispatcherWeb.Images;
 using DispatcherWeb.Infrastructure.AzureBlobs;
-using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.Web.Areas.App.Models.Trucks;
@@ -113,8 +113,8 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
                     FileId = fileId,
                     ThumbnailId = thumbnailId,
                     TruckId = truckId,
-                    FileName = file.FileName.WithMaxLength(500),
-                    Title = file.FileName.WithMaxLength(50),
+                    FileName = file.FileName.Truncate(500),
+                    Title = file.FileName.Truncate(50),
                     FileType = fileType,
                 });
 

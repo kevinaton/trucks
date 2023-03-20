@@ -269,7 +269,7 @@ namespace DispatcherWeb.WorkOrders
                 {
                     TruckId = truckId,
                     OutOfServiceDate = issueDate,
-                    Reason = $"Work Order for {note}".WithMaxLength(500)
+                    Reason = $"Work Order for {note}".Truncate(500)
                 };
 
                 await _outOfServiceHistoryRepository.InsertAsync(outOfServiceHistory);

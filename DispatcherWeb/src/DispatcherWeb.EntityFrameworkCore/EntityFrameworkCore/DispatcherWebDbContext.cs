@@ -16,6 +16,7 @@ using DispatcherWeb.Emailing;
 using DispatcherWeb.EntityFrameworkCore.Configurations;
 using DispatcherWeb.Friendships;
 using DispatcherWeb.FuelSurchargeCalculations;
+using DispatcherWeb.HostEmails;
 using DispatcherWeb.Invoices;
 using DispatcherWeb.LeaseHaulerRequests;
 using DispatcherWeb.LeaseHaulers;
@@ -248,6 +249,16 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<FuelSurchargeCalculation> FuelSurchargeCalculations { get; set; }
 
+        public virtual DbSet<HostEmail> HostEmails { get; set; }
+
+        public virtual DbSet<HostEmailEdition> HostEmailEditions { get; set; }
+
+        public virtual DbSet<HostEmailTenant> HostEmailTenants { get; set; }
+
+        public virtual DbSet<HostEmailRole> HostEmailRoles { get; set; }
+
+        public virtual DbSet<HostEmailReceiver> HostEmailReceivers { get; set; }
+
         public DispatcherWebDbContext(DbContextOptions<DispatcherWebDbContext> options)
             : base(options)
         {
@@ -321,6 +332,10 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new EmployeeTimePayStatementTimeConfiguration());
             modelBuilder.ApplyConfiguration(new InvoiceConfiguration());
             modelBuilder.ApplyConfiguration(new FcmPushMessageConfiguration());
+            modelBuilder.ApplyConfiguration(new HostEmailConfiguration());
+            modelBuilder.ApplyConfiguration(new HostEmailEditionConfiguration());
+            modelBuilder.ApplyConfiguration(new HostEmailReceiverConfiguration());
+            modelBuilder.ApplyConfiguration(new HostEmailTenantConfiguration());
             modelBuilder.ApplyConfiguration(new InvoiceBatchConfiguration());
             modelBuilder.ApplyConfiguration(new InvoiceUploadBatchConfiguration());
             modelBuilder.ApplyConfiguration(new InvoiceEmailConfiguration());

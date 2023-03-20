@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using DispatcherWeb.Authorization.Roles.Dto;
+using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Authorization.Roles
 {
@@ -17,5 +19,6 @@ namespace DispatcherWeb.Authorization.Roles
         Task<bool> IsRoleHaveUsers(EntityDto input);
         Task DeleteRole(EntityDto input);
         Task RestoreDefaultPermissionsAsync(int roleId);
+        List<SelectListDto> GetStaticRoleNamesSelectList(GetStaticRoleNamesSelectListInput input);
     }
 }

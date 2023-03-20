@@ -518,6 +518,10 @@
         active: 1,
         inactive: 2
     };
+    abp.enums.multiTenancySides = {
+        tenant: 0x1,
+        host: 0x2
+    };
 
     window.app = app || {};
     app.order = app.order || {};

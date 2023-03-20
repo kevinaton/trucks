@@ -201,6 +201,9 @@ namespace DispatcherWeb.Authorization
             var vehicleServiceTypes = pages.CreateChildPermission(AppPermissions.Pages_VehicleServiceTypes_View, L("VehicleServiceTypes"), multiTenancySides: _isMultiTenancyEnabled ? MultiTenancySides.Host : MultiTenancySides.Tenant);
             vehicleServiceTypes.CreateChildPermission(AppPermissions.Pages_VehicleServiceTypes_Edit, L("EditingVehicleServiceTypes"), multiTenancySides: _isMultiTenancyEnabled ? MultiTenancySides.Host : MultiTenancySides.Tenant);
 
+            var hostEmails = pages.CreateChildPermission(AppPermissions.Pages_HostEmails, L("HostEmails"), multiTenancySides: MultiTenancySides.Host);
+            hostEmails.CreateChildPermission(AppPermissions.Pages_HostEmails_Send, L("SendHostEmails"), multiTenancySides: MultiTenancySides.Host);
+
             pages.CreateChildPermission(AppPermissions.Pages_DemoUiComponents, L("DemoUiComponents"), multiTenancySides: MultiTenancySides.Host);
         }
 
