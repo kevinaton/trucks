@@ -44,6 +44,14 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Editions)
                     )
                 ).AddItem(new MenuItemDefinition(
+                        AppPageNames.Host.HostEmails,
+                        L("HostEmails"),
+                        customData: new MenuItemCustomData { Id = "HostEmailsNavbarItem" },
+                        url: "App/HostEmails",
+                        icon: "flaticon-email",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_HostEmails)
+                    )
+                ).AddItem(new MenuItemDefinition(
                         AppPageNames.Tenant.Dashboard,
                         L("Dashboard"),
                         customData: new MenuItemCustomData { Id = "TenantDashboardNavbarItem" },

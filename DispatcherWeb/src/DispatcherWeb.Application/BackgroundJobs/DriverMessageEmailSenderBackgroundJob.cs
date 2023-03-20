@@ -5,6 +5,7 @@ using Abp.BackgroundJobs;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.Extensions;
 using Abp.Net.Mail;
 using Abp.Notifications;
 using Abp.Threading;
@@ -12,7 +13,6 @@ using Abp.Timing;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Emailing;
 using DispatcherWeb.Infrastructure;
-using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Runtime.Session;
 
@@ -71,7 +71,7 @@ namespace DispatcherWeb.BackgroundJobs
                     DriverId = args.DriverId,
                     MessageType = DriverMessageType.Email,
                     Subject = args.Subject,
-                    Body = args.Body.WithMaxLength(EntityStringFieldLengths.DriverMessage.Body),
+                    Body = args.Body.Truncate(EntityStringFieldLengths.DriverMessage.Body),
                     TrackableEmailId = trackableEmailId,
                 };
 

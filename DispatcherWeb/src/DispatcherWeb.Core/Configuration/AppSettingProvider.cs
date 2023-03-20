@@ -239,6 +239,7 @@ namespace DispatcherWeb.Configuration
 
                 new SettingDefinition(AppSettings.UserOptions.DontShowZeroQuantityWarning, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.UserOptions.PlaySoundForNotifications, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.UserOptions.HostEmailPreference, "15", scopes: SettingScopes.User, isVisibleToClients: true),
 
                 new SettingDefinition(AppSettings.GettingStarted.ShowGettingStarted, "true", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GettingStarted.UsersChecked, "false", scopes: SettingScopes.Tenant),

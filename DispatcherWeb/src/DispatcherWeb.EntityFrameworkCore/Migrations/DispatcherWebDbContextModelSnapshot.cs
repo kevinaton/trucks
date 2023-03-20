@@ -3262,6 +3262,159 @@ namespace DispatcherWeb.Migrations
                     b.ToTable("FuelSurchargeCalculation");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool?>("ActiveFilter")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Body")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("ProcessedAtDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorUserId");
+
+                    b.ToTable("HostEmails");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmailEdition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("EditionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HostEmailId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EditionId");
+
+                    b.HasIndex("HostEmailId");
+
+                    b.ToTable("HostEmailEditions");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmailReceiver", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("HostEmailId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TrackableEmailId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostEmailId");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TrackableEmailId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("HostEmailReceivers");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmailRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("HostEmailId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostEmailId");
+
+                    b.ToTable("HostEmailRoles");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmailTenant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("HostEmailId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostEmailId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("HostEmailTenants");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Invoices.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -9095,6 +9248,98 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("TrackableEmail");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmail", b =>
+                {
+                    b.HasOne("DispatcherWeb.Authorization.Users.User", "CreatorUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("CreatorUser");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmailEdition", b =>
+                {
+                    b.HasOne("Abp.Application.Editions.Edition", "Edition")
+                        .WithMany()
+                        .HasForeignKey("EditionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.HostEmails.HostEmail", "HostEmail")
+                        .WithMany("Editions")
+                        .HasForeignKey("HostEmailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Edition");
+
+                    b.Navigation("HostEmail");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmailReceiver", b =>
+                {
+                    b.HasOne("DispatcherWeb.HostEmails.HostEmail", "HostEmail")
+                        .WithMany("Receivers")
+                        .HasForeignKey("HostEmailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.MultiTenancy.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.Emailing.TrackableEmail", "TrackableEmail")
+                        .WithMany()
+                        .HasForeignKey("TrackableEmailId");
+
+                    b.HasOne("DispatcherWeb.Authorization.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("HostEmail");
+
+                    b.Navigation("Tenant");
+
+                    b.Navigation("TrackableEmail");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmailRole", b =>
+                {
+                    b.HasOne("DispatcherWeb.HostEmails.HostEmail", "HostEmail")
+                        .WithMany("Roles")
+                        .HasForeignKey("HostEmailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("HostEmail");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmailTenant", b =>
+                {
+                    b.HasOne("DispatcherWeb.HostEmails.HostEmail", "HostEmail")
+                        .WithMany("Tenants")
+                        .HasForeignKey("HostEmailId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.MultiTenancy.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("HostEmail");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Invoices.Invoice", b =>
                 {
                     b.HasOne("DispatcherWeb.Invoices.InvoiceBatch", "Batch")
@@ -10533,6 +10778,17 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Quotes");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.HostEmails.HostEmail", b =>
+                {
+                    b.Navigation("Editions");
+
+                    b.Navigation("Receivers");
+
+                    b.Navigation("Roles");
+
+                    b.Navigation("Tenants");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Invoices.Invoice", b =>

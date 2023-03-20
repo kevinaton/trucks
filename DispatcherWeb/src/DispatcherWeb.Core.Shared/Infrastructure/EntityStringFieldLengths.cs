@@ -78,6 +78,17 @@
             public const int Body = General.ExtraLong;
         }
 
+        public static class HostEmail
+        {
+            public const int Subject = General.Long;
+            public const int Body = 4000;
+        }
+
+        public static class TrackableEmail
+        {
+            public const int Subject = 200;
+        }
+
         public static class ChatMessage
         {
             public const int Message = 4 * 1024;

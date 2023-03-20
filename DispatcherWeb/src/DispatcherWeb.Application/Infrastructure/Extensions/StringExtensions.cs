@@ -1,31 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Abp.Extensions;
 using DispatcherWeb.Infrastructure.Templates;
 
 namespace DispatcherWeb.Infrastructure.Extensions
 {
     public static class StringExtensions
     {
-        public const string Ellipsis = "...";
-
-        public static string WithMaxLength(this string value, int maxLength, bool showEllipsis = false)
-        {
-            return value?.Substring(0, Math.Min(value.Length, maxLength))
-                   + (showEllipsis && value?.Length > maxLength ? "\u2026" : "")
-            ;
-        }
-
-        public static string TrimMaxLengthWithDots(this string value, int maxLength)
-        {
-            if (value.IsNullOrEmpty() || value.Length <= maxLength)
-            {
-                return value;
-            }
-            return $"{value.Substring(0, maxLength - 3)}{Ellipsis}";
-        }
-
         public static string ReplaceTokens(this string template, Dictionary<string, string> tokenDictionary)
         {
             foreach (var keyValuePair in tokenDictionary)

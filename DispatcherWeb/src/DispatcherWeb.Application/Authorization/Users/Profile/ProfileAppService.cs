@@ -97,7 +97,8 @@ namespace DispatcherWeb.Authorization.Users.Profile
             userProfileEditDto.Options = new CurrentUserOptionsEditDto
             {
                 DontShowZeroQuantityWarning = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.DontShowZeroQuantityWarning),
-                PlaySoundForNotifications = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.PlaySoundForNotifications)
+                PlaySoundForNotifications = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.PlaySoundForNotifications),
+                HostEmailPreference = (HostEmailPreference)await SettingManager.GetSettingValueAsync<int>(AppSettings.UserOptions.HostEmailPreference)
             };
 
             return userProfileEditDto;
@@ -202,6 +203,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
             {
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.DontShowZeroQuantityWarning, input.Options.DontShowZeroQuantityWarning.ToLowerCaseString());
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.PlaySoundForNotifications, input.Options.PlaySoundForNotifications.ToLowerCaseString());
+                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.HostEmailPreference, input.Options.HostEmailPreference.ToIntString());
             }
         }
 
