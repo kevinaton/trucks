@@ -498,7 +498,7 @@
         };
     }
 
-    function handleBlockNumberChange(block, input) {
+    async function handleBlockNumberChangeAsync(block, input, additionalValidationCallback) {
         var newVal = Number(input.val()) || 0;
         var field = input.attr('name');
 
@@ -509,6 +509,13 @@
         if (input.attr('data-rule-max')) {
             let max = Number(input.attr('data-rule-max'));
             newVal = newVal > max ? max : newVal;
+        }
+
+        if (additionalValidationCallback) {
+            if (!await additionalValidationCallback(newVal)) {
+                input.val(block.orderLine[field] || 0);
+                return null;
+            }
         }
 
         var affectedBlocks = _orderLineBlocks.filter(o => o.orderLine.id === block.orderLine.id);
@@ -1247,14 +1254,21 @@
             }
             var input = $(this);
             var field = input.attr('name');
-            if (parseFloat(input.val()) === block.orderLine[field]) {
+
+            var additionalValidationCallback = async (newValue) => {
+                if (newValue === block.orderLine[field]) {
+                    return false;
+                }
+                if (!await validateNewRateAsync(newValue, field, input, block)) {
+                    return false;
+                }
+                return true;
+            };
+
+            var result = await handleBlockNumberChangeAsync(block, input, additionalValidationCallback);
+            if (!result) {
                 return;
             }
-            if (!await validateNewRateAsync(field, input, block)) {
-                input.val(block.orderLine[field] || 0);
-                return;
-            }
-            handleBlockNumberChange(block, input);
             saveOrderLine(block.orderLine);
         });
 
@@ -1266,12 +1280,11 @@
             });
         };
 
-        var validateNewRateAsync = async function (field, input, block) {
+        var validateNewRateAsync = async function (newValue, field, input, block) {
             let fieldIsFreight = field === 'freightRate';
             let otherField = fieldIsFreight ? 'materialRate' : 'freightRate';
             let otherFieldDisplayName = fieldIsFreight ? 'material' : 'freight';
             let fieldDisplayName = fieldIsFreight ? 'freight' : 'material';
-            let newValue = Number(input.val()) || 0;
             var oldValue = block.orderLine[field] || 0;
             let otherValue = block.orderLine[otherField] || 0;
             if (oldValue && !newValue) {
