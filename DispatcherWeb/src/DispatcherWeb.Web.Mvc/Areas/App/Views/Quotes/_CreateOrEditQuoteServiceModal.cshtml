@@ -1,8 +1,10 @@
 ﻿@using System.Threading.Tasks
+@using DispatcherWeb.Designations;
 @using DispatcherWeb.Infrastructure
 @using DispatcherWeb.Quotes.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @using DispatcherWeb.Authorization
+@inject IDesignationAppService DesignationAppService
 @model QuoteServiceEditDto
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit item" : "Add new item"))
 
@@ -12,7 +14,7 @@
         <input type="hidden" asp-for="QuoteId" />
         <div class="form-group">
             <label class="required-label">@L("Designation")</label>
-            <select class="form-control" required asp-for="Designation" asp-items="Html.GetEnumSelectList<DesignationEnum>()">
+            <select class="form-control" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation)">
                 <option value="">Select a designation</option>
             </select>
         </div>

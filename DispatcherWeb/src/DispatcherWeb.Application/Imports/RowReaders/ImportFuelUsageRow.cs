@@ -2,6 +2,7 @@
 using System.Linq;
 using CsvHelper;
 using DispatcherWeb.Imports.Columns;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders;
 
 namespace DispatcherWeb.Imports.RowReaders
@@ -16,6 +17,6 @@ namespace DispatcherWeb.Imports.RowReaders
         public decimal? Amount => GetDecimal(FuelUsageColumn.Amount, true);
         public decimal? FuelRate => GetDecimal(FuelUsageColumn.FuelRate);
         public decimal? Odometer => GetDecimal(FuelUsageColumn.Odometer, 1);
-        public string TicketNumber => GetString(FuelUsageColumn.TicketNumber, Ticket.MaxTicketNumberLength);
+        public string TicketNumber => GetString(FuelUsageColumn.TicketNumber, EntityStringFieldLengths.Ticket.TicketNumber);
     }
 }

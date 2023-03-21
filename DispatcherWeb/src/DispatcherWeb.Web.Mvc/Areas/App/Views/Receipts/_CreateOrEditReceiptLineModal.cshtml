@@ -1,10 +1,12 @@
 ﻿@using System.Threading.Tasks
+@using DispatcherWeb.Designations;
 @using DispatcherWeb.Infrastructure
 @using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Receipts.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @using Microsoft.EntityFrameworkCore
 @using DispatcherWeb.Authorization
+@inject IDesignationAppService DesignationAppService
 @model ReceiptLineEditDto
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit line" : "Add new line"))
 
@@ -22,7 +24,7 @@
         </div>
         <div class="form-group">
             <label class="required-label">Designation</label>
-            <select class="form-control" required asp-for="Designation" asp-items="Html.GetEnumSelectList<DesignationEnum>()">
+            <select class="form-control" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation)">
                 <option value="">Select a designation</option>
             </select>
         </div>

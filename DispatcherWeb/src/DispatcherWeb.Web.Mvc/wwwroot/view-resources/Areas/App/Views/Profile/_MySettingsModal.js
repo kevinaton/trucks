@@ -53,6 +53,20 @@
             });
 
             _$form.find(".tooltips").tooltip();
+
+            _$optionsForm.find('#DefaultLoadAtLocationIdForUser').select2Init({
+                abpServiceMethod: abp.services.app.location.getLocationsSelectList,
+                showAll: false,
+                allowClear: true
+            });
+
+            _$optionsForm.find('#DefaultServiceId').select2Init({
+                abpServiceMethod: abp.services.app.service.getServicesSelectList,
+                showAll: false,
+                allowClear: true
+            });
+
+            _$optionsForm.find('#DefaultMaterialUomId').select2Uom();
         };
 
         this.save = function () {

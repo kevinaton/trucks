@@ -86,6 +86,7 @@ namespace DispatcherWeb.Configuration
             public const string SubscriptionExpireNotifyDayCount = "App.TenantManagement.SubscriptionExpireNotifyDayCount";
             public const string BillingLegalName = "App.TenantManagement.BillingLegalName";
             public const string BillingAddress = "App.TenantManagement.BillingAddress";
+            public const string BillingPhoneNumber = "App.TenantManagement.BillingPhoneNumber";
             public const string BillingTaxVatNo = "App.TenantManagement.BillingTaxVatNo";
         }
 
@@ -324,6 +325,13 @@ namespace DispatcherWeb.Configuration
             public const string TextForSignatureView = "App.DispatchingAndMessaging.TextForSignatureView";
             public const string ShowTrailersOnSchedule = "App.DispatchingAndMessaging.ShowTrailersOnSchedule";
             public const string ValidateUtilization = "App.DispatchingAndMessaging.ValidateUtilization";
+            public const string AllowCounterSales = "App.DispatchingAndMessaging.AllowCounterSales";
+            public const string DefaultLoadAtLocationId = "App.DispatchingAndMessaging.DefaultLoadAtLocationId";
+            public const string DefaultDesignationToCounterSales = "App.DispatchingAndMessaging.DefaultDesignationToCounterSales";
+            public const string DefaultServiceId = "App.DispatchingAndMessaging.DefaultServiceId";
+            public const string DefaultMaterialUomId = "App.DispatchingAndMessaging.DefaultMaterialUomId";
+            public const string DefaultAutoGenerateTicketNumber = "App.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber";
+            public const string CCMeOnInvoices = "App.DispatchingAndMessaging.CCMeOnInvoices";
         }
 
         public static class LeaseHaulers

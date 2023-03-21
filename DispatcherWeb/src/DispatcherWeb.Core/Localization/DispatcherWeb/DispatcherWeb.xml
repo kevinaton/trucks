@@ -1775,5 +1775,15 @@
 		<text name="AddJob">Add Job</text>
 		<text name="EditJob">Edit Job</text>
 		<text name="SubContractorRate">Sub-contractor Rate</text>
+		<text name="AllowCounterSales">Allow counter sales</text>
+		<text name="DefaultLoadAtLocation">Default "Load At" Location</text>
+		<text name="AutoGenerateTicketNumberOnCounterSales">Auto-generate ticket number on counter sales</text>
+		<text name="AutoGenerateTicketNumber">Auto-generate ticket number</text>
+		<text name="DefaultAutoGenerateTicket">Default "Auto-generate Ticket"</text>
+		<text name="DefaultsForAddJobDialog">Defaults for "Add Job" dialog</text>
+		<text name="DefaultDesignationToCounterSales">Default designation to "Counter Sales"</text>
+		<text name="DefaultItem">Default "Item"</text>
+		<text name="DefaultMaterialUoM">Default "Material UoM"</text>
+		<text name="CCMeOnInvoices">CC me on invoices</text>
 	</texts>
 </localizationDictionary>

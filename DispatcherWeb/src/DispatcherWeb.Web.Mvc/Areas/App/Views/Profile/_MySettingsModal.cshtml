@@ -1,7 +1,9 @@
 ﻿@using Abp.Application.Services.Dto
 @using Abp.Authorization.Users
+@using Abp.Configuration;
 @using Abp.Timing;
 @using DispatcherWeb.Authorization.Users
+@using DispatcherWeb.Configuration;
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @using DispatcherWeb.Web.Areas.App.Models.Profile
 @model MySettingsViewModel
@@ -134,6 +136,66 @@
                         <span></span>
                     </label>
                 </div>
+                @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales))
+                {
+                    <h5 class="mt-4 mb-3">@L("DefaultsForAddJobDialog")</h5>
+                    <div class="mb-1">
+                        <label class="m-checkbox">
+                            <input type="checkbox" name="DefaultDesignationToCounterSales" value="true" checked=@(Model.Options?.DefaultDesignationToCounterSales == true ? "checked" : null)>
+                            @L("DefaultDesignationToCounterSales")
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultLoadAtLocationIdForUser">@L("DefaultLoadAtLocation")</label>
+                        <select class="form-control" id="DefaultLoadAtLocationIdForUser" name="DefaultLoadAtLocationId">
+                            <option value="">@L("SelectALocation")</option>
+                            @if (Model.Options?.DefaultLoadAtLocationId > 0)
+                            {
+                                <option value="@Model.Options?.DefaultLoadAtLocationId" selected>@Model.Options?.DefaultLoadAtLocationName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>@L("DefaultItem")</label>
+                        <select class="form-control" id="DefaultServiceId" name="DefaultServiceId">
+                            <option value="">Select an item</option>
+                            @if (Model.Options?.DefaultServiceId != 0)
+                            {
+                                <option selected value="@Model.Options?.DefaultServiceId">@Model.Options?.DefaultServiceName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultMaterialUomId">@L("DefaultMaterialUoM")</label>
+                        <select class="form-control" id="DefaultMaterialUomId" name="DefaultMaterialUomId">
+                            <option value=""
+                                    data-placeholder-default="Select a UOM"
+                                    data-placeholder-no-items="No Prices defined for the selected Item"
+                                    data-placeholder-no-parent="Select an Item first">
+                                Select Material UOM
+                            </option>
+                            @if (Model.Options.DefaultMaterialUomId != 0)
+                            {
+                                <option selected value="@Model.Options.DefaultMaterialUomId">@Model.Options.DefaultMaterialUomName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label for="DefaultAutoGenerateTicketNumberForUser" class="m-checkbox">
+                            <input id="DefaultAutoGenerateTicketNumberForUser" type="checkbox" name="DefaultAutoGenerateTicketNumber" value="true" checked=@(Model.Options?.DefaultAutoGenerateTicketNumber == true ? "checked" : null)>
+                            @L("DefaultAutoGenerateTicket")
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="mb-1">
+                        <label for="CCMeOnInvoices" class="m-checkbox">
+                            <input id="CCMeOnInvoices" type="checkbox" name="CCMeOnInvoices" value="true" checked=@(Model.Options?.CCMeOnInvoices == true ? "checked" : null)>
+                            @L("CCMeOnInvoices")
+                            <span></span>
+                        </label>
+                    </div>
+                }
             </form>
         </div>
     </div>

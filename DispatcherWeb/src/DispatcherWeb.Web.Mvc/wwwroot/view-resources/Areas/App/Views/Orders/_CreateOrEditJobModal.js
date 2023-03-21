@@ -186,6 +186,8 @@
                 allowClear: false
             });
 
+            _$form.find("#AutoGenerateTicketNumber").change(updateTicketNumberVisibility);
+
             var quoteChildDropdown = abp.helper.ui.initChildDropdown({
                 parentDropdown: _customerDropdown,
                 childDropdown: _quoteDropdown,
@@ -597,10 +599,31 @@
         function updateDesignationRelatedFieldsVisibility() {
             var designationRelatedFields = _$form.find("#DesignationRelatedFields");
             if (_designationDropdown.val()) {
+                updateControlsVisibility();
                 designationRelatedFields.show();
             } else {
                 designationRelatedFields.hide();
             }
+        }
+
+        function updateControlsVisibility() {
+            var designation = Number(_designationDropdown.val());
+            var designationIsCounterSale = designation === abp.enums.designation.counterSale;
+            _deliverToDropdown.closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#MaterialPrice").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#LeaseHaulerRate").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#NumberOfTrucks").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#IsMultipleLoads").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#TimeOnJob").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#ChargeTo").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#Priority").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#ProductionPay").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#AutoGenerateTicketNumber").closest('.form-group').toggle(designationIsCounterSale);
+            _$form.find("#TicketNumber").closest('.form-group').toggle(designationIsCounterSale && !_$form.find('#AutoGenerateTicketNumber').is(':checked'));
+        }
+
+        function updateTicketNumberVisibility() {
+            _$form.find("#TicketNumber").closest('.form-group').toggle(!_$form.find('#AutoGenerateTicketNumber').is(':checked'));
         }
 
         function initOverrideButtons() {
@@ -993,8 +1016,15 @@
         }
 
         function hasMissingQuantityOrNumberOfTrucks(model) {
-            if (model.materialQuantity || model.freightQuantity || model.numberOfTrucks) {
-                return false;
+            var designation = Number(_designationDropdown.val());
+            if (designation === abp.enums.designation.counterSale) {
+                if (model.materialQuantity || model.freightQuantity) {
+                    return false;
+                }
+            } else {
+                if (model.materialQuantity || model.freightQuantity || model.numberOfTrucks) {
+                    return false;
+                }
             }
             return true;
         }
@@ -1075,6 +1105,8 @@
             _model.timeOnJob = model.TimeOnJob;
             _model.jobNumber = model.JobNumber;
             _model.note = model.Note;
+            _model.autoGenerateTicketNumber = !!model.AutoGenerateTicketNumber;
+            _model.ticketNumber = model.TicketNumber;
 
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
             let freightQuantity = model.FreightQuantity === "" ? null : abp.utils.round(parseFloat(model.FreightQuantity));

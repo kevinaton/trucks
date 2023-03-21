@@ -1,12 +1,14 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Auditing;
 using Abp.Authorization;
 using Abp.BackgroundJobs;
 using Abp.Configuration;
+using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.IO;
 using Abp.Localization;
@@ -19,15 +21,20 @@ using DispatcherWeb.Authentication.TwoFactor.Google;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.Authorization.Users.Profile.Cache;
 using DispatcherWeb.Authorization.Users.Profile.Dto;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Friendships;
 using DispatcherWeb.Gdpr;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Sms;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Security;
+using DispatcherWeb.Services;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Timing;
+using DispatcherWeb.UnitsOfMeasure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Authorization.Users.Profile
 {
@@ -45,6 +52,9 @@ namespace DispatcherWeb.Authorization.Users.Profile
         private readonly ITempFileCacheManager _tempFileCacheManager;
         private readonly IBackgroundJobManager _backgroundJobManager;
         private readonly ProfileImageServiceFactory _profileImageServiceFactory;
+        private readonly IRepository<Location> _locationRepository;
+        private readonly IRepository<Service> _serviceRepository;
+        private readonly IRepository<UnitOfMeasure> _unitOfMeasureRepository;
 
         public ProfileAppService(
             IAppFolders appFolders,
@@ -56,7 +66,10 @@ namespace DispatcherWeb.Authorization.Users.Profile
             ICacheManager cacheManager,
             ITempFileCacheManager tempFileCacheManager,
             IBackgroundJobManager backgroundJobManager,
-            ProfileImageServiceFactory profileImageServiceFactory)
+            ProfileImageServiceFactory profileImageServiceFactory,
+            IRepository<Location> locationRepository,
+            IRepository<Service> serviceRepository,
+            IRepository<UnitOfMeasure> unitOfMeasureRepository)
         {
             _appFolders = appFolders;
             _binaryObjectManager = binaryObjectManager;
@@ -68,6 +81,9 @@ namespace DispatcherWeb.Authorization.Users.Profile
             _tempFileCacheManager = tempFileCacheManager;
             _backgroundJobManager = backgroundJobManager;
             _profileImageServiceFactory = profileImageServiceFactory;
+            _locationRepository = locationRepository;
+            _serviceRepository = serviceRepository;
+            _unitOfMeasureRepository = unitOfMeasureRepository;
         }
 
         [DisableAuditing]
@@ -97,8 +113,71 @@ namespace DispatcherWeb.Authorization.Users.Profile
             userProfileEditDto.Options = new CurrentUserOptionsEditDto
             {
                 DontShowZeroQuantityWarning = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.DontShowZeroQuantityWarning),
-                PlaySoundForNotifications = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.PlaySoundForNotifications)
+                PlaySoundForNotifications = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.PlaySoundForNotifications),
+                DefaultDesignationToCounterSales = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales),
+                DefaultAutoGenerateTicketNumber = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber),
+                CCMeOnInvoices = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.CCMeOnInvoices)
             };
+
+            var loadAtId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId);
+            if (loadAtId > 0)
+            {
+                var loadAt = await _locationRepository.GetAll()
+                    .Where(x => x.Id == loadAtId)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        Location = new LocationNameDto
+                        {
+                            Name = x.Name,
+                            StreetAddress = x.StreetAddress,
+                            City = x.City,
+                            State = x.State,
+                        }
+                    }).FirstOrDefaultAsync();
+                userProfileEditDto.Options.DefaultLoadAtLocationId = loadAt?.Id;
+                userProfileEditDto.Options.DefaultLoadAtLocationName = loadAt?.Location.FormattedAddress;
+            }
+
+            userProfileEditDto.Options.DefaultServiceId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultServiceId);
+            if (userProfileEditDto.Options.DefaultServiceId > 0)
+            {
+                var service = await _serviceRepository.GetAll()
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Service1
+                    })
+                    .FirstOrDefaultAsync(x => x.Id == userProfileEditDto.Options.DefaultServiceId);
+                if (service == null)
+                {
+                    userProfileEditDto.Options.DefaultServiceId = 0;
+                }
+                else
+                {
+                    userProfileEditDto.Options.DefaultServiceName = service.Service1;
+                }
+            }
+
+            userProfileEditDto.Options.DefaultMaterialUomId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultMaterialUomId);
+            if (userProfileEditDto.Options.DefaultMaterialUomId > 0)
+            {
+                var query = await _unitOfMeasureRepository.GetAll()
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.Name
+                    })
+                    .FirstOrDefaultAsync(x => x.Id == userProfileEditDto.Options.DefaultMaterialUomId);
+                if (query == null)
+                {
+                    userProfileEditDto.Options.DefaultMaterialUomId = 0;
+                }
+                else
+                {
+                    userProfileEditDto.Options.DefaultMaterialUomName = query.Name;
+                }
+            }
 
             return userProfileEditDto;
         }
@@ -202,6 +281,16 @@ namespace DispatcherWeb.Authorization.Users.Profile
             {
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.DontShowZeroQuantityWarning, input.Options.DontShowZeroQuantityWarning.ToLowerCaseString());
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.PlaySoundForNotifications, input.Options.PlaySoundForNotifications.ToLowerCaseString());
+                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, input.Options.DefaultDesignationToCounterSales.ToLowerCaseString());
+                if (input.Options.DefaultLoadAtLocationId == null)
+                {
+                    input.Options.DefaultLoadAtLocationId = await SettingManager.GetSettingValueForTenantAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, AbpSession.GetTenantId());
+                }
+                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.Options.DefaultLoadAtLocationId ?? 0).ToString());
+                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultServiceId, (input.Options.DefaultServiceId ?? 0).ToString());
+                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, (input.Options.DefaultMaterialUomId ?? 0).ToString());
+                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.Options.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
+                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.CCMeOnInvoices, input.Options.CCMeOnInvoices.ToLowerCaseString());
             }
         }
 

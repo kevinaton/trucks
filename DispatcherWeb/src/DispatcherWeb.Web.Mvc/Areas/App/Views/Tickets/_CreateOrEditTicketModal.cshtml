@@ -75,7 +75,7 @@
         </div>
         <div class="form-group">
             <label class="required-label" asp-for="TicketNumber">@L("TicketNumber")</label>
-            <input class="form-control" type="text" asp-for="TicketNumber" required maxlength="@Ticket.MaxTicketNumberLength">
+            <input class="form-control" type="text" asp-for="TicketNumber" required maxlength="@DispatcherWeb.Infrastructure.EntityStringFieldLengths.Ticket.TicketNumber">
         </div>
         <div class="form-group">
             <label class="required-label" asp-for="Quantity">@L("Quantity")</label>

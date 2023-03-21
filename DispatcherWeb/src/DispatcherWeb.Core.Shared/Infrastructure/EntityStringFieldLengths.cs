@@ -195,5 +195,10 @@
             public const int MaxAllowedJsonPayloadLength = JsonPayload - 1000; //the whole FCM message will have additional required fields around our specific payload, so we need to account for that extra length.
             public const int Error = 500;
         }
+
+        public static class Ticket
+        {
+            public const int TicketNumber = 20;
+        }
     }
 }
