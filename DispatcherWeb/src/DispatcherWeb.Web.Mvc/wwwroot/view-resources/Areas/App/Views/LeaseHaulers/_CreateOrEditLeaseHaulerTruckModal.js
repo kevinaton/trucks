@@ -78,7 +78,7 @@
             $defaultDriverId.select2Init({
                 abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulerDriversSelectList,
                 abpServiceParams: { leaseHaulerId: _$form.find('#LeaseHaulerId').val() },
-                showAll: false,
+                showAll: true,
                 allowClear: true
             });
 
