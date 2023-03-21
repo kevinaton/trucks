@@ -114,6 +114,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
             {
                 DontShowZeroQuantityWarning = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.DontShowZeroQuantityWarning),
                 PlaySoundForNotifications = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.PlaySoundForNotifications),
+                HostEmailPreference = (HostEmailPreference)await SettingManager.GetSettingValueAsync<int>(AppSettings.UserOptions.HostEmailPreference),
                 DefaultDesignationToCounterSales = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales),
                 DefaultAutoGenerateTicketNumber = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber),
                 CCMeOnInvoices = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.CCMeOnInvoices)
@@ -281,6 +282,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
             {
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.DontShowZeroQuantityWarning, input.Options.DontShowZeroQuantityWarning.ToLowerCaseString());
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.PlaySoundForNotifications, input.Options.PlaySoundForNotifications.ToLowerCaseString());
+                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.HostEmailPreference, input.Options.HostEmailPreference.ToIntString());
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, input.Options.DefaultDesignationToCounterSales.ToLowerCaseString());
                 if (input.Options.DefaultLoadAtLocationId == null)
                 {

@@ -136,6 +136,28 @@
                         <span></span>
                     </label>
                 </div>
+                <h5 class="mt-4 mb-3">@L("EmailSubscriptions")</h5>
+                <h6 class="mb-3">@L("UncheckForEmailsYouDontWantToReceive")</h6>
+                <div class="m-checkbox-list">
+                        @{
+                            var hostEmailPreferenceCheckboxes = new[]
+                            {
+                                new { Value = HostEmailPreference.ReleaseNotes, Label = L("ReleaseNotes") },
+                                new { Value = HostEmailPreference.Transactional, Label = L("TransactionalEmails") },
+                                new { Value = HostEmailPreference.ServiceStatus, Label = L("ServiceStatusEmails") },
+                                new { Value = HostEmailPreference.Marketing, Label = L("MarketingEmails") },
+                            };
+                            @foreach (var checkbox in hostEmailPreferenceCheckboxes)
+                            {
+                                <label class="m-checkbox">
+                                    <input type="checkbox" class="HostEmailPreferenceCheckbox" value="@((int)checkbox.Value)"
+                                           checked=@(Model.Options?.HostEmailPreference.HasFlag(checkbox.Value) == true ? "checked" : null)>
+                                    @checkbox.Label
+                                    <span></span>
+                                </label>
+                            }
+                        }
+                </div>
                 @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales))
                 {
                     <h5 class="mt-4 mb-3">@L("DefaultsForAddJobDialog")</h5>

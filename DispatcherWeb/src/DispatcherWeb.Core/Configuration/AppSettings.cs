@@ -180,6 +180,7 @@ namespace DispatcherWeb.Configuration
         {
             public const string DontShowZeroQuantityWarning = "App.UserOptions.DontShowZeroQuantityWarning";
             public const string PlaySoundForNotifications = "App.UserOptions.PlaySoundForNotifications";
+            public const string HostEmailPreference = "App.UserOptions.HostEmailPreference";
         }
         public static class CacheKeys
         {

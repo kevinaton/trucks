@@ -77,6 +77,10 @@
             var profile = _$form.serializeFormToObject();
             profile.Options = _$optionsForm.serializeFormToObject();
 
+            var hostEmailPreferenceCheckboxes = _$optionsForm.find(".HostEmailPreferenceCheckbox:checked");
+            var hostEmailPreference = hostEmailPreferenceCheckboxes.map((_, x) => Number($(x).val())).toArray().reduce((a, b) => a | b, 0);
+            profile.Options.HostEmailPreference = hostEmailPreference;
+
             _modalManager.setBusy(true);
             _profileService.updateCurrentUserProfile(profile)
                 .done(function () {

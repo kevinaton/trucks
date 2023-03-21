@@ -4,6 +4,7 @@
     {
         public bool DontShowZeroQuantityWarning { get; set; }
         public bool PlaySoundForNotifications { get; set; }
+        public HostEmailPreference HostEmailPreference { get; set; }
         public bool DefaultDesignationToCounterSales { get; set; }
         public int? DefaultLoadAtLocationId { get; set; }
         public string DefaultLoadAtLocationName { get; set; }

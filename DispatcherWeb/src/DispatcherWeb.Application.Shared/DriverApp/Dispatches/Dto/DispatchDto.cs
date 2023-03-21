@@ -21,6 +21,7 @@ namespace DispatcherWeb.DriverApp.Dispatches.Dto
         public LocationDto DeliverTo { get; set; }
         public decimal? MaterialQuantity { get; set; }
         public decimal? FreightQuantity { get; set; }
+        public string JobNumber { get; set; }
         public string Note { get; set; }
         public bool IsCOD { get; set; }
         public string ChargeTo { get; set; }

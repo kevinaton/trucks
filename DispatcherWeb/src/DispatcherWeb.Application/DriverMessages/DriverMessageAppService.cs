@@ -7,6 +7,7 @@ using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.BackgroundJobs;
 using Abp.Domain.Repositories;
+using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Session;
 using Abp.UI;
@@ -82,8 +83,8 @@ namespace DispatcherWeb.DriverMessages
                 TimeSent = dm.TimeSent,
                 Driver = dm.Driver,
                 SentBy = dm.SentBy,
-                Subject = dm.Subject.TrimMaxLengthWithDots(MaxLengthOfBodyAndSubject),
-                Body = dm.Body.TrimMaxLengthWithDots(MaxLengthOfBodyAndSubject),
+                Subject = dm.Subject.TruncateWithPostfix(MaxLengthOfBodyAndSubject),
+                Body = dm.Body.TruncateWithPostfix(MaxLengthOfBodyAndSubject),
                 MessageType = dm.MessageType,
                 EmailStatus = (EmailDeliveryStatus)(dm.EmailStatus ?? 0),
                 SmsStatus = dm.SmsStatus,

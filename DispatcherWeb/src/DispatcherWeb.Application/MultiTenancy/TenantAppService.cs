@@ -15,6 +15,7 @@ using Abp.Runtime.Security;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Editions.Dto;
 using DispatcherWeb.Emailing;
 using DispatcherWeb.Infrastructure.Extensions;
@@ -167,6 +168,19 @@ namespace DispatcherWeb.MultiTenancy
                 tenantCount,
                 ObjectMapper.Map<List<TenantListDto>>(tenants)
                 );
+        }
+
+        public async Task<PagedResultDto<SelectListDto>> GetTenantsSelectList(GetTenantsSelectListInput input)
+        {
+            return await TenantManager.Tenants
+                .WhereIf(input.EditionIds?.Any() == true, x => x.EditionId.HasValue && input.EditionIds.Contains(x.EditionId.Value))
+                .WhereIf(input.ActiveFilter.HasValue, x => x.IsActive == input.ActiveFilter)
+                .Select(x => new SelectListDto()
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Name,
+                })
+                .GetSelectListResult(input);
         }
 
         [AbpAuthorize(AppPermissions.Pages_Tenants_Create)]

@@ -808,6 +808,14 @@ namespace DispatcherWeb.Tickets
             await _ticketRepository.UpdateAsync(ticket);
         }
 
+        [AbpAuthorize(AppPermissions.Pages_Tickets_Edit)]
+        public async Task EditTicketFromList(EditTicketFromListInput input)
+        {
+            var ticket = await _ticketRepository.GetAsync(input.Id);
+            ticket.IsVerified = input.IsVerified;
+            await _ticketRepository.UpdateAsync(ticket);
+        }
+
         [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
