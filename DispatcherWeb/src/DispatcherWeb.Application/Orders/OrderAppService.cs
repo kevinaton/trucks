@@ -2715,7 +2715,6 @@ namespace DispatcherWeb.Orders
             var data = new OrderSummaryReportDto
             {
                 Date = input.Date,
-                ShowLoadColumns = input.ShowLoadColumns,
                 HidePrices = input.HidePrices,
                 Items = items,
                 UseShifts = await SettingManager.UseShifts(),

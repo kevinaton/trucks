@@ -9,7 +9,6 @@
         var _hidePricesInput = null;
         var _includeTicketsInput = null;
         var _printDailySummary = null;
-        var _orderAndLoadSummaryReport = null;
         var _printDailyDetail = null;
         var _printOrdersForTruck = null;
         var _printDailyDetailWithSeparatePrices = null;
@@ -49,7 +48,6 @@
             _includeTicketsInput = _$form.find("#IncludeTickets");
 
             _printDailySummary = _$form.find("#PrintDailySummary");
-            _orderAndLoadSummaryReport = _$form.find("#OrderAndLoadSummaryReport");
             _printDailyDetail = _$form.find("#PrintDailyDetail");
             _printOrdersForTruck = _$form.find("#PrintOrdersForTruck");
             _printDailyDetailWithSeparatePrices = _$form.find("#PrintDailyDetailWithSeparatePrices");
@@ -58,7 +56,7 @@
             var printOrdersOptions = _$form.find('[name="PrintOrdersOption"]');
             printOrdersOptions.on('change', function (e) {
                 if (!$(this).is(_printDailyDetail) && !$(this).is(_printOrdersForTruck) && !$(this).is(_printOrdersWithDeliveryInfo)
-                    && !$(this).is(_printDailySummary) && !$(this).is(_orderAndLoadSummaryReport)
+                    && !$(this).is(_printDailySummary)
                 ) {
                     _$form.find("#HidePricesBlock").hide();
                 } else {
@@ -107,22 +105,6 @@
                 reportParams = {
                     date: date,
                     hidePrices: hidePrices
-                };
-                _orderService.doesOrderSummaryReportHaveData(reportParams).done(function (result) {
-                    if (!result) {
-                        abp.message.warn(noDataMessage);
-                        return;
-                    }
-                    _modalManager.close();
-                    window.open(abp.appPath + 'app/orders/GetOrderSummaryReport?' + $.param(reportParams));
-                });
-            }
-
-            if (_orderAndLoadSummaryReport.is(":checked")) {
-                reportParams = {
-                    date: date,
-                    hidePrices: hidePrices,
-                    showLoadColumns: true
                 };
                 _orderService.doesOrderSummaryReportHaveData(reportParams).done(function (result) {
                     if (!result) {

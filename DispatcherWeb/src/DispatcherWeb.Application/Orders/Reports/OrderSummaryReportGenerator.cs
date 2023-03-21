@@ -14,9 +14,9 @@ namespace DispatcherWeb.Orders.Reports
             Section section = document.AddSection();
             section.PageSetup = document.DefaultPageSetup.Clone();
             //section.PageSetup.Orientation = Orientation.Landscape;
-            section.PageSetup.PageFormat = model.ShowLoadColumns ? PageFormat.Legal : PageFormat.Letter;
+            section.PageSetup.PageFormat = PageFormat.Letter;
             section.PageSetup.PageHeight = Unit.FromInch(8.5);
-            section.PageSetup.PageWidth = Unit.FromInch(model.ShowLoadColumns ? 14 : 11);
+            section.PageSetup.PageWidth = Unit.FromInch(11);
             section.PageSetup.TopMargin = Unit.FromCentimeter(1.2);
             section.PageSetup.LeftMargin = Unit.FromCentimeter(1.2);
             section.PageSetup.BottomMargin = Unit.FromCentimeter(1.2);
@@ -75,14 +75,6 @@ namespace DispatcherWeb.Orders.Reports
             table.AddColumn(Unit.FromCentimeter(1.2));
             //Trucks
             table.AddColumn(Unit.FromCentimeter(3.8));
-            if (model.ShowLoadColumns)
-            {
-                for (int j = 1; j < 6; j++)
-                {
-                    //Load 1-5
-                    table.AddColumn(Unit.FromCentimeter(7.8 / 5)); //~1.55 each
-                }
-            }
 
             Row row = table.AddRow();
             row.Shading.Color = Colors.LightGray;
@@ -112,15 +104,6 @@ namespace DispatcherWeb.Orders.Reports
             cell.AddParagraph("# Of Trucks");
             cell = row.Cells[i++];
             cell.AddParagraph("Trucks");
-
-            if (model.ShowLoadColumns)
-            {
-                for (int j = 1; j < 6; j++)
-                {
-                    cell = row.Cells[i++];
-                    cell.AddParagraph("Load " + j);
-                }
-            }
 
             if (model.Items.Any())
             {
