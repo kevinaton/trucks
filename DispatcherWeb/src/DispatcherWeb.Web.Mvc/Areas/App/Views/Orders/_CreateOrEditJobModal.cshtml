@@ -1,6 +1,7 @@
 ﻿@using System.Threading.Tasks
 @using Abp.Configuration
 @using DispatcherWeb.Configuration
+@using DispatcherWeb.Designations;
 @using DispatcherWeb.Features
 @using Abp.Application.Features
 @using DispatcherWeb.Infrastructure
@@ -9,6 +10,7 @@
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @using Microsoft.EntityFrameworkCore
 @using DispatcherWeb.Authorization
+@inject IDesignationAppService DesignationAppService
 @model JobEditDto
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.OrderId > 0 ? "Edit Job" : "Add Job"))
 
@@ -72,7 +74,7 @@
             </div>
             <div class="col-6 form-group">
                 <label class="required-label">@L("Designation")</label>
-                <select class="form-control order-line-field" required asp-for="Designation" asp-items="Html.GetEnumSelectList<DesignationEnum>()">
+                <select class="form-control order-line-field" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation).ToSelectListItemsAsync()">
                     <option value="">Select a designation</option>
                 </select>
             </div>
@@ -261,6 +263,21 @@
                 <div class="col-12 form-group">
                     <label>@L("Note")</label>
                     <textarea class="form-control order-line-field" rows="5" asp-for="Note"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group mt-2 mb-1">
+                    <label asp-for="AutoGenerateTicketNumber" class="m-checkbox">
+                        <input type="checkbox" id="AutoGenerateTicketNumber" name="AutoGenerateTicketNumber" value="true" @Html.Raw(!Model.AutoGenerateTicketNumber ? "" : "checked=\"checked\"")>
+                        @L("AutoGenerateTicketNumber")
+                        <span></span>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group" style="display: none">
+                    <label asp-for="TicketNumber">@L("TicketNumber")</label>
+                    <input class="form-control" type="text" asp-for="TicketNumber" maxlength="@DispatcherWeb.Infrastructure.EntityStringFieldLengths.Ticket.TicketNumber">
                 </div>
             </div>
         </div>

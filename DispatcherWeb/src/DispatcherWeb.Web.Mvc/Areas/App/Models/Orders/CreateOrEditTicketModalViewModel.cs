@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders;
 
 namespace DispatcherWeb.Web.Areas.App.Models.Orders
@@ -11,7 +12,7 @@ namespace DispatcherWeb.Web.Areas.App.Models.Orders
 
         public int Id { get; set; }
 
-        [StringLength(Ticket.MaxTicketNumberLength)]
+        [StringLength(EntityStringFieldLengths.Ticket.TicketNumber)]
         [Required]
         public string TicketNumber { get; set; }
 

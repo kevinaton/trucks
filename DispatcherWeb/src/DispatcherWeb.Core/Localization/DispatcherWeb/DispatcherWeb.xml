@@ -1786,5 +1786,15 @@
 		<text name="SendHostEmails">Send host emails</text>
 		<text name="HostEmailsHeaderInfo">Manage your host emails</text>
 		<text name="SendNewHostEmail">Send New Email</text>
+		<text name="AllowCounterSales">Allow counter sales</text>
+		<text name="DefaultLoadAtLocation">Default "Load At" Location</text>
+		<text name="AutoGenerateTicketNumberOnCounterSales">Auto-generate ticket number on counter sales</text>
+		<text name="AutoGenerateTicketNumber">Auto-generate ticket number</text>
+		<text name="DefaultAutoGenerateTicket">Default "Auto-generate Ticket"</text>
+		<text name="DefaultsForAddJobDialog">Defaults for "Add Job" dialog</text>
+		<text name="DefaultDesignationToCounterSales">Default designation to "Counter Sales"</text>
+		<text name="DefaultItem">Default "Item"</text>
+		<text name="DefaultMaterialUOM">Default "Material UOM"</text>
+		<text name="CCMeOnInvoices">CC me on invoices</text>
 	</texts>
 </localizationDictionary>

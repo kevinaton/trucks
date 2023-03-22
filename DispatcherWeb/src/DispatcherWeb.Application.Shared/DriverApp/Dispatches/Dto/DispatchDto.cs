@@ -47,7 +47,7 @@ namespace DispatcherWeb.DriverApp.Dispatches.Dto
                 var material = $"{MaterialQuantity?.ToString(Utilities.NumberFormatWithoutRounding) ?? "-"} {MaterialUOM} {Item}";
                 var freight = $"{FreightQuantity?.ToString(Utilities.NumberFormatWithoutRounding) ?? "-"} {FreightUOM} {Item}";
 
-                if (Designation == DesignationEnum.MaterialOnly)
+                if (Designation.MaterialOnly())
                 {
                     return material;
                 }

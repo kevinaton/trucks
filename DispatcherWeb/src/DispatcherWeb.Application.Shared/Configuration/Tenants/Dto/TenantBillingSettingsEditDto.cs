@@ -8,6 +8,7 @@ namespace DispatcherWeb.Configuration.Tenants.Dto
     {
         public string LegalName { get; set; }
         public string Address { get; set; }
+        public string PhoneNumber { get; set; }
         public string RemitToInformation { get; set; }
         public string DefaultMessageOnInvoice { get; set; }
         public string InvoiceEmailSubjectTemplate { get; set; }

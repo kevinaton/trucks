@@ -1,5 +1,8 @@
-﻿@using DispatcherWeb.Services.Dto
+﻿@using DispatcherWeb.Designations;
+@using DispatcherWeb.Infrastructure.Extensions;
+@using DispatcherWeb.Services.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@inject IDesignationAppService DesignationAppService
 @model ServicePriceEditDto
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Price" : "Create new price"))
 
@@ -10,7 +13,7 @@
         <input type="hidden" asp-for="ServiceId" />
         <div class="form-group">
             <label class="required-label">@L("Designation")</label>
-            <select class="form-control" required asp-for="Designation" id="ServicePrice_Designation" asp-items="Html.GetEnumSelectList<DesignationEnum>()">
+            <select class="form-control" required asp-for="Designation" id="ServicePrice_Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation).ToSelectListItemsAsync()">
                 <option value="">Select a designation</option>
             </select>
         </div>

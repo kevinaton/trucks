@@ -324,7 +324,8 @@
         backhaulFreightAndMaterial: 9,
         disposal: 6,
         backHaulFreightAndDisposal: 7,
-        straightHaulFreightAndDisposal: 8
+        straightHaulFreightAndDisposal: 8,
+        counterSale: 10
     };
     abp.enums.designations = {
         hasMaterial: [
@@ -333,10 +334,12 @@
             abp.enums.designation.backhaulFreightAndMaterial,
             abp.enums.designation.disposal,
             abp.enums.designation.backHaulFreightAndDisposal,
-            abp.enums.designation.straightHaulFreightAndDisposal
+            abp.enums.designation.straightHaulFreightAndDisposal,
+            abp.enums.designation.counterSale
         ],
         materialOnly: [
-            abp.enums.designation.materialOnly
+            abp.enums.designation.materialOnly,
+            abp.enums.designation.counterSale
         ],
         freightOnly: [
             abp.enums.designation.freightOnly,

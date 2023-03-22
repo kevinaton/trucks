@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Attributes;
 using DispatcherWeb.Orders;
 
@@ -23,7 +24,7 @@ namespace DispatcherWeb.Trucks
         [MileageColumn]
         public decimal? Odometer { get; set; }
 
-        [StringLength(Ticket.MaxTicketNumberLength)]
+        [StringLength(EntityStringFieldLengths.Ticket.TicketNumber)]
         public string TicketNumber { get; set; }
     }
 }

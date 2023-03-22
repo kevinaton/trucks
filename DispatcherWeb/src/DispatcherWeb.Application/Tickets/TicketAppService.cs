@@ -216,7 +216,7 @@ namespace DispatcherWeb.Tickets
             }
             ticket.CustomerId = orderLineData.CustomerId;
             ticket.ServiceId = orderLineData.ServiceId;
-            if (orderLineData.Designation == DesignationEnum.MaterialOnly || orderLineData.Designation == DesignationEnum.FreightAndMaterial)
+            if (orderLineData.Designation.MaterialOnly() || orderLineData.Designation == DesignationEnum.FreightAndMaterial)
             {
                 ticket.UnitOfMeasureId = orderLineData.MaterialUomId;
             }

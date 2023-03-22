@@ -214,6 +214,7 @@ namespace DispatcherWeb
                 case DesignationEnum.Disposal:
                 case DesignationEnum.BackHaulFreightAndDisposal:
                 case DesignationEnum.StraightHaulFreightAndDisposal:
+                case DesignationEnum.CounterSale:
                     return true;
             }
             return false;
@@ -221,7 +222,13 @@ namespace DispatcherWeb
 
         public static bool MaterialOnly(this DesignationEnum val)
         {
-            return val == DesignationEnum.MaterialOnly;
+            switch (val)
+            {
+                case DesignationEnum.MaterialOnly:
+                case DesignationEnum.CounterSale:
+                    return true;
+            }
+            return false;
         }
 
         public static bool FreightOnly(this DesignationEnum val)

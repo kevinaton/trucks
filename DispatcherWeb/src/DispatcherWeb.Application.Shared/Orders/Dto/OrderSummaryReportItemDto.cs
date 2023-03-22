@@ -47,7 +47,7 @@ namespace DispatcherWeb.Orders.Dto
 
             public string GetDisplayValue()
             {
-                if (Designation == DesignationEnum.MaterialOnly)
+                if (Designation.MaterialOnly())
                 {
                     return $"{ServiceName}   {MaterialQuantity:f2} {MaterialUom}";
                 }
