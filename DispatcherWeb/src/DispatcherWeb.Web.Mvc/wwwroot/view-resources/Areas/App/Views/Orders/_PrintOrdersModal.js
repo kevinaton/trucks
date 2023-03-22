@@ -4,13 +4,11 @@
         var _modalManager;
         var _orderService = abp.services.app.order;
         var _$form = null;
-        var _truckDropdown = null;
         var _dateInput = null;
         var _hidePricesInput = null;
         var _includeTicketsInput = null;
         var _printDailySummary = null;
         var _printDailyDetail = null;
-        var _printOrdersForTruck = null;
         var _printOrdersWithDeliveryInfo = null;
 
         this.init = function (modalManager) {
@@ -30,14 +28,6 @@
 
             abp.helper.ui.initControls();
 
-            _truckDropdown = _$form.find("#TruckId");
-            _truckDropdown.select2Init({
-                abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-                abpServiceParams: { includeLeaseHaulerTrucks: true },
-                showAll: true,
-                allowClear: false
-            });
-
             _dateInput = _$form.find("#DateFilter");
             //_dateInput.val(moment().format("MM/DD/YYYY"));
             _dateInput.datepickerInit();
@@ -47,22 +37,9 @@
 
             _printDailySummary = _$form.find("#PrintDailySummary");
             _printDailyDetail = _$form.find("#PrintDailyDetail");
-            _printOrdersForTruck = _$form.find("#PrintOrdersForTruck");
             _printOrdersWithDeliveryInfo = _$form.find("#PrintOrdersWithDeliveryInfo");
             var printOrdersOptions = _$form.find('[name="PrintOrdersOption"]');
             printOrdersOptions.on('change', function (e) {
-                if (!$(this).is(_printDailyDetail) && !$(this).is(_printOrdersForTruck) && !$(this).is(_printOrdersWithDeliveryInfo)
-                    && !$(this).is(_printDailySummary)
-                ) {
-                    _$form.find("#HidePricesBlock").hide();
-                } else {
-                    _$form.find("#HidePricesBlock").show();
-                }
-                if (!$(this).is(_printOrdersForTruck)) {
-                    _$form.find("#SelectTruckBlock").hide();
-                } else {
-                    _$form.find("#SelectTruckBlock").show();
-                }
                 if (!$(this).is(_printOrdersWithDeliveryInfo)) {
                     _$form.find("#IncludeTicketsBlock").hide();
                 } else {
@@ -85,14 +62,8 @@
                 return;
             }
 
-            var truckId = _truckDropdown.val();
             var hidePrices = _hidePricesInput.is(":checked");
             var includeTickets = _includeTicketsInput.is(":checked");
-
-            if (_printOrdersForTruck.is(":checked") && !truckId) {
-                abp.message.warn("Please select a truck");
-                return;
-            }
 
             var noDataMessage = 'There are no orders to print for ' + date + '.';
             var reportParams = {};
@@ -115,15 +86,6 @@
             if (_printDailyDetail.is(":checked")) {
                 reportParams = {
                     date: date,
-                    hidePrices: hidePrices
-                };
-                printWorkOrderReport(reportParams);
-            }
-
-            if (_printOrdersForTruck.is(":checked")) {
-                reportParams = {
-                    date: date,
-                    truckId: truckId,
                     hidePrices: hidePrices
                 };
                 printWorkOrderReport(reportParams);
