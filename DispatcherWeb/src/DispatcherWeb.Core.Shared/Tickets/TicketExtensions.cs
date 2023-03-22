@@ -16,7 +16,7 @@
 
         public static (decimal? materialQuantity, decimal? freightQuantity) GetMaterialAndFreightQuantity(this ITicketQuantity ticket)
         {
-            if (ticket.Designation == DesignationEnum.MaterialOnly)
+            if (ticket.Designation.MaterialOnly())
             {
                 return (ticket.Quantity, null); //quantity is material
             }
@@ -45,7 +45,7 @@
 
         public static (bool useMaterial, bool useFreight) GetAmountTypeToUse(this ITicketQuantity ticket)
         {
-            if (ticket.Designation == DesignationEnum.MaterialOnly)
+            if (ticket.Designation.MaterialOnly())
             {
                 return (true, false); //quantity is material
             }

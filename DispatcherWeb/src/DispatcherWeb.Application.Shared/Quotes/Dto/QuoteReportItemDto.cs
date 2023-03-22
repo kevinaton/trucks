@@ -34,7 +34,7 @@ namespace DispatcherWeb.Quotes.Dto
                 var material = $"{MaterialQuantity?.ToString(Utilities.NumberFormatWithoutRounding) ?? "-"} {MaterialUomName}";
                 var freight = $"{FreightQuantity?.ToString(Utilities.NumberFormatWithoutRounding) ?? "-"} {FreightUomName}";
 
-                if (Designation == DesignationEnum.MaterialOnly)
+                if (Designation.MaterialOnly())
                 {
                     return material;
                 }

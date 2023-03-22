@@ -46,7 +46,7 @@ namespace DispatcherWeb.Orders.Dto
             var material = $"{materialQuantityToUse?.ToString(Utilities.NumberFormatWithoutRounding) ?? "-"} {MaterialUomName}";
             var freight = $"{freightQuantityToUse?.ToString(Utilities.NumberFormatWithoutRounding) ?? "-"} {FreightUomName}";
 
-            if (Designation == DesignationEnum.MaterialOnly)
+            if (Designation.MaterialOnly())
             {
                 return material;
             }
