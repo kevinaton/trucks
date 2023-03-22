@@ -11,8 +11,6 @@
         var _printDailySummary = null;
         var _printDailyDetail = null;
         var _printOrdersForTruck = null;
-        var _printDailyDetailWithSeparatePrices = null;
-        var _printDailyDetailForBackOffice = null;
         var _printOrdersWithDeliveryInfo = null;
 
         this.init = function (modalManager) {
@@ -50,8 +48,6 @@
             _printDailySummary = _$form.find("#PrintDailySummary");
             _printDailyDetail = _$form.find("#PrintDailyDetail");
             _printOrdersForTruck = _$form.find("#PrintOrdersForTruck");
-            _printDailyDetailWithSeparatePrices = _$form.find("#PrintDailyDetailWithSeparatePrices");
-            _printDailyDetailForBackOffice = _$form.find("#PrintDailyDetailForBackOffice");
             _printOrdersWithDeliveryInfo = _$form.find("#PrintOrdersWithDeliveryInfo");
             var printOrdersOptions = _$form.find('[name="PrintOrdersOption"]');
             printOrdersOptions.on('change', function (e) {
@@ -130,16 +126,6 @@
                     truckId: truckId,
                     hidePrices: hidePrices
                 };
-                printWorkOrderReport(reportParams);
-            }
-
-            if (_printDailyDetailWithSeparatePrices.is(":checked")) {
-                reportParams = app.order.getOrderWithSeparatePricesReportOptions({ date: date });
-                printWorkOrderReport(reportParams);
-            }
-
-            if (_printDailyDetailForBackOffice.is(":checked")) {
-                reportParams = app.order.getBackOfficeReportOptions({ date: date });
                 printWorkOrderReport(reportParams);
             }
 
