@@ -74,7 +74,7 @@
             </div>
             <div class="col-6 form-group">
                 <label class="required-label">@L("Designation")</label>
-                <select class="form-control order-line-field" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation)">
+                <select class="form-control order-line-field" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation).ToSelectListItemsAsync()">
                     <option value="">Select a designation</option>
                 </select>
             </div>

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Designations
 {
     public interface IDesignationAppService
     {
-        Task<IEnumerable<SelectListItem>> GetDesignationSelectListItemsAsync(DesignationEnum? selectedDesignation = null);
+        Task<List<SelectListDto>> GetDesignationSelectListItemsAsync(DesignationEnum? selectedDesignation = null);
     }
 }

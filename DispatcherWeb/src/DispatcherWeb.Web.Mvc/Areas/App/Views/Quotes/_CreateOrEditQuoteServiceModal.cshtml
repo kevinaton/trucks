@@ -1,6 +1,7 @@
 ﻿@using System.Threading.Tasks
 @using DispatcherWeb.Designations;
 @using DispatcherWeb.Infrastructure
+@using DispatcherWeb.Infrastructure.Extensions;
 @using DispatcherWeb.Quotes.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @using DispatcherWeb.Authorization
@@ -14,7 +15,7 @@
         <input type="hidden" asp-for="QuoteId" />
         <div class="form-group">
             <label class="required-label">@L("Designation")</label>
-            <select class="form-control" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation)">
+            <select class="form-control" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation).ToSelectListItemsAsync()">
                 <option value="">Select a designation</option>
             </select>
         </div>

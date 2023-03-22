@@ -1,4 +1,5 @@
 ﻿@using DispatcherWeb.Designations;
+@using DispatcherWeb.Infrastructure.Extensions;
 @using DispatcherWeb.Services.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @inject IDesignationAppService DesignationAppService
@@ -12,7 +13,7 @@
         <input type="hidden" asp-for="ServiceId" />
         <div class="form-group">
             <label class="required-label">@L("Designation")</label>
-            <select class="form-control" required asp-for="Designation" id="ServicePrice_Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation)">
+            <select class="form-control" required asp-for="Designation" id="ServicePrice_Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation).ToSelectListItemsAsync()">
                 <option value="">Select a designation</option>
             </select>
         </div>

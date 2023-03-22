@@ -1,5 +1,6 @@
 ﻿@using System.Threading.Tasks
 @using DispatcherWeb.Designations
+@using DispatcherWeb.Infrastructure.Extensions;
 @using DispatcherWeb.Projects.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @inject IDesignationAppService DesignationAppService
@@ -12,7 +13,7 @@
         <input type="hidden" asp-for="ProjectId" />
         <div class="form-group">
             <label class="required-label">@L("Designation")</label>
-            <select class="form-control" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation)">
+            <select class="form-control" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation).ToSelectListItemsAsync()">
                 <option value="">Select a designation</option>
             </select>
         </div>

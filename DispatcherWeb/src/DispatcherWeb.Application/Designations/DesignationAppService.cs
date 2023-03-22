@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Configuration;
 using DispatcherWeb.Configuration;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Designations
 {
@@ -14,9 +14,9 @@ namespace DispatcherWeb.Designations
         {
         }
 
-        public async Task<IEnumerable<SelectListItem>> GetDesignationSelectListItemsAsync(DesignationEnum? selectedDesignation = null)
+        public async Task<List<SelectListDto>> GetDesignationSelectListItemsAsync(DesignationEnum? selectedDesignation = null)
         {
-            var designationList = new List<SelectListItem>();
+            var designationList = new List<SelectListDto>();
             designationList.Add(GetSelectListItemFromEnum(DesignationEnum.FreightOnly));
             designationList.Add(GetSelectListItemFromEnum(DesignationEnum.MaterialOnly));
             
@@ -36,12 +36,12 @@ namespace DispatcherWeb.Designations
             return designationList;
         }
 
-        public static SelectListItem GetSelectListItemFromEnum(DesignationEnum designation)
+        public static SelectListDto GetSelectListItemFromEnum(DesignationEnum designation)
         {
-            return new SelectListItem
+            return new SelectListDto
             {
-                Value = ((int)designation).ToString(),
-                Text = designation.GetDisplayName()
+                Id = ((int)designation).ToString(),
+                Name = designation.GetDisplayName()
             };
         }
     }
