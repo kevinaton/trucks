@@ -1794,7 +1794,7 @@
 		<text name="DefaultsForAddJobDialog">Defaults for "Add Job" dialog</text>
 		<text name="DefaultDesignationToCounterSales">Default designation to "Counter Sales"</text>
 		<text name="DefaultItem">Default "Item"</text>
-		<text name="DefaultMaterialUoM">Default "Material UoM"</text>
+		<text name="DefaultMaterialUOM">Default "Material UOM"</text>
 		<text name="CCMeOnInvoices">CC me on invoices</text>
 	</texts>
 </localizationDictionary>
