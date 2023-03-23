@@ -2810,7 +2810,6 @@ namespace DispatcherWeb.Orders
                     .WhereIf(input.Ids?.Any() == true, x => input.Ids.Contains(x.Id))
                     .WhereIf(input.Date.HasValue, x => x.Order.DeliveryDate == input.Date)
                     //.Where(x => x.OfficeId == OfficeId)
-                    .WhereIf(input.TruckId.HasValue, x => x.Order.OrderLines.Any(ol => ol.OrderLineTrucks.Any(olt => olt.TruckId == input.TruckId)))
                     .GetWorkOrderReportDtoQuery(input, OfficeId);
             }
             else
@@ -2819,7 +2818,6 @@ namespace DispatcherWeb.Orders
                     .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
                     .WhereIf(input.Ids?.Any() == true, x => input.Ids.Contains(x.Id))
                     .WhereIf(input.Date.HasValue, x => x.DeliveryDate == input.Date && (x.LocationId == OfficeId || x.SharedOrders.Any(s => s.OfficeId == OfficeId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(s => s.OfficeId == OfficeId))))
-                    .WhereIf(input.TruckId.HasValue, x => x.OrderLines.Any(ol => ol.OrderLineTrucks.Any(olt => olt.TruckId == input.TruckId)))
                     .GetWorkOrderReportDtoQuery(input, OfficeId);
             }
         }
@@ -2834,7 +2832,6 @@ namespace DispatcherWeb.Orders
             var data = new OrderSummaryReportDto
             {
                 Date = input.Date,
-                ShowLoadColumns = input.ShowLoadColumns,
                 HidePrices = input.HidePrices,
                 Items = items,
                 UseShifts = await SettingManager.UseShifts(),

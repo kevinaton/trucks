@@ -221,6 +221,13 @@
             modalSize: 'lg'
         });
 
+        var _specifyPrintOptionsModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/SpecifyPrintOptionsModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_SpecifyPrintOptionsModal.js',
+            modalClass: 'SpecifyPrintOptionsModal',
+            modalSize: 'sm'
+        });
+
         var _reassignTrucksModal = abp.helper.createModal('ReassignTrucks', 'Scheduling');
 
         var _createOrEditLeaseHaulerRequestModal = abp.helper.createModal('CreateOrEditLeaseHaulerRequest', 'LeaseHaulerRequests');
@@ -2150,6 +2157,47 @@
                 shift: filterData.shift,
                 officeId: filterData.officeId,
                 officeName: filterData.officeName
+            });
+        });
+
+        $("#PrintScheduleButton").click(async function (e) {
+            e.preventDefault();
+            var printOptions = await _specifyPrintOptionsModal.open().then((modal, modalObject) => {
+                return modalObject.getResultPromise();
+            });
+
+            var date = _dtHelper.getFilterData().date;
+            var reportParams = {
+                date: date,
+                ...printOptions
+            };
+            _orderService.doesOrderSummaryReportHaveData(reportParams).done(function (result) {
+                if (!result) {
+                    abp.message.warn('There are no orders to print for ' + date + '.');
+                    return;
+                }
+                window.open(abp.appPath + 'app/orders/GetOrderSummaryReport?' + $.param(reportParams));
+            });
+        });
+
+        $("#PrintAllOrdersButton").click(async function (e) {
+            e.preventDefault();
+            var printOptions = await _specifyPrintOptionsModal.open().then((modal, modalObject) => {
+                return modalObject.getResultPromise();
+            });
+
+            var date = _dtHelper.getFilterData().date;
+            var reportParams = {
+                date: date,
+                splitRateColumn: true,
+                ...printOptions
+            };
+            _orderService.doesWorkOrderReportHaveData(reportParams).done(function (result) {
+                if (!result) {
+                    abp.message.warn('There are no orders to print for ' + date + '.');
+                    return;
+                }
+                window.open(abp.appPath + 'app/orders/GetWorkOrderReport?' + $.param(reportParams));
             });
         });
 

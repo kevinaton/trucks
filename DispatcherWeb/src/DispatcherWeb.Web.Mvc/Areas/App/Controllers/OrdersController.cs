@@ -178,15 +178,21 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_PrintOrders)]
-        public PartialViewResult PrintOrdersModal()
+        public PartialViewResult PrintOrdersWithDeliveryInfoModal()
         {
-            return PartialView("_PrintOrdersModal");
+            return PartialView("_PrintOrdersWithDeliveryInfoModal");
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_PrintOrders)]
         public PartialViewResult PrintOrderWithDeliveryInfoModal(EntityDto model)
         {
             return PartialView("_PrintOrderWithDeliveryInfoModal", model);
+        }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_PrintOrders)]
+        public PartialViewResult SpecifyPrintOptionsModal()
+        {
+            return PartialView("_SpecifyPrintOptionsModal");
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_SendOrdersToDrivers)]

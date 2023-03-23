@@ -234,16 +234,16 @@
 
         //Print Orders
 
-        var printOrdersModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Orders/PrintOrdersModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_PrintOrdersModal.js',
-            modalClass: 'PrintOrdersModal',
+        var printOrdersWithDeliveryInfoModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/PrintOrdersWithDeliveryInfoModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_PrintOrdersWithDeliveryInfoModal.js',
+            modalClass: 'PrintOrdersWithDeliveryInfoModal',
             modalSize: 'sm'
         });
 
-        $('#PrintOrdersNavbarItem').click(function (e) {
+        $('#PrintOrdersWithDeliveryInfoNavbarItem').click(function (e) {
             e.preventDefault();
-            printOrdersModal.open();
+            printOrdersWithDeliveryInfoModal.open();
         });
 
         //Payment Reconciliation Report
