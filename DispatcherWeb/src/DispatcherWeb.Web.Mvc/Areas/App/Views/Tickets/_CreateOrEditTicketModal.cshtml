@@ -5,6 +5,7 @@
 @using DispatcherWeb.Tickets.Dto
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @using DispatcherWeb.Authorization
+@using DispatcherWeb.Infrastructure
 @model TicketEditDto
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Ticket: " + Model.TicketNumber : "Create new Ticket"))
 @{
@@ -75,7 +76,7 @@
         </div>
         <div class="form-group">
             <label class="required-label" asp-for="TicketNumber">@L("TicketNumber")</label>
-            <input class="form-control" type="text" asp-for="TicketNumber" required maxlength="@Ticket.MaxTicketNumberLength">
+            <input class="form-control" type="text" asp-for="TicketNumber" required maxlength="@EntityStringFieldLengths.Ticket.TicketNumber">
         </div>
         <div class="form-group">
             <label class="required-label" asp-for="Quantity">@L("Quantity")</label>

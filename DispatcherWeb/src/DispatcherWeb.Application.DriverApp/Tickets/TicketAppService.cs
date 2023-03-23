@@ -86,7 +86,7 @@ namespace DispatcherWeb.DriverApp.Tickets
                 ticket.CustomerId = dispatchData.CustomerId;
                 ticket.ServiceId = dispatchData.ServiceId;
                 ticket.DriverId = dispatchData.DriverId;
-                ticket.UnitOfMeasureId = dispatchData.Designation == DesignationEnum.MaterialOnly || dispatchData.Designation == DesignationEnum.FreightAndMaterial
+                ticket.UnitOfMeasureId = dispatchData.Designation.MaterialOnly() || dispatchData.Designation == DesignationEnum.FreightAndMaterial
                                    ? dispatchData.MaterialUomId
                                    : dispatchData.FreightUomId;
                 ticket.TenantId = dispatchData.TenantId;

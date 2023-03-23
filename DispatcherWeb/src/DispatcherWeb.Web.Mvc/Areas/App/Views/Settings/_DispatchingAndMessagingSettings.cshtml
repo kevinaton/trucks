@@ -69,6 +69,39 @@
                                 <span></span>
                             </label>
                         </div>
+                        <div class="form-group margin-top-20">
+                            <label for="AllowCounterSales" class="m-checkbox col-lg-12">
+                                <input id="AllowCounterSales" type="checkbox" name="AllowCounterSales" value="true" @(Model.AllowCounterSales ? "checked=\"checked\"" : "")>
+                                @L("AllowCounterSales")
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="DefaultDesignationToCounterSalesForTenant" class="m-checkbox">
+                                <input id="DefaultDesignationToCounterSalesForTenant" type="checkbox" name="DefaultDesignationToCounterSales" value="true" checked=@(Model.DefaultDesignationToCounterSales == true ? "checked" : null)>
+                                @L("DefaultDesignationToCounterSales")
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-8">
+                                <label for="DefaultLoadAtLocationIdForTenant">@L("DefaultLoadAtLocation")</label>
+                                <select class="form-control" id="DefaultLoadAtLocationIdForTenant" name="DefaultLoadAtLocationId">
+                                    <option value="">@L("SelectALocation")</option>
+                                    @if (Model.DefaultLoadAtLocationId > 0)
+                                    {
+                                        <option value="@Model.DefaultLoadAtLocationId" selected>@Model.DefaultLoadAtLocationName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="DefaultAutoGenerateTicketNumberForTenant" class="m-checkbox">
+                                <input id="DefaultAutoGenerateTicketNumberForTenant" type="checkbox" name="DefaultAutoGenerateTicketNumber" value="true" checked=@(Model.DefaultAutoGenerateTicketNumber == true ? "checked" : null)>
+                                @L("AutoGenerateTicketNumberOnCounterSales")
+                                <span></span>
+                            </label>
+                        </div>
                         @if (await FeatureChecker.IsEnabledAsync(AppFeatures.SmsIntegrationFeature))
                         {
                             <div class="form-group">

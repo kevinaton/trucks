@@ -37,6 +37,7 @@ using DispatcherWeb.Features;
 using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Templates;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders.Dto;
@@ -49,6 +50,7 @@ using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Services;
 using DispatcherWeb.Storage;
 using DispatcherWeb.SyncRequests;
+using DispatcherWeb.UnitsOfMeasure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using MigraDoc.DocumentObjectModel;
@@ -75,6 +77,9 @@ namespace DispatcherWeb.Orders
         private readonly IRepository<Service> _serviceRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<FuelSurchargeCalculation> _fuelSurchargeCalculationRepository;
+        private readonly IRepository<Location> _locationRepository;
+        private readonly IRepository<UnitOfMeasure> _unitOfMeasureRepository;
+        private readonly IRepository<Ticket> _ticketRepository;
         private readonly IOrderLineUpdaterFactory _orderLineUpdaterFactory;
         private readonly IDriverApplicationPushSender _driverApplicationPushSender;
         private readonly ISyncRequestSender _syncRequestSender;
@@ -109,6 +114,9 @@ namespace DispatcherWeb.Orders
             IRepository<Service> serviceRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<FuelSurchargeCalculation> fuelSurchargeCalculationRepository,
+            IRepository<Location> locationRepository,
+            IRepository<UnitOfMeasure> unitOfMeasureRepository,
+            IRepository<Ticket> ticketRepository,
             IOrderLineUpdaterFactory orderLineUpdaterFactory,
             IDriverApplicationPushSender driverApplicationPushSender,
             ISyncRequestSender syncRequestSender,
@@ -138,6 +146,9 @@ namespace DispatcherWeb.Orders
             _orderEmailRepository = orderEmailRepository;
             _driverAssignmentRepository = driverAssignmentRepository;
             _fuelSurchargeCalculationRepository = fuelSurchargeCalculationRepository;
+            _locationRepository = locationRepository;
+            _unitOfMeasureRepository = unitOfMeasureRepository;
+            _ticketRepository = ticketRepository;
             _paymentRepository = paymentRepository;
             _orderPaymentRepository = orderPaymentRepository;
             _receiptRepository = receiptRepository;
@@ -427,6 +438,29 @@ namespace DispatcherWeb.Orders
                 editOrderLineModal.QuoteServiceId = model.QuoteServiceId;
 
                 var orderLine = await EditOrderLine(editOrderLineModal);
+
+                if (model.TicketId != null || !string.IsNullOrEmpty(model.TicketNumber) || model.AutoGenerateTicketNumber)
+                {
+                    var ticket = model.TicketId != null ? await _ticketRepository.GetAll()
+                        .Where(t => t.Id == model.TicketId)
+                        .FirstOrDefaultAsync() : null;
+
+                    if (ticket == null)
+                    {
+                        ticket = new Ticket
+                        {
+                            OrderLineId = orderLine.OrderLineId
+                        };
+                        await _ticketRepository.InsertAndGetIdAsync(ticket);
+                    }
+                    ticket.TicketNumber = model.TicketNumber;
+                    ticket.Quantity = model.MaterialQuantity ?? 0;
+
+                    if (model.AutoGenerateTicketNumber)
+                    {
+                        ticket.TicketNumber = "G-" + ticket.Id;
+                    }
+                }
 
                 await unitOfWork.CompleteAsync();
 
@@ -2103,9 +2137,69 @@ namespace DispatcherWeb.Orders
                     order.OfficeId = input.OfficeId.Value;
                     order.OfficeName = input.OfficeName;
                 }
+
+                if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales))
+                {
+                    orderLine.Designation = DesignationEnum.CounterSale;
+                }
+
+                var defaultLoadAtLocationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId);
+                if (defaultLoadAtLocationId > 0)
+                {
+                    var location = await _locationRepository.GetAll()
+                        .Where(x => x.Id == defaultLoadAtLocationId)
+                        .Select(x => new LocationNameDto
+                        {
+                            Name = x.Name,
+                            StreetAddress = x.StreetAddress,
+                            City = x.City,
+                            State = x.State
+                        })
+                        .FirstOrDefaultAsync();
+
+                    if (location != null)
+                    {
+                        orderLine.LoadAtId = defaultLoadAtLocationId;
+                        orderLine.LoadAt = location;
+                    }
+                }
+
+                var defaultServiceId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultServiceId);
+                if (defaultServiceId > 0)
+                {
+                    var service = await _serviceRepository.GetAll()
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.Service1
+                        })
+                        .FirstOrDefaultAsync(x => x.Id == defaultServiceId);
+                    if (service != null)
+                    {
+                        orderLine.ServiceId = defaultServiceId;
+                        orderLine.ServiceName = service.Service1;
+                    }
+                }
+
+                var defaultMaterialUomId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultMaterialUomId);
+                if (defaultMaterialUomId > 0)
+                {
+                    var query = await _unitOfMeasureRepository.GetAll()
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.Name
+                        })
+                        .FirstOrDefaultAsync(x => x.Id == defaultMaterialUomId);
+                    if (query != null)
+                    {
+                        orderLine.MaterialUomId = defaultMaterialUomId;
+                        orderLine.MaterialUomName = query.Name;
+                    }
+                }
             }
 
-            return new JobEditDto
+            var result = new JobEditDto
             {
                 OrderId = order.Id,
                 OrderLineId = orderLine.Id,
@@ -2167,6 +2261,31 @@ namespace DispatcherWeb.Orders
                 UpdateStaggeredTime = orderLine.UpdateStaggeredTime,
                 QuoteServiceId = orderLine.QuoteServiceId
             };
+
+            if (input.OrderLineId != null)
+            {
+                var ticket = await _ticketRepository.GetAll()
+                    .Select(t => new
+                    {
+                        t.Id,
+                        t.OrderLineId,
+                        t.TicketNumber,
+                    })
+                    .OrderBy(t => t.Id)
+                    .FirstOrDefaultAsync(t => t.OrderLineId == input.OrderLineId);
+                
+                if (ticket != null)
+                {
+                    result.TicketId = ticket.Id;
+                    result.TicketNumber = ticket.TicketNumber;
+                }
+            }
+            else
+            {
+                result.AutoGenerateTicketNumber = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber);
+            }
+
+            return result;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]

@@ -1885,7 +1885,7 @@ namespace DispatcherWeb.Dispatching
                         ServiceId = dispatchEntity.OrderLine.ServiceId,
                         DriverId = dispatchEntity.DriverId,
                         TicketDateTime = input.Info?.ActionTimeInUtc ?? Clock.Now, //dispatchEntity.OrderLine.Order.DeliveryDate?.Date.Add(Clock.Now.ConvertTimeZoneTo(timezone).TimeOfDay).ConvertTimeZoneFrom(timezone), //(dispatchEntity.OrderLine.Order.DateTime ?? DateTime.Today).Date.Add(input.Info.ActionTime.TimeOfDay),
-                        UnitOfMeasureId = dispatchEntity.OrderLine.Designation == DesignationEnum.MaterialOnly || dispatchEntity.OrderLine.Designation == DesignationEnum.FreightAndMaterial
+                        UnitOfMeasureId = dispatchEntity.OrderLine.Designation.MaterialOnly() || dispatchEntity.OrderLine.Designation == DesignationEnum.FreightAndMaterial
                             ? dispatchEntity.OrderLine.MaterialUomId
                             : dispatchEntity.OrderLine.FreightUomId,
                         TenantId = AbpSession.TenantId ?? 0

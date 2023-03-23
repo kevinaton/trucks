@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Abp;
 using Abp.Application.Features;
 using Abp.Authorization;
 using Abp.BackgroundJobs;
@@ -21,6 +22,7 @@ using Abp.Zero.Configuration;
 using Abp.Zero.Ldap.Configuration;
 using DispatcherWeb.Authentication;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration.Dto;
 using DispatcherWeb.Configuration.Host.Dto;
 using DispatcherWeb.Configuration.Tenants.Dto;
@@ -29,6 +31,7 @@ using DispatcherWeb.Drivers;
 using DispatcherWeb.Features;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Telematics;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
@@ -59,6 +62,7 @@ namespace DispatcherWeb.Configuration.Tenants
         private readonly IRepository<OrderLine> _orderLineRepository;
         private readonly IRepository<Service> _serviceRepository;
         private readonly IRepository<Office> _officeRepository;
+        private readonly IRepository<Location> _locationRepository;
         private readonly IDtdTrackerTelematics _dtdTrackerTelematics;
         private readonly IAbpZeroLdapModuleConfig _ldapModuleConfig;
 
@@ -79,6 +83,7 @@ namespace DispatcherWeb.Configuration.Tenants
             IRepository<OrderLine> orderLineRepository,
             IRepository<Service> serviceRepository,
             IRepository<Office> officeRepository,
+            IRepository<Location> locationRepository,
             IDtdTrackerTelematics dtdTrackerTelematics
             ) : base(emailSender, configurationAccessor)
         {
@@ -98,6 +103,7 @@ namespace DispatcherWeb.Configuration.Tenants
             _orderLineRepository = orderLineRepository;
             _serviceRepository = serviceRepository;
             _officeRepository = officeRepository;
+            _locationRepository = locationRepository;
             _dtdTrackerTelematics = dtdTrackerTelematics;
         }
 
@@ -363,6 +369,7 @@ namespace DispatcherWeb.Configuration.Tenants
             {
                 LegalName = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingLegalName),
                 Address = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingAddress),
+                PhoneNumber = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingPhoneNumber),
                 RemitToInformation = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.RemitToInformation),
                 DefaultMessageOnInvoice = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.DefaultMessageOnInvoice),
                 InvoiceEmailSubjectTemplate = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.EmailSubjectTemplate),
@@ -497,7 +504,7 @@ namespace DispatcherWeb.Configuration.Tenants
         private async Task<DispatchingAndMessagingSettingsEditDto> GetDispatchingAndMessagingSettingsAsync()
         {
             var timezone = await GetTimezone();
-            return new DispatchingAndMessagingSettingsEditDto
+            var result = new DispatchingAndMessagingSettingsEditDto
             {
                 DispatchVia = (DispatchVia)await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DispatchVia),
                 AllowSmsMessages = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowSmsMessages),
@@ -513,8 +520,33 @@ namespace DispatcherWeb.Configuration.Tenants
                 DispatchesLockedToTruck = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DispatchesLockedToTruck),
                 DefaultStartTime = (await SettingManager.GetSettingValueAsync<DateTime>(AppSettings.DispatchingAndMessaging.DefaultStartTime)).ConvertTimeZoneTo(timezone),
                 ShowTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule),
-                ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization)
+                ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization),
+                AllowCounterSales = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales),
+                DefaultDesignationToCounterSales = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, AbpSession.GetTenantId()),
+                DefaultAutoGenerateTicketNumber = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, AbpSession.GetTenantId())
             };
+
+            var loadAtId = await SettingManager.GetSettingValueForTenantAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, AbpSession.GetTenantId());
+            if (loadAtId > 0)
+            {
+                var loadAt = await _locationRepository.GetAll()
+                    .Where(x => x.Id == loadAtId)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        Location = new LocationNameDto
+                        {
+                            Name = x.Name,
+                            StreetAddress = x.StreetAddress,
+                            City = x.City,
+                            State = x.State,                            
+                        }
+                    }).FirstOrDefaultAsync();
+                result.DefaultLoadAtLocationId = loadAt?.Id;
+                result.DefaultLoadAtLocationName = loadAt?.Location.FormattedAddress;
+            }
+
+            return result;
         }
 
         private async Task<LeaseHaulerSettingsEditDto> GetLeaseHaulerSettingsEditDto()
@@ -907,6 +939,7 @@ namespace DispatcherWeb.Configuration.Tenants
         {
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TenantManagement.BillingLegalName, input.LegalName);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TenantManagement.BillingAddress, input.Address);
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TenantManagement.BillingPhoneNumber, input.PhoneNumber);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.RemitToInformation, input.RemitToInformation);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.DefaultMessageOnInvoice, input.DefaultMessageOnInvoice);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.EmailSubjectTemplate, input.InvoiceEmailSubjectTemplate);
@@ -1165,6 +1198,7 @@ namespace DispatcherWeb.Configuration.Tenants
         private async Task UpdateDispatchingAndMessagingSettingsAsync(DispatchingAndMessagingSettingsEditDto input)
         {
             var timezone = await GetTimezone();
+            var allowCounterSalesWasUnchecked = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales) && !input.AllowCounterSales;
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DispatchVia, input.DispatchVia.ToIntString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.AllowSmsMessages, input.AllowSmsMessages.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.SendSmsOnDispatching, input.SendSmsOnDispatching.ToIntString());
@@ -1180,6 +1214,23 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DefaultStartTime, input.DefaultStartTime.ConvertTimeZoneFrom(timezone).ToString("s"));
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, input.ShowTrailersOnSchedule.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.ValidateUtilization, input.ValidateUtilization.ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.AllowCounterSales, input.AllowCounterSales.ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.DefaultLoadAtLocationId ?? 0).ToString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, input.DefaultDesignationToCounterSales.ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
+            if (allowCounterSalesWasUnchecked)
+            {
+                var userIds = UserManager.Users.Select(x => x.Id).ToList();
+                foreach (var userId in userIds)
+                {
+                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, "false");
+                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, "0");
+                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultServiceId, "0");
+                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, "0");
+                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, "false");
+                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.CCMeOnInvoices, "true");
+                }
+            }
         }
 
         private async Task UpdateLeaseHaulerSettingsAsync(LeaseHaulerSettingsEditDto input)

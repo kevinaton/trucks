@@ -2148,8 +2148,12 @@
         $('#AddJobButton').click(function (e) {
             e.preventDefault();
             var filterData = _dtHelper.getFilterData();
+            var date = filterData.date;
+            if (abp.setting.getBoolean('App.DispatchingAndMessaging.DefaultDesignationToCounterSales')) {
+                date = moment().format('L');
+            }
             _createOrEditJobModal.open({
-                deliveryDate: filterData.date,
+                deliveryDate: date,
                 shift: filterData.shift,
                 officeId: filterData.officeId,
                 officeName: filterData.officeName

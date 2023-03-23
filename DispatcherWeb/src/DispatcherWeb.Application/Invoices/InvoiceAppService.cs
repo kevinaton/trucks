@@ -965,12 +965,13 @@ namespace DispatcherWeb.Invoices
 
             var body = ReplaceEmailBodyTemplateTokens(await SettingManager.GetSettingValueAsync(AppSettings.Invoice.EmailBodyTemplate), user.FirstName, user.LastName);
 
+            var ccMeOnInvoices = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.CCMeOnInvoices);
             return new EmailInvoicePrintOutDto
             {
                 InvoiceId = input.Id,
                 From = user.Email,
                 To = invoice.EmailAddress,
-                CC = user.Email,
+                CC = ccMeOnInvoices ? user.Email : null,
                 Subject = subject,
                 Body = body
             };
