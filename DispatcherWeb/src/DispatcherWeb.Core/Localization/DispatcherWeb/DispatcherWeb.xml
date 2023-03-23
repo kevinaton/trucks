@@ -1786,5 +1786,8 @@
 		<text name="SendHostEmails">Send host emails</text>
 		<text name="HostEmailsHeaderInfo">Manage your host emails</text>
 		<text name="SendNewHostEmail">Send New Email</text>
+		<text name="PrintSchedule">Print Schedule</text>
+		<text name="PrintAllOrders">Print All Orders</text>
+		<text name="DeliveryReport">Delivery Report</text>
 	</texts>
 </localizationDictionary>
