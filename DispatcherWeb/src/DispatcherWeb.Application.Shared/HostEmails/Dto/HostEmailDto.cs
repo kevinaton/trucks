@@ -17,8 +17,8 @@ namespace DispatcherWeb.HostEmails.Dto
 
         public string Subject { get; set; }
         public string Body { get; set; }
-        public int? SentEmailCount => GetReceiverCount(EmailDeliveryStatuses.Sent);
-        public int? DeliveredEmailCount => GetReceiverCount(EmailDeliveryStatus.Delivered);
+        public int? SentEmailCount => Receivers.Count(r => r.DeliveryStatus.HasValue);
+        public int? DeliveredEmailCount => GetReceiverCount(EmailDeliveryStatus.Delivered, EmailDeliveryStatus.Opened);
         public int? OpenedEmailCount => GetReceiverCount(EmailDeliveryStatus.Opened);
         public int? FailedEmailCount => GetReceiverCount(EmailDeliveryStatuses.Failed) 
             + (ProcessedAtDateTime.HasValue ? Receivers.Count(r => r.DeliveryStatus == null) : 0);
