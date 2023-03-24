@@ -378,36 +378,36 @@ namespace DispatcherWeb.Orders
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<EditOrderResult> EditJob(JobEditDto model)
         {
-            OrderEditDto editOrderModal;
+            OrderEditDto editOrderModel;
             using (var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
             {
-                editOrderModal = await GetOrderForEdit(new NullableIdDto(model.OrderId));
+                editOrderModel = await GetOrderForEdit(new NullableIdDto(model.OrderId));
                 await unitOfWork.CompleteAsync();
             }
-            editOrderModal.DeliveryDate = model.DeliveryDate;
-            editOrderModal.CustomerId = model.CustomerId;
-            editOrderModal.QuoteId = model.QuoteId;
-            editOrderModal.ChargeTo = model.ChargeTo;
-            editOrderModal.Priority = model.Priority;
-            editOrderModal.Shift = model.Shift;
-            editOrderModal.OfficeId = model.OfficeId;
-            editOrderModal.ProjectId = model.ProjectId;
-            editOrderModal.ContactId = model.ContactId;
-            editOrderModal.MaterialCompanyOrderId = model.MaterialCompanyOrderId;
-            editOrderModal.PONumber = model.PONumber;
-            editOrderModal.SpectrumNumber = model.SpectrumNumber;
-            editOrderModal.Directions = model.Directions;
+            editOrderModel.DeliveryDate = model.DeliveryDate;
+            editOrderModel.CustomerId = model.CustomerId;
+            editOrderModel.QuoteId = model.QuoteId;
+            editOrderModel.ChargeTo = model.ChargeTo;
+            editOrderModel.Priority = model.Priority;
+            editOrderModel.Shift = model.Shift;
+            editOrderModel.OfficeId = model.OfficeId;
+            editOrderModel.ProjectId = model.ProjectId;
+            editOrderModel.ContactId = model.ContactId;
+            editOrderModel.MaterialCompanyOrderId = model.MaterialCompanyOrderId;
+            editOrderModel.PONumber = model.PONumber;
+            editOrderModel.SpectrumNumber = model.SpectrumNumber;
+            editOrderModel.Directions = model.Directions;
 
             if ((TaxCalculationType)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.TaxCalculationType) == TaxCalculationType.NoCalculation)
             {
-                editOrderModal.SalesTax = model.SalesTax;
+                editOrderModel.SalesTax = model.SalesTax;
             }
             else
             {
-                editOrderModal.SalesTaxRate = model.SalesTaxRate;
+                editOrderModel.SalesTaxRate = model.SalesTaxRate;
             }
 
-            var editOrderResult = await EditOrder(editOrderModal);
+            var editOrderResult = await EditOrder(editOrderModel);
             if (!editOrderResult.Completed)
             {
                 return editOrderResult;
@@ -415,29 +415,39 @@ namespace DispatcherWeb.Orders
 
             using (var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
             {
-                var editOrderLineModal = await GetOrderLineForEdit(new GetOrderLineForEditInput(model.OrderLineId, editOrderResult.Id));
-                editOrderLineModal.JobNumber = model.JobNumber;
-                editOrderLineModal.Designation = model.Designation;
-                editOrderLineModal.LoadAtId = model.LoadAtId;
-                editOrderLineModal.DeliverToId = model.DeliverToId;
-                editOrderLineModal.ServiceId = model.ServiceId;
-                editOrderLineModal.FreightUomId = model.FreightUomId;
-                editOrderLineModal.MaterialUomId = model.MaterialUomId;
-                editOrderLineModal.FreightPricePerUnit = model.FreightPricePerUnit;
-                editOrderLineModal.MaterialPricePerUnit = model.MaterialPricePerUnit;
-                editOrderLineModal.FreightQuantity = model.FreightQuantity;
-                editOrderLineModal.MaterialQuantity = model.MaterialQuantity;
-                editOrderLineModal.FreightPrice = model.FreightPrice;
-                editOrderLineModal.MaterialPrice = model.MaterialPrice;
-                editOrderLineModal.LeaseHaulerRate = model.LeaseHaulerRate;
-                editOrderLineModal.NumberOfTrucks = model.NumberOfTrucks;
-                editOrderLineModal.IsMultipleLoads = model.IsMultipleLoads;
-                editOrderLineModal.TimeOnJob = model.TimeOnJob;
-                editOrderLineModal.ProductionPay = model.ProductionPay;
-                editOrderLineModal.Note = model.Note;
-                editOrderLineModal.QuoteServiceId = model.QuoteServiceId;
+                var editOrderLineModel = await GetOrderLineForEdit(new GetOrderLineForEditInput(model.OrderLineId, editOrderResult.Id));
+                editOrderLineModel.JobNumber = model.JobNumber;
+                editOrderLineModel.Designation = model.Designation;
+                editOrderLineModel.LoadAtId = model.LoadAtId;
+                editOrderLineModel.DeliverToId = model.DeliverToId;
+                editOrderLineModel.ServiceId = model.ServiceId;
+                editOrderLineModel.FreightUomId = model.FreightUomId;
+                editOrderLineModel.MaterialUomId = model.MaterialUomId;
+                editOrderLineModel.FreightPricePerUnit = model.FreightPricePerUnit;
+                editOrderLineModel.MaterialPricePerUnit = model.MaterialPricePerUnit;
+                editOrderLineModel.FreightQuantity = model.FreightQuantity;
+                editOrderLineModel.MaterialQuantity = model.MaterialQuantity;
+                editOrderLineModel.FreightPrice = model.FreightPrice;
+                editOrderLineModel.MaterialPrice = model.MaterialPrice;
+                editOrderLineModel.LeaseHaulerRate = model.LeaseHaulerRate;
+                editOrderLineModel.NumberOfTrucks = model.NumberOfTrucks;
+                editOrderLineModel.IsMultipleLoads = model.IsMultipleLoads;
+                editOrderLineModel.TimeOnJob = model.TimeOnJob;
+                editOrderLineModel.ProductionPay = model.ProductionPay;
+                editOrderLineModel.Note = model.Note;
+                editOrderLineModel.QuoteServiceId = model.QuoteServiceId;
 
-                var orderLine = await EditOrderLine(editOrderLineModal);
+                var orderLine = await EditOrderLine(editOrderLineModel);
+                await CurrentUnitOfWork.SaveChangesAsync();
+
+                if (model.OrderLineId == null)
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLine.OrderLineId);
+                    await orderLineUpdater.UpdateFieldAsync(x => x.IsComplete, true);
+                    await orderLineUpdater.SaveChangesAsync();
+                }
+
+                int? ticketId = null;
 
                 if (model.TicketId != null || !string.IsNullOrEmpty(model.TicketNumber) || model.AutoGenerateTicketNumber)
                 {
@@ -449,12 +459,26 @@ namespace DispatcherWeb.Orders
                     {
                         ticket = new Ticket
                         {
-                            OrderLineId = orderLine.OrderLineId
+                            OrderLineId = orderLine.OrderLineId,
+                            TicketDateTime = editOrderModel.DeliveryDate?.ConvertTimeZoneFrom(await GetTimezone()),
+                            CustomerId = editOrderModel.CustomerId,
+                            ServiceId = editOrderLineModel.ServiceId,
+                            LoadAtId = editOrderLineModel.LoadAtId,
+                            DeliverToId = editOrderLineModel.DeliverToId
                         };
+                        if (editOrderLineModel.Designation.MaterialOnly() || editOrderLineModel.Designation == DesignationEnum.FreightAndMaterial)
+                        {
+                            ticket.UnitOfMeasureId = editOrderLineModel.MaterialUomId;
+                        }
+                        else
+                        {
+                            ticket.UnitOfMeasureId = editOrderLineModel.FreightUomId;
+                        }
                         await _ticketRepository.InsertAndGetIdAsync(ticket);
                     }
                     ticket.TicketNumber = model.TicketNumber;
                     ticket.Quantity = model.MaterialQuantity ?? 0;
+                    ticketId = ticket.Id;
 
                     if (model.AutoGenerateTicketNumber)
                     {
@@ -470,7 +494,8 @@ namespace DispatcherWeb.Orders
                     Completed = editOrderResult.Completed,
                     HasZeroQuantityItems = editOrderResult.HasZeroQuantityItems,
                     NotAvailableTrucks = editOrderResult.NotAvailableTrucks,
-                    OrderLineId = orderLine.OrderLineId
+                    OrderLineId = orderLine.OrderLineId,
+                    TicketId = ticketId
                 };
             }
         }

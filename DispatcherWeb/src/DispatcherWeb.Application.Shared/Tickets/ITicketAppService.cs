@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using DispatcherWeb.Tickets.Dto;
+using MigraDoc.DocumentObjectModel;
 
 namespace DispatcherWeb.Tickets
 {
@@ -21,5 +22,6 @@ namespace DispatcherWeb.Tickets
         Task<TicketPhotoDto> GetTicketPhotosForInvoice(int invoiceId);
         Task<GetDriverForTicketTruckResult> GetDriverForTicketTruck(GetDriverForTicketTruckInput input);
         Task<GetTruckForTicketDriverResult> GetTruckForTicketDriver(GetTruckForTicketDriverInput input);
+        Task<Document> GetTicketPrintOut(GetTicketPrintOutInput input);
     }
 }

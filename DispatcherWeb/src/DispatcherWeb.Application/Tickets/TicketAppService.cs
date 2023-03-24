@@ -29,12 +29,14 @@ using DispatcherWeb.Services.Dto;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Tickets.Dto;
 using DispatcherWeb.Tickets.Exporting;
+using DispatcherWeb.Tickets.Reports;
 using DispatcherWeb.TimeOffs;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.UnitsOfMeasure;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MigraDoc.DocumentObjectModel;
 
 namespace DispatcherWeb.Tickets
 {
@@ -58,6 +60,7 @@ namespace DispatcherWeb.Tickets
         private readonly IRepository<TimeOff> _timeOffRepository;
         private readonly IRepository<Invoice> _invoiceRepository;
         private readonly IFuelSurchargeCalculator _fuelSurchargeCalculator;
+        private readonly TicketPrintOutGenerator _ticketPrintOutGenerator;
 
         public TicketAppService(
             IRepository<Ticket> ticketRepository,
@@ -76,7 +79,8 @@ namespace DispatcherWeb.Tickets
             IServiceAppService serviceAppService,
             IRepository<TimeOff> timeOffRepository,
             IRepository<Invoice> invoiceRepository,
-            IFuelSurchargeCalculator fuelSurchargeCalculator
+            IFuelSurchargeCalculator fuelSurchargeCalculator,
+            TicketPrintOutGenerator ticketPrintOutGenerator
         )
         {
             _ticketRepository = ticketRepository;
@@ -96,6 +100,7 @@ namespace DispatcherWeb.Tickets
             _timeOffRepository = timeOffRepository;
             _invoiceRepository = invoiceRepository;
             _fuelSurchargeCalculator = fuelSurchargeCalculator;
+            _ticketPrintOutGenerator = ticketPrintOutGenerator;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Tickets_Edit)]
@@ -1679,6 +1684,41 @@ namespace DispatcherWeb.Tickets
                 Date = dailyFuelCost.Date,
                 Cost = dailyFuelCost.Cost
             };
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
+        public async Task<Document> GetTicketPrintOut(GetTicketPrintOutInput input)
+        {
+            var data = await GetTicketPrintOutData(input);
+
+            Document report;
+
+            report = await _ticketPrintOutGenerator.GenerateReport(data);
+            return report;
+        }
+
+        private async Task<List<TicketPrintOutDto>> GetTicketPrintOutData(GetTicketPrintOutInput input)
+        {
+            var item = await _ticketRepository.GetAll()
+                .Where(x => input.TicketId == x.Id)
+                .Select(x => new TicketPrintOutDto
+                {
+                    TicketNumber = x.TicketNumber,
+                    TicketDateTime = x.TicketDateTime,
+                    CustomerName = x.Customer.Name,
+                    ServiceName = x.Service.Service1,
+                    MaterialQuantity = x.OrderLine.MaterialQuantity,
+                    MaterialUomName = x.OrderLine.MaterialUom.Name,
+                    Note = x.OrderLine.Note
+
+                }).FirstOrDefaultAsync();
+
+            item.LegalName = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingLegalName);
+            item.LegalAddress = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingAddress);
+            item.BillingPhoneNumber = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingPhoneNumber);
+            item.LogoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
+
+            return new List<TicketPrintOutDto> { item };
         }
 
         private async Task ThrowIfDriverHasTimeOffRequests(int? driverId, DateTime? date)
