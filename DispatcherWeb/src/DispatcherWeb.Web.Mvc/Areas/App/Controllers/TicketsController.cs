@@ -97,5 +97,12 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             Response.Headers.Add("Content-Disposition", "inline; filename=" + ticketPhotos.Filename.SanitizeFilename());
             return File(ticketPhotos.FileBytes, "application/zip");
         }
+
+        [AbpMvcAuthorize(AppPermissions.Pages_PrintOrders)]
+        public async Task<FileContentResult> GetTicketPrintOut(GetTicketPrintOutInput input)
+        {
+            var report = await _ticketService.GetTicketPrintOut(input);
+            return InlinePdfFile(report.SaveToBytesArray(), "TicketPrintOut.pdf");
+        }
     }
 }

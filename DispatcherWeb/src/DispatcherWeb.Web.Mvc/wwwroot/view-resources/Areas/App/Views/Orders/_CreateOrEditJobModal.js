@@ -455,6 +455,20 @@
                 _saveEventArgs.reloadFreightTotalIfNotOverridden = true;
                 setIsFreightPriceOverridden(true);
             });
+
+            _modalManager.getModal().find("#SaveJobButton").click(function (e) {
+                e.preventDefault();
+                saveJobAsync();
+            });
+
+            _modalManager.getModal().find("#SaveAndPrintButton").click(function (e) {
+                e.preventDefault();
+                saveJobAsync(function (saveResult) {
+                    _$form.find("#TicketId").val(saveResult.ticketId);
+                    window.open(abp.appPath + 'app/tickets/GetTicketPrintOut?ticketId=' + saveResult.ticketId);
+                });
+            });
+
             initOverrideButtons();
             disableProductionPayIfNeeded(false);
             disableQuoteRelatedFieldsIfNeeded();
@@ -472,15 +486,15 @@
         }
 
         function disableOrderEditForHaulingCompany() {
-            $('input,select,textarea').not('#SalesTaxRate, #FuelSurchargeCalculationId, #BaseFuelCost, .order-line-field').attr('disabled', true);
+            _$form.find('input,select,textarea').not('#SalesTaxRate, #FuelSurchargeCalculationId, #BaseFuelCost, .order-line-field').attr('disabled', true);
         }
 
         function disableJobEditIfNeeded() {
             if (!_permissions.edit) {
                 _$form.find('input,select,textarea,button').attr('disabled', true);
-                _modalManager.getModal().find('.save-button').hide();
+                _modalManager.getModal().find('.save-button-dropdown').hide();
             } else {
-                if ($("#MaterialCompanyOrderId").val()) {
+                if (_$form.find("#MaterialCompanyOrderId").val()) {
                     disableOrderEditForHaulingCompany();
                 }
             }
@@ -1029,7 +1043,7 @@
             return true;
         }
 
-        this.save = async function () {
+        var saveJobAsync = async function (callback) {
             if (!_$form.valid()) {
                 _$form.showValidateMessage();
                 return;
@@ -1106,6 +1120,7 @@
             _model.jobNumber = model.JobNumber;
             _model.note = model.Note;
             _model.autoGenerateTicketNumber = !!model.AutoGenerateTicketNumber;
+            _model.ticketId = model.TicketId;
             _model.ticketNumber = model.TicketNumber;
 
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
@@ -1145,6 +1160,9 @@
                         abp.notify.info('Saved successfully.');
                         abp.event.trigger('app.createOrEditJobModalSaved', result);
                         _modalManager.close();
+                        if (callback) {
+                            callback(result);
+                        }
                     }
 
                 }).always(function () {

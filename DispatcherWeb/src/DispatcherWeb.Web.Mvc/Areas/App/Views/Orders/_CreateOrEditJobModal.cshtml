@@ -18,6 +18,7 @@
     <form role="form" novalidate class="form-validation order-line-form">
         <input type="hidden" asp-for="OrderId" />
         <input type="hidden" asp-for="OrderLineId" />
+        <input type="hidden" asp-for="TicketId" />
         <input type="hidden" asp-for="IsMaterialPricePerUnitOverridden" />
         <input type="hidden" asp-for="IsFreightPricePerUnitOverridden" />   
         <input type="hidden" asp-for="IsMaterialPriceOverridden" />
@@ -284,4 +285,18 @@
     </form>
 </div>
 
-@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary close-button" data-dismiss="modal">@L("Cancel")</button>
+    <div class="btn-group dropdown save-button-dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span>
+                <i class="fa fa-save"></i>
+                <span>@L("Save")</span>
+            </span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="#" id="SaveJobButton">@L("Save")</a>
+            <a class="dropdown-item" href="#" id="SaveAndPrintButton">@L("SaveAndPrint")</a>
+        </div>
+    </div>
+</div>
