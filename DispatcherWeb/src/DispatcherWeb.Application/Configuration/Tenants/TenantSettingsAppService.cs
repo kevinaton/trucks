@@ -1228,7 +1228,6 @@ namespace DispatcherWeb.Configuration.Tenants
                     await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultServiceId, "0");
                     await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, "0");
                     await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, "false");
-                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.CCMeOnInvoices, "true");
                 }
             }
         }

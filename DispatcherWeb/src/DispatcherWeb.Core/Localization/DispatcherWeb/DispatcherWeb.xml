@@ -1791,7 +1791,7 @@
 		<text name="AutoGenerateTicketNumberOnCounterSales">Auto-generate ticket number on counter sales</text>
 		<text name="AutoGenerateTicketNumber">Auto-generate ticket number</text>
 		<text name="DefaultAutoGenerateTicket">Default "Auto-generate Ticket"</text>
-		<text name="DefaultsForAddJobDialog">Defaults for "Add Job" dialog</text>
+		<text name="CounterSalesDefaults">Counter sales defaults</text>
 		<text name="DefaultDesignationToCounterSales">Default designation to "Counter Sales"</text>
 		<text name="DefaultItem">Default "Item"</text>
 		<text name="DefaultMaterialUOM">Default "Material UOM"</text>
