@@ -512,7 +512,7 @@
                     links.append(renderLink('btnDuplicate', app.localize('Copy'), 'fa fa-clone'));
                 }
                 if (dispatch.isMultipleLoads) {
-                    links.append(renderLink('btnEndMultipleLoadsDispatch', app.localize('EndMultipleDispatches')));
+                    links.append(renderLink('btnEndMultipleLoadsDispatch', app.localize('EndMultipleDispatches'), 'fa fa-stop-circle'));
                 }
                 if (firstActiveDispatch && (dispatch.status === abp.enums.dispatchStatus.created || dispatch.status === abp.enums.dispatchStatus.sent)) {
                     links.append(renderLink('btnAddLoadInfo', app.localize('Acknowledge'), 'fa fa-thumbs-up'));
@@ -521,7 +521,7 @@
                     links.append(renderLink('btnAddLoadInfo', app.localize('AddLoadInfo'), 'fa fa-edit'));
                 }
                 if (firstActiveDispatch && (dispatch.status === abp.enums.dispatchStatus.loaded)) {
-                    links.append(renderLink('btnMarkAsDelivered', app.localize('MarkAsDelivered')));
+                    links.append(renderLink('btnMarkAsDelivered', app.localize('MarkAsDelivered'), 'fa fa-check'));
                 }
                 if (dispatch.status !== abp.enums.dispatchStatus.completed && dispatch.status !== abp.enums.dispatchStatus.canceled) {
                     links.append(renderLink('btnCancel', app.localize('Cancel'), 'fa fa-times'));
