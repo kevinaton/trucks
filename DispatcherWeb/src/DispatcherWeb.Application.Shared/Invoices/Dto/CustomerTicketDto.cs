@@ -72,7 +72,7 @@ namespace DispatcherWeb.Invoices.Dto
         {
             get
             {
-                var designationHasMaterial = Designation == DesignationEnum.MaterialOnly || Designation == DesignationEnum.FreightAndMaterial;
+                var designationHasMaterial = Designation?.MaterialOnly() == true || Designation == DesignationEnum.FreightAndMaterial;
                 var jobNumber = JobNumber.IsNullOrEmpty() ? "" : "; Job Nbr: " + JobNumber;
                 var poNumber = PoNumber.IsNullOrEmpty() ? "" : "; PO Nbr: " + PoNumber;
 

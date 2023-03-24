@@ -242,7 +242,9 @@ namespace DispatcherWeb
         [Display(Name = "Back haul freight & disposal")]
         BackHaulFreightAndDisposal = 7,
         [Display(Name = "Straight haul freight & disposal")]
-        StraightHaulFreightAndDisposal = 8
+        StraightHaulFreightAndDisposal = 8,
+        [Display(Name = "Counter Sale")]
+        CounterSale = 10
     }
 
     public enum PredefinedLocationKind
@@ -283,6 +285,12 @@ namespace DispatcherWeb
         Bounced = 4,
         Delivered = 5,
         Opened = 6
+    }
+
+    public static class EmailDeliveryStatuses
+    {
+        public static readonly EmailDeliveryStatus[] Failed = new[] { EmailDeliveryStatus.Dropped, EmailDeliveryStatus.Bounced };
+        public static readonly EmailDeliveryStatus[] Sent = new[] { EmailDeliveryStatus.NotProcessed, EmailDeliveryStatus.Processed, EmailDeliveryStatus.Deferred };
     }
 
     public enum EmailReceiverKind
@@ -746,5 +754,30 @@ namespace DispatcherWeb
         MotionChange = 1,
         Geofence = 2,
         Heartbeat = 3,
+    }
+
+    public enum HostEmailType
+    {
+        [Display(Name = "Release Notes")]
+        ReleaseNotes = 0x1,
+        [Display(Name = "Transactional")]
+        Transactional = 0x2,
+        [Display(Name = "Service Status")]
+        ServiceStatus = 0x4,
+        [Display(Name = "Marketing")]
+        Marketing = 0x8,
+    }
+
+    [Flags] //we can't reuse HostEmailType because [Flag] enums can't be used with GetEnumSelectList
+    public enum HostEmailPreference
+    {
+        [Display(Name = "Release Notes")]
+        ReleaseNotes = 0x1,
+        [Display(Name = "Transactional")]
+        Transactional = 0x2,
+        [Display(Name = "Service Status")]
+        ServiceStatus = 0x4,
+        [Display(Name = "Marketing")]
+        Marketing = 0x8,
     }
 }

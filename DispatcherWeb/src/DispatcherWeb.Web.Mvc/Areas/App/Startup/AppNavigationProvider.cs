@@ -44,6 +44,14 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Editions)
                     )
                 ).AddItem(new MenuItemDefinition(
+                        AppPageNames.Host.HostEmails,
+                        L("HostEmails"),
+                        customData: new MenuItemCustomData { Id = "HostEmailsNavbarItem" },
+                        url: "App/HostEmails",
+                        icon: "flaticon-email",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_HostEmails)
+                    )
+                ).AddItem(new MenuItemDefinition(
                         AppPageNames.Tenant.Dashboard,
                         L("Dashboard"),
                         customData: new MenuItemCustomData { Id = "TenantDashboardNavbarItem" },
@@ -128,14 +136,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         url: "app/DriverMessages",
                         icon: "fa fa-comments",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_DriverMessages)
-                    )
-                    ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.PrintOrders,
-                        L("PrintOrders"),
-                        customData: new MenuItemCustomData { Id = "PrintOrdersNavbarItem" },
-                        url: "#",
-                        icon: "fa fa-print",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_PrintOrders)
                         )
                     ).AddItem(new MenuItemDefinition(
                         AppPageNames.Tenant.Dispatches,
@@ -338,8 +338,15 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         customData: new MenuItemCustomData { Id = "ReportsNavbarItem" },
                         icon: "fa fa-print",
                         featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                    )
-                    .AddItem(new MenuItemDefinition(
+                    ).AddItem(new MenuItemDefinition(
+                            AppPageNames.Tenant.PrintOrders,
+                            L("DeliveryReport"),
+                            customData: new MenuItemCustomData { Id = "PrintOrdersWithDeliveryInfoNavbarItem" },
+                            url: "#",
+                            icon: "fa fa-calendar-check",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_PrintOrders)
+                        )
+                    ).AddItem(new MenuItemDefinition(
                             AppPageNames.Tenant.RevenueBreakdown,
                             L("RevenueBreakdownReport"),
                             customData: new MenuItemCustomData { Id = "RevenueBreakdownReportNavbarItem" },

@@ -53,6 +53,20 @@
             });
 
             _$form.find(".tooltips").tooltip();
+
+            _$optionsForm.find('#DefaultLoadAtLocationIdForUser').select2Init({
+                abpServiceMethod: abp.services.app.location.getLocationsSelectList,
+                showAll: false,
+                allowClear: true
+            });
+
+            _$optionsForm.find('#DefaultServiceId').select2Init({
+                abpServiceMethod: abp.services.app.service.getServicesSelectList,
+                showAll: false,
+                allowClear: true
+            });
+
+            _$optionsForm.find('#DefaultMaterialUomId').select2Uom();
         };
 
         this.save = function () {
@@ -62,6 +76,10 @@
 
             var profile = _$form.serializeFormToObject();
             profile.Options = _$optionsForm.serializeFormToObject();
+
+            var hostEmailPreferenceCheckboxes = _$optionsForm.find(".HostEmailPreferenceCheckbox:checked");
+            var hostEmailPreference = hostEmailPreferenceCheckboxes.map((_, x) => Number($(x).val())).toArray().reduce((a, b) => a | b, 0);
+            profile.Options.HostEmailPreference = hostEmailPreference;
 
             _modalManager.setBusy(true);
             _profileService.updateCurrentUserProfile(profile)

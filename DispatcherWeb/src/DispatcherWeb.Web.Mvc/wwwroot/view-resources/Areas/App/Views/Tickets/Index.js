@@ -23,6 +23,7 @@
 
     var rowSelectionClass = 'invoice-row-selection';
     var rowSelectAllClass = 'invoice-row-select-all';
+    var rowSelectionColumnClass = 'invoice-row-selection-column';
 
     var ticketTable = $('#TicketTable');
     var ticketGrid = ticketTable.DataTableInit({
@@ -104,13 +105,22 @@
 
             localStorage.setItem('tickets_filter', JSON.stringify(abpData));
 
-            abp.ui.setBusy();
             _ticketService.ticketListView(abpData).done(function (abpResult) {
                 callback(_dtHelper.fromAbpResult(abpResult));
-            })
-                .always(function () {
-                    abp.ui.clearBusy();
-                });
+            });
+        },
+        editable: {
+            saveCallback: async function (rowData, cell) {
+                try {
+                    await _ticketService.editTicketFromList({
+                        id: rowData.id,
+                        isVerified: rowData.isVerified
+                    });
+                    updateSelectionCellForRow(rowData, cell);
+                } catch {
+                    reloadMainGrid();
+                }
+            }
         },
         order: [[2, 'asc']],
         headerCallback: function (thead, data, start, end, display) {
@@ -133,12 +143,9 @@
                 orderable: false,
                 visible: _permissions.invoices,
                 render: function (data, type, full, meta) {
-                    if (full.isBilled || !full.revenue || full.invoiceLineId || !full.isVerified /*|| full.hasPayStatements*/) {
-                        return "";
-                    }
-                    return `<label class="m-checkbox cell-centered-checkbox"><input type="checkbox" class="minimal ${rowSelectionClass}" ${(_selectedRowIds.includes(full.id) ? 'checked' : '')}><span></span></label>`;
+                    return renderSelectionCheckbox(full);
                 },
-                className: "checkmark text-center checkbox-only-header",
+                className: `checkmark text-center checkbox-only-header ${rowSelectionColumnClass}`,
                 width: "30px",
                 title: " ",
                 //responsivePriority: 3,
@@ -227,7 +234,10 @@
                 title: "Ver",
                 titleHoverText: "Verified",
                 render: function (data, type, full, meta) { return _dtHelper.renderCheckbox(data); },
-                width: '30px'
+                width: '30px',
+                editable: {
+                    editor: _dtHelper.editors.checkbox
+                }
             },
             {
                 data: 'ticketPhotoId',
@@ -263,6 +273,25 @@
             }
         ]
     });
+
+    function updateSelectionCellForRow(rowData, updatedCell) {
+        var selectionColumnCell = $(updatedCell).closest('tr').find('.' + rowSelectionColumnClass);
+        var oldCellContent = selectionColumnCell.html();
+        var newCellContent = renderSelectionCheckbox(rowData);
+        if (oldCellContent !== newCellContent) {
+            if (!newCellContent) {
+                setRowSelectionState(rowData.id, false);
+            }
+            selectionColumnCell.html(newCellContent);
+        }
+    }
+
+    function renderSelectionCheckbox(rowData) {
+        if (rowData.isBilled || !rowData.revenue || rowData.invoiceLineId || !rowData.isVerified /*|| full.hasPayStatements*/) {
+            return "";
+        }
+        return `<label class="m-checkbox cell-centered-checkbox"><input type="checkbox" class="minimal ${rowSelectionClass}" ${(_selectedRowIds.includes(rowData.id) ? 'checked' : '')}><span></span></label>`;
+    }
 
     ticketTable.on('change', '.' + rowSelectAllClass, function () {
         if ($(this).is(":checked")) {

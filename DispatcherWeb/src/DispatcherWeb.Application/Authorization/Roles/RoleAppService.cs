@@ -10,6 +10,7 @@ using Abp.Zero.Configuration;
 using DispatcherWeb.Authorization.Permissions;
 using DispatcherWeb.Authorization.Permissions.Dto;
 using DispatcherWeb.Authorization.Roles.Dto;
+using DispatcherWeb.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,6 +59,21 @@ namespace DispatcherWeb.Authorization.Roles
             var rolesListDtos = await GetRoleListDtoList(query);
 
             return new ListResultDto<RoleListDto>(rolesListDtos);
+        }
+
+        public List<SelectListDto> GetStaticRoleNamesSelectList(GetStaticRoleNamesSelectListInput input)
+        {
+            var staticRoleNames = _roleManagementConfig.StaticRoles
+                .Where(r => r.Side == (input.MultiTenancySide ?? AbpSession.MultiTenancySide))
+                .Select(r => new SelectListDto
+                {
+                    Id = r.RoleName,
+                    Name = r.RoleDisplayName,
+                })
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            return staticRoleNames;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Administration_Roles_Create, AppPermissions.Pages_Administration_Roles_Edit)]

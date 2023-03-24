@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using DispatcherWeb.Dispatching.Dto;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders;
 
 namespace DispatcherWeb.Web.Areas.App.Models.Acknowledge
@@ -21,7 +22,7 @@ namespace DispatcherWeb.Web.Areas.App.Models.Acknowledge
         public string ChargeTo { get; set; }
         public bool IsMultipleLoads { get; set; }
 
-        [StringLength(Ticket.MaxTicketNumberLength)]
+        [StringLength(EntityStringFieldLengths.Ticket.TicketNumber)]
         public string TicketNumber { get; set; }
         public bool CreateNewTicket { get; set; }
         public decimal Amount { get; set; }

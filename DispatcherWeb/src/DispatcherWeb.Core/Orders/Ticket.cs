@@ -7,6 +7,7 @@ using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Invoices;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.LeaseHaulerStatements;
@@ -22,7 +23,6 @@ namespace DispatcherWeb.Orders
     [Table("Ticket")]
     public class Ticket : FullAuditedEntity, IMustHaveTenant
     {
-        public const int MaxTicketNumberLength = 20;
 
         public int TenantId { get; set; }
 
@@ -37,7 +37,7 @@ namespace DispatcherWeb.Orders
         public int? OfficeId { get; set; }
         public virtual Office Office { get; set; }
 
-        [StringLength(MaxTicketNumberLength)]
+        [StringLength(EntityStringFieldLengths.Ticket.TicketNumber)]
         public string TicketNumber { get; set; }
 
         public decimal Quantity { get; set; }

@@ -134,6 +134,14 @@ namespace DispatcherWeb.Orders.Dto
         public bool IsMultipleLoads { get; set; }
 
         public bool ProductionPay { get; set; }
+
+        public bool AutoGenerateTicketNumber { get; set; }
+
+        public int? TicketId { get; set; }
+
+        [StringLength(EntityStringFieldLengths.Ticket.TicketNumber)]
+        public string TicketNumber { get; set; }
+
         public bool HasQuoteBasedPricing { get; set; }
         public bool HasTickets { get; set; }
         public bool HasOpenDispatches { get; set; }

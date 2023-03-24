@@ -78,6 +78,17 @@
             public const int Body = General.ExtraLong;
         }
 
+        public static class HostEmail
+        {
+            public const int Subject = General.Long;
+            public const int Body = 4000;
+        }
+
+        public static class TrackableEmail
+        {
+            public const int Subject = 200;
+        }
+
         public static class ChatMessage
         {
             public const int Message = 4 * 1024;
@@ -194,6 +205,11 @@
             public const int JsonPayload = 4000;
             public const int MaxAllowedJsonPayloadLength = JsonPayload - 1000; //the whole FCM message will have additional required fields around our specific payload, so we need to account for that extra length.
             public const int Error = 500;
+        }
+
+        public static class Ticket
+        {
+            public const int TicketNumber = 20;
         }
     }
 }

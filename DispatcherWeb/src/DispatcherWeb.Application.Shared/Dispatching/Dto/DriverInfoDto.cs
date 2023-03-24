@@ -111,6 +111,7 @@ namespace DispatcherWeb.Dispatching.Dto
         public string FreightUomName { get; set; }
         public DateTime Date { get; set; }
         public Shift? Shift { get; set; }
+        public string JobNumber { get; set; }
         public string Note { get; set; }
         public string ChargeTo { get; set; }
         public int? LoadId { get; set; }

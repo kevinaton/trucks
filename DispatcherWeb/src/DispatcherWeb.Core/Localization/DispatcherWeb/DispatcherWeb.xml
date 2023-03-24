@@ -1433,6 +1433,13 @@
 		<text name="MissingQtyOrNbrOfTrucksOnJobConfirmation">You have not specified either a quantity or a number of trucks for this job. Any jobs without a number of trucks or quantity will not be displayed on the schedule. Are you sure you want to continue with the save?</text>
 		<text name="DontShowZeroQuantityWarning">Don't show zero quantity warning</text>
 		<text name="PlaySoundForNotifications">Play sound for notifications</text>
+		<text name="ReleaseNotes">Release notes</text>
+		<text name="TransactionalEmails">Transactional emails</text>
+		<text name="ServiceStatusEmails">Service status emails</text>
+		<text name="MarketingEmails">Marketing emails</text>
+		<text name="EmailSubscriptions">Email subscriptions</text>
+		<text name="UncheckForEmailsYouDontWantToReceive">Uncheck for emails you don't want to receive.</text>
+		<text name="Receivers">Receivers</text>
 		<text name="Options">Options</text>
 		<text name="TicketStatus">Ticket Status</text>
 		<text name="Export">Export</text>
@@ -1775,5 +1782,22 @@
 		<text name="AddJob">Add Job</text>
 		<text name="EditJob">Edit Job</text>
 		<text name="SubContractorRate">Sub-contractor Rate</text>
+		<text name="HostEmails">Host Emails</text>
+		<text name="SendHostEmails">Send host emails</text>
+		<text name="HostEmailsHeaderInfo">Manage your host emails</text>
+		<text name="SendNewHostEmail">Send New Email</text>
+		<text name="AllowCounterSales">Allow counter sales</text>
+		<text name="DefaultLoadAtLocation">Default "Load At" Location</text>
+		<text name="AutoGenerateTicketNumberOnCounterSales">Auto-generate ticket number on counter sales</text>
+		<text name="AutoGenerateTicketNumber">Auto-generate ticket number</text>
+		<text name="DefaultAutoGenerateTicket">Default "Auto-generate Ticket"</text>
+		<text name="DefaultsForAddJobDialog">Defaults for "Add Job" dialog</text>
+		<text name="DefaultDesignationToCounterSales">Default designation to "Counter Sales"</text>
+		<text name="DefaultItem">Default "Item"</text>
+		<text name="DefaultMaterialUOM">Default "Material UOM"</text>
+		<text name="CCMeOnInvoices">CC me on invoices</text>
+		<text name="PrintSchedule">Print Schedule</text>
+		<text name="PrintAllOrders">Print All Orders</text>
+		<text name="DeliveryReport">Delivery Report</text>
 	</texts>
 </localizationDictionary>

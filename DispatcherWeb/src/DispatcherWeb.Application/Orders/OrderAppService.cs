@@ -37,6 +37,7 @@ using DispatcherWeb.Features;
 using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Templates;
+using DispatcherWeb.Locations;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders.Dto;
@@ -49,6 +50,7 @@ using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Services;
 using DispatcherWeb.Storage;
 using DispatcherWeb.SyncRequests;
+using DispatcherWeb.UnitsOfMeasure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using MigraDoc.DocumentObjectModel;
@@ -75,6 +77,9 @@ namespace DispatcherWeb.Orders
         private readonly IRepository<Service> _serviceRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<FuelSurchargeCalculation> _fuelSurchargeCalculationRepository;
+        private readonly IRepository<Location> _locationRepository;
+        private readonly IRepository<UnitOfMeasure> _unitOfMeasureRepository;
+        private readonly IRepository<Ticket> _ticketRepository;
         private readonly IOrderLineUpdaterFactory _orderLineUpdaterFactory;
         private readonly IDriverApplicationPushSender _driverApplicationPushSender;
         private readonly ISyncRequestSender _syncRequestSender;
@@ -109,6 +114,9 @@ namespace DispatcherWeb.Orders
             IRepository<Service> serviceRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<FuelSurchargeCalculation> fuelSurchargeCalculationRepository,
+            IRepository<Location> locationRepository,
+            IRepository<UnitOfMeasure> unitOfMeasureRepository,
+            IRepository<Ticket> ticketRepository,
             IOrderLineUpdaterFactory orderLineUpdaterFactory,
             IDriverApplicationPushSender driverApplicationPushSender,
             ISyncRequestSender syncRequestSender,
@@ -138,6 +146,9 @@ namespace DispatcherWeb.Orders
             _orderEmailRepository = orderEmailRepository;
             _driverAssignmentRepository = driverAssignmentRepository;
             _fuelSurchargeCalculationRepository = fuelSurchargeCalculationRepository;
+            _locationRepository = locationRepository;
+            _unitOfMeasureRepository = unitOfMeasureRepository;
+            _ticketRepository = ticketRepository;
             _paymentRepository = paymentRepository;
             _orderPaymentRepository = orderPaymentRepository;
             _receiptRepository = receiptRepository;
@@ -367,36 +378,36 @@ namespace DispatcherWeb.Orders
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<EditOrderResult> EditJob(JobEditDto model)
         {
-            OrderEditDto editOrderModal;
+            OrderEditDto editOrderModel;
             using (var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
             {
-                editOrderModal = await GetOrderForEdit(new NullableIdDto(model.OrderId));
+                editOrderModel = await GetOrderForEdit(new NullableIdDto(model.OrderId));
                 await unitOfWork.CompleteAsync();
             }
-            editOrderModal.DeliveryDate = model.DeliveryDate;
-            editOrderModal.CustomerId = model.CustomerId;
-            editOrderModal.QuoteId = model.QuoteId;
-            editOrderModal.ChargeTo = model.ChargeTo;
-            editOrderModal.Priority = model.Priority;
-            editOrderModal.Shift = model.Shift;
-            editOrderModal.OfficeId = model.OfficeId;
-            editOrderModal.ProjectId = model.ProjectId;
-            editOrderModal.ContactId = model.ContactId;
-            editOrderModal.MaterialCompanyOrderId = model.MaterialCompanyOrderId;
-            editOrderModal.PONumber = model.PONumber;
-            editOrderModal.SpectrumNumber = model.SpectrumNumber;
-            editOrderModal.Directions = model.Directions;
+            editOrderModel.DeliveryDate = model.DeliveryDate;
+            editOrderModel.CustomerId = model.CustomerId;
+            editOrderModel.QuoteId = model.QuoteId;
+            editOrderModel.ChargeTo = model.ChargeTo;
+            editOrderModel.Priority = model.Priority;
+            editOrderModel.Shift = model.Shift;
+            editOrderModel.OfficeId = model.OfficeId;
+            editOrderModel.ProjectId = model.ProjectId;
+            editOrderModel.ContactId = model.ContactId;
+            editOrderModel.MaterialCompanyOrderId = model.MaterialCompanyOrderId;
+            editOrderModel.PONumber = model.PONumber;
+            editOrderModel.SpectrumNumber = model.SpectrumNumber;
+            editOrderModel.Directions = model.Directions;
 
             if ((TaxCalculationType)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.TaxCalculationType) == TaxCalculationType.NoCalculation)
             {
-                editOrderModal.SalesTax = model.SalesTax;
+                editOrderModel.SalesTax = model.SalesTax;
             }
             else
             {
-                editOrderModal.SalesTaxRate = model.SalesTaxRate;
+                editOrderModel.SalesTaxRate = model.SalesTaxRate;
             }
 
-            var editOrderResult = await EditOrder(editOrderModal);
+            var editOrderResult = await EditOrder(editOrderModel);
             if (!editOrderResult.Completed)
             {
                 return editOrderResult;
@@ -404,29 +415,78 @@ namespace DispatcherWeb.Orders
 
             using (var unitOfWork = UnitOfWorkManager.Begin(new UnitOfWorkOptions { IsTransactional = true }))
             {
-                var editOrderLineModal = await GetOrderLineForEdit(new GetOrderLineForEditInput(model.OrderLineId, editOrderResult.Id));
-                editOrderLineModal.JobNumber = model.JobNumber;
-                editOrderLineModal.Designation = model.Designation;
-                editOrderLineModal.LoadAtId = model.LoadAtId;
-                editOrderLineModal.DeliverToId = model.DeliverToId;
-                editOrderLineModal.ServiceId = model.ServiceId;
-                editOrderLineModal.FreightUomId = model.FreightUomId;
-                editOrderLineModal.MaterialUomId = model.MaterialUomId;
-                editOrderLineModal.FreightPricePerUnit = model.FreightPricePerUnit;
-                editOrderLineModal.MaterialPricePerUnit = model.MaterialPricePerUnit;
-                editOrderLineModal.FreightQuantity = model.FreightQuantity;
-                editOrderLineModal.MaterialQuantity = model.MaterialQuantity;
-                editOrderLineModal.FreightPrice = model.FreightPrice;
-                editOrderLineModal.MaterialPrice = model.MaterialPrice;
-                editOrderLineModal.LeaseHaulerRate = model.LeaseHaulerRate;
-                editOrderLineModal.NumberOfTrucks = model.NumberOfTrucks;
-                editOrderLineModal.IsMultipleLoads = model.IsMultipleLoads;
-                editOrderLineModal.TimeOnJob = model.TimeOnJob;
-                editOrderLineModal.ProductionPay = model.ProductionPay;
-                editOrderLineModal.Note = model.Note;
-                editOrderLineModal.QuoteServiceId = model.QuoteServiceId;
+                var editOrderLineModel = await GetOrderLineForEdit(new GetOrderLineForEditInput(model.OrderLineId, editOrderResult.Id));
+                editOrderLineModel.JobNumber = model.JobNumber;
+                editOrderLineModel.Designation = model.Designation;
+                editOrderLineModel.LoadAtId = model.LoadAtId;
+                editOrderLineModel.DeliverToId = model.DeliverToId;
+                editOrderLineModel.ServiceId = model.ServiceId;
+                editOrderLineModel.FreightUomId = model.FreightUomId;
+                editOrderLineModel.MaterialUomId = model.MaterialUomId;
+                editOrderLineModel.FreightPricePerUnit = model.FreightPricePerUnit;
+                editOrderLineModel.MaterialPricePerUnit = model.MaterialPricePerUnit;
+                editOrderLineModel.FreightQuantity = model.FreightQuantity;
+                editOrderLineModel.MaterialQuantity = model.MaterialQuantity;
+                editOrderLineModel.FreightPrice = model.FreightPrice;
+                editOrderLineModel.MaterialPrice = model.MaterialPrice;
+                editOrderLineModel.LeaseHaulerRate = model.LeaseHaulerRate;
+                editOrderLineModel.NumberOfTrucks = model.NumberOfTrucks;
+                editOrderLineModel.IsMultipleLoads = model.IsMultipleLoads;
+                editOrderLineModel.TimeOnJob = model.TimeOnJob;
+                editOrderLineModel.ProductionPay = model.ProductionPay;
+                editOrderLineModel.Note = model.Note;
+                editOrderLineModel.QuoteServiceId = model.QuoteServiceId;
 
-                var orderLine = await EditOrderLine(editOrderLineModal);
+                var orderLine = await EditOrderLine(editOrderLineModel);
+                await CurrentUnitOfWork.SaveChangesAsync();
+
+                if (model.OrderLineId == null)
+                {
+                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLine.OrderLineId);
+                    await orderLineUpdater.UpdateFieldAsync(x => x.IsComplete, true);
+                    await orderLineUpdater.SaveChangesAsync();
+                }
+
+                int? ticketId = null;
+
+                if (model.TicketId != null || !string.IsNullOrEmpty(model.TicketNumber) || model.AutoGenerateTicketNumber)
+                {
+                    var ticket = model.TicketId != null ? await _ticketRepository.GetAll()
+                        .Where(t => t.Id == model.TicketId)
+                        .FirstOrDefaultAsync() : null;
+
+                    if (ticket == null)
+                    {
+                        ticket = new Ticket
+                        {
+                            OrderLineId = orderLine.OrderLineId
+                        };
+                        
+                        await _ticketRepository.InsertAndGetIdAsync(ticket);
+                    }
+                    ticket.TicketNumber = model.TicketNumber;
+                    ticket.Quantity = model.MaterialQuantity ?? 0;
+                    ticket.TicketDateTime = editOrderModel.DeliveryDate?.ConvertTimeZoneFrom(await GetTimezone());
+                    ticket.CustomerId = editOrderModel.CustomerId;
+                    ticket.ServiceId = editOrderLineModel.ServiceId;
+                    ticket.LoadAtId = editOrderLineModel.LoadAtId;
+                    ticket.DeliverToId = editOrderLineModel.DeliverToId;
+                    if (editOrderLineModel.Designation.MaterialOnly() || editOrderLineModel.Designation == DesignationEnum.FreightAndMaterial)
+                    {
+                        ticket.UnitOfMeasureId = editOrderLineModel.MaterialUomId;
+                    }
+                    else
+                    {
+                        ticket.UnitOfMeasureId = editOrderLineModel.FreightUomId;
+                    }
+
+                    ticketId = ticket.Id;
+
+                    if (model.AutoGenerateTicketNumber)
+                    {
+                        ticket.TicketNumber = "G-" + ticket.Id;
+                    }
+                }
 
                 await unitOfWork.CompleteAsync();
 
@@ -436,7 +496,8 @@ namespace DispatcherWeb.Orders
                     Completed = editOrderResult.Completed,
                     HasZeroQuantityItems = editOrderResult.HasZeroQuantityItems,
                     NotAvailableTrucks = editOrderResult.NotAvailableTrucks,
-                    OrderLineId = orderLine.OrderLineId
+                    OrderLineId = orderLine.OrderLineId,
+                    TicketId = ticketId
                 };
             }
         }
@@ -2103,9 +2164,69 @@ namespace DispatcherWeb.Orders
                     order.OfficeId = input.OfficeId.Value;
                     order.OfficeName = input.OfficeName;
                 }
+
+                if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales))
+                {
+                    orderLine.Designation = DesignationEnum.CounterSale;
+                }
+
+                var defaultLoadAtLocationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId);
+                if (defaultLoadAtLocationId > 0)
+                {
+                    var location = await _locationRepository.GetAll()
+                        .Where(x => x.Id == defaultLoadAtLocationId)
+                        .Select(x => new LocationNameDto
+                        {
+                            Name = x.Name,
+                            StreetAddress = x.StreetAddress,
+                            City = x.City,
+                            State = x.State
+                        })
+                        .FirstOrDefaultAsync();
+
+                    if (location != null)
+                    {
+                        orderLine.LoadAtId = defaultLoadAtLocationId;
+                        orderLine.LoadAt = location;
+                    }
+                }
+
+                var defaultServiceId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultServiceId);
+                if (defaultServiceId > 0)
+                {
+                    var service = await _serviceRepository.GetAll()
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.Service1
+                        })
+                        .FirstOrDefaultAsync(x => x.Id == defaultServiceId);
+                    if (service != null)
+                    {
+                        orderLine.ServiceId = defaultServiceId;
+                        orderLine.ServiceName = service.Service1;
+                    }
+                }
+
+                var defaultMaterialUomId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultMaterialUomId);
+                if (defaultMaterialUomId > 0)
+                {
+                    var query = await _unitOfMeasureRepository.GetAll()
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.Name
+                        })
+                        .FirstOrDefaultAsync(x => x.Id == defaultMaterialUomId);
+                    if (query != null)
+                    {
+                        orderLine.MaterialUomId = defaultMaterialUomId;
+                        orderLine.MaterialUomName = query.Name;
+                    }
+                }
             }
 
-            return new JobEditDto
+            var result = new JobEditDto
             {
                 OrderId = order.Id,
                 OrderLineId = orderLine.Id,
@@ -2167,6 +2288,31 @@ namespace DispatcherWeb.Orders
                 UpdateStaggeredTime = orderLine.UpdateStaggeredTime,
                 QuoteServiceId = orderLine.QuoteServiceId
             };
+
+            if (input.OrderLineId != null)
+            {
+                var ticket = await _ticketRepository.GetAll()
+                    .Select(t => new
+                    {
+                        t.Id,
+                        t.OrderLineId,
+                        t.TicketNumber,
+                    })
+                    .OrderBy(t => t.Id)
+                    .FirstOrDefaultAsync(t => t.OrderLineId == input.OrderLineId);
+                
+                if (ticket != null)
+                {
+                    result.TicketId = ticket.Id;
+                    result.TicketNumber = ticket.TicketNumber;
+                }
+            }
+            else
+            {
+                result.AutoGenerateTicketNumber = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber);
+            }
+
+            return result;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
@@ -2691,7 +2837,6 @@ namespace DispatcherWeb.Orders
                     .WhereIf(input.Ids?.Any() == true, x => input.Ids.Contains(x.Id))
                     .WhereIf(input.Date.HasValue, x => x.Order.DeliveryDate == input.Date)
                     //.Where(x => x.OfficeId == OfficeId)
-                    .WhereIf(input.TruckId.HasValue, x => x.Order.OrderLines.Any(ol => ol.OrderLineTrucks.Any(olt => olt.TruckId == input.TruckId)))
                     .GetWorkOrderReportDtoQuery(input, OfficeId);
             }
             else
@@ -2700,7 +2845,6 @@ namespace DispatcherWeb.Orders
                     .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
                     .WhereIf(input.Ids?.Any() == true, x => input.Ids.Contains(x.Id))
                     .WhereIf(input.Date.HasValue, x => x.DeliveryDate == input.Date && (x.LocationId == OfficeId || x.SharedOrders.Any(s => s.OfficeId == OfficeId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(s => s.OfficeId == OfficeId))))
-                    .WhereIf(input.TruckId.HasValue, x => x.OrderLines.Any(ol => ol.OrderLineTrucks.Any(olt => olt.TruckId == input.TruckId)))
                     .GetWorkOrderReportDtoQuery(input, OfficeId);
             }
         }
@@ -2715,7 +2859,6 @@ namespace DispatcherWeb.Orders
             var data = new OrderSummaryReportDto
             {
                 Date = input.Date,
-                ShowLoadColumns = input.ShowLoadColumns,
                 HidePrices = input.HidePrices,
                 Items = items,
                 UseShifts = await SettingManager.UseShifts(),

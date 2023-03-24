@@ -216,7 +216,10 @@ namespace DispatcherWeb.LeaseHaulers
             }
             else
             {
-                leaseHaulerEditDto = new LeaseHaulerEditDto();
+                leaseHaulerEditDto = new LeaseHaulerEditDto
+                {
+                    IsActive = true
+                };
             }
 
             return leaseHaulerEditDto;

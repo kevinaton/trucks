@@ -631,6 +631,10 @@
                                 <textarea id="Address" rows="5" class="form-control" name="Address" maxlength="256">@Model.Settings.Billing.Address</textarea>
                             </div>
                             <div class="form-group">
+                                <label for="PhoneNumber">@L("PhoneNumber")</label>
+                                <input id="PhoneNumber" type="text" name="PhoneNumber" class="form-control" value="@Model.Settings.Billing.PhoneNumber" maxlength="64">
+                            </div>
+                            <div class="form-group">
                                 <label for="RemitToInformation">@L("RemitToInformation")</label>
                                 <textarea id="RemitToInformation" rows="5" class="form-control" name="RemitToInformation" maxlength="256">@Model.Settings.Billing.RemitToInformation</textarea>
                             </div>

@@ -4,16 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.Emailing
 {
     public class TrackableEmail : AuditedEntity<Guid>, IMayHaveTenant
     {
-        private static class FieldLengthes
-        {
-            public const int Subject = 200;
-        }
-
         public TrackableEmail()
         {
             Events = new HashSet<TrackableEmailEvent>();
@@ -25,7 +21,7 @@ namespace DispatcherWeb.Emailing
 
         public int? TenantId { get; set; }
 
-        [StringLength(FieldLengthes.Subject)]
+        [StringLength(EntityStringFieldLengths.TrackableEmail.Subject)]
         public string Subject { get; set; }
 
         public EmailDeliveryStatus CalculatedDeliveryStatus { get; set; }
@@ -44,9 +40,9 @@ namespace DispatcherWeb.Emailing
 
         public void TruncateFieldsIfNeeded()
         {
-            if (Subject?.Length > FieldLengthes.Subject)
+            if (Subject?.Length > EntityStringFieldLengths.TrackableEmail.Subject)
             {
-                Subject = Subject.Substring(0, FieldLengthes.Subject);
+                Subject = Subject.Substring(0, EntityStringFieldLengths.TrackableEmail.Subject);
             }
         }
 

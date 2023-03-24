@@ -324,7 +324,8 @@
         backhaulFreightAndMaterial: 9,
         disposal: 6,
         backHaulFreightAndDisposal: 7,
-        straightHaulFreightAndDisposal: 8
+        straightHaulFreightAndDisposal: 8,
+        counterSale: 10
     };
     abp.enums.designations = {
         hasMaterial: [
@@ -333,10 +334,12 @@
             abp.enums.designation.backhaulFreightAndMaterial,
             abp.enums.designation.disposal,
             abp.enums.designation.backHaulFreightAndDisposal,
-            abp.enums.designation.straightHaulFreightAndDisposal
+            abp.enums.designation.straightHaulFreightAndDisposal,
+            abp.enums.designation.counterSale
         ],
         materialOnly: [
-            abp.enums.designation.materialOnly
+            abp.enums.designation.materialOnly,
+            abp.enums.designation.counterSale
         ],
         freightOnly: [
             abp.enums.designation.freightOnly,
@@ -517,6 +520,10 @@
         all: 0,
         active: 1,
         inactive: 2
+    };
+    abp.enums.multiTenancySides = {
+        tenant: 0x1,
+        host: 0x2
     };
 
     window.app = app || {};
@@ -1230,17 +1237,40 @@
         }
     });
 
-    abp.helperConfiguration.dataTables.afterInit.push((table, grid, options) => {
-        grid.on("draw", () => {
-            var pageSizeSelector = $(grid.containers()[0]).find('div.dataTables_length select');
+    abp.helperConfiguration.dataTables.beforeInit.push((options, table) => {
+        var lastRequestedPageSize;
+        table.on("draw.dt", () => {
+            var pageSizeSelector = findPageSizeDropdownForTable(table);
+
+            if (lastRequestedPageSize && parseInt(pageSizeSelector.val()) !== lastRequestedPageSize) {
+                pageSizeSelector.val(lastRequestedPageSize).trigger('change.select2');
+            }
+
             if (!pageSizeSelector.data('select2')) {
                 pageSizeSelector.select2Init({
                     showAll: true,
                     allowClear: false
                 });
+            } else {
+                pageSizeSelector.trigger('change.select2');
+            }
+        });
+
+        table.on('preXhr.dt', (e, settings, data) => {
+            if (data && data.length > 0) {
+                lastRequestedPageSize = data.length;
             }
         });
     });
+
+    abp.helperConfiguration.dataTables.beforeInit.push((options, table) => {
+        table.on('preXhr.dt', () => abp.ui.setBusy(table.closest('.dataTables_wrapper')));
+        table.on('xhr.dt', () => abp.ui.clearBusy(table.closest('.dataTables_wrapper')));
+    });
+
+    function findPageSizeDropdownForTable(table) {
+        return $(table).closest('.dataTables_wrapper').find('div.dataTables_length select');
+    }
 
 })(jQuery);
 (function ($) {

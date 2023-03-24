@@ -6,7 +6,6 @@ namespace DispatcherWeb.Orders.Dto
 {
     public class OrderSummaryReportDto
     {
-        public bool ShowLoadColumns { get; set; }
         public bool HidePrices { get; set; }
         public DateTime Date { get; set; }
         public List<OrderSummaryReportItemDto> Items { get; set; }

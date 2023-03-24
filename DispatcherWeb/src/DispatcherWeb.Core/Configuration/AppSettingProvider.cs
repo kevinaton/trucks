@@ -116,6 +116,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.UserManagement.UseCaptchaOnRegistration, GetFromAppSettings(AppSettings.UserManagement.UseCaptchaOnRegistration, "true"), scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.TenantManagement.BillingLegalName, GetFromAppSettings(AppSettings.TenantManagement.BillingLegalName, ""), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.TenantManagement.BillingAddress, GetFromAppSettings(AppSettings.TenantManagement.BillingAddress, ""), scopes: SettingScopes.Tenant),
+                new SettingDefinition(AppSettings.TenantManagement.BillingPhoneNumber, GetFromAppSettings(AppSettings.TenantManagement.BillingPhoneNumber, ""), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Invoice.RemitToInformation, GetFromAppSettings(AppSettings.Invoice.RemitToInformation, ""), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Invoice.DefaultMessageOnInvoice, GetFromAppSettings(AppSettings.Invoice.DefaultMessageOnInvoice, ""), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.TenantManagement.BillingTaxVatNo, GetFromAppSettings(AppSettings.TenantManagement.BillingTaxVatNo, ""), scopes: SettingScopes.Tenant),
@@ -214,6 +215,13 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultStartTime, "2000-01-01T12:00:00", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.ValidateUtilization, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowCounterSales, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, "0", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultServiceId, "0", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, "0", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.CCMeOnInvoices, "true", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
 
                 new SettingDefinition(AppSettings.LeaseHaulers.ShowLeaseHaulerRateOnQuote, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.LeaseHaulers.ShowLeaseHaulerRateOnOrder, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
@@ -239,6 +247,7 @@ namespace DispatcherWeb.Configuration
 
                 new SettingDefinition(AppSettings.UserOptions.DontShowZeroQuantityWarning, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.UserOptions.PlaySoundForNotifications, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.UserOptions.HostEmailPreference, "15", scopes: SettingScopes.User, isVisibleToClients: true),
 
                 new SettingDefinition(AppSettings.GettingStarted.ShowGettingStarted, "true", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GettingStarted.UsersChecked, "false", scopes: SettingScopes.Tenant),

@@ -257,7 +257,7 @@ namespace DispatcherWeb.Orders.Reports
                 //Line #
                 table.AddColumn(Unit.FromCentimeter(0.8));
                 //Item
-                table.AddColumn(Unit.FromCentimeter(model.SplitRateColumn ? 2.2 : 3.3));
+                table.AddColumn(Unit.FromCentimeter(!model.HidePrices && model.SplitRateColumn ? 2.2 : 3.3));
                 //Designation
                 table.AddColumn(Unit.FromCentimeter(1.9));
                 //Quarry/Load At

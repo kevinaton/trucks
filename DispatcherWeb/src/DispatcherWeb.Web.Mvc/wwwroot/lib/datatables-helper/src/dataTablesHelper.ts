@@ -7,7 +7,7 @@
     abp.helper = abp.helper || {}; //todo add the interface
     abp.helperConfiguration = abp.helperConfiguration || {}; //todo add the interface
     abp.helperConfiguration.dataTables = abp.helperConfiguration.dataTables || {};
-    abp.helperConfiguration.dataTables.beforeInit = (abp.helperConfiguration.dataTables.beforeInit || []) as ((options: any) => void)[];
+    abp.helperConfiguration.dataTables.beforeInit = (abp.helperConfiguration.dataTables.beforeInit || []) as ((options, table) => void)[];
     abp.helperConfiguration.dataTables.afterInit = (abp.helperConfiguration.dataTables.afterInit || []) as ((table, grid, options) => void)[];
     abp.helperConfiguration.dataTables.getNewCheckboxContainer = function (options) {
         options = options || {};
@@ -1015,9 +1015,9 @@
         var options = $.extend(true, {}, defaultOptions, userOptions);
         $element.data('options', options);
 
-        let beforeInitCallbacks = abp.helperConfiguration.dataTables.beforeInit as ((options: any) => void)[];
+        let beforeInitCallbacks = abp.helperConfiguration.dataTables.beforeInit as ((options: any, table: any) => void)[];
         if (beforeInitCallbacks) {
-            beforeInitCallbacks.forEach(x => x(options));
+            beforeInitCallbacks.forEach(x => x(options, $element));
         }
 
         if (options.selectionColumnOptions) {
