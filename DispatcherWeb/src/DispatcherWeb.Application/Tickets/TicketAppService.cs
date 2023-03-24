@@ -1717,6 +1717,7 @@ namespace DispatcherWeb.Tickets
             item.LegalAddress = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingAddress);
             item.BillingPhoneNumber = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingPhoneNumber);
             item.LogoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
+            item.TicketDateTime = item.TicketDateTime?.ConvertTimeZoneTo(await GetTimezone());
 
             return new List<TicketPrintOutDto> { item };
         }

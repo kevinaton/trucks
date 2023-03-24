@@ -459,25 +459,27 @@ namespace DispatcherWeb.Orders
                     {
                         ticket = new Ticket
                         {
-                            OrderLineId = orderLine.OrderLineId,
-                            TicketDateTime = editOrderModel.DeliveryDate?.ConvertTimeZoneFrom(await GetTimezone()),
-                            CustomerId = editOrderModel.CustomerId,
-                            ServiceId = editOrderLineModel.ServiceId,
-                            LoadAtId = editOrderLineModel.LoadAtId,
-                            DeliverToId = editOrderLineModel.DeliverToId
+                            OrderLineId = orderLine.OrderLineId
                         };
-                        if (editOrderLineModel.Designation.MaterialOnly() || editOrderLineModel.Designation == DesignationEnum.FreightAndMaterial)
-                        {
-                            ticket.UnitOfMeasureId = editOrderLineModel.MaterialUomId;
-                        }
-                        else
-                        {
-                            ticket.UnitOfMeasureId = editOrderLineModel.FreightUomId;
-                        }
+                        
                         await _ticketRepository.InsertAndGetIdAsync(ticket);
                     }
                     ticket.TicketNumber = model.TicketNumber;
                     ticket.Quantity = model.MaterialQuantity ?? 0;
+                    ticket.TicketDateTime = editOrderModel.DeliveryDate?.ConvertTimeZoneFrom(await GetTimezone());
+                    ticket.CustomerId = editOrderModel.CustomerId;
+                    ticket.ServiceId = editOrderLineModel.ServiceId;
+                    ticket.LoadAtId = editOrderLineModel.LoadAtId;
+                    ticket.DeliverToId = editOrderLineModel.DeliverToId;
+                    if (editOrderLineModel.Designation.MaterialOnly() || editOrderLineModel.Designation == DesignationEnum.FreightAndMaterial)
+                    {
+                        ticket.UnitOfMeasureId = editOrderLineModel.MaterialUomId;
+                    }
+                    else
+                    {
+                        ticket.UnitOfMeasureId = editOrderLineModel.FreightUomId;
+                    }
+
                     ticketId = ticket.Id;
 
                     if (model.AutoGenerateTicketNumber)
