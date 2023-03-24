@@ -135,6 +135,11 @@
                         @L("PlaySoundForNotifications")
                         <span></span>
                     </label>
+                    <label for="CCMeOnInvoices" class="m-checkbox">
+                        <input id="CCMeOnInvoices" type="checkbox" name="CCMeOnInvoices" value="true" checked=@(Model.Options?.CCMeOnInvoices == true ? "checked" : null)>
+                        @L("CCMeOnInvoices")
+                        <span></span>
+                    </label>
                 </div>
                 <h5 class="mt-4 mb-3">@L("EmailSubscriptions")</h5>
                 <h6 class="mb-3">@L("UncheckForEmailsYouDontWantToReceive")</h6>
@@ -160,7 +165,7 @@
                 </div>
                 @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales))
                 {
-                    <h5 class="mt-4 mb-3">@L("DefaultsForAddJobDialog")</h5>
+                    <h5 class="mt-4 mb-3">@L("CounterSalesDefaults")</h5>
                     <div class="mb-1">
                         <label class="m-checkbox">
                             <input type="checkbox" name="DefaultDesignationToCounterSales" value="true" checked=@(Model.Options?.DefaultDesignationToCounterSales == true ? "checked" : null)>
@@ -207,13 +212,6 @@
                         <label for="DefaultAutoGenerateTicketNumberForUser" class="m-checkbox">
                             <input id="DefaultAutoGenerateTicketNumberForUser" type="checkbox" name="DefaultAutoGenerateTicketNumber" value="true" checked=@(Model.Options?.DefaultAutoGenerateTicketNumber == true ? "checked" : null)>
                             @L("DefaultAutoGenerateTicket")
-                            <span></span>
-                        </label>
-                    </div>
-                    <div class="mb-1">
-                        <label for="CCMeOnInvoices" class="m-checkbox">
-                            <input id="CCMeOnInvoices" type="checkbox" name="CCMeOnInvoices" value="true" checked=@(Model.Options?.CCMeOnInvoices == true ? "checked" : null)>
-                            @L("CCMeOnInvoices")
                             <span></span>
                         </label>
                     </div>
