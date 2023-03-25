@@ -4,6 +4,7 @@ using Abp.Extensions;
 using Abp.UI;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverApp.Tickets.Dto;
+using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Orders;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,16 +16,22 @@ namespace DispatcherWeb.DriverApp.Tickets
         private readonly IRepository<Ticket> _ticketRepository;
         private readonly IRepository<Load> _loadRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
+        private readonly IFuelSurchargeCalculator _fuelSurchargeCalculator;
+        private readonly IDispatchingAppService _dispatchingAppService;
 
         public TicketAppService(
             IRepository<Ticket> ticketRepository,
             IRepository<Load> loadRepository,
-            IRepository<Dispatch> dispatchRepository
+            IRepository<Dispatch> dispatchRepository,
+            IFuelSurchargeCalculator fuelSurchargeCalculator,
+            IDispatchingAppService dispatchingAppService
             )
         {
             _ticketRepository = ticketRepository;
             _loadRepository = loadRepository;
             _dispatchRepository = dispatchRepository;
+            _fuelSurchargeCalculator = fuelSurchargeCalculator;
+            _dispatchingAppService = dispatchingAppService;
         }
 
         public async Task<TicketDto> Post(TicketDto model)
@@ -67,6 +74,8 @@ namespace DispatcherWeb.DriverApp.Tickets
             {
                 throw new UserFriendlyException($"Dispatch with id {model.DispatchId} wasn't found");
             }
+
+            var orderTotalsBeforeUpdate = await _dispatchingAppService.GetOrderTotalsAsync(dispatchData.OrderLineId);
 
             ticket.Quantity = model.Quantity;
             ticket.TicketDateTime = model.TicketDateTime;
@@ -112,6 +121,12 @@ namespace DispatcherWeb.DriverApp.Tickets
                     model.TicketNumber = ticket.TicketNumber;
                 }
             }
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+            await _fuelSurchargeCalculator.RecalculateTicket(ticket.Id);
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+            await _dispatchingAppService.NotifyDispatchersAfterTicketUpdateIfNeeded(dispatchData.OrderLineId, orderTotalsBeforeUpdate);
 
             return model;
         }

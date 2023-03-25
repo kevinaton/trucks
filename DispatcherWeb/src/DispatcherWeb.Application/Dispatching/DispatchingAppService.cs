@@ -1804,71 +1804,6 @@ namespace DispatcherWeb.Dispatching
 
                 var orderTotalsBeforeUpdate = await GetOrderTotalsAsync(dispatchEntity.OrderLineId);
 
-                //if (!await SettingManager.DispatchViaSimplifiedSms())
-                //{
-                await CreateOrUpdateTicketAsync(loadEntity);
-                var ticket = loadEntity.Tickets.LastOrDefault();
-                //}
-
-                await _loadRepository.InsertOrUpdateAsync(loadEntity);
-                await CurrentUnitOfWork.SaveChangesAsync();
-
-                if (input.DispatchTicket.CreateNewTicket && ticket != null)
-                {
-                    ticket.TicketNumber = "G-" + (ticket.Id);
-                }
-
-                await CurrentUnitOfWork.SaveChangesAsync();
-                await _orderTaxCalculator.CalculateTotalsAsync(dispatchEntity.OrderLine.OrderId);
-                if (ticket != null)
-                {
-                    await _fuelSurchargeCalculator.RecalculateTicket(ticket.Id);
-                }
-
-                await CurrentUnitOfWork.SaveChangesAsync();
-                if (input.Info == null)
-                {
-                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchEntity.DriverId)
-                    {
-                        LogMessage = $"Modified dispatch ticket, dispatch {dispatchEntity.Id}"
-                    });
-                }
-                await _syncRequestSender.SendSyncRequest(new SyncRequest()
-                    .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity())
-                    .SetIgnoreForDeviceId(input.Info?.DeviceId)
-                    .AddLogMessage("Modified dispatch ticket"));
-
-                var orderTotalsAfterUpdate = await GetOrderTotalsAsync(dispatchEntity.OrderLineId);
-
-                if (!orderTotalsBeforeUpdate.AmountExceedsQuantity && orderTotalsAfterUpdate.AmountExceedsQuantity)
-                {
-                    var orderDetails = await _orderLineRepository.GetAll()
-                        .Where(x => x.Id == dispatchEntity.OrderLineId)
-                        .Select(x => new
-                        {
-                            OfficeId = x.Order.LocationId,
-                            SharedOfficeIds = x.SharedOrderLines.Select(s => s.OfficeId),
-                            CustomerName = x.Order.Customer.Name
-                        })
-                        .FirstOrDefaultAsync();
-
-                    await _appNotifier.SendPriorityNotification(
-                        new SendPriorityNotificationInput(
-                            L("OrderHasReachedRequestedAmount").Replace("{CustomerName}", orderDetails.CustomerName),
-                            NotificationSeverity.Warn,
-                            orderDetails.SharedOfficeIds.Union(new[] { orderDetails.OfficeId }).ToArray()
-                        )
-                        {
-                            OnlineFilter = true,
-                            RoleFilter = new[] { StaticRoleNames.Tenants.Dispatching }
-                        });
-                }
-            }
-
-            // Local functions
-            async Task CreateOrUpdateTicketAsync(Load loadEntity)
-            {
-                //still create a ticket regardless of dispatchTicket.TicketControlsWereHidden
                 var ticket = loadEntity.Tickets.LastOrDefault();
                 if (ticket == null)
                 {
@@ -1900,12 +1835,7 @@ namespace DispatcherWeb.Dispatching
                         }).FirstOrDefaultAsync();
                     ticket.CarrierId = truckDetails?.LeaseHaulerId;
                 }
-                if (input.DispatchTicket.CreateNewTicket)
-                {
-                    //var ticketId = _ticketRepository.GetAll().Select(x => x.Id).DefaultIfEmpty(0).Max();
-                    //ticket.TicketNumber = "G-" + (ticketId + 1);
-                }
-                else
+                if (!input.DispatchTicket.CreateNewTicket)
                 {
                     ticket.TicketNumber = input.DispatchTicket.TicketNumber;
                 }
@@ -1933,11 +1863,68 @@ namespace DispatcherWeb.Dispatching
                     }
                     ticket.TicketPhotoFilename = input.DispatchTicket.TicketPhotoFilename;
                 }
-            }
 
+                await _loadRepository.InsertOrUpdateAsync(loadEntity);
+                await CurrentUnitOfWork.SaveChangesAsync();
+
+                if (input.DispatchTicket.CreateNewTicket && ticket != null)
+                {
+                    ticket.TicketNumber = "G-" + (ticket.Id);
+                }
+
+                await CurrentUnitOfWork.SaveChangesAsync();
+                await _orderTaxCalculator.CalculateTotalsAsync(dispatchEntity.OrderLine.OrderId);
+                await _fuelSurchargeCalculator.RecalculateTicket(ticket.Id);
+
+                await CurrentUnitOfWork.SaveChangesAsync();
+                if (input.Info == null)
+                {
+                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchEntity.DriverId)
+                    {
+                        LogMessage = $"Modified dispatch ticket, dispatch {dispatchEntity.Id}"
+                    });
+                }
+                await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                    .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity())
+                    .SetIgnoreForDeviceId(input.Info?.DeviceId)
+                    .AddLogMessage("Modified dispatch ticket"));
+
+                await NotifyDispatchersAfterTicketUpdateIfNeeded(dispatchEntity.OrderLineId, orderTotalsBeforeUpdate);
+            }
         }
 
-        private async Task<GetOrderTotalsResult> GetOrderTotalsAsync(int orderLineId)
+        [RemoteService(false)]
+        public async Task NotifyDispatchersAfterTicketUpdateIfNeeded(int orderLineId, GetOrderTotalsResult orderTotalsBeforeUpdate)
+        {
+            var orderTotalsAfterUpdate = await GetOrderTotalsAsync(orderLineId);
+
+            if (!orderTotalsBeforeUpdate.AmountExceedsQuantity && orderTotalsAfterUpdate.AmountExceedsQuantity)
+            {
+                var orderDetails = await _orderLineRepository.GetAll()
+                    .Where(x => x.Id == orderLineId)
+                    .Select(x => new
+                    {
+                        OfficeId = x.Order.LocationId,
+                        SharedOfficeIds = x.SharedOrderLines.Select(s => s.OfficeId),
+                        CustomerName = x.Order.Customer.Name
+                    })
+                    .FirstOrDefaultAsync();
+
+                await _appNotifier.SendPriorityNotification(
+                    new SendPriorityNotificationInput(
+                        L("OrderHasReachedRequestedAmount").Replace("{CustomerName}", orderDetails.CustomerName),
+                        NotificationSeverity.Warn,
+                        orderDetails.SharedOfficeIds.Union(new[] { orderDetails.OfficeId }).ToArray()
+                    )
+                    {
+                        OnlineFilter = true,
+                        RoleFilter = new[] { StaticRoleNames.Tenants.Dispatching }
+                    });
+            }
+        }
+
+        [RemoteService(false)]
+        public async Task<GetOrderTotalsResult> GetOrderTotalsAsync(int orderLineId)
         {
             var data = await _orderLineRepository.GetAll()
                     .Where(x => x.Id == orderLineId)
