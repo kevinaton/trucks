@@ -28,6 +28,7 @@ using DispatcherWeb.PayStatements;
 using DispatcherWeb.Sms;
 using DispatcherWeb.TimeOffs;
 using DispatcherWeb.Url;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.MultiTenancy
@@ -170,6 +171,7 @@ namespace DispatcherWeb.MultiTenancy
                 );
         }
 
+        [HttpPost]
         public async Task<PagedResultDto<SelectListDto>> GetTenantsSelectList(GetTenantsSelectListInput input)
         {
             return await TenantManager.Tenants
