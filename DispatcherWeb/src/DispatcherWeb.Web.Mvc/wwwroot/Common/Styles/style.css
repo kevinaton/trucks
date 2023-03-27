@@ -1396,9 +1396,17 @@ input[type="file"] {
         font-size: 14px;
     }
 
-    .dispatch-driver .content div.form-group input {
-        padding: 0;
-        height: 30px;
+    .dispatch-driver .content div.form-group .input-button input{
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+    }
+
+    .dispatch-driver .content div.form-group .input-button button {
+        width: 48px;
+        height: calc(2.95rem + 2px);
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: 0;
     }
 
 .dispatch_block {
