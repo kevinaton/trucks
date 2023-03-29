@@ -285,15 +285,43 @@
         $("#QbExportButton").click(function (e) {
             e.preventDefault();
             let button = $(this);
-            abp.ui.setBusy(button);
-            let fileWindow = window.open(abp.appPath + 'app/QuickBooks/ExportInvoicesToIIF');
-            var awaitFileWindowInterval = setInterval(function () {
-                if (fileWindow.closed) {
-                    clearInterval(awaitFileWindowInterval);
-                    reloadMainGrid();
-                    abp.ui.clearBusy(button);
-                }
-            }, 500);
+            let quickbooksIntegrationKind = abp.setting.getInt('App.Invoice.Quickbooks.IntegrationKind');
+
+            switch (quickbooksIntegrationKind) {
+                case abp.enums.quickbooksIntegrationKind.desktop:
+                    abp.ui.setBusy(button);
+                    let fileWindow = window.open(abp.appPath + 'app/QuickBooks/ExportInvoicesToIIF');
+                    var awaitFileWindowInterval = setInterval(function () {
+                        if (fileWindow.closed) {
+                            clearInterval(awaitFileWindowInterval);
+                            reloadMainGrid();
+                            abp.ui.clearBusy(button);
+                        }
+                    }, 500);
+                    break;
+                case abp.enums.quickbooksIntegrationKind.qboExport:
+                    abp.ui.setBusy(button);
+                    abp.services.app.quickbooksOnlineExport.exportInvoicesToCsv().done(function (result) {
+                        app.downloadTempFile(result);
+                    }).always(() => {
+                        abp.ui.clearBusy(button);
+                    });
+                    break;
+                case abp.enums.quickbooksIntegrationKind.transactionProExport:
+                    abp.ui.setBusy(button);
+                    abp.services.app.quickbooksTransactionProExport.exportInvoicesToCsv().done(function (result) {
+                        app.downloadTempFile(result);
+                    }).always(() => {
+                        abp.ui.clearBusy(button);
+                    });
+                    break;
+                case abp.enums.quickbooksIntegrationKind.online:
+                case abp.enums.quickbooksIntegrationKind.none:
+                default:
+                    break;
+            }
+
+            
         });
 
 

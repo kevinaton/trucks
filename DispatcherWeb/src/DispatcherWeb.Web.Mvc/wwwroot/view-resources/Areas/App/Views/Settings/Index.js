@@ -909,13 +909,10 @@
         refreshQuickbooksControls();
         function refreshQuickbooksControls() {
             let quickbooksIntegrationKind = parseInt($('#QuickbooksIntegrationKind').val() || '0');
-            $('#quickbooksConnectBlock, #quickbooksConnectedBlock, #quickbooksDesktopBlock, #quickbooksGeneralBlock').hide();
+            $('#quickbooksConnectBlock, #quickbooksConnectedBlock, #quickbooksDesktopBlock, #quickbooksTransactionProBlock, #quickbooksGeneralBlock').hide();
             switch (quickbooksIntegrationKind) {
                 case abp.enums.quickbooksIntegrationKind.desktop:
                     $('#quickbooksDesktopBlock, #quickbooksGeneralBlock').show();
-                    break;
-                case abp.enums.quickbooksIntegrationKind.none:
-                default:
                     break;
                 case abp.enums.quickbooksIntegrationKind.online:
                     $('#quickbooksGeneralBlock').show();
@@ -924,6 +921,15 @@
                     } else {
                         $('#quickbooksConnectBlock').show();
                     }
+                    break;
+                case abp.enums.quickbooksIntegrationKind.qboExport:
+                    $('#quickbooksGeneralBlock').show();
+                    break;
+                case abp.enums.quickbooksIntegrationKind.transactionProExport:
+                    $('#quickbooksTransactionProBlock, #quickbooksGeneralBlock').show();
+                    break;
+                case abp.enums.quickbooksIntegrationKind.none:
+                default:
                     break;
             }
         }
