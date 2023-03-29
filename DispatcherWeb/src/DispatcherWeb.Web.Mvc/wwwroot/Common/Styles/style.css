@@ -1864,12 +1864,65 @@ span.contact-status2.online {
     border-right: 1px solid #ebedf2;
 }
 
-.vertical-tab .nav.nav-tabs .nav-item:first-child {
-    margin-left: 5px;
+.m-tabs-line.nav.nav-tabs .nav-link {
+    padding: 14px;
+    font-size: 1.1rem;
+    color: #444444;
+    border-bottom: 2px solid transparent;
 }
 
-.vertical-tab .m-tabs-line .m-tabs__item {
+.m-tabs-line.nav.nav-tabs .nav-link:hover {
+    color: #444444;
+    background: #F1F1F1;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+}
+
+.m-tabs-line.nav.nav-tabs .nav-link.active {
+    color: #58A3DC;
+    border-bottom: 2px solid #58A3DC;
+    font-weight: 500;
+    background: transparent;
+}
+
+.m-tabs-line .m-tabs__item,
+.nav.nav-pills .nav-item,
+.nav.nav-tabs .nav-item {
+    margin: 0;
+}
+
+.m-tabs-line .m-tabs__item .badge {
+    border-radius: 50%;
+    padding: 3px;
+    font-size: 9px;
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.modal-body .m-tabs-line {
+    margin-top: -25px;
+}
+
+.m-tabs-line.nav.nav-tabs .nav-link > i,
+.m-tabs-line.nav.nav-tabs .nav-link:hover i {
+    color: inherit;
+}
+
+.m-tabs-line.nav.nav-tabs .nav-link.active > i,
+.m-tabs-line a.m-tabs__link.active > i {
+    color: #58A3DC;
+}
+
+.m-tabs-line .m-tabs__link i,
+.m-tabs-line.nav.nav-tabs .nav-item .nav-link i {
     margin-right: 0;
+}
+
+.m-tabs-line .m-tabs__link i + span {
+    margin-left: 8px;
 }
 
 .tooltip-inner {
