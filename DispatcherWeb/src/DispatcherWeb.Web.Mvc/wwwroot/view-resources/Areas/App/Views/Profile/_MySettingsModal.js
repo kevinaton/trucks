@@ -66,7 +66,10 @@
                 allowClear: true
             });
 
-            _$optionsForm.find('#DefaultMaterialUomId').select2Uom();
+            _$optionsForm.find('#DefaultMaterialUomId').select2Uom({
+                showAll: true,
+                allowClear: true
+            });
         };
 
         this.save = function () {
