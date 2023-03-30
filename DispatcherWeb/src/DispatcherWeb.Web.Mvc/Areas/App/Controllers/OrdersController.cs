@@ -9,7 +9,6 @@ using DispatcherWeb.Exceptions;
 using DispatcherWeb.OrderPayments;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Dto;
-using DispatcherWeb.Orders.SendOrdersToDrivers;
 using DispatcherWeb.Quotes.Dto;
 using DispatcherWeb.Web.Areas.App.Models.Orders;
 using DispatcherWeb.Web.Areas.App.Models.Shared;
@@ -25,17 +24,14 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
     {
         private readonly IOrderAppService _orderAppService;
         private readonly IOrderPaymentAppService _orderPaymentAppService;
-        private readonly ISendOrdersToDriversAppService _sendOrdersToDriversAppService;
 
         public OrdersController(
             IOrderAppService orderAppService,
-            IOrderPaymentAppService orderPaymentAppService,
-            ISendOrdersToDriversAppService sendOrdersToDriversAppService
+            IOrderPaymentAppService orderPaymentAppService
         )
         {
             _orderAppService = orderAppService;
             _orderPaymentAppService = orderPaymentAppService;
-            _sendOrdersToDriversAppService = sendOrdersToDriversAppService;
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_View)]
