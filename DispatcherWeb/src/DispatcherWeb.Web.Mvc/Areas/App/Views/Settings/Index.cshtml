@@ -716,8 +716,7 @@
                                     <div class="row">
                                         <div class="col-sm-6 form-group">
                                             <label for="QbdDefaultIncomeAccountType" class="required-label">@L("DefaultIncomeAccountType"):</label>
-                                            <select id="QbdDefaultIncomeAccountType" class="form-control" name="QbdDefaultIncomeAccountType" asp-for="Settings.Billing.QbdDefaultIncomeAccountType" asp-items="Model.Settings.Billing.QbdIncomeAccountTypes.Select(x => new SelectListItem(x.Name, x.Id)).ToList()" required>
-                                            </select>
+                                            <select id="QbdDefaultIncomeAccountType" class="form-control" name="QbdDefaultIncomeAccountType" asp-for="Settings.Billing.QbdDefaultIncomeAccountType" asp-items="Model.Settings.Billing.QbdIncomeAccountTypes.Select(x => new SelectListItem(x.Name, x.Id)).ToList()" required></select>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -732,6 +731,8 @@
                                             <input id="QbdTaxAccountName" type="text" class="form-control" name="QbdTaxAccountName" value="@Model.Settings.Billing.QbdTaxAccountName" required>
                                         </div>
                                     </div>
+                                </div>
+                                <div id="quickbooksTransactionProBlock" style="display: none">
                                 </div>
                             }
                         </form>

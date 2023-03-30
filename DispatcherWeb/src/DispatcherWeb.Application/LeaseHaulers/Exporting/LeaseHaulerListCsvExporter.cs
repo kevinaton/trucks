@@ -18,31 +18,18 @@ namespace DispatcherWeb.LeaseHaulers.Exporting
                 "LeaseHaulerList.csv",
                 () =>
                 {
-                    AddHeader(
-                        "Name",
-                        "Street Address 1",
-                        "Street Address 2",
-                        "City",
-                        "State",
-                        "Zip Code",
-                        "Country Code",
-                        "Account Number",
-                        "Phone Number"
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         leaseHaulerEditDtos,
-                        _ => _.Name,
-                        _ => _.StreetAddress1,
-                        _ => _.StreetAddress2,
-                        _ => _.City,
-                        _ => _.State,
-                        _ => _.ZipCode,
-                        _ => _.CountryCode,
-                        _ => _.AccountNumber,
-                        _ => _.PhoneNumber
+                        ("Name", x => x.Name),
+                        ("Street Address 1", x => x.StreetAddress1),
+                        ("Street Address 2", x => x.StreetAddress2),
+                        ("City", x => x.City),
+                        ("State", x => x.State),
+                        ("Zip Code", x => x.ZipCode),
+                        ("Country Code", x => x.CountryCode),
+                        ("Account Number", x => x.AccountNumber),
+                        ("Phone Number", x => x.PhoneNumber)
                     );
-
                 }
             );
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Abp.AspNetZeroCore.Net;
 using Abp.Collections.Extensions;
 using Abp.Dependency;
@@ -36,6 +37,19 @@ namespace DispatcherWeb.DataExporting.Csv
 
             return file;
 
+        }
+
+        protected void AddHeaderAndData<T>(IList<T> items, params (string header, Func<T, string> dataSelector)[] headerAndDataPairs)
+        {
+            AddHeader(headerAndDataPairs
+                .Where(x => x.header != null)
+                .Select(x => x.header)
+                .ToArray());
+
+            AddObjects(items, headerAndDataPairs
+                .Where(x => x.header != null && x.dataSelector != null)
+                .Select(x => x.dataSelector)
+                .ToArray());
         }
 
         protected void AddHeader(params string[] headerTexts)

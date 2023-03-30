@@ -86,7 +86,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             var integrationKind = (QuickbooksIntegrationKind)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.Quickbooks.IntegrationKind);
             var isConnected = await SettingManager.IsQuickbooksConnected();
 
-            if (integrationKind != QuickbooksIntegrationKind.Online || !isConnected)
+            if ((int)integrationKind != (int)QuickbooksDeprecatedIntegrationKind.Online || !isConnected)
             {
                 return Redirect("Index");
             }

@@ -582,8 +582,16 @@ namespace DispatcherWeb
         None = 0,
         [Display(Name = "QuickBooks Desktop")]
         Desktop = 1,
-        [Display(Name = "QuickBooks Online")]
-        Online = 2
+        [Display(Name = "QuickBooks Online Export")]
+        QboExport = 3,
+        [Display(Name = "Transaction Pro Export for QuickBooks Online")]
+        TransactionProExport = 4
+    }
+
+    public enum QuickbooksDeprecatedIntegrationKind
+    {
+        [Display(Name = "QuickBooks Online (Deprecated)")]
+        Online = 2,
     }
 
     public enum TicketListStatusFilterEnum

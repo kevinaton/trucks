@@ -21,27 +21,16 @@ namespace DispatcherWeb.Authorization.Users.Importing
                 "InvalidUserImportList.csv",
                 () =>
                 {
-                    AddHeader(
-                        L("UserName"),
-                        L("Name"),
-                        L("Surname"),
-                        L("EmailAddress"),
-                        L("PhoneNumber"),
-                        L("Password"),
-                        L("Roles"),
-                        L("Refuse Reason")
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         userListDtos,
-                        _ => _.UserName,
-                        _ => _.Name,
-                        _ => _.Surname,
-                        _ => _.EmailAddress,
-                        _ => _.PhoneNumber,
-                        _ => _.Password,
-                        _ => _.AssignedRoleNames?.JoinAsString(","),
-                        _ => _.Exception
+                        (L("UserName"), x => x.UserName),
+                        (L("Name"), x => x.Name),
+                        (L("Surname"), x => x.Surname),
+                        (L("EmailAddress"), x => x.EmailAddress),
+                        (L("PhoneNumber"), x => x.PhoneNumber),
+                        (L("Password"), x => x.Password),
+                        (L("Roles"), x => x.AssignedRoleNames?.JoinAsString(",")),
+                        (L("Refuse Reason"), x => x.Exception)
                     );
                 });
         }

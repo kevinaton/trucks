@@ -19,33 +19,19 @@ namespace DispatcherWeb.Locations.Exporting
                 "LocationList.csv",
                 () =>
                 {
-                    AddHeader(
-                        "Name",
-                        "Category",
-                        "Street Address",
-                        "City",
-                        "State",
-                        "Zip Code",
-                        "Country Code",
-                        "Active",
-                        "Abbreviation",
-                        "Notes"
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         locationDtos,
-                        _ => _.Name,
-                        _ => _.CategoryName,
-                        _ => _.StreetAddress,
-                        _ => _.City,
-                        _ => _.State,
-                        _ => _.ZipCode,
-                        _ => _.CountryCode,
-                        _ => _.IsActive.ToYesNoString(),
-                        _ => _.Abbreviation,
-                        _ => _.Notes
+                        ("Name", x => x.Name),
+                        ("Category", x => x.CategoryName),
+                        ("Street Address", x => x.StreetAddress),
+                        ("City", x => x.City),
+                        ("State", x => x.State),
+                        ("Zip Code", x => x.ZipCode),
+                        ("Country Code", x => x.CountryCode),
+                        ("Active", x => x.IsActive.ToYesNoString()),
+                        ("Abbreviation", x => x.Abbreviation),
+                        ("Notes", x => x.Notes)
                     );
-
                 }
             );
         }

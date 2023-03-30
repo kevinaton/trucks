@@ -19,19 +19,12 @@ namespace DispatcherWeb.Services.Exporting
                 "ServiceList.csv",
                 () =>
                 {
-                    AddHeader(
-                        "Name",
-                        "Description",
-                        "Active"
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         serviceDtos,
-                        _ => _.Service1,
-                        _ => _.Description,
-                        _ => _.IsActive.ToYesNoString()
+                        ("Name", x => x.Service1),
+                        ("Description", x => x.Description),
+                        ("Active", x => x.IsActive.ToYesNoString())
                     );
-
                 }
             );
         }

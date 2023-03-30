@@ -18,23 +18,14 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard.Exporting
                 "Requests.csv",
                 () =>
                 {
-                    AddHeader(
-                        "Request name",
-                        "Ave. Exec. Time",
-                        "# yesterday",
-                        "# in last week",
-                        "# in last month"
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         requestDtos,
-                        _ => $"{_.ServiceName}.{_.MethodName}",
-                        _ => _.AverageExecutionDuration.ToString("N0"),
-                        _ => _.NumberOfTransactions.ToString("N0"),
-                        _ => _.LastWeekNumberOfTransactions.ToString("N0"),
-                        _ => _.LastMonthNumberOfTransactions.ToString("N0")
+                        ("Request name", x => $"{x.ServiceName}.{x.MethodName}"),
+                        ("Ave. Exec. Time", x => x.AverageExecutionDuration.ToString("N0")),
+                        ("# yesterday", x => x.NumberOfTransactions.ToString("N0")),
+                        ("# in last week", x => x.LastWeekNumberOfTransactions.ToString("N0")),
+                        ("# in last month", x => x.LastMonthNumberOfTransactions.ToString("N0"))
                     );
-
                 }
             );
         }

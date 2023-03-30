@@ -18,21 +18,13 @@ namespace DispatcherWeb.EmployeeTime.Exporting
                 "EmployeeTimeList.csv",
                 () =>
                 {
-                    AddHeader(
-                        L("Employee"),
-                        L("StartDateTime"),
-                        L("EndDateTime"),
-                        L("TimeClassification"),
-                        L("ElapsedTimeHr")
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         employeeTimeDtos,
-                        _ => _.EmployeeName,
-                        _ => _.StartDateTime.ToString("f"),
-                        _ => _.EndDateTime?.ToString("f"),
-                        _ => _.TimeClassificationName,
-                        _ => _.ElapsedHours.ToString("N1")
+                        (L("Employee"), x => x.EmployeeName),
+                        (L("StartDateTime"), x => x.StartDateTime.ToString("f")),
+                        (L("EndDateTime"), x => x.EndDateTime?.ToString("f")),
+                        (L("TimeClassification"), x => x.TimeClassificationName),
+                        (L("ElapsedTimeHr"), x => x.ElapsedHours.ToString("N1"))
                     );
 
                 }

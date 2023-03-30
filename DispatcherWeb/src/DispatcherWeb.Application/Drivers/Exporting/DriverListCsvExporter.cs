@@ -19,35 +19,20 @@ namespace DispatcherWeb.Drivers.Exporting
                 "DriverList.csv",
                 () =>
                 {
-                    AddHeader(
-                        "First Name",
-                        "Last Name",
-                        "Office Name",
-                        "Inactive",
-                        "License Number",
-                        "Type of License",
-                        "License Expiration Date",
-                        "Last Physical Date",
-                        "Next Physical Due Date",
-                        "Last MVR Date",
-                        "Next MVR Due Date",
-                        "Date of Hire"
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         driverDtos,
-                        _ => _.FirstName,
-                        _ => _.LastName,
-                        _ => _.OfficeName,
-                        _ => _.IsInactive.ToYesNoString(),
-                        _ => _.LicenseNumber,
-                        _ => _.TypeOfLicense,
-                        _ => _.LicenseExpirationDate?.ToString("d"),
-                        _ => _.LastPhysicalDate?.ToString("d"),
-                        _ => _.NextPhysicalDueDate?.ToString("d"),
-                        _ => _.LastMvrDate?.ToString("d"),
-                        _ => _.NextMvrDueDate?.ToString("d"),
-                        _ => _.DateOfHire?.ToString("d")
+                        ("First Name", x => x.FirstName),
+                        ("Last Name", x => x.LastName),
+                        ("Office Name", x => x.OfficeName),
+                        ("Inactive", x => x.IsInactive.ToYesNoString()),
+                        ("License Number", x => x.LicenseNumber),
+                        ("Type of License", x => x.TypeOfLicense),
+                        ("License Expiration Date", x => x.LicenseExpirationDate?.ToString("d")),
+                        ("Last Physical Date", x => x.LastPhysicalDate?.ToString("d")),
+                        ("Next Physical Due Date", x => x.NextPhysicalDueDate?.ToString("d")),
+                        ("Last MVR Date", x => x.LastMvrDate?.ToString("d")),
+                        ("Next MVR Due Date", x => x.NextMvrDueDate?.ToString("d")),
+                        ("Date of Hire", x => x.DateOfHire?.ToString("d"))
                     );
 
                 }

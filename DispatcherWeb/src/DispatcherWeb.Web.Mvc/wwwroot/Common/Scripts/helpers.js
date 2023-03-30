@@ -440,7 +440,9 @@
     abp.enums.quickbooksIntegrationKind = {
         none: 0,
         desktop: 1,
-        online: 2
+        online: 2,
+        qboExport: 3,
+        transactionProExport: 4
     };
     abp.enums.staggeredTimeKind = {
         none: 0,

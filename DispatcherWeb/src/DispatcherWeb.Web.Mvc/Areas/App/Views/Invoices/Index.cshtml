@@ -37,11 +37,11 @@
             @if (await FeatureChecker.IsEnabledAsync(AppFeatures.QuickbooksFeature))
             {
                 var accountingIntegrationKind = (QuickbooksIntegrationKind)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.Quickbooks.IntegrationKind);
-                @if (accountingIntegrationKind == QuickbooksIntegrationKind.Desktop)
+                @if (accountingIntegrationKind.IsIn(QuickbooksIntegrationKind.Desktop, QuickbooksIntegrationKind.QboExport, QuickbooksIntegrationKind.TransactionProExport))
                 {
                     <button type="button" id="QbExportButton" class="btn btn-primary" data-toggle="tooltip" title="@L("CreateQuickBooksExportFile")">@L("QbExport")</button>
                 }
-                else if (accountingIntegrationKind == QuickbooksIntegrationKind.Online && await SettingManager.IsQuickbooksConnected())
+                else if ((int)accountingIntegrationKind == (int)QuickbooksDeprecatedIntegrationKind.Online && await SettingManager.IsQuickbooksConnected())
                 {
                     <button type="button" id="UpdateQboButton" class="btn btn-primary" data-toggle="tooltip" title="@L("UpdateInvoicesToQuickBooksOnline")">@L("UpdateQbo")</button>
                 }

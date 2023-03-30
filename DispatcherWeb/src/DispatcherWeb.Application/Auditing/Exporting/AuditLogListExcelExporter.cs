@@ -30,32 +30,19 @@ namespace DispatcherWeb.Auditing.Exporting
                 "AuditLogs.csv",
                 () =>
                 {
-                    AddHeader(
-                        L("Time"),
-                        L("UserName"),
-                        L("Service"),
-                        L("Action"),
-                        L("Parameters"),
-                        L("Duration"),
-                        L("IpAddress"),
-                        L("Client"),
-                        L("Browser"),
-                        L("ErrorState")
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         auditLogListDtos,
-                        _ => _timeZoneConverter.Convert(_.ExecutionTime, _abpSession.TenantId, _abpSession.GetUserId())?.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"),
-                        _ => _.UserName,
-                        _ => _.ServiceName,
-                        _ => _.MethodName,
-                        _ => _.Parameters,
-                        _ => _.ExecutionDuration.ToString(),
-                        _ => _.ClientIpAddress,
-                        _ => _.ClientName,
-                        _ => _.BrowserInfo,
-                        _ => _.Exception.IsNullOrEmpty() ? L("Success") : _.Exception
-                        );
+                        (L("Time"), x => _timeZoneConverter.Convert(x.ExecutionTime, _abpSession.TenantId, _abpSession.GetUserId())?.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss")),
+                        (L("UserName"), x => x.UserName),
+                        (L("Service"), x => x.ServiceName),
+                        (L("Action"), x => x.MethodName),
+                        (L("Parameters"), x => x.Parameters),
+                        (L("Duration"), x => x.ExecutionDuration.ToString()),
+                        (L("IpAddress"), x => x.ClientIpAddress),
+                        (L("Client"), x => x.ClientName),
+                        (L("Browser"), x => x.BrowserInfo),
+                        (L("ErrorState"), x => x.Exception.IsNullOrEmpty() ? L("Success") : x.Exception)
+                    );
                 });
         }
 
@@ -65,19 +52,12 @@ namespace DispatcherWeb.Auditing.Exporting
                 "DetailedLogs.xlsx",
                 () =>
                 {
-                    AddHeader(
-                        L("Action"),
-                        L("Object"),
-                        L("UserName"),
-                        L("Time")
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         entityChangeListDtos,
-                        _ => _.ChangeType.ToString(),
-                        _ => _.EntityTypeFullName,
-                        _ => _.UserName,
-                        _ => _timeZoneConverter.Convert(_.ChangeTime, _abpSession.TenantId, _abpSession.GetUserId())?.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
+                        (L("Action"), x => x.ChangeType.ToString()),
+                        (L("Object"), x => x.EntityTypeFullName),
+                        (L("UserName"), x => x.UserName),
+                        (L("Time"), x => _timeZoneConverter.Convert(x.ChangeTime, _abpSession.TenantId, _abpSession.GetUserId())?.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"))
                     );
                 });
         }
