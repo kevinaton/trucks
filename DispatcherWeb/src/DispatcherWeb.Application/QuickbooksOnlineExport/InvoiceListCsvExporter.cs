@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Configuration;
 using DispatcherWeb.Configuration;
@@ -29,66 +30,30 @@ namespace DispatcherWeb.QuickbooksOnlineExport
                 filename + ".csv",
                 () =>
                 {
-                    AddHeader(
-                        "*InvoiceNo",
-                        "*Customer",
-                        "*InvoiceDate",
-                        "*DueDate",
-                        "Terms",
-                        "Location",
-                        "Memo",
-                        "Item(Product/Service)",
-                        "ItemDescription",
-                        "ItemQuantity",
-                        "ItemRate",
-                        "*ItemAmount",
-                        "Taxable",
-                        "TaxRate",
-                        "Service Date"
-                    );
-
-                    foreach (var invoice in invoiceList)
+                    var flatData = invoiceList.SelectMany(x => x.InvoiceLines, (invoice, invoiceLine) => new
                     {
-                        var firstRow = true;
-                        foreach (var invoiceLine in invoice.InvoiceLines)
-                        {
-                            AddObjects(
-                                new[] {
-                                    new
-                                    {
-                                        InvoiceNumber = invoiceNumberPrefix + invoice.InvoiceId,
-                                        CustomerName = invoice.Customer.Name,
-                                        invoice.IssueDate,
-                                        invoice.DueDate,
-                                        invoice.Terms,
-                                        invoice.Message,
-                                        invoiceLine.ItemName,
-                                        invoiceLine.Quantity,
-                                        invoiceLine.Subtotal,
-                                        invoiceLine.IsTaxable,
-                                        invoice.TaxRate,
-                                    }
-                                },
-                                _ => _.InvoiceNumber,
-                                _ => firstRow ? _.CustomerName : "",
-                                _ => firstRow ? _.IssueDate?.ToString("d") : "",
-                                _ => firstRow ? _.DueDate?.ToString("d") : "",
-                                _ => firstRow ? _.Terms?.GetDisplayName() : "",
-                                _ => "",
-                                _ => firstRow ? _.Message : "",
-                                _ => _.ItemName,
-                                _ => "",
-                                _ => _.Quantity.ToString(),
-                                _ => (_.Subtotal / _.Quantity).ToString(),
-                                _ => _.Subtotal.ToString(),
-                                _ => _.IsTaxable == true ? "Y" : "N",
-                                _ => firstRow ? _.TaxRate + "%" : "",
-                                _ => _.IssueDate?.ToString("d")
-                            );
+                        IsFirstRow = invoice.InvoiceLines.IndexOf(invoiceLine) == 0,
+                        Invoice = invoice,
+                        InvoiceLine = invoiceLine
+                    }).ToList();
 
-                            firstRow = false;
-                        }
-                    }
+                    AddHeaderAndData(flatData,
+                        ("*InvoiceNo", x => invoiceNumberPrefix + x.Invoice.InvoiceId),
+                        ("*Customer", x => x.IsFirstRow ? x.Invoice.Customer.Name : ""),
+                        ("*InvoiceDate", x => x.IsFirstRow ? x.Invoice.IssueDate?.ToString("d") : ""),
+                        ("*DueDate", x => x.IsFirstRow ? x.Invoice.DueDate?.ToString("d") : ""),
+                        ("Terms", x => x.IsFirstRow ? x.Invoice.Terms?.GetDisplayName() : ""),
+                        ("Location", x => ""),
+                        ("Memo", x => x.IsFirstRow ? x.Invoice.Message : ""),
+                        ("Item(Product/Service)", x => x.InvoiceLine.ItemName),
+                        ("ItemDescription", x => ""),
+                        ("ItemQuantity", x => x.InvoiceLine.Quantity.ToString()),
+                        ("ItemRate", x => (x.InvoiceLine.Subtotal / x.InvoiceLine.Quantity).ToString()),
+                        ("*ItemAmount", x => x.InvoiceLine.Subtotal.ToString()),
+                        ("Taxable", x => x.InvoiceLine.IsTaxable == true ? "Y" : "N"),
+                        ("TaxRate", x => x.IsFirstRow ? x.Invoice.TaxRate + "%" : ""),
+                        ("Service Date", x => x.Invoice.IssueDate?.ToString("d"))
+                    );
                 });
         }
     }
