@@ -18,23 +18,14 @@ namespace DispatcherWeb.TimeOffs.Exporting
                 "TimeOffList.csv",
                 () =>
                 {
-                    AddHeader(
-                        L("Driver"),
-                        L("StartDate"),
-                        L("EndDate"),
-                        L("Reason"),
-                        L("RequestedHrs")
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         timeOffDtos,
-                        _ => _.DriverName,
-                        _ => _.StartDate.ToString("f"),
-                        _ => _.EndDate.ToString("f"),
-                        _ => _.Reason,
-                        _ => _.RequestedHours?.ToString("N1")
+                        (L("Driver"), x => x.DriverName),
+                        (L("StartDate"), x => x.StartDate.ToString("f")),
+                        (L("EndDate"), x => x.EndDate.ToString("f")),
+                        (L("Reason"), x => x.Reason),
+                        (L("RequestedHrs"), x => x.RequestedHours?.ToString("N1"))
                     );
-
                 }
             );
         }

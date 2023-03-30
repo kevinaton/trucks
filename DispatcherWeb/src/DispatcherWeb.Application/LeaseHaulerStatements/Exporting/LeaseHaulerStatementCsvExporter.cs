@@ -28,47 +28,26 @@ namespace DispatcherWeb.LeaseHaulerStatements.Exporting
                         $"End Date: {data.EndDate:d}"
                     );
 
-                    AddHeader(
-                        "Order Date",
-                        "Shift",
-                        "Customer",
-                        "Product / Service",
-                        "Ticket #",
-                        "Ticket Date Time",
-                        "Carrier",
-                        "Truck",
-                        "Driver",
-                        "Load At",
-                        "Deliver To",
-                        "UOM",
-                        "Quantity",
-                        "Rate",
-                        "BrokerFee",
-                        showFuelSurcharge ? "Fuel" : null,
-                        "ExtendedAmount"
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         data.Tickets,
-                        _ => _.OrderDate?.ToString("d"),
-                        _ => _.ShiftName,
-                        _ => _.CustomerName,
-                        _ => _.ServiceName,
-                        _ => _.TicketNumber,
-                        _ => _.TicketDateTime?.ToString("g"),
-                        _ => _.CarrierName,
-                        _ => _.TruckCode,
-                        _ => _.DriverName,
-                        _ => _.LoadAtName,
-                        _ => _.DeliverToName,
-                        _ => _.UomName,
-                        _ => _.Quantity.ToString(),
-                        _ => _.Rate?.ToString(),
-                        _ => _.BrokerFee.ToString(),
-                        showFuelSurcharge ? _ => _.FuelSurcharge.ToString("N2") : null,
-                        _ => _.ExtendedAmount.ToString()
+                        ("Order Date", x => x.OrderDate?.ToString("d")),
+                        ("Shift", x => x.ShiftName),
+                        ("Customer", x => x.CustomerName),
+                        ("Product / Service", x => x.ServiceName),
+                        ("Ticket #", x => x.TicketNumber),
+                        ("Ticket Date Time", x => x.TicketDateTime?.ToString("g")),
+                        ("Carrier", x => x.CarrierName),
+                        ("Truck", x => x.TruckCode),
+                        ("Driver", x => x.DriverName),
+                        ("Load At", x => x.LoadAtName),
+                        ("Deliver To", x => x.DeliverToName),
+                        ("UOM", x => x.UomName),
+                        ("Quantity", x => x.Quantity.ToString()),
+                        ("Rate", x => x.Rate?.ToString()),
+                        ("BrokerFee", x => x.BrokerFee.ToString()),
+                        (showFuelSurcharge ? "Fuel" : null, showFuelSurcharge ? x => x.FuelSurcharge.ToString("N2") : null),
+                        ("ExtendedAmount", x => x.ExtendedAmount.ToString())
                     );
-
                 }
             );
         }

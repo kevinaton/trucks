@@ -13,16 +13,13 @@ namespace DispatcherWeb.Chat.Exporting
     public class ChatMessageListExcelExporter : CsvExporterBase, IChatMessageListExcelExporter
     {
         private readonly ITimeZoneConverter _timeZoneConverter;
-        private readonly IAbpSession _abpSession;
 
         public ChatMessageListExcelExporter(
             ITempFileCacheManager tempFileCacheManager,
-            ITimeZoneConverter timeZoneConverter,
-            IAbpSession abpSession
+            ITimeZoneConverter timeZoneConverter
             ) : base(tempFileCacheManager)
         {
             _timeZoneConverter = timeZoneConverter;
-            _abpSession = abpSession;
         }
 
         public FileDto ExportToFile(UserIdentifier user, List<ChatMessageExportDto> messages)
@@ -34,21 +31,13 @@ namespace DispatcherWeb.Chat.Exporting
                 $"Chat_{tenancyName}_{userName}.csv",
                 () =>
                 {
-                    AddHeader(
-                        L("ChatMessage_From"),
-                        L("ChatMessage_To"),
-                        L("Message"),
-                        L("ReadState"),
-                        L("CreationTime")
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         messages,
-                        _ => _.Side == ChatSide.Receiver ? (_.TargetTenantName + "/" + _.TargetUserName) : L("You"),
-                        _ => _.Side == ChatSide.Receiver ? L("You") : (_.TargetTenantName + "/" + _.TargetUserName),
-                        _ => _.Message,
-                        _ => _.Side == ChatSide.Receiver ? _.ReadState.ToString() : _.ReceiverReadState.ToString(),
-                        _ => _timeZoneConverter.Convert(_.CreationTime, user.TenantId, user.UserId)?.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
+                        (L("ChatMessage_From"), x => x.Side == ChatSide.Receiver ? (x.TargetTenantName + "/" + x.TargetUserName) : L("You")),
+                        (L("ChatMessage_To"), x => x.Side == ChatSide.Receiver ? L("You") : (x.TargetTenantName + "/" + x.TargetUserName)),
+                        (L("Message"), x => x.Message),
+                        (L("ReadState"), x => x.Side == ChatSide.Receiver ? x.ReadState.ToString() : x.ReceiverReadState.ToString()),
+                        (L("CreationTime"), x => _timeZoneConverter.Convert(x.CreationTime, user.TenantId, user.UserId)?.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss"))
                     );
                 });
         }

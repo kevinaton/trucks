@@ -21,41 +21,23 @@ namespace DispatcherWeb.Dispatching.Exporting
                 "LoadHistoryList.csv",
                 () =>
                 {
-                    AddHeader(
-                        "Truck",
-                        "Driver",
-                        "Sent",
-                        "Acknowledged",
-                        "Loaded",
-                        "Delivered",
-                        "Customer",
-                        "Quote Name",
-                        "Job Nbr",
-                        "Load At",
-                        "Deliver To",
-                        "Item",
-                        "Quantity",
-                        "UOM"
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         dispatchDtos,
-                        _ => _.TruckCode,
-                        _ => _.DriverLastFirstName,
-                        _ => _.Sent?.ToString("g"),
-                        _ => _.Acknowledged?.ToString("g"),
-                        _ => _.Loaded?.ToString("g"),
-                        _ => _.Delivered?.ToString("g"),
-                        _ => _.CustomerName,
-                        _ => _.QuoteName,
-                        _ => _.JobNumber,
-                        _ => _.LoadAtName,
-                        _ => _.DeliverToName,
-                        _ => _.Item,
-                        _ => _.Quantity?.ToString("N"),
-                        _ => _.Uom
+                        ("Truck", x => x.TruckCode),
+                        ("Driver", x => x.DriverLastFirstName),
+                        ("Sent", x => x.Sent?.ToString("g")),
+                        ("Acknowledged", x => x.Acknowledged?.ToString("g")),
+                        ("Loaded", x => x.Loaded?.ToString("g")),
+                        ("Delivered", x => x.Delivered?.ToString("g")),
+                        ("Customer", x => x.CustomerName),
+                        ("Quote Name", x => x.QuoteName),
+                        ("Job Nbr", x => x.JobNumber),
+                        ("Load At", x => x.LoadAtName),
+                        ("Deliver To", x => x.DeliverToName),
+                        ("Item", x => x.Item),
+                        ("Quantity", x => x.Quantity?.ToString("N")),
+                        ("UOM", x => x.Uom)
                     );
-
                 }
             );
         }

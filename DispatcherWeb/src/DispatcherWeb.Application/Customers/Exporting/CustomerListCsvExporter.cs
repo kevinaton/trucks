@@ -19,31 +19,18 @@ namespace DispatcherWeb.Customers.Exporting
                 "CustomerList.csv",
                 () =>
                 {
-                    AddHeader(
-                        "Name",
-                        "Account",
-                        "Address 1",
-                        "Address 2",
-                        "City",
-                        "State",
-                        "Zip Code",
-                        "Country Code",
-                        "Active"
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         customerDtos,
-                        _ => _.Name,
-                        _ => _.AccountNumber,
-                        _ => _.Address1,
-                        _ => _.Address2,
-                        _ => _.City,
-                        _ => _.State,
-                        _ => _.ZipCode,
-                        _ => _.CountryCode,
-                        _ => _.IsActive.ToYesNoString()
+                        ("Name", x => x.Name),
+                        ("Account", x => x.AccountNumber),
+                        ("Address 1", x => x.Address1),
+                        ("Address 2", x => x.Address2),
+                        ("City", x => x.City),
+                        ("State", x => x.State),
+                        ("Zip Code", x => x.ZipCode),
+                        ("Country Code", x => x.CountryCode),
+                        ("Active", x => x.IsActive.ToYesNoString())
                     );
-
                 }
             );
         }

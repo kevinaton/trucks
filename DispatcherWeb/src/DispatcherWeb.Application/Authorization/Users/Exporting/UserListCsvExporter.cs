@@ -32,33 +32,19 @@ namespace DispatcherWeb.Authorization.Users.Exporting
                 "UserList.csv",
                 () =>
                 {
-                    AddHeader(
-                        L("Name"),
-                        L("Surname"),
-                        L("UserName"),
-                        L("Office"),
-                        L("PhoneNumber"),
-                        L("EmailAddress"),
-                        L("EmailConfirm"),
-                        L("Roles"),
-                        L("LastLoginTime"),
-                        L("Active"),
-                        L("CreationTime")
-                    );
-
-                    AddObjects(
+                    AddHeaderAndData(
                         userListDtos,
-                        _ => _.Name,
-                        _ => _.Surname,
-                        _ => _.UserName,
-                        _ => _.OfficeName,
-                        _ => _.PhoneNumber,
-                        _ => _.EmailAddress,
-                        _ => _.IsEmailConfirmed.ToYesNoString(),
-                        _ => _.Roles.Select(r => r.RoleName).JoinAsString(", "),
-                        _ => _timeZoneConverter.Convert(_.LastLoginTime, _abpSession.TenantId, _abpSession.GetUserId())?.ToShortDateString(),
-                        _ => _.IsActive.ToYesNoString(),
-                        _ => _timeZoneConverter.Convert(_.CreationTime, _abpSession.TenantId, _abpSession.GetUserId())?.ToShortDateString()
+                        (L("Name"), x => x.Name),
+                        (L("Surname"), x => x.Surname),
+                        (L("UserName"), x => x.UserName),
+                        (L("Office"), x => x.OfficeName),
+                        (L("PhoneNumber"), x => x.PhoneNumber),
+                        (L("EmailAddress"), x => x.EmailAddress),
+                        (L("EmailConfirm"), x => x.IsEmailConfirmed.ToYesNoString()),
+                        (L("Roles"), x => x.Roles.Select(r => r.RoleName).JoinAsString(", ")),
+                        (L("LastLoginTime"), x => _timeZoneConverter.Convert(x.LastLoginTime, _abpSession.TenantId, _abpSession.GetUserId())?.ToShortDateString()),
+                        (L("Active"), x => x.IsActive.ToYesNoString()),
+                        (L("CreationTime"), x => _timeZoneConverter.Convert(x.CreationTime, _abpSession.TenantId, _abpSession.GetUserId())?.ToShortDateString())
                     );
 
                 }

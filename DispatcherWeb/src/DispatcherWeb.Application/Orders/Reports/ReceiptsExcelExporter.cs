@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Configuration;
 using DispatcherWeb.DataExporting.Csv;
@@ -27,67 +28,30 @@ namespace DispatcherWeb.Orders.Reports
                 "Receipts.csv",
                 () =>
                 {
-                    AddHeader(
-                        "Delivery Date",
-                        "Customer",
-                        "Sales Tax",
-                        "Total",
-                        "Item name",
-                        "Load At",
-                        "Deliver To",
-                        "Material UOM",
-                        "Freight UOM",
-                        "Designation",
-                        "Actual Material Quantity",
-                        "Actual Freight Quantity",
-                        "Freight Amount",
-                        "Material Amount"
-                    );
-
-                    foreach (var order in orderList)
+                    var flatData = orderList.SelectMany(x => x.Items, (order, orderLine) => new
                     {
-                        var firstRow = true;
-                        foreach (var orderLine in order.Items)
-                        {
-                            AddObjects(
-                                new[] {
-                                    new
-                                    {
-                                        order.DeliveryDate,
-                                        order.CustomerName,
-                                        order.SalesTax,
-                                        order.CODTotal,
-                                        orderLine.Name,
-                                        orderLine.LoadAtName,
-                                        orderLine.DeliverToName,
-                                        orderLine.MaterialUomName,
-                                        orderLine.FreightUomName,
-                                        orderLine.DesignationName,
-                                        orderLine.ActualMaterialQuantity,
-                                        orderLine.ActualFreightQuantity,
-                                        orderLine.FreightPrice,
-                                        orderLine.MaterialPrice
-                                    }
-                                },
-                                _ => firstRow ? _.DeliveryDate?.ToString("d") : "",
-                                _ => firstRow ? _.CustomerName : "",
-                                _ => firstRow ? _.SalesTax.ToString("C2", currencyCulture) : "",
-                                _ => firstRow ? _.CODTotal.ToString("C2", currencyCulture) : "",
-                                _ => _.Name,
-                                _ => _.LoadAtName,
-                                _ => _.DeliverToName,
-                                _ => _.MaterialUomName,
-                                _ => _.FreightUomName,
-                                _ => _.DesignationName,
-                                _ => _.ActualMaterialQuantity?.ToString(Utilities.NumberFormatWithoutRounding),
-                                _ => _.ActualFreightQuantity?.ToString(Utilities.NumberFormatWithoutRounding),
-                                _ => _.FreightPrice.ToString("C2", currencyCulture),
-                                _ => _.MaterialPrice.ToString("C2", currencyCulture)
-                            );
+                        IsFirstRow = order.Items.IndexOf(orderLine) == 0,
+                        Order = order,
+                        OrderLine = orderLine
+                    }).ToList();
 
-                            firstRow = false;
-                        }
-                    }
+                    AddHeaderAndData(
+                        flatData,
+                        ("Delivery Date", x => x.IsFirstRow ? x.Order.DeliveryDate?.ToString("d") : ""),
+                        ("Customer", x => x.IsFirstRow ? x.Order.CustomerName : ""),
+                        ("Sales Tax", x => x.IsFirstRow ? x.Order.SalesTax.ToString("C2", currencyCulture) : ""),
+                        ("Total", x => x.IsFirstRow ? x.Order.CODTotal.ToString("C2", currencyCulture) : ""),
+                        ("Item name", x => x.OrderLine.Name),
+                        ("Load At", x => x.OrderLine.LoadAtName),
+                        ("Deliver To", x => x.OrderLine.DeliverToName),
+                        ("Material UOM", x => x.OrderLine.MaterialUomName),
+                        ("Freight UOM", x => x.OrderLine.FreightUomName),
+                        ("Designation", x => x.OrderLine.DesignationName),
+                        ("Actual Material Quantity", x => x.OrderLine.ActualMaterialQuantity?.ToString(Utilities.NumberFormatWithoutRounding)),
+                        ("Actual Freight Quantity", x => x.OrderLine.ActualFreightQuantity?.ToString(Utilities.NumberFormatWithoutRounding)),
+                        ("Freight Amount", x => x.OrderLine.FreightPrice.ToString("C2", currencyCulture)),
+                        ("Material Amount", x => x.OrderLine.MaterialPrice.ToString("C2", currencyCulture))
+                    );
                 });
         }
     }
