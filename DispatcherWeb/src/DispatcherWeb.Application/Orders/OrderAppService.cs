@@ -471,6 +471,7 @@ namespace DispatcherWeb.Orders
                     ticket.ServiceId = editOrderLineModel.ServiceId;
                     ticket.LoadAtId = editOrderLineModel.LoadAtId;
                     ticket.DeliverToId = editOrderLineModel.DeliverToId;
+                    ticket.OfficeId = model.OfficeId;
                     if (editOrderLineModel.Designation.MaterialOnly() || editOrderLineModel.Designation == DesignationEnum.FreightAndMaterial)
                     {
                         ticket.UnitOfMeasureId = editOrderLineModel.MaterialUomId;
