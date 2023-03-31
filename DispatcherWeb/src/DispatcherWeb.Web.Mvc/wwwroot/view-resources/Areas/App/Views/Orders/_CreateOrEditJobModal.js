@@ -624,7 +624,6 @@
             var designation = Number(_designationDropdown.val());
             var designationIsCounterSale = designation === abp.enums.designation.counterSale;
             _deliverToDropdown.closest('.form-group').toggle(!designationIsCounterSale);
-            _$form.find("#MaterialPrice").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#LeaseHaulerRate").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#NumberOfTrucks").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#IsMultipleLoads").closest('.form-group').toggle(!designationIsCounterSale);
