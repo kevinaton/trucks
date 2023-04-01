@@ -51,7 +51,7 @@
             </div>
             <div class="col-6 form-group">
                 <label class="required-label">@L("Customer")</label>
-                <select class="form-control order-field" asp-for="CustomerId">
+                <select class="form-control order-field" asp-for="CustomerId" required>
                     <option value="">Select a customer</option>
                     @if (Model.CustomerId != 0)
                     {
