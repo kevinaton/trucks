@@ -634,6 +634,22 @@
             _$form.find("#ProductionPay").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#AutoGenerateTicketNumber").closest('.form-group').toggle(designationIsCounterSale);
             _$form.find("#TicketNumber").closest('.form-group').toggle(designationIsCounterSale && !_$form.find('#AutoGenerateTicketNumber').is(':checked'));
+
+            if (designationIsCounterSale) {
+                setDefaultValuesForCounterSaleDesignation();
+            }
+        }
+
+        function setDefaultValuesForCounterSaleDesignation() {
+            if (_$form.find("#DefaultLoadAtLocationId").val()) {
+                abp.helper.ui.addAndSetDropdownValue(_$form.find("#LoadAtId"), _$form.find("#DefaultLoadAtLocationId").val(), _$form.find("#DefaultLoadAtLocationName").val());
+            }
+            if (_$form.find("#DefaultServiceId").val()) {
+                abp.helper.ui.addAndSetDropdownValue(_$form.find("#ServiceId"), _$form.find("#DefaultServiceId").val(), _$form.find("#DefaultServiceName").val());
+            }
+            if (_$form.find("#DefaultMaterialUomId").val()) {
+                abp.helper.ui.addAndSetDropdownValue(_$form.find("#MaterialUomId"), _$form.find("#DefaultMaterialUomId").val(), _$form.find("#DefaultMaterialUomName").val());
+            }
         }
 
         function updateTicketNumberVisibility() {

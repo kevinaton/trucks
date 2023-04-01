@@ -152,5 +152,11 @@ namespace DispatcherWeb.Orders.Dto
         public int? QuoteServiceId { get; set; }
         public string FocusFieldId { get; set; }
         public int? MaterialCompanyOrderId { get; set; }
+        public int? DefaultLoadAtLocationId { get; set; }
+        public string DefaultLoadAtLocationName { get; set; }
+        public int? DefaultServiceId { get; set; }
+        public string DefaultServiceName { get; set; }
+        public int? DefaultMaterialUomId { get; set; }
+        public string DefaultMaterialUomName { get; set; }
     }
 }

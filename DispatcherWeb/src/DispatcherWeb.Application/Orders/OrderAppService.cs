@@ -2169,61 +2169,6 @@ namespace DispatcherWeb.Orders
                 {
                     orderLine.Designation = DesignationEnum.CounterSale;
                 }
-
-                var defaultLoadAtLocationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId);
-                if (defaultLoadAtLocationId > 0)
-                {
-                    var location = await _locationRepository.GetAll()
-                        .Where(x => x.Id == defaultLoadAtLocationId)
-                        .Select(x => new LocationNameDto
-                        {
-                            Name = x.Name,
-                            StreetAddress = x.StreetAddress,
-                            City = x.City,
-                            State = x.State
-                        })
-                        .FirstOrDefaultAsync();
-
-                    if (location != null)
-                    {
-                        orderLine.LoadAtId = defaultLoadAtLocationId;
-                        orderLine.LoadAt = location;
-                    }
-                }
-
-                var defaultServiceId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultServiceId);
-                if (defaultServiceId > 0)
-                {
-                    var service = await _serviceRepository.GetAll()
-                        .Select(x => new
-                        {
-                            x.Id,
-                            x.Service1
-                        })
-                        .FirstOrDefaultAsync(x => x.Id == defaultServiceId);
-                    if (service != null)
-                    {
-                        orderLine.ServiceId = defaultServiceId;
-                        orderLine.ServiceName = service.Service1;
-                    }
-                }
-
-                var defaultMaterialUomId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultMaterialUomId);
-                if (defaultMaterialUomId > 0)
-                {
-                    var query = await _unitOfMeasureRepository.GetAll()
-                        .Select(x => new
-                        {
-                            x.Id,
-                            x.Name
-                        })
-                        .FirstOrDefaultAsync(x => x.Id == defaultMaterialUomId);
-                    if (query != null)
-                    {
-                        orderLine.MaterialUomId = defaultMaterialUomId;
-                        orderLine.MaterialUomName = query.Name;
-                    }
-                }
             }
 
             var result = new JobEditDto
@@ -2310,6 +2255,61 @@ namespace DispatcherWeb.Orders
             else
             {
                 result.AutoGenerateTicketNumber = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber);
+                
+                var defaultLoadAtLocationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId);
+                if (defaultLoadAtLocationId > 0)
+                {
+                    var location = await _locationRepository.GetAll()
+                        .Where(x => x.Id == defaultLoadAtLocationId)
+                        .Select(x => new LocationNameDto
+                        {
+                            Name = x.Name,
+                            StreetAddress = x.StreetAddress,
+                            City = x.City,
+                            State = x.State
+                        })
+                        .FirstOrDefaultAsync();
+
+                    if (location != null)
+                    {
+                        result.DefaultLoadAtLocationId = defaultLoadAtLocationId;
+                        result.DefaultLoadAtLocationName = location.FormattedAddress;
+                    }
+                }
+
+                var defaultServiceId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultServiceId);
+                if (defaultServiceId > 0)
+                {
+                    var service = await _serviceRepository.GetAll()
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.Service1
+                        })
+                        .FirstOrDefaultAsync(x => x.Id == defaultServiceId);
+                    if (service != null)
+                    {
+                        result.DefaultServiceId = defaultServiceId;
+                        result.DefaultServiceName = service.Service1;
+                    }
+                }
+
+                var defaultMaterialUomId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultMaterialUomId);
+                if (defaultMaterialUomId > 0)
+                {
+                    var query = await _unitOfMeasureRepository.GetAll()
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.Name
+                        })
+                        .FirstOrDefaultAsync(x => x.Id == defaultMaterialUomId);
+                    if (query != null)
+                    {
+                        result.DefaultMaterialUomId = defaultMaterialUomId;
+                        result.DefaultMaterialUomName = query.Name;
+                    }
+                }
             }
 
             return result;
