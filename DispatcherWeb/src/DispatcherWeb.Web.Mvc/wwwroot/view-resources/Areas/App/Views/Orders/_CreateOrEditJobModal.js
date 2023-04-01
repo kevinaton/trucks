@@ -376,6 +376,7 @@
 
             _designationDropdown.change(function () {
                 updateDesignationRelatedFieldsVisibility();
+                setDefaultValuesForCounterSaleDesignationIfNeeded();
 
                 if (designationHasMaterial()) {
                     enableMaterialFields();
@@ -474,6 +475,9 @@
             disableQuoteRelatedFieldsIfNeeded();
             disableFieldsIfEditingJob();
             updateDesignationRelatedFieldsVisibility();
+            if (isNewOrder()) {
+                setDefaultValuesForCounterSaleDesignationIfNeeded();
+            }
             disableJobEditIfNeeded();
             disableTaxControls();
         };
@@ -634,13 +638,13 @@
             _$form.find("#ProductionPay").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#AutoGenerateTicketNumber").closest('.form-group').toggle(designationIsCounterSale);
             _$form.find("#TicketNumber").closest('.form-group').toggle(designationIsCounterSale && !_$form.find('#AutoGenerateTicketNumber').is(':checked'));
-
-            if (designationIsCounterSale) {
-                setDefaultValuesForCounterSaleDesignation();
-            }
         }
 
-        function setDefaultValuesForCounterSaleDesignation() {
+        function setDefaultValuesForCounterSaleDesignationIfNeeded() {
+            var designation = Number(_designationDropdown.val());
+            if (designation !== abp.enums.designation.counterSale) {
+                return;
+            }
             if (_$form.find("#DefaultLoadAtLocationId").val()) {
                 abp.helper.ui.addAndSetDropdownValue(_$form.find("#LoadAtId"), _$form.find("#DefaultLoadAtLocationId").val(), _$form.find("#DefaultLoadAtLocationName").val());
             }
