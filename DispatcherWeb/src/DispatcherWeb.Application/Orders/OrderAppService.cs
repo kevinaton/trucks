@@ -449,7 +449,8 @@ namespace DispatcherWeb.Orders
 
                 int? ticketId = null;
 
-                if (model.TicketId != null || !string.IsNullOrEmpty(model.TicketNumber) || model.AutoGenerateTicketNumber)
+                if (model.Designation == DesignationEnum.CounterSale 
+                    && (model.TicketId != null || !string.IsNullOrEmpty(model.TicketNumber) || model.AutoGenerateTicketNumber))
                 {
                     var ticket = model.TicketId != null ? await _ticketRepository.GetAll()
                         .Where(t => t.Id == model.TicketId)
