@@ -424,7 +424,11 @@ namespace DispatcherWeb.Orders
                 editOrderLineModel.FreightUomId = model.FreightUomId;
                 editOrderLineModel.MaterialUomId = model.MaterialUomId;
                 editOrderLineModel.FreightPricePerUnit = model.FreightPricePerUnit;
+                editOrderLineModel.IsFreightPricePerUnitOverridden = model.IsFreightPricePerUnitOverridden;
+                editOrderLineModel.IsFreightPriceOverridden = model.IsFreightPriceOverridden;
                 editOrderLineModel.MaterialPricePerUnit = model.MaterialPricePerUnit;
+                editOrderLineModel.IsMaterialPricePerUnitOverridden = model.IsMaterialPricePerUnitOverridden;
+                editOrderLineModel.IsMaterialPriceOverridden = model.IsMaterialPriceOverridden;
                 editOrderLineModel.FreightQuantity = model.FreightQuantity;
                 editOrderLineModel.MaterialQuantity = model.MaterialQuantity;
                 editOrderLineModel.FreightPrice = model.FreightPrice;
