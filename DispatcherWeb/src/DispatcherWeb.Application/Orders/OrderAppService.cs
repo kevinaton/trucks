@@ -440,7 +440,7 @@ namespace DispatcherWeb.Orders
                 var orderLine = await EditOrderLine(editOrderLineModel);
                 await CurrentUnitOfWork.SaveChangesAsync();
 
-                if (model.OrderLineId == null)
+                if (model.OrderLineId == null && model.Designation == DesignationEnum.CounterSale)
                 {
                     var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLine.OrderLineId);
                     await orderLineUpdater.UpdateFieldAsync(x => x.IsComplete, true);
