@@ -397,6 +397,8 @@ namespace DispatcherWeb.Orders
             editOrderModel.PONumber = model.PONumber;
             editOrderModel.SpectrumNumber = model.SpectrumNumber;
             editOrderModel.Directions = model.Directions;
+            editOrderModel.FuelSurchargeCalculationId = model.FuelSurchargeCalculationId;
+            editOrderModel.BaseFuelCost = model.BaseFuelCost;
 
             if ((TaxCalculationType)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.TaxCalculationType) == TaxCalculationType.NoCalculation)
             {
@@ -2196,6 +2198,13 @@ namespace DispatcherWeb.Orders
                 SalesTaxRate = order.SalesTaxRate,
                 SalesTax = order.SalesTax,
                 FocusFieldId = input.FocusFieldId,
+                BaseFuelCost = order.BaseFuelCost,
+                FuelSurchargeCalculationId = order.FuelSurchargeCalculationId,
+                FuelSurchargeCalculationName = order.FuelSurchargeCalculationName,
+                CanChangeBaseFuelCost = order.CanChangeBaseFuelCost,
+                DefaultFuelSurchargeCalculationName = order.DefaultFuelSurchargeCalculationName,
+                DefaultBaseFuelCost = order.DefaultBaseFuelCost,
+                DefaultCanChangeBaseFuelCost = order.DefaultCanChangeBaseFuelCost,
                 
                 DeliverToId = orderLine.DeliverToId,
                 DeliverTo = orderLine.DeliverTo,
