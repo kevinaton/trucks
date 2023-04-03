@@ -417,6 +417,10 @@
                 allowClear: false
             });
 
+            if (isNewOrder()) {
+                setDefaultValueForProductionPay();
+            }
+
             _designationDropdown.change(function () {
                 updateDesignationRelatedFieldsVisibility();
                 setDefaultValuesForCounterSaleDesignationIfNeeded();
@@ -520,8 +524,6 @@
             updateDesignationRelatedFieldsVisibility();
             if (isNewOrder()) {
                 setDefaultValuesForCounterSaleDesignationIfNeeded();
-                var newOrderLine = setDefaultNewOrderLineValues({});
-                setOrderLine(newOrderLine);
             }
             disableJobEditIfNeeded();
             disableTaxControls();
@@ -625,11 +627,8 @@
             refreshHighlighting();
         }
 
-        function setDefaultNewOrderLineValues(orderLine) {
-            orderLine.quoteId = _quoteId;
-            orderLine.canOverrideTotals = true;
-            orderLine.productionPay = abp.setting.getBoolean('App.TimeAndPay.DefaultToProductionPay');
-            return orderLine;
+        function setDefaultValueForProductionPay() {
+            _$form.find("#ProductionPay").prop('checked', abp.setting.getBoolean('App.TimeAndPay.DefaultToProductionPay'));
         }
 
         function showSelectOrderLineButton() {
