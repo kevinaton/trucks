@@ -151,6 +151,7 @@ namespace DispatcherWeb.Web.Controllers
 
             if (AbpSession.UserId.HasValue && AbpSession.TenantId.HasValue && !returnUrl.IsNullOrEmpty())
             {
+                // Prevent user from going "back" after they logged in to the driver app
                 if (returnUrl.Contains("driverapplicationclient"))
                 {
                     var driverApplicationUri = _appConfiguration["App:DriverApplicationUri"];
