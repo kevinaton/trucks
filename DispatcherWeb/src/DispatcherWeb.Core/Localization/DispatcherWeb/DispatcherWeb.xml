@@ -1412,7 +1412,7 @@
 		<text name="RemoveSomeTrucks">To decrease the Number of Trucks please remove some of the trucks first.</text>
 		<text name="QuantityIsRequiredWhenTotalIsSpecified">Quantity is required when Freight or Material Total is specified</text>
 		<text name="CannotChangeRatesAndAmountBecauseOrderIsPaid">Rates and amounts can't be changed because the payment has been finalized.</text>
-		<text name="CannotChangeLHRateBecauseTicketsAreAssociatedWithLHStatement">Rates can't be changed because the tickets were added to a Lease Hauler Statement, Driver Pay Statement, or Invoice.</text>
+		<text name="CannotChangeRateBecauseTicketsAreAssociatedWithPayStatementOrInvoice">Rates can't be changed because the tickets were added to a Lease Hauler Statement, Driver Pay Statement, or Invoice.</text>
 		<text name="CannotChangeDispatchStatus">The data has changed since it was loaded. Unable to process the request. Refresh the page and try again.</text>
 		<text name="DriverNameHasFinishedDispatches">{DriverName} has finished all assigned dispatches.</text>
 		<text name="OrderHasReachedRequestedAmount">Order for {CustomerName} has reached the requested amount.</text>
