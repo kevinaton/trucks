@@ -218,6 +218,24 @@
                 showSelectOrderLineButton();
             });
 
+            _$form.find("#FuelSurchargeCalculationId").select2Init({
+                abpServiceMethod: abp.services.app.fuelSurchargeCalculation.getFuelSurchargeCalculationsSelectList,
+                showAll: true,
+                allowClear: true
+            });
+            _$form.find("#FuelSurchargeCalculationId").change(function () {
+                if (_quoteId !== '') {
+                    //_$form.find("#BaseFuelCostContainer").toggle(false);
+                } else {
+                    let dropdownData = _$form.find("#FuelSurchargeCalculationId").select2('data');
+                    let selectedOption = dropdownData && dropdownData.length && dropdownData[0];
+                    let canChangeBaseFuelCost = selectedOption?.item?.canChangeBaseFuelCost || false;
+                    _$form.find("#BaseFuelCostContainer").toggle(canChangeBaseFuelCost);
+                    _$form.find("#BaseFuelCost").val(selectedOption?.item?.baseFuelCost || 0);
+                    _$form.find("#FuelSurchargeCalculationId").removeUnselectedOptions();
+                }
+            });
+
             quoteChildDropdown.onChildDropdownUpdated(function (data) {
                 var hasActiveOrPendingQuotes = false;
                 $.each(data.items, function (ind, val) {
@@ -265,6 +283,31 @@
                     updateInputValue("#ChargeTo", option.data('chargeTo'));
                 }
 
+                if (_quoteId !== '') {
+                    let fuelSurchargeCalculationId = option.data('fuelSurchargeCalculationId');
+                    if (fuelSurchargeCalculationId) {
+                        abp.helper.ui.addAndSetDropdownValue(_$form.find("#FuelSurchargeCalculationId"), fuelSurchargeCalculationId, option.data('fuelSurchargeCalculationName'));
+                        updateInputValue("#BaseFuelCost", option.data('baseFuelCost'));
+                    } else {
+                        _$form.find("#FuelSurchargeCalculationId").val(null).change();
+                        updateInputValue("#BaseFuelCost", 0);
+                    }
+                    _$form.find("#BaseFuelCostContainer").toggle(option.data('canChangeBaseFuelCost') === true);
+                    _$form.find("#FuelSurchargeCalculationId").prop("disabled", true);
+                    _$form.find("#BaseFuelCost").prop("disabled", true);
+                } else {
+                    let defaultFuelSurchargeCalculationId = abp.setting.getInt('App.Fuel.DefaultFuelSurchargeCalculationId');
+                    let defaultFuelSurchargeCalculationName = _$form.find("#DefaultFuelSurchargeCalculationName").val();
+                    if (defaultFuelSurchargeCalculationId > 0) {
+                        abp.helper.ui.addAndSetDropdownValue(_$form.find("#FuelSurchargeCalculationId"), defaultFuelSurchargeCalculationId, defaultFuelSurchargeCalculationName);
+                    } else {
+                        _$form.find("#FuelSurchargeCalculationId").val(null).change();
+                    }
+                    updateInputValue("#BaseFuelCost", _$form.find("#DefaultBaseFuelCost").val());
+                    _$form.find("#BaseFuelCostContainer").toggle(_$form.find("#DefaultCanChangeBaseFuelCost").val() === 'True');
+                    _$form.find("#FuelSurchargeCalculationId").prop("disabled", false);
+                    _$form.find("#BaseFuelCost").prop("disabled", false);
+                }
                 if (_quoteId) {
                     try {
                         abp.ui.setBusy();
@@ -1141,6 +1184,8 @@
             _model.autoGenerateTicketNumber = !!model.AutoGenerateTicketNumber;
             _model.ticketId = model.TicketId;
             _model.ticketNumber = model.TicketNumber;
+            _model.fuelSurchargeCalculationId = model.FuelSurchargeCalculationId;
+            _model.baseFuelCost = model.BaseFuelCost;
 
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
             let freightQuantity = model.FreightQuantity === "" ? null : abp.utils.round(parseFloat(model.FreightQuantity));

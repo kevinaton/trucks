@@ -158,5 +158,20 @@ namespace DispatcherWeb.Orders.Dto
         public string DefaultServiceName { get; set; }
         public int? DefaultMaterialUomId { get; set; }
         public string DefaultMaterialUomName { get; set; }
+
+        public int? FuelSurchargeCalculationId { get; set; }
+
+        public string FuelSurchargeCalculationName { get; set; }
+
+        public bool? CanChangeBaseFuelCost { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:F2}", ApplyFormatInEditMode = true)]
+        public decimal? BaseFuelCost { get; set; }
+
+        public string DefaultFuelSurchargeCalculationName { get; set; }
+
+        public decimal? DefaultBaseFuelCost { get; set; }
+
+        public bool? DefaultCanChangeBaseFuelCost { get; set; }
     }
 }

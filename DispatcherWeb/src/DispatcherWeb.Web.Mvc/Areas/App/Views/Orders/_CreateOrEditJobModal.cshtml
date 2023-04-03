@@ -272,6 +272,30 @@
                     <textarea class="form-control order-line-field" rows="5" asp-for="Note"></textarea>
                 </div>
             </div>
+            <div class="row" @Html.StyleDisplayNone(!await SettingManager.GetSettingValueAsync<bool>(AppSettings.Fuel.ShowFuelSurcharge))>
+                <div class="col-6 form-group">
+                    <label for="FuelSurchargeCalculation">@L("FuelSurchargeCalculation"):</label>
+                    <input type="hidden" id="DefaultFuelSurchargeCalculationName" value="@Model.DefaultFuelSurchargeCalculationName" />
+                    <select class="form-control" asp-for="FuelSurchargeCalculationId" disabled="@(Model.QuoteId.HasValue ? "disabled" : null)">
+                        <option value="">@AppConsts.FuelSurchargeCalculationBlankName</option>
+                        @if (Model.FuelSurchargeCalculationId > 0)
+                        {
+                            <option selected value="@Model.FuelSurchargeCalculationId">@Model.FuelSurchargeCalculationName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-6" id="BaseFuelCostContainer" @Html.StyleDisplayNone(Model.CanChangeBaseFuelCost != true)>
+                    <label for="BaseFuelCost">@L("BaseFuelCost"):</label>
+                    <input type="hidden" id="DefaultBaseFuelCost" value="@Model.DefaultBaseFuelCost" />
+                    <input type="hidden" id="DefaultCanChangeBaseFuelCost" value="@Model.DefaultCanChangeBaseFuelCost.ToString()" />
+                    <input type="text" class="form-control" asp-for="BaseFuelCost"
+                            data-rule-number="true"
+                            data-rule-min="0"
+                            data-rule-max="@AppConsts.MaxDecimalDatabaseLength"
+                            data-msg-number="Must be a numeric value"
+                            disabled="@(Model.QuoteId.HasValue ? "disabled" : null)">
+                </div>
+            </div>
             <div class="row">
                 <div class="col-6 form-group mt-2 mb-1">
                     <label asp-for="AutoGenerateTicketNumber" class="m-checkbox">
