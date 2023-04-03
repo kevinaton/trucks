@@ -477,6 +477,8 @@
             updateDesignationRelatedFieldsVisibility();
             if (isNewOrder()) {
                 setDefaultValuesForCounterSaleDesignationIfNeeded();
+                var newOrderLine = setDefaultNewOrderLineValues({});
+                setOrderLine(newOrderLine);
             }
             disableJobEditIfNeeded();
             disableTaxControls();
@@ -578,6 +580,13 @@
             refreshTotalFields();
             refreshOverrideButtons();
             refreshHighlighting();
+        }
+
+        function setDefaultNewOrderLineValues(orderLine) {
+            orderLine.quoteId = _quoteId;
+            orderLine.canOverrideTotals = true;
+            orderLine.productionPay = abp.setting.getBoolean('App.TimeAndPay.DefaultToProductionPay');
+            return orderLine;
         }
 
         function showSelectOrderLineButton() {
