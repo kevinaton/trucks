@@ -1,7 +1,7 @@
 'use strict';
 //import { App } from './js/site.js';
 // Update cache names any time any of the cached files change.
-const CACHE_NAME = 'static-cache-v137';
+const CACHE_NAME = 'static-cache-v138';
 const LIBS_CACHE_NAME = 'static-libs-cache-v12';
 const DATA_CACHE_NAME = 'data-cache-v5';
 const CACHE_NAMES = [CACHE_NAME, LIBS_CACHE_NAME, DATA_CACHE_NAME];

@@ -196,6 +196,7 @@
 		</text>
 		<text name="WelcomePage_Title">Welcome!</text>
 		<text name="WelcomePage_Info">Welcome to the application. You can use the menu to start using the application. If you don't see any menu item, probably you don't have permission to see any page. Consider to ask system administration for permissions.</text>
+		<text name="WelcomePage_DriverInfo">If you are trying to log in to the driver app, please close this browser and open the app directly.</text>
 		<text name="RequestedFileDoesNotExists">Requested file does not exists!</text>
 		<text name="MailSent">Mail sent</text>
 		<text name="PasswordResetMailSentMessage">A password reset link was sent to your e-mail address. Please check your emails.</text>
