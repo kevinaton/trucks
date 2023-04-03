@@ -109,9 +109,11 @@ namespace DispatcherWeb.Orders
                 case nameof(orderLine.LeaseHaulerRate):
                 case nameof(orderLine.MaterialPrice):
                 case nameof(orderLine.FreightPrice):
+                case nameof(orderLine.FreightPricePerUnit):
+                case nameof(orderLine.MaterialPricePerUnit):
                     if (await HasTicketsWithStatementsAsync())
                     {
-                        return L("CannotChangeLHRateBecauseTicketsAreAssociatedWithLHStatement");
+                        return L("CannotChangeRateBecauseTicketsAreAssociatedWithPayStatementOrInvoice");
                     }
                     break;
             }
@@ -134,55 +136,55 @@ namespace DispatcherWeb.Orders
 
         protected override async Task<OrderLine> GetEntityAsync()
         {
-            return _entity ?? (_entity = _orderLineId == 0 ? new OrderLine() : await _orderLineRepository.GetAsync(_orderLineId));
+            return _entity ??= _orderLineId == 0 ? new OrderLine() : await _orderLineRepository.GetAsync(_orderLineId);
         }
 
         private bool? _hasLoadedDispatches = null;
         private async Task<bool> HasLoadedDispatchesAsync()
         {
-            return _hasLoadedDispatches ?? (_hasLoadedDispatches = await _dispatchRepository.GetAll()
+            return _hasLoadedDispatches ??= await _dispatchRepository.GetAll()
                 .AnyAsync(x => x.OrderLineId == _orderLineId
-                    && (x.Status == DispatchStatus.Loaded || x.Status == DispatchStatus.Completed))).Value;
+                    && (x.Status == DispatchStatus.Loaded || x.Status == DispatchStatus.Completed));
         }
 
         private bool? _hasDeliveredDispatches = null;
         private async Task<bool> HasDeliveredDispatchesAsync()
         {
-            return _hasDeliveredDispatches ?? (_hasDeliveredDispatches = await _dispatchRepository.GetAll()
+            return _hasDeliveredDispatches ??= await _dispatchRepository.GetAll()
                 .AnyAsync(x => x.OrderLineId == _orderLineId
-                    && x.Status == DispatchStatus.Completed)).Value;
+                    && x.Status == DispatchStatus.Completed);
         }
 
         private bool? _hasManualTickets = null;
         private async Task<bool> HasManualTicketsAsync()
         {
-            return _hasManualTickets ?? (_hasManualTickets = await _ticketRepository.GetAll()
+            return _hasManualTickets ??= await _ticketRepository.GetAll()
                 .AnyAsync(x => x.OrderLineId == _orderLineId
                     && x.Load == null
-                )).Value;
+                );
         }
 
 
         private bool? _isOrderPaid = null;
         private async Task<bool> IsOrderPaidAsync()
         {
-            return _isOrderPaid ?? (_isOrderPaid = await _orderLineRepository.GetAll()
+            return _isOrderPaid ??= await _orderLineRepository.GetAll()
                 .Where(x => x.Id == _orderLineId)
                 .Select(x => x.Order)
                 .AnyAsync(o => o.OrderPayments
                                 .Where(op => op.OfficeId == Session.GetOfficeIdOrThrow())
                                 .Select(x => x.Payment)
-                                .Any(x => !x.IsCancelledOrRefunded && x.AuthorizationCaptureDateTime.HasValue))).Value;
+                                .Any(x => !x.IsCancelledOrRefunded && x.AuthorizationCaptureDateTime.HasValue));
         }
 
         private bool? _hasTicketsWithStatements = null;
         private async Task<bool> HasTicketsWithStatementsAsync()
         {
-            return _hasTicketsWithStatements ?? (_hasTicketsWithStatements = await _orderLineRepository.GetAll()
-                .AnyAsync(o => o.Id == _orderLineId
-                        && o.Tickets.Any(t => t.LeaseHaulerStatementTicket != null
+            return _hasTicketsWithStatements ??= await _ticketRepository.GetAll()
+                .AnyAsync(t => t.OrderLineId == _orderLineId
+                        && (t.LeaseHaulerStatementTicket != null
                             || t.InvoiceLine != null
-                            || t.PayStatementTickets.Any()))).Value;
+                            || t.PayStatementTickets.Any()));
         }
     }
 }

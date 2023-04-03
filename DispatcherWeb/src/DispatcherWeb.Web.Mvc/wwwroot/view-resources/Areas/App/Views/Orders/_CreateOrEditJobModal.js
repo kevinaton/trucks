@@ -641,8 +641,8 @@
                     .add(_serviceDropdown)
                     .add(_freightUomDropdown)
                     .add(_materialUomDropdown)
-                    .add(_freightPricePerUnitInput)
-                    .add(_materialPricePerUnitInput)
+                    //.add(_freightPricePerUnitInput)
+                    //.add(_materialPricePerUnitInput)
                     //.add(_freightQuantityInput)
                     //.add(_materialQuantityInput)
                     .prop('disabled', true);
