@@ -363,25 +363,8 @@ namespace DispatcherWeb.Services
         }
 
         [AbpAuthorize(AppPermissions.Pages_Services)]
-        public async Task<bool> CanDeleteServicePrice(EntityDto input)
-        {
-            var hasOrdersLines = await _orderLineRepository.GetAll().Where(x => x.ServiceId == input.Id).AnyAsync();
-            if (hasOrdersLines)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Services)]
         public async Task DeleteServicePrice(EntityDto input)
         {
-            var canDelete = await CanDeleteServicePrice(input);
-            if (!canDelete)
-            {
-                throw new UserFriendlyException("You can't delete selected row because it has data associated with it.");
-            }
             await _servicePriceRepository.DeleteAsync(input.Id);
         }
 

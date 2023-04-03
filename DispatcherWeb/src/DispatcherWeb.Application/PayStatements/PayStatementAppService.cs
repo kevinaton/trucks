@@ -132,7 +132,7 @@ namespace DispatcherWeb.PayStatements
             var endDateInUtc = input.EndDate.AddDays(1).ConvertTimeZoneFrom(timezone);
 
             var tickets = await _ticketRepository.GetAll()
-                .WhereIf(input.OfficeId.HasValue, x => OfficeId == input.OfficeId)
+                .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
                 .WhereIf(input.LocalEmployeesOnly, x => x.Driver.OfficeId != null)
                 .WhereIf(startDateInUtc.HasValue, x => x.TicketDateTime >= startDateInUtc)
                 .Where(x =>
@@ -455,7 +455,7 @@ namespace DispatcherWeb.PayStatements
 
             //issues:
             var ticketsForDates = await _ticketRepository.GetAll()
-                    .WhereIf(input.OfficeId.HasValue, x => OfficeId == input.OfficeId)
+                    .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
                     .WhereIf(input.LocalEmployeesOnly, x => x.Driver.OfficeId != null)
                     .Where(x => x.TicketDateTime >= startDateInUtc
                         && x.TicketDateTime < endDateInUtc
