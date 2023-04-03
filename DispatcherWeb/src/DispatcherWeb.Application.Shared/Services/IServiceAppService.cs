@@ -20,7 +20,6 @@ namespace DispatcherWeb.Services
         Task<PagedResultDto<ServicePriceDto>> GetServicePrices(GetServicePricesInput input);
         Task<ServicePriceEditDto> GetServicePriceForEdit(NullableIdDto input);
         Task EditServicePrice(ServicePriceEditDto model);
-        Task<bool> CanDeleteServicePrice(EntityDto input);
         Task DeleteServicePrice(EntityDto input);
 
         Task MergeServices(DataMergeInput input);
