@@ -181,13 +181,6 @@
             modalSize: 'lg'
         });
 
-        var _leaseHaulerSelectionModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Scheduling/LeaseHaulerSelectionModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_LeaseHaulerSelectionModal.js',
-            modalClass: 'LeaseHaulerSelectionModal',
-            modalSize: 'lg'
-        });
-
         var _printOrderWithDeliveryInfoModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Orders/PrintOrderWithDeliveryInfoModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_PrintOrderWithDeliveryInfoModal.js',
@@ -783,15 +776,6 @@
             };
         }
 
-        function refreshLeaseHaulerButtonVisibility() {
-            //var date = moment($('#DateFilter').val(), 'MM/DD/YYYY');
-            //if (isLeaseHaulerEnabled && date >= moment().startOf('day')) {
-            //    $('#AddLeaseHaulersButton').show();
-            //} else {
-            //    $('#AddLeaseHaulersButton').hide();
-            //}
-        }
-
         function refreshDateRelatedButtonsVisibility() {
             refreshDriverAssignmentButtonVisibility();
             refreshSendOrdersToDriversButtonVisibility();
@@ -822,7 +806,6 @@
                 reloadTruckTiles();
                 reloadDriverAssignments();
                 reloadMainGrid();
-                refreshLeaseHaulerButtonVisibility();
                 refreshHideProgressBarCheckboxVisibility();
                 refreshDateRelatedButtonsVisibility();
             }
@@ -1195,7 +1178,6 @@
                     _loadingState = false;
                     reloadTruckTiles();
                     reloadDriverAssignments();
-                    refreshLeaseHaulerButtonVisibility();
 
                     app.localStorage.getItem('schedule_grid', function (result) {
                         callback(JSON.parse(result));
@@ -2034,12 +2016,6 @@
             reloadDriverAssignments();
         });
 
-        abp.event.on('app.leaseHaulerSelectionModalSaved', function () {
-            reloadMainGrid(null, false);
-            reloadTruckTiles();
-            reloadDriverAssignments();
-        });
-
         abp.event.on('app.reassignModalSaved', function () {
             reloadMainGrid(null, false);
             reloadTruckTiles();
@@ -2084,10 +2060,6 @@
             position.x += $(window).scrollLeft();
             position.y += $(window).scrollTop();
             button.contextMenu({ x: position.x, y: position.y });
-        });
-
-        $('#AddLeaseHaulersButton').click(function () {
-            _leaseHaulerSelectionModal.open(_dtHelper.getFilterData());
         });
 
         $('#AddLeaseHaulerRequestButton').click(function (e) {
