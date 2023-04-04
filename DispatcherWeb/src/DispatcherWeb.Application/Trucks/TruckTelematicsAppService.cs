@@ -688,6 +688,8 @@ namespace DispatcherWeb.Trucks
                     return !(await SettingManager.GetGeotabSettingsAsync()).IsEmpty();
                 case GpsPlatform.Samsara:
                     return !(await SettingManager.GetSamsaraSettingsAsync()).IsEmpty();
+                case GpsPlatform.IntelliShift:
+                    return !(await SettingManager.GetIntelliShiftSettingsAsync()).IsEmpty();
                 default:
                     return false;
             }
