@@ -1018,8 +1018,7 @@
 		<text name="UnitType">Unit Type</text>
 		<text name="DeviceType">Device Type</text>
 		<text name="ServerAddress">Server Address</text>
-		<text name="SyncWithWialon">Sync with Wialon</text>
-		<text name="SyncWithIntelliShift">Sync with IntelliShift</text>
+		<text name="SyncTrucks">Sync Trucks</text>
 		<text name="IntelliShiftAuthError">Unable to access IntelliShift. Please make sure the settings are correct.</text>
 		<text name="IntelliShiftError">Unable to access IntelliShift. Please try again later.</text>
 		<text name="GeotabSettings">Geotab Settings</text>
