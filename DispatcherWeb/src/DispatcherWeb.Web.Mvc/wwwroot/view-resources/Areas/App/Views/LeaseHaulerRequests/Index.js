@@ -62,13 +62,9 @@
 
             localStorage.setItem('leaseHaulerRequests_filter', JSON.stringify(abpData));
 
-            abp.ui.setBusy();
             _leaseHaulerRequestListService.getLeaseHaulerRequestPagedList(abpData).done(function (abpResult) {
                 callback(_dtHelper.fromAbpResult(abpResult));
-            })
-                .always(function () {
-                    abp.ui.clearBusy();
-                });
+            });
         },
         order: [[0, 'asc']],
         columns: [
