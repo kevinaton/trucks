@@ -445,6 +445,13 @@ namespace DispatcherWeb.Invoices
                     .Where(x => ticketIds.Contains(x.Id) && x.InvoiceLine != null)
                     .Select(x => x.Id).ToListAsync();
 
+                model.InvoiceLines = model.InvoiceLines
+                        .OrderBy(x => x.DeliveryDateTime)
+                        .ThenBy(x => x.TruckCode)
+                        .ThenBy(x => x.TicketNumber)
+                        .ToList();
+
+                short lineNumber = 1;
                 foreach (var modelInvoiceLine in model.InvoiceLines)
                 {
                     var invoiceLine = modelInvoiceLine.Id == 0 ? null : invoice.InvoiceLines.FirstOrDefault(x => x.Id == modelInvoiceLine.Id);
@@ -460,7 +467,7 @@ namespace DispatcherWeb.Invoices
                         newInvoiceLineEntities.Add(invoiceLine);
                     }
 
-                    invoiceLine.LineNumber = modelInvoiceLine.LineNumber;
+                    invoiceLine.LineNumber = lineNumber++;
                     if (invoiceLine.TicketId != modelInvoiceLine.TicketId)
                     {
                         if (modelInvoiceLine.TicketId.HasValue)
