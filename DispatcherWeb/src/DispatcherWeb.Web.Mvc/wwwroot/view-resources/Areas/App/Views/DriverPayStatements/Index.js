@@ -144,6 +144,7 @@
                             + '<ul class="dropdown-menu dropdown-menu-right">'
                             + '<li><a href="' + viewUrl + '" class="btnViewRow"><i class="fa fa-edit"></i> View</a></li>'
                             + '<li><a class="btnPrintRow"><i class="fas fa-print"></i> Print</a></li>'
+                            + '<li><a class="btnExportRow"><i class="fas fa-file-excel"></i> Export</a></li>'
                             + (full.driverDateConflicts.length ? '<li><a class="btnPrintWarningsForRow"><i class="fas fas fa-exclamation-triangle"></i> Print Warnings</a></li>' : '')
                             + '<li><a class="btnDeleteRow"><i class="fa fa-trash"></i> Delete</a></li>'
                             + '</ul>'
@@ -161,6 +162,13 @@
         driverPayStatementsTable.on('click', '.btnPrintRow', function () {
             var record = _dtHelper.getRowData(this);
             _printDriverPayStatementModal.open({ id: record.id });
+        });
+
+
+        driverPayStatementsTable.on('click', '.btnExportRow', async function () {
+            var record = _dtHelper.getRowData(this);
+            var tempFile = await _payStatementService.exportPayStatementToCsv({ id: record.id });
+            app.downloadTempFile(tempFile);
         });
 
         driverPayStatementsTable.on('click', '.btnPrintWarningsForRow', function () {

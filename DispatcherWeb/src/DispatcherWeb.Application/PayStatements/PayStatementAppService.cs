@@ -14,11 +14,13 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.Reports;
 using DispatcherWeb.Orders.RevenueBreakdownReport;
 using DispatcherWeb.Orders.RevenueBreakdownReport.Dto;
 using DispatcherWeb.PayStatements.Dto;
+using DispatcherWeb.PayStatements.Exporting;
 using DispatcherWeb.TimeClassifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +42,7 @@ namespace DispatcherWeb.PayStatements
         private readonly IRevenueBreakdownTimeCalculator _revenueBreakdownTimeCalculator;
         private readonly DriverPayStatementReportGenerator _driverPayStatementReportGenerator;
         private readonly DriverPayStatementWarningReportGenerator _driverPayStatementWarningReportGenerator;
+        private readonly IPayStatementDetailsCsvExporter _payStatementDetailsCsvExporter;
 
         public PayStatementAppService(
             IRepository<PayStatement> payStatementRepository,
@@ -53,7 +56,8 @@ namespace DispatcherWeb.PayStatements
             IRepository<TimeClassification> timeClassificationRepository,
             IRevenueBreakdownTimeCalculator revenueBreakdownTimeCalculator,
             DriverPayStatementReportGenerator driverPayStatementReportGenerator,
-            DriverPayStatementWarningReportGenerator driverPayStatementWarningReportGenerator
+            DriverPayStatementWarningReportGenerator driverPayStatementWarningReportGenerator,
+            IPayStatementDetailsCsvExporter payStatementDetailsCsvExporter
             )
         {
             _payStatementRepository = payStatementRepository;
@@ -68,6 +72,7 @@ namespace DispatcherWeb.PayStatements
             _revenueBreakdownTimeCalculator = revenueBreakdownTimeCalculator;
             _driverPayStatementReportGenerator = driverPayStatementReportGenerator;
             _driverPayStatementWarningReportGenerator = driverPayStatementWarningReportGenerator;
+            _payStatementDetailsCsvExporter = payStatementDetailsCsvExporter;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Backoffice_DriverPay)]
@@ -814,6 +819,18 @@ namespace DispatcherWeb.PayStatements
             await _payStatementTicketRepository.DeleteAsync(x => x.PayStatementDetail.PayStatementId == input.Id);
             await _payStatementDetailRepository.DeleteAsync(x => x.PayStatementId == input.Id);
             await _payStatementRepository.DeleteAsync(input.Id);
+        }
+
+        public async Task<FileDto> ExportPayStatementToCsv(EntityDto input)
+        {
+            var details = await GetPayStatementForEdit(input);
+            var items = await GetPayStatementItems(new GetPayStatementItemsInput
+            {
+                PayStatementId = input.Id,
+                Sorting = nameof(PayStatementItemEditDto.DriverName)
+            });
+
+            return await _payStatementDetailsCsvExporter.ExportToFileAsync(items.Items.ToList(), details);
         }
     }
 }
