@@ -308,5 +308,17 @@
             _printDriverPayStatementModal.open({ id: _payStatementId });
         });
 
+        $("#ExportPayStatementButton").click(async function (e) {
+            e.preventDefault();
+            var button = $(this);
+            try {
+                abp.ui.setBusy(button);
+                var tempFile = await _payStatementService.exportPayStatementToCsv({ id: _payStatementId });
+                app.downloadTempFile(tempFile);
+            } finally {
+                abp.ui.clearBusy(button);
+            }
+        });
+
     });
 })();
