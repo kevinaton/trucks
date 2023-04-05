@@ -393,11 +393,13 @@ namespace DispatcherWeb
                         && a.Date == input.Date)
                 .Select(x => new
                 {
+                    x.Id,
                     x.TruckId,
                     x.DriverId,
                     DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
                     x.OfficeId,
                 })
+                .OrderByDescending(x => x.Id)
                 .ToListAsync();
 
             var leaseHaulerTruckIds = leaseHaulerTrucks.Select(x => x.TruckId).ToList();

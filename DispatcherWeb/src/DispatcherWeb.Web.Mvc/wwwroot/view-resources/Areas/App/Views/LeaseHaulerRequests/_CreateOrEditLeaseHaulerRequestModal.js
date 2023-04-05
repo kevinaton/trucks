@@ -289,14 +289,14 @@
                 });
                 rows.find('.lease-hauler-truck-select').each(function () {
                     $(this).select2Init({
-                        showAll: false,
+                        showAll: true,
                         allowClear: true
                     });
                 });
 
                 rows.find('.lease-hauler-driver-select').each(function () {
                     $(this).select2Init({
-                        showAll: false,
+                        showAll: true,
                         allowClear: true
                     });
                 });
