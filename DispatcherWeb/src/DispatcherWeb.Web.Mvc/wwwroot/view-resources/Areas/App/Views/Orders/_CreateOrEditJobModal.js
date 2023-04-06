@@ -424,6 +424,7 @@
             _designationDropdown.change(function () {
                 updateDesignationRelatedFieldsVisibility();
                 setDefaultValuesForCounterSaleDesignationIfNeeded();
+                updateSaveButtonsVisibility();
 
                 if (designationHasMaterial()) {
                     enableMaterialFields();
@@ -504,16 +505,23 @@
                 setIsFreightPriceOverridden(true);
             });
 
-            _modalManager.getModal().find("#SaveJobButton").click(function (e) {
+            _modalManager.getModal().find(".save-job-button").click(function (e) {
                 e.preventDefault();
-                saveJobAsync();
+                saveJobAsync(function () {
+                    _modalManager.close();
+                });
             });
 
             _modalManager.getModal().find("#SaveAndPrintButton").click(function (e) {
                 e.preventDefault();
                 saveJobAsync(function (saveResult) {
+                    if (!saveResult.ticketId) {
+                        abp.message.error(app.localize('TicketNumberIsRequired'));
+                        return;
+                    }
                     _$form.find("#TicketId").val(saveResult.ticketId);
                     window.open(abp.appPath + 'app/tickets/GetTicketPrintOut?ticketId=' + saveResult.ticketId);
+                    _modalManager.close();
                 });
             });
 
@@ -525,6 +533,7 @@
             if (isNewOrder()) {
                 setDefaultValuesForCounterSaleDesignationIfNeeded();
             }
+            updateSaveButtonsVisibility();
             disableJobEditIfNeeded();
             disableTaxControls();
         };
@@ -708,6 +717,13 @@
 
         function updateTicketNumberVisibility() {
             _$form.find("#TicketNumber").closest('.form-group').toggle(!_$form.find('#AutoGenerateTicketNumber').is(':checked'));
+        }
+
+        function updateSaveButtonsVisibility() {
+            var designation = Number(_designationDropdown.val());
+            var designationIsCounterSale = designation === abp.enums.designation.counterSale;
+            _modalManager.getModal().find(".save-button-container").toggle(!designationIsCounterSale);
+            _modalManager.getModal().find(".save-and-print-buttons-container").toggle(designationIsCounterSale);
         }
 
         function initOverrideButtons() {
@@ -1231,7 +1247,6 @@
                     function notifyAndFinish(result) {
                         abp.notify.info('Saved successfully.');
                         abp.event.trigger('app.createOrEditJobModalSaved', result);
-                        _modalManager.close();
                         if (callback) {
                             callback(result);
                         }
