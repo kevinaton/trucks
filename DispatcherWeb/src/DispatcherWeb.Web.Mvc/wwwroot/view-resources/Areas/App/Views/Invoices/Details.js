@@ -280,10 +280,6 @@
                     }
                 },
                 {
-                    data: "lineNumber",
-                    title: "#"
-                },
-                {
                     data: "ticketNumber",
                     title: "Ticket #"
                     //className: "cell-text-wrap all",
