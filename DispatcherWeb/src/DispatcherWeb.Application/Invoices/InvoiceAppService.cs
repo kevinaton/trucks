@@ -446,7 +446,8 @@ namespace DispatcherWeb.Invoices
                     .Select(x => x.Id).ToListAsync();
 
                 model.InvoiceLines = model.InvoiceLines
-                        .OrderBy(x => x.DeliveryDateTime)
+                        .OrderByDescending(x => x.ChildInvoiceLineKind != ChildInvoiceLineKind.BottomFuelSurchargeLine)
+                        .ThenBy(x => x.DeliveryDateTime)
                         .ThenBy(x => x.TruckCode)
                         .ThenBy(x => x.TicketNumber)
                         .ToList();
