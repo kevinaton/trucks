@@ -371,6 +371,7 @@ namespace DispatcherWeb.Invoices
         [AbpAuthorize(AppPermissions.Pages_Invoices)]
         public async Task<int> EditInvoice(InvoiceEditDto model)
         {
+            short lineNumber;
             var invoice = model.Id > 0
                 ? await _invoiceRepository.GetAll()
                     .Include(x => x.InvoiceLines)
@@ -452,7 +453,7 @@ namespace DispatcherWeb.Invoices
                         .ThenBy(x => x.TicketNumber)
                         .ToList();
 
-                short lineNumber = 1;
+                lineNumber = 1;
                 foreach (var modelInvoiceLine in model.InvoiceLines)
                 {
                     var invoiceLine = modelInvoiceLine.Id == 0 ? null : invoice.InvoiceLines.FirstOrDefault(x => x.Id == modelInvoiceLine.Id);
@@ -545,6 +546,39 @@ namespace DispatcherWeb.Invoices
                     }
                     childEntity.ParentInvoiceLineId = parentEntity.Id;
                 }
+            }
+
+            var regularInvoiceLines = invoice.InvoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.None).ToList();
+            var bottomLines = invoice.InvoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.BottomFuelSurchargeLine).ToList();
+            var perTicketLines = invoice.InvoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.FuelSurchargeLinePerTicket).ToList();
+
+            var reorderedLines = regularInvoiceLines.ToList();
+            foreach (var perTicketLine in perTicketLines)
+            {
+                if (perTicketLine.ParentInvoiceLineId != null)
+                {
+                    var parentLine = reorderedLines.FirstOrDefault(x => x.Id == perTicketLine.ParentInvoiceLineId);
+                    if (parentLine != null)
+                    {
+                        var parentLineIndex = reorderedLines.IndexOf(parentLine);
+                        if (parentLineIndex != -1)
+                        {
+                            reorderedLines.Insert(parentLineIndex + 1, perTicketLine);
+                            continue;
+                        }
+                    }
+                }
+                reorderedLines.Add(perTicketLine);
+            }
+            foreach (var bottomLine in bottomLines)
+            {
+                reorderedLines.Add(bottomLine);
+            }
+
+            lineNumber = 1;
+            foreach (var line in reorderedLines)
+            {
+                line.LineNumber = lineNumber++;
             }
 
             return invoice.Id;
