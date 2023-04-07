@@ -548,9 +548,10 @@ namespace DispatcherWeb.Invoices
                 }
             }
 
-            var regularInvoiceLines = invoice.InvoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.None).ToList();
-            var bottomLines = invoice.InvoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.BottomFuelSurchargeLine).ToList();
-            var perTicketLines = invoice.InvoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.FuelSurchargeLinePerTicket).ToList();
+            var invoiceLinesToReorder = invoice.InvoiceLines.OrderBy(x => x.LineNumber).ToList();
+            var regularInvoiceLines = invoiceLinesToReorder.Where(x => x.ChildInvoiceLineKind == null).ToList();
+            var bottomLines = invoiceLinesToReorder.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.BottomFuelSurchargeLine).ToList();
+            var perTicketLines = invoiceLinesToReorder.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.FuelSurchargeLinePerTicket).ToList();
 
             var reorderedLines = regularInvoiceLines.ToList();
             foreach (var perTicketLine in perTicketLines)
