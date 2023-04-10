@@ -447,7 +447,8 @@ namespace DispatcherWeb
         Sent = 1,
         Viewed = 2,
         [Display(Name = "Ready for QuickBooks")]
-        ReadyForQuickbooks = 3
+        ReadyForQuickbooks = 3,
+        Printed = 4
     }
 
     public enum BillingTermsEnum
