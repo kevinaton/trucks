@@ -62,6 +62,10 @@
                             <input type="hidden" class="filter" name="IssueDateStart" id="IssueDateStartFilter" />
                             <input type="hidden" class="filter" name="IssueDateEnd" id="IssueDateEndFilter" />
                         </div>
+                        <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                            <label class="control-label" for="InvoiceIdFilter">@L("InvoiceNumber")</label>
+                            <input class="form-control filter" name="InvoiceId" id="InvoiceIdFilter" type="text">
+                        </div>
                         @if ((await FeatureChecker.GetValueAsync(AppFeatures.AllowMultiOfficeFeature)).To<bool>())
                         {
                             <div class="form-group col-lg-3 col-md-4 col-sm-6">
