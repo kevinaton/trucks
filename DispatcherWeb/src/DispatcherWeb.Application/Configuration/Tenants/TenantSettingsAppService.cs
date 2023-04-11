@@ -52,6 +52,7 @@ namespace DispatcherWeb.Configuration.Tenants
         private readonly IMultiTenancyConfig _multiTenancyConfig;
         private readonly ITimeZoneService _timeZoneService;
         private readonly IBinaryObjectManager _binaryObjectManager;
+        private readonly IAppSettingAvailabilityProvider _settingAvailabilityProvider;
         private readonly IBackgroundJobManager _backgroundJobManager;
         private readonly IAppNotifier _appNotifier;
         private readonly ISettingDefinitionManager _settingDefinitionManager;
@@ -73,6 +74,7 @@ namespace DispatcherWeb.Configuration.Tenants
             IEmailSender emailSender,
             IBinaryObjectManager binaryObjectManager,
             IAppConfigurationAccessor configurationAccessor,
+            IAppSettingAvailabilityProvider settingAvailabilityProvider,
             IBackgroundJobManager backgroundJobManager,
             IAppNotifier appNotifier,
             ISettingDefinitionManager settingDefinitionManager,
@@ -93,6 +95,7 @@ namespace DispatcherWeb.Configuration.Tenants
             _ldapModuleConfig = ldapModuleConfig;
             _timeZoneService = timeZoneService;
             _binaryObjectManager = binaryObjectManager;
+            _settingAvailabilityProvider = settingAvailabilityProvider;
             _backgroundJobManager = backgroundJobManager;
             _appNotifier = appNotifier;
             _settingDefinitionManager = settingDefinitionManager;
@@ -1198,37 +1201,56 @@ namespace DispatcherWeb.Configuration.Tenants
         private async Task UpdateDispatchingAndMessagingSettingsAsync(DispatchingAndMessagingSettingsEditDto input)
         {
             var timezone = await GetTimezone();
-            var allowCounterSalesWasUnchecked = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales) && !input.AllowCounterSales;
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DispatchVia, input.DispatchVia.ToIntString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.AllowSmsMessages, input.AllowSmsMessages.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.SendSmsOnDispatching, input.SendSmsOnDispatching.ToIntString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.SmsPhoneNumber, input.SmsPhoneNumber);
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DriverDispatchSmsTemplate, input.DriverDispatchSms);
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DriverStartTimeTemplate, input.DriverStartTime);
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp, input.HideTicketControlsInDriverApp.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.RequireDriversToEnterTickets, input.RequireDriversToEnterTickets.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.RequireSignature, input.RequireSignature.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.RequireTicketPhoto, input.RequireTicketPhoto.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.TextForSignatureView, input.TextForSignatureView);
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DispatchesLockedToTruck, input.DispatchesLockedToTruck.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DefaultStartTime, input.DefaultStartTime.ConvertTimeZoneFrom(timezone).ToString("s"));
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, input.ShowTrailersOnSchedule.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.ValidateUtilization, input.ValidateUtilization.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.AllowCounterSales, input.AllowCounterSales.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.DefaultLoadAtLocationId ?? 0).ToString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, input.DefaultDesignationToCounterSales.ToLowerCaseString());
-            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
+            var allowCounterSalesWasUnchecked = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales) && !input.AllowCounterSales
+                && await _settingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSales);
+
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DispatchVia, input.DispatchVia.ToIntString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.AllowSmsMessages, input.AllowSmsMessages.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.SendSmsOnDispatching, input.SendSmsOnDispatching.ToIntString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.SmsPhoneNumber, input.SmsPhoneNumber);
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DriverDispatchSmsTemplate, input.DriverDispatchSms);
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DriverStartTimeTemplate, input.DriverStartTime);
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp, input.HideTicketControlsInDriverApp.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.RequireDriversToEnterTickets, input.RequireDriversToEnterTickets.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.RequireSignature, input.RequireSignature.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.RequireTicketPhoto, input.RequireTicketPhoto.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.TextForSignatureView, input.TextForSignatureView);
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DispatchesLockedToTruck, input.DispatchesLockedToTruck.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultStartTime, input.DefaultStartTime.ConvertTimeZoneFrom(timezone).ToString("s"));
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, input.ShowTrailersOnSchedule.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.ValidateUtilization, input.ValidateUtilization.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSales, input.AllowCounterSales.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.DefaultLoadAtLocationId ?? 0).ToString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, input.DefaultDesignationToCounterSales.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
+            
             if (allowCounterSalesWasUnchecked)
             {
-                var userIds = UserManager.Users.Select(x => x.Id).ToList();
+                var userSettingsToReset = new[]
+                {
+                    AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales,
+                    AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId,
+                    AppSettings.DispatchingAndMessaging.DefaultServiceId,
+                    AppSettings.DispatchingAndMessaging.DefaultMaterialUomId,
+                    AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber,
+                };
+                var userIds = await UserManager.Users.Select(x => x.Id).ToListAsync();
                 foreach (var userId in userIds)
                 {
-                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, "false");
-                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, "0");
-                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultServiceId, "0");
-                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, "0");
-                    await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, "false");
+                    foreach (var settingToReset in userSettingsToReset)
+                    {
+                        var defaultValue = _settingDefinitionManager.GetSettingDefinition(settingToReset).DefaultValue;
+                        await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), settingToReset, defaultValue);
+                    }
                 }
+            }
+        }
+
+        private async Task ChangeSettingForTenantIfAvailableAsync(string settingName, string newValue)
+        {
+            if (await _settingAvailabilityProvider.IsSettingAvailableAsync(settingName))
+            {
+                await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), settingName, newValue);
             }
         }
 

@@ -1,9 +1,11 @@
 ﻿@using Abp.Application.Features
 @using DispatcherWeb.Features
+@using DispatcherWeb.Configuration
 @using DispatcherWeb.Configuration.Tenants.Dto
 @using DispatcherWeb.Dispatching
 @using DispatcherWeb.Infrastructure
 @using DispatcherWeb.Infrastructure.Extensions
+@inject IAppSettingAvailabilityProvider SettingAvailabilityProvider
 @model DispatchingAndMessagingSettingsEditDto
 
 <div class="tab-pane" id="DispatchingAndMessagingTab">
@@ -11,7 +13,7 @@
         <div class="col-sm-12">
             <h5>@L("Settings_DispatchingAndMessaging")</h5>
             <form id="DispatchingAndMessagingSettingsForm" class="m-form">
-                @if (await FeatureChecker.IsEnabledAsync(AppFeatures.DispatchingFeature))
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DispatchVia))
                 {
                     <div class="form-group">
                         <div class="m-radio-list">
@@ -33,7 +35,10 @@
                             </label>
                         </div>
                     </div>
-                    <div id="AdditionalSettings">
+                }
+                <div id="AdditionalSettings">
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp))
+                    {
                         <div class="form-group margin-top-20">
                             <label for="HideTicketControlsInDriverApp" class="m-checkbox col-lg-12">
                                 <input id="HideTicketControlsInDriverApp" type="checkbox" name="HideTicketControlsInDriverApp" value="true" @(Model.HideTicketControlsInDriverApp ? "checked=\"checked\"" : "")>
@@ -41,6 +46,9 @@
                                 <span></span>
                             </label>
                         </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.RequireDriversToEnterTickets))
+                    {
                         <div class="form-group margin-top-20">
                             <label for="RequireDriversToEnterTickets" class="m-checkbox col-lg-12">
                                 <input id="RequireDriversToEnterTickets" type="checkbox" name="RequireDriversToEnterTickets" value="true" @(Model.RequireDriversToEnterTickets ? "checked=\"checked\"" : "")>
@@ -48,6 +56,9 @@
                                 <span></span>
                             </label>
                         </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.RequireSignature))
+                    {
                         <div class="form-group margin-top-20">
                             <label for="RequireSignature" class="m-checkbox col-lg-12">
                                 <input id="RequireSignature" type="checkbox" name="RequireSignature" value="true" @(Model.RequireSignature ? "checked=\"checked\"" : "")>
@@ -55,6 +66,9 @@
                                 <span></span>
                             </label>
                         </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.RequireTicketPhoto))
+                    {
                         <div class="form-group margin-top-20">
                             <label for="RequireTicketPhoto" class="m-checkbox col-lg-12">
                                 <input id="RequireTicketPhoto" type="checkbox" name="RequireTicketPhoto" value="true" @(Model.RequireTicketPhoto ? "checked=\"checked\"" : "")>
@@ -62,6 +76,9 @@
                                 <span></span>
                             </label>
                         </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DispatchesLockedToTruck))
+                    {
                         <div class="form-group margin-top-20">
                             <label for="DispatchesLockedToTruck" class="m-checkbox col-lg-12">
                                 <input id="DispatchesLockedToTruck" type="checkbox" name="DispatchesLockedToTruck" value="true" @(Model.DispatchesLockedToTruck ? "checked=\"checked\"" : "")>
@@ -69,6 +86,9 @@
                                 <span></span>
                             </label>
                         </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSales))
+                    {
                         <div class="form-group margin-top-20">
                             <label for="AllowCounterSales" class="m-checkbox col-lg-12">
                                 <input id="AllowCounterSales" type="checkbox" name="AllowCounterSales" value="true" @(Model.AllowCounterSales ? "checked=\"checked\"" : "")>
@@ -76,6 +96,9 @@
                                 <span></span>
                             </label>
                         </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales))
+                    {
                         <div class="form-group">
                             <label for="DefaultDesignationToCounterSalesForTenant" class="m-checkbox">
                                 <input id="DefaultDesignationToCounterSalesForTenant" type="checkbox" name="DefaultDesignationToCounterSales" value="true" checked=@(Model.DefaultDesignationToCounterSales == true ? "checked" : null)>
@@ -83,6 +106,9 @@
                                 <span></span>
                             </label>
                         </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId))
+                    {
                         <div class="row">
                             <div class="form-group col-8">
                                 <label for="DefaultLoadAtLocationIdForTenant">@L("DefaultLoadAtLocation")</label>
@@ -95,6 +121,9 @@
                                 </select>
                             </div>
                         </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber))
+                    {
                         <div class="form-group">
                             <label for="DefaultAutoGenerateTicketNumberForTenant" class="m-checkbox">
                                 <input id="DefaultAutoGenerateTicketNumberForTenant" type="checkbox" name="DefaultAutoGenerateTicketNumber" value="true" checked=@(Model.DefaultAutoGenerateTicketNumber == true ? "checked" : null)>
@@ -102,49 +131,59 @@
                                 <span></span>
                             </label>
                         </div>
-                        @if (await FeatureChecker.IsEnabledAsync(AppFeatures.SmsIntegrationFeature))
-                        {
-                            <div class="form-group">
-                                <div class="m-radio-list">
-                                    <label>@L("Settings_SendSmsOnDispatching")</label>
-                                    <label class="m-radio">
-                                        <input type="radio" name="SendSmsOnDispatching" value="@SendSmsOnDispatchingEnum.DontSend.ToIntString()" @(Model.SendSmsOnDispatching == SendSmsOnDispatchingEnum.DontSend ? "checked=\"checked\"" : "")> Don't send
-                                        <span></span>
-                                    </label>
-                                    <label class="m-radio">
-                                        <input type="radio" name="SendSmsOnDispatching" value="@SendSmsOnDispatchingEnum.SendWhenUserNotClockedIn.ToIntString()" @(Model.SendSmsOnDispatching == SendSmsOnDispatchingEnum.SendWhenUserNotClockedIn ? "checked=\"checked\"" : "")> Send when user not clocked in
-                                        <span></span>
-                                    </label>
-                                    <label class="m-radio">
-                                        <input type="radio" name="SendSmsOnDispatching" value="@SendSmsOnDispatchingEnum.SendForAllDispatches.ToIntString()" @(Model.SendSmsOnDispatching == SendSmsOnDispatchingEnum.SendForAllDispatches ? "checked=\"checked\"" : "")> Send for all dispatches
-                                        <span></span>
-                                    </label>
-                                </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.SendSmsOnDispatching))
+                    {
+                        <div class="form-group">
+                            <div class="m-radio-list">
+                                <label>@L("Settings_SendSmsOnDispatching")</label>
+                                <label class="m-radio">
+                                    <input type="radio" name="SendSmsOnDispatching" value="@SendSmsOnDispatchingEnum.DontSend.ToIntString()" @(Model.SendSmsOnDispatching == SendSmsOnDispatchingEnum.DontSend ? "checked=\"checked\"" : "")> Don't send
+                                    <span></span>
+                                </label>
+                                <label class="m-radio">
+                                    <input type="radio" name="SendSmsOnDispatching" value="@SendSmsOnDispatchingEnum.SendWhenUserNotClockedIn.ToIntString()" @(Model.SendSmsOnDispatching == SendSmsOnDispatchingEnum.SendWhenUserNotClockedIn ? "checked=\"checked\"" : "")> Send when user not clocked in
+                                    <span></span>
+                                </label>
+                                <label class="m-radio">
+                                    <input type="radio" name="SendSmsOnDispatching" value="@SendSmsOnDispatchingEnum.SendForAllDispatches.ToIntString()" @(Model.SendSmsOnDispatching == SendSmsOnDispatchingEnum.SendForAllDispatches ? "checked=\"checked\"" : "")> Send for all dispatches
+                                    <span></span>
+                                </label>
                             </div>
-                        }
+                        </div>
+                    }
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.TextForSignatureView))
+                    {
                         <div class="row">
                             <div class="form-group col-8">
                                 <label asp-for="TextForSignatureView">@L("TextForSignatureView")</label>
                                 <textarea class="form-control" asp-for="TextForSignatureView" rows="3"></textarea>
                             </div>
                         </div>
+                    }
+                </div>
+
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule))
+                {
+                    <div class="form-group margin-top-20">
+                        <label for="ShowTrailersOnSchedule" class="m-checkbox col-lg-12">
+                            <input id="ShowTrailersOnSchedule" type="checkbox" name="ShowTrailersOnSchedule" value="true" checked="@(Model.ShowTrailersOnSchedule ? "checked" : null)">
+                            @L("ShowTrailersOnSchedule")
+                            <span></span>
+                        </label>
                     </div>
                 }
-                <div class="form-group margin-top-20">
-                    <label for="ShowTrailersOnSchedule" class="m-checkbox col-lg-12">
-                        <input id="ShowTrailersOnSchedule" type="checkbox" name="ShowTrailersOnSchedule" value="true" checked="@(Model.ShowTrailersOnSchedule ? "checked" : null)">
-                        @L("ShowTrailersOnSchedule")
-                        <span></span>
-                    </label>
-                </div>
-                <div class="form-group margin-top-20">
-                    <label for="ValidateUtilization" class="m-checkbox col-lg-12">
-                        <input id="ValidateUtilization" type="checkbox" name="ValidateUtilization" value="true" checked="@(Model.ValidateUtilization ? "checked" : null)">
-                        @L("ValidateUtilization")
-                        <span></span>
-                    </label>
-                </div>
-                @if (await FeatureChecker.IsEnabledAsync(AppFeatures.SmsIntegrationFeature))
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.ValidateUtilization))
+                {
+                    <div class="form-group margin-top-20">
+                        <label for="ValidateUtilization" class="m-checkbox col-lg-12">
+                            <input id="ValidateUtilization" type="checkbox" name="ValidateUtilization" value="true" checked="@(Model.ValidateUtilization ? "checked" : null)">
+                            @L("ValidateUtilization")
+                            <span></span>
+                        </label>
+                    </div>
+                }
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowSmsMessages))
                 {
                     <div class="form-group margin-top-20">
                         <label for="AllowSmsMessages" class="m-checkbox col-lg-12">
@@ -153,6 +192,9 @@
                             <span></span>
                         </label>
                     </div>
+                }
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.SmsPhoneNumber))
+                {
                     <div class="row">
                         <div class="form-group col-8">
                             <label for="SmsPhoneNumber">@L("PhoneNumberToSendMessagesFrom") <i class="fa fa-info-circle text-primary" id="PhoneNumberToSendMessagesFromInfo" title="@L("ThisNumberMustBeTwilioNumber")"></i></label>
@@ -163,35 +205,38 @@
                             <button class="btn btn-primary" id="TestPhoneNumberButton" data-test="number">Test</button>
                         </div>
                     </div>
-                    @if (await FeatureChecker.IsEnabledAsync(AppFeatures.DispatchingFeature))
-                    {
-                        <div class="row">
-                            <div class="form-group col-8">
-                                <label class="required-label" asp-for="DriverDispatchSms">@L("DriverDispatchSms")</label>
-                                <textarea class="form-control" asp-for="DriverDispatchSms" rows="3" maxlength="@(EntityStringFieldLengths.Dispatch.Message - 100)"></textarea>
-                            </div>
-                            <div class="form-group col-4">
-                                <label class="col-12">&nbsp;</label>
-                                <button class="btn btn-primary" id="SendTestMessageButton" data-test="message">Send Test Message</button>
-                            </div>
-                        </div>
-                    }
                 }
-
-                <div class="row">
-                    <div class="form-group col-8">
-                        <label class="required-label" asp-for="DriverStartTime">@L("DriverStartTime")</label>
-                        <textarea class="form-control" asp-for="DriverStartTime" rows="3" required></textarea>
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DriverDispatchSmsTemplate))
+                {
+                    <div class="row">
+                        <div class="form-group col-8">
+                            <label class="required-label" asp-for="DriverDispatchSms">@L("DriverDispatchSms")</label>
+                            <textarea class="form-control" asp-for="DriverDispatchSms" rows="3" maxlength="@(EntityStringFieldLengths.Dispatch.Message - 100)"></textarea>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-12">&nbsp;</label>
+                            <button class="btn btn-primary" id="SendTestMessageButton" data-test="message">Send Test Message</button>
+                        </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group col-8">
-                        <label class="required-label" asp-for="DefaultStartTime">@L("DefaultStartTime")</label>
-                        <input type="text" class="form-control" asp-for="DefaultStartTime" autocomplete="off" required>
+                }
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DriverStartTimeTemplate))
+                {
+                    <div class="row">
+                        <div class="form-group col-8">
+                            <label class="required-label" asp-for="DriverStartTime">@L("DriverStartTime")</label>
+                            <textarea class="form-control" asp-for="DriverStartTime" rows="3" required></textarea>
+                        </div>
                     </div>
-                </div>
-
+                }
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultStartTime))
+                {
+                    <div class="row">
+                        <div class="form-group col-8">
+                            <label class="required-label" asp-for="DefaultStartTime">@L("DefaultStartTime")</label>
+                            <input type="text" class="form-control" asp-for="DefaultStartTime" autocomplete="off" required>
+                        </div>
+                    </div>
+                }
             </form>
         </div>
     </div>
