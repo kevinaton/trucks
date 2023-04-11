@@ -388,6 +388,7 @@ namespace DispatcherWeb.Invoices
                 switch (invoice.Status)
                 {
                     case InvoiceStatus.Draft:
+                    case InvoiceStatus.Printed:
                         if (model.Status.IsIn(InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Sent))
                         {
                             invoice.Status = model.Status;
@@ -880,9 +881,9 @@ namespace DispatcherWeb.Invoices
         public async Task<Document> GetInvoicePrintOut(GetInvoicePrintOutInput input)
         {
             var invoice = await _invoiceRepository.GetAsync(input.InvoiceId);
-            if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks))
+            if (invoice.Status.IsIn(InvoiceStatus.Draft))
             {
-                invoice.Status = InvoiceStatus.Sent;
+                invoice.Status = InvoiceStatus.Printed;
                 await CurrentUnitOfWork.SaveChangesAsync();
             }
 
@@ -1074,7 +1075,7 @@ namespace DispatcherWeb.Invoices
                 });
 
                 var invoice = await _invoiceRepository.GetAsync(input.InvoiceId);
-                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks))
+                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Printed))
                 {
                     invoice.Status = InvoiceStatus.Sent;
                 }
