@@ -936,11 +936,24 @@
                         }
                     }
                 },
-                {
+                /*{
                     data: "freightPrice",
                     name: "freightPrice",
                     render: function (data, type, full, meta) {
                         return _dtHelper.renderMoney(full.freightPrice);
+                    },
+                    title: "Freight",
+                    createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
+                        if (rowData.isFreightPriceOverridden) {
+                            $(cell).addClass("overridden-price");
+                        }
+                    }
+                },*/
+                {
+                    data: "freightRateToPayDrivers",
+                    name: "freightRateToPayDrivers",
+                    render: function (data, type, full, meta) {
+                        return _dtHelper.renderMoney(full.freightRateToPayDrivers);
                     },
                     title: "Freight",
                     createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {

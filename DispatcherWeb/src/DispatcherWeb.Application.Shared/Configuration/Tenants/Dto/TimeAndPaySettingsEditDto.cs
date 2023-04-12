@@ -7,5 +7,6 @@
         public bool AllowProductionPay { get; set; }
         public bool DefaultToProductionPay { get; set; }
         public bool PreventProductionPayOnHourlyJobs { get; set; }
+        public bool AllowDriverPayRateDifferentFromFreightRate { get; set; }
     }
 }

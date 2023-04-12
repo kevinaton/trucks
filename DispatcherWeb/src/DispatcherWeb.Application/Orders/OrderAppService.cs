@@ -436,13 +436,14 @@ namespace DispatcherWeb.Orders
                 editOrderLineModel.FreightPrice = model.FreightPrice;
                 editOrderLineModel.MaterialPrice = model.MaterialPrice;
                 editOrderLineModel.LeaseHaulerRate = model.LeaseHaulerRate;
+                editOrderLineModel.FreightRateToPayDrivers = model.FreightRateToPayDrivers;
                 editOrderLineModel.NumberOfTrucks = model.NumberOfTrucks;
                 editOrderLineModel.IsMultipleLoads = model.IsMultipleLoads;
                 editOrderLineModel.TimeOnJob = model.TimeOnJob;
                 editOrderLineModel.ProductionPay = model.ProductionPay;
                 editOrderLineModel.Note = model.Note;
                 editOrderLineModel.QuoteServiceId = model.QuoteServiceId;
-
+                
                 var orderLine = await EditOrderLine(editOrderLineModel);
                 await CurrentUnitOfWork.SaveChangesAsync();
 
@@ -455,7 +456,7 @@ namespace DispatcherWeb.Orders
 
                 int? ticketId = null;
 
-                if (model.Designation == DesignationEnum.CounterSale 
+                if (model.Designation == DesignationEnum.CounterSale
                     && (model.TicketId != null || !string.IsNullOrEmpty(model.TicketNumber) || model.AutoGenerateTicketNumber))
                 {
                     var ticket = model.TicketId != null ? await _ticketRepository.GetAll()
@@ -468,7 +469,7 @@ namespace DispatcherWeb.Orders
                         {
                             OrderLineId = orderLine.OrderLineId
                         };
-                        
+
                         await _ticketRepository.InsertAndGetIdAsync(ticket);
                     }
                     ticket.TicketNumber = model.TicketNumber;
@@ -1429,6 +1430,7 @@ namespace DispatcherWeb.Orders
                             IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
                             IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                             LeaseHaulerRate = x.LeaseHaulerRate,
+                            FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                             TimeOnJob = x.TimeOnJob == null ? null : (currentDate.Date.Add(x.TimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
                             FirstStaggeredTimeOnJob = x.FirstStaggeredTimeOnJob == null ? null : (currentDate.Date.Add(x.FirstStaggeredTimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
                             StaggeredTimeKind = x.StaggeredTimeKind,
@@ -1899,6 +1901,7 @@ namespace DispatcherWeb.Orders
                         IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                         JobNumber = x.JobNumber,
                         Note = x.Note,
                         IsMultipleLoads = x.IsMultipleLoads,
@@ -1973,6 +1976,7 @@ namespace DispatcherWeb.Orders
                         MaterialPricePerUnit = x.PricePerUnit,
                         FreightPricePerUnit = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                         //Quantity = x.Quantity, //Do not default quantities. They will have to fill that in.
                         //MaterialQuantity = x.MaterialQuantity,
                         //FreightQuantity = x.FreightQuantity,
@@ -2014,7 +2018,7 @@ namespace DispatcherWeb.Orders
             {
                 var canOverrideTotals = await _orderLineRepository.CanOverrideTotals(input.Id.Value, OfficeId);
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
-
+                
                 orderLineEditDto = await _orderLineRepository.GetAll()
                     .Select(x => new OrderLineEditDto
                     {
@@ -2057,6 +2061,7 @@ namespace DispatcherWeb.Orders
                         IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                         JobNumber = x.JobNumber,
                         Note = x.Note,
                         NumberOfTrucks = x.NumberOfTrucks,
@@ -2205,7 +2210,7 @@ namespace DispatcherWeb.Orders
                 DefaultFuelSurchargeCalculationName = order.DefaultFuelSurchargeCalculationName,
                 DefaultBaseFuelCost = order.DefaultBaseFuelCost,
                 DefaultCanChangeBaseFuelCost = order.DefaultCanChangeBaseFuelCost,
-                
+
                 DeliverToId = orderLine.DeliverToId,
                 DeliverTo = orderLine.DeliverTo,
                 DeliverToNamePlain = orderLine.DeliverToNamePlain,
@@ -2237,6 +2242,7 @@ namespace DispatcherWeb.Orders
                 HasTickets = orderLine.HasTickets,
                 IsMultipleLoads = orderLine.IsMultipleLoads,
                 LeaseHaulerRate = orderLine.LeaseHaulerRate,
+                FreightRateToPayDrivers = orderLine.FreightRateToPayDrivers,
                 Note = orderLine.Note,
                 NumberOfTrucks = orderLine.NumberOfTrucks,
                 ProductionPay = orderLine.ProductionPay,
@@ -2260,7 +2266,7 @@ namespace DispatcherWeb.Orders
                     })
                     .OrderBy(t => t.Id)
                     .FirstOrDefaultAsync(t => t.OrderLineId == input.OrderLineId);
-                
+
                 if (ticket != null)
                 {
                     result.TicketId = ticket.Id;
@@ -2270,7 +2276,7 @@ namespace DispatcherWeb.Orders
             else
             {
                 result.AutoGenerateTicketNumber = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber);
-                
+
                 var defaultLoadAtLocationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId);
                 if (defaultLoadAtLocationId > 0)
                 {
@@ -2433,6 +2439,7 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.IsMaterialPriceOverridden, model.IsMaterialPriceOverridden);
             await orderLineUpdater.UpdateFieldAsync(o => o.IsFreightPriceOverridden, model.IsFreightPriceOverridden);
             await orderLineUpdater.UpdateFieldAsync(o => o.LeaseHaulerRate, model.LeaseHaulerRate);
+            await orderLineUpdater.UpdateFieldAsync(o => o.FreightRateToPayDrivers, model.FreightRateToPayDrivers);
             await orderLineUpdater.UpdateFieldAsync(o => o.JobNumber, model.JobNumber);
             await orderLineUpdater.UpdateFieldAsync(o => o.Note, model.Note);
 

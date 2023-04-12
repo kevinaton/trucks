@@ -31,6 +31,8 @@ namespace DispatcherWeb.Orders.Dto
 
         public decimal? LeaseHaulerRate { get; set; }
 
+        public decimal? FreightRateToPayDrivers { get; set; }
+
         [Required(ErrorMessage = "Service/Product Item is a required field")]
         public int ServiceId { get; set; }
 

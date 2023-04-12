@@ -6,6 +6,7 @@
         var _$form = null;
         var _designationDropdown = null;
         var _addLocationTarget = null;
+        var _ratesInitialState = {};
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
@@ -40,6 +41,8 @@
             var materialRateInput = _$form.find("#PricePerUnit");
             var freightRateInput = _$form.find("#FreightRate");
             var leaseHaulerRateInput = _$form.find("#LeaseHaulerRate");
+
+            _ratesInitialState.freightRate = Number(freightRateInput.val()) || 0;
 
             if (leaseHaulerRateInput.val() !== "") {
                 leaseHaulerRateInput.val(abp.utils.round(leaseHaulerRateInput.val()).toFixed(2));
@@ -165,6 +168,17 @@
             }
 
             var quoteService = _$form.serializeFormToObject();
+
+            /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
+            property should be updated to the same value as the “Freight Rate”.  */
+            if (_$form.find("#FreightRateToPayDrivers_Hidden")) {
+                if (_ratesInitialState.freightRate !== quoteService.FreightRate &&
+                    _ratesInitialState.freightRate === quoteService.FreightRateToPayDrivers)
+                    quoteService.freightRateToPayDrivers = quoteService.FreightRate;
+                else
+                    quoteService.freightRateToPayDrivers = Number(_$form.find("#FreightRateToPayDrivers").val()) || 0;
+            }
+            else quoteService.freightRateToPayDrivers = Number(quoteService.FreightRate) || 0;
 
             _modalManager.setBusy(true);
             _quoteAppService.editQuoteService(quoteService).done(function () {

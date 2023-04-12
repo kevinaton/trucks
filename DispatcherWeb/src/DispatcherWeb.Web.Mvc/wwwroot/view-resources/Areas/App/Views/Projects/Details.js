@@ -149,10 +149,16 @@
                     render: function (data, type, full, meta) { return _dtHelper.renderMoney(full.pricePerUnit); },
                     title: "Material<br>Rate"
                 },
-                {
+                /*{
                     targets: 7,
                     data: "freightRate",
                     render: function (data, type, full, meta) { return _dtHelper.renderMoney(full.freightRate); },
+                    title: "Freight<br>Rate"
+                },*/
+                {
+                    targets: 7,
+                    data: "freightRateToPayDrivers",
+                    render: function (data, type, full, meta) { return _dtHelper.renderMoney(full.freightRateToPayDrivers); },
                     title: "Freight<br>Rate"
                 },
                 {

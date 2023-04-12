@@ -22,6 +22,7 @@ namespace DispatcherWeb.Quotes.Dto
         public string FreightUomName { get; set; }
         public decimal? FreightRate { get; set; }
         public decimal? LeaseHaulerRate { get; set; }
+        public decimal? FreightRateToPayDrivers { get; set; }
         public decimal? PricePerUnit { get; set; }
         public decimal? Rate => FreightRate.HasValue || PricePerUnit.HasValue ? (FreightRate ?? 0) + (PricePerUnit ?? 0) : (decimal?)null;
         public string JobNumber { get; set; }

@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.IO;
 using Abp.Linq.Extensions;
@@ -494,6 +495,7 @@ namespace DispatcherWeb.Quotes
                         PricePerUnit = x.PricePerUnit,
                         FreightRate = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
                         Note = x.Note
@@ -750,6 +752,7 @@ namespace DispatcherWeb.Quotes
                 PricePerUnit = s.PricePerUnit,
                 FreightRate = s.FreightRate,
                 LeaseHaulerRate = s.LeaseHaulerRate,
+                FreightRateToPayDrivers = s.FreightRateToPayDrivers,
                 MaterialQuantity = s.MaterialQuantity,
                 FreightQuantity = s.FreightQuantity,
                 JobNumber = s.JobNumber,
@@ -800,6 +803,7 @@ namespace DispatcherWeb.Quotes
                     x.IsFreightPricePerUnitOverridden,
                     x.IsMaterialPricePerUnitOverridden,
                     x.LeaseHaulerRate,
+                    x.FreightRateToPayDrivers,
                     x.LineNumber,
                     x.MaterialPrice,
                     x.MaterialPricePerUnit,
@@ -848,6 +852,7 @@ namespace DispatcherWeb.Quotes
                 FreightRate = x.FreightPricePerUnit,
                 PricePerUnit = x.MaterialPricePerUnit,
                 LeaseHaulerRate = x.LeaseHaulerRate,
+                FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                 MaterialQuantity = x.MaterialQuantity,
                 FreightQuantity = x.FreightQuantity,
                 ServiceId = x.ServiceId,
@@ -973,6 +978,7 @@ namespace DispatcherWeb.Quotes
                     PricePerUnit = x.PricePerUnit,
                     FreightRate = x.FreightRate,
                     LeaseHaulerRate = x.LeaseHaulerRate,
+                    FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                     MaterialQuantity = x.MaterialQuantity,
                     FreightQuantity = x.FreightQuantity
                 })
@@ -1057,6 +1063,7 @@ namespace DispatcherWeb.Quotes
                         PricePerUnit = x.PricePerUnit,
                         FreightRate = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
+                        FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
                         JobNumber = x.JobNumber,
@@ -1223,6 +1230,15 @@ namespace DispatcherWeb.Quotes
                 quoteService.LeaseHaulerRate = model.LeaseHaulerRate;
             }
 
+            if (quoteService.FreightRateToPayDrivers != model.FreightRateToPayDrivers)
+            {
+                if (captureHistory)
+                {
+                    fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.FreightRateToPayDrivers, quoteService.FreightRateToPayDrivers?.ToString(), model.FreightRateToPayDrivers?.ToString()));
+                }
+                quoteService.FreightRateToPayDrivers = model.FreightRateToPayDrivers;
+            }
+
             if (quoteService.MaterialQuantity != model.MaterialQuantity)
             {
                 if (captureHistory)
@@ -1295,6 +1311,7 @@ namespace DispatcherWeb.Quotes
                         FreightUomName = s.FreightUom.Name,
                         FreightRate = s.FreightRate,
                         LeaseHaulerRate = s.LeaseHaulerRate,
+                        FreightRateToPayDrivers = s.FreightRateToPayDrivers,
                         PricePerUnit = s.PricePerUnit,
                         Code = s.Service.Service1,
                         Description = s.Service.Description,

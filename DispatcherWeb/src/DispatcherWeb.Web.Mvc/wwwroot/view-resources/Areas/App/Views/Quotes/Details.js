@@ -262,9 +262,14 @@
                     render: function (data, type, full, meta) { return _dtHelper.renderMoney(full.pricePerUnit); },
                     title: "Material Rate"
                 },
-                {
+                /*{
                     data: "freightRate",
                     render: function (data, type, full, meta) { return _dtHelper.renderMoney(full.freightRate); },
+                    title: "Freight Rate"
+                },*/
+                {
+                    data: "freightRateToPayDrivers",
+                    render: function (data, type, full, meta) { return _dtHelper.renderMoney(full.freightRateToPayDrivers); },
                     title: "Freight Rate"
                 },
                 {

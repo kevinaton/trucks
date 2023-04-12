@@ -26,6 +26,7 @@
         var _freightQuantityInput = null;
         var _materialPricePerUnitInput = null;
         var _freightPricePerUnitInput = null;
+        var _freightRateToPayDriversInput = null;
         var _materialPriceInput = null; //total for the item
         var _freightPriceInput = null; //total for the item
         var _numberOfTrucksInput = null;
@@ -35,6 +36,8 @@
         var _unlockMaterialPriceButton = null;
         var _unlockFreightPriceButton = null;
         var _wasProductionPay = null;
+
+        var _ratesInitialState = {};
 
         var _addLocationTarget = null;
 
@@ -119,6 +122,10 @@
             _freightQuantityInput = _$form.find("#FreightQuantity");
             _materialPricePerUnitInput = _$form.find("#MaterialPricePerUnit");
             _freightPricePerUnitInput = _$form.find("#FreightPricePerUnit");
+
+            _ratesInitialState.freightPricePerUnit = Number(_freightPricePerUnitInput.val()) || 0;
+
+            _freightRateToPayDriversInput = _$form.find("#FreightRateToPayDrivers");
             _materialPriceInput = _$form.find("#MaterialPrice"); //total for item
             _freightPriceInput = _$form.find("#FreightPrice"); //total for item
             var leaseHaulerRateInput = _$form.find("#LeaseHaulerRate");
@@ -505,10 +512,13 @@
             }
             _recalculating = true;
 
-            var freightRatePricing =
+            /*var freightRatePricing =
                 _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.freightRate !== null ? _pricing.quoteBasedPricing.freightRate
                     : _pricing && _pricing.hasPricing && _pricing.freightRate !== null ? _pricing.freightRate
-                        : null;
+                        : null;*/
+
+            var freightRatePricing = Number(_$form.find("#FreightRateToPayDrivers").val()) || 0;
+                
 
             var materialRatePricing =
                 _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null ? _pricing.quoteBasedPricing.pricePerUnit
@@ -685,6 +695,17 @@
             _orderLine.jobNumber = orderLine.JobNumber;
             _orderLine.note = orderLine.Note;
 
+            /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
+            property should be updated to the same value as the “Freight Rate”.  */
+            if (_$form.find("#FreightRateToPayDrivers_Hidden")) {
+                if (_ratesInitialState.freightPricePerUnit !== _orderLine.freightPricePerUnit &&
+                    _ratesInitialState.freightPricePerUnit === orderLine.FreightRateToPayDrivers)
+                    _orderLine.freightRateToPayDrivers = _orderLine.freightPricePerUnit;
+                else
+                    _orderLine.freightRateToPayDrivers = orderLine.FreightRateToPayDrivers;
+            }
+            else _orderLine.freightRateToPayDrivers = _orderLine.freightPricePerUnit;
+
             if (this.saveCallback) {
                 this.saveCallback(_orderLine);
             }
@@ -784,6 +805,7 @@
             _$form.find("#FreightQuantity").val(_orderLine.freightQuantity);
             _$form.find("#MaterialPrice").val(_orderLine.materialPrice);
             _$form.find("#FreightPrice").val(_orderLine.freightPrice);
+            _$form.find("#FreightRateToPayDrivers").val(_orderLine.freightRateToPayDrivers);
             _$form.find("#NumberOfTrucks").val(_orderLine.numberOfTrucks);
             _$form.find("#IsMultipleLoads").prop('checked', _orderLine.isMultipleLoads);
             _$form.find("#ProductionPay").prop('checked', _orderLine.productionPay);

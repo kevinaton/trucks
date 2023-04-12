@@ -33,6 +33,7 @@
         var _freightQuantityInput = null;
         var _materialPricePerUnitInput = null;
         var _freightPricePerUnitInput = null;
+        var _freightRateToPayDriversInput = null;
         var _materialPriceInput = null; //total for the item
         var _freightPriceInput = null; //total for the item
         var _numberOfTrucksInput = null;
@@ -42,6 +43,7 @@
         var _unlockMaterialPriceButton = null;
         var _unlockFreightPriceButton = null;
         var _wasProductionPay = null;
+        var _ratesInitialState = {};
 
         var _addLocationTarget = null;
 
@@ -152,6 +154,10 @@
             _freightQuantityInput = _$form.find("#FreightQuantity");
             _materialPricePerUnitInput = _$form.find("#MaterialPricePerUnit");
             _freightPricePerUnitInput = _$form.find("#FreightPricePerUnit");
+
+            _freightRateToPayDriversInput = _$form.find("#FreightRateToPayDrivers");
+            _ratesInitialState.freightPricePerUnit = _freightPricePerUnitInput.val() || 0;
+
             _materialPriceInput = _$form.find("#MaterialPrice"); //total for item
             _freightPriceInput = _$form.find("#FreightPrice"); //total for item
             var leaseHaulerRateInput = _$form.find("#LeaseHaulerRate");
@@ -606,6 +612,7 @@
             abp.helper.ui.addAndSetDropdownValue(_$form.find("#FreightUomId"), _orderLine.freightUomId, _orderLine.freightUomName);
             _$form.find("#MaterialPricePerUnit").val(_orderLine.materialPricePerUnit);
             _$form.find("#FreightPricePerUnit").val(_orderLine.freightPricePerUnit);
+            _$form.find("#FreightRateToPayDrivers").val(_orderLine.freightRateToPayDrivers);
             _$form.find("#LeaseHaulerRate").val(_orderLine.leaseHaulerRate);
             _$form.find("#MaterialQuantity").val(_orderLine.materialQuantity);
             _$form.find("#FreightQuantity").val(_orderLine.freightQuantity);
@@ -967,10 +974,12 @@
             }
             _recalculating = true;
 
-            var freightRatePricing =
+            /*var freightRatePricing =
                 _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.freightRate !== null ? _pricing.quoteBasedPricing.freightRate
                     : _pricing && _pricing.hasPricing && _pricing.freightRate !== null ? _pricing.freightRate
-                        : null;
+                        : null;*/
+
+            var freightRatePricing = Number(_$form.find("#FreightRateToPayDrivers").val()) || 0;
 
             var materialRatePricing =
                 _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null ? _pricing.quoteBasedPricing.pricePerUnit
@@ -1210,6 +1219,17 @@
             _model.ticketNumber = model.TicketNumber;
             _model.fuelSurchargeCalculationId = model.FuelSurchargeCalculationId;
             _model.baseFuelCost = model.BaseFuelCost;
+
+            /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
+            property should be updated to the same value as the “Freight Rate”.  */
+            if (_$form.find("#FreightRateToPayDrivers_Hidden")) {
+                if (_ratesInitialState.freightPricePerUnit !== _model.freightPricePerUnit &&
+                    _ratesInitialState.freightPricePerUnit === model.FreightRateToPayDrivers)
+                    _model.freightRateToPayDrivers = _model.freightPricePerUnit;
+                else
+                    _model.freightRateToPayDrivers = model.FreightRateToPayDrivers;
+            }
+            else _model.freightRateToPayDrivers = Number(model.FreightPricePerUnit) || 0;
 
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
             let freightQuantity = model.FreightQuantity === "" ? null : abp.utils.round(parseFloat(model.FreightQuantity));

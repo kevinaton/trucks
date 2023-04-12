@@ -37,6 +37,7 @@ namespace DispatcherWeb.Projects
 
         [Column(TypeName = "money")]
         public decimal? LeaseHaulerRate { get; set; }
+        public decimal? FreightRateToPayDrivers { get; set; }
 
         public decimal? MaterialQuantity { get; set; }
 

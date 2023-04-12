@@ -1180,6 +1180,7 @@
 		<text name="AddUnbilledTickets">Add Unbilled Tickets</text>
 		<text name="FindLocation">Find Location</text>
 		<text name="LHRate">LH Rate</text>
+		<text name="FreightRateToPayDrivers">Freight Rate to Pay Drivers</text>
 		<text name="TruckCode">Truck Code</text>
 		<text name="DefaultDriver">Default Driver</text>
 		<text name="DefaultTrailer">Default Trailer</text>
@@ -1575,6 +1576,7 @@
 		<text name="DefaultToProductionPay">Default to Production Pay</text>
 		<text name="PreventProductionPayOnHourlyJobs">Prevent production pay on hourly jobs</text>
 		<text name="PreventProductionPayOnHourlyJobsHint">Based on your system settings hourly jobs can't be specified as production pay.</text>
+		<text name="AllowDriverPayRateDifferentFromFreightRate">Allow specifying driver pay rate different from freight rate</text>
 		<text name="TimeEntiresWarningOnHoursUomChange">This change may require you to fix the time classification(s) on some time entries for any driver(s) associated with this job. Please check the time entries for driver(s) working this job.</text>
 		<text name="CannotDisallowProductionPayBecauseOfDrivers">You cannot uncheck Allow Production Pay because there are drivers with Production Pay rates</text>
 		<text name="CannotDisallowProductionPayBecauseOfDefaultJob">You cannot uncheck Allow Production Pay when Production Pay is selected as a default time classification</text>

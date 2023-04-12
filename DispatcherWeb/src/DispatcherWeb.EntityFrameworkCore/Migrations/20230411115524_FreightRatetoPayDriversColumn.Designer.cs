@@ -4,6 +4,7 @@ using DispatcherWeb.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    partial class DispatcherWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230411115524_FreightRatetoPayDriversColumn")]
+    partial class FreightRatetoPayDriversColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5115,9 +5117,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<decimal?>("FreightQuantity")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("FreightRateToPayDrivers")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("FreightUomId")
                         .HasColumnType("int");
 
@@ -5206,6 +5205,9 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("PayDriversFreightRate")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("ProductionPay")
                         .HasColumnType("bit");
@@ -6438,9 +6440,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<decimal?>("FreightRate")
                         .HasColumnType("decimal(19,4)");
 
-                    b.Property<decimal?>("FreightRateToPayDrivers")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("FreightUomId")
                         .HasColumnType("int");
 
@@ -6468,6 +6467,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<string>("Note")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<decimal?>("PayDriversFreightRate")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("PricePerUnit")
                         .HasColumnType("decimal(19,4)");
@@ -6755,9 +6757,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<decimal?>("FreightRate")
                         .HasColumnType("decimal(19,4)");
 
-                    b.Property<decimal?>("FreightRateToPayDrivers")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("FreightUomId")
                         .HasColumnType("int");
 
@@ -6789,6 +6788,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<string>("Note")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<decimal?>("PayDriversFreightRate")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("PricePerUnit")
                         .HasColumnType("decimal(19,4)");
