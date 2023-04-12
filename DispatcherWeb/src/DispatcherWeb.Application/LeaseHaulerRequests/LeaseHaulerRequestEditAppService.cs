@@ -105,7 +105,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
             {
                 foreach (var truckInUse in trucksInUse)
                 {
-                    truckModel.IsTruckInUse |= truckInUse.TruckId == truckModel.TruckId && truckInUse.DriverId == truckModel.DriverId;
+                    truckModel.IsTruckInUse |= truckInUse.TruckId == truckModel.TruckId;
                     truckModel.IsDriverInUse |= truckInUse.TruckId == truckModel.TruckId && truckInUse.DriverId == truckModel.DriverId;
                     if (truckModel.IsDriverInUse)
                     {
@@ -221,12 +221,9 @@ namespace DispatcherWeb.LeaseHaulerRequests
                 return;
             }
             var availableTruckCount = await _availableLeaseHaulerTruckRepository.GetAll()
-                .Where(x => x.Date == leaseHaulerRequest.Date
+                .CountAsync(x => x.Date == leaseHaulerRequest.Date
                             && x.LeaseHaulerId == leaseHaulerRequest.LeaseHaulerId
-                            && x.Shift == leaseHaulerRequest.Shift)
-                .Select(x => x.TruckId)
-                .Distinct()
-                .CountAsync();
+                            && x.Shift == leaseHaulerRequest.Shift);
             if (availableTruckCount == 0 || availableTruckCount <= input.Value)
             {
                 leaseHaulerRequest.Approved = input.Value;
@@ -371,7 +368,12 @@ namespace DispatcherWeb.LeaseHaulerRequests
                 }
             }
 
-            var trucksToSave = new List<AvailableLeaseHaulerTruck>();
+            var trucksWithValues = trucks?.Where(x => x.HasValue).ToList();
+
+            if (trucksWithValues?.Distinct().Count() < trucksWithValues?.Count)
+            {
+                throw new UserFriendlyException("You specified the same truck more than once");
+            }
 
             if (trucks != null && drivers != null)
             {
@@ -389,33 +391,43 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     {
                         throw new UserFriendlyException("Driver is required for selected Trucks");
                     }
-                    trucksToSave.Add(new AvailableLeaseHaulerTruck
+                    var existing = existingTrucks.FirstOrDefault(x => x.TruckId == trucks[i]);
+                    if (existing != null)
                     {
-                        TenantId = leaseHaulerRequest.TenantId,
-                        LeaseHaulerId = leaseHaulerRequest.LeaseHaulerId,
-                        OfficeId = leaseHaulerRequest.OfficeId,
-                        Date = leaseHaulerRequest.Date,
-                        Shift = leaseHaulerRequest.Shift,
-                        TruckId = trucks[i].Value,
-                        DriverId = drivers[i].Value
-                    });
+                        if (existing.DriverId != drivers[i].Value)
+                        {
+                            if (trucksInUse.Any(x => x.TruckId == existing.TruckId && x.DriverId == existing.DriverId))
+                            {
+                                throw new UserFriendlyException("One of the drivers is associated with dispatches, or tickets.", "If you want to remove or change the driver, you need to remove any associated dispatches, and tickets for this date.");
+                            }
+                            existing.DriverId = drivers[i].Value;
+                        }
+                    }
+                    else
+                    {
+                        await _availableLeaseHaulerTruckRepository.InsertAsync(new AvailableLeaseHaulerTruck
+                        {
+                            TenantId = leaseHaulerRequest.TenantId,
+                            LeaseHaulerId = leaseHaulerRequest.LeaseHaulerId,
+                            OfficeId = leaseHaulerRequest.OfficeId,
+                            Date = leaseHaulerRequest.Date,
+                            Shift = leaseHaulerRequest.Shift,
+                            TruckId = trucks[i].Value,
+                            DriverId = drivers[i].Value
+                        });
+                    }
                 }
             }
 
-            foreach (var truckToDelete in existingTrucks)
+            var trucksToDelete = existingTrucks.Where(x => trucks == null || !trucks.Contains(x.TruckId)).ToList();
+            foreach (var truckToDelete in trucksToDelete)
             {
-                if (trucksInUse.Any(x => x.TruckId == truckToDelete.TruckId && x.DriverId == truckToDelete.DriverId) 
-                    && !trucksToSave.Any(x => x.TruckId == truckToDelete.TruckId && x.DriverId == truckToDelete.DriverId))
+                if (trucksInUse.Any(x => x.TruckId == truckToDelete.TruckId))
                 {
-                    throw new UserFriendlyException("One of the trucks is associated with orders, dispatches, or tickets.", "If you want to remove or change the driver, you need to remove any associated orders, dispatches, and tickets for this date.");
+                    throw new UserFriendlyException("One of the trucks is associated with orders, dispatches, or tickets.", "If you want to delete this record, you need to remove any associated orders, dispatches, and tickets for this date.");
                 }
 
                 await _availableLeaseHaulerTruckRepository.DeleteAsync(truckToDelete);
-            }
-
-            foreach (var truckToSave in trucksToSave)
-            {
-                await _availableLeaseHaulerTruckRepository.InsertAndGetIdAsync(truckToSave);
             }
         }
 
