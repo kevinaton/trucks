@@ -216,7 +216,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.ValidateUtilization, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowCounterSales, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
-                new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, "0", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultServiceId, "0", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, "0", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),

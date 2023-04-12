@@ -693,7 +693,7 @@
 
         function updateControlsVisibility() {
             var designation = Number(_designationDropdown.val());
-            var designationIsCounterSale = designation === abp.enums.designation.counterSale;
+            var designationIsCounterSale = designation === abp.enums.designation.materialOnly;
             _deliverToDropdown.closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#LeaseHaulerRate").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#NumberOfTrucks").closest('.form-group').toggle(!designationIsCounterSale);
@@ -708,7 +708,7 @@
 
         function setDefaultValuesForCounterSaleDesignationIfNeeded() {
             var designation = Number(_designationDropdown.val());
-            if (designation !== abp.enums.designation.counterSale) {
+            if (designation !== abp.enums.designation.materialOnly) {
                 return;
             }
             if (_$form.find("#DefaultLoadAtLocationId").val()) {
@@ -728,7 +728,7 @@
 
         function updateSaveButtonsVisibility() {
             var designation = Number(_designationDropdown.val());
-            var designationIsCounterSale = designation === abp.enums.designation.counterSale;
+            var designationIsCounterSale = designation === abp.enums.designation.materialOnly;
             _modalManager.getModal().find(".save-button-container").toggle(!designationIsCounterSale);
             _modalManager.getModal().find(".save-and-print-buttons-container").toggle(designationIsCounterSale);
         }
@@ -1126,7 +1126,7 @@
 
         function hasMissingQuantityOrNumberOfTrucks(model) {
             var designation = Number(_designationDropdown.val());
-            if (designation === abp.enums.designation.counterSale) {
+            if (designation === abp.enums.designation.materialOnly) {
                 if (model.materialQuantity || model.freightQuantity) {
                     return false;
                 }

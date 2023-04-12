@@ -1794,7 +1794,7 @@
 		<text name="AutoGenerateTicketNumber">Auto-generate ticket number</text>
 		<text name="DefaultAutoGenerateTicket">Default "Auto-generate Ticket"</text>
 		<text name="CounterSalesDefaults">Counter sales defaults</text>
-		<text name="DefaultDesignationToCounterSales">Default designation to "Counter Sales"</text>
+		<text name="DefaultDesignationToMaterialOnly">Default designation to "Material Only"</text>
 		<text name="DefaultItem">Default "Item"</text>
 		<text name="DefaultMaterialUOM">Default "Material UOM"</text>
 		<text name="CCMeOnInvoices">CC me on invoices</text>
