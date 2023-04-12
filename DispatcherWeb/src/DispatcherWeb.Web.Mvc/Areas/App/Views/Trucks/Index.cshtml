@@ -41,7 +41,6 @@
                 <button id="UpdateMileageButton" class="btn btn-primary mt-1"><i class="fas fa-pen"></i> Update Mileage</button>
             }
             <button id="ExportTrucksToCsvButton" class="btn btn-primary mt-1"> Export</button>
-            <button id="CreateNewTruckButton" class="btn btn-primary mt-1"><i class="fa fa-plus"></i> @L("AddNew")</button>
             @if (Model.IsDtdTrackerConfigured)
             {
                 <button id="SyncWithWialonButton" class="btn btn-primary mt-1"><i class="fas fa-sync-alt"></i> @L("SyncTrucks")</button>
@@ -50,6 +49,7 @@
             {
                 <button id="SyncWithIntelliShiftButton" class="btn btn-primary mt-1"><i class="fas fa-sync-alt"></i> @L("SyncTrucks")</button>
             }
+            <button id="CreateNewTruckButton" class="btn btn-primary mt-1"><i class="fa fa-plus"></i> @L("AddNew")</button>
         </div>
     </div>
 </div>

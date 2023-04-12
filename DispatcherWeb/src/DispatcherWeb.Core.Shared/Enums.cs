@@ -242,9 +242,7 @@ namespace DispatcherWeb
         [Display(Name = "Back haul freight & disposal")]
         BackHaulFreightAndDisposal = 7,
         [Display(Name = "Straight haul freight & disposal")]
-        StraightHaulFreightAndDisposal = 8,
-        [Display(Name = "Counter Sale")]
-        CounterSale = 10
+        StraightHaulFreightAndDisposal = 8
     }
 
     public enum PredefinedLocationKind
@@ -447,7 +445,8 @@ namespace DispatcherWeb
         Sent = 1,
         Viewed = 2,
         [Display(Name = "Ready for QuickBooks")]
-        ReadyForQuickbooks = 3
+        ReadyForQuickbooks = 3,
+        Printed = 4
     }
 
     public enum BillingTermsEnum

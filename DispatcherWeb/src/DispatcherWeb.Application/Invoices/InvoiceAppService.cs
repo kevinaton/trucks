@@ -371,6 +371,7 @@ namespace DispatcherWeb.Invoices
         [AbpAuthorize(AppPermissions.Pages_Invoices)]
         public async Task<int> EditInvoice(InvoiceEditDto model)
         {
+            short lineNumber;
             var invoice = model.Id > 0
                 ? await _invoiceRepository.GetAll()
                     .Include(x => x.InvoiceLines)
@@ -387,6 +388,7 @@ namespace DispatcherWeb.Invoices
                 switch (invoice.Status)
                 {
                     case InvoiceStatus.Draft:
+                    case InvoiceStatus.Printed:
                         if (model.Status.IsIn(InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Sent))
                         {
                             invoice.Status = model.Status;
@@ -445,6 +447,14 @@ namespace DispatcherWeb.Invoices
                     .Where(x => ticketIds.Contains(x.Id) && x.InvoiceLine != null)
                     .Select(x => x.Id).ToListAsync();
 
+                model.InvoiceLines = model.InvoiceLines
+                        .OrderByDescending(x => x.ChildInvoiceLineKind != ChildInvoiceLineKind.BottomFuelSurchargeLine)
+                        .ThenBy(x => x.DeliveryDateTime)
+                        .ThenBy(x => x.TruckCode)
+                        .ThenBy(x => x.TicketNumber)
+                        .ToList();
+
+                lineNumber = 1;
                 foreach (var modelInvoiceLine in model.InvoiceLines)
                 {
                     var invoiceLine = modelInvoiceLine.Id == 0 ? null : invoice.InvoiceLines.FirstOrDefault(x => x.Id == modelInvoiceLine.Id);
@@ -460,7 +470,7 @@ namespace DispatcherWeb.Invoices
                         newInvoiceLineEntities.Add(invoiceLine);
                     }
 
-                    invoiceLine.LineNumber = modelInvoiceLine.LineNumber;
+                    invoiceLine.LineNumber = lineNumber++;
                     if (invoiceLine.TicketId != modelInvoiceLine.TicketId)
                     {
                         if (modelInvoiceLine.TicketId.HasValue)
@@ -537,6 +547,40 @@ namespace DispatcherWeb.Invoices
                     }
                     childEntity.ParentInvoiceLineId = parentEntity.Id;
                 }
+            }
+
+            var invoiceLinesToReorder = invoice.InvoiceLines.OrderBy(x => x.LineNumber).ToList();
+            var regularInvoiceLines = invoiceLinesToReorder.Where(x => x.ChildInvoiceLineKind == null).ToList();
+            var bottomLines = invoiceLinesToReorder.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.BottomFuelSurchargeLine).ToList();
+            var perTicketLines = invoiceLinesToReorder.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.FuelSurchargeLinePerTicket).ToList();
+
+            var reorderedLines = regularInvoiceLines.ToList();
+            foreach (var perTicketLine in perTicketLines)
+            {
+                if (perTicketLine.ParentInvoiceLineId != null)
+                {
+                    var parentLine = reorderedLines.FirstOrDefault(x => x.Id == perTicketLine.ParentInvoiceLineId);
+                    if (parentLine != null)
+                    {
+                        var parentLineIndex = reorderedLines.IndexOf(parentLine);
+                        if (parentLineIndex != -1)
+                        {
+                            reorderedLines.Insert(parentLineIndex + 1, perTicketLine);
+                            continue;
+                        }
+                    }
+                }
+                reorderedLines.Add(perTicketLine);
+            }
+            foreach (var bottomLine in bottomLines)
+            {
+                reorderedLines.Add(bottomLine);
+            }
+
+            lineNumber = 1;
+            foreach (var line in reorderedLines)
+            {
+                line.LineNumber = lineNumber++;
             }
 
             return invoice.Id;
@@ -837,9 +881,9 @@ namespace DispatcherWeb.Invoices
         public async Task<Document> GetInvoicePrintOut(GetInvoicePrintOutInput input)
         {
             var invoice = await _invoiceRepository.GetAsync(input.InvoiceId);
-            if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks))
+            if (invoice.Status.IsIn(InvoiceStatus.Draft))
             {
-                invoice.Status = InvoiceStatus.Sent;
+                invoice.Status = InvoiceStatus.Printed;
                 await CurrentUnitOfWork.SaveChangesAsync();
             }
 
@@ -1031,7 +1075,7 @@ namespace DispatcherWeb.Invoices
                 });
 
                 var invoice = await _invoiceRepository.GetAsync(input.InvoiceId);
-                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks))
+                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Printed))
                 {
                     invoice.Status = InvoiceStatus.Sent;
                 }

@@ -210,8 +210,6 @@ namespace DispatcherWeb.Invoices.Reports
                 var tm = new TextMeasurement(document.Styles["Table"].Font.Clone());
 
                 //18.6cm total width
-                //#
-                table.AddColumn(Unit.FromCentimeter(0.6));
                 //Ticket #
                 table.AddColumn(Unit.FromCentimeter(2));
                 //Hauler
@@ -221,7 +219,7 @@ namespace DispatcherWeb.Invoices.Reports
                 //Date
                 table.AddColumn(Unit.FromCentimeter(2));
                 //Description
-                table.AddColumn(Unit.FromCentimeter(7));
+                table.AddColumn(Unit.FromCentimeter(7.6));
                 //Amount
                 table.AddColumn(Unit.FromCentimeter(2));
 
@@ -235,8 +233,6 @@ namespace DispatcherWeb.Invoices.Reports
                 row.HeadingFormat = true;
 
                 i = 0;
-                cell = row.Cells[i++];
-                cell.AddParagraph("#");
                 cell = row.Cells[i++];
                 cell.AddParagraph("Ticket #");
                 cell = row.Cells[i++];
@@ -257,9 +253,6 @@ namespace DispatcherWeb.Invoices.Reports
                     {
                         i = 0;
                         row = table.AddRow();
-                        cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(invoiceLine.LineNumber?.ToString() ?? "", tm);
-                        paragraph.Format.Alignment = ParagraphAlignment.Center;
                         cell = row.Cells[i++];
                         paragraph = cell.AddParagraph(invoiceLine.TicketNumber, tm);
                         cell = row.Cells[i++];
@@ -286,12 +279,12 @@ namespace DispatcherWeb.Invoices.Reports
                 {
                     row = table.AddRow();
                     cell = row.Cells[0];
-                    cell.MergeRight = 5;
+                    cell.MergeRight = 4;
                     cell.Borders.Visible = false;
                     cell.Borders.Left.Visible = true;
                     paragraph = cell.AddParagraph("Tax:", tm);
                     paragraph.Format.Alignment = ParagraphAlignment.Right;
-                    cell = row.Cells[6];
+                    cell = row.Cells[5];
                     cell.Borders.Visible = false;
                     cell.Borders.Right.Visible = true;
                     paragraph = cell.AddParagraph(model.Tax.ToString("C2", model.CurrencyCulture), tm);
@@ -299,13 +292,13 @@ namespace DispatcherWeb.Invoices.Reports
 
                     row = table.AddRow();
                     cell = row.Cells[0];
-                    cell.MergeRight = 5;
+                    cell.MergeRight = 4;
                     cell.Borders.Visible = false;
                     cell.Borders.Left.Visible = true;
                     cell.Borders.Bottom.Visible = true;
                     paragraph = cell.AddParagraph("Total:", tm);
                     paragraph.Format.Alignment = ParagraphAlignment.Right;
-                    cell = row.Cells[6];
+                    cell = row.Cells[5];
                     cell.Borders.Visible = false;
                     cell.Borders.Right.Visible = true;
                     cell.Borders.Bottom.Visible = true;

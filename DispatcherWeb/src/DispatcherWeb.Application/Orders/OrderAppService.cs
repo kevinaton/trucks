@@ -446,7 +446,9 @@ namespace DispatcherWeb.Orders
                 var orderLine = await EditOrderLine(editOrderLineModel);
                 await CurrentUnitOfWork.SaveChangesAsync();
 
-                if (model.OrderLineId == null && model.Designation == DesignationEnum.CounterSale)
+                var allowCounterSales = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales);
+
+                if (model.OrderLineId == null && model.Designation == DesignationEnum.MaterialOnly && allowCounterSales)
                 {
                     var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLine.OrderLineId);
                     await orderLineUpdater.UpdateFieldAsync(x => x.IsComplete, true);
@@ -455,7 +457,7 @@ namespace DispatcherWeb.Orders
 
                 int? ticketId = null;
 
-                if (model.Designation == DesignationEnum.CounterSale 
+                if (model.Designation == DesignationEnum.MaterialOnly && allowCounterSales
                     && (model.TicketId != null || !string.IsNullOrEmpty(model.TicketNumber) || model.AutoGenerateTicketNumber))
                 {
                     var ticket = model.TicketId != null ? await _ticketRepository.GetAll()
@@ -2173,9 +2175,9 @@ namespace DispatcherWeb.Orders
                     order.OfficeName = input.OfficeName;
                 }
 
-                if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales))
+                if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly))
                 {
-                    orderLine.Designation = DesignationEnum.CounterSale;
+                    orderLine.Designation = DesignationEnum.MaterialOnly;
                 }
             }
 

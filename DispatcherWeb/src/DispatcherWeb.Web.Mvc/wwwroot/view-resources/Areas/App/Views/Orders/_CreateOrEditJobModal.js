@@ -15,6 +15,7 @@
         var _permissions = {
             edit: abp.auth.hasPermission('Pages.Orders.Edit')
         };
+        var _allowCounterSales = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSales');
         var _saveEventArgs = {
             reloadMaterialTotalIfNotOverridden: false,
             reloadFreightTotalIfNotOverridden: false
@@ -424,6 +425,7 @@
             _designationDropdown.change(function () {
                 updateDesignationRelatedFieldsVisibility();
                 setDefaultValuesForCounterSaleDesignationIfNeeded();
+                updateSaveButtonsVisibility();
 
                 if (designationHasMaterial()) {
                     enableMaterialFields();
@@ -504,16 +506,23 @@
                 setIsFreightPriceOverridden(true);
             });
 
-            _modalManager.getModal().find("#SaveJobButton").click(function (e) {
+            _modalManager.getModal().find(".save-job-button").click(function (e) {
                 e.preventDefault();
-                saveJobAsync();
+                saveJobAsync(function () {
+                    _modalManager.close();
+                });
             });
 
             _modalManager.getModal().find("#SaveAndPrintButton").click(function (e) {
                 e.preventDefault();
                 saveJobAsync(function (saveResult) {
+                    if (!saveResult.ticketId) {
+                        abp.message.error(app.localize('TicketNumberIsRequired'));
+                        return;
+                    }
                     _$form.find("#TicketId").val(saveResult.ticketId);
                     window.open(abp.appPath + 'app/tickets/GetTicketPrintOut?ticketId=' + saveResult.ticketId);
+                    _modalManager.close();
                 });
             });
 
@@ -525,6 +534,7 @@
             if (isNewOrder()) {
                 setDefaultValuesForCounterSaleDesignationIfNeeded();
             }
+            updateSaveButtonsVisibility();
             disableJobEditIfNeeded();
             disableTaxControls();
         };
@@ -677,7 +687,7 @@
 
         function updateControlsVisibility() {
             var designation = Number(_designationDropdown.val());
-            var designationIsCounterSale = designation === abp.enums.designation.counterSale;
+            var designationIsCounterSale = designation === abp.enums.designation.materialOnly && _allowCounterSales;
             _deliverToDropdown.closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#LeaseHaulerRate").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#NumberOfTrucks").closest('.form-group').toggle(!designationIsCounterSale);
@@ -692,7 +702,7 @@
 
         function setDefaultValuesForCounterSaleDesignationIfNeeded() {
             var designation = Number(_designationDropdown.val());
-            if (designation !== abp.enums.designation.counterSale) {
+            if (designation !== abp.enums.designation.materialOnly || !_allowCounterSales) {
                 return;
             }
             if (_$form.find("#DefaultLoadAtLocationId").val()) {
@@ -708,6 +718,13 @@
 
         function updateTicketNumberVisibility() {
             _$form.find("#TicketNumber").closest('.form-group').toggle(!_$form.find('#AutoGenerateTicketNumber').is(':checked'));
+        }
+
+        function updateSaveButtonsVisibility() {
+            var designation = Number(_designationDropdown.val());
+            var designationIsCounterSale = designation === abp.enums.designation.materialOnly && _allowCounterSales;
+            _modalManager.getModal().find(".save-button-container").toggle(!designationIsCounterSale);
+            _modalManager.getModal().find(".save-and-print-buttons-container").toggle(designationIsCounterSale);
         }
 
         function initOverrideButtons() {
@@ -1101,7 +1118,8 @@
 
         function hasMissingQuantityOrNumberOfTrucks(model) {
             var designation = Number(_designationDropdown.val());
-            if (designation === abp.enums.designation.counterSale) {
+            var designationIsCounterSale = designation === abp.enums.designation.materialOnly && _allowCounterSales;
+            if (designationIsCounterSale) {
                 if (model.materialQuantity || model.freightQuantity) {
                     return false;
                 }
@@ -1231,7 +1249,6 @@
                     function notifyAndFinish(result) {
                         abp.notify.info('Saved successfully.');
                         abp.event.trigger('app.createOrEditJobModalSaved', result);
-                        _modalManager.close();
                         if (callback) {
                             callback(result);
                         }
