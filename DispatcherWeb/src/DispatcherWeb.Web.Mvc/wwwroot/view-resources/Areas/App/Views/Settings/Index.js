@@ -864,11 +864,11 @@
         refreshCounterSalesControls();
         function refreshCounterSalesControls() {
             if ($('#AllowCounterSales').is(':checked')) {
-                $('#DefaultDesignationToCounterSalesForTenant').closest('.form-group').show();
+                $('#DefaultDesignationToMaterialOnlyForTenant').closest('.form-group').show();
                 $('#DefaultLoadAtLocationIdForTenant').closest('.form-group').show();
                 $('#DefaultAutoGenerateTicketNumberForTenant').closest('.form-group').show();
             } else {
-                $('#DefaultDesignationToCounterSalesForTenant').prop('checked', false).closest('.form-group').hide();
+                $('#DefaultDesignationToMaterialOnlyForTenant').prop('checked', false).closest('.form-group').hide();
                 $('#DefaultLoadAtLocationIdForTenant').val('').change().closest('.form-group').hide();
                 $('#DefaultAutoGenerateTicketNumberForTenant').prop('checked', false).closest('.form-group').hide();
             }
