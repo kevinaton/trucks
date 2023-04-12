@@ -14,17 +14,17 @@ namespace DispatcherWeb.Designations
         {
         }
 
-        public async Task<List<SelectListDto>> GetDesignationSelectListItemsAsync(DesignationEnum? selectedDesignation = null)
+        public Task<List<SelectListDto>> GetDesignationSelectListItemsAsync(DesignationEnum? selectedDesignation = null)
         {
             var designationList = new List<SelectListDto>();
             designationList.Add(GetSelectListItemFromEnum(DesignationEnum.FreightOnly));
             designationList.Add(GetSelectListItemFromEnum(DesignationEnum.MaterialOnly));
             
-            if (selectedDesignation == DesignationEnum.CounterSale 
-                || await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales))
-            {
-                designationList.Add(GetSelectListItemFromEnum(DesignationEnum.CounterSale));
-            }
+            //if (selectedDesignation == DesignationEnum.CounterSale 
+            //    || await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales))
+            //{
+            //    designationList.Add(GetSelectListItemFromEnum(DesignationEnum.CounterSale));
+            //}
             
             designationList.Add(GetSelectListItemFromEnum(DesignationEnum.FreightAndMaterial));
             designationList.Add(GetSelectListItemFromEnum(DesignationEnum.BackhaulFreightOnly));
@@ -33,7 +33,7 @@ namespace DispatcherWeb.Designations
             designationList.Add(GetSelectListItemFromEnum(DesignationEnum.BackHaulFreightAndDisposal));
             designationList.Add(GetSelectListItemFromEnum(DesignationEnum.StraightHaulFreightAndDisposal));
 
-            return designationList;
+            return Task.FromResult(designationList);
         }
 
         public static SelectListDto GetSelectListItemFromEnum(DesignationEnum designation)

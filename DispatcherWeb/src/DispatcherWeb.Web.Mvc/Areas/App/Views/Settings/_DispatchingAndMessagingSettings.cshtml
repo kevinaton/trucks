@@ -100,9 +100,9 @@
                     @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales))
                     {
                         <div class="form-group">
-                            <label for="DefaultDesignationToCounterSalesForTenant" class="m-checkbox">
-                                <input id="DefaultDesignationToCounterSalesForTenant" type="checkbox" name="DefaultDesignationToCounterSales" value="true" checked=@(Model.DefaultDesignationToCounterSales == true ? "checked" : null)>
-                                @L("DefaultDesignationToCounterSales")
+                            <label for="DefaultDesignationToMaterialOnlyForTenant" class="m-checkbox">
+                                <input id="DefaultDesignationToMaterialOnlyForTenant" type="checkbox" name="DefaultDesignationToMaterialOnly" value="true" checked=@(Model.DefaultDesignationToMaterialOnly == true ? "checked" : null)>
+                                @L("DefaultDesignationToMaterialOnly")
                                 <span></span>
                             </label>
                         </div>

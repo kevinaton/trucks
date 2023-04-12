@@ -525,7 +525,7 @@ namespace DispatcherWeb.Configuration.Tenants
                 ShowTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule),
                 ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization),
                 AllowCounterSales = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales),
-                DefaultDesignationToCounterSales = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, AbpSession.GetTenantId()),
+                DefaultDesignationToMaterialOnly = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, AbpSession.GetTenantId()),
                 DefaultAutoGenerateTicketNumber = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, AbpSession.GetTenantId())
             };
 
@@ -1221,14 +1221,14 @@ namespace DispatcherWeb.Configuration.Tenants
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.ValidateUtilization, input.ValidateUtilization.ToLowerCaseString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSales, input.AllowCounterSales.ToLowerCaseString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.DefaultLoadAtLocationId ?? 0).ToString());
-            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales, input.DefaultDesignationToCounterSales.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, input.DefaultDesignationToMaterialOnly.ToLowerCaseString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
             
             if (allowCounterSalesWasUnchecked)
             {
                 var userSettingsToReset = new[]
                 {
-                    AppSettings.DispatchingAndMessaging.DefaultDesignationToCounterSales,
+                    AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly,
                     AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId,
                     AppSettings.DispatchingAndMessaging.DefaultServiceId,
                     AppSettings.DispatchingAndMessaging.DefaultMaterialUomId,

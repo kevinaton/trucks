@@ -2149,7 +2149,7 @@
             e.preventDefault();
             var filterData = _dtHelper.getFilterData();
             var date = filterData.date;
-            if (abp.setting.getBoolean('App.DispatchingAndMessaging.DefaultDesignationToCounterSales')) {
+            if (abp.setting.getBoolean('App.DispatchingAndMessaging.DefaultDesignationToMaterialOnly')) {
                 date = moment().format('L');
             }
             _createOrEditJobModal.open({

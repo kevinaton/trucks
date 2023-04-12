@@ -328,7 +328,7 @@ namespace DispatcherWeb.Configuration
             public const string ValidateUtilization = "App.DispatchingAndMessaging.ValidateUtilization";
             public const string AllowCounterSales = "App.DispatchingAndMessaging.AllowCounterSales";
             public const string DefaultLoadAtLocationId = "App.DispatchingAndMessaging.DefaultLoadAtLocationId";
-            public const string DefaultDesignationToCounterSales = "App.DispatchingAndMessaging.DefaultDesignationToCounterSales";
+            public const string DefaultDesignationToMaterialOnly = "App.DispatchingAndMessaging.DefaultDesignationToMaterialOnly";
             public const string DefaultServiceId = "App.DispatchingAndMessaging.DefaultServiceId";
             public const string DefaultMaterialUomId = "App.DispatchingAndMessaging.DefaultMaterialUomId";
             public const string DefaultAutoGenerateTicketNumber = "App.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber";
