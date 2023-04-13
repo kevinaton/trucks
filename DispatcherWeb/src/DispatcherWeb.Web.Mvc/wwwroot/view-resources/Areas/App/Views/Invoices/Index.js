@@ -6,6 +6,8 @@
         var _dtHelper = abp.helper.dataTables;
         var _quickbooksIntegrationKind = abp.setting.getInt('App.Invoice.Quickbooks.IntegrationKind');
         var _isQuickbooksIntegrationEnabled = _quickbooksIntegrationKind !== abp.enums.quickbooksIntegrationKind.none;
+        var _isFilterReady = false;
+        var _isGridInitialized = false;
 
         var _emailInvoicePrintOutModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Invoices/EmailInvoicePrintOutModal',
@@ -15,63 +17,124 @@
 
         $('[data-toggle="tooltip"]').tooltip();
 
-        $("#StatusFilter").select2Init({
-            showAll: true,
-            allowClear: true
-        });
-
-        $("#CustomerIdFilter").select2Init({
-            abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
-            abpServiceParams: { includeInactiveWithInvoices: true },
-            showAll: false,
-            allowClear: true
-        });
-
-        $("#OfficeIdFilter").select2Init({
-            abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            showAll: true,
-            allowClear: true
-        });
-
-        $("#IssueDateFilter").daterangepicker({
-            autoUpdateInput: false,
-            locale: {
-                cancelLabel: 'Clear'
+        app.localStorage.getItem('InvoicesFilter', function (cachedFilter) {
+            if (!cachedFilter) {
+                cachedFilter = {
+                };
             }
-        }, function (start, end, label) {
-            $("#IssueDateStartFilter").val(start.format('MM/DD/YYYY'));
-            $("#IssueDateEndFilter").val(end.format('MM/DD/YYYY'));
-        });
 
-        $("#IssueDateFilter").on('blur', function () {
-            var startDate = $("#IssueDateStartFilter").val();
-            var endDate = $("#IssueDateEndFilter").val();
-            $(this).val(startDate && endDate ? startDate + ' - ' + endDate : '');
-        });
+            var dateFilterIsEmpty = false;
 
-        $("#IssueDateFilter").on('apply.daterangepicker', function (ev, picker) {
-            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-            $("#IssueDateStartFilter").val(picker.startDate.format('MM/DD/YYYY'));
-            $("#IssueDateEndFilter").val(picker.endDate.format('MM/DD/YYYY'));
-            reloadMainGrid();
-        });
+            if (!cachedFilter.issueDateStart || cachedFilter.issueDateStart === 'Invalid date') {
+                dateFilterIsEmpty = true;
+                //still need to init the daterangepicker with real dates first and clear the inputs only after the init.
+                cachedFilter.issueDateStart = moment().format("MM/DD/YYYY");
+            }
 
-        $("#IssueDateFilter").on('cancel.daterangepicker', function (ev, picker) {
-            $(this).val('');
-            $("#IssueDateStartFilter").val('');
-            $("#IssueDateEndFilter").val('');
-            reloadMainGrid();
+            if (!cachedFilter.issueDateEnd || cachedFilter.issueDateEnd === 'Invalid date') {
+                dateFilterIsEmpty = true;
+                cachedFilter.issueDateEnd = moment().add(1, 'days').format("MM/DD/YYYY");
+            }
+
+            $("#IssueDateStartFilter").val(cachedFilter.issueDateStart);
+            $("#IssueDateEndFilter").val(cachedFilter.issueDateEnd);
+            $("#IssueDateFilter").val($("#IssueDateStartFilter").val() + ' - ' + $("#IssueDateEndFilter").val());
+
+            $("#IssueDateFilter").daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            }, function (start, end, label) {
+                $("#IssueDateStartFilter").val(start.format('MM/DD/YYYY'));
+                $("#IssueDateEndFilter").val(end.format('MM/DD/YYYY'));
+            });
+
+            $("#IssueDateFilter").on('blur', function () {
+                var startDate = $("#IssueDateStartFilter").val();
+                var endDate = $("#IssueDateEndFilter").val();
+                $(this).val(startDate && endDate ? startDate + ' - ' + endDate : '');
+            });
+
+            $("#IssueDateFilter").on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+                $("#IssueDateStartFilter").val(picker.startDate.format('MM/DD/YYYY'));
+                $("#IssueDateEndFilter").val(picker.endDate.format('MM/DD/YYYY'));
+                reloadMainGrid();
+            });
+
+            $("#IssueDateFilter").on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+                $("#IssueDateStartFilter").val('');
+                $("#IssueDateEndFilter").val('');
+                reloadMainGrid();
+            });
+
+            if (dateFilterIsEmpty) {
+                $("#IssueDateFilter").val('');
+                $("#IssueDateStartFilter").val('');
+                $("#IssueDateEndFilter").val('');
+            }
+
+            $("#StatusFilter").select2Init({
+                showAll: true,
+                allowClear: true
+            });
+            if (cachedFilter.status) {
+                abp.helper.ui.addAndSetDropdownValue($("#StatusFilter"), cachedFilter.status);
+            }
+
+            $("#CustomerIdFilter").select2Init({
+                abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
+                abpServiceParams: { includeInactiveWithInvoices: true },
+                showAll: false,
+                allowClear: true
+            });
+            if (cachedFilter.customerId) {
+                abp.helper.ui.addAndSetDropdownValue($("#CustomerIdFilter"), cachedFilter.customerId, cachedFilter.customerName);
+            }
+
+            $("#OfficeIdFilter").select2Init({
+                abpServiceMethod: abp.services.app.office.getOfficesSelectList,
+                showAll: true,
+                allowClear: true
+            });
+            if (cachedFilter.officeId) {
+                abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), cachedFilter.officeId, cachedFilter.officeName);
+            }
+
+            $("#InvoiceIdFilter").val(cachedFilter.invoiceId);
+            //$("#BatchIdFilter").val(cachedFilter.batchId);
+            $("#UploadBatchIdFilter").val(cachedFilter.uploadBatchId);
+            $("#TicketNumberFilter").val(cachedFilter.ticketNumber);
+
+            _isFilterReady = true;
+            if (_isGridInitialized) {
+                reloadMainGrid(null, false);
+            }
         });
 
         var invoicesTable = $('#InvoicesTable');
         var invoicesGrid = invoicesTable.DataTableInit({
+            stateSave: true,
+            stateDuration: 0,
             ajax: function (data, callback, settings) {
+                if (!_isGridInitialized) {
+                    _isGridInitialized = true;
+                }
+                if (!_isFilterReady) {
+                    callback(_dtHelper.getEmptyResult());
+                    return;
+                }
                 var abpData = _dtHelper.toAbpData(data);
+                var filterData = _dtHelper.getFilterData();
+                app.localStorage.setItem('InvoicesFilter', filterData);
                 $.extend(abpData, _dtHelper.getFilterData());
                 _invoiceService.getInvoices(abpData).done(function (abpResult) {
                     callback(_dtHelper.fromAbpResult(abpResult));
                 });
             },
+            order: [[1, 'desc']],
             columns: [
                 {
                     width: '20px',
@@ -80,6 +143,11 @@
                     render: function () {
                         return '';
                     }
+                },
+                {
+                    data: "id",
+                    title: "Inv #",
+                    width: "50px"
                 },
                 {
                     data: "issueDate",
