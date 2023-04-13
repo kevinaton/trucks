@@ -84,12 +84,16 @@
                 <div id="CustomersFormFilter">
                     <div class="row m--margin-bottom-10">
                         <div class="form-group col-xl-3">
-                            <label class="control-label" for="DateRangeFilter">@L("TicketDate")</label>
-                            <input class="form-control m-input filter" id="DateRangeFilter" name="DateRangeFilter" placeholder="@L("SearchWithThreeDot")" type="text" autocomplete="off">
+                            <label class="control-label" for="TicketDateRangeFilter">@L("TicketDate")</label>
+                            <input class="form-control m-input filter" id="TicketDateRangeFilter" name="TicketDateRangeFilter" placeholder="@L("SearchWithThreeDot")" type="text" autocomplete="off">
+                            <input type="hidden" class="filter" name="TicketDateRangeBegin" id="TicketDateRangeBeginInput" />
+                            <input type="hidden" class="filter" name="TicketDateRangeEnd" id="TicketDateRangeEndInput" />
                         </div>
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="OrderDateRangeFilter">@L("OrderDate")</label>
                             <input class="form-control m-input filter" id="OrderDateRangeFilter" name="OrderDateRangeFilter" type="text" autocomplete="off">
+                            <input type="hidden" class="filter" name="OrderDateRangeBegin" id="OrderDateRangeBeginInput" />
+                            <input type="hidden" class="filter" name="OrderDateRangeEnd" id="OrderDateRangeEndInput" />
                         </div>
                         @if (await SettingManager.UseShifts())
                         {
