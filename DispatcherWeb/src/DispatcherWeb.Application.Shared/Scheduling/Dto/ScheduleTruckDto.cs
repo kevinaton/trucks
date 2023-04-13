@@ -22,6 +22,7 @@ namespace DispatcherWeb.Scheduling.Dto
         public int? DriverId { get; set; }
         public string DriverName { get; set; }
         public bool IsExternal { get; set; }
+        public int? LeaseHaulerId { get; set; }
         public BedConstructionEnum BedConstruction { get; set; }
         public bool IsApportioned { get; set; }
         public string DefaultDriverName { get; set; }
@@ -55,6 +56,7 @@ namespace DispatcherWeb.Scheduling.Dto
             DriverId = other.DriverId;
             DriverName = other.DriverName;
             IsExternal = other.IsExternal;
+            LeaseHaulerId = other.LeaseHaulerId;
             BedConstruction = other.BedConstruction;
             IsApportioned = other.IsApportioned;
             DefaultDriverName = other.DefaultDriverName;

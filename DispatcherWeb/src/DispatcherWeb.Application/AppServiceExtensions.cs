@@ -394,6 +394,7 @@ namespace DispatcherWeb
                 .Select(x => new
                 {
                     x.Id,
+                    x.LeaseHaulerId,
                     x.TruckId,
                     x.DriverId,
                     DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
@@ -462,6 +463,7 @@ namespace DispatcherWeb
                     truck.DriverName = leaseHaulerTruck.DriverName;
                     truck.OfficeId = leaseHaulerTruck.OfficeId;
                     truck.IsExternal = true;
+                    truck.LeaseHaulerId = leaseHaulerTruck.LeaseHaulerId;
                 }
                 else if (driverAssignment != null)
                 {

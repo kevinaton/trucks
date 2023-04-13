@@ -17,5 +17,6 @@ namespace DispatcherWeb.DriverAssignments
         Task<ThereAreOpenDispatchesForTruckOnDateResult> ThereAreOpenDispatchesForTruckOnDate(ThereAreOpenDispatchesForTruckOnDateInput input);
         Task<int> AddUnscheduledTrucks(AddUnscheduledTrucksInput input);
         Task AddDefaultStartTime(AddDefaultStartTimeInput input);
+        Task<HasOrderLineTrucksResult> HasOrderLineTrucks(HasOrderLineTrucksInput input);
     }
 }

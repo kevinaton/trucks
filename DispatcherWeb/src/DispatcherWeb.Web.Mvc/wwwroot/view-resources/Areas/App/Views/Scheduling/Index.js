@@ -436,6 +436,7 @@
                     textForLookup: truck.truckCode,
                     officeId: truck.officeId,
                     isExternal: truck.isExternal,
+                    leaseHaulerId: truck.leaseHaulerId,
                     sharedOfficeId: truck.sharedFromOfficeId,
                     vehicleCategory: {
                         id: truck.vehicleCategory.id,
@@ -479,6 +480,7 @@
                             textForLookup: driverNameWithTruck,
                             officeId: truck.officeId,
                             isExternal: truck.isExternal,
+                            leaseHaulerId: truck.leaseHaulerId,
                             sharedOfficeId: truck.sharedFromOfficeId,
                             vehicleCategory: {
                                 id: truck.vehicleCategory.id,
@@ -2579,7 +2581,7 @@
             events: {
                 show: function (options) {
                     var truck = $(this).data('truck');
-                    if (!hasTrucksPermissions() || truck.alwaysShowOnSchedule || truck.isExternal) {
+                    if (!hasTrucksPermissions()) {
                         return false;
                     }
                     //if (!abp.session.officeId || $("#OfficeIdFilter").val() !== abp.session.officeId.toString() 
@@ -2595,7 +2597,9 @@
                     name: 'Place back in service',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() && truck.isOutOfService; // && truck.officeId === abp.session.officeId;
+                        return !truck.isExternal
+                            && !truck.alwaysShowOnSchedule
+                            && truck.isOutOfService; // && truck.officeId === abp.session.officeId;
                     },
                     callback: function () {
                         var truck = $(this).data('truck'); //category, hasNoDriver, id, isOutOfService, officeId, truckCode, utilization, utilizationList
@@ -2606,7 +2610,9 @@
                     name: 'Place out of service',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() && !truck.isOutOfService; //&& truck.officeId === abp.session.officeId;
+                        return !truck.isExternal
+                            && !truck.alwaysShowOnSchedule
+                            && !truck.isOutOfService; //&& truck.officeId === abp.session.officeId;
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
@@ -2617,7 +2623,7 @@
                     name: 'No driver for truck',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() &&
+                        return !truck.isExternal &&
                             !truckHasNoDriver(truck) &&
                             truck.vehicleCategory.isPowered &&
                             !isPastDate();
@@ -2636,7 +2642,7 @@
                     name: 'Assign driver',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions()
+                        return !truck.isExternal
                             && truckHasNoDriver(truck)
                             && truck.vehicleCategory.isPowered
                             && !isPastDate();
@@ -2647,6 +2653,7 @@
                         _assignDriverForTruckModal.open({
                             truckId: truck.id,
                             truckCode: truck.truckCode,
+                            leaseHaulerId: truck.leaseHaulerId,
                             date: filterData.date,
                             shift: filterData.shift,
                             officeId: filterData.officeId
@@ -2657,8 +2664,7 @@
                     name: 'Change driver',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions()
-                            && !truckHasNoDriver(truck)
+                        return (truck.isExternal || !truckHasNoDriver(truck))
                             && truck.vehicleCategory.isPowered
                             && !isPastDate();
                     },
@@ -2668,6 +2674,7 @@
                         _assignDriverForTruckModal.open({
                             truckId: truck.id,
                             truckCode: truck.truckCode,
+                            leaseHaulerId: truck.leaseHaulerId,
                             date: filterData.date,
                             shift: filterData.shift,
                             officeId: filterData.officeId,
@@ -2680,7 +2687,7 @@
                     name: 'Assign default driver back to truck',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() && truck.hasNoDriver && truck.hasDefaultDriver && !isPastDate();
+                        return !truck.isExternal && truck.hasNoDriver && truck.hasDefaultDriver && !isPastDate();
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
@@ -2697,7 +2704,8 @@
                     name: 'Share',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return _features.allowMultiOffice && hasTrucksPermissions() && truck.sharedWithOfficeId === null && !truck.isOutOfService;
+                        return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && _features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService;
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
