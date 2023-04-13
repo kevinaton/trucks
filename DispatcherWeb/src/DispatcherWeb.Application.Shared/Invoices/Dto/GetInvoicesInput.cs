@@ -15,6 +15,7 @@ namespace DispatcherWeb.Invoices.Dto
         public int? BatchId { get; set; }
         public int? UploadBatchId { get; set; }
         public string TicketNumber { get; set; }
+        public int? InvoiceId { get; set; }
 
         public void Normalize()
         {
