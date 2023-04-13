@@ -886,8 +886,8 @@ namespace DispatcherWeb.Tickets
 
         private IQueryable<TicketListViewDto> FilterTicketList(IQueryable<Ticket> ticketQuery, TicketListInput input, string timezone)
         {
-            var dateRangeBegin = input.DateRangeBegin?.ConvertTimeZoneFrom(timezone);
-            var dateRangeEnd = input.DateRangeEnd?.AddDays(1).ConvertTimeZoneFrom(timezone);
+            var ticketDateRangeBegin = input.TicketDateRangeBegin?.ConvertTimeZoneFrom(timezone);
+            var ticketDateRangeEnd = input.TicketDateRangeEnd?.AddDays(1).ConvertTimeZoneFrom(timezone);
             var orderDateRangeBegin = input.OrderDateRangeBegin;
             var orderDateRangeEnd = input.OrderDateRangeEnd?.AddDays(1);
 
@@ -897,8 +897,8 @@ namespace DispatcherWeb.Tickets
                 .WhereIf(input.CarrierId.HasValue, x => x.CarrierId == input.CarrierId)
                 .WhereIf(input.ServiceId.HasValue, x => x.ServiceId == input.ServiceId)
                 .WhereIf(input.DriverId.HasValue, x => x.DriverId == input.DriverId)
-                .WhereIf(dateRangeBegin.HasValue, x => x.TicketDateTime >= dateRangeBegin)
-                .WhereIf(dateRangeEnd.HasValue, x => x.TicketDateTime < dateRangeEnd)
+                .WhereIf(ticketDateRangeBegin.HasValue, x => x.TicketDateTime >= ticketDateRangeBegin)
+                .WhereIf(ticketDateRangeEnd.HasValue, x => x.TicketDateTime < ticketDateRangeEnd)
                 .WhereIf(orderDateRangeBegin.HasValue, x => x.OrderLine.Order.DeliveryDate >= orderDateRangeBegin)
                 .WhereIf(orderDateRangeEnd.HasValue, x => x.OrderLine.Order.DeliveryDate < orderDateRangeEnd)
                 .WhereIf(!string.IsNullOrEmpty(input.TicketNumber), x => x.TicketNumber.Contains(input.TicketNumber))

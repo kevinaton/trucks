@@ -7,8 +7,8 @@ namespace DispatcherWeb.Tickets.Dto
 {
     public class TicketListInput : PagedAndSortedInputDto, IShouldNormalize
     {
-        public DateTime? DateRangeBegin { get; set; }
-        public DateTime? DateRangeEnd { get; set; }
+        public DateTime? TicketDateRangeBegin { get; set; }
+        public DateTime? TicketDateRangeEnd { get; set; }
         public DateTime? OrderDateRangeBegin { get; set; }
         public DateTime? OrderDateRangeEnd { get; set; }
         public int? OfficeId { get; set; }

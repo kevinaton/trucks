@@ -1802,5 +1802,6 @@
 		<text name="PrintAllOrders">Print All Orders</text>
 		<text name="DeliveryReport">Delivery Report</text>
 		<text name="TicketNumberIsRequired">Ticket Number is required</text>
+		<text name="InvoiceNumber">Invoice Number</text>
 	</texts>
 </localizationDictionary>

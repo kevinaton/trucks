@@ -93,6 +93,8 @@ namespace DispatcherWeb.Invoices
         public async Task<PagedResultDto<InvoiceDto>> GetInvoices(GetInvoicesInput input)
         {
             var query = _invoiceRepository.GetAll()
+                .WhereIf(input.InvoiceId.HasValue,
+                    x => x.Id == input.InvoiceId)
                 .WhereIf(input.CustomerId.HasValue,
                     x => x.CustomerId == input.CustomerId)
                 .WhereIf(input.Status >= 0,
