@@ -273,7 +273,6 @@ namespace DispatcherWeb.Projects
                     Designation = x.Designation,
                     PricePerUnit = x.PricePerUnit,
                     FreightRate = x.FreightRate,
-                    FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                     LeaseHaulerRate = x.LeaseHaulerRate,
                     MaterialQuantity = x.MaterialQuantity,
                     FreightQuantity = x.FreightQuantity
@@ -327,7 +326,6 @@ namespace DispatcherWeb.Projects
                         PricePerUnit = x.PricePerUnit,
                         FreightRate = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
-                        FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
                         Note = x.Note
@@ -367,7 +365,6 @@ namespace DispatcherWeb.Projects
                 LeaseHaulerRate = model.LeaseHaulerRate,
                 MaterialQuantity = model.MaterialQuantity,
                 FreightQuantity = model.FreightQuantity,
-                FreightRateToPayDrivers = model.FreightRateToPayDrivers,
                 Note = model.Note,
                 TenantId = Session.TenantId ?? 0
             });

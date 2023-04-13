@@ -49,8 +49,6 @@ namespace DispatcherWeb.Projects.Dto
 
         public decimal? LeaseHaulerRate { get; set; }
 
-        public decimal? FreightRateToPayDrivers { get; set; }
-
         public decimal? MaterialQuantity { get; set; }
 
         public decimal? FreightQuantity { get; set; }

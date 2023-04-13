@@ -44,7 +44,6 @@
         var _unlockFreightPriceButton = null;
         var _wasProductionPay = null;
         var _ratesInitialState = {};
-
         var _addLocationTarget = null;
 
         this.init = function (modalManager) {
@@ -153,10 +152,14 @@
             _materialQuantityInput = _$form.find("#MaterialQuantity");
             _freightQuantityInput = _$form.find("#FreightQuantity");
             _materialPricePerUnitInput = _$form.find("#MaterialPricePerUnit");
-            _freightPricePerUnitInput = _$form.find("#FreightPricePerUnit");
 
+            _freightPricePerUnitInput = _$form.find("#FreightPricePerUnit");
             _freightRateToPayDriversInput = _$form.find("#FreightRateToPayDrivers");
-            _ratesInitialState.freightPricePerUnit = _freightPricePerUnitInput.val() || 0;
+
+            _ratesInitialState = {
+                freightPricePerUnit: Number(_freightPricePerUnitInput.val()) || 0,
+                freightRateToPayDrivers: Number(_freightRateToPayDriversInput.val()) || 0
+            };
 
             _materialPriceInput = _$form.find("#MaterialPrice"); //total for item
             _freightPriceInput = _$form.find("#FreightPrice"); //total for item
@@ -498,7 +501,25 @@
             _materialPricePerUnitInput.change(function () {
                 recalculate($(this));
             });
+
             _freightPricePerUnitInput.change(function () {
+
+                /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
+                property should be updated to the same value as the “Freight Rate”.  
+                When the “Freight Rate” is changed and the driver pay rate was the same as the prior “Freight Rate”, 
+                the “Freight Rate to Pay Drivers” should be changed to be the same as the “Freight Rate”. 
+                */
+                var freightPricePerUnit = Number(_freightPricePerUnitInput.val()) || 0;
+                var freightRateToPayDrivers = Number(_freightRateToPayDriversInput.val()) || 0;
+                if (_freightRateToPayDriversInput.css("display") == "none" || _freightRateToPayDriversInput.css("visibility") == "hidden" ||
+                    _ratesInitialState.freightPricePerUnit !== freightPricePerUnit &&
+                    _ratesInitialState.freightPricePerUnit === freightRateToPayDrivers) {
+
+                    _freightRateToPayDriversInput.val(freightPricePerUnit);
+                    _ratesInitialState.freightPricePerUnit = Number(_freightPricePerUnitInput.val()) || 0;
+                    _ratesInitialState.freightRateToPayDrivers = Number(_freightRateToPayDriversInput.val()) || 0;
+                }
+
                 recalculate($(this));
             });
 
@@ -974,12 +995,10 @@
             }
             _recalculating = true;
 
-            /*var freightRatePricing =
+            var freightRatePricing =
                 _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.freightRate !== null ? _pricing.quoteBasedPricing.freightRate
                     : _pricing && _pricing.hasPricing && _pricing.freightRate !== null ? _pricing.freightRate
-                        : null;*/
-
-            var freightRatePricing = Number(_$form.find("#FreightRateToPayDrivers").val()) || 0;
+                        : null;
 
             var materialRatePricing =
                 _pricing && _pricing.quoteBasedPricing && _pricing.quoteBasedPricing.pricePerUnit !== null ? _pricing.quoteBasedPricing.pricePerUnit
@@ -1219,17 +1238,7 @@
             _model.ticketNumber = model.TicketNumber;
             _model.fuelSurchargeCalculationId = model.FuelSurchargeCalculationId;
             _model.baseFuelCost = model.BaseFuelCost;
-
-            /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
-            property should be updated to the same value as the “Freight Rate”.  */
-            if (_$form.find("#FreightRateToPayDrivers_Hidden")) {
-                if (_ratesInitialState.freightPricePerUnit !== _model.freightPricePerUnit &&
-                    _ratesInitialState.freightPricePerUnit === model.FreightRateToPayDrivers)
-                    _model.freightRateToPayDrivers = _model.freightPricePerUnit;
-                else
-                    _model.freightRateToPayDrivers = model.FreightRateToPayDrivers;
-            }
-            else _model.freightRateToPayDrivers = Number(model.FreightPricePerUnit) || 0;
+            _model.freightRateToPayDrivers = model.FreightRateToPayDrivers;
 
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
             let freightQuantity = model.FreightQuantity === "" ? null : abp.utils.round(parseFloat(model.FreightQuantity));

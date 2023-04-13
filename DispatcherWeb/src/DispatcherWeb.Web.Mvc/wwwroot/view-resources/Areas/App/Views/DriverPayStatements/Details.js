@@ -176,7 +176,8 @@
                     }
                 },
                 {
-                    data: "freightRate",
+                    //data: "freightRate",
+                    data: "freightRateToPayDrivers",
                     render: function (data, type, full, meta) { return data ? _dtHelper.renderMoney(data) : ''; },
                     title: "Freight<br>Rate",
                     visible: _allowProductionPay
@@ -262,7 +263,8 @@
             switch (rowData.itemKind) {
                 case abp.enums.payStatementItemKind.ticket:
                     return rowData.isProductionPay
-                        ? abp.utils.round(rowData.quantity * rowData.driverPayRate * rowData.freightRate / 100)
+                        //? abp.utils.round(rowData.quantity * rowData.driverPayRate * rowData.freightRate / 100)
+                        ? abp.utils.round(rowData.quantity * rowData.driverPayRate * rowData.freightRateToPayDrivers / 100)
                         : abp.utils.round(rowData.quantity * rowData.driverPayRate);
                 case abp.enums.payStatementItemKind.time:
                     return abp.utils.round(rowData.quantity * rowData.driverPayRate);

@@ -6438,9 +6438,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<decimal?>("FreightRate")
                         .HasColumnType("decimal(19,4)");
 
-                    b.Property<decimal?>("FreightRateToPayDrivers")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int?>("FreightUomId")
                         .HasColumnType("int");
 

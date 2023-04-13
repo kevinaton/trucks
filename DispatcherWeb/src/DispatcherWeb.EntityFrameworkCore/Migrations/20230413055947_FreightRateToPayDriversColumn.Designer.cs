@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    [Migration("20230412111234_ColumnRename_FreightRateToPayDrivers")]
-    partial class ColumnRename_FreightRateToPayDrivers
+    [Migration("20230413055947_FreightRateToPayDriversColumn")]
+    partial class FreightRateToPayDriversColumn
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -6439,9 +6439,6 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<decimal?>("FreightRate")
                         .HasColumnType("decimal(19,4)");
-
-                    b.Property<decimal?>("FreightRateToPayDrivers")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("FreightUomId")
                         .HasColumnType("int");

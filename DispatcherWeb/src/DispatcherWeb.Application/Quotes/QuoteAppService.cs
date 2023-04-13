@@ -495,7 +495,6 @@ namespace DispatcherWeb.Quotes
                         PricePerUnit = x.PricePerUnit,
                         FreightRate = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
-                        FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
                         Note = x.Note
@@ -1234,7 +1233,7 @@ namespace DispatcherWeb.Quotes
             {
                 if (captureHistory)
                 {
-                    fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.FreightRateToPayDrivers, quoteService.FreightRateToPayDrivers?.ToString(), model.FreightRateToPayDrivers?.ToString()));
+                    fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.LineItemFreightRateToPayDrivers, quoteService.FreightRateToPayDrivers?.ToString(), model.FreightRateToPayDrivers?.ToString()));
                 }
                 quoteService.FreightRateToPayDrivers = model.FreightRateToPayDrivers;
             }

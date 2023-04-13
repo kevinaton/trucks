@@ -30,5 +30,6 @@ namespace DispatcherWeb.PayStatements.Dto
         public LocationNameDto LoadAt { get; set; }
         public decimal FreightRate { get; set; }
         public int Id { get; set; }
+        public decimal? FreightRateToPayDrivers { get; set; }
     }
 }

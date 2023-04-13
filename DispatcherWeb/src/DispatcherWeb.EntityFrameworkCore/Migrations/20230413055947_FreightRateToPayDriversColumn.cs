@@ -4,41 +4,37 @@
 
 namespace DispatcherWeb.Migrations
 {
-    public partial class FreightRatetoPayDriversColumn : Migration
+    public partial class FreightRateToPayDriversColumn : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<decimal>(
-                name: "PayDriversFreightRate",
+                name: "FreightRateToPayDrivers",
                 table: "QuoteService",
-                type: "decimal(18,2)",
+                type: "decimal(19,4)",
                 nullable: true);
 
-            migrationBuilder.AddColumn<decimal>(
-                name: "PayDriversFreightRate",
-                table: "ProjectService",
-                type: "decimal(18,2)",
-                nullable: true);
+            var sql = @"UPDATE QuoteService SET FreightRateToPayDrivers = FreightRate;";
+            migrationBuilder.Sql(sql);
 
             migrationBuilder.AddColumn<decimal>(
-                name: "PayDriversFreightRate",
+                name: "FreightRateToPayDrivers",
                 table: "OrderLine",
-                type: "decimal(18,2)",
+                type: "decimal(19,4)",
                 nullable: true);
+
+            sql = @"UPDATE OrderLine SET FreightRateToPayDrivers = FreightPricePerUnit;";
+            migrationBuilder.Sql(sql);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PayDriversFreightRate",
+                name: "FreightRateToPayDrivers",
                 table: "QuoteService");
 
             migrationBuilder.DropColumn(
-                name: "PayDriversFreightRate",
-                table: "ProjectService");
-
-            migrationBuilder.DropColumn(
-                name: "PayDriversFreightRate",
+                name: "FreightRateToPayDrivers",
                 table: "OrderLine");
         }
     }
