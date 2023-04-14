@@ -1856,6 +1856,11 @@
             return !truck.isExternal && (truck.hasNoDriver || !truck.hasDefaultDriver && !truck.hasDriverAssignment);
         }
 
+        function truckHasOrderLineTrucks(truck) {
+            var orders = scheduleGrid.data().toArray();
+            return orders.some(o => o.trucks.some(olt => olt.truckId === truck.id));
+        }
+
         function isPastDate() {
             var isPastDate = moment($("#DateFilter").val(), 'MM/DD/YYYY') < moment().startOf('day');
             return isPastDate;
@@ -2568,8 +2573,8 @@
                             && !isPastDate();
                     },
                     callback: function () {
-                        var OrderLineTruckId = $(this).data('item').id;
-                        _changeDriverForOrderLineTruckModal.open({ orderLineTruckId: OrderLineTruckId });
+                        var orderLineTruckId = $(this).data('item').id;
+                        _changeDriverForOrderLineTruckModal.open({ orderLineTruckId: orderLineTruckId });
                     }
                 }
             }
@@ -2580,10 +2585,25 @@
             zIndex: 103,
             events: {
                 show: function (options) {
-                    var truck = $(this).data('truck');
                     if (!hasTrucksPermissions()) {
                         return false;
                     }
+                    var anyItemIsVisible = false;
+                    for (var itemName in options.items) {
+                        if (!options.items.hasOwnProperty(itemName)) {
+                            continue;
+                        }
+                        var item = options.items[itemName];
+
+                        if (item.visible.apply(this)) {
+                            anyItemIsVisible = true;
+                            break;
+                        }
+                    }
+                    if (!anyItemIsVisible) {
+                        return false;
+                    }
+                    //var truck = $(this).data('truck');
                     //if (!abp.session.officeId || $("#OfficeIdFilter").val() !== abp.session.officeId.toString() 
                     //    || truck.officeId !== abp.session.officeId && (truck.sharedWithOfficeId !== abp.session.officeId || isPastDate())
                     //) {
@@ -2699,7 +2719,35 @@
                         });
                     }
                 },
-                separator1: "-----",
+                removeLhTruckFromSchedule: {
+                    name: 'Remove from schedule',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return truck.isExternal && !truckHasOrderLineTrucks(truck);
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+                        var filterData = _dtHelper.getFilterData();
+                        await abp.services.app.leaseHaulerRequestEdit.removeAvailableLeaseHaulerTruckFromSchedule({
+                            truckId: truck.id,
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                        });
+                        abp.notify.info('Successfully removed.');
+                        reloadTruckTiles();
+                        reloadDriverAssignments();
+                    }
+                },
+                separator1: {
+                    "type": "cm_separator",
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && (_features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService
+                            || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
+                    }
+                },
                 addSharedTruck: {
                     name: 'Share',
                     visible: function () {
@@ -2721,7 +2769,8 @@
                     name: 'Revoke Share',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() && truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId;
+                        return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId;
                     },
                     disabled: function () {
                         var truck = $(this).data('truck');
