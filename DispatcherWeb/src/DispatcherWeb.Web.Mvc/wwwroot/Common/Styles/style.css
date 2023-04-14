@@ -2068,3 +2068,7 @@ a.btn-default:hover {
 div.dataTables_wrapper div.dataTables_length select {
     display: none;
 }
+
+#CustomerNotificationPhoneNumber:invalid {
+    background-color: var(--danger-highlight);
+}

@@ -442,6 +442,9 @@ namespace DispatcherWeb.Orders
                 editOrderLineModel.ProductionPay = model.ProductionPay;
                 editOrderLineModel.Note = model.Note;
                 editOrderLineModel.QuoteServiceId = model.QuoteServiceId;
+                editOrderLineModel.RequiresCustomerNotification = model.RequiresCustomerNotification;
+                editOrderLineModel.CustomerNotificationContactName = model.CustomerNotificationContactName;
+                editOrderLineModel.CustomerNotificationPhoneNumber = model.CustomerNotificationPhoneNumber;
 
                 var orderLine = await EditOrderLine(editOrderLineModel);
                 await CurrentUnitOfWork.SaveChangesAsync();
@@ -2067,6 +2070,9 @@ namespace DispatcherWeb.Orders
                         IsMultipleLoads = x.IsMultipleLoads,
                         ProductionPay = allowProductionPay && x.ProductionPay,
                         CanOverrideTotals = canOverrideTotals,
+                        RequiresCustomerNotification = x.RequiresCustomerNotification,
+                        CustomerNotificationContactName = x.CustomerNotificationContactName,
+                        CustomerNotificationPhoneNumber = x.CustomerNotificationPhoneNumber
                     })
                     .FirstOrDefaultAsync(x => x.Id == input.Id.Value);
 
@@ -2248,7 +2254,10 @@ namespace DispatcherWeb.Orders
                 StaggeredTimeKind = orderLine.StaggeredTimeKind,
                 TimeOnJob = orderLine.TimeOnJob,
                 UpdateStaggeredTime = orderLine.UpdateStaggeredTime,
-                QuoteServiceId = orderLine.QuoteServiceId
+                QuoteServiceId = orderLine.QuoteServiceId,
+                RequiresCustomerNotification = orderLine.RequiresCustomerNotification,
+                CustomerNotificationContactName = orderLine.CustomerNotificationContactName,
+                CustomerNotificationPhoneNumber = orderLine.CustomerNotificationPhoneNumber
             };
 
             if (input.OrderLineId != null)
@@ -2443,6 +2452,10 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.NumberOfTrucks, model.NumberOfTrucks.Round(2));
             await orderLineUpdater.UpdateFieldAsync(o => o.IsMultipleLoads, model.IsMultipleLoads);
             await orderLineUpdater.UpdateFieldAsync(o => o.ProductionPay, model.ProductionPay);
+
+            await orderLineUpdater.UpdateFieldAsync(o => o.RequiresCustomerNotification, model.RequiresCustomerNotification);
+            await orderLineUpdater.UpdateFieldAsync(o => o.CustomerNotificationContactName, model.CustomerNotificationContactName);
+            await orderLineUpdater.UpdateFieldAsync(o => o.CustomerNotificationPhoneNumber, model.CustomerNotificationPhoneNumber);
 
             await orderLineUpdater.SaveChangesAsync();
 

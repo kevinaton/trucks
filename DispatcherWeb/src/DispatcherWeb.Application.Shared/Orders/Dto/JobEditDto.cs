@@ -173,5 +173,13 @@ namespace DispatcherWeb.Orders.Dto
         public decimal? DefaultBaseFuelCost { get; set; }
 
         public bool? DefaultCanChangeBaseFuelCost { get; set; }
+
+        public bool RequiresCustomerNotification { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationContactName)]
+        public string CustomerNotificationContactName { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationPhoneNumber)]
+        public string CustomerNotificationPhoneNumber { get; set; }
     }
 }
