@@ -53,7 +53,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
             _roleManager = roleManager;
         }
 
-        public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestEditDto(int? leaseHaulerRequestId)
+        public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestEditDto(int? leaseHaulerRequestId, DateTime? scheduleDate)
         {
             var model = leaseHaulerRequestId != null ? await _leaseHaulerRequestRepository.GetAll()
                 .Where(lhr => lhr.Id == leaseHaulerRequestId)
@@ -70,7 +70,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     Comments = lhr.Comments
                 })
                 .FirstAsync()
-                : new LeaseHaulerRequestEditDto();
+                : new LeaseHaulerRequestEditDto() { Date = scheduleDate };
 
             if (model.Id != 0)
             {
