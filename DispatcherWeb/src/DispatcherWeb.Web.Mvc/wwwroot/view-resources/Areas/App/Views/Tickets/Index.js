@@ -7,7 +7,9 @@
     var _$ticketPhotoInput = $('#TicketPhoto');
     var _ticketForPhotoUpload = null;
 
-    initFilterControls();
+    var _isFilterReady = false;
+    var _isGridInitialized = false;
+
     $('[data-toggle="tooltip"]').tooltip();
 
     var _createOrEditTicketModal = new app.ModalManager({
@@ -25,85 +27,249 @@
     var rowSelectAllClass = 'invoice-row-select-all';
     var rowSelectionColumnClass = 'invoice-row-selection-column';
 
+    //init the filter controls
+    app.localStorage.getItem('tickets_filter', function (cachedFilter) {
+        if (!cachedFilter) {
+            cachedFilter = {
+                ticketDateRangeBegin: moment().format("MM/DD/YYYY"),
+                ticketDateRangeEnd: moment().add(1, 'days').format("MM/DD/YYYY"),
+                officeId: abp.session.officeId,
+                officeName: abp.session.officeName
+            };
+        }
+
+        var ticketDateFilterIsEmpty = false;
+        if (!cachedFilter.ticketDateRangeBegin || cachedFilter.ticketDateRangeBegin === 'Invalid date') {
+            ticketDateFilterIsEmpty = true;
+            //still need to init the daterangepicker with real dates first and clear the inputs only after the init.
+            cachedFilter.ticketDateRangeBegin = moment().format("MM/DD/YYYY");
+        }
+
+        if (!cachedFilter.ticketDateRangeEnd || cachedFilter.ticketDateRangeEnd === 'Invalid date') {
+            ticketDateFilterIsEmpty = true;
+            cachedFilter.ticketDateRangeEnd = moment().add(1, 'days').format("MM/DD/YYYY");
+        }
+
+        $("#TicketDateRangeBeginInput").val(cachedFilter.ticketDateRangeBegin);
+        $("#TicketDateRangeEndInput").val(cachedFilter.ticketDateRangeEnd);
+        $("#TicketDateRangeFilter").val($("#TicketDateRangeBeginInput").val() + ' - ' + $("#TicketDateRangeEndInput").val());
+
+        $("#TicketDateRangeFilter").daterangepicker({
+            locale: {
+                cancelLabel: 'Clear'
+            },
+            showDropDown: true,
+            autoUpdateInput: false
+        }).on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            $("#TicketDateRangeBeginInput").val(picker.startDate.format('MM/DD/YYYY'));
+            $("#TicketDateRangeEndInput").val(picker.endDate.format('MM/DD/YYYY'));
+        }).on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+            $("#TicketDateRangeBeginInput").val('');
+            $("#TicketDateRangeEndInput").val('');
+        });
+
+        if (ticketDateFilterIsEmpty) {
+            $("#TicketDateRangeBeginInput").val('');
+            $("#TicketDateRangeEndInput").val('');
+            $("#TicketDateRangeFilter").val('');
+        }
+
+        //orderDateFilter
+        var orderDateFilterIsEmpty = false;
+
+        if (!cachedFilter.orderDateRangeBegin || cachedFilter.orderDateRangeBegin === 'Invalid date') {
+            orderDateFilterIsEmpty = true;
+            //still need to init the daterangepicker with real dates first and clear the inputs only after the init.
+            cachedFilter.orderDateRangeBegin = moment().format("MM/DD/YYYY");
+        }
+
+        if (!cachedFilter.orderDateRangeEnd || cachedFilter.orderDateRangeEnd === 'Invalid date') {
+            orderDateFilterIsEmpty = true;
+            cachedFilter.orderDateRangeEnd = moment().add(1, 'days').format("MM/DD/YYYY");
+        }
+
+        $("#OrderDateRangeBeginInput").val(cachedFilter.orderDateRangeBegin);
+        $("#OrderDateRangeEndInput").val(cachedFilter.orderDateRangeEnd);
+        $("#OrderDateRangeFilter").val($("#OrderDateRangeBeginInput").val() + ' - ' + $("#OrderDateRangeEndInput").val());
+
+        $("#OrderDateRangeFilter").daterangepicker({
+            locale: {
+                cancelLabel: 'Clear'
+            },
+            showDropDown: true,
+            autoUpdateInput: false
+        }).on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+             $("#OrderDateRangeBeginInput").val(picker.startDate.format('MM/DD/YYYY'));
+             $("#OrderDateRangeEndInput").val(picker.endDate.format('MM/DD/YYYY'));
+        }).on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+            $("#OrderDateRangeBeginInput").val('');
+            $("#OrderDateRangeEndInput").val('');
+        });
+
+        if (orderDateFilterIsEmpty) {
+            $("#OrderDateRangeBeginInput").val('');
+            $("#OrderDateRangeEndInput").val('');
+            $("#OrderDateRangeFilter").val('');
+        }
+
+        $('#TruckFilter').select2Init({
+            abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
+            abpServiceParams: {
+                excludeTrailers: false,
+                includeLeaseHaulerTrucks: true
+            },
+            showAll: false,
+            allowClear: true
+        });
+        if (cachedFilter.truckId) {
+            abp.helper.ui.addAndSetDropdownValue($("#TruckFilter"), cachedFilter.truckId, cachedFilter.truckCode);
+        }
+
+        $('#CarrierFilter').select2Init({
+            abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        if (cachedFilter.carrierId) {
+            abp.helper.ui.addAndSetDropdownValue($("#CarrierFilter"), cachedFilter.carrierId, cachedFilter.carrierName);
+        }
+
+        $('#ServiceFilter').select2Init({
+            abpServiceMethod: abp.services.app.service.getAllServicesSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        if (cachedFilter.serviceId) {
+            abp.helper.ui.addAndSetDropdownValue($("#ServiceFilter"), cachedFilter.serviceId, cachedFilter.serviceName);
+        }
+
+        $('#Shifts').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+        if (cachedFilter.shifts) {
+            cachedFilter.shifts.forEach(function (shift) {
+                abp.helper.ui.addAndSetDropdownValue($("#Shifts"), shift);
+            });   
+        }
+
+        $('#BillingStatusFilter').select2Init({
+            showAll: true,
+            allowClear: true
+        });
+        if (cachedFilter.billingStatus) {
+            abp.helper.ui.addAndSetDropdownValue($("#BillingStatusFilter"), cachedFilter.billingStatus, cachedFilter.billingStatusName);
+        }
+
+        $('#IsVerifiedFilter').select2Init({
+            showAll: true,
+            allowClear: true
+        });
+        if (cachedFilter.isVerified) {
+            abp.helper.ui.addAndSetDropdownValue($("#IsVerifiedFilter"), cachedFilter.isVerified, cachedFilter.isVerifiedDescription);
+        }
+
+        $('#IsImportedFilter').select2Init({
+            showAll: true,
+            allowClear: true
+        });
+        if (cachedFilter.isImported) {
+            abp.helper.ui.addAndSetDropdownValue($("#IsImportedFilter"), cachedFilter.isImported, cachedFilter.isImportedDescription);
+        }
+
+        $('#DriverFilter').select2Init({
+            abpServiceMethod: abp.services.app.driver.getDriversSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        if (cachedFilter.driverId) {
+            abp.helper.ui.addAndSetDropdownValue($("#DriverFilter"), cachedFilter.driverId, cachedFilter.driverName);
+        }
+
+        $('#OfficeIdFilter').select2Init({
+            abpServiceMethod: abp.services.app.office.getOfficesSelectList,
+            showAll: true,
+            allowClear: true
+        });
+        if (cachedFilter.officeId) {
+            abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), cachedFilter.officeId, cachedFilter.officeName);
+        }
+
+        $('#CustomerFilter').select2Init({
+            abpServiceMethod: abp.services.app.customer.getCustomersSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        if (cachedFilter.customerId) {
+            abp.helper.ui.addAndSetDropdownValue($("#CustomerFilter"), cachedFilter.customerId, cachedFilter.customerName);
+        }
+
+        $('#LoadAtFilter').select2Init({
+            abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        if (cachedFilter.loadAtId) {
+            abp.helper.ui.addAndSetDropdownValue($("#LoadAtFilter"), cachedFilter.loadAtId, cachedFilter.loadAtName);
+        }
+
+        $('#DeliverToFilter').select2Init({
+            abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        if (cachedFilter.deliverToId) {
+            abp.helper.ui.addAndSetDropdownValue($("#DeliverToFilter"), cachedFilter.deliverToId, cachedFilter.deliverToName);
+        }
+
+        $('#TicketStatusFilter').select2Init({
+            showAll: true,
+            allowClear: true
+        });
+        if (cachedFilter.ticketStatus) {
+            abp.helper.ui.addAndSetDropdownValue($("#TicketStatusFilter"), cachedFilter.ticketStatus, cachedFilter.ticketStatusDescription);
+        }
+
+        $('#OrderIdFilter').select2Init({
+            abpServiceMethod: abp.services.app.order.getOrderIdsSelectList,
+            showAll: false,
+            allowClear: true
+        });
+        if (cachedFilter.orderId) {
+            abp.helper.ui.addAndSetDropdownValue($("#OrderIdFilter"), cachedFilter.orderId, cachedFilter.orderId);
+        }
+
+        $("#TicketNumberFilter").val(cachedFilter.ticketNumber);
+        $("#JobNumberFilter").val(cachedFilter.jobNumber);
+
+
+        _isFilterReady = true;
+        if (_isGridInitialized) {
+            reloadMainGrid(null, false);
+        }
+    });
+
     var ticketTable = $('#TicketTable');
     var ticketGrid = ticketTable.DataTableInit({
         stateSave: true,
         stateDuration: 0,
-        stateLoadCallback: function (settings, callback) {
-            app.localStorage.getItem('tickets_filter', function (result) {
-                var filter = result || {};
-
-                if (filter.dateRangeFilter) {
-                    $('#DateRangeFilter').val(filter.dateRangeFilter);
-                }
-                if (filter.orderDateRangeFilter) {
-                    $('#OrderDateRangeFilter').val(filter.orderDateRangeFilter);
-                }
-                if (filter.ticketNumber) {
-                    $('#TicketNumberFilter').val(filter.ticketNumber);
-                }
-
-                if (filter.carrierId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#CarrierFilter"), filter.carrierId, filter.carrierName);
-                }
-                if (filter.serviceId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#ServiceFilter"), filter.serviceId, filter.serviceName);
-                }
-                if (filter.driverId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#DriverFilter"), filter.driverId, filter.driverName);
-                }
-                if (filter.billingStatus) {
-                    abp.helper.ui.addAndSetDropdownValue($("#BillingStatusFilter"), filter.billingStatus, filter.billingStatusName);
-                }
-                if (filter.isImported) {
-                    abp.helper.ui.addAndSetDropdownValue($("#IsImportedFilter"), filter.isImported, filter.isImportedDescription);
-                }
-                if (filter.truckId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#TruckFilter"), filter.truckId, filter.truckCode);
-                }
-                if (filter.customerId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#CustomerFilter"), filter.customerId, filter.customerName);
-                }
-                if (filter.loadAtId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#LoadAtFilter"), filter.loadAtId, filter.loadAtName);
-                }
-                if (filter.deliverToId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#DeliverToFilter"), filter.deliverToId, filter.deliverToName);
-                }
-                if (filter.ticketStatus) {
-                    abp.helper.ui.addAndSetDropdownValue($("#TicketStatusFilter"), filter.ticketStatus, filter.ticketStatusDescription);
-                }
-                if (filter.isVerified) {
-                    abp.helper.ui.addAndSetDropdownValue($("#IsVerifiedFilter"), filter.isVerified, filter.isVerifiedDescription);
-                }
-                if (filter.orderId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#OrderIdFilter"), filter.orderId, filter.orderId);
-                }
-                if (filter.officeId) {
-                    abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), filter.officeId, filter.officeName);
-                } else {
-                    abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
-                }
-
-
-                app.localStorage.getItem('tickets_grid', function (result) {
-                    callback(JSON.parse(result));
-                });
-            });
-        },
-        stateSaveCallback: function (settings, data) {
-            delete data.columns;
-            delete data.search;
-            app.localStorage.setItem('tickets_grid', JSON.stringify(data));
-            app.localStorage.setItem('tickets_filter', getFilterData());
-        },
         ajax: function (data, callback, settings) {
+            if (!_isGridInitialized) {
+                _isGridInitialized = true;
+            }
+            if (!_isFilterReady) {
+                callback(_dtHelper.getEmptyResult());
+                return;
+            }
             var abpData = _dtHelper.toAbpData(data);
             _lastAbpData = $.extend({}, abpData);
-            var filterData = getFilterData();
+            var filterData = _dtHelper.getFilterData();
+            app.localStorage.setItem('tickets_filter', filterData);
             $.extend(abpData, filterData);
-
-            localStorage.setItem('tickets_filter', JSON.stringify(abpData));
 
             _ticketService.ticketListView(abpData).done(function (abpResult) {
                 callback(_dtHelper.fromAbpResult(abpResult));
@@ -454,8 +620,10 @@
         $('#TruckFilter').val('').trigger("change");
         $('#Shifts').val('').trigger("change");
         $(".filter").change();
-        $("#DateRangeFilter").val('');
-        $("#OrderDateRangeFilter").val('');
+        $("#TicketDateRangeBeginInput").val('');
+        $("#TicketDateRangeEndInput").val('');
+        $("#OrderDateRangeBeginInput").val('');
+        $("#OrderDateRangeEndInput").val('');
         $('#OfficeIdFilter').val('').trigger("change");
         _selectedRowIds = [];
         reloadMainGrid();
@@ -478,18 +646,10 @@
         });
     });
 
-    function getFilterData() {
-        var filterData = _dtHelper.getFilterData();
-        $.extend(filterData, _dtHelper.getDateRangeObject(filterData.dateRangeFilter, 'dateRangeBegin', 'dateRangeEnd'));
-        $.extend(filterData, _dtHelper.getDateRangeObject(filterData.orderDateRangeFilter, 'orderDateRangeBegin', 'orderDateRangeEnd'));
-        delete filterData.dateRangeFilter;
-        delete filterData.orderDateRangeFilter;
-        return filterData;
-    }
-
     function exportTicketsToCsv(additionalFilter) {
         var abpData = $.extend({}, _lastAbpData);
-        $.extend(abpData, getFilterData(), additionalFilter);
+        var filterData = _dtHelper.getFilterData();
+        $.extend(abpData, filterData, additionalFilter);
 
         abp.ui.setBusy();
         _ticketService
@@ -503,101 +663,6 @@
 
     function reloadMainGrid() {
         ticketGrid.ajax.reload();
-    }
-
-    function initFilterControls() {
-        $("#DateRangeFilter").daterangepicker({
-            locale: {
-                cancelLabel: 'Clear'
-            },
-            showDropDown: true
-        }).on('apply.daterangepicker', function (ev, picker) {
-            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-        }).on('cancel.daterangepicker', function (ev, picker) {
-            $(this).val('');
-        });
-        $("#OrderDateRangeFilter").daterangepicker({
-            locale: {
-                cancelLabel: 'Clear'
-            },
-            showDropDown: true,
-            autoUpdateInput: false
-        }).on('apply.daterangepicker', function (ev, picker) {
-            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-        }).on('cancel.daterangepicker', function (ev, picker) {
-            $(this).val('');
-        });
-        $('#TruckFilter').select2Init({
-            abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
-            abpServiceParams: {
-                excludeTrailers: false,
-                includeLeaseHaulerTrucks: true
-            },
-            showAll: false,
-            allowClear: true
-        });
-        $('#CarrierFilter').select2Init({
-            abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
-            showAll: false,
-            allowClear: true
-        });
-        $('#ServiceFilter').select2Init({
-            abpServiceMethod: abp.services.app.service.getAllServicesSelectList,
-            showAll: false,
-            allowClear: true
-        });
-        $('#Shifts').select2Init({
-            showAll: true,
-            allowClear: false
-        });
-        $('#BillingStatusFilter').select2Init({
-            showAll: true,
-            allowClear: true
-        });
-
-        $('#IsVerifiedFilter').select2Init({
-            showAll: true,
-            allowClear: true
-        });
-        $('#IsImportedFilter').select2Init({
-            showAll: true,
-            allowClear: true
-        });
-        $('#DriverFilter').select2Init({
-            abpServiceMethod: abp.services.app.driver.getDriversSelectList,
-            showAll: false,
-            allowClear: true
-        });
-        $('#OfficeIdFilter').select2Init({
-            abpServiceMethod: abp.services.app.office.getOfficesSelectList,
-            showAll: true,
-            allowClear: true
-        });
-        $('#CustomerFilter').select2Init({
-            abpServiceMethod: abp.services.app.customer.getCustomersSelectList,
-            showAll: false,
-            allowClear: true
-        });
-
-        $('#LoadAtFilter').select2Init({
-            abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
-            showAll: false,
-            allowClear: true
-        });
-        $('#DeliverToFilter').select2Init({
-            abpServiceMethod: abp.services.app.location.getAllLocationsSelectList,
-            showAll: false,
-            allowClear: true
-        });
-        $('#TicketStatusFilter').select2Init({
-            showAll: true,
-            allowClear: true
-        });
-        $('#OrderIdFilter').select2Init({
-            abpServiceMethod: abp.services.app.order.getOrderIdsSelectList,
-            showAll: false,
-            allowClear: true
-        });
     }
 
     _$ticketPhotoInput.change(function () {

@@ -655,19 +655,18 @@
         }
 
         function disableQuoteRelatedFieldsIfNeeded() {
-            if (_quoteId) {
-                _designationDropdown
-                    .add(_loadAtDropdown)
-                    //.add(_deliverToDropdown)
-                    .add(_serviceDropdown)
-                    .add(_freightUomDropdown)
-                    .add(_materialUomDropdown)
-                    //.add(_freightPricePerUnitInput)
-                    //.add(_materialPricePerUnitInput)
-                    //.add(_freightQuantityInput)
-                    //.add(_materialQuantityInput)
-                    .prop('disabled', true);
-            }
+            var isQuoteSet = !!_quoteId;
+            _designationDropdown
+                .add(_loadAtDropdown)
+                //.add(_deliverToDropdown)
+                .add(_serviceDropdown)
+                .add(_freightUomDropdown)
+                .add(_materialUomDropdown)
+                //.add(_freightPricePerUnitInput)
+                //.add(_materialPricePerUnitInput)
+                //.add(_freightQuantityInput)
+                //.add(_materialQuantityInput)
+                .prop('disabled', isQuoteSet);
         }
 
         function disableFieldsIfEditingJob() {
