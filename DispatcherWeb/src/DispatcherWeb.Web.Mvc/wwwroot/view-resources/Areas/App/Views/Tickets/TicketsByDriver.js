@@ -135,10 +135,12 @@
     }
 
     function reloadAllDataAndThrow(e) {
-        return reloadAllData().then(() => { throw e; });
+        return reloadAllData({
+            suppressWarnings: true
+        }).then(() => { throw e; });
     }
 
-    function reloadAllData() {
+    function reloadAllData(loadDataOptions) {
         $('#TicketList').empty();
         $('#CurrentFuelCostContainer').hide();
         _orderLines = [];
@@ -157,10 +159,11 @@
         });
         _orderLineBlocks = []; //one per unique orderLine-driver (later per unique orderLine-driver-truck)
         _leaseHaulerBlocks = [];
-        return loadData();
+        return loadData(loadDataOptions);
     }
 
-    function loadData() {
+    function loadData(loadDataOptions) {
+        loadDataOptions = loadDataOptions || {};
         var filter = _dtHelper.getFilterData();
         if (!filter.date) {
             _date = null;
@@ -194,7 +197,7 @@
             _dailyFuelCost = result.dailyFuelCost;
             if (result.hasOpenOrders !== _hasOpenOrders) {
                 _hasOpenOrders = result.hasOpenOrders;
-                if (_hasOpenOrders) {
+                if (_hasOpenOrders && !loadDataOptions.suppressWarnings) {
                     abp.message.warn(app.localize('SomeOfTheOrdersAreStillOpenWillNotBeDisplayed'));
                 }
             }
