@@ -41,8 +41,10 @@
             var materialRateInput = _$form.find("#PricePerUnit");
             var freightRateInput = _$form.find("#FreightRate");
             var leaseHaulerRateInput = _$form.find("#LeaseHaulerRate");
+            var freightRateToPayDriversInput = _$form.find("#FreightRateToPayDrivers");
 
             _ratesInitialState.freightRate = Number(freightRateInput.val()) || 0;
+            _ratesInitialState.freightRateToPayDrivers = Number(freightRateToPayDriversInput.val()) || 0;
 
             if (leaseHaulerRateInput.val() !== "") {
                 leaseHaulerRateInput.val(abp.utils.round(leaseHaulerRateInput.val()).toFixed(2));
@@ -122,20 +124,46 @@
             }
             function disableFreightFields() {
                 freightRateInput.attr('disabled', 'disabled').val('0');
+                freightRateToPayDriversInput.attr('disabled', 'disabled').val('0');
                 freightUomDropdown.attr('disabled', 'disabled').val('').change();
                 freightQuantityInput.attr('disabled', 'disabled').val('');
                 freightRateInput.closest('.form-group').hide();
+                freightRateToPayDriversInput.closest('.form-group').hide();
                 freightUomDropdown.closest('.form-group').hide();
                 freightQuantityInput.closest('.form-group').hide();
             }
             function enableFreightFields() {
                 freightRateInput.removeAttr('disabled');
+                freightRateToPayDriversInput.removeAttr('disabled');
                 freightUomDropdown.removeAttr('disabled');
                 freightQuantityInput.removeAttr('disabled');
                 freightRateInput.closest('.form-group').show();
+                freightRateToPayDriversInput.closest('.form-group').show();
                 freightUomDropdown.closest('.form-group').show();
                 freightQuantityInput.closest('.form-group').show();
             }
+
+            freightRateInput.change(function () {
+
+                /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
+                property should be updated to the same value as the “Freight Rate”.  
+                When the “Freight Rate” is changed and the driver pay rate was the same as the prior “Freight Rate”, 
+                the “Freight Rate to Pay Drivers” should be changed to be the same as the “Freight Rate”. 
+                */
+                var freightRate = Number(freightRateInput.val()) || 0;
+                var freightRateToPayDrivers = Number(freightRateToPayDriversInput.val()) || 0;
+
+                if (freightRateToPayDriversInput.css("display") == "none" || freightRateToPayDriversInput.css("visibility") == "hidden" ||
+                    _ratesInitialState.freightRate !== freightRate &&
+                    _ratesInitialState.freightRate === freightRateToPayDrivers) {
+
+                    freightRateToPayDriversInput.val(freightRate);
+                    _ratesInitialState.freightRate = Number(freightRateInput.val()) || 0;
+                    _ratesInitialState.freightRateToPayDrivers = Number(freightRateToPayDriversInput.val()) || 0;
+                }
+
+                recalculate($(this));
+            });
 
             _modalManager.on('app.createOrEditServiceModalSaved', function (e) {
                 abp.helper.ui.addAndSetDropdownValue(serviceDropdown, e.item.Id, e.item.Service1);
@@ -168,17 +196,6 @@
             }
 
             var quoteService = _$form.serializeFormToObject();
-
-            /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
-            property should be updated to the same value as the “Freight Rate”.  */
-            if (_$form.find("#FreightRateToPayDrivers_Hidden")) {
-                if (_ratesInitialState.freightRate !== quoteService.FreightRate &&
-                    _ratesInitialState.freightRate === quoteService.FreightRateToPayDrivers)
-                    quoteService.freightRateToPayDrivers = quoteService.FreightRate;
-                else
-                    quoteService.freightRateToPayDrivers = Number(_$form.find("#FreightRateToPayDrivers").val()) || 0;
-            }
-            else quoteService.freightRateToPayDrivers = Number(quoteService.FreightRate) || 0;
 
             _modalManager.setBusy(true);
             _quoteAppService.editQuoteService(quoteService).done(function () {

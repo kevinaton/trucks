@@ -714,7 +714,7 @@
             _orderLine.timeOnJob = orderLine.TimeOnJob;
             _orderLine.jobNumber = orderLine.JobNumber;
             _orderLine.note = orderLine.Note;
-            _orderLine.freightRateToPayDrivers = orderLine.FreightRateToPayDrivers;
+            _orderLine.freightRateToPayDrivers = Number(orderLine.FreightRateToPayDrivers) ?? 0;
 
 
             if (this.saveCallback) {
