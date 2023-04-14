@@ -512,6 +512,7 @@
                 */
                 var freightPricePerUnit = Number(_freightPricePerUnitInput.val()) || 0;
                 var freightRateToPayDrivers = Number(_freightRateToPayDriversInput.val()) || 0;
+
                 if (_freightRateToPayDriversInput.css("display") == "none" || _freightRateToPayDriversInput.css("visibility") == "hidden" ||
                     _ratesInitialState.freightPricePerUnit !== freightPricePerUnit &&
                     _ratesInitialState.freightPricePerUnit === freightRateToPayDrivers) {
@@ -975,7 +976,7 @@
             if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _freightPricePerUnitInput.val()) {
                 return;
             }
-            _freightPricePerUnitInput.val(rate);
+            _freightPricePerUnitInput.val(rate).change();
         }
 
         function setMaterialRateFromPricingIfNeeded(rate, sender) {
@@ -1014,7 +1015,7 @@
             } else {
                 //no freight pricing
                 if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown))) {
-                    _freightPricePerUnitInput.val('');
+                    _freightPricePerUnitInput.val('').change();
                 }
             }
 
@@ -1030,18 +1031,21 @@
                     _materialPricePerUnitInput.val('');
                 }
             }
+
             var materialPricePerUnit = _materialPricePerUnitInput.val();
             var freightPricePerUnit = _freightPricePerUnitInput.val();
             var materialQuantity = _materialQuantityInput.val();
             var freightQuantity = _freightQuantityInput.val();
             var materialPrice = round(materialPricePerUnit * materialQuantity);
             var freightPrice = round(freightPricePerUnit * freightQuantity);
+
             if (!getIsMaterialPriceOverridden()) {
                 _materialPriceInput.val(materialPrice.toFixed(2));
             }
             if (!getIsFreightPriceOverridden()) {
                 _freightPriceInput.val(freightPrice.toFixed(2));
             }
+
             refreshHighlighting();
             _saveEventArgs.reloadMaterialTotalIfNotOverridden = true;
             _saveEventArgs.reloadFreightTotalIfNotOverridden = true;
@@ -1077,6 +1081,7 @@
         function disableFreightFields() {
             _$form.find("label[for=FreightUomId]").removeClass('required-label');
             _$form.find('#FreightPricePerUnit').val('').closest('.form-group').hide();
+            _$form.find('#FreightRateToPayDrivers').val('').closest('.form-group').hide();
             _$form.find('#FreightPrice').val('0').closest('.form-group').hide();
             _$form.find('#FreightUomId').val('').change().closest('.form-group').hide();
             _$form.find('#FreightQuantity').val('').closest('.form-group').hide();
@@ -1239,7 +1244,7 @@
             _model.ticketNumber = model.TicketNumber;
             _model.fuelSurchargeCalculationId = model.FuelSurchargeCalculationId;
             _model.baseFuelCost = model.BaseFuelCost;
-            _model.freightRateToPayDrivers = model.FreightRateToPayDrivers;
+            _model.freightRateToPayDrivers = Number(model.FreightRateToPayDrivers) ?? 0;
 
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
             let freightQuantity = model.FreightQuantity === "" ? null : abp.utils.round(parseFloat(model.FreightQuantity));

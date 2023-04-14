@@ -554,7 +554,7 @@
             } else {
                 //no freight pricing
                 if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown))) {
-                    _freightPricePerUnitInput.val('');
+                    _freightPricePerUnitInput.val('').change();
                 }
             }
 
