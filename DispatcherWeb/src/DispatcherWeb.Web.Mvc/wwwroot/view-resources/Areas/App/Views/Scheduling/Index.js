@@ -2664,8 +2664,7 @@
                         var truck = $(this).data('truck');
                         return !truck.isExternal
                             && truckHasNoDriver(truck)
-                            && truck.vehicleCategory.isPowered
-                            && !isPastDate();
+                            && truck.vehicleCategory.isPowered;
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
@@ -2685,8 +2684,7 @@
                     visible: function () {
                         var truck = $(this).data('truck');
                         return (truck.isExternal || !truckHasNoDriver(truck))
-                            && truck.vehicleCategory.isPowered
-                            && !isPastDate();
+                            && truck.vehicleCategory.isPowered;
                     },
                     callback: function () {
                         var truck = $(this).data('truck');

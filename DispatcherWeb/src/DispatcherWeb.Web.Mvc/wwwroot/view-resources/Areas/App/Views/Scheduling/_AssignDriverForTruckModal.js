@@ -52,6 +52,7 @@
 
             try {
                 _modalManager.setBusy(true);
+                var isPastDate = moment(input.Date, 'MM/DD/YYYY') < moment().startOf('day');
 
                 if (_originalDriverId) {
                     var validationResult = await _driverAssignmentService.hasOrderLineTrucks({
@@ -68,7 +69,9 @@
                             return;
                         }
                     } else {
-                        if (validationResult.hasOrderLineTrucks) {
+                        if (isPastDate) {
+                            input.CreateNewDriverAssignment = true;
+                        } else if (validationResult.hasOrderLineTrucks) {
                             _modalManager.setBusy(false);
                             var userResponse = await swal(
                                 app.localize("DriverAlreadyScheduledForTruck{0}Prompt_YesToReplace_NoToCreateNew", input.TruckCode),

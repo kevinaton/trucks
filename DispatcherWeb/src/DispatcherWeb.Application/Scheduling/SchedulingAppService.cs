@@ -130,19 +130,10 @@ namespace DispatcherWeb.Scheduling
                 .GetScheduleTrucks(input, await SettingManager.UseShifts(),
                     await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature));
 
-            if (await IsDateInThePast(input.Date))
-            {
-                trucksLite.ForEach(t => t.DefaultDriverId = null);
-            }
-
             var trucks = await trucksLite
                 .PopulateScheduleTruckFullFields(input, _driverAssignmentRepository.GetAll());
 
             return new ListResultDto<ScheduleTruckDto>(trucks);
-        }
-        private async Task<bool> IsDateInThePast(DateTime date)
-        {
-            return date < await GetToday();
         }
 
         //'add truck' dropdown on 'add truck' modal
