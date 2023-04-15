@@ -22,20 +22,11 @@
             _$form.find('#Shift').select2Init({ allowClear: false });
 
             var $leaseHaulerDropdown = _$form.find('#LeaseHaulerId');
-
-            function initLeseHaulerDropdown() {
-                $leaseHaulerDropdown.select2Init({
-                    abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
-                    showAll: false,
-                    allowClear: true
-                });
-            }
-
-            function destroyLeaseHaulerDropdown() {
-                $leaseHaulerDropdown.select2('destroy');
-            }
-
-            initLeseHaulerDropdown();
+            $leaseHaulerDropdown.select2Init({
+                abpServiceMethod: abp.services.app.leaseHauler.getLeaseHaulersSelectList,
+                showAll: false,
+                allowClear: true
+            });
 
             var $truckSelectionRowTemplate = _$form.find('#truckSelectionRowTemplate .truck-selection-row');
             var $truckSelectionBlock = _$form.find('#truckSelectionBlock');
@@ -269,7 +260,6 @@
             }
 
             function addRow(rowsToAdd) {
-                //destroyLeaseHaulerDropdown();
                 var $newRows = $();
                 for (var i = 0; i < rowsToAdd; i++) {
                     var newRow = $truckSelectionRowTemplate.clone();
@@ -277,7 +267,6 @@
                     $newRows = $newRows.add(newRow);
                 }
                 initTruckRow($newRows);
-                //initLeseHaulerDropdown();
             }
 
             function getLeaseHaulerId() {
