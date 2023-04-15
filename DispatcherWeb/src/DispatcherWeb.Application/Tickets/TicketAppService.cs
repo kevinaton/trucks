@@ -827,7 +827,7 @@ namespace DispatcherWeb.Tickets
         [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
-            var query = FilterTicketList(_ticketRepository.GetAll(), input, await GetTimezone());
+            var query = GetTicketListQuery(input, await GetTimezone());
 
             var totalCount = await query.CountAsync();
 
@@ -851,7 +851,7 @@ namespace DispatcherWeb.Tickets
         public async Task<FileDto> GetTicketsToCsv(TicketListInput input)
         {
             var timezone = await GetTimezone();
-            var query = FilterTicketList(_ticketRepository.GetAll(), input, timezone);
+            var query = GetTicketListQuery(input, timezone);
 
             var totalCount = await query.CountAsync();
 
@@ -884,14 +884,27 @@ namespace DispatcherWeb.Tickets
             return _ticketListCsvExporter.ExportToFile(items, filename);
         }
 
-        private IQueryable<TicketListViewDto> FilterTicketList(IQueryable<Ticket> ticketQuery, TicketListInput input, string timezone)
+        private IQueryable<TicketListViewDto> GetTicketListQuery(TicketListInput input, string timezone)
         {
             var ticketDateRangeBegin = input.TicketDateRangeBegin?.ConvertTimeZoneFrom(timezone);
             var ticketDateRangeEnd = input.TicketDateRangeEnd?.AddDays(1).ConvertTimeZoneFrom(timezone);
             var orderDateRangeBegin = input.OrderDateRangeBegin;
             var orderDateRangeEnd = input.OrderDateRangeEnd?.AddDays(1);
 
-            return ticketQuery
+            var query = _ticketRepository.GetAll();
+
+            if (input.TicketStatus == TicketListStatusFilterEnum.PotentialDuplicateTickets)
+            {
+                query = (from ticket in query
+                        join otherTicket in _ticketRepository.GetAll()
+                        on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
+                        equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
+                        where otherTicket != null && otherTicket.Id != ticket.Id
+                        select ticket)
+                        .Distinct();
+            }
+
+            return query
                 .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId.Value)
                 .WhereIf(input.InvoiceId.HasValue, x => x.InvoiceLine.InvoiceId == input.InvoiceId.Value)
                 .WhereIf(input.CarrierId.HasValue, x => x.CarrierId == input.CarrierId)
