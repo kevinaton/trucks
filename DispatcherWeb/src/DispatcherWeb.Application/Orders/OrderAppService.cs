@@ -2268,6 +2268,10 @@ namespace DispatcherWeb.Orders
                     result.TicketId = ticket.Id;
                     result.TicketNumber = ticket.TicketNumber;
                 }
+                else
+                {
+                    result.AutoGenerateTicketNumber = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber);
+                }
             }
             else
             {
