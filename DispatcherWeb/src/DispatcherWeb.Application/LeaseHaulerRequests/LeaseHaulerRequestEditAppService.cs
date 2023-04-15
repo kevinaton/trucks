@@ -53,25 +53,28 @@ namespace DispatcherWeb.LeaseHaulerRequests
             _roleManager = roleManager;
         }
 
-        public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestEditDto(int? leaseHaulerRequestId, DateTime? scheduleDate, bool? requestFromScheduler)
+        public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestForEdit(GetLeaseHaulerRequestForEditInput input)
         {
-            var model = leaseHaulerRequestId != null ? await _leaseHaulerRequestRepository.GetAll()
-                .Where(lhr => lhr.Id == leaseHaulerRequestId)
-                .Select(lhr => new LeaseHaulerRequestEditDto()
-                {
-                    Id = lhr.Id,
-                    Date = lhr.Date,
-                    Shift = lhr.Shift,
-                    OfficeId = lhr.OfficeId,
-                    LeaseHaulerId = lhr.LeaseHaulerId,
-                    LeaseHaulerName = lhr.LeaseHauler.Name,
-                    Available = lhr.Available,
-                    Approved = lhr.Approved,
-                    Comments = lhr.Comments,
-                    RequestFromScheduler = requestFromScheduler ?? false
-                })
-                .FirstAsync()
-                : new LeaseHaulerRequestEditDto() { Date = scheduleDate, RequestFromScheduler = requestFromScheduler ?? false };
+            var model = input.LeaseHaulerRequestId != null 
+                ? await _leaseHaulerRequestRepository.GetAll()
+                    .Where(lhr => lhr.Id == input.LeaseHaulerRequestId)
+                    .Select(lhr => new LeaseHaulerRequestEditDto
+                    {
+                        Id = lhr.Id,
+                        Date = lhr.Date,
+                        Shift = lhr.Shift,
+                        OfficeId = lhr.OfficeId,
+                        LeaseHaulerId = lhr.LeaseHaulerId,
+                        LeaseHaulerName = lhr.LeaseHauler.Name,
+                        Available = lhr.Available,
+                        Approved = lhr.Approved,
+                        Comments = lhr.Comments
+                    })
+                    .FirstAsync()
+                : new LeaseHaulerRequestEditDto
+                { 
+                    Date = input.Date
+                };
 
             if (model.Id != 0)
             {

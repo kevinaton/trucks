@@ -21,11 +21,6 @@
             _$form.find('#Date').datepickerInit();
             _$form.find('#Shift').select2Init({ allowClear: false });
 
-            var isNewLeaseHauler = Number(_$form.find('#Id').val() ?? 0) === 0;
-            if (isNewLeaseHauler) {
-                _$form.find('#Shift').select2('focus');
-            }
-
             var $leaseHaulerDropdown = _$form.find('#LeaseHaulerId');
 
             function initLeseHaulerDropdown() {
@@ -449,6 +444,14 @@
                 }
                 return true;
             };
+        };
+
+        this.focusOnDefaultElement = function () {
+            if (_$form.find('#Date').is(':disabled')) {
+                _$form.find('#Shift').select2('focus');
+            } else {
+                _$form.find('#Date').focus();
+            }
         };
 
         this.save = function () {

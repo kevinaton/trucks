@@ -13,7 +13,7 @@
 
         <div class="form-group">
             <label class="control-label required-label" asp-for="Date">Request Date</label>
-            <input class="form-control" asp-for="Date" type="text" required autocomplete="off" disabled="@((Model.RequestFromScheduler ?? false) || (!(Model.RequestFromScheduler ?? false) && Model.Id != 0) ? "disable" : null)">
+            <input class="form-control" asp-for="Date" type="text" required autocomplete="off" disabled="@(Model.Date.HasValue || Model.Id != 0 ? "disabled" : null)">
         </div>
         @if (await SettingManager.UseShifts())
         {
