@@ -448,7 +448,7 @@ namespace DispatcherWeb.Orders
 
                 var allowCounterSales = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales);
 
-                if (model.OrderLineId == null && model.Designation == DesignationEnum.MaterialOnly && allowCounterSales)
+                if (model.Designation == DesignationEnum.MaterialOnly && allowCounterSales)
                 {
                     var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLine.OrderLineId);
                     await orderLineUpdater.UpdateFieldAsync(x => x.IsComplete, true);
