@@ -2091,7 +2091,7 @@
 
         $('#AddLeaseHaulerRequestButton').click(function (e) {
             e.preventDefault();
-            _createOrEditLeaseHaulerRequestModal.open({ scheduleDate: $('#DateFilter').val() });
+            _createOrEditLeaseHaulerRequestModal.open({ scheduleDate: $('#DateFilter').val(), requestFromScheduler: true });
         });
 
         $('#MarkAllJobsCompletedButton').click(async function (e) {

@@ -30,9 +30,9 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_LeaseHaulerRequests_Edit)]
-        public async Task<PartialViewResult> CreateOrEditLeaseHaulerRequestModal(int? leaseHaulerRequestId, DateTime? scheduleDate)
+        public async Task<PartialViewResult> CreateOrEditLeaseHaulerRequestModal(int? leaseHaulerRequestId, DateTime? scheduleDate, bool? requestFromScheduler)
         {
-            var model = await _leaseHaulerRequestEdit.GetLeaseHaulerRequestEditDto(leaseHaulerRequestId, scheduleDate);
+            var model = await _leaseHaulerRequestEdit.GetLeaseHaulerRequestEditDto(leaseHaulerRequestId, scheduleDate, requestFromScheduler);
             return PartialView("_CreateOrEditLeaseHaulerRequestModal", model);
         }
 
