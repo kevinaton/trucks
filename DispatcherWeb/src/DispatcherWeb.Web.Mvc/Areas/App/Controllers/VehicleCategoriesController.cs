@@ -1,15 +1,11 @@
-﻿using Abp.AspNetCore.Mvc.Authorization;
+﻿using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
+using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Dto;
 using DispatcherWeb.VehicleCategories;
-using DispatcherWeb.VehicleCategories.Dto;
 using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.Web.Utils;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.Web.Mvc.Areas.App.Controllers
 {
@@ -30,7 +26,7 @@ namespace DispatcherWeb.Web.Mvc.Areas.App.Controllers
         }
 
         [Modal]
-        public async Task<PartialViewResult> CreateOrEditVehicleCategoryModal(GetVehicleCategoryForEditInput input)
+        public async Task<PartialViewResult> CreateOrEditVehicleCategoryModal(NullableIdDto input)
         {
             var model = await _vehicleCategoryAppService.GetVehicleCategoryForEdit(input);
             return PartialView("_CreateOrEditVehicleCategoryModal", model);

@@ -4,7 +4,7 @@ using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.VehicleCategories.Dto
 {
-    public class GetVehicleCategoriesInput : PagedAndSortedInputDto, IShouldNormalize, IGetVehicleCategoryFilteredList
+    public class GetVehicleCategoriesInput : PagedAndSortedInputDto, IShouldNormalize
     {
         public string Name { get; set; }
 
@@ -18,7 +18,7 @@ namespace DispatcherWeb.VehicleCategories.Dto
         {
             if (Sorting.IsNullOrEmpty())
             {
-                Sorting = "Name";
+                Sorting = nameof(SortOrder);
             }
         }
     }

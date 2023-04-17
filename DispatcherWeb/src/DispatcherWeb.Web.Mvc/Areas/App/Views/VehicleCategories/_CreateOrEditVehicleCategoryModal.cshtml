@@ -18,12 +18,8 @@
         <div class="row">
             <div class="col-xl-12 form-group">
                 <label class="required-label" for="AssetType">@L("AssetType")</label>
-                <select class="form-control" asp-for="AssetType" required>
+                <select class="form-control" asp-for="AssetType" required asp-items="Html.GetEnumSelectList<AssetType>()">
                     <option value="">Select an asset type</option>
-                    @if (Model.AssetType > 0)
-                    {
-                        <option selected value="@Model.AssetType">@Model.AssetType.ToString()</option>
-                    }
                 </select>
             </div>
         </div>
@@ -35,6 +31,12 @@
                     @L("IsPowered")
                     <span></span>
                 </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 form-group">
+                <label class="required-label" for="SortOrder">@L("SortOrder")</label>
+                <input class="form-control" type="number" step="1" asp-for="SortOrder" autocomplete="off" required>
             </div>
         </div>
     </form>

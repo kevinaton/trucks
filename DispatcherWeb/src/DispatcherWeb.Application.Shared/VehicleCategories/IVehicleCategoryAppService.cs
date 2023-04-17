@@ -9,9 +9,7 @@ namespace DispatcherWeb.VehicleCategories
     public interface IVehicleCategoryAppService : IApplicationService
     {
         Task<PagedResultDto<VehicleCategoryDto>> GetVehicleCategories(GetVehicleCategoriesInput input);
-        Task<PagedResultDto<SelectListDto>> GetVehicleCategoriesSelectList(GetSelectListInput input);
-        Task<ListResultDto<SelectListDto>> GetVehicleCategoriesByIdsSelectList(GetItemsByIdsInput input);
-        Task<VehicleCategoryEditDto> GetVehicleCategoryForEdit(GetVehicleCategoryForEditInput input);
+        Task<VehicleCategoryEditDto> GetVehicleCategoryForEdit(NullableIdDto input);
         Task<VehicleCategoryEditDto> EditVehicleCategory(VehicleCategoryEditDto model);
         Task<bool> CanDeleteVehicleCategory(EntityDto input);
         Task DeleteVehicleCategory(EntityDto input);

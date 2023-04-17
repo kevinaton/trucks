@@ -204,9 +204,6 @@
         public const string Pages_VehicleServiceTypes_Edit = "Pages.VehicleServiceTypes.Edit";
 
         public const string Pages_VehicleCategories = "Pages.VehicleCategories";
-        public const string Pages_VehicleCategories_Create = "Pages.VehicleCategories.Create";
-        public const string Pages_VehicleCategories_Edit = "Pages.VehicleCategories.Edit";
-        public const string Pages_VehicleCategories_Delete = "Pages.VehicleCategories.Delete";
 
         public const string Pages_HostEmails = "Pages.HostEmails";
         public const string Pages_HostEmails_Send = "Pages.HostEmails.Send";

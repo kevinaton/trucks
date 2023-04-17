@@ -25,7 +25,6 @@
   <ItemGroup>
     <Compile Remove="Enums.cs" />
     <Compile Remove="UnitsOfMeasure\UnitOfMeasure.cs" />
-    <Compile Remove="VehicleCategories\IVehicleCategoryRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Abp.HangFire.AspNetCore" Version="7.0.1" />

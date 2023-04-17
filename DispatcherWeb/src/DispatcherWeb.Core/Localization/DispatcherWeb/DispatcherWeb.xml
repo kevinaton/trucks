@@ -1786,9 +1786,7 @@
 		<text name="VehicleCategoriesHeaderInfo">Manage your vehicle categories</text>
 		<text name="AssetType">Asset Type</text>
 		<text name="IsPowered">Is Powered</text>
-		<text name="CreatingVehicleCategory">Creating vehicle category</text>
-		<text name="EditingVehicleCategory">Editing vehicle category</text>
-		<text name="DeletingVehicleCategory">Deleting vehicle category</text>		
+		<text name="SortOrder">Sort Order</text>
 		<text name="HostEmails">Host Emails</text>
 		<text name="SendHostEmails">Send host emails</text>
 		<text name="HostEmailsHeaderInfo">Manage your host emails</text>

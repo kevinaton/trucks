@@ -204,10 +204,7 @@ namespace DispatcherWeb.Authorization
             var hostEmails = pages.CreateChildPermission(AppPermissions.Pages_HostEmails, L("HostEmails"), multiTenancySides: MultiTenancySides.Host);
             hostEmails.CreateChildPermission(AppPermissions.Pages_HostEmails_Send, L("SendHostEmails"), multiTenancySides: MultiTenancySides.Host);
 
-            var vehicleCatagory = pages.CreateChildPermission(AppPermissions.Pages_VehicleCategories, L("VehicleCategories"), multiTenancySides: MultiTenancySides.Host);
-            vehicleCatagory.CreateChildPermission(AppPermissions.Pages_VehicleCategories_Create, L("CreatingVehicleCategory"), multiTenancySides: MultiTenancySides.Host);
-            vehicleCatagory.CreateChildPermission(AppPermissions.Pages_VehicleCategories_Edit, L("EditingVehicleCategory"), multiTenancySides: MultiTenancySides.Host);
-            vehicleCatagory.CreateChildPermission(AppPermissions.Pages_VehicleCategories_Delete, L("DeletingVehicleCategory"), multiTenancySides: MultiTenancySides.Host);
+            pages.CreateChildPermission(AppPermissions.Pages_VehicleCategories, L("VehicleCategories"), multiTenancySides: MultiTenancySides.Host);
 
             pages.CreateChildPermission(AppPermissions.Pages_DemoUiComponents, L("DemoUiComponents"), multiTenancySides: MultiTenancySides.Host);
         }

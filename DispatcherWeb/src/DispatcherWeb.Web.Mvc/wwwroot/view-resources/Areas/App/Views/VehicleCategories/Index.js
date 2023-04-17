@@ -12,24 +12,13 @@
         });
 
         $("#AssetTypeFilter").select2Init({
-            abpServiceMethod: _vehicleCategoryService.getAssetTypesSelectList,
             showAll: true,
             allowClear: true
         });
 
         $("#IsPoweredFilter").select2Init({
             showAll: true,
-            allowClear: true,
-            data: [
-                { id: 0, text: '- Neither -' },
-                { id: 1, text: 'Not Powered' },
-                { id: 2, text: 'Powered' }
-            ]
-        });
-
-        $("#IsPoweredFilter").on("select2:select", e => {
-            if (parseInt(e.params.data.id) === 0)
-                $("#IsPoweredFilter").val('').change();
+            allowClear: true
         });
 
         var vehicleCategoriesTable = $('#VehicleCategoriesTable');
@@ -39,11 +28,7 @@
             processing: true,
             ajax: function (data, callback, settings) {
                 var abpData = _dtHelper.toAbpData(data);
-                $.extend(abpData, _dtHelper.getFilterData());
-
-                var isPoweredOption = parseInt($("#IsPoweredFilter").val());
-                abpData.isPowered = isPoweredOption === 1 ? false : isPoweredOption === 2 ? true : null;
-                
+                $.extend(abpData, _dtHelper.getFilterData());                
                 _vehicleCategoryService.getVehicleCategories(abpData).done(function (abpResult) {
                     callback(_dtHelper.fromAbpResult(abpResult));
                     abp.helper.ui.initControls();
@@ -71,6 +56,10 @@
                     data: "isPowered",
                     title: "Is Powered",
                     render: (data, type, row) => _dtHelper.renderCheckbox(data)
+                },
+                {
+                    data: "sortOrder",
+                    title: "Sort Order"
                 },
                 {
                     data: null,

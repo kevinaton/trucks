@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
+using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.VehicleCategories
 {
     [Table("VehicleCategory")]
     public class VehicleCategory : Entity
     {
-        [StringLength(50)]
+        [StringLength(EntityStringFieldLengths.VehicleCategory.Name)]
         public string Name { get; set; }
 
         public AssetType AssetType { get; set; }
