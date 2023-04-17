@@ -189,6 +189,8 @@
 
             _$form.find("#AutoGenerateTicketNumber").change(updateTicketNumberVisibility);
 
+            _$form.find("#RequiresCustomerNotification").change(updateCustomerNotificationControlsVisibility);
+
             var quoteChildDropdown = abp.helper.ui.initChildDropdown({
                 parentDropdown: _customerDropdown,
                 childDropdown: _quoteDropdown,
@@ -537,6 +539,7 @@
             updateSaveButtonsVisibility();
             disableJobEditIfNeeded();
             disableTaxControls();
+            updateCustomerNotificationControlsVisibility();
         };
 
         this.focusOnDefaultElement = function () {
@@ -717,6 +720,11 @@
 
         function updateTicketNumberVisibility() {
             _$form.find("#TicketNumber").closest('.form-group').toggle(!_$form.find('#AutoGenerateTicketNumber').is(':checked'));
+        }
+
+        function updateCustomerNotificationControlsVisibility() {
+            _$form.find("#CustomerNotificationContactName").closest('.form-group').toggle(_$form.find('#RequiresCustomerNotification').is(':checked'));
+            _$form.find("#CustomerNotificationPhoneNumber").closest('.form-group').toggle(_$form.find('#RequiresCustomerNotification').is(':checked'));
         }
 
         function updateSaveButtonsVisibility() {
@@ -1148,6 +1156,20 @@
                 return;
             }
 
+            if (model.RequiresCustomerNotification && (model.CustomerNotificationContactName === "" || model.CustomerNotificationPhoneNumber === "")) {
+                abp.message.error('Please check the following: \n'
+                    + (model.CustomerNotificationContactName ? '' : '"Contact Name" - This field is required.\n')
+                    + (model.CustomerNotificationPhoneNumber ? '' : '"Phone Number" - This field is required.\n'), 'Some of the data is invalid');
+                return;
+            }
+
+            if (model.CustomerNotificationPhoneNumber) {
+                if (!_$form.find("#CustomerNotificationPhoneNumber")[0].checkValidity()) {
+                    abp.message.error(app.localize('IncorrectPhoneNumberFormatError'));
+                    return;
+                }
+            }
+
             if (!validateFields(model)) {
                 return;
             }
@@ -1211,6 +1233,9 @@
             _model.ticketNumber = model.TicketNumber;
             _model.fuelSurchargeCalculationId = model.FuelSurchargeCalculationId;
             _model.baseFuelCost = model.BaseFuelCost;
+            _model.requiresCustomerNotification = !!model.RequiresCustomerNotification;
+            _model.customerNotificationContactName = model.CustomerNotificationContactName;
+            _model.customerNotificationPhoneNumber = model.CustomerNotificationPhoneNumber;
 
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
             let freightQuantity = model.FreightQuantity === "" ? null : abp.utils.round(parseFloat(model.FreightQuantity));

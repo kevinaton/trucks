@@ -178,6 +178,8 @@
                 updateProductionPay();
             }).change();
 
+            _$form.find("#RequiresCustomerNotification").change(updateCustomerNotificationControlsVisibility);
+
             _modalManager.on('app.createOrEditServiceModalSaved', function (e) {
                 abp.helper.ui.addAndSetDropdownValue(_serviceDropdown, e.item.Id, e.item.Service1);
                 _$form.find("#IsTaxable").val(e.item.isTaxable ? "True" : "False");
@@ -246,6 +248,7 @@
             initOverrideButtons();
             disableProductionPayIfNeeded(false);
             disableQuoteRelatedFieldsIfNeeded();
+            updateCustomerNotificationControlsVisibility();
         };
 
         function disableQuoteRelatedFieldsIfNeeded() {
@@ -262,6 +265,11 @@
                     //.add(_materialQuantityInput)
                     .prop('disabled', true);
             }
+        }
+
+        function updateCustomerNotificationControlsVisibility() {
+            _$form.find("#CustomerNotificationContactName").closest('.form-group').toggle(_$form.find('#RequiresCustomerNotification').is(':checked'));
+            _$form.find("#CustomerNotificationPhoneNumber").closest('.form-group').toggle(_$form.find('#RequiresCustomerNotification').is(':checked'));
         }
 
         function initOverrideButtons() {
@@ -639,6 +647,20 @@
                 return;
             }
 
+            if (orderLine.RequiresCustomerNotification && (orderLine.CustomerNotificationContactName === "" || orderLine.CustomerNotificationPhoneNumber === "")) {
+                abp.message.error('Please check the following: \n'
+                    + (orderLine.CustomerNotificationContactName ? '' : '"Contact Name" - This field is required.\n')
+                    + (orderLine.CustomerNotificationPhoneNumber ? '' : '"Phone Number" - This field is required.\n'), 'Some of the data is invalid');
+                return;
+            }
+
+            if (orderLine.CustomerNotificationPhoneNumber) {
+                if (!_$form.find("#CustomerNotificationPhoneNumber")[0].checkValidity()) {
+                    abp.message.error(app.localize('IncorrectPhoneNumberFormatError'));
+                    return;
+                }
+            }
+
             if (!validateFields(orderLine)) {
                 return;
             }
@@ -684,6 +706,9 @@
             _orderLine.timeOnJob = orderLine.TimeOnJob;
             _orderLine.jobNumber = orderLine.JobNumber;
             _orderLine.note = orderLine.Note;
+            _orderLine.requiresCustomerNotification = !!orderLine.RequiresCustomerNotification;
+            _orderLine.customerNotificationContactName = orderLine.CustomerNotificationContactName;
+            _orderLine.customerNotificationPhoneNumber = orderLine.CustomerNotificationPhoneNumber;
 
             if (this.saveCallback) {
                 this.saveCallback(_orderLine);

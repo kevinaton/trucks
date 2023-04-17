@@ -124,6 +124,8 @@
             public const int JobNumber = 20;
             public const int Note = 1000;
             public const int DriverNote = 500;
+            public const int CustomerNotificationContactName = 100;
+            public const int CustomerNotificationPhoneNumber = General.PhoneNumber;
         }
 
         public static class OrderLineTruck

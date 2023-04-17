@@ -272,6 +272,25 @@
                     <textarea class="form-control order-line-field" rows="5" asp-for="Note"></textarea>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-6 form-group mt-2 mb-1">
+                    <label asp-for="RequiresCustomerNotification" class="m-checkbox">
+                        <input type="checkbox" class="order-line-field" id="RequiresCustomerNotification" name="RequiresCustomerNotification" value="true" checked="@(Model.RequiresCustomerNotification ? "checked" : null)">
+                        @L("RequiresNotification")
+                        <span></span>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 form-group" style="display: none">
+                    <label asp-for="CustomerNotificationContactName" class="required-label">@L("ContactName")</label>
+                    <input class="form-control" type="text" asp-for="CustomerNotificationContactName" maxlength="@DispatcherWeb.Infrastructure.EntityStringFieldLengths.OrderLine.CustomerNotificationContactName">
+                </div>
+                <div class="col-6 form-group" style="display: none">
+                    <label asp-for="CustomerNotificationPhoneNumber" class="required-label">@L("PhoneNumber")</label>
+                    <input class="form-control" type="text" asp-for="CustomerNotificationPhoneNumber" pattern="\+1\d{10}" placeholder="+1##########" maxlength="@DispatcherWeb.Infrastructure.EntityStringFieldLengths.OrderLine.CustomerNotificationPhoneNumber">
+                </div>
+            </div>
             <div class="row" @Html.StyleDisplayNone(!await SettingManager.GetSettingValueAsync<bool>(AppSettings.Fuel.ShowFuelSurcharge))>
                 <div class="col-6 form-group">
                     <label for="FuelSurchargeCalculation">@L("FuelSurchargeCalculation"):</label>

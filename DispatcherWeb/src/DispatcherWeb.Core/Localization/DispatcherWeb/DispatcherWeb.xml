@@ -470,7 +470,7 @@
 		<text name="VerifySecurityCode_Information">Please enter the verification code sent to you.</text>
 		<text name="RememberThisBrowser">Remember this browser</text>
 		<text name="InvalidSecurityCode">Invalid security code!</text>
-		<text name="PhoneNumber">Phone number</text>
+		<text name="PhoneNumber">Phone Number</text>
 		<text name="Unlock">Unlock</text>
 		<text name="UnlockedTheUser">Unlocked the user {0}</text>
 		<text name="UserLockOut">User Lock Out</text>
@@ -1801,5 +1801,8 @@
 		<text name="DeliveryReport">Delivery Report</text>
 		<text name="TicketNumberIsRequired">Ticket Number is required</text>
 		<text name="InvoiceNumber">Invoice Number</text>
+		<text name="RequiresNotification">Requires Notification</text>
+		<text name="ContactName">Contact Name</text>
+		<text name="IncorrectPhoneNumberFormatError">Phone Number should be in the format of +1##########</text>
 	</texts>
 </localizationDictionary>

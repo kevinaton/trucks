@@ -106,5 +106,12 @@ namespace DispatcherWeb.Orders.Dto
         public int? StaggeredTimeInterval { get; set; }
         public bool UpdateStaggeredTime { get; set; }
         public int? QuoteServiceId { get; set; }
+        public bool RequiresCustomerNotification { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationContactName)]
+        public string CustomerNotificationContactName { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationPhoneNumber)]
+        public string CustomerNotificationPhoneNumber { get; set; }
     }
 }
