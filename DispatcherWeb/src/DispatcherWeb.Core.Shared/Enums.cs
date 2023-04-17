@@ -598,7 +598,9 @@ namespace DispatcherWeb
         [Display(Name = "Missing Tickets Only")]
         MissingTicketsOnly = 1,
         [Display(Name = "Entered Tickets Only")]
-        EnteredTicketsOnly = 2
+        EnteredTicketsOnly = 2,
+        [Display(Name = "Potential Duplicate Tickets")]
+        PotentialDuplicateTickets = 3
     }
 
     public enum SendSmsOnDispatchingEnum
