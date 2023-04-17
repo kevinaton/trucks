@@ -91,6 +91,7 @@ namespace DispatcherWeb.Orders
             {
                 case nameof(orderLine.IsFreightPricePerUnitOverridden):
                 case nameof(orderLine.FreightPricePerUnit):
+                case nameof(orderLine.FreightRateToPayDrivers):
                 case nameof(orderLine.IsFreightPriceOverridden):
                 case nameof(orderLine.FreightPrice):
                 case nameof(orderLine.IsMaterialPricePerUnitOverridden):
@@ -110,6 +111,7 @@ namespace DispatcherWeb.Orders
                 case nameof(orderLine.MaterialPrice):
                 case nameof(orderLine.FreightPrice):
                 case nameof(orderLine.FreightPricePerUnit):
+                case nameof(orderLine.FreightRateToPayDrivers):
                 case nameof(orderLine.MaterialPricePerUnit):
                     if (await HasTicketsWithStatementsAsync())
                     {
