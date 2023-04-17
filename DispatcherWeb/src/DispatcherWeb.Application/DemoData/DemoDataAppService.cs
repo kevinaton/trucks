@@ -12,6 +12,7 @@ using DispatcherWeb.Drivers;
 using DispatcherWeb.Offices;
 using DispatcherWeb.TimeClassifications;
 using DispatcherWeb.Trucks;
+using DispatcherWeb.VehicleCategories;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.DemoData

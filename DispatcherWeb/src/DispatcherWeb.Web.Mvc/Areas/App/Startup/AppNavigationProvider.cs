@@ -44,6 +44,14 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Editions)
                     )
                 ).AddItem(new MenuItemDefinition(
+                        AppPageNames.Host.VehicleCategories,
+                        L("VehicleCategories"),
+                        customData: new MenuItemCustomData { Id = "VehicleCategoriesNavbarItem" },
+                        url: "App/VehicleCategories",
+                        icon: "flaticon-truck",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_VehicleCategories)
+                    )
+                ).AddItem(new MenuItemDefinition(
                         AppPageNames.Host.HostEmails,
                         L("HostEmails"),
                         customData: new MenuItemCustomData { Id = "HostEmailsNavbarItem" },

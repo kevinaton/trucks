@@ -211,5 +211,10 @@
         {
             public const int TicketNumber = 20;
         }
+
+        public static class VehicleCategory
+        {
+            public const int Name = 50;
+        }
     }
 }

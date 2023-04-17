@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DispatcherWeb.Dto;
@@ -25,5 +26,10 @@ namespace DispatcherWeb.Infrastructure.Extensions
                 Text = x.Name
             }).ToList();
         }
+
+        public static async Task<List<SelectListDto>> GetEnumItemsSelectList<TEnum>() where TEnum : Enum =>
+            await Task.FromResult(Enum.GetValues(typeof(TEnum))
+                            .Cast<TEnum>()
+                            .Select(e => new SelectListDto { Id = e.ToString(), Name = Enum.GetName(typeof(TEnum), e) }).ToList());
     }
 }

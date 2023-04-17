@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 
-namespace DispatcherWeb.Trucks
+namespace DispatcherWeb.VehicleCategories
 {
     [Table("VehicleCategory")]
     public class VehicleCategory : Entity

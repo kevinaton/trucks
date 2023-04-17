@@ -34,6 +34,7 @@ using DispatcherWeb.SyncRequests;
 using DispatcherWeb.TimeOffs;
 using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.Trucks.Exporting;
+using DispatcherWeb.VehicleCategories;
 using DispatcherWeb.VehicleMaintenance;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
