@@ -32,6 +32,7 @@ using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Services;
 using DispatcherWeb.Tests.TestDatas;
 using DispatcherWeb.Trucks;
+using DispatcherWeb.VehicleCategories;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 

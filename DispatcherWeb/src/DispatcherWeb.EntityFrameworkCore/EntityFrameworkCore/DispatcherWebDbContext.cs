@@ -42,6 +42,7 @@ using DispatcherWeb.TruckPositions;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trux;
 using DispatcherWeb.UnitsOfMeasure;
+using DispatcherWeb.VehicleCategories;
 using DispatcherWeb.VehicleMaintenance;
 using DispatcherWeb.WebPush;
 using Microsoft.EntityFrameworkCore;

@@ -1782,6 +1782,11 @@
 		<text name="AddJob">Add Job</text>
 		<text name="EditJob">Edit Job</text>
 		<text name="SubContractorRate">Sub-contractor Rate</text>
+		<text name="VehicleCategories">Vehicle Categories</text>
+		<text name="VehicleCategoriesHeaderInfo">Manage your vehicle categories</text>
+		<text name="AssetType">Asset Type</text>
+		<text name="IsPowered">Is Powered</text>
+		<text name="SortOrder">Sort Order</text>
 		<text name="HostEmails">Host Emails</text>
 		<text name="SendHostEmails">Send host emails</text>
 		<text name="HostEmailsHeaderInfo">Manage your host emails</text>

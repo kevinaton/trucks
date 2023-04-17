@@ -11,6 +11,7 @@ using DispatcherWeb.LeaseHaulerRequests;
 using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
+using DispatcherWeb.VehicleCategories;
 using DispatcherWeb.VehicleMaintenance;
 
 namespace DispatcherWeb.Trucks

@@ -30,6 +30,7 @@ using DispatcherWeb.Infrastructure.Utilities;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Trucks.Dto;
+using DispatcherWeb.VehicleCategories;
 using Microsoft.EntityFrameworkCore;
 using NUglify.Helpers;
 using TruckPosition = DispatcherWeb.TruckPositions.TruckPosition;
