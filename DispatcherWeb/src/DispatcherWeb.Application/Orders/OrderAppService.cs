@@ -443,7 +443,7 @@ namespace DispatcherWeb.Orders
                 editOrderLineModel.ProductionPay = model.ProductionPay;
                 editOrderLineModel.Note = model.Note;
                 editOrderLineModel.QuoteServiceId = model.QuoteServiceId;
-                
+
                 var orderLine = await EditOrderLine(editOrderLineModel);
                 await CurrentUnitOfWork.SaveChangesAsync();
 
@@ -2020,7 +2020,7 @@ namespace DispatcherWeb.Orders
             {
                 var canOverrideTotals = await _orderLineRepository.CanOverrideTotals(input.Id.Value, OfficeId);
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
-                
+
                 orderLineEditDto = await _orderLineRepository.GetAll()
                     .Select(x => new OrderLineEditDto
                     {

@@ -7,7 +7,6 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
-using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.IO;
 using Abp.Linq.Extensions;

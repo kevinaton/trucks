@@ -155,7 +155,6 @@ namespace DispatcherWeb.PayStatements
                     DriverId = x.DriverId.Value,
                     UserId = x.Driver.UserId,
                     Quantity = x.Quantity,
-                    FreightPricePerUnit = x.OrderLine.FreightPricePerUnit,
                     FreightRateToPayDrivers = x.OrderLine.FreightRateToPayDrivers
                 }).ToListAsync();
 
@@ -331,12 +330,9 @@ namespace DispatcherWeb.PayStatements
                             TimeClassificationId = productionPay.TimeClassificationId,
                             TicketId = ticket.TicketId,
                             Quantity = ticket.Quantity,
-                            FreightRate = ticket.FreightPricePerUnit ?? 0,
                             FreightRateToPayDrivers = ticket.FreightRateToPayDrivers ?? 0,
                             DriverPayRate = productionPay.PayRate,
                         };
-                        
-                        //payStatementTicket.Total = Math.Round(payStatementTicket.Quantity * payStatementTicket.FreightRate * payStatementTicket.DriverPayRate / 100, 2);
                         payStatementTicket.Total = Math.Round(payStatementTicket.Quantity * payStatementTicket.FreightRateToPayDrivers * payStatementTicket.DriverPayRate / 100, 2);
                         payStatementDetail.PayStatementTickets.Add(payStatementTicket);
                         payStatementDetail.ProductionBasedTotal += payStatementTicket.Total;
@@ -606,7 +602,6 @@ namespace DispatcherWeb.PayStatements
                         City = t.Ticket.OrderLine.LoadAt.City,
                         State = t.Ticket.OrderLine.LoadAt.State
                     },
-                    FreightRate = t.FreightRate,
                     FreightRateToPayDrivers = t.Ticket.OrderLine.FreightRateToPayDrivers,
                     Item = t.Ticket.OrderLine.Service.Service1,
                     JobNumber = t.Ticket.OrderLine.JobNumber,
@@ -666,7 +661,6 @@ namespace DispatcherWeb.PayStatements
                 }
                 var oldTotal = item.Total;
                 item.Total = timeClassification.IsProductionBased
-                    //? Math.Round(item.Quantity * item.DriverPayRate * item.FreightRate / 100, 2)
                     ? Math.Round(item.Quantity * item.DriverPayRate * (item.Ticket.OrderLine.FreightRateToPayDrivers ?? 0) / 100, 2)
                     : Math.Round(item.Quantity * item.DriverPayRate, 2);
                 var newTotal = item.Total;
@@ -755,7 +749,6 @@ namespace DispatcherWeb.PayStatements
                                 City = t.Ticket.OrderLine.LoadAt.City,
                                 State = t.Ticket.OrderLine.LoadAt.State
                             },
-                            FreightRate = t.FreightRate,
                             FreightRateToPayDrivers = t.Ticket.OrderLine.FreightRateToPayDrivers ?? 0,
                             DriverPayRate = t.DriverPayRate,
                             TimeClassificationId = t.TimeClassificationId,

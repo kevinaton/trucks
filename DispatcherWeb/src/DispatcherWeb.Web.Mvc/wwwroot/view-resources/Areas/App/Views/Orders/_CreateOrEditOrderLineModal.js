@@ -37,7 +37,7 @@
         var _unlockFreightPriceButton = null;
         var _wasProductionPay = null;
 
-        var _ratesInitialState = {};
+        var _ratesLastValue = {};
 
         var _addLocationTarget = null;
 
@@ -124,9 +124,8 @@
             _freightPricePerUnitInput = _$form.find("#FreightPricePerUnit");
             _freightRateToPayDriversInput = _$form.find("#FreightRateToPayDrivers");
 
-            _ratesInitialState = {
-                freightPricePerUnit: Number(_freightPricePerUnitInput.val()) || 0,
-                freightRateToPayDrivers: Number(_freightRateToPayDriversInput.val()) || 0
+            _ratesLastValue = {
+                freightPricePerUnit: Number(_freightPricePerUnitInput.val()) || 0
             };
 
             _materialPriceInput = _$form.find("#MaterialPrice"); //total for item
@@ -242,23 +241,21 @@
                 recalculate($(this));
             });
             _freightPricePerUnitInput.change(function () {
-
                 /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
                 property should be updated to the same value as the “Freight Rate”.  
                 When the “Freight Rate” is changed and the driver pay rate was the same as the prior “Freight Rate”, 
                 the “Freight Rate to Pay Drivers” should be changed to be the same as the “Freight Rate”. 
                 */
-                var freightPricePerUnit = Number(_freightPricePerUnitInput.val()) || 0;
+                var newFreightPricePerUnit = Number(_freightPricePerUnitInput.val()) || 0;
                 var freightRateToPayDrivers = Number(_freightRateToPayDriversInput.val()) || 0;
 
-                if (_freightRateToPayDriversInput.css("display") == "none" || _freightRateToPayDriversInput.css("visibility") == "hidden" ||
-                    _ratesInitialState.freightPricePerUnit !== freightPricePerUnit &&
-                    _ratesInitialState.freightPricePerUnit === freightRateToPayDrivers) {
-
-                    _freightRateToPayDriversInput.val(freightPricePerUnit);
-                    _ratesInitialState.freightPricePerUnit = Number(_freightPricePerUnitInput.val()) || 0;
-                    _ratesInitialState.freightRateToPayDrivers = Number(_freightRateToPayDriversInput.val()) || 0;
+                if (_freightRateToPayDriversInput.css("display") == "none"
+                    || _freightRateToPayDriversInput.css("visibility") == "hidden"
+                    || _ratesLastValue.freightPricePerUnit !== newFreightPricePerUnit && _ratesLastValue.freightPricePerUnit === freightRateToPayDrivers
+                ) {
+                    _freightRateToPayDriversInput.val(newFreightPricePerUnit);
                 }
+                _ratesLastValue.freightPricePerUnit = newFreightPricePerUnit;
 
                 recalculate($(this));
             });
@@ -528,11 +525,9 @@
         }
 
         function recalculate(sender) {
-
             if (_initializing || _recalculating) {
                 return;
             }
-
             _recalculating = true;
 
             var freightRatePricing =
@@ -703,6 +698,7 @@
             _orderLine.freightUomName = Number(orderLine.FreightUomId) ? _$form.find("#FreightUomId option:selected").text() : null;
             _orderLine.materialPricePerUnit = Number(orderLine.MaterialPricePerUnit) || 0;
             _orderLine.freightPricePerUnit = Number(orderLine.FreightPricePerUnit) || 0;
+            _orderLine.freightRateToPayDrivers = Number(orderLine.FreightRateToPayDrivers) || 0;
             _orderLine.leaseHaulerRate = Number(orderLine.LeaseHaulerRate) || 0;
             _orderLine.materialQuantity = Number(orderLine.MaterialQuantity) || 0;
             _orderLine.freightQuantity = Number(orderLine.FreightQuantity) || 0;
@@ -714,7 +710,6 @@
             _orderLine.timeOnJob = orderLine.TimeOnJob;
             _orderLine.jobNumber = orderLine.JobNumber;
             _orderLine.note = orderLine.Note;
-            _orderLine.freightRateToPayDrivers = Number(orderLine.FreightRateToPayDrivers) ?? 0;
 
 
             if (this.saveCallback) {
@@ -811,6 +806,7 @@
             abp.helper.ui.addAndSetDropdownValue(_$form.find("#FreightUomId"), _orderLine.freightUomId, _orderLine.freightUomName);
             _$form.find("#MaterialPricePerUnit").val(_orderLine.materialPricePerUnit);
             _$form.find("#FreightPricePerUnit").val(_orderLine.freightPricePerUnit);
+            _ratesLastValue.freightPricePerUnit = Number(_orderLine.freightPricePerUnit) || 0;
             _$form.find("#LeaseHaulerRate").val(_orderLine.leaseHaulerRate);
             _$form.find("#MaterialQuantity").val(_orderLine.materialQuantity);
             _$form.find("#FreightQuantity").val(_orderLine.freightQuantity);
@@ -823,9 +819,6 @@
             _$form.find("#JobNumber").val(_orderLine.jobNumber);
             _$form.find("#Note").val(_orderLine.note);
             _$form.find("#FreightRateToPayDrivers").val(_orderLine.freightRateToPayDrivers);
-
-            _ratesInitialState.freightPricePerUnit = Number(_orderLine.freightPricePerUnit) || 0;
-            _ratesInitialState.freightRateToPayDrivers = Number(_orderLine.freightRateToPayDrivers) || 0;
 
             _quoteId = _$form.find("#QuoteId").val();
             _quoteServiceId = _$form.find("#QuoteServiceId").val();

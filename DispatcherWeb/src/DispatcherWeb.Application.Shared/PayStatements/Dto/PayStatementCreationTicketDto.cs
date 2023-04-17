@@ -9,7 +9,6 @@ namespace DispatcherWeb.PayStatements.Dto
         public int DriverId { get; set; }
         public long? UserId { get; set; }
         public decimal Quantity { get; set; }
-        public decimal? FreightPricePerUnit { get; set; }
         public decimal? FreightRateToPayDrivers { get; set; }
         public DateTime TicketCreationTime { get; set; }
     }

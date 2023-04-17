@@ -164,7 +164,6 @@ namespace DispatcherWeb.Orders.Reports
                     IsProductionPay = t.IsProductionPay,
                     DeliverTo = t.DeliverTo,
                     CustomerName = t.CustomerName,
-                    FreightRate = t.FreightRate,
                     FreightRateToPayDrivers = t.FreightRateToPayDrivers,
                     Item = t.Item,
                     JobNumber = t.JobNumber,
@@ -274,7 +273,6 @@ namespace DispatcherWeb.Orders.Reports
                         {
                             cell = row.Cells[i++];
                             var freightRate = item.ItemKind == PayStatementItemKind.Ticket
-                                //? item.FreightRate.ToString("C2", model.CurrencyCulture)
                                 ? (item.FreightRateToPayDrivers ?? 0).ToString("C2", model.CurrencyCulture)
                                 : "";
                             paragraph = cell.AddParagraph(freightRate ?? "", tm);
@@ -307,7 +305,6 @@ namespace DispatcherWeb.Orders.Reports
                     paragraph.Format.Alignment = ParagraphAlignment.Right;
 
                     cell = row.Cells[4 + (allowProductionPay ? 6 : 0)];
-                    //paragraph = cell.AddParagraph(driverModel.Tickets.Sum(t => t.FreightRate * t.Quantity).ToString("C2", model.CurrencyCulture) ?? "", tm);
                     paragraph = cell.AddParagraph(driverModel.Tickets.Sum(t => t.FreightRateToPayDrivers * t.Quantity).ToString("C2", model.CurrencyCulture) ?? "", tm);
                     paragraph.Format.Alignment = ParagraphAlignment.Right;
                     paragraph.Format.Font.Bold = true;
@@ -331,6 +328,8 @@ namespace DispatcherWeb.Orders.Reports
                 //{
                 //    paragraph = document.LastSection.AddParagraph($"Salary: {driverModel.PayRate.ToString("C2", model.CurrencyCulture)}");
                 //}
+
+
 
                 if (input.SplitByDriver)
                 {

@@ -171,7 +171,7 @@
             <div class="row">
                 <div class="col-6 form-group" @Html.StyleDisplayNone(!await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate))>
                     <label>@L("FreightRateToPayDrivers")</label>
-                    <input class="form-control" type="text" asp-for="FreightRateToPayDrivers" disabled="@(Model.CanOverrideTotals && Model.IsMaterialPriceOverridden ? null : "disabled")" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
+                    <input class="form-control" type="text" asp-for="FreightRateToPayDrivers" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
                 </div>
             </div>
             <div class="row">
