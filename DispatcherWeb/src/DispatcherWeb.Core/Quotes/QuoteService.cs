@@ -38,6 +38,7 @@ namespace DispatcherWeb.Quotes
         public decimal? FreightRate { get; set; }
 
         public decimal? LeaseHaulerRate { get; set; }
+
         public decimal? FreightRateToPayDrivers { get; set; }
 
         public decimal? MaterialQuantity { get; set; }

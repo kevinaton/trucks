@@ -711,7 +711,6 @@
             _orderLine.jobNumber = orderLine.JobNumber;
             _orderLine.note = orderLine.Note;
 
-
             if (this.saveCallback) {
                 this.saveCallback(_orderLine);
             }
@@ -807,6 +806,7 @@
             _$form.find("#MaterialPricePerUnit").val(_orderLine.materialPricePerUnit);
             _$form.find("#FreightPricePerUnit").val(_orderLine.freightPricePerUnit);
             _ratesLastValue.freightPricePerUnit = Number(_orderLine.freightPricePerUnit) || 0;
+            _$form.find("#FreightRateToPayDrivers").val(_orderLine.freightRateToPayDrivers);
             _$form.find("#LeaseHaulerRate").val(_orderLine.leaseHaulerRate);
             _$form.find("#MaterialQuantity").val(_orderLine.materialQuantity);
             _$form.find("#FreightQuantity").val(_orderLine.freightQuantity);
@@ -818,7 +818,6 @@
             _$form.find("#TimeOnJob").val(_orderLine.timeOnJob);
             _$form.find("#JobNumber").val(_orderLine.jobNumber);
             _$form.find("#Note").val(_orderLine.note);
-            _$form.find("#FreightRateToPayDrivers").val(_orderLine.freightRateToPayDrivers);
 
             _quoteId = _$form.find("#QuoteId").val();
             _quoteServiceId = _$form.find("#QuoteServiceId").val();

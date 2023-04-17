@@ -80,6 +80,7 @@ namespace DispatcherWeb.Orders
         public decimal FreightPrice { get; set; }
 
         public decimal? LeaseHaulerRate { get; set; }
+
         public decimal? FreightRateToPayDrivers { get; set; }
 
         [Column(TypeName = "money")]

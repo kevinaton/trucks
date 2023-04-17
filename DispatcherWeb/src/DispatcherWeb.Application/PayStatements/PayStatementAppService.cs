@@ -330,10 +330,10 @@ namespace DispatcherWeb.PayStatements
                             TimeClassificationId = productionPay.TimeClassificationId,
                             TicketId = ticket.TicketId,
                             Quantity = ticket.Quantity,
-                            FreightRateToPayDrivers = ticket.FreightRateToPayDrivers ?? 0,
+                            FreightRate = ticket.FreightRateToPayDrivers ?? 0,
                             DriverPayRate = productionPay.PayRate,
                         };
-                        payStatementTicket.Total = Math.Round(payStatementTicket.Quantity * payStatementTicket.FreightRateToPayDrivers * payStatementTicket.DriverPayRate / 100, 2);
+                        payStatementTicket.Total = Math.Round(payStatementTicket.Quantity * payStatementTicket.FreightRate * payStatementTicket.DriverPayRate / 100, 2);
                         payStatementDetail.PayStatementTickets.Add(payStatementTicket);
                         payStatementDetail.ProductionBasedTotal += payStatementTicket.Total;
                         _payStatementTicketRepository.Insert(payStatementTicket);

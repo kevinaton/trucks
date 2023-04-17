@@ -15,7 +15,7 @@ namespace DispatcherWeb.PayStatements
         public int TicketId { get; set; }
         public virtual Ticket Ticket { get; set; }
         public decimal Quantity { get; set; }
-        public decimal FreightRateToPayDrivers { get; set; }
+        public decimal FreightRate { get; set; }
         public decimal Total { get; set; }
         public int TimeClassificationId { get; set; }
         public virtual TimeClassification TimeClassification { get; set; }
