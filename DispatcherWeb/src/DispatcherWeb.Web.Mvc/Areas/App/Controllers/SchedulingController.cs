@@ -154,12 +154,6 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         }
 
         [Modal]
-        public PartialViewResult LeaseHaulerSelectionModal(LeaseHaulerSelectionDto input)
-        {
-            return PartialView("_LeaseHaulerSelectionModal", input);
-        }
-
-        [Modal]
         public async Task<PartialViewResult> ActivateClosedTrucksModal(int orderLineId)
         {
             var trucks = await _schedulingAppService.GetClosedTrucksSelectList(orderLineId);

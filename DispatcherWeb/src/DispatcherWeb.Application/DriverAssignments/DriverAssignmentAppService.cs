@@ -19,6 +19,7 @@ using DispatcherWeb.DriverAssignments.Dto;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.RepositoryExtensions;
+using DispatcherWeb.LeaseHaulerRequests;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.SyncRequests;
@@ -40,6 +41,7 @@ namespace DispatcherWeb.DriverAssignments
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<TimeOff> _timeOffRepository;
+        private readonly IRepository<AvailableLeaseHaulerTruck> _availableLeaseHaulerTruckRepository;
         private readonly IOrderLineUpdaterFactory _orderLineUpdaterFactory;
         private readonly IDriverApplicationPushSender _driverApplicationPushSender;
         private readonly IDriverApplicationLogger _driverApplicationLogger;
@@ -54,6 +56,7 @@ namespace DispatcherWeb.DriverAssignments
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<TimeOff> timeOffRepository,
+            IRepository<AvailableLeaseHaulerTruck> availableLeaseHaulerTruckRepository,
             IOrderLineUpdaterFactory orderLineUpdaterFactory,
             IDriverApplicationPushSender driverApplicationPushSender,
             IDriverApplicationLogger driverApplicationLogger,
@@ -71,6 +74,7 @@ namespace DispatcherWeb.DriverAssignments
             _driverApplicationLogger = driverApplicationLogger;
             _syncRequestSender = syncRequestSender;
             _timeOffRepository = timeOffRepository;
+            _availableLeaseHaulerTruckRepository = availableLeaseHaulerTruckRepository;
             _orderLineUpdaterFactory = orderLineUpdaterFactory;
         }
 
@@ -527,19 +531,36 @@ namespace DispatcherWeb.DriverAssignments
 
             if (input.ReplaceExistingDriver)
             {
-                driverAssignment = await _driverAssignmentRepository.GetAll(orderDetails.DeliveryDate.Value, orderDetails.Shift, orderDetails.OfficeId)
-                    .Where(x => x.TruckId == orderLineTruck.TruckId && x.DriverId == orderLineTruck.DriverId)
-                    .OrderByDescending(x => x.Id)
-                    .FirstOrDefaultAsync();
-
-                if (driverAssignment != null)
+                if (orderDetails.IsExternalTruck)
                 {
-                    oldDriverId = driverAssignment.DriverId;
-                    driverAssignment.DriverId = input.DriverId;
+                    var availableLeaseHaulerTrucks = await _availableLeaseHaulerTruckRepository.GetAll()
+                        .Where(x => x.Date == orderDetails.DeliveryDate.Value
+                            && x.OfficeId == orderDetails.OfficeId
+                            && x.Shift == orderDetails.Shift
+                            && x.TruckId == orderLineTruck.TruckId)
+                        .ToListAsync();
+
+                    foreach (var availableLeaseHaulerTruck in availableLeaseHaulerTrucks)
+                    {
+                        availableLeaseHaulerTruck.DriverId = input.DriverId;
+                    }
                 }
                 else
                 {
-                    //handled below
+                    driverAssignment = await _driverAssignmentRepository.GetAll(orderDetails.DeliveryDate.Value, orderDetails.Shift, orderDetails.OfficeId)
+                        .Where(x => x.TruckId == orderLineTruck.TruckId && x.DriverId == orderLineTruck.DriverId)
+                        .OrderByDescending(x => x.Id)
+                        .FirstOrDefaultAsync();
+
+                    if (driverAssignment != null)
+                    {
+                        oldDriverId = driverAssignment.DriverId;
+                        driverAssignment.DriverId = input.DriverId;
+                    }
+                    else
+                    {
+                        //handled below
+                    }
                 }
             }
             else

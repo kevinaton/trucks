@@ -181,13 +181,6 @@
             modalSize: 'lg'
         });
 
-        var _leaseHaulerSelectionModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Scheduling/LeaseHaulerSelectionModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_LeaseHaulerSelectionModal.js',
-            modalClass: 'LeaseHaulerSelectionModal',
-            modalSize: 'lg'
-        });
-
         var _printOrderWithDeliveryInfoModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Orders/PrintOrderWithDeliveryInfoModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_PrintOrderWithDeliveryInfoModal.js',
@@ -443,6 +436,7 @@
                     textForLookup: truck.truckCode,
                     officeId: truck.officeId,
                     isExternal: truck.isExternal,
+                    leaseHaulerId: truck.leaseHaulerId,
                     sharedOfficeId: truck.sharedFromOfficeId,
                     vehicleCategory: {
                         id: truck.vehicleCategory.id,
@@ -486,6 +480,7 @@
                             textForLookup: driverNameWithTruck,
                             officeId: truck.officeId,
                             isExternal: truck.isExternal,
+                            leaseHaulerId: truck.leaseHaulerId,
                             sharedOfficeId: truck.sharedFromOfficeId,
                             vehicleCategory: {
                                 id: truck.vehicleCategory.id,
@@ -783,15 +778,6 @@
             };
         }
 
-        function refreshLeaseHaulerButtonVisibility() {
-            //var date = moment($('#DateFilter').val(), 'MM/DD/YYYY');
-            //if (isLeaseHaulerEnabled && date >= moment().startOf('day')) {
-            //    $('#AddLeaseHaulersButton').show();
-            //} else {
-            //    $('#AddLeaseHaulersButton').hide();
-            //}
-        }
-
         function refreshDateRelatedButtonsVisibility() {
             refreshDriverAssignmentButtonVisibility();
             refreshSendOrdersToDriversButtonVisibility();
@@ -822,7 +808,6 @@
                 reloadTruckTiles();
                 reloadDriverAssignments();
                 reloadMainGrid();
-                refreshLeaseHaulerButtonVisibility();
                 refreshHideProgressBarCheckboxVisibility();
                 refreshDateRelatedButtonsVisibility();
             }
@@ -1195,7 +1180,6 @@
                     _loadingState = false;
                     reloadTruckTiles();
                     reloadDriverAssignments();
-                    refreshLeaseHaulerButtonVisibility();
 
                     app.localStorage.getItem('schedule_grid', function (result) {
                         callback(JSON.parse(result));
@@ -1872,6 +1856,11 @@
             return !truck.isExternal && (truck.hasNoDriver || !truck.hasDefaultDriver && !truck.hasDriverAssignment);
         }
 
+        function truckHasOrderLineTrucks(truck) {
+            var orders = scheduleGrid.data().toArray();
+            return orders.some(o => o.trucks.some(olt => olt.truckId === truck.id));
+        }
+
         function isPastDate() {
             var isPastDate = moment($("#DateFilter").val(), 'MM/DD/YYYY') < moment().startOf('day');
             return isPastDate;
@@ -2034,12 +2023,6 @@
             reloadDriverAssignments();
         });
 
-        abp.event.on('app.leaseHaulerSelectionModalSaved', function () {
-            reloadMainGrid(null, false);
-            reloadTruckTiles();
-            reloadDriverAssignments();
-        });
-
         abp.event.on('app.reassignModalSaved', function () {
             reloadMainGrid(null, false);
             reloadTruckTiles();
@@ -2084,10 +2067,6 @@
             position.x += $(window).scrollLeft();
             position.y += $(window).scrollTop();
             button.contextMenu({ x: position.x, y: position.y });
-        });
-
-        $('#AddLeaseHaulersButton').click(function () {
-            _leaseHaulerSelectionModal.open(_dtHelper.getFilterData());
         });
 
         $('#AddLeaseHaulerRequestButton').click(function (e) {
@@ -2594,8 +2573,8 @@
                             && !isPastDate();
                     },
                     callback: function () {
-                        var OrderLineTruckId = $(this).data('item').id;
-                        _changeDriverForOrderLineTruckModal.open({ orderLineTruckId: OrderLineTruckId });
+                        var orderLineTruckId = $(this).data('item').id;
+                        _changeDriverForOrderLineTruckModal.open({ orderLineTruckId: orderLineTruckId });
                     }
                 }
             }
@@ -2606,10 +2585,25 @@
             zIndex: 103,
             events: {
                 show: function (options) {
-                    var truck = $(this).data('truck');
-                    if (!hasTrucksPermissions() || truck.alwaysShowOnSchedule || truck.isExternal) {
+                    if (!hasTrucksPermissions()) {
                         return false;
                     }
+                    var anyItemIsVisible = false;
+                    for (var itemName in options.items) {
+                        if (!options.items.hasOwnProperty(itemName)) {
+                            continue;
+                        }
+                        var item = options.items[itemName];
+
+                        if (item.visible.apply(this)) {
+                            anyItemIsVisible = true;
+                            break;
+                        }
+                    }
+                    if (!anyItemIsVisible) {
+                        return false;
+                    }
+                    //var truck = $(this).data('truck');
                     //if (!abp.session.officeId || $("#OfficeIdFilter").val() !== abp.session.officeId.toString() 
                     //    || truck.officeId !== abp.session.officeId && (truck.sharedWithOfficeId !== abp.session.officeId || isPastDate())
                     //) {
@@ -2623,7 +2617,9 @@
                     name: 'Place back in service',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() && truck.isOutOfService; // && truck.officeId === abp.session.officeId;
+                        return !truck.isExternal
+                            && !truck.alwaysShowOnSchedule
+                            && truck.isOutOfService; // && truck.officeId === abp.session.officeId;
                     },
                     callback: function () {
                         var truck = $(this).data('truck'); //category, hasNoDriver, id, isOutOfService, officeId, truckCode, utilization, utilizationList
@@ -2634,7 +2630,9 @@
                     name: 'Place out of service',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() && !truck.isOutOfService; //&& truck.officeId === abp.session.officeId;
+                        return !truck.isExternal
+                            && !truck.alwaysShowOnSchedule
+                            && !truck.isOutOfService; //&& truck.officeId === abp.session.officeId;
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
@@ -2645,7 +2643,7 @@
                     name: 'No driver for truck',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() &&
+                        return !truck.isExternal &&
                             !truckHasNoDriver(truck) &&
                             truck.vehicleCategory.isPowered &&
                             !isPastDate();
@@ -2664,10 +2662,9 @@
                     name: 'Assign driver',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions()
+                        return !truck.isExternal
                             && truckHasNoDriver(truck)
-                            && truck.vehicleCategory.isPowered
-                            && !isPastDate();
+                            && truck.vehicleCategory.isPowered;
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
@@ -2675,6 +2672,7 @@
                         _assignDriverForTruckModal.open({
                             truckId: truck.id,
                             truckCode: truck.truckCode,
+                            leaseHaulerId: truck.leaseHaulerId,
                             date: filterData.date,
                             shift: filterData.shift,
                             officeId: filterData.officeId
@@ -2685,10 +2683,8 @@
                     name: 'Change driver',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions()
-                            && !truckHasNoDriver(truck)
-                            && truck.vehicleCategory.isPowered
-                            && !isPastDate();
+                        return (truck.isExternal || !truckHasNoDriver(truck))
+                            && truck.vehicleCategory.isPowered;
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
@@ -2696,6 +2692,7 @@
                         _assignDriverForTruckModal.open({
                             truckId: truck.id,
                             truckCode: truck.truckCode,
+                            leaseHaulerId: truck.leaseHaulerId,
                             date: filterData.date,
                             shift: filterData.shift,
                             officeId: filterData.officeId,
@@ -2708,7 +2705,7 @@
                     name: 'Assign default driver back to truck',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() && truck.hasNoDriver && truck.hasDefaultDriver && !isPastDate();
+                        return !truck.isExternal && truck.hasNoDriver && truck.hasDefaultDriver && !isPastDate();
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
@@ -2720,12 +2717,41 @@
                         });
                     }
                 },
-                separator1: "-----",
+                removeLhTruckFromSchedule: {
+                    name: 'Remove from schedule',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return truck.isExternal && !truckHasOrderLineTrucks(truck);
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+                        var filterData = _dtHelper.getFilterData();
+                        await abp.services.app.leaseHaulerRequestEdit.removeAvailableLeaseHaulerTruckFromSchedule({
+                            truckId: truck.id,
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                        });
+                        abp.notify.info('Successfully removed.');
+                        reloadTruckTiles();
+                        reloadDriverAssignments();
+                    }
+                },
+                separator1: {
+                    "type": "cm_separator",
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && (_features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService
+                            || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
+                    }
+                },
                 addSharedTruck: {
                     name: 'Share',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return _features.allowMultiOffice && hasTrucksPermissions() && truck.sharedWithOfficeId === null && !truck.isOutOfService;
+                        return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && _features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService;
                     },
                     callback: function () {
                         var truck = $(this).data('truck');
@@ -2741,7 +2767,8 @@
                     name: 'Revoke Share',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return hasTrucksPermissions() && truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId;
+                        return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId;
                     },
                     disabled: function () {
                         var truck = $(this).data('truck');

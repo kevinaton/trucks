@@ -13,6 +13,9 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching;
+using DispatcherWeb.DriverAssignments;
+using DispatcherWeb.DriverAssignments.Dto;
+using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Extensions;
@@ -33,6 +36,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
         private readonly IRepository<Ticket> _ticketRepository;
         private readonly INotificationPublisher _notificationPublisher;
         private readonly RoleManager _roleManager;
+        private readonly IDriverAssignmentAppService _driverAssignmentAppService;
 
         public LeaseHaulerRequestEditAppService(
             IRepository<LeaseHaulerRequest> leaseHaulerRequestRepository,
@@ -41,7 +45,8 @@ namespace DispatcherWeb.LeaseHaulerRequests
             IRepository<Dispatch> dispatchRepository,
             IRepository<Ticket> ticketRepository,
             INotificationPublisher notificationPublisher,
-            RoleManager roleManager
+            RoleManager roleManager,
+            IDriverAssignmentAppService driverAssignmentAppService
         )
         {
             _leaseHaulerRequestRepository = leaseHaulerRequestRepository;
@@ -51,6 +56,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
             _ticketRepository = ticketRepository;
             _notificationPublisher = notificationPublisher;
             _roleManager = roleManager;
+            _driverAssignmentAppService = driverAssignmentAppService;
         }
 
         public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestEditDto(int? leaseHaulerRequestId)
@@ -117,8 +123,8 @@ namespace DispatcherWeb.LeaseHaulerRequests
 
         public async Task<List<AvailableTruckUsageDto>> GetTrucksInUse(GetTrucksInUseInput input)
         {
-            input.DriverIds = input.DriverIds ?? new List<int>();
-            input.TruckIds = input.TruckIds ?? new List<int>();
+            input.DriverIds ??= new List<int>();
+            input.TruckIds ??= new List<int>();
 
             var orderLineTrucks = await _orderLineTruckRepository.GetAll()
                 .Where(x => x.OrderLine.Order.DeliveryDate == input.Date
@@ -349,7 +355,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
 
             var trucksInUse = await GetTrucksInUse(new GetTrucksInUseInput
             {
-                TruckIds = existingTrucks.Select(x => x.TruckId).ToList(),
+                TruckIds = existingTrucks.Select(x => x.TruckId).Distinct().ToList(),
                 DriverIds = existingTrucks.Select(x => x.DriverId).Distinct().ToList(),
                 Date = leaseHaulerRequest.Date,
                 LeaseHaulerId = leaseHaulerRequest.LeaseHaulerId,
@@ -480,6 +486,86 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     userIds: userIds.ToArray()
                 );
             }
+        }
+
+        public async Task SetDriverForLeaseHaulerTruck(SetDriverForTruckInput input)
+        {
+            if (input.DriverId == null)
+            {
+                throw new UserFriendlyException("Driver is required");
+            }
+
+            if (input.LeaseHaulerId == null)
+            {
+                throw new ApplicationException("LeaseHaulerId is null in SetDriverForLeaseHaulerTruck input");
+            }
+
+            var availableLeaseHaulerTrucks = await _availableLeaseHaulerTruckRepository.GetAll()
+                .Where(x => x.Date == input.Date
+                    && x.OfficeId == input.OfficeId
+                    && x.Shift == input.Shift
+                    && x.TruckId == input.TruckId)
+                .ToListAsync();
+
+            var oldDriverIds = availableLeaseHaulerTrucks.Select(x => x.DriverId).Distinct().ToList();
+            foreach (var oldDriverId in oldDriverIds)
+            {
+                var validationResult = await _driverAssignmentAppService.HasOrderLineTrucks(new HasOrderLineTrucksInput
+                {
+                    Date = input.Date,
+                    OfficeId = input.OfficeId,
+                    Shift = input.Shift,
+                    TruckId = input.TruckId,
+                    DriverId = oldDriverId,
+                });
+                if (validationResult.HasOpenDispatches)
+                {
+                    throw new UserFriendlyException(L("CannotChangeDriverBecauseOfDispatchesError"));
+                }
+                if (validationResult.HasOrderLineTrucks)
+                {
+                    //uncomment if we start supporting null DriverIds in AvailableLeaseHaulerTrucks
+                    //if (input.DriverId == null)
+                    //{
+                    //    throw new UserFriendlyException(L("CannotRemoveDriverBecauseOfOrderLineTrucksError"));
+                    //}
+
+                    var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                        .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
+                        .Where(x => input.OfficeId == x.OrderLine.Order.LocationId)
+                        .Where(x => oldDriverId == x.DriverId)
+                        .Where(x => input.TruckId == x.TruckId)
+                        .ToListAsync();
+
+                    foreach (var orderLineTruck in orderLineTrucks)
+                    {
+                        orderLineTruck.DriverId = input.DriverId.Value;
+                    }
+                }
+            }
+
+            foreach (var availableLeaseHaulerTruck in availableLeaseHaulerTrucks)
+            {
+                availableLeaseHaulerTruck.DriverId = input.DriverId.Value;
+            }
+        }
+
+        public async Task RemoveAvailableLeaseHaulerTruckFromSchedule(RemoveAvailableLeaseHaulerTruckFromScheduleInput input)
+        {
+            var hasOrderLineTrucks = await _orderLineTruckRepository.GetAll()
+                        .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
+                        .Where(x => input.OfficeId == x.OrderLine.Order.LocationId)
+                        .Where(x => input.TruckId == x.TruckId)
+                        .AnyAsync();
+            if (hasOrderLineTrucks)
+            {
+                throw new UserFriendlyException("You cannot remove this truck because it was already added to orders");
+            }
+
+            await _availableLeaseHaulerTruckRepository.DeleteAsync(x => x.Date == input.Date
+                    && x.OfficeId == input.OfficeId
+                    && x.Shift == input.Shift
+                    && x.TruckId == input.TruckId);
         }
     }
 }
