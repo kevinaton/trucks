@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Infrastructure;
@@ -29,9 +30,9 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         }
 
         [AbpMvcAuthorize(AppPermissions.Pages_LeaseHaulerRequests_Edit)]
-        public async Task<PartialViewResult> CreateOrEditLeaseHaulerRequestModal(int? leaseHaulerRequestId)
+        public async Task<PartialViewResult> CreateOrEditLeaseHaulerRequestModal(GetLeaseHaulerRequestForEditInput input)
         {
-            var model = await _leaseHaulerRequestEdit.GetLeaseHaulerRequestEditDto(leaseHaulerRequestId);
+            var model = await _leaseHaulerRequestEdit.GetLeaseHaulerRequestForEdit(input);
             return PartialView("_CreateOrEditLeaseHaulerRequestModal", model);
         }
 

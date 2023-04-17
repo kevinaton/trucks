@@ -7,7 +7,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
 {
     public interface ILeaseHaulerRequestEditAppService
     {
-        Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestEditDto(int? leaseHaulerRequestId);
+        Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestForEdit(GetLeaseHaulerRequestForEditInput input);
         Task<LeaseHaulerRequestEditModel> EditLeaseHaulerRequest(LeaseHaulerRequestEditModel model);
         Task UpdateAvailable(IdValueInput<int?> input);
         Task UpdateApproved(IdValueInput<int?> input);

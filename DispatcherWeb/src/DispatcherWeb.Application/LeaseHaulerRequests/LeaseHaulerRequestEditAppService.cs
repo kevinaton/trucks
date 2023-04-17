@@ -59,24 +59,28 @@ namespace DispatcherWeb.LeaseHaulerRequests
             _driverAssignmentAppService = driverAssignmentAppService;
         }
 
-        public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestEditDto(int? leaseHaulerRequestId)
+        public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestForEdit(GetLeaseHaulerRequestForEditInput input)
         {
-            var model = leaseHaulerRequestId != null ? await _leaseHaulerRequestRepository.GetAll()
-                .Where(lhr => lhr.Id == leaseHaulerRequestId)
-                .Select(lhr => new LeaseHaulerRequestEditDto()
-                {
-                    Id = lhr.Id,
-                    Date = lhr.Date,
-                    Shift = lhr.Shift,
-                    OfficeId = lhr.OfficeId,
-                    LeaseHaulerId = lhr.LeaseHaulerId,
-                    LeaseHaulerName = lhr.LeaseHauler.Name,
-                    Available = lhr.Available,
-                    Approved = lhr.Approved,
-                    Comments = lhr.Comments
-                })
-                .FirstAsync()
-                : new LeaseHaulerRequestEditDto();
+            var model = input.LeaseHaulerRequestId != null 
+                ? await _leaseHaulerRequestRepository.GetAll()
+                    .Where(lhr => lhr.Id == input.LeaseHaulerRequestId)
+                    .Select(lhr => new LeaseHaulerRequestEditDto
+                    {
+                        Id = lhr.Id,
+                        Date = lhr.Date,
+                        Shift = lhr.Shift,
+                        OfficeId = lhr.OfficeId,
+                        LeaseHaulerId = lhr.LeaseHaulerId,
+                        LeaseHaulerName = lhr.LeaseHauler.Name,
+                        Available = lhr.Available,
+                        Approved = lhr.Approved,
+                        Comments = lhr.Comments
+                    })
+                    .FirstAsync()
+                : new LeaseHaulerRequestEditDto
+                { 
+                    Date = input.Date
+                };
 
             if (model.Id != 0)
             {

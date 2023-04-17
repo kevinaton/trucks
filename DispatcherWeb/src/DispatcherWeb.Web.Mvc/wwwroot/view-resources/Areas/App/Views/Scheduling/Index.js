@@ -1920,8 +1920,8 @@
 
         async function sendDispatchMessage(options) {
             if (dispatchVia === abp.enums.dispatchVia.simplifiedSms //sendSmsOnDispatching is always set to dontSend when using simplifiedSms, so we're not checking that value in this case
-                || (dispatchVia === abp.enums.dispatchVia.driverApplication))
-            {
+                || (dispatchVia === abp.enums.dispatchVia.driverApplication)
+            ) {
                 _sendDispatchMessageModal.open(options);
             } else if (dispatchVia === abp.enums.dispatchVia.driverApplication) {
                 try {
@@ -2071,7 +2071,9 @@
 
         $('#AddLeaseHaulerRequestButton').click(function (e) {
             e.preventDefault();
-            _createOrEditLeaseHaulerRequestModal.open();
+            _createOrEditLeaseHaulerRequestModal.open({
+                date: $('#DateFilter').val()
+            });
         });
 
         $('#MarkAllJobsCompletedButton').click(async function (e) {
