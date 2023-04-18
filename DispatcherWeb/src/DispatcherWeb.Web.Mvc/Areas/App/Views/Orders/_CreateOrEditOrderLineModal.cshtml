@@ -105,6 +105,10 @@
             <label>Freight Rate</label>
             <input class="form-control" type="text" asp-for="FreightPricePerUnit" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
         </div>
+        <div class="form-group" @Html.StyleDisplayNone(!await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate))>
+            <label>@L("FreightRateToPayDrivers")</label>
+            <input class="form-control" type="text" asp-for="FreightRateToPayDrivers" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
+        </div>
         <div class="form-group">
             <label>@L("LHRate")</label>
             <input class="form-control" type="text" asp-for="LeaseHaulerRate" data-rule-number="true" data-rule-min="0" data-rule-max="@AppConsts.MaxDecimalDatabaseLength">
@@ -117,7 +121,6 @@
             <label>Freight Quantity</label>
             <input class="form-control" type="text" asp-for="FreightQuantity" data-rule-number="true" data-rule-min="0" data-rule-max="1000000">
         </div>
-
         <div class="form-group">
             <label>Material</label>
             <div class="input-group">

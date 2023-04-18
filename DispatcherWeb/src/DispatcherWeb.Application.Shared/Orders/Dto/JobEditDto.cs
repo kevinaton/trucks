@@ -61,6 +61,7 @@ namespace DispatcherWeb.Orders.Dto
 
         public bool IsFreightPricePerUnitOverridden { get; set; }
 
+        public decimal? FreightRateToPayDrivers { get; set; }
         public decimal? LeaseHaulerRate { get; set; }
 
         [Required(ErrorMessage = "Service/Product Item is a required field")]

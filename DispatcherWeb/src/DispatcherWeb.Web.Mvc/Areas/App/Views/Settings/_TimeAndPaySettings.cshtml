@@ -40,6 +40,13 @@
                             <span></span>
                         </label>
                     </div>
+                    <div class="form-group">
+                        <label for="AllowDriverPayRateDifferentFromFreightRate" class="m-checkbox col-lg-12">
+                            <input id="AllowDriverPayRateDifferentFromFreightRate" type="checkbox" name="AllowDriverPayRateDifferentFromFreightRate" value="true" checked=@(Model.AllowDriverPayRateDifferentFromFreightRate ? "checked" : null)>
+                            @L("AllowDriverPayRateDifferentFromFreightRate")
+                            <span></span>
+                        </label>
+                    </div>
                 }
             </form>
         </div>

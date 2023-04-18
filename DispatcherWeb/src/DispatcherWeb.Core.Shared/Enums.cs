@@ -220,7 +220,10 @@ namespace DispatcherWeb
         LineItemLeaseHaulerRate = 34,
 
         [Display(Name = "Fuel Surcharge Calculation")]
-        FuelSurchargeCalculation = 35
+        FuelSurchargeCalculation = 35,
+
+        [Display(Name = "Freight Rate to Pay Drivers")]
+        LineItemFreightRateToPayDrivers = 36
     }
 
     public enum DesignationEnum

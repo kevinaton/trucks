@@ -285,10 +285,11 @@ namespace DispatcherWeb.Configuration.Tenants
             {
                 AllowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay) && await FeatureChecker.IsEnabledAsync(AppFeatures.DriverProductionPayFeature),
                 DefaultToProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.DefaultToProductionPay),
-                PreventProductionPayOnHourlyJobs = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs)
+                PreventProductionPayOnHourlyJobs = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs),
+                AllowDriverPayRateDifferentFromFreightRate = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate),
+                TimeTrackingDefaultTimeClassificationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.TimeTrackingDefaultTimeClassificationId)
             };
 
-            settings.TimeTrackingDefaultTimeClassificationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.TimeTrackingDefaultTimeClassificationId);
             if (settings.TimeTrackingDefaultTimeClassificationId > 0)
             {
                 var timeClassification = await _timeClassificationRepository.GetAll()
@@ -925,6 +926,7 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.TimeTrackingDefaultTimeClassificationId, input.TimeAndPay.TimeTrackingDefaultTimeClassificationId.ToString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.AllowProductionPay, input.TimeAndPay.AllowProductionPay.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.DefaultToProductionPay, input.TimeAndPay.DefaultToProductionPay.ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate, input.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs, input.TimeAndPay.PreventProductionPayOnHourlyJobs.ToLowerCaseString());
 
             await UpdateFuelSettingsAsync(input.Fuel);

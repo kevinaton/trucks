@@ -16,7 +16,7 @@ namespace DispatcherWeb.PayStatements.Dto
         public string LoadAtName => LoadAt?.FormattedAddress;
         [JsonIgnore]
         public LocationNameDto LoadAt { get; set; }
-        public decimal FreightRate { get; set; }
+        public decimal FreightRateToPayDrivers { get; set; }
         public decimal Quantity { get; set; }
         public decimal Total { get; set; }
         public decimal DriverPayRate { get; set; }

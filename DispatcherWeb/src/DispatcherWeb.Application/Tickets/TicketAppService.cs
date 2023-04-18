@@ -1030,6 +1030,7 @@ namespace DispatcherWeb.Tickets
                     FreightUomId = x.FreightUomId,
                     FreightUomName = x.FreightUom.Name,
                     FreightRate = x.FreightPricePerUnit,
+                    FreightRateToPayDrivers = x.FreightRateToPayDrivers,
                     MaterialRate = x.MaterialPricePerUnit,
                     FuelSurchargeRate = x.FuelSurchargeRate,
                     MaterialTotal = x.MaterialPrice,
@@ -1555,6 +1556,7 @@ namespace DispatcherWeb.Tickets
                             await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPrice, Math.Round((orderLine.MaterialPricePerUnit ?? 0) * (orderLine.MaterialQuantity ?? 0), 2));
                         }
                     }
+                    await orderLineUpdater.UpdateFieldAsync(x => x.FreightRateToPayDrivers, orderLineModel.FreightRateToPayDrivers);
 
                     await orderLineUpdater.SaveChangesAsync();
                     if (rateWasChanged)
