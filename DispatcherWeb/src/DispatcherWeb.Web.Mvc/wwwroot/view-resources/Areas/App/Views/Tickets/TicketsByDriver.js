@@ -1092,7 +1092,7 @@
             ).append(
                 renderRateInput(ui, 'freightRate', app.localize('FreightRate'), 'freightRate')
             ).append(
-                renderRateInput(ui, 'freightRateToPayDrivers', app.localize('FreightRateToPayDrivers'), 'freightRateToPayDrivers')
+                renderRateInput(ui, 'freightRateToPayDrivers', app.localize('FreightRateToPayDriversShort'), 'freightRateToPayDrivers')
                     .toggle(abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate'))
             ).append(
                 renderRateInput(ui, 'materialRate', app.localize('MaterialRate'), 'materialRate')

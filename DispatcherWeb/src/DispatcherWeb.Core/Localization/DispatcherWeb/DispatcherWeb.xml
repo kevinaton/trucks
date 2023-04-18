@@ -1181,6 +1181,7 @@
 		<text name="FindLocation">Find Location</text>
 		<text name="LHRate">LH Rate</text>
 		<text name="FreightRateToPayDrivers">Freight Rate to Pay Drivers</text>
+		<text name="FreightRateToPayDriversShort">Driver Pay Freight Rate</text>
 		<text name="TruckCode">Truck Code</text>
 		<text name="DefaultDriver">Default Driver</text>
 		<text name="DefaultTrailer">Default Trailer</text>
