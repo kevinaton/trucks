@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Domain.Repositories;
 using Abp.MultiTenancy;
@@ -45,31 +46,42 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             }
             else
             {
-                if (await IsGrantedAsync(AppPermissions.Pages_Dashboard))
-                {
-                    return RedirectToAction("Index", "Dashboard");
-                }
+                var hasDashboardPermission = await IsGrantedAsync(AppPermissions.Pages_Dashboard);
+                var hasReactNativeDriverAppPermission = await IsGrantedAsync(AppPermissions.Pages_DriverApplication_ReactNativeDriverApp);
+                var hasPwaDriverAppPermission = await IsGrantedAsync(AppPermissions.Pages_DriverApplication_WebBasedDriverApp);
 
-                if (await UserIsDriver())
+                var redirectRelatedPermissionList = new[]
                 {
-                    return RedirectToAction("Index", "DriverApplication");
+                    hasDashboardPermission,
+                    hasReactNativeDriverAppPermission,
+                    hasPwaDriverAppPermission,
+                };
+
+                if (redirectRelatedPermissionList.Count(x => x == true) == 1)
+                {
+                    if (hasDashboardPermission)
+                    {
+                        return RedirectToAction("Index", "Dashboard");
+                    }
+
+                    if (hasReactNativeDriverAppPermission)
+                    {
+                        return RedirectToAction("ReactNative", "DriverApplication");
+                    }
+
+                    if (hasPwaDriverAppPermission)
+                    {
+                        return RedirectToAction("PWA", "DriverApplication");
+                    }
+                }
+                else if (redirectRelatedPermissionList.Any())
+                {
+                    return RedirectToAction("ChooseRedirectTarget", "Welcome");
                 }
             }
 
             //Default page if no permission to the pages above
             return RedirectToAction("Index", "Welcome");
-
-            // Local functions
-            async Task<bool> UserIsDriver()
-            {
-                var user = await _userManager.GetUserAsync(AbpSession.ToUserIdentifier());
-
-                return await HasDriverRole() && await DriverIsAssociatedWithUser();
-
-                async Task<bool> HasDriverRole() => await _userManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Driver)
-                    || await _userManager.IsInRoleAsync(user, StaticRoleNames.Tenants.LeaseHaulerDriver);
-                async Task<bool> DriverIsAssociatedWithUser() => await _driverRepository.GetAll().AnyAsync(d => d.UserId == user.Id);
-            }
         }
     }
 }

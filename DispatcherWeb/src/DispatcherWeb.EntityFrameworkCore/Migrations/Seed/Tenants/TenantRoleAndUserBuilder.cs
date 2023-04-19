@@ -177,9 +177,10 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
                 _context.SaveChanges();
 
                 GrantPermission(driverRole.Id, new[]
-                    {
-                        AppPermissions.Pages_DriverApplication,
-                    }
+                {
+                    AppPermissions.Pages_DriverApplication,
+                    AppPermissions.Pages_DriverApplication_WebBasedDriverApp
+                }
                 );
                 _context.SaveChanges();
             }
@@ -193,9 +194,9 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
                 _context.SaveChanges();
 
                 GrantPermission(leaseHaulerDriverRole.Id, new[]
-                    {
-                        AppPermissions.Pages_DriverApplication,
-                    }
+                {
+                    AppPermissions.Pages_DriverApplication,
+                }
                 );
                 _context.SaveChanges();
             }
@@ -381,6 +382,8 @@ namespace DispatcherWeb.Migrations.Seed.Tenants
             });
 
             GrantPermissionIfMissing(administrativeRole.Id, DefaultRolePermissions.GetRolePermissions(StaticRoleNames.Tenants.Administrative).ToArray());
+
+            GrantPermissionIfMissing(driverRole.Id, DefaultRolePermissions.GetRolePermissions(StaticRoleNames.Tenants.Driver).ToArray());
 
             _context.SaveChanges();
 

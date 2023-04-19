@@ -248,6 +248,15 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Administrative,
                     }
                 },
+
+                // DriverApplication_WebBasedDriverApp
+                {
+                    AppPermissions.Pages_DriverApplication_WebBasedDriverApp, new[]
+                    {
+                        StaticRoleNames.Tenants.Driver,
+                        StaticRoleNames.Tenants.LeaseHaulerDriver
+                    }
+                },
                 
                 // DriverAssignment
                 {
