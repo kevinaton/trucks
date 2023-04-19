@@ -8,6 +8,7 @@ using DispatcherWeb.Imports.DataResolvers.OfficeResolvers;
 using DispatcherWeb.Imports.RowReaders;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
+using DispatcherWeb.VehicleCategories;
 
 namespace DispatcherWeb.Imports.Services
 {

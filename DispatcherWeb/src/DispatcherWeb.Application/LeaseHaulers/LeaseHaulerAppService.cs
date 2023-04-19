@@ -26,6 +26,7 @@ using DispatcherWeb.Orders;
 using DispatcherWeb.Security;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Url;
+using DispatcherWeb.VehicleCategories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

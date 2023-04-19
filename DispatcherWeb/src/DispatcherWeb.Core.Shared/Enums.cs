@@ -220,7 +220,10 @@ namespace DispatcherWeb
         LineItemLeaseHaulerRate = 34,
 
         [Display(Name = "Fuel Surcharge Calculation")]
-        FuelSurchargeCalculation = 35
+        FuelSurchargeCalculation = 35,
+
+        [Display(Name = "Freight Rate to Pay Drivers")]
+        LineItemFreightRateToPayDrivers = 36
     }
 
     public enum DesignationEnum
@@ -598,7 +601,9 @@ namespace DispatcherWeb
         [Display(Name = "Missing Tickets Only")]
         MissingTicketsOnly = 1,
         [Display(Name = "Entered Tickets Only")]
-        EnteredTicketsOnly = 2
+        EnteredTicketsOnly = 2,
+        [Display(Name = "Potential Duplicate Tickets")]
+        PotentialDuplicateTickets = 3
     }
 
     public enum SendSmsOnDispatchingEnum

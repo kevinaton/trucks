@@ -135,10 +135,12 @@
     }
 
     function reloadAllDataAndThrow(e) {
-        return reloadAllData().then(() => { throw e; });
+        return reloadAllData({
+            suppressWarnings: true
+        }).then(() => { throw e; });
     }
 
-    function reloadAllData() {
+    function reloadAllData(loadDataOptions) {
         $('#TicketList').empty();
         $('#CurrentFuelCostContainer').hide();
         _orderLines = [];
@@ -157,10 +159,11 @@
         });
         _orderLineBlocks = []; //one per unique orderLine-driver (later per unique orderLine-driver-truck)
         _leaseHaulerBlocks = [];
-        return loadData();
+        return loadData(loadDataOptions);
     }
 
-    function loadData() {
+    function loadData(loadDataOptions) {
+        loadDataOptions = loadDataOptions || {};
         var filter = _dtHelper.getFilterData();
         if (!filter.date) {
             _date = null;
@@ -194,7 +197,7 @@
             _dailyFuelCost = result.dailyFuelCost;
             if (result.hasOpenOrders !== _hasOpenOrders) {
                 _hasOpenOrders = result.hasOpenOrders;
-                if (_hasOpenOrders) {
+                if (_hasOpenOrders && !loadDataOptions.suppressWarnings) {
                     abp.message.warn(app.localize('SomeOfTheOrdersAreStillOpenWillNotBeDisplayed'));
                 }
             }
@@ -400,6 +403,7 @@
         setInputOrDropdownValue(block.ui.item, block.orderLine.serviceId, block.orderLine.serviceName);
         setInputOrDropdownValue(block.ui.uom, block.orderLine.uomId, block.orderLine.uomName);
         block.ui.freightRate.val(block.orderLine.freightRate);
+        block.ui.freightRateToPayDrivers.val(block.orderLine.freightRateToPayDrivers);
         block.ui.materialRate.val(block.orderLine.materialRate);
         block.ui.fuelSurchargeRate.val(block.orderLine.fuelSurchargeRate);
 
@@ -691,6 +695,7 @@
             block.ui.item,
             block.ui.uom,
             block.ui.freightRate,
+            block.ui.freightRateToPayDrivers,
             block.ui.materialRate
             //block.ui.fuelSurchargeRate //always readonly
         ];
@@ -1087,6 +1092,9 @@
             ).append(
                 renderRateInput(ui, 'freightRate', app.localize('FreightRate'), 'freightRate')
             ).append(
+                renderRateInput(ui, 'freightRateToPayDrivers', app.localize('FreightRateToPayDriversShort'), 'freightRateToPayDrivers')
+                    .toggle(abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate'))
+            ).append(
                 renderRateInput(ui, 'materialRate', app.localize('MaterialRate'), 'materialRate')
             ).append(
                 renderDisabledInput(ui, 'fuelSurchargeRate', app.localize('FuelSurchargeRate'), 'fuelSurchargeRate', '')
@@ -1097,7 +1105,9 @@
                 ).append(
                     renderDriverNoteIconsContainer(ui)
                 )
-            ).append(
+            )
+        ).append(
+            $('<div class="row align-items-center">').append(
                 $('<div class="col-lg-10 col-md-8 col-sm-10 col-8 pb-2">').append(
                     renderTicketCounts(ui, 'orderLine')
                 )
@@ -1247,6 +1257,8 @@
         });
 
         block.ui.freightRate.add(
+            block.ui.freightRateToPayDrivers
+        ).add(
             block.ui.materialRate
         ).focusout(async function () {
             if (_initializing) {
@@ -1262,6 +1274,7 @@
                 if (!await validateNewRateAsync(newValue, field, input, block)) {
                     return false;
                 }
+                await syncFreightRateToPayDriversIfNeeded(newValue, field, input, block);
                 return true;
             };
 
@@ -1281,11 +1294,19 @@
         };
 
         var validateNewRateAsync = async function (newValue, field, input, block) {
+            let oldValue = block.orderLine[field] || 0;
+            if (field === 'freightRateToPayDrivers') {
+                let freightRate = block.orderLine.freightRate || 0;
+                if (newValue && !oldValue && !freightRate) {
+                    abp.message.error('Freight rate has to be specified first');
+                    return false;
+                }
+                return true;
+            }
             let fieldIsFreight = field === 'freightRate';
             let otherField = fieldIsFreight ? 'materialRate' : 'freightRate';
             let otherFieldDisplayName = fieldIsFreight ? 'material' : 'freight';
             let fieldDisplayName = fieldIsFreight ? 'freight' : 'material';
-            var oldValue = block.orderLine[field] || 0;
             let otherValue = block.orderLine[otherField] || 0;
             if (oldValue && !newValue) {
                 if (!otherValue) {
@@ -1327,6 +1348,22 @@
             }
 
             return true;
+        };
+
+        var syncFreightRateToPayDriversIfNeeded = async function (newValue, field, input, block) {
+            let oldValue = block.orderLine[field] || 0;
+            if (field === 'freightRate') {
+                if (!newValue
+                    || oldValue === (block.orderLine.freightRateToPayDrivers)
+                    || !abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')
+                ) {
+                    block.orderLine.freightRateToPayDrivers = newValue;
+                    var affectedBlocks = _orderLineBlocks.filter(o => o.orderLine.id === block.orderLine.id);
+                    affectedBlocks.forEach(function (affectedBlock) {
+                        affectedBlock.orderLine.freightRateToPayDrivers = block.orderLine.freightRateToPayDrivers;
+                    });
+                }
+            }
         };
 
         block.ui.destroyGrid = function () {

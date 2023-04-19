@@ -26,6 +26,7 @@
         var _freightQuantityInput = null;
         var _materialPricePerUnitInput = null;
         var _freightPricePerUnitInput = null;
+        var _freightRateToPayDriversInput = null;
         var _materialPriceInput = null; //total for the item
         var _freightPriceInput = null; //total for the item
         var _numberOfTrucksInput = null;
@@ -35,6 +36,8 @@
         var _unlockMaterialPriceButton = null;
         var _unlockFreightPriceButton = null;
         var _wasProductionPay = null;
+
+        var _ratesLastValue = {};
 
         var _addLocationTarget = null;
 
@@ -119,6 +122,12 @@
             _freightQuantityInput = _$form.find("#FreightQuantity");
             _materialPricePerUnitInput = _$form.find("#MaterialPricePerUnit");
             _freightPricePerUnitInput = _$form.find("#FreightPricePerUnit");
+            _freightRateToPayDriversInput = _$form.find("#FreightRateToPayDrivers");
+
+            _ratesLastValue = {
+                freightPricePerUnit: Number(_freightPricePerUnitInput.val()) || 0
+            };
+
             _materialPriceInput = _$form.find("#MaterialPrice"); //total for item
             _freightPriceInput = _$form.find("#FreightPrice"); //total for item
             var leaseHaulerRateInput = _$form.find("#LeaseHaulerRate");
@@ -178,6 +187,8 @@
                 updateProductionPay();
             }).change();
 
+            _$form.find("#RequiresCustomerNotification").change(updateCustomerNotificationControlsVisibility);
+
             _modalManager.on('app.createOrEditServiceModalSaved', function (e) {
                 abp.helper.ui.addAndSetDropdownValue(_serviceDropdown, e.item.Id, e.item.Service1);
                 _$form.find("#IsTaxable").val(e.item.isTaxable ? "True" : "False");
@@ -232,6 +243,22 @@
                 recalculate($(this));
             });
             _freightPricePerUnitInput.change(function () {
+                /* #12546: If the “Freight Rate to Pay Drivers” textbox isn’t being displayed, the FreightRateToPayDrivers 
+                property should be updated to the same value as the “Freight Rate”.  
+                When the “Freight Rate” is changed and the driver pay rate was the same as the prior “Freight Rate”, 
+                the “Freight Rate to Pay Drivers” should be changed to be the same as the “Freight Rate”. 
+                */
+                var newFreightPricePerUnit = Number(_freightPricePerUnitInput.val()) || 0;
+                var freightRateToPayDrivers = Number(_freightRateToPayDriversInput.val()) || 0;
+
+                if (_freightRateToPayDriversInput.css("display") == "none"
+                    || _freightRateToPayDriversInput.css("visibility") == "hidden"
+                    || _ratesLastValue.freightPricePerUnit !== newFreightPricePerUnit && _ratesLastValue.freightPricePerUnit === freightRateToPayDrivers
+                ) {
+                    _freightRateToPayDriversInput.val(newFreightPricePerUnit);
+                }
+                _ratesLastValue.freightPricePerUnit = newFreightPricePerUnit;
+
                 recalculate($(this));
             });
 
@@ -246,6 +273,7 @@
             initOverrideButtons();
             disableProductionPayIfNeeded(false);
             disableQuoteRelatedFieldsIfNeeded();
+            updateCustomerNotificationControlsVisibility();
         };
 
         function disableQuoteRelatedFieldsIfNeeded() {
@@ -262,6 +290,11 @@
                     //.add(_materialQuantityInput)
                     .prop('disabled', true);
             }
+        }
+
+        function updateCustomerNotificationControlsVisibility() {
+            _$form.find("#CustomerNotificationContactName").closest('.form-group').toggle(_$form.find('#RequiresCustomerNotification').is(':checked'));
+            _$form.find("#CustomerNotificationPhoneNumber").closest('.form-group').toggle(_$form.find('#RequiresCustomerNotification').is(':checked'));
         }
 
         function initOverrideButtons() {
@@ -524,7 +557,7 @@
             } else {
                 //no freight pricing
                 if (!getIsFreightPricePerUnitOverridden() && (sender.is(_freightUomDropdown) || sender.is(_serviceDropdown))) {
-                    _freightPricePerUnitInput.val('');
+                    _freightPricePerUnitInput.val('').change();
                 }
             }
 
@@ -639,6 +672,20 @@
                 return;
             }
 
+            if (orderLine.RequiresCustomerNotification && (orderLine.CustomerNotificationContactName === "" || orderLine.CustomerNotificationPhoneNumber === "")) {
+                abp.message.error('Please check the following: \n'
+                    + (orderLine.CustomerNotificationContactName ? '' : '"Contact Name" - This field is required.\n')
+                    + (orderLine.CustomerNotificationPhoneNumber ? '' : '"Phone Number" - This field is required.\n'), 'Some of the data is invalid');
+                return;
+            }
+
+            if (orderLine.CustomerNotificationPhoneNumber) {
+                if (!_$form.find("#CustomerNotificationPhoneNumber")[0].checkValidity()) {
+                    abp.message.error(app.localize('IncorrectPhoneNumberFormatError'));
+                    return;
+                }
+            }
+
             if (!validateFields(orderLine)) {
                 return;
             }
@@ -673,6 +720,7 @@
             _orderLine.freightUomName = Number(orderLine.FreightUomId) ? _$form.find("#FreightUomId option:selected").text() : null;
             _orderLine.materialPricePerUnit = Number(orderLine.MaterialPricePerUnit) || 0;
             _orderLine.freightPricePerUnit = Number(orderLine.FreightPricePerUnit) || 0;
+            _orderLine.freightRateToPayDrivers = Number(orderLine.FreightRateToPayDrivers) || 0;
             _orderLine.leaseHaulerRate = Number(orderLine.LeaseHaulerRate) || 0;
             _orderLine.materialQuantity = Number(orderLine.MaterialQuantity) || 0;
             _orderLine.freightQuantity = Number(orderLine.FreightQuantity) || 0;
@@ -684,6 +732,9 @@
             _orderLine.timeOnJob = orderLine.TimeOnJob;
             _orderLine.jobNumber = orderLine.JobNumber;
             _orderLine.note = orderLine.Note;
+            _orderLine.requiresCustomerNotification = !!orderLine.RequiresCustomerNotification;
+            _orderLine.customerNotificationContactName = orderLine.CustomerNotificationContactName;
+            _orderLine.customerNotificationPhoneNumber = orderLine.CustomerNotificationPhoneNumber;
 
             if (this.saveCallback) {
                 this.saveCallback(_orderLine);
@@ -779,6 +830,8 @@
             abp.helper.ui.addAndSetDropdownValue(_$form.find("#FreightUomId"), _orderLine.freightUomId, _orderLine.freightUomName);
             _$form.find("#MaterialPricePerUnit").val(_orderLine.materialPricePerUnit);
             _$form.find("#FreightPricePerUnit").val(_orderLine.freightPricePerUnit);
+            _ratesLastValue.freightPricePerUnit = Number(_orderLine.freightPricePerUnit) || 0;
+            _$form.find("#FreightRateToPayDrivers").val(_orderLine.freightRateToPayDrivers);
             _$form.find("#LeaseHaulerRate").val(_orderLine.leaseHaulerRate);
             _$form.find("#MaterialQuantity").val(_orderLine.materialQuantity);
             _$form.find("#FreightQuantity").val(_orderLine.freightQuantity);

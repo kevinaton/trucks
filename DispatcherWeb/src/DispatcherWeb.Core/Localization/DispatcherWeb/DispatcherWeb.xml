@@ -470,7 +470,7 @@
 		<text name="VerifySecurityCode_Information">Please enter the verification code sent to you.</text>
 		<text name="RememberThisBrowser">Remember this browser</text>
 		<text name="InvalidSecurityCode">Invalid security code!</text>
-		<text name="PhoneNumber">Phone number</text>
+		<text name="PhoneNumber">Phone Number</text>
 		<text name="Unlock">Unlock</text>
 		<text name="UnlockedTheUser">Unlocked the user {0}</text>
 		<text name="UserLockOut">User Lock Out</text>
@@ -1181,6 +1181,8 @@
 		<text name="AddUnbilledTickets">Add Unbilled Tickets</text>
 		<text name="FindLocation">Find Location</text>
 		<text name="LHRate">LH Rate</text>
+		<text name="FreightRateToPayDrivers">Freight Rate to Pay Drivers</text>
+		<text name="FreightRateToPayDriversShort">Driver Pay Freight Rate</text>
 		<text name="TruckCode">Truck Code</text>
 		<text name="DefaultDriver">Default Driver</text>
 		<text name="DefaultTrailer">Default Trailer</text>
@@ -1576,6 +1578,7 @@
 		<text name="DefaultToProductionPay">Default to Production Pay</text>
 		<text name="PreventProductionPayOnHourlyJobs">Prevent production pay on hourly jobs</text>
 		<text name="PreventProductionPayOnHourlyJobsHint">Based on your system settings hourly jobs can't be specified as production pay.</text>
+		<text name="AllowDriverPayRateDifferentFromFreightRate">Allow specifying driver pay rate different from freight rate</text>
 		<text name="TimeEntiresWarningOnHoursUomChange">This change may require you to fix the time classification(s) on some time entries for any driver(s) associated with this job. Please check the time entries for driver(s) working this job.</text>
 		<text name="CannotDisallowProductionPayBecauseOfDrivers">You cannot uncheck Allow Production Pay because there are drivers with Production Pay rates</text>
 		<text name="CannotDisallowProductionPayBecauseOfDefaultJob">You cannot uncheck Allow Production Pay when Production Pay is selected as a default time classification</text>
@@ -1783,6 +1786,11 @@
 		<text name="AddJob">Add Job</text>
 		<text name="EditJob">Edit Job</text>
 		<text name="SubContractorRate">Sub-contractor Rate</text>
+		<text name="VehicleCategories">Vehicle Categories</text>
+		<text name="VehicleCategoriesHeaderInfo">Manage your vehicle categories</text>
+		<text name="AssetType">Asset Type</text>
+		<text name="IsPowered">Is Powered</text>
+		<text name="SortOrder">Sort Order</text>
 		<text name="HostEmails">Host Emails</text>
 		<text name="SendHostEmails">Send host emails</text>
 		<text name="HostEmailsHeaderInfo">Manage your host emails</text>
@@ -1802,6 +1810,9 @@
 		<text name="DeliveryReport">Delivery Report</text>
 		<text name="TicketNumberIsRequired">Ticket Number is required</text>
 		<text name="InvoiceNumber">Invoice Number</text>
+		<text name="RequiresNotification">Requires Notification</text>
+		<text name="ContactName">Contact Name</text>
+		<text name="IncorrectPhoneNumberFormatError">Phone Number should be in the format of +1##########</text>
 		<text name="ADD">ADD</text>
 	</texts>
 </localizationDictionary>

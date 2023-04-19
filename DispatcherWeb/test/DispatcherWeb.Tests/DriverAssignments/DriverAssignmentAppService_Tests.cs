@@ -12,6 +12,7 @@ using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Services;
 using DispatcherWeb.Trucks;
+using DispatcherWeb.VehicleCategories;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;

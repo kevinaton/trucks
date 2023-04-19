@@ -81,6 +81,8 @@ namespace DispatcherWeb.Orders
 
         public decimal? LeaseHaulerRate { get; set; }
 
+        public decimal? FreightRateToPayDrivers { get; set; }
+
         [Column(TypeName = "money")]
         public decimal? FuelSurchargeRate { get; set; }
 
@@ -121,6 +123,14 @@ namespace DispatcherWeb.Orders
         public double? ScheduledTrucks { get; set; }
 
         public bool IsMultipleLoads { get; set; }
+
+        public bool RequiresCustomerNotification { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationContactName)]
+        public string CustomerNotificationContactName { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationPhoneNumber)]
+        public string CustomerNotificationPhoneNumber { get; set; }
 
         /// <summary>
         /// MaterialCompany's order line id. Only set for HaulingCompany order lines when a copy of this order line exists on another MaterialCompany tenant.

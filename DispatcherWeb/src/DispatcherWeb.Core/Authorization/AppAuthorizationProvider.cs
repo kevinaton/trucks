@@ -204,6 +204,8 @@ namespace DispatcherWeb.Authorization
             var hostEmails = pages.CreateChildPermission(AppPermissions.Pages_HostEmails, L("HostEmails"), multiTenancySides: MultiTenancySides.Host);
             hostEmails.CreateChildPermission(AppPermissions.Pages_HostEmails_Send, L("SendHostEmails"), multiTenancySides: MultiTenancySides.Host);
 
+            pages.CreateChildPermission(AppPermissions.Pages_VehicleCategories, L("VehicleCategories"), multiTenancySides: MultiTenancySides.Host);
+
             pages.CreateChildPermission(AppPermissions.Pages_DemoUiComponents, L("DemoUiComponents"), multiTenancySides: MultiTenancySides.Host);
         }
 

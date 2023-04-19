@@ -75,6 +75,7 @@ namespace DispatcherWeb.Orders.Dto
 
         public bool IsFreightPricePerUnitOverridden { get; set; }
 
+        public decimal? FreightRateToPayDrivers { get; set; }
         public decimal? LeaseHaulerRate { get; set; }
 
         [Required(ErrorMessage = "Service/Product Item is a required field")]
@@ -187,5 +188,13 @@ namespace DispatcherWeb.Orders.Dto
         public decimal? DefaultBaseFuelCost { get; set; }
 
         public bool? DefaultCanChangeBaseFuelCost { get; set; }
+
+        public bool RequiresCustomerNotification { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationContactName)]
+        public string CustomerNotificationContactName { get; set; }
+
+        [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationPhoneNumber)]
+        public string CustomerNotificationPhoneNumber { get; set; }
     }
 }

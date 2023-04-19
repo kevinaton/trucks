@@ -203,6 +203,8 @@
         public const string Pages_VehicleServiceTypes_View = "Pages.VehicleServiceTypes.View";
         public const string Pages_VehicleServiceTypes_Edit = "Pages.VehicleServiceTypes.Edit";
 
+        public const string Pages_VehicleCategories = "Pages.VehicleCategories";
+
         public const string Pages_HostEmails = "Pages.HostEmails";
         public const string Pages_HostEmails_Send = "Pages.HostEmails.Send";
 

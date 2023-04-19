@@ -44,7 +44,7 @@ namespace DispatcherWeb.PayStatements.Exporting
                         ("Deliver To", x => x.DeliverToName),
                         ("Load At", x => x.LoadAtName),
                         ("Time Class", x => x.TimeClassificationName),
-                        ("Freight Rate", x => x.FreightRate.ToString("C2", currencyCulture)),
+                        ("Freight Rate", x => x.FreightRateToPayDrivers?.ToString("C2", currencyCulture)),
                         ("Driver Pay Rate", x => FormatDriverRate(x, currencyCulture)),
                         ("Quantity", x => x.Quantity.ToString()),
                         ("Ext. Amount", x => x.Total.ToString("C2", currencyCulture))

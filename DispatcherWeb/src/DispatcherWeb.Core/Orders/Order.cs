@@ -91,11 +91,11 @@ namespace DispatcherWeb.Orders
 
         public bool IsClosed { get; set; }
 
-        public Guid? LastQuoteEmailId { get; set; }
-
         public OrderPriority Priority { get; set; }
 
         public bool IsImported { get; set; }
+
+        public Guid? LastQuoteEmailId { get; set; }
 
         public virtual TrackableEmail LastQuoteEmail { get; set; }
 

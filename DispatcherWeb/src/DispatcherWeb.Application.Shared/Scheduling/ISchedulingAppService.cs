@@ -38,7 +38,6 @@ namespace DispatcherWeb.Scheduling
         Task<SetOrderLineScheduledTrucksResult> SetOrderLineScheduledTrucks(SetOrderLineScheduledTrucksInput input);
         Task<CopyOrderTrucksResult> CopyOrdersTrucks(CopyOrdersTrucksInput input);
         Task<int?> GetDefaultTrailerId(int truckId);
-        Task UpdateLeaseHaulerSelection(LeaseHaulerSelectionDto model);
         Task<MoveTruckResult> MoveTruck(MoveTruckInput input);
         Task<PagedResultDto<SelectListDto>> GetOrderLinesToAssignTrucksToSelectList(GetSelectListIdInput input);
         Task<IList<SelectListDto>> GetTrucksSelectList(int orderLineId);

@@ -55,6 +55,7 @@ namespace DispatcherWeb.Tickets.Dto
             public string UomName { get; set; }
             public int? UomId { get; set; }
             public decimal? FreightRate { get; set; }
+            public decimal? FreightRateToPayDrivers { get; set; }
             public decimal? MaterialRate { get; set; }
             public decimal? FuelSurchargeRate { get; set; }
             public decimal MaterialTotal { get; set; }

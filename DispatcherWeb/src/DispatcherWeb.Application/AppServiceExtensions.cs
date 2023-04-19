@@ -393,11 +393,14 @@ namespace DispatcherWeb
                         && a.Date == input.Date)
                 .Select(x => new
                 {
+                    x.Id,
+                    x.LeaseHaulerId,
                     x.TruckId,
                     x.DriverId,
                     DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
                     x.OfficeId,
                 })
+                .OrderByDescending(x => x.Id)
                 .ToListAsync();
 
             var leaseHaulerTruckIds = leaseHaulerTrucks.Select(x => x.TruckId).ToList();
@@ -460,6 +463,7 @@ namespace DispatcherWeb
                     truck.DriverName = leaseHaulerTruck.DriverName;
                     truck.OfficeId = leaseHaulerTruck.OfficeId;
                     truck.IsExternal = true;
+                    truck.LeaseHaulerId = leaseHaulerTruck.LeaseHaulerId;
                 }
                 else if (driverAssignment != null)
                 {

@@ -5,6 +5,7 @@ using Abp.Timing;
 using Abp.UI;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
+using DispatcherWeb.VehicleCategories;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Xunit;

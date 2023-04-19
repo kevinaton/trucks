@@ -19,6 +19,7 @@ using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.Trucks.Exporting;
 using DispatcherWeb.UnitTests.TestUtilities;
+using DispatcherWeb.VehicleCategories;
 using DispatcherWeb.VehicleMaintenance;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;

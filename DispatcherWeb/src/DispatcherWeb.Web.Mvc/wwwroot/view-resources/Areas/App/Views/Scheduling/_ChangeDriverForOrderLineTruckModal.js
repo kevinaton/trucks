@@ -32,7 +32,9 @@
             var input = _$form.serializeFormToObject();
             input.ReplaceExistingDriver = false;
 
-            if (input.HasTicketsOrLoads === "False") {
+            if (input.LeaseHaulerId) {
+                input.ReplaceExistingDriver = true;
+            } else if (input.HasTicketsOrLoads === "False") {
                 var answer = await swal(
                     "Do you want to replace the driver assigned to this truck for the day/shift, or do you want to add an additional driver to the truck for the day/shift?",
                     {

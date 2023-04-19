@@ -5085,6 +5085,14 @@ namespace DispatcherWeb.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("CustomerNotificationContactName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CustomerNotificationPhoneNumber")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
 
@@ -5114,6 +5122,9 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<decimal?>("FreightQuantity")
                         .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("FreightRateToPayDrivers")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("FreightUomId")
                         .HasColumnType("int");
@@ -5209,6 +5220,9 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<int?>("QuoteServiceId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("RequiresCustomerNotification")
+                        .HasColumnType("bit");
 
                     b.Property<double?>("ScheduledTrucks")
                         .HasColumnType("float");
@@ -6748,6 +6762,9 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<decimal?>("FreightRate")
                         .HasColumnType("decimal(19,4)");
+
+                    b.Property<decimal?>("FreightRateToPayDrivers")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("FreightUomId")
                         .HasColumnType("int");

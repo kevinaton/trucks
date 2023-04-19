@@ -95,6 +95,11 @@ namespace DispatcherWeb.DriverApp.Dispatches
                             CountryCode = di.OrderLine.DeliverTo.CountryCode
                         },
                     },
+                    CustomerNotification = di.OrderLine.RequiresCustomerNotification ? new CustomerNotificationDto()
+                    {
+                        ContactName = di.OrderLine.CustomerNotificationContactName,
+                        PhoneNumber = di.OrderLine.CustomerNotificationPhoneNumber,
+                    } : null,
                     MaterialQuantity = di.OrderLine.MaterialQuantity,
                     FreightQuantity = di.OrderLine.FreightQuantity,
                     JobNumber = di.OrderLine.JobNumber,

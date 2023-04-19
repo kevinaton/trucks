@@ -1084,6 +1084,7 @@ namespace DispatcherWeb.Dispatching
                         .Where(a => a.Date == today)
                         .Select(x => new
                         {
+                            x.Id,
                             x.TruckId,
                             x.Truck.TruckCode,
                             x.DriverId,
@@ -1092,6 +1093,7 @@ namespace DispatcherWeb.Dispatching
                             x.OfficeId,
                             OfficeName = x.Office.Name
                         })
+                        .OrderByDescending(x => x.Id)
                         .ToListAsync();
 
                     foreach (var truck in leaseHaulerTrucks)
