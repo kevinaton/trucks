@@ -2068,3 +2068,25 @@ a.btn-default:hover {
 div.dataTables_wrapper div.dataTables_length select {
     display: none;
 }
+
+.m-aside-menu .m-menu__nav {
+    padding-top: 25px;
+}
+
+.common-add-button-group {
+    padding: 25px 25px 0;
+}
+
+.common-add-button-group button {
+    width: 205px;
+    padding: 8px;
+}
+
+.common-add-button-group button:hover {
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.16)!important;
+}
+
+.common-add-button-group .dropdown-menu {
+    width: 205px;
+}
+

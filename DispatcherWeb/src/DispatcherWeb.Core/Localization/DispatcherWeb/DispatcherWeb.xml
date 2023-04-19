@@ -975,6 +975,7 @@
 		<text name="DriverProductionPay">Driver Production Pay</text>
 		<text name="NumberOfTrucksFeature">Number of Trucks</text>
 		<text name="AddOrders">Add Orders</text>
+		<text name="AddOrder">Add Order</text>
 		<text name="ViewOrders">View Orders</text>
 		<text name="CompleteExistingDispatchesBeforeFutureDispatchesWithUrl">You must complete your existing dispatches before you can acknowledge a future dispatch. {URL} to get back to your current dispatch.</text>
 		<text name="CapitalClickHere">Click here</text>
@@ -1801,5 +1802,6 @@
 		<text name="DeliveryReport">Delivery Report</text>
 		<text name="TicketNumberIsRequired">Ticket Number is required</text>
 		<text name="InvoiceNumber">Invoice Number</text>
+		<text name="ADD">ADD</text>
 	</texts>
 </localizationDictionary>

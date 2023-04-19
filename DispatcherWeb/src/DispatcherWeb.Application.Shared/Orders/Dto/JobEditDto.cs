@@ -40,7 +40,21 @@ namespace DispatcherWeb.Orders.Dto
 
         public Shift? Shift { get; set; }
 
-        public int OfficeId { get; set; }
+        [Required(ErrorMessage = "Office is a required field")]
+        public int LocationId { get; set; }
+        public int OfficeId
+        {
+            get
+            {
+                return LocationId;
+            }
+            set
+            {
+                LocationId = value;
+            }
+        }
+        public string OfficeName { get; set; }
+        public bool IsSingleOffice { get; set; }
 
         public int? ProjectId { get; set; }
 
