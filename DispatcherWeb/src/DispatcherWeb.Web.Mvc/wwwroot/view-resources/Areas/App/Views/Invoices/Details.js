@@ -191,6 +191,7 @@
                     if (!invoiceLine.ticketId) {
                         $(sender).closest('tr').find('.freight-total-cell').text(invoiceLine.freightExtendedAmount);
                         $(sender).closest('tr').find('.material-total-cell').text(invoiceLine.materialExtendedAmount);
+                        $(sender).closest('tr').find('.description-cell textarea').val(invoiceLine.description);
                     }
                     $(sender).closest('tr').find('.total-cell').text(_dtHelper.renderMoney(invoiceLine.subtotal));
                     $(sender).closest('tr').find('.tax-cell input').prop('checked', invoiceLine.tax > 0);
@@ -327,7 +328,8 @@
                         editStartingCallback: function editStartingCallback(rowData, cell, selectedOption) {
                             console.log(selectedOption);
                             if (selectedOption && selectedOption.item) {
-                                rowData.isTaxable = selectedOption.item.isTaxable
+                                rowData.isTaxable = selectedOption.item.isTaxable;
+                                rowData.description = selectedOption.name;
                             }
                         },
                         isReadOnly: function (rowData, isRowReadOnly) {
@@ -339,7 +341,7 @@
                     data: "description",
                     title: "Description",
                     width: '240px',
-                    className: "all",
+                    className: "all description-cell",
                     editable: {
                         editor: _dtHelper.editors.textarea,
                         maxLength: 1000,
