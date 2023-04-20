@@ -327,7 +327,8 @@ namespace DispatcherWeb.Configuration
             public const string TextForSignatureView = "App.DispatchingAndMessaging.TextForSignatureView";
             public const string ShowTrailersOnSchedule = "App.DispatchingAndMessaging.ShowTrailersOnSchedule";
             public const string ValidateUtilization = "App.DispatchingAndMessaging.ValidateUtilization";
-            public const string AllowCounterSales = "App.DispatchingAndMessaging.AllowCounterSales";
+            public const string AllowCounterSalesForTenant = "App.DispatchingAndMessaging.AllowCounterSalesForTenant";
+            public const string AllowCounterSalesForUser = "App.DispatchingAndMessaging.AllowCounterSalesForUser";
             public const string DefaultLoadAtLocationId = "App.DispatchingAndMessaging.DefaultLoadAtLocationId";
             public const string DefaultDesignationToMaterialOnly = "App.DispatchingAndMessaging.DefaultDesignationToMaterialOnly";
             public const string DefaultServiceId = "App.DispatchingAndMessaging.DefaultServiceId";

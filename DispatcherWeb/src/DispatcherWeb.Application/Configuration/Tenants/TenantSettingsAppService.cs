@@ -525,7 +525,7 @@ namespace DispatcherWeb.Configuration.Tenants
                 DefaultStartTime = (await SettingManager.GetSettingValueAsync<DateTime>(AppSettings.DispatchingAndMessaging.DefaultStartTime)).ConvertTimeZoneTo(timezone),
                 ShowTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule),
                 ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization),
-                AllowCounterSales = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales),
+                AllowCounterSalesForTenant = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant),
                 DefaultDesignationToMaterialOnly = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, AbpSession.GetTenantId()),
                 DefaultAutoGenerateTicketNumber = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, AbpSession.GetTenantId())
             };
@@ -1203,8 +1203,9 @@ namespace DispatcherWeb.Configuration.Tenants
         private async Task UpdateDispatchingAndMessagingSettingsAsync(DispatchingAndMessagingSettingsEditDto input)
         {
             var timezone = await GetTimezone();
-            var allowCounterSalesWasUnchecked = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales) && !input.AllowCounterSales
-                && await _settingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSales);
+            var allowCounterSalesForTenant = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant);
+            var allowCounterSalesForTenantWasUnchecked = allowCounterSalesForTenant && !input.AllowCounterSalesForTenant
+                && await _settingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant);
 
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DispatchVia, input.DispatchVia.ToIntString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.AllowSmsMessages, input.AllowSmsMessages.ToLowerCaseString());
@@ -1221,15 +1222,16 @@ namespace DispatcherWeb.Configuration.Tenants
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultStartTime, input.DefaultStartTime.ConvertTimeZoneFrom(timezone).ToString("s"));
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, input.ShowTrailersOnSchedule.ToLowerCaseString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.ValidateUtilization, input.ValidateUtilization.ToLowerCaseString());
-            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSales, input.AllowCounterSales.ToLowerCaseString());
+            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant, input.AllowCounterSalesForTenant.ToLowerCaseString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.DefaultLoadAtLocationId ?? 0).ToString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, input.DefaultDesignationToMaterialOnly.ToLowerCaseString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
             
-            if (allowCounterSalesWasUnchecked)
+            if (allowCounterSalesForTenantWasUnchecked)
             {
                 var userSettingsToReset = new[]
                 {
+                    AppSettings.DispatchingAndMessaging.AllowCounterSalesForUser,
                     AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly,
                     AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId,
                     AppSettings.DispatchingAndMessaging.DefaultServiceId,
@@ -1239,10 +1241,11 @@ namespace DispatcherWeb.Configuration.Tenants
                 var userIds = await UserManager.Users.Select(x => x.Id).ToListAsync();
                 foreach (var userId in userIds)
                 {
+                    var userIdentifier = new UserIdentifier(AbpSession.GetTenantId(), userId);
                     foreach (var settingToReset in userSettingsToReset)
                     {
                         var defaultValue = _settingDefinitionManager.GetSettingDefinition(settingToReset).DefaultValue;
-                        await SettingManager.ChangeSettingForUserAsync(new UserIdentifier(AbpSession.GetTenantId(), userId), settingToReset, defaultValue);
+                        await SettingManager.ChangeSettingForUserAsync(userIdentifier, settingToReset, defaultValue);
                     }
                 }
             }

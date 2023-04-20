@@ -115,6 +115,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
                 DontShowZeroQuantityWarning = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.DontShowZeroQuantityWarning),
                 PlaySoundForNotifications = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserOptions.PlaySoundForNotifications),
                 HostEmailPreference = (HostEmailPreference)await SettingManager.GetSettingValueAsync<int>(AppSettings.UserOptions.HostEmailPreference),
+                AllowCounterSalesForUser = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSalesForUser),
                 DefaultDesignationToMaterialOnly = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly),
                 DefaultAutoGenerateTicketNumber = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber),
                 CCMeOnInvoices = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.CCMeOnInvoices)
@@ -283,16 +284,39 @@ namespace DispatcherWeb.Authorization.Users.Profile
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.DontShowZeroQuantityWarning, input.Options.DontShowZeroQuantityWarning.ToLowerCaseString());
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.PlaySoundForNotifications, input.Options.PlaySoundForNotifications.ToLowerCaseString());
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.UserOptions.HostEmailPreference, input.Options.HostEmailPreference.ToIntString());
-                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, input.Options.DefaultDesignationToMaterialOnly.ToLowerCaseString());
-                if (input.Options.DefaultLoadAtLocationId == null)
-                {
-                    input.Options.DefaultLoadAtLocationId = await SettingManager.GetSettingValueForTenantAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, AbpSession.GetTenantId());
-                }
-                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.Options.DefaultLoadAtLocationId ?? 0).ToString());
-                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultServiceId, (input.Options.DefaultServiceId ?? 0).ToString());
-                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, (input.Options.DefaultMaterialUomId ?? 0).ToString());
-                await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.Options.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
                 await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.CCMeOnInvoices, input.Options.CCMeOnInvoices.ToLowerCaseString());
+                if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant))
+                {
+                    await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.AllowCounterSalesForUser, input.Options.AllowCounterSalesForUser.ToLowerCaseString());
+                    if (input.Options.AllowCounterSalesForUser)
+                    {
+                        await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, input.Options.DefaultDesignationToMaterialOnly.ToLowerCaseString());
+                        if (input.Options.DefaultLoadAtLocationId == null)
+                        {
+                            input.Options.DefaultLoadAtLocationId = await SettingManager.GetSettingValueForTenantAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, AbpSession.GetTenantId());
+                        }
+                        await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.Options.DefaultLoadAtLocationId ?? 0).ToString());
+                        await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultServiceId, (input.Options.DefaultServiceId ?? 0).ToString());
+                        await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, (input.Options.DefaultMaterialUomId ?? 0).ToString());
+                        await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.Options.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
+                    }
+                    else
+                    {
+                        var userSettingsToReset = new[]
+                        {
+                            AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly,
+                            AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId,
+                            AppSettings.DispatchingAndMessaging.DefaultServiceId,
+                            AppSettings.DispatchingAndMessaging.DefaultMaterialUomId,
+                            AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber,
+                        };
+                        foreach (var settingToReset in userSettingsToReset)
+                        {
+                            var tenantSettingValue = await SettingManager.GetSettingValueForTenantAsync(settingToReset, AbpSession.GetTenantId());
+                            await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), settingToReset, tenantSettingValue);
+                        }
+                    }
+                }
             }
         }
 
