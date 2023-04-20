@@ -215,7 +215,8 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultStartTime, "2000-01-01T12:00:00", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.ValidateUtilization, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
-                new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowCounterSales, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowCounterSalesForUser, "false", scopes: SettingScopes.User, isVisibleToClients: true), //the value of this setting shouldn't be inherited from AllowCounterSalesForTenant, so these are two different settings
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, "false", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, "0", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultServiceId, "0", scopes: SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),

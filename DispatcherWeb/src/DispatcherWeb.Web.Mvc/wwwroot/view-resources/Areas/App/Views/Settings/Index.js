@@ -860,10 +860,10 @@
             }
         }
 
-        $('#AllowCounterSales').change(refreshCounterSalesControls);
+        $('#AllowCounterSalesForTenant').change(refreshCounterSalesControls);
         refreshCounterSalesControls();
         function refreshCounterSalesControls() {
-            if ($('#AllowCounterSales').is(':checked')) {
+            if ($('#AllowCounterSalesForTenant').is(':checked')) {
                 $('#DefaultDesignationToMaterialOnlyForTenant').closest('.form-group').show();
                 $('#DefaultLoadAtLocationIdForTenant').closest('.form-group').show();
                 $('#DefaultAutoGenerateTicketNumberForTenant').closest('.form-group').show();

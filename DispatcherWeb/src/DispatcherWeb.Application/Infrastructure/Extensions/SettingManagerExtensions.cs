@@ -269,5 +269,11 @@ namespace DispatcherWeb.Infrastructure.Extensions
             }
             return false;
         }
+
+        public static async Task<bool> AllowCounterSales(this ISettingManager settingManager)
+        {
+            return await settingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant)
+                && await settingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSalesForUser);
+        }
     }
 }

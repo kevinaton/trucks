@@ -450,7 +450,7 @@ namespace DispatcherWeb.Orders
                 var orderLine = await EditOrderLine(editOrderLineModel);
                 await CurrentUnitOfWork.SaveChangesAsync();
 
-                var allowCounterSales = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSales);
+                var allowCounterSales = await SettingManager.AllowCounterSales();
 
                 if (model.Designation == DesignationEnum.MaterialOnly && allowCounterSales)
                 {

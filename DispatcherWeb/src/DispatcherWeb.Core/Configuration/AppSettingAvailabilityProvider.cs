@@ -25,7 +25,7 @@ namespace DispatcherWeb.Configuration
                 case AppSettings.DispatchingAndMessaging.RequireSignature:
                 case AppSettings.DispatchingAndMessaging.RequireTicketPhoto:
                 case AppSettings.DispatchingAndMessaging.DispatchesLockedToTruck:
-                case AppSettings.DispatchingAndMessaging.AllowCounterSales:
+                case AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant:
                 case AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly:
                 case AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId:
                 case AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber:

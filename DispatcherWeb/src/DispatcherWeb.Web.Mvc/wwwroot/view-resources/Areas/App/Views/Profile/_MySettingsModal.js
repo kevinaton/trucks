@@ -54,6 +54,24 @@
 
             _$form.find(".tooltips").tooltip();
 
+            $('#AllowCounterSalesForUser').change(refreshCounterSalesControls);
+            refreshCounterSalesControls();
+            function refreshCounterSalesControls() {
+                if ($('#AllowCounterSalesForUser').is(':checked')) {
+                    $('#DefaultDesignationToMaterialOnlyForUser').closest('.mb-1').show();
+                    $('#DefaultLoadAtLocationIdForUser').closest('.form-group').show();
+                    $('#DefaultServiceId').closest('.form-group').show();
+                    $('#DefaultMaterialUomId').closest('.form-group').show();
+                    $('#DefaultAutoGenerateTicketNumberForUser').closest('.mb-1').show();
+                } else {
+                    $('#DefaultDesignationToMaterialOnlyForUser').prop('checked', false).closest('.mb-1').hide();
+                    $('#DefaultLoadAtLocationIdForUser').val('').change().closest('.form-group').hide();
+                    $('#DefaultServiceId').val('').change().closest('.form-group').hide();
+                    $('#DefaultMaterialUomId').val('').change().closest('.form-group').hide();
+                    $('#DefaultAutoGenerateTicketNumberForUser').prop('checked', false).closest('.mb-1').hide();
+                }
+            }
+
             _$optionsForm.find('#DefaultLoadAtLocationIdForUser').select2Init({
                 abpServiceMethod: abp.services.app.location.getLocationsSelectList,
                 showAll: false,

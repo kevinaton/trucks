@@ -87,11 +87,11 @@
                             </label>
                         </div>
                     }
-                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSales))
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant))
                     {
                         <div class="form-group margin-top-20">
-                            <label for="AllowCounterSales" class="m-checkbox col-lg-12">
-                                <input id="AllowCounterSales" type="checkbox" name="AllowCounterSales" value="true" @(Model.AllowCounterSales ? "checked=\"checked\"" : "")>
+                            <label for="AllowCounterSalesForTenant" class="m-checkbox col-lg-12">
+                                <input id="AllowCounterSalesForTenant" type="checkbox" name="AllowCounterSalesForTenant" value="true" @(Model.AllowCounterSalesForTenant ? "checked=\"checked\"" : "")>
                                 @L("AllowCounterSales")
                                 <span></span>
                             </label>

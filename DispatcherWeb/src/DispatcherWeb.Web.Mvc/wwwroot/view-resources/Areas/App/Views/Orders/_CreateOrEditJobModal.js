@@ -15,7 +15,7 @@
         var _permissions = {
             edit: abp.auth.hasPermission('Pages.Orders.Edit')
         };
-        var _allowCounterSales = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSales');
+        var _allowCounterSales = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForUser') && abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForTenant');
         var _saveEventArgs = {
             reloadMaterialTotalIfNotOverridden: false,
             reloadFreightTotalIfNotOverridden: false
