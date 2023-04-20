@@ -54,7 +54,6 @@ namespace DispatcherWeb.Tickets
         private readonly IRepository<DailyFuelCost> _dailyFuelCostRepository;
         private readonly IRepository<UnitOfMeasure> _uomRepository;
         private readonly OrderTaxCalculator _orderTaxCalculator;
-        private readonly IOrderLineUpdaterFactory _orderLineUpdaterFactory;
         private readonly IBinaryObjectManager _binaryObjectManager;
         private readonly ITicketListCsvExporter _ticketListCsvExporter;
         private readonly IServiceAppService _serviceAppService;
@@ -75,7 +74,6 @@ namespace DispatcherWeb.Tickets
             IRepository<DailyFuelCost> dailyFuelCostRepository,
             IRepository<UnitOfMeasure> uomRepository,
             OrderTaxCalculator orderTaxCalculator,
-            IOrderLineUpdaterFactory orderLineUpdaterFactory,
             IBinaryObjectManager binaryObjectManager,
             ITicketListCsvExporter ticketListCsvExporter,
             IServiceAppService serviceAppService,
@@ -96,7 +94,6 @@ namespace DispatcherWeb.Tickets
             _dailyFuelCostRepository = dailyFuelCostRepository;
             _uomRepository = uomRepository;
             _orderTaxCalculator = orderTaxCalculator;
-            _orderLineUpdaterFactory = orderLineUpdaterFactory;
             _binaryObjectManager = binaryObjectManager;
             _ticketListCsvExporter = ticketListCsvExporter;
             _serviceAppService = serviceAppService;
@@ -1403,74 +1400,77 @@ namespace DispatcherWeb.Tickets
             {
                 foreach (var orderLineModel in model.OrderLines)
                 {
-                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineModel.Id);
-                    var orderLine = await orderLineUpdater.GetEntityAsync();
+                    var orderLine = await _orderLineRepository.GetAll()
+                        .Include(x => x.Tickets)
+                        .FirstOrDefaultAsync(x => x.Id == orderLineModel.Id);
 
-                    var orderLineTickets = await _ticketRepository.GetAll()
-                        .Where(x => x.OrderLineId == orderLineModel.Id)
-                        .ToListAsync();
-                    
+                    if (orderLine == null)
+                    {
+                        throw new ApplicationException($"OrderLine with id {orderLineModel.Id} wasn't found");
+                    }
+
+                    var orderLineTickets = orderLine.Tickets.ToList();
                     //if (orderLine.Order.CustomerId != orderLineModel.CustomerId)
                     // we disallowed to change CustomerId from tickets by driver view per #10977
                     //}
                     if (orderLine.LoadAtId != orderLineModel.LoadAtId)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.LoadAtId, orderLineModel.LoadAtId);
+                        orderLine.LoadAtId = orderLineModel.LoadAtId;
                         orderLineTickets.ForEach(t => t.LoadAtId = orderLineModel.LoadAtId);
                     }
                     if (orderLine.DeliverToId != orderLineModel.DeliverToId)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.DeliverToId, orderLineModel.DeliverToId);
+                        orderLine.DeliverToId = orderLineModel.DeliverToId;
                         orderLineTickets.ForEach(t => t.DeliverToId = orderLineModel.DeliverToId);
                     }
                     if (orderLine.ServiceId != orderLineModel.ServiceId)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.ServiceId, orderLineModel.ServiceId);
+                        orderLine.ServiceId = orderLineModel.ServiceId;
                         orderLineTickets.ForEach(t => t.ServiceId = orderLineModel.ServiceId);
                     }
 
-                    await orderLineUpdater.UpdateFieldAsync(x => x.JobNumber, orderLineModel.JobNumber);
+                    orderLine.JobNumber = orderLineModel.JobNumber;
 
                     var rateWasChanged = false;
                     if (orderLine.Designation != orderLineModel.Designation)
                     {
                         var oldDesignation = orderLine.Designation;
-                        await orderLineUpdater.UpdateFieldAsync(x => x.Designation, orderLineModel.Designation);
+                        orderLine.Designation = orderLineModel.Designation;
                         if (orderLine.Designation.MaterialOnly())
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, null);
+                            orderLine.FreightUomId = null;
                             if (orderLine.FreightPrice != 0 || orderLine.FreightPricePerUnit != 0 || orderLine.FreightQuantity != 0)
                             {
                                 rateWasChanged = true;
                             }
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightPrice, 0);
-                            //await orderLineUpdater.UpdateFieldAsync(x => x.FreightPricePerUnit, 0); //Rate change will be handled below
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightQuantity, 0);
+                            orderLine.FreightPrice = 0;
+                            //orderLine.FreightPricePerUnit = 0; //Rate change will be handled below
+                            orderLine.FreightQuantity = 0;
                         }
                         else if (orderLine.Designation.FreightOnly())
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, null);
+                            orderLine.MaterialUomId = null;
                             if (orderLine.MaterialPrice != 0 || orderLine.MaterialPricePerUnit != 0 || orderLine.MaterialQuantity != 0)
                             {
                                 rateWasChanged = true;
                             }
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPrice, 0);
-                            //await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPricePerUnit, 0); //Rate change will be handled below
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialQuantity, 0);
+                            orderLine.MaterialPrice = 0;
+                            //orderLine.MaterialPricePerUnit = 0; //Rate change will be handled below
+                            orderLine.MaterialQuantity = 0;
                         }
                         else
                         {
                             if (oldDesignation.MaterialOnly())
                             {
                                 rateWasChanged = true;
-                                await orderLineUpdater.UpdateFieldAsync(x => x.FreightQuantity, orderLine.MaterialQuantity);
-                                //await orderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, orderLine.MaterialUomId); //UOM change will be handled below
+                                orderLine.FreightQuantity = orderLine.MaterialQuantity;
+                                //orderLine.FreightUomId = orderLine.MaterialUomId; //UOM change will be handled below
                             }
                             else if (oldDesignation.FreightOnly())
                             {
                                 rateWasChanged = true;
-                                await orderLineUpdater.UpdateFieldAsync(x => x.MaterialQuantity, orderLine.FreightQuantity);
-                                //await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, orderLine.FreightUomId); //UOM change will be handled below
+                                orderLine.MaterialQuantity = orderLine.FreightQuantity;
+                                //orderLine.MaterialUomId = orderLine.FreightUomId; //UOM change will be handled below
                             }
                         }
                     }
@@ -1479,9 +1479,9 @@ namespace DispatcherWeb.Tickets
                     {
                         if (orderLine.MaterialUomId != orderLineModel.UomId || orderLine.FreightUomId != orderLineModel.UomId)
                         {
-                            await UncheckProductionPayOnFreightUomChangeIfNeeded(orderLine, orderLineUpdater, orderLineModel.UomId);
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, orderLineModel.UomId);
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, orderLineModel.UomId);
+                            await UncheckProductionPayOnFreightUomChangeIfNeeded(orderLine, orderLineModel.UomId);
+                            orderLine.MaterialUomId = orderLineModel.UomId;
+                            orderLine.FreightUomId = orderLineModel.UomId;
                             orderLineTickets.ForEach(t => t.UnitOfMeasureId = orderLineModel.UomId);
                         }
                     }
@@ -1489,7 +1489,7 @@ namespace DispatcherWeb.Tickets
                     {
                         if (orderLine.MaterialUomId != orderLineModel.UomId)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, orderLineModel.UomId);
+                            orderLine.MaterialUomId = orderLineModel.UomId;
                             orderLineTickets.ForEach(t => t.UnitOfMeasureId = orderLineModel.UomId);
                         }
                     }
@@ -1497,8 +1497,8 @@ namespace DispatcherWeb.Tickets
                     {
                         if (orderLine.FreightUomId != orderLineModel.UomId)
                         {
-                            await UncheckProductionPayOnFreightUomChangeIfNeeded(orderLine, orderLineUpdater, orderLineModel.UomId);
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, orderLineModel.UomId);
+                            await UncheckProductionPayOnFreightUomChangeIfNeeded(orderLine, orderLineModel.UomId);
+                            orderLine.FreightUomId = orderLineModel.UomId;
                             orderLineTickets.ForEach(t => t.UnitOfMeasureId = orderLineModel.UomId);
                         }
                     }
@@ -1517,48 +1517,45 @@ namespace DispatcherWeb.Tickets
                         if (!(orderLine.MaterialPricePerUnit > 0) && orderLineModel.MaterialRate > 0
                             && orderLine.Designation.FreightOnly())
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.Designation, DesignationEnum.FreightAndMaterial);
-                            orderLineModel.Designation = DesignationEnum.FreightAndMaterial;
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, orderLine.FreightUomId);
-                            orderLineModel.MaterialUomId = orderLine.FreightUomId;
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialQuantity, orderLine.FreightQuantity);
+                            orderLine.Designation = orderLineModel.Designation = DesignationEnum.FreightAndMaterial;
+                            orderLine.MaterialUomId = orderLineModel.MaterialUomId = orderLine.FreightUomId;
+                            orderLine.MaterialQuantity = orderLine.FreightQuantity;
                         }
                     }
                     if (orderLine.FreightPricePerUnit != orderLineModel.FreightRate)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.FreightPricePerUnit, orderLineModel.FreightRate);
+                        orderLine.FreightPricePerUnit = orderLineModel.FreightRate;
                         if (pricing?.QuoteBasedPricing?.FreightRate != null)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.IsFreightPricePerUnitOverridden, pricing.QuoteBasedPricing.FreightRate != orderLine.FreightPricePerUnit);
+                            orderLine.IsFreightPricePerUnitOverridden = pricing.QuoteBasedPricing.FreightRate != orderLine.FreightPricePerUnit;
                         }
                         else if (pricing?.FreightRate != null && pricing.HasPricing)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.IsFreightPricePerUnitOverridden, pricing.FreightRate != orderLine.FreightPricePerUnit);
+                            orderLine.IsFreightPricePerUnitOverridden = pricing.FreightRate != orderLine.FreightPricePerUnit;
                         }
                         if (!orderLine.IsFreightPriceOverridden)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightPrice, Math.Round((orderLine.FreightPricePerUnit ?? 0) * (orderLine.FreightQuantity ?? 0), 2));
+                            orderLine.FreightPrice = Math.Round((orderLine.FreightPricePerUnit ?? 0) * (orderLine.FreightQuantity ?? 0), 2);
                         }
                     }
                     if (orderLine.MaterialPricePerUnit != orderLineModel.MaterialRate)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPricePerUnit, orderLineModel.MaterialRate);
+                        orderLine.MaterialPricePerUnit = orderLineModel.MaterialRate;
                         if (pricing?.QuoteBasedPricing?.PricePerUnit != null)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.IsMaterialPricePerUnitOverridden, pricing.QuoteBasedPricing.PricePerUnit != orderLine.MaterialPricePerUnit);
+                            orderLine.IsMaterialPricePerUnitOverridden = pricing.QuoteBasedPricing.PricePerUnit != orderLine.MaterialPricePerUnit;
                         }
                         else if (pricing?.PricePerUnit != null && pricing.HasPricing)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.IsMaterialPricePerUnitOverridden, pricing.PricePerUnit != orderLine.MaterialPricePerUnit);
+                            orderLine.IsMaterialPricePerUnitOverridden = pricing.PricePerUnit != orderLine.MaterialPricePerUnit;
                         }
                         if (!orderLine.IsMaterialPriceOverridden)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPrice, Math.Round((orderLine.MaterialPricePerUnit ?? 0) * (orderLine.MaterialQuantity ?? 0), 2));
+                            orderLine.MaterialPrice = Math.Round((orderLine.MaterialPricePerUnit ?? 0) * (orderLine.MaterialQuantity ?? 0), 2);
                         }
                     }
-                    await orderLineUpdater.UpdateFieldAsync(x => x.FreightRateToPayDrivers, orderLineModel.FreightRateToPayDrivers);
+                    orderLine.FreightRateToPayDrivers = orderLineModel.FreightRateToPayDrivers;
 
-                    await orderLineUpdater.SaveChangesAsync();
                     if (rateWasChanged)
                     {
                         await CurrentUnitOfWork.SaveChangesAsync();
@@ -1622,7 +1619,7 @@ namespace DispatcherWeb.Tickets
             return model;
         }
 
-        private async Task UncheckProductionPayOnFreightUomChangeIfNeeded(OrderLine orderLine, IOrderLineUpdater orderLineUpdater, int? newUomId)
+        private async Task UncheckProductionPayOnFreightUomChangeIfNeeded(OrderLine orderLine, int? newUomId)
         {
             if (orderLine.FreightUomId == newUomId
                 || !orderLine.ProductionPay
@@ -1641,7 +1638,7 @@ namespace DispatcherWeb.Tickets
 
             if (uom.Name.ToLower().TrimEnd('s') == "hour")
             {
-                await orderLineUpdater.UpdateFieldAsync(x => x.ProductionPay, false);
+                orderLine.ProductionPay = false;
             }
         }
 
