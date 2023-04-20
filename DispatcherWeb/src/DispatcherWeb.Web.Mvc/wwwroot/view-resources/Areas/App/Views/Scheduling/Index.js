@@ -2571,8 +2571,7 @@
                     visible: function () {
                         var truck = $(this).data('item');
                         return hasTrucksPermissions()
-                            && truck.vehicleCategory.isPowered
-                            && !isPastDate();
+                            && truck.vehicleCategory.isPowered;
                     },
                     callback: function () {
                         var orderLineTruckId = $(this).data('item').id;
