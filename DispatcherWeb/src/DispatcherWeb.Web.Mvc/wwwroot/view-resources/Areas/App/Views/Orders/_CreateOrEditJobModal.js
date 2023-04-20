@@ -141,11 +141,11 @@
             _deliveryDateDropdown = _$form.find("#DeliveryDate");
             _loadAtDropdown = _$form.find("#LoadAtId");
             _deliverToDropdown = _$form.find("#DeliverToId");
-            _serviceDropdown = _$form.find("#ServiceId");
+            _serviceDropdown = _$form.find("#JobServiceId");
             _materialUomDropdown = _$form.find("#MaterialUomId");
             _freightUomDropdown = _$form.find("#FreightUomId");
-            _designationDropdown = _$form.find("#Designation");
-            _customerDropdown = _$form.find("#CustomerId");
+            _designationDropdown = _$form.find("#JobDesignation");
+            _customerDropdown = _$form.find("#JobCustomerId");
 
             _projectInput = _$form.find("#ProjectId");
             _isMaterialPricePerUnitOverriddenInput = _$form.find("#IsMaterialPricePerUnitOverridden");
@@ -180,6 +180,17 @@
 
             _deliveryDateDropdown.datepickerInit();
 
+            _$form.find("#JobShift").select2Init({
+                showAll: true,
+                allowClear: false
+            });
+
+            _$form.find("#JobLocationId").select2Init({
+                abpServiceMethod: abp.services.app.office.getOfficesSelectList,
+                showAll: true,
+                allowClear: false
+            });
+
             _customerDropdown.select2Init({
                 abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
                 showAll: false,
@@ -189,7 +200,7 @@
                 }
             });
 
-            _$form.find("#Priority").select2Init({
+            _$form.find("#JobPriority").select2Init({
                 showAll: true,
                 allowClear: false
             });
@@ -228,21 +239,21 @@
                 showSelectOrderLineButton();
             });
 
-            _$form.find("#FuelSurchargeCalculationId").select2Init({
+            _$form.find("#JobFuelSurchargeCalculationId").select2Init({
                 abpServiceMethod: abp.services.app.fuelSurchargeCalculation.getFuelSurchargeCalculationsSelectList,
                 showAll: true,
                 allowClear: true
             });
-            _$form.find("#FuelSurchargeCalculationId").change(function () {
+            _$form.find("#JobFuelSurchargeCalculationId").change(function () {
                 if (_quoteId !== '') {
                     //_$form.find("#BaseFuelCostContainer").toggle(false);
                 } else {
-                    let dropdownData = _$form.find("#FuelSurchargeCalculationId").select2('data');
+                    let dropdownData = _$form.find("#JobFuelSurchargeCalculationId").select2('data');
                     let selectedOption = dropdownData && dropdownData.length && dropdownData[0];
                     let canChangeBaseFuelCost = selectedOption?.item?.canChangeBaseFuelCost || false;
                     _$form.find("#BaseFuelCostContainer").toggle(canChangeBaseFuelCost);
                     _$form.find("#BaseFuelCost").val(selectedOption?.item?.baseFuelCost || 0);
-                    _$form.find("#FuelSurchargeCalculationId").removeUnselectedOptions();
+                    _$form.find("#JobFuelSurchargeCalculationId").removeUnselectedOptions();
                 }
             });
 
@@ -296,26 +307,26 @@
                 if (_quoteId !== '') {
                     let fuelSurchargeCalculationId = option.data('fuelSurchargeCalculationId');
                     if (fuelSurchargeCalculationId) {
-                        abp.helper.ui.addAndSetDropdownValue(_$form.find("#FuelSurchargeCalculationId"), fuelSurchargeCalculationId, option.data('fuelSurchargeCalculationName'));
+                        abp.helper.ui.addAndSetDropdownValue(_$form.find("#JobFuelSurchargeCalculationId"), fuelSurchargeCalculationId, option.data('fuelSurchargeCalculationName'));
                         updateInputValue("#BaseFuelCost", option.data('baseFuelCost'));
                     } else {
-                        _$form.find("#FuelSurchargeCalculationId").val(null).change();
+                        _$form.find("#JobFuelSurchargeCalculationId").val(null).change();
                         updateInputValue("#BaseFuelCost", 0);
                     }
                     _$form.find("#BaseFuelCostContainer").toggle(option.data('canChangeBaseFuelCost') === true);
-                    _$form.find("#FuelSurchargeCalculationId").prop("disabled", true);
+                    _$form.find("#JobFuelSurchargeCalculationId").prop("disabled", true);
                     _$form.find("#BaseFuelCost").prop("disabled", true);
                 } else {
                     let defaultFuelSurchargeCalculationId = abp.setting.getInt('App.Fuel.DefaultFuelSurchargeCalculationId');
                     let defaultFuelSurchargeCalculationName = _$form.find("#DefaultFuelSurchargeCalculationName").val();
                     if (defaultFuelSurchargeCalculationId > 0) {
-                        abp.helper.ui.addAndSetDropdownValue(_$form.find("#FuelSurchargeCalculationId"), defaultFuelSurchargeCalculationId, defaultFuelSurchargeCalculationName);
+                        abp.helper.ui.addAndSetDropdownValue(_$form.find("#JobFuelSurchargeCalculationId"), defaultFuelSurchargeCalculationId, defaultFuelSurchargeCalculationName);
                     } else {
-                        _$form.find("#FuelSurchargeCalculationId").val(null).change();
+                        _$form.find("#JobFuelSurchargeCalculationId").val(null).change();
                     }
                     updateInputValue("#BaseFuelCost", _$form.find("#DefaultBaseFuelCost").val());
                     _$form.find("#BaseFuelCostContainer").toggle(_$form.find("#DefaultCanChangeBaseFuelCost").val() === 'True');
-                    _$form.find("#FuelSurchargeCalculationId").prop("disabled", false);
+                    _$form.find("#JobFuelSurchargeCalculationId").prop("disabled", false);
                     _$form.find("#BaseFuelCost").prop("disabled", false);
                 }
                 if (_quoteId) {
@@ -574,7 +585,7 @@
         }
 
         function disableOrderEditForHaulingCompany() {
-            _$form.find('input,select,textarea').not('#SalesTaxRate, #FuelSurchargeCalculationId, #BaseFuelCost, .order-line-field').attr('disabled', true);
+            _$form.find('input,select,textarea').not('#SalesTaxRate, #JobFuelSurchargeCalculationId, #BaseFuelCost, .order-line-field').attr('disabled', true);
         }
 
         function disableJobEditIfNeeded() {
@@ -626,10 +637,10 @@
             _$form.find("#IsTaxable").val(_orderLine.isTaxable ? "True" : "False");
             _$form.find("#StaggeredTimeKind").val(_orderLine.staggeredTimeKind);
             //_$form.find("#LineNumber").val(_orderLine.lineNumber);
-            abp.helper.ui.addAndSetDropdownValue(_$form.find("#Designation"), _orderLine.designation, _orderLine.designationName);
+            abp.helper.ui.addAndSetDropdownValue(_$form.find("#JobDesignation"), _orderLine.designation, _orderLine.designationName);
             abp.helper.ui.addAndSetDropdownValue(_$form.find("#LoadAtId"), _orderLine.loadAtId, _orderLine.loadAtName);
             abp.helper.ui.addAndSetDropdownValue(_$form.find("#DeliverToId"), _orderLine.deliverToId, _orderLine.deliverToName);
-            abp.helper.ui.addAndSetDropdownValue(_$form.find("#ServiceId"), _orderLine.serviceId, _orderLine.serviceName);
+            abp.helper.ui.addAndSetDropdownValue(_$form.find("#JobServiceId"), _orderLine.serviceId, _orderLine.serviceName);
             abp.helper.ui.addAndSetDropdownValue(_$form.find("#MaterialUomId"), _orderLine.materialUomId, _orderLine.materialUomName);
             abp.helper.ui.addAndSetDropdownValue(_$form.find("#FreightUomId"), _orderLine.freightUomId, _orderLine.freightUomName);
             _$form.find("#MaterialPricePerUnit").val(_orderLine.materialPricePerUnit);
@@ -672,10 +683,10 @@
 
         function showSelectOrderLineButton() {
             if (_quoteId && !_quoteServiceId) {
-                _$form.find("#Designation").parent().hide();
+                _$form.find("#JobDesignation").parent().hide();
                 _$form.find("#OpenQuoteBasedOrderLinesModalButton").parent().show();
             } else {
-                _$form.find("#Designation").parent().show();
+                _$form.find("#JobDesignation").parent().show();
                 _$form.find("#OpenQuoteBasedOrderLinesModalButton").parent().hide();
             }
         }
@@ -722,7 +733,7 @@
             _$form.find("#IsMultipleLoads").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#TimeOnJob").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#ChargeTo").closest('.form-group').toggle(!designationIsCounterSale);
-            _$form.find("#Priority").closest('.form-group').toggle(!designationIsCounterSale);
+            _$form.find("#JobPriority").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#ProductionPay").closest('.form-group').toggle(!designationIsCounterSale);
             _$form.find("#AutoGenerateTicketNumber").closest('.form-group').toggle(designationIsCounterSale);
             _$form.find("#TicketNumber").closest('.form-group').toggle(designationIsCounterSale && !_$form.find('#AutoGenerateTicketNumber').is(':checked'));
@@ -737,7 +748,7 @@
                 abp.helper.ui.addAndSetDropdownValue(_$form.find("#LoadAtId"), _$form.find("#DefaultLoadAtLocationId").val(), _$form.find("#DefaultLoadAtLocationName").val());
             }
             if (_$form.find("#DefaultServiceId").val()) {
-                abp.helper.ui.addAndSetDropdownValue(_$form.find("#ServiceId"), _$form.find("#DefaultServiceId").val(), _$form.find("#DefaultServiceName").val());
+                abp.helper.ui.addAndSetDropdownValue(_$form.find("#JobServiceId"), _$form.find("#DefaultServiceId").val(), _$form.find("#DefaultServiceName").val());
             }
             if (_$form.find("#DefaultMaterialUomId").val()) {
                 abp.helper.ui.addAndSetDropdownValue(_$form.find("#MaterialUomId"), _$form.find("#DefaultMaterialUomId").val(), _$form.find("#DefaultMaterialUomName").val());
@@ -1232,16 +1243,17 @@
             _model.priority = model.Priority;
             _model.shift = model.Shift;
             _model.officeId = model.OfficeId;
+            _model.locationId = model.LocationId;
             _model.projectId = model.ProjectId;
             _model.contactId = model.ContactId;
             _model.designation = model.Designation;
-            _model.designationName = Number(model.Designation) ? _$form.find("#Designation option:selected").text() : null;
+            _model.designationName = Number(model.Designation) ? _$form.find("#JobDesignation option:selected").text() : null;
             _model.loadAtId = model.LoadAtId;
             _model.loadAtName = Number(model.LoadAtId) ? _$form.find("#LoadAtId option:selected").text() : null;
             _model.deliverToId = model.DeliverToId;
             _model.deliverToName = Number(model.DeliverToId) ? _$form.find("#DeliverToId option:selected").text() : null;
             _model.serviceId = model.ServiceId;
-            _model.serviceName = Number(model.ServiceId) ? _$form.find("#ServiceId option:selected").text() : null;
+            _model.serviceName = Number(model.ServiceId) ? _$form.find("#JobServiceId option:selected").text() : null;
             _model.materialUomId = model.MaterialUomId;
             _model.materialUomName = Number(model.MaterialUomId) ? _$form.find("#MaterialUomId option:selected").text() : null;
             _model.freightUomId = model.FreightUomId;

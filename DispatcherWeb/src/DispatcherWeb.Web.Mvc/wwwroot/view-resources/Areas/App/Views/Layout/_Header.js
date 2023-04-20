@@ -260,6 +260,38 @@
             printPaymentReconciliationReportModal.open();
         });
 
+        //Common 'Add Job' button
+
+        var _createOrEditJobModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditJobModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditJobModal.js',
+            modalClass: 'CreateOrEditJobModal',
+            modalSize: 'lg'
+        });
+
+        $('#CommonAddJobButton').click(function (e) {
+            e.preventDefault();
+            date = moment().format('L');
+            _createOrEditJobModal.open({
+                deliveryDate: date,
+                shift: ''
+            });
+        });
+
+        //Common 'Add Order' button
+
+        $("#CommonAddOrderButton").click(function (e) {
+            e.preventDefault();
+            window.location = abp.appPath + 'app/Orders/Details/';
+        });
+
+        //Common 'Add Quote' button
+
+        $("#CommonAddQuoteButton").click(function (e) {
+            e.preventDefault();
+            window.location = abp.appPath + 'app/Quotes/Details/';
+        });
+
         function init() {
             loadNotifications();
             getRecentlyLinkedUsers();

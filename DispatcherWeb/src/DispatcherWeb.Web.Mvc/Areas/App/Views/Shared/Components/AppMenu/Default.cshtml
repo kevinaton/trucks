@@ -1,4 +1,5 @@
-﻿@using DispatcherWeb.Web.Areas.App.Models.Layout
+﻿@using DispatcherWeb.Authorization;
+@using DispatcherWeb.Web.Areas.App.Models.Layout
 @using DispatcherWeb.Web.Areas.App.Views.Shared.Components.AppMenu
 
 @model MenuViewModel
@@ -11,6 +12,28 @@
      m-menu-vertical="1"
      m-menu-scrollable="1"
      m-menu-dropdown-timeout="500">
+    @if (IsGranted(AppPermissions.Pages_Orders_Edit) || IsGranted(AppPermissions.Pages_Quotes_Edit))
+    {
+        <div class="common-add-button-group dropdown">
+            <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span>
+                    <i class="fa fa-plus"></i>
+                    <span>@L("ADD")</span>
+                </span>
+            </button>
+            <div class="dropdown-menu">
+                @if (IsGranted(AppPermissions.Pages_Orders_Edit))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddJobButton">@L("AddJob")</a>
+                    <a class="dropdown-item" href="#" id="CommonAddOrderButton">@L("AddOrder")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddQuoteButton">@L("AddQuote")</a>
+                }
+            </div>
+        </div>
+    }
     <ul class="m-menu__nav m-menu__nav--dropdown-submenu-arrow" 
         role="menubar" 
         aria-label="@L("LeftMenu")">

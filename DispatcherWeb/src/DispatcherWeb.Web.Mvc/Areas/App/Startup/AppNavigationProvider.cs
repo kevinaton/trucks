@@ -105,14 +105,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                     customData: new MenuItemCustomData { Id = "DispatchingNavbarItem" },
                     icon: "fa fa-calendar",
                     featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                     ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.AddOrders,
-                        L("AddOrders"),
-                        customData: new MenuItemCustomData { Id = "AddOrdersNavbarItem" },
-                        url: "app/orders/details",
-                        icon: "fa fa-calendar-plus",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Orders_Edit)
-                        )
                     ).AddItem(new MenuItemDefinition(
                         AppPageNames.Tenant.ViewOrders,
                         L("ViewOrders"),
