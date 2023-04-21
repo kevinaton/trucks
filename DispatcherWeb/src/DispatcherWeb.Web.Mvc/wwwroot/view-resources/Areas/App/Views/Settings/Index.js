@@ -860,20 +860,6 @@
             }
         }
 
-        $('#AllowCounterSalesForTenant').change(refreshCounterSalesControls);
-        refreshCounterSalesControls();
-        function refreshCounterSalesControls() {
-            if ($('#AllowCounterSalesForTenant').is(':checked')) {
-                $('#DefaultDesignationToMaterialOnlyForTenant').closest('.form-group').show();
-                $('#DefaultLoadAtLocationIdForTenant').closest('.form-group').show();
-                $('#DefaultAutoGenerateTicketNumberForTenant').closest('.form-group').show();
-            } else {
-                $('#DefaultDesignationToMaterialOnlyForTenant').prop('checked', false).closest('.form-group').hide();
-                $('#DefaultLoadAtLocationIdForTenant').val('').change().closest('.form-group').hide();
-                $('#DefaultAutoGenerateTicketNumberForTenant').prop('checked', false).closest('.form-group').hide();
-            }
-        }
-
         $('#DefaultLoadAtLocationIdForTenant').select2Init({
             abpServiceMethod: abp.services.app.location.getLocationsSelectList,
             showAll: false,

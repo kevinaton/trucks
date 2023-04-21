@@ -526,29 +526,7 @@ namespace DispatcherWeb.Configuration.Tenants
                 ShowTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule),
                 ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization),
                 AllowCounterSalesForTenant = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant),
-                DefaultDesignationToMaterialOnly = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, AbpSession.GetTenantId()),
-                DefaultAutoGenerateTicketNumber = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, AbpSession.GetTenantId())
             };
-
-            var loadAtId = await SettingManager.GetSettingValueForTenantAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, AbpSession.GetTenantId());
-            if (loadAtId > 0)
-            {
-                var loadAt = await _locationRepository.GetAll()
-                    .Where(x => x.Id == loadAtId)
-                    .Select(x => new
-                    {
-                        x.Id,
-                        Location = new LocationNameDto
-                        {
-                            Name = x.Name,
-                            StreetAddress = x.StreetAddress,
-                            City = x.City,
-                            State = x.State,                            
-                        }
-                    }).FirstOrDefaultAsync();
-                result.DefaultLoadAtLocationId = loadAt?.Id;
-                result.DefaultLoadAtLocationName = loadAt?.Location.FormattedAddress;
-            }
 
             return result;
         }
@@ -1223,9 +1201,6 @@ namespace DispatcherWeb.Configuration.Tenants
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, input.ShowTrailersOnSchedule.ToLowerCaseString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.ValidateUtilization, input.ValidateUtilization.ToLowerCaseString());
             await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant, input.AllowCounterSalesForTenant.ToLowerCaseString());
-            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.DefaultLoadAtLocationId ?? 0).ToString());
-            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, input.DefaultDesignationToMaterialOnly.ToLowerCaseString());
-            await ChangeSettingForTenantIfAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber, input.DefaultAutoGenerateTicketNumber.ToLowerCaseString());
             
             if (allowCounterSalesForTenantWasUnchecked)
             {

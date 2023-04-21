@@ -52,6 +52,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
         private readonly ITempFileCacheManager _tempFileCacheManager;
         private readonly IBackgroundJobManager _backgroundJobManager;
         private readonly ProfileImageServiceFactory _profileImageServiceFactory;
+        private readonly ISettingDefinitionManager _settingDefinitionManager;
         private readonly IRepository<Location> _locationRepository;
         private readonly IRepository<Service> _serviceRepository;
         private readonly IRepository<UnitOfMeasure> _unitOfMeasureRepository;
@@ -67,6 +68,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
             ITempFileCacheManager tempFileCacheManager,
             IBackgroundJobManager backgroundJobManager,
             ProfileImageServiceFactory profileImageServiceFactory,
+            ISettingDefinitionManager settingDefinitionManager,
             IRepository<Location> locationRepository,
             IRepository<Service> serviceRepository,
             IRepository<UnitOfMeasure> unitOfMeasureRepository)
@@ -81,6 +83,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
             _tempFileCacheManager = tempFileCacheManager;
             _backgroundJobManager = backgroundJobManager;
             _profileImageServiceFactory = profileImageServiceFactory;
+            _settingDefinitionManager = settingDefinitionManager;
             _locationRepository = locationRepository;
             _serviceRepository = serviceRepository;
             _unitOfMeasureRepository = unitOfMeasureRepository;
@@ -291,10 +294,6 @@ namespace DispatcherWeb.Authorization.Users.Profile
                     if (input.Options.AllowCounterSalesForUser)
                     {
                         await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, input.Options.DefaultDesignationToMaterialOnly.ToLowerCaseString());
-                        if (input.Options.DefaultLoadAtLocationId == null)
-                        {
-                            input.Options.DefaultLoadAtLocationId = await SettingManager.GetSettingValueForTenantAsync<int>(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, AbpSession.GetTenantId());
-                        }
                         await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId, (input.Options.DefaultLoadAtLocationId ?? 0).ToString());
                         await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultServiceId, (input.Options.DefaultServiceId ?? 0).ToString());
                         await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettings.DispatchingAndMessaging.DefaultMaterialUomId, (input.Options.DefaultMaterialUomId ?? 0).ToString());
@@ -312,8 +311,8 @@ namespace DispatcherWeb.Authorization.Users.Profile
                         };
                         foreach (var settingToReset in userSettingsToReset)
                         {
-                            var tenantSettingValue = await SettingManager.GetSettingValueForTenantAsync(settingToReset, AbpSession.GetTenantId());
-                            await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), settingToReset, tenantSettingValue);
+                            var defaultValue = _settingDefinitionManager.GetSettingDefinition(settingToReset).DefaultValue;
+                            await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), settingToReset, defaultValue);
                         }
                     }
                 }
