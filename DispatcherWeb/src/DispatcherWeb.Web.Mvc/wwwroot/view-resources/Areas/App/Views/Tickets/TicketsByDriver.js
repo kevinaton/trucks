@@ -105,7 +105,7 @@
             _driverIdFilterInput = $("#DriverIdFilter");
             _driverIdFilterInput.select2Init({
                 showAll: true,
-                allowClear: false
+                allowClear: true
             }).change(function () {
                 _driverIdFilter = Number(_driverIdFilterInput.val()) || null;
                 _orderLineBlocks.forEach(block => {
@@ -345,6 +345,15 @@
             return [];
         }
         var tickets = _tickets.filter(t => t.orderLineId === orderLineId && t.driverId === driverId);
+        return tickets;
+    }
+
+    function getTicketsForOrderLine(orderLine) {
+        var orderLineId = orderLine && orderLine.id;
+        if (!orderLineId) {
+            return [];
+        }
+        var tickets = _tickets.filter(t => t.orderLineId === orderLineId);
         return tickets;
     }
 
@@ -679,7 +688,7 @@
     }
 
     function updateCardReadOnlyState(block) {
-        let tickets = getTicketsForOrderLineBlock(block);
+        let tickets = getTicketsForOrderLine(block.orderLine);
         let isReadOnly = tickets.some(t => t.isReadOnly);
         if (block.orderLine.isReadonly === isReadOnly) {
             return;
