@@ -2093,3 +2093,17 @@ div.dataTables_wrapper div.dataTables_length select {
     width: 205px;
 }
 
+@media (min-width: 1025px) {
+    .m-aside-left--minimize .common-add-button-group button {
+        width: auto;
+    }
+
+    .m-aside-left--minimize .common-add-button-group button span,
+    .m-aside-left--minimize .common-add-button-group .dropdown-menu {
+        display: none;
+    }
+
+    .m-aside-left--minimize .common-add-button-group button i {
+        margin-right: 0;
+    }
+}
