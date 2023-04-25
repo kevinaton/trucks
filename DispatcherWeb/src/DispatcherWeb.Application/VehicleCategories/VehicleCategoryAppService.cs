@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
@@ -108,7 +107,9 @@ namespace DispatcherWeb.VehicleCategories
                 .PageBy(input)
                 .ToListAsync();
 
-            return new PagedResultDto<VehicleCategoryDto>(totalCount, items);
+            return new PagedResultDto<VehicleCategoryDto>(
+                totalCount, 
+                items);
         }
     }
 }
