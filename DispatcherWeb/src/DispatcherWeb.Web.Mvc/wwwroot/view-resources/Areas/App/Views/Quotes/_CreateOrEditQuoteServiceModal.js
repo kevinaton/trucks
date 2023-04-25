@@ -133,11 +133,13 @@
             }
             function enableFreightFields() {
                 freightRateInput.removeAttr('disabled');
-                freightRateToPayDriversInput.removeAttr('disabled');
                 freightUomDropdown.removeAttr('disabled');
                 freightQuantityInput.removeAttr('disabled');
                 freightRateInput.closest('.form-group').show();
-                freightRateToPayDriversInput.closest('.form-group').show();
+                if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')) {
+                    freightRateToPayDriversInput.removeAttr('disabled');
+                    freightRateToPayDriversInput.closest('.form-group').show();
+                }
                 freightUomDropdown.closest('.form-group').show();
                 freightQuantityInput.closest('.form-group').show();
             }
