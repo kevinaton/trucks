@@ -108,7 +108,9 @@ namespace DispatcherWeb
     public enum BedConstructionEnum
     {
         Steel = 0,
-        Aluminum = 1
+        Aluminum = 1,
+        [Display(Name = "Rock Box")]
+        RockBox = 2
     }
 
     public enum ProjectStatus
