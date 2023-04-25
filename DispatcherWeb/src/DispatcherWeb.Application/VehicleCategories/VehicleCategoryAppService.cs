@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
@@ -27,7 +28,7 @@ namespace DispatcherWeb.VehicleCategories
         }
 
         [AbpAuthorize(AppPermissions.Pages_VehicleCategories)]
-        public async Task<bool> CanDeleteVehicleCategory(EntityDto input) => 
+        public async Task<bool> CanDeleteVehicleCategory(EntityDto input) =>
             !await _truckRepository.GetAll().AnyAsync(p => p.VehicleCategoryId == input.Id);
 
         [AbpAuthorize(AppPermissions.Pages_VehicleCategories)]
@@ -87,29 +88,36 @@ namespace DispatcherWeb.VehicleCategories
         public async Task<PagedResultDto<VehicleCategoryDto>> GetVehicleCategories(GetVehicleCategoriesInput input)
         {
             var query = _vehicleCategoryRepository.GetAll()
-                    .WhereIf(!input.Name.IsNullOrEmpty(), x => x.Name.Contains(input.Name))
-                    .WhereIf(input.AssetType.HasValue, x => x.AssetType == input.AssetType.Value)
-                    .WhereIf(input.IsPowered.HasValue, x => x.IsPowered == input.IsPowered.Value)
-                    .Select(x => new VehicleCategoryDto
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        AssetType = x.AssetType,
-                        AssetTypeName = x.AssetType.ToString(),
-                        IsPowered = x.IsPowered,
-                        SortOrder = x.SortOrder,
-                    });
+                .WhereIf(!input.Name.IsNullOrEmpty(), x => x.Name.Contains(input.Name))
+                .WhereIf(input.AssetType.HasValue, x => x.AssetType == input.AssetType.Value)
+                .WhereIf(input.IsPowered.HasValue, x => x.IsPowered == input.IsPowered.Value)
+                .Select(x => new VehicleCategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    AssetType = x.AssetType,
+                    AssetTypeName = x.AssetType.ToString(),
+                    IsPowered = x.IsPowered,
+                    SortOrder = x.SortOrder,
+                });
+
+            query = input.Sorting.ToLower() switch
+            {
+                "name" => query.OrderBy(x => x.Name),
+                "name desc" => query.OrderByDescending(x => x.Name),
+                "assettype" or "assettypename" => query.OrderBy(x => x.AssetType),
+                "assettype desc" or "assettypename desc" => query.OrderByDescending(x => x.AssetType),
+                "ispowered" => query.OrderBy(x => x.IsPowered),
+                "ispowered desc" => query.OrderByDescending(x => x.IsPowered),
+                "sortorder desc" => query.OrderByDescending(x => x.SortOrder),
+                _ => query.OrderBy(x => x.SortOrder),
+            };
 
             var totalCount = await query.CountAsync();
 
-            var items = await query
-                .OrderBy(input.Sorting)
-                .PageBy(input)
-                .ToListAsync();
+            var items = await query.PageBy(input).ToListAsync();
 
-            return new PagedResultDto<VehicleCategoryDto>(
-                totalCount,
-                items);
+            return new PagedResultDto<VehicleCategoryDto>(totalCount, items);
         }
     }
 }
