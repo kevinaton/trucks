@@ -360,8 +360,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/DispatcherWeb/src/DispatcherWeb.Migrator/appsettings.json
-/DispatcherWeb/src/DispatcherWeb.Web.DriverApplication/DispatcherWeb.Web.DriverApplication.csproj
-/DispatcherWeb/src/DispatcherWeb.Web.Mvc/wwwroot/lib/morris.js/morris.min.css
-/DispatcherWeb/src/DispatcherWeb.Migrator/appsettings.json
-/DispatcherWeb/src/DispatcherWeb.Web.DriverApplication/DispatcherWeb.Web.DriverApplication.csproj
