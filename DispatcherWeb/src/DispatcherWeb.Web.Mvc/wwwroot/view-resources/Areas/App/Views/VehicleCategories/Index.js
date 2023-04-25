@@ -49,8 +49,9 @@
                     title: "Name"
                 },
                 {
-                    data: "assetTypeName",
-                    title: "Asset Type"
+                    data: "assetType",
+                    title: "Asset Type",
+                    render: (data, type, full, meta) => _dtHelper.renderText(full.assetTypeName),
                 },
                 {
                     data: "isPowered",
