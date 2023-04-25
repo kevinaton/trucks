@@ -518,7 +518,7 @@
             if ((sender.is(_materialQuantityInput) || sender.is(_freightQuantityInput)) && _freightPricePerUnitInput.val()) {
                 return;
             }
-            _freightPricePerUnitInput.val(rate);
+            _freightPricePerUnitInput.val(rate).change();
         }
 
         function setMaterialRateFromPricingIfNeeded(rate, sender) {
