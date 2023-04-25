@@ -10,27 +10,28 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>aspnet-DispatcherWeb.Web.DriverApplication-4FEE49BA-3914-4B83-B478-A14A9C591635</UserSecretsId>
+	<EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="bundleconfig.json" />
+	  <Content Remove="bundleconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\.well-known\assetlinks.json" />
+	  <Content Include="wwwroot\.well-known\assetlinks.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="bundleconfig.json" />
+	  <None Include="bundleconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+	  <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\bundles\" />
-    <Folder Include="wwwroot\lib\dayjs\" />
+	  <Folder Include="wwwroot\bundles\" />
+	  <Folder Include="wwwroot\lib\dayjs\" />
   </ItemGroup>
 
 </Project>
