@@ -444,8 +444,11 @@ namespace DispatcherWeb.Imports.Services
                             .Select(x => new
                             {
                                 x.Id,
-                                x.UserId
-                            }).FirstOrDefault();
+                                x.UserId,
+                                x.IsInactive
+                            })
+                            .OrderByDescending(x => !x.IsInactive)
+                            .FirstOrDefault();
 
                         if (driver == null)
                         {
