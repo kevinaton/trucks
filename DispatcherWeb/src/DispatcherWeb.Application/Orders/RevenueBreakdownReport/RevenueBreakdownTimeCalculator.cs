@@ -110,6 +110,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                     x.TimeClassificationId,
                     x.TimeClassification.IsProductionBased,
                     x.UserId,
+                    x.DriverId,
                     x.StartDateTime,
                     x.EndDateTime,
                     x.ManualHourAmount
@@ -133,6 +134,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                     EmployeeTimeId = driverTime.Id,
                     TruckId = driverTime.EquipmentId,
                     UserId = driverTime.UserId,
+                    DriverId = driverTime.DriverId,
                     DeliveryDate = deliveryDate,
                     HoursToAdd = hoursToAdd,
                     TimeClassificationId = driverTime.TimeClassificationId,
@@ -164,6 +166,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                     x.Id,
                     x.EquipmentId,
                     x.UserId,
+                    x.DriverId,
                     x.StartDateTime,
                     x.EndDateTime
                 })
@@ -209,6 +212,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                     EmployeeTimeId = driverTime.Id,
                     TruckId = driverTime.EquipmentId,
                     UserId = driverTime.UserId,
+                    DriverId = driverTime.DriverId,
                     DeliveryDate = startDateInUserTimeZone,
                     HoursToAdd = hoursToAdd
                 });
@@ -223,6 +227,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                         EmployeeTimeId = driverTime.Id,
                         TruckId = driverTime.EquipmentId,
                         UserId = driverTime.UserId,
+                        DriverId = driverTime.DriverId,
                         DeliveryDate = startDateInUserTimeZone,
                         HoursToAdd = hoursToAdd
                     });

@@ -375,7 +375,7 @@ namespace DispatcherWeb.PayStatements
                     {
                         return;
                     }
-                    var driver = drivers.FirstOrDefault(x => x.UserId == e.UserId);
+                    var driver = drivers.FirstOrDefault(x => x.DriverId == e.DriverId);
                     if (driver == null)
                     {
                         return;
@@ -490,9 +490,9 @@ namespace DispatcherWeb.PayStatements
             {
                 var dateBeginUtc = e.DeliveryDate.ConvertTimeZoneFrom(timezone);
                 var dateEndUtc = dateBeginUtc.AddDays(1);
-                var matches = ticketsForDates.Where(t => t.UserId == e.UserId && t.TicketDateTime >= dateBeginUtc && t.TicketDateTime < dateEndUtc);
+                var matches = ticketsForDates.Where(t => t.DriverId == e.DriverId && t.TicketDateTime >= dateBeginUtc && t.TicketDateTime < dateEndUtc);
 
-                var driver = drivers.Where(x => x.UserId == e.UserId).FirstOrDefault();
+                var driver = drivers.Where(x => x.DriverId == e.DriverId).FirstOrDefault();
                 if (driver == null /*|| !driverIdsIncludedInReport.Contains(driver.DriverId)*/) //ignore the time of not included in the report drivers
                 {
                     return;
