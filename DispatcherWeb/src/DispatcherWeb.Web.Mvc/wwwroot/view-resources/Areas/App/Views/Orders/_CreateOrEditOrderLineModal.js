@@ -620,6 +620,7 @@
         function disableFreightFields() {
             _$form.find("label[for=FreightUomId]").removeClass('required-label');
             _$form.find('#FreightPricePerUnit').val('').closest('.form-group').hide();
+            _$form.find('#FreightRateToPayDrivers').val('').closest('.form-group').hide();
             _$form.find('#FreightPrice').val('0').closest('.form-group').hide();
             _$form.find('#FreightUomId').val('').change().closest('.form-group').hide();
             _$form.find('#FreightQuantity').val('').closest('.form-group').hide();
@@ -627,6 +628,9 @@
         function enableFreightFields() {
             _$form.find("label[for=FreightUomId]").addClass('required-label');
             _$form.find('#FreightPricePerUnit').closest('.form-group').show();
+            if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')) {
+                _$form.find('#FreightRateToPayDrivers').closest('.form-group').show();
+            }
             _$form.find('#FreightPrice').closest('.form-group').show();
             _$form.find('#FreightUomId').closest('.form-group').show();
             _$form.find('#FreightQuantity').closest('.form-group').show();
