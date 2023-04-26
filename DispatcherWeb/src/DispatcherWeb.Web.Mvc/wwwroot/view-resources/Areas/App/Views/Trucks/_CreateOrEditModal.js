@@ -12,7 +12,12 @@
             viewUrl: abp.appPath + 'app/PreventiveMaintenanceSchedule/CreateOrEditPreventiveMaintenanceModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/PreventiveMaintenanceSchedule/_CreateOrEditPreventiveMaintenanceModal.js',
             modalClass: 'CreateOrEditPreventiveMaintenanceModal'
+        });
 
+        var _createOrEditDriverModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Drivers/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Drivers/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditDriverModal',
         });
 
         this.init = function (modalManager) {
@@ -121,7 +126,16 @@
                     includeLeaseHaulerDrivers: abp.setting.getBoolean('App.LeaseHaulers.AllowSubcontractorsToDriveCompanyOwnedTrucks')
                 },
                 showAll: false,
-                allowClear: true
+                allowClear: true,
+                addItemCallback: async function (newItemName) {
+                    var result = await app.getModalResultAsync(
+                        _createOrEditDriverModal.open({ name: newItemName })
+                    );
+                    return {
+                        id: result.id,
+                        name: result.firstName + ' ' + result.lastName
+                    };
+                },
             });
 
             $defaultTrailerId.select2Init({

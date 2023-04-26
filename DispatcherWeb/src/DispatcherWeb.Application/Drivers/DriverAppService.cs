@@ -263,7 +263,7 @@ namespace DispatcherWeb.Drivers
         }
 
         [AbpAuthorize(AppPermissions.Pages_Drivers)]
-        public async Task<DriverEditDto> GetDriverForEdit(NullableIdDto input)
+        public async Task<DriverEditDto> GetDriverForEdit(NullableIdNameDto input)
         {
             DriverEditDto driverEditDto;
 
@@ -300,7 +300,12 @@ namespace DispatcherWeb.Drivers
             }
             else
             {
-                driverEditDto = new DriverEditDto();
+                var (firstName, lastName) = Utilities.SplitFullName(input.Name);
+                driverEditDto = new DriverEditDto
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                };
             }
 
             await _singleOfficeService.FillSingleOffice(driverEditDto);
@@ -500,6 +505,9 @@ namespace DispatcherWeb.Drivers
             await UpdateEmployeeTimeClassifications(driver, model.EmployeeTimeClassifications);
 
             await _crossTenantOrderSender.SyncMaterialCompanyDriversIfNeeded(driver.Id);
+
+            result.FirstName = driver.FirstName;
+            result.LastName = driver.LastName;
 
             return result;
         }
