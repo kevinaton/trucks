@@ -292,6 +292,32 @@
             window.location = abp.appPath + 'app/Quotes/Details/';
         });
 
+        //Common 'Add Truck' button
+
+        var _createOrEditTruckModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Trucks/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Trucks/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditTruckModal'
+        });
+
+        $("#CommonAddTruckButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditTruckModal.open();
+        });
+
+        //Common 'Add Driver' button
+
+        var _createOrEditDriverModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Drivers/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Drivers/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditDriverModal',
+        });
+
+        $("#CommonAddDriverButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditDriverModal.open();
+        });
+
         function init() {
             loadNotifications();
             getRecentlyLinkedUsers();
