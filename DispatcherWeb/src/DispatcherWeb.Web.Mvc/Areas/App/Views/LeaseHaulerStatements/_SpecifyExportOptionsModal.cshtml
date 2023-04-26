@@ -1,0 +1,21 @@
+﻿@using System.Threading.Tasks
+@using Abp.Configuration
+@using DispatcherWeb.Configuration
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Export options"))
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <div class="form-group">
+            <input type="radio" checked name="ExportLeaseHaulerStatementsOption" class="minimal" id="ExportAllLeaseHaulers" />
+            <label for="ExportAllLeaseHaulers">Export as a single file</label>
+        </div>
+        <div class="form-group">
+            <input type="radio" name="ExportLeaseHaulerStatementsOption" class="minimal" id="SplitByLeaseHauler" />
+            <label for="SplitByLeaseHauler">Export a file for each lease hauler</label>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary close-button" data-dismiss="modal">@L("Cancel")</button>
+    <button type="button" class="btn btn-primary save-button">@L("Export")</button>
+</div>

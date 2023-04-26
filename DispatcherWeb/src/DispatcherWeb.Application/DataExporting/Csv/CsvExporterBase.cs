@@ -22,9 +22,13 @@ namespace DispatcherWeb.DataExporting.Csv
             _tempFileCacheManager = tempFileCacheManager;
         }
 
-        protected FileDto CreateCsvFile(string fileName, Action creator)
+        protected FileBytesDto CreateCsvFileBytes(string fileName, Action creator)
         {
-            var file = new FileDto(fileName.SanitizeFilename(), MimeTypeNames.TextCsv);
+            var file = new FileBytesDto
+            {
+                FileName = fileName.SanitizeFilename(),
+                MimeType = MimeTypeNames.TextCsv
+            };
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream))
             using (_csv = new CsvWriter(writer, System.Globalization.CultureInfo.CurrentCulture))
@@ -32,11 +36,24 @@ namespace DispatcherWeb.DataExporting.Csv
                 creator();
                 writer.Flush();
                 stream.Seek(0, SeekOrigin.Begin);
-                _tempFileCacheManager.SetFile(file.FileToken, stream.ToArray());
+                file.FileBytes = stream.ToArray();
             }
 
             return file;
+        }
 
+        protected FileDto CreateCsvFile(string fileName, Action creator)
+        {
+            var fileBytes = CreateCsvFileBytes(fileName, creator);
+            return StoreTempFile(fileBytes);
+        }
+
+        public FileDto StoreTempFile(FileBytesDto fileBytes)
+        {
+            var file = new FileDto(fileBytes.FileName, fileBytes.MimeType);
+            _tempFileCacheManager.SetFile(file.FileToken, fileBytes.FileBytes);
+
+            return file;
         }
 
         protected void AddHeaderAndData<T>(IList<T> items, params (string header, Func<T, string> dataSelector)[] headerAndDataPairs)

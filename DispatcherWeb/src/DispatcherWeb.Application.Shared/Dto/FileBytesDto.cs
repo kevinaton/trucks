@@ -1,6 +1,6 @@
-﻿namespace DispatcherWeb.PayStatements.Dto
+﻿namespace DispatcherWeb.Dto
 {
-    public class DriverPayStatementReport
+    public class FileBytesDto
     {
         public byte[] FileBytes { get; set; }
         public string FileName { get; set; }
