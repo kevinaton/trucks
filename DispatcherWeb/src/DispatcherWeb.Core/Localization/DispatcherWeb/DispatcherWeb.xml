@@ -1271,6 +1271,7 @@
 		<text name="ExportToCsv">Export to csv</text>
 		<text name="OutOfServiceTrucksReportHeader">Out of Service Trucks</text>
 		<text name="OutOfServiceTrucksReportDescription">Generate the "Out of Service Trucks" report</text>
+		<text name="TicketsAndLoads">Tickets &amp; Loads</text>
 		<text name="Dispatches">Dispatches</text>
 		<text name="LoadHistory">Load History</text>
 		<text name="TruckDispatchList">Truck Dispatch List</text>
@@ -1656,7 +1657,7 @@
 		<text name="ShowLeaseHaulerRateOnQuote">Show lease hauler rate on quote</text>
 		<text name="ShowLeaseHaulerRateOnOrder">Show lease hauler rate on order</text>
 		<text name="BrokerageFee">Brokerage fee</text>
-		<text name="LeaseHaulerStatements">Lease Hauler Statements</text>
+		<text name="LeaseHaulerStatements">Lease Hauler Pay</text>
 		<text name="StatementId">Statement Id</text>
 		<text name="AddLeaseHaulerStatement">Add LH Statement</text>
 		<text name="CreateTicketsFile">Create Tickets File</text>

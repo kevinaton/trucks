@@ -71,17 +71,19 @@
             public const string DriverPayStatements = "BackOffice.DriverPayStatements";
             public const string LeaseHaulerStatements = "BackOffice.LeaseHaulerStatements";
 
+            public const string TicketsAndLoads = "TicketsAndLoads";
+            public const string Tickets = "Orders.Tickets";
+            public const string Dispatches = "Orders.Dispatches";
+
             public const string Orders = "Orders";
             public const string AddOrders = "Orders.AddOrders";
             public const string ViewOrders = "Orders.ViewOrders";
-            public const string Tickets = "Orders.Tickets";
             public const string TicketsByDriver = "Orders.TicketsByDriver";
             public const string Invoices = "Orders.Invoices";
             public const string Schedule = "Orders.Schedule";
             public const string DriverAssignment = "Orders.DriverAssignment";
             public const string PrintOrders = "Orders.PrintOrders";
             public const string SendOrdersToDrivers = "Orders.SendOrdersToDrivers";
-            public const string Dispatches = "Orders.Dispatches";
             public const string TruckDispatchList = "Orders.TruckDispatchList";
             public const string DriverMessages = "Orders.DriverMessages";
 

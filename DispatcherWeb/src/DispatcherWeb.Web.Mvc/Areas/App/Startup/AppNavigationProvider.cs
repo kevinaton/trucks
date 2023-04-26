@@ -19,7 +19,8 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                 new MenuDefinition(MenuName, new FixedLocalizableString("Main Menu"));
 
             menu
-                .AddItem(new MenuItemDefinition(
+                .AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Host.Dashboard,
                         L("Dashboard"),
                         customData: new MenuItemCustomData { Id = "HostDashboardNavbarItem" },
@@ -27,7 +28,8 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         icon: "flaticon-line-graph",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Administration_Host_Dashboard)
                     )
-                ).AddItem(new MenuItemDefinition(
+                ).AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Host.Tenants,
                         L("Tenants"),
                         customData: new MenuItemCustomData { Id = "TenantsNavbarItem" },
@@ -35,7 +37,8 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         icon: "flaticon-list-3",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Tenants)
                     )
-                ).AddItem(new MenuItemDefinition(
+                ).AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Host.Editions,
                         L("Editions"),
                         customData: new MenuItemCustomData { Id = "EditionsNavbarItem" },
@@ -43,7 +46,8 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         icon: "flaticon-app",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Editions)
                     )
-                ).AddItem(new MenuItemDefinition(
+                ).AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Host.VehicleCategories,
                         L("VehicleCategories"),
                         customData: new MenuItemCustomData { Id = "VehicleCategoriesNavbarItem" },
@@ -51,7 +55,8 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         icon: "flaticon-truck",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_VehicleCategories)
                     )
-                ).AddItem(new MenuItemDefinition(
+                ).AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Host.HostEmails,
                         L("HostEmails"),
                         customData: new MenuItemCustomData { Id = "HostEmailsNavbarItem" },
@@ -59,7 +64,8 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         icon: "flaticon-email",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_HostEmails)
                     )
-                ).AddItem(new MenuItemDefinition(
+                ).AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Tenant.Dashboard,
                         L("Dashboard"),
                         customData: new MenuItemCustomData { Id = "TenantDashboardNavbarItem" },
@@ -68,95 +74,306 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dashboard),
                         featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
                     )
-                ).AddItem(new MenuItemDefinition(
-                    AppPageNames.Tenant.ProjectsAndQuotes,
-                    L("Sales"),
-                    customData: new MenuItemCustomData { Id = "SalesNavbarItem" },
-                    icon: "fa fa-tasks",
-                    featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                    ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.AddProject,
-                        L("AddProject"),
-                        customData: new MenuItemCustomData { Id = "AddProjectNavbarItem" },
-                        url: "app/projects/details",
-                        icon: "fa fa-plus",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Projects)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.Projects,
-                        L("Projects"),
-                        customData: new MenuItemCustomData { Id = "ProjectsNavbarItem" },
-                        url: "app/projects",
-                        icon: "fa fa-search",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Projects)
-                        )
-                    ).AddItem(new MenuItemDefinition(
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.Customers,
+                        L("Customers"),
+                        customData: new MenuItemCustomData { Id = "CustomersNavbarItem" },
+                        url: "app/customers",
+                        icon: "fa-regular fa-user-tie secondary-icon",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Customers),
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.Services,
+                        L("ProductsOrServices"),
+                        customData: new MenuItemCustomData { Id = "ProductsOrServicesNavbarItem" },
+                        url: "app/services",
+                        icon: "fa fa-cubes",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Services),
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.Drivers,
+                        L("Drivers"),
+                        customData: new MenuItemCustomData { Id = "DriversNavbarItem" },
+                        url: "app/drivers",
+                        icon: "fa fa-address-card",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Drivers),
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.Locations,
+                        L("Locations"),
+                        customData: new MenuItemCustomData { Id = "LocationsNavbarItem" },
+                        url: "app/locations",
+                        icon: "fa fa-map-marker-alt",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Locations),
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Tenant.Quotes,
                         L("Quotes"),
                         customData: new MenuItemCustomData { Id = "QuotesNavbarItem" },
                         url: "app/quotes",
                         icon: "fa fa-file",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Quotes_View)
-                        )
                     )
-                ).AddItem(new MenuItemDefinition(
-                    AppPageNames.Tenant.Orders,
-                    L("Dispatching"),
-                    customData: new MenuItemCustomData { Id = "DispatchingNavbarItem" },
-                    icon: "fa fa-calendar",
-                    featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                    ).AddItem(new MenuItemDefinition(
+                ).AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Tenant.ViewOrders,
-                        L("ViewOrders"),
+                        L("Orders"),
                         customData: new MenuItemCustomData { Id = "ViewOrdersNavbarItem" },
                         url: "app/orders",
                         icon: "fa fa-search",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Orders_View)
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.ProjectsAndQuotes,
+                        L("Sales"),
+                        customData: new MenuItemCustomData { Id = "SalesNavbarItem" },
+                        icon: "fa fa-tasks",
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.AddProject,
+                            L("AddProject"),
+                            customData: new MenuItemCustomData { Id = "AddProjectNavbarItem" },
+                            url: "app/projects/details",
+                            icon: "fa fa-plus",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Projects)
                         )
-                    ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.Schedule,
-                        L("Schedule"),
-                        customData: new MenuItemCustomData { Id = "ScheduleNavbarItem" },
-                        url: "app/scheduling",
-                        icon: "fa fa-calendar",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Schedule)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.DriverAssignment,
-                        L("DriverAssignment"),
-                        customData: new MenuItemCustomData { Id = "DriverAssignmentNavbarItem" },
-                        url: "app/driverassignments",
-                        icon: "fa fa-calendar-check",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_DriverAssignment)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.DriverMessages,
-                        L("DriverMessagesMenuItem"),
-                        customData: new MenuItemCustomData { Id = "DriverMessagesNavbarItem" },
-                        url: "app/DriverMessages",
-                        icon: "fa fa-comments",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_DriverMessages)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.Dispatches,
-                        L("LoadHistory"),
-                        customData: new MenuItemCustomData { Id = "LoadHistoryNavbarItem" },
-                        url: "app/Dispatches",
-                        icon: "fa fa-calendar-check",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches),
-                        featureDependency: new DispatchSettingFeatureDependency()
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.TruckDispatchList,
-                        L("TruckDispatchList"),
-                        customData: new MenuItemCustomData { Id = "TruckDispatchListNavbarItem" },
-                        url: "app/Dispatches/TruckDispatchList",
-                        icon: "fa fa-calendar-check",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches),
-                        featureDependency: new DispatchSettingFeatureDependency()
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.Projects,
+                            L("Projects"),
+                            customData: new MenuItemCustomData { Id = "ProjectsNavbarItem" },
+                            url: "app/projects",
+                            icon: "fa fa-search",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Projects)
                         )
                     )
-                ).AddItem(new MenuItemDefinition(
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.Orders,
+                        L("Dispatching"),
+                        customData: new MenuItemCustomData { Id = "DispatchingNavbarItem" },
+                        icon: "fa fa-calendar",
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.Schedule,
+                            L("Schedule"),
+                            customData: new MenuItemCustomData { Id = "ScheduleNavbarItem" },
+                            url: "app/scheduling",
+                            icon: "fa fa-calendar",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Schedule)
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.DriverMessages,
+                            L("DriverMessagesMenuItem"),
+                            customData: new MenuItemCustomData { Id = "DriverMessagesNavbarItem" },
+                            url: "app/DriverMessages",
+                            icon: "fa fa-comments",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_DriverMessages)
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.TruckDispatchList,
+                            L("TruckDispatchList"),
+                            customData: new MenuItemCustomData { Id = "TruckDispatchListNavbarItem" },
+                            url: "app/Dispatches/TruckDispatchList",
+                            icon: "fa fa-calendar-check",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches),
+                            featureDependency: new DispatchSettingFeatureDependency()
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.DriverAssignment,
+                            L("DriverAssignment"),
+                            customData: new MenuItemCustomData { Id = "DriverAssignmentNavbarItem" },
+                            url: "app/driverassignments",
+                            icon: "fa fa-calendar-check",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_DriverAssignment)
+                        )
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.TicketsAndLoads,
+                        L("TicketsAndLoads"),
+                        customData: new MenuItemCustomData { Id = "TicketsAndLoadsNavbarItem" },
+                        icon: "fa fa-ticket-alt",
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.Dispatches,
+                            L("Loads"),
+                            customData: new MenuItemCustomData { Id = "LoadHistoryNavbarItem" },
+                            url: "app/Dispatches",
+                            icon: "fa fa-calendar-check",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches),
+                            featureDependency: new DispatchSettingFeatureDependency()
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.Tickets,
+                            L("Tickets"),
+                            customData: new MenuItemCustomData { Id = "TicketsNavbarItem" },
+                            url: "app/tickets",
+                            icon: "fa fa-ticket-alt",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Tickets_View)
+                        )
+                     ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.TicketsByDriver,
+                            L("TicketsByDriver"),
+                            customData: new MenuItemCustomData { Id = "TicketsByDriverNavbarItem" },
+                            url: "app/tickets/TicketsByDriver",
+                            icon: "fa fa-ticket-alt",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_TicketsByDriver)
+                        )
+                     )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.Invoices,
+                        L("Invoices"),
+                        customData: new MenuItemCustomData { Id = "InvoicesNavbarItem" },
+                        url: "app/invoices",
+                        icon: "fa fa-file-invoice",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Invoices),
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature)
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.LeaseHauler,
+                        L("LeaseHauler"),
+                        customData: new MenuItemCustomData { Id = "LeaseHaulerNavbarItem" },
+                        icon: "fa fa-truck",
+                        featureDependency: new SimpleFeatureDependency(true, AppFeatures.AllowLeaseHaulersFeature)
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.LeaseHaulers,
+                            L("LeaseHaulers"),
+                            customData: new MenuItemCustomData { Id = "LeaseHaulersNavbarItem" },
+                            url: "app/leasehaulers",
+                            icon: "fa fa-truck", //icon: "fa fa-truck fa-truck-usd",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_LeaseHaulers_Edit)
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.LeaseHaulerRequests,
+                            L("LeaseHaulerRequests"),
+                            customData: new MenuItemCustomData { Id = "LeaseHaulerRequestsNavbarItem" },
+                            url: "app/leasehaulerrequests",
+                            icon: "fa fa-truck",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_LeaseHaulerRequests)
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.LeaseHaulerStatements,
+                            L("LeaseHaulerStatements"),
+                            customData: new MenuItemCustomData { Id = "LeaseHaulerStatementsNavbarItem" },
+                            url: "app/leasehaulerstatements",
+                            icon: "fa fa-file-invoice-dollar",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_LeaseHaulerStatements),
+                            featureDependency: new SimpleFeatureDependency(AppFeatures.AllowLeaseHaulersFeature)
+                        )
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.Trucks,
+                        L("Trucks"),
+                        customData: new MenuItemCustomData { Id = "TrucksNavbarItem" },
+                        url: "app/trucks",
+                        icon: "fa fa-truck",
+                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Trucks),
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
+                        )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        AppPageNames.Tenant.VehicleMaintenance,
+                        L("VehicleMaintenance"),
+                        customData: new MenuItemCustomData { Id = "VehicleMaintenanceNavbarItem" },
+                        icon: "fa fa-fax",
+                        featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Host.ServiceType,
+                            L("ServiceType"),
+                            customData: new MenuItemCustomData { Id = "VehicleServiceTypeNavbarItem" },
+                            url: "app/vehicleservicetypes",
+                            icon: "fa fa-list",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_VehicleServiceTypes_View),
+                            featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.VehicleServices,
+                            L("VehicleMaintenanceServices"),
+                            customData: new MenuItemCustomData { Id = "VehicleMaintenanceServicesNavbarItem" },
+                            url: "app/vehicleservices",
+                            icon: "fa fa-list-alt",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_VehicleService_View),
+                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.PreventiveMaintenanceSchedule,
+                            L("PreventiveMaintenanceSchedule"),
+                            customData: new MenuItemCustomData { Id = "PreventiveMaintenanceScheduleNavbarItem" },
+                            url: "app/preventivemaintenanceschedule",
+                            icon: "fa fa-calendar",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_PreventiveMaintenanceSchedule_View),
+                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
+                        )
+                     ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.WorkOrders,
+                            L("WorkOrders"),
+                            customData: new MenuItemCustomData { Id = "WorkOrdersNavbarItem" },
+                            url: "app/workorders",
+                            icon: "fa fa-wrench",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_WorkOrders_View),
+                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
+                        )
+                     ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.FuelPurchases,
+                            L("FuelPurchases"),
+                            customData: new MenuItemCustomData { Id = "FuelPurchasesNavbarItem" },
+                            url: "app/fuel",
+                            icon: "fas fa-gas-pump",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_FuelPurchases_View),
+                            featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
+                        )
+                     ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.OutOfSeriveTrucks,
+                            L("OutOfServiceTrucksReport"),
+                            customData: new MenuItemCustomData { Id = "OutOfServiceTrucksReportNavbarItem" },
+                            url: "app/OutOfServiceTrucksReport",
+                            icon: "fa fa-truck",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Reports_OutOfServiceTrucks),
+                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
+                        )
+                    ).AddItem(
+                        new MenuItemDefinition(
+                            AppPageNames.Tenant.VehicleUsages,
+                            L("VehicleUsageMenuItem"),
+                            customData: new MenuItemCustomData { Id = "VehicleUsageNavbarItem" },
+                            url: "app/vehicleusages",
+                            icon: "fas fa-truck-moving",
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_VehicleUsages_View)
+                        )
+                    )
+                ).AddItem(
+                    new MenuItemDefinition(
                         AppPageNames.Tenant.Time,
                         L("Time"),
                         customData: new MenuItemCustomData { Id = "TimeNavbarItem" },
@@ -197,31 +414,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         icon: "fa fa-briefcase",
                         featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
                     ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.Invoices,
-                            L("Invoices"),
-                            customData: new MenuItemCustomData { Id = "InvoicesNavbarItem" },
-                            url: "app/invoices",
-                            icon: "fa fa-file-invoice",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Invoices),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature)
-                        )
-                     ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.Tickets,
-                            L("Tickets"),
-                            customData: new MenuItemCustomData { Id = "TicketsNavbarItem" },
-                            url: "app/tickets",
-                            icon: "fa fa-ticket-alt",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Tickets_View)
-                        )
-                     ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.TicketsByDriver,
-                            L("TicketsByDriver"),
-                            customData: new MenuItemCustomData { Id = "TicketsByDriverNavbarItem" },
-                            url: "app/tickets/TicketsByDriver",
-                            icon: "fa fa-ticket-alt",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_TicketsByDriver)
-                        )
-                     ).AddItem(new MenuItemDefinition(
                             AppPageNames.Tenant.DriverPayStatements,
                             L("DriverPay"),
                             customData: new MenuItemCustomData { Id = "DriverPayNavbarItem" },
@@ -229,107 +421,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             icon: "fa fa-file-invoice-dollar",
                             permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Backoffice_DriverPay),
                             featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                        )
-                    )
-                ).AddItem(new MenuItemDefinition(
-                    AppPageNames.Tenant.LeaseHauler,
-                    L("LeaseHauler"),
-                    customData: new MenuItemCustomData { Id = "LeaseHaulerNavbarItem" },
-                    icon: "fa fa-truck",
-                    featureDependency: new SimpleFeatureDependency(true, AppFeatures.AllowLeaseHaulersFeature)
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.LeaseHaulers,
-                            L("LeaseHaulers"),
-                            customData: new MenuItemCustomData { Id = "LeaseHaulersNavbarItem" },
-                            url: "app/leasehaulers",
-                            icon: "fa fa-truck", //icon: "fa fa-truck fa-truck-usd",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_LeaseHaulers_Edit)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.LeaseHaulerRequests,
-                            L("LeaseHaulerRequests"),
-                            customData: new MenuItemCustomData { Id = "LeaseHaulerRequestsNavbarItem" },
-                            url: "app/leasehaulerrequests",
-                            icon: "fa fa-truck",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_LeaseHaulerRequests)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.LeaseHaulerStatements,
-                            L("LeaseHaulerStatements"),
-                            customData: new MenuItemCustomData { Id = "LeaseHaulerStatementsNavbarItem" },
-                            url: "app/leasehaulerstatements",
-                            icon: "fa fa-file-invoice-dollar",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_LeaseHaulerStatements),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.AllowLeaseHaulersFeature)
-                        )
-                    )
-                ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.VehicleMaintenance,
-                        L("VehicleMaintenance"),
-                        customData: new MenuItemCustomData { Id = "VehicleMaintenanceNavbarItem" },
-                        icon: "fa fa-fax",
-                        featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Host.ServiceType,
-                            L("ServiceType"),
-                            customData: new MenuItemCustomData { Id = "VehicleServiceTypeNavbarItem" },
-                            url: "app/vehicleservicetypes",
-                            icon: "fa fa-list",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_VehicleServiceTypes_View),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.VehicleServices,
-                            L("VehicleMaintenanceServices"),
-                            customData: new MenuItemCustomData { Id = "VehicleMaintenanceServicesNavbarItem" },
-                            url: "app/vehicleservices",
-                            icon: "fa fa-list-alt",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_VehicleService_View),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.PreventiveMaintenanceSchedule,
-                            L("PreventiveMaintenanceSchedule"),
-                            customData: new MenuItemCustomData { Id = "PreventiveMaintenanceScheduleNavbarItem" },
-                            url: "app/preventivemaintenanceschedule",
-                            icon: "fa fa-calendar",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_PreventiveMaintenanceSchedule_View),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
-                        )
-                     ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.WorkOrders,
-                            L("WorkOrders"),
-                            customData: new MenuItemCustomData { Id = "WorkOrdersNavbarItem" },
-                            url: "app/workorders",
-                            icon: "fa fa-wrench",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_WorkOrders_View),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
-                        )
-                     ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.FuelPurchases,
-                            L("FuelPurchases"),
-                            customData: new MenuItemCustomData { Id = "FuelPurchasesNavbarItem" },
-                            url: "app/fuel",
-                            icon: "fas fa-gas-pump",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_FuelPurchases_View),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                        )
-                     ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.OutOfSeriveTrucks,
-                            L("OutOfServiceTrucksReport"),
-                            customData: new MenuItemCustomData { Id = "OutOfServiceTrucksReportNavbarItem" },
-                            url: "app/OutOfServiceTrucksReport",
-                            icon: "fa fa-truck",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Reports_OutOfServiceTrucks),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.VehicleUsages,
-                            L("VehicleUsageMenuItem"),
-                            customData: new MenuItemCustomData { Id = "VehicleUsageNavbarItem" },
-                            url: "app/vehicleusages",
-                            icon: "fas fa-truck-moving",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_VehicleUsages_View)
                         )
                     )
                 ).AddItem(new MenuItemDefinition(
@@ -436,51 +527,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
                         )
                      ).AddItem(new MenuItemDefinition(
-                        AppPageNames.Tenant.Trucks,
-                        L("Trucks"),
-                        customData: new MenuItemCustomData { Id = "TrucksNavbarItem" },
-                        url: "app/trucks",
-                        icon: "fa fa-truck",
-                        permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Trucks),
-                        featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.Customers,
-                            L("Customers"),
-                            customData: new MenuItemCustomData { Id = "CustomersNavbarItem" },
-                            url: "app/customers",
-                            icon: "fa fa-shopping-basket",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Customers),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.Services,
-                            L("ProductsOrServices"),
-                            customData: new MenuItemCustomData { Id = "ProductsOrServicesNavbarItem" },
-                            url: "app/services",
-                            icon: "fa fa-cubes",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Services),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.Drivers,
-                            L("Drivers"),
-                            customData: new MenuItemCustomData { Id = "DriversNavbarItem" },
-                            url: "app/drivers",
-                            icon: "fa fa-address-card",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Drivers),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.FreeFunctionality)
-                        )
-                    ).AddItem(new MenuItemDefinition(
-                            AppPageNames.Tenant.Locations,
-                            L("Locations"),
-                            customData: new MenuItemCustomData { Id = "LocationsNavbarItem" },
-                            url: "app/locations",
-                            icon: "fa fa-map-marker-alt",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Locations),
-                            featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                        )
-                    ).AddItem(new MenuItemDefinition(
                             AppPageNames.Tenant.CannedTexts,
                             L("CannedTexts"),
                             customData: new MenuItemCustomData { Id = "CannedTextsNavbarItem" },
