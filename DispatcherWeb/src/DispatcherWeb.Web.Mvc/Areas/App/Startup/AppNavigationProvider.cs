@@ -80,7 +80,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                         L("Customers"),
                         customData: new MenuItemCustomData { Id = "CustomersNavbarItem" },
                         url: "app/customers",
-                        icon: "fa-regular fa-user-tie secondary-icon",
+                        icon: "fas fa-user-tie",
                         permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Customers),
                         featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
                     )
@@ -213,7 +213,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                     ).AddItem(
                         new MenuItemDefinition(
                             AppPageNames.Tenant.Dispatches,
-                            L("Loads"),
+                            L("LoadHistory"),
                             customData: new MenuItemCustomData { Id = "LoadHistoryNavbarItem" },
                             url: "app/Dispatches",
                             icon: "fa fa-calendar-check",

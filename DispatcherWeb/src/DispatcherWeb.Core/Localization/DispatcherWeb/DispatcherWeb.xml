@@ -1273,7 +1273,7 @@
 		<text name="OutOfServiceTrucksReportDescription">Generate the "Out of Service Trucks" report</text>
 		<text name="TicketsAndLoads">Tickets &amp; Loads</text>
 		<text name="Dispatches">Dispatches</text>
-		<text name="LoadHistory">Load History</text>
+		<text name="LoadHistory">Loads</text>
 		<text name="TruckDispatchList">Truck Dispatch List</text>
 		<text name="DispatchesHeader">Load History</text>
 		<text name="DispatchesHeaderInfo">View the load history</text>
