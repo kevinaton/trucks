@@ -292,6 +292,19 @@
             window.location = abp.appPath + 'app/Quotes/Details/';
         });
 
+        //Common 'Add Driver Message' button
+
+        var _sendDriverMessageModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/DriverMessages/SendMessageModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/DriverMessages/_SendMessageModal.js',
+            modalClass: 'SendMessageModal'
+        });
+
+        $('#CommonAddDriverMessageButton').click(function (e) {
+            e.preventDefault();
+            _sendDriverMessageModal.open();
+        });
+
         //Common 'Add Truck' button
 
         var _createOrEditTruckModal = new app.ModalManager({
@@ -305,6 +318,19 @@
             _createOrEditTruckModal.open();
         });
 
+        //Common 'Add Product or Service' button
+        var _createOrEditProductOrServiceModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Services/CreateOrEditServiceModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Services/_CreateOrEditServiceModal.js',
+            modalClass: 'CreateOrEditServiceModal',
+            modalSize: 'lg'
+        });
+
+        $('#CommonAddServiceButton').click(function (e) {
+            e.preventDefault();
+            _createOrEditProductOrServiceModal.open();
+        });
+
         //Common 'Add Driver' button
 
         var _createOrEditDriverModal = new app.ModalManager({
@@ -316,6 +342,33 @@
         $("#CommonAddDriverButton").click(function (e) {
             e.preventDefault();
             _createOrEditDriverModal.open();
+        });
+
+        //Common 'Add Location' button
+
+        var _createOrEditLocationModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Locations/CreateOrEditLocationModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Locations/_CreateOrEditLocationModal.js',
+            modalClass: 'CreateOrEditLocationModal',
+            modalSize: 'lg'
+        });
+
+        $("#CommonAddLocationButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditLocationModal.open();
+        });
+
+        //Common 'Add User' button
+
+        var _createOrEditUserModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'App/Users/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/App/Views/Users/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditUserModal'
+        });
+
+        $("#CommonAddUserButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditUserModal.open();
         });
 
         function init() {

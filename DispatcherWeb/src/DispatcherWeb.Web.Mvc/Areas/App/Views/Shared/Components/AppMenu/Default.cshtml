@@ -14,8 +14,12 @@
      m-menu-dropdown-timeout="500">
     @if (IsGranted(AppPermissions.Pages_Orders_Edit) 
         || IsGranted(AppPermissions.Pages_Quotes_Edit)
+        || IsGranted(AppPermissions.Pages_DriverMessages)
         || IsGranted(AppPermissions.Pages_Trucks)
+        || IsGranted(AppPermissions.Pages_Services)
         || IsGranted(AppPermissions.Pages_Drivers)
+        || IsGranted(AppPermissions.Pages_Locations)
+        || IsGranted(AppPermissions.Pages_Administration_Users_Create)
     )
     {
         <div class="common-add-button-group dropdown">
@@ -26,20 +30,36 @@
             <div class="dropdown-menu">
                 @if (IsGranted(AppPermissions.Pages_Orders_Edit))
                 {
-                    <a class="dropdown-item" href="#" id="CommonAddJobButton">@L("AddJob")</a>
-                    <a class="dropdown-item" href="#" id="CommonAddOrderButton">@L("AddOrder")</a>
+                    <a class="dropdown-item" href="#" id="CommonAddOrderButton">@L("GlobalAddOrder")</a>
+                    <a class="dropdown-item" href="#" id="CommonAddJobButton">@L("GlobalAddJob")</a>
                 }
                 @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
                 {
-                    <a class="dropdown-item" href="#" id="CommonAddQuoteButton">@L("AddQuote")</a>
+                    <a class="dropdown-item" href="#" id="CommonAddQuoteButton">@L("GlobalAddQuote")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_DriverMessages))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddDriverMessageButton">@L("GlobalAddMessage")</a>
                 }
                 @if (IsGranted(AppPermissions.Pages_Trucks))
                 {
-                    <a class="dropdown-item" href="#" id="CommonAddTruckButton">@L("AddTruck")</a>
+                    <a class="dropdown-item" href="#" id="CommonAddTruckButton">@L("GlobalAddTruck")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_Services))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddServiceButton">@L("GlobalAddProductOrService")</a>
                 }
                 @if (IsGranted(AppPermissions.Pages_Drivers))
                 {
-                    <a class="dropdown-item" href="#" id="CommonAddDriverButton">@L("AddDriver")</a>
+                    <a class="dropdown-item" href="#" id="CommonAddDriverButton">@L("GlobalAddDriver")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_Locations))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddLocationButton">@L("GlobalAddLocation")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_Administration_Users_Create))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddUserButton">@L("GlobalAddUser")</a>
                 }
             </div>
         </div>
