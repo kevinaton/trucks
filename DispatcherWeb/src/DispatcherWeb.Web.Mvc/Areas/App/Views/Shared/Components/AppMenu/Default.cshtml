@@ -12,7 +12,11 @@
      m-menu-vertical="1"
      m-menu-scrollable="1"
      m-menu-dropdown-timeout="500">
-    @if (IsGranted(AppPermissions.Pages_Orders_Edit) || IsGranted(AppPermissions.Pages_Quotes_Edit))
+    @if (IsGranted(AppPermissions.Pages_Orders_Edit) 
+        || IsGranted(AppPermissions.Pages_Quotes_Edit)
+        || IsGranted(AppPermissions.Pages_Trucks)
+        || IsGranted(AppPermissions.Pages_Drivers)
+    )
     {
         <div class="common-add-button-group dropdown">
             <button class="btn btn-primary" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -28,6 +32,14 @@
                 @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
                 {
                     <a class="dropdown-item" href="#" id="CommonAddQuoteButton">@L("AddQuote")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_Trucks))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddTruckButton">@L("AddTruck")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_Drivers))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddDriverButton">@L("AddDriver")</a>
                 }
             </div>
         </div>

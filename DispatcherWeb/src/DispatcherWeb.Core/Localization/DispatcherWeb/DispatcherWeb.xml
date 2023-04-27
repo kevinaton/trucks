@@ -1144,6 +1144,8 @@
 		<text name="CopyQuote">Copy Quote</text>
 		<text name="PrintQuote">Print Quote</text>
 		<text name="EmailQuote">Email Quote</text>
+		<text name="AddTruck">Add Truck</text>
+		<text name="AddDriver">Add Driver</text>
 		<text name="ProposalDate">Proposal Date</text>
 		<text name="ProposalExpiryDate">Proposal Expiry Date</text>
 		<text name="InactivationDate">Inactivation Date</text>

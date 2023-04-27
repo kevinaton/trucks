@@ -1,4 +1,5 @@
 @using System.Threading.Tasks
+@using DispatcherWeb.Authorization;
 @using DispatcherWeb.Web.Areas.App.Startup
 @{
     ViewBag.CurrentPageName = AppPageNames.Tenant.Quotes;
@@ -36,12 +37,15 @@
         <div class="m-portlet__body">
             <form class="m-form m-form--label-align-right">
                 <div class="row">
-                    <div class="form-group col-lg-3 col-md-4 col-sm-6">
-                        <label class="control-label" for="ProjectIdFilter">@L("ProjectName")</label>
-                        <select class="form-control filter" name="ProjectId" id="ProjectIdFilter" data-display-name="ProjectName">
-                            <option value="">Select a project name</option>
-                        </select>
-                    </div>
+                    @if (IsGranted(AppPermissions.Pages_Projects))
+                    {
+                        <div class="form-group col-lg-3 col-md-4 col-sm-6">
+                            <label class="control-label" for="ProjectIdFilter">@L("ProjectName")</label>
+                            <select class="form-control filter" name="ProjectId" id="ProjectIdFilter" data-display-name="ProjectName">
+                                <option value="">Select a project name</option>
+                            </select>
+                        </div>
+                    }
                     <div class="form-group col-lg-3 col-md-4 col-sm-6">
                         <label class="control-label" for="QuoteIdFilter">@L("QuoteId")</label>
                         <input class="form-control filter" name="QuoteId" id="QuoteIdFilter" placeholder="Quote Id" type="text">

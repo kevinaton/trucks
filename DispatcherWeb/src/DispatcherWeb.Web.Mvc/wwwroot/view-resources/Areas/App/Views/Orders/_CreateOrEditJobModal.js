@@ -216,9 +216,9 @@
                 abpServiceData: { hideInactive: true },
                 optionCreatedCallback: function (option, val) {
                     switch (val.item.status) {
-                        case abp.enums.projectStatus.pending: option.addClass("quote-pending"); break;
-                        case abp.enums.projectStatus.active: option.addClass("quote-active"); break;
-                        case abp.enums.projectStatus.inactive: option.addClass("quote-inactive"); break;
+                        case abp.enums.quoteStatus.pending: option.addClass("quote-pending"); break;
+                        case abp.enums.quoteStatus.active: option.addClass("quote-active"); break;
+                        case abp.enums.quoteStatus.inactive: option.addClass("quote-inactive"); break;
                     }
                 }
             });
@@ -260,7 +260,7 @@
             quoteChildDropdown.onChildDropdownUpdated(function (data) {
                 var hasActiveOrPendingQuotes = false;
                 $.each(data.items, function (ind, val) {
-                    if (val.item.status === abp.enums.projectStatus.pending || val.item.status === abp.enums.projectStatus.active) {
+                    if (val.item.status === abp.enums.quoteStatus.pending || val.item.status === abp.enums.quoteStatus.active) {
                         hasActiveOrPendingQuotes = true;
                     }
                 });
@@ -367,13 +367,13 @@
                 }
                 var newQuoteId = _quoteDropdown.val();
                 var option = _quoteDropdown.getSelectedDropdownOption();
-                if (option.data('status') === abp.enums.projectStatus.pending) {
+                if (option.data('status') === abp.enums.quoteStatus.pending) {
                     if (await abp.message.confirm(
                         "This quote is 'Pending'. If you add this quote to the order it will be changed to 'Active'. If you do not want the quote to be activated, select 'Cancel'."
                     )) {
-                        option.data('status', abp.enums.projectStatus.active);
+                        option.data('status', abp.enums.quoteStatus.active);
                         await handleQuoteChangeAsync(newQuoteId, option);
-                        abp.services.app.quote.setQuoteStatus({ id: _quoteId, status: abp.enums.projectStatus.active });
+                        abp.services.app.quote.setQuoteStatus({ id: _quoteId, status: abp.enums.quoteStatus.active });
                     } else {
                         quoteIdChanging = true;
                         //check if the old value is still in the dropdown, and set the quote to "" if not

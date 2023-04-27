@@ -34,6 +34,34 @@ namespace DispatcherWeb
                 : first + " " + middle + " " + last;
         }
 
+        public static (string FirstName, string LastName) SplitFullName(string fullName)
+        {
+            if (fullName == null)
+            {
+                return (null, null);
+            }
+
+            if (fullName == "")
+            {
+                return ("", "");
+            }
+
+            if (fullName.Contains(","))
+            {
+                var parts = fullName.Split(',');
+                var lastName = parts[0].Trim();
+                var firstName = string.Join(",", parts.Skip(1)).Trim();
+                return (firstName, lastName);
+            }
+            else
+            {
+                var parts = fullName.Split(" ");
+                var firstName = parts[0].Trim();
+                var lastName = string.Join(" ", parts.Skip(1)).Trim();
+                return (firstName, lastName);
+            }
+        }
+
         public static string ConcatenateAddress(params string[] parts)
         {
             var joins = parts.ToList();

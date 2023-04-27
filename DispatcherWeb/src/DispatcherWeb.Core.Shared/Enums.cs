@@ -113,7 +113,7 @@ namespace DispatcherWeb
         RockBox = 2
     }
 
-    public enum ProjectStatus
+    public enum QuoteStatus
     {
         Pending = 0,
         Active = 1,

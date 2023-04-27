@@ -3,6 +3,7 @@ using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,9 +26,9 @@ namespace DispatcherWeb.Web.Mvc.Areas.App.Controllers
             return View();
         }
 
-        public async Task<PartialViewResult> CreateOrEditModal(int? id)
+        public async Task<PartialViewResult> CreateOrEditModal(NullableIdNameDto input)
         {
-            var model = await _driverAppService.GetDriverForEdit(new NullableIdDto(id));
+            var model = await _driverAppService.GetDriverForEdit(input);
             return PartialView("_CreateOrEditModal", model);
         }
     }

@@ -247,7 +247,7 @@
     };
 
     abp.enums = abp.enums || {};
-    abp.enums.projectStatus = {
+    abp.enums.quoteStatus = {
         pending: 0,
         active: 1,
         inactive: 2

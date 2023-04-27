@@ -115,7 +115,8 @@
                 {
                     responsivePriority: 2,
                     data: "projectName",
-                    title: "Project Name"
+                    title: "Project Name",
+                    visible: abp.auth.hasPermission('Pages.Projects')
                 },
                 {
                     data: "customerName",
@@ -150,7 +151,7 @@
                             + '<ul class="dropdown-menu dropdown-menu-right">'
                             + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
 
-                            + (_permissions.edit ? (full.status !== abp.enums.projectStatus.inactive ?
+                            + (_permissions.edit ? (full.status !== abp.enums.quoteStatus.inactive ?
                                 '<li><a class="btnInactiveRow" title="Inactive"><i class="fa fa-minus-circle"></i> Inactivate</a></li>' :
                                 '<li><a class="btnreactiveRow" title="Re-active"><i class="fa fa-plus-circle"></i> Re-activate</a></li>') : '')
 

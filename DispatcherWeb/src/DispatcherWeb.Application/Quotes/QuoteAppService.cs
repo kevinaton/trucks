@@ -165,7 +165,7 @@ namespace DispatcherWeb.Quotes
             }
             var quotes = await _quoteRepository.GetAll()
                 .Where(x => x.CustomerId == input.Id)
-                .WhereIf(input.HideInactive, x => x.Status != ProjectStatus.Inactive)
+                .WhereIf(input.HideInactive, x => x.Status != QuoteStatus.Inactive)
                 .OrderBy(x => x.Name)
                 .Select(x => new SelectListDto<QuoteSelectListInfoDto>
                 {
@@ -505,9 +505,9 @@ namespace DispatcherWeb.Quotes
                     });
 
                     var project = await _projectRepository.GetAsync(model.ProjectId.Value);
-                    if (project.Status == ProjectStatus.Pending)
+                    if (project.Status == QuoteStatus.Pending)
                     {
-                        project.Status = ProjectStatus.Active;
+                        project.Status = QuoteStatus.Active;
                         await _projectRepository.UpdateAsync(project);
                     }
                 }
@@ -827,7 +827,7 @@ namespace DispatcherWeb.Quotes
                 Directions = order.Directions,
                 Name = input.QuoteName,
                 PONumber = order.PONumber,
-                Status = ProjectStatus.Active,
+                Status = QuoteStatus.Active,
                 SalesPersonId = AbpSession.UserId,
                 Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes),
                 ProposalDate = today,
@@ -875,7 +875,7 @@ namespace DispatcherWeb.Quotes
         {
             var quote = await _quoteRepository.GetAsync(model.Id);
             quote.Status = model.Status;
-            if (quote.Status == ProjectStatus.Active && quote.ProjectId.HasValue)
+            if (quote.Status == QuoteStatus.Active && quote.ProjectId.HasValue)
             {
                 var project = await _projectRepository.GetAsync(quote.ProjectId.Value);
                 project.Status = quote.Status;
@@ -924,7 +924,7 @@ namespace DispatcherWeb.Quotes
         {
             var quote = await _quoteRepository.GetAsync(input.Id);
             quote.InactivationDate = await GetToday();
-            quote.Status = ProjectStatus.Inactive;
+            quote.Status = QuoteStatus.Inactive;
         }
 
         //*********************//
@@ -1528,7 +1528,7 @@ namespace DispatcherWeb.Quotes
         {
             var quote = await _quoteRepository.GetAsync(input.Id);
             quote.InactivationDate = null;
-            quote.Status = ProjectStatus.Active;
+            quote.Status = QuoteStatus.Active;
         }
     }
 }

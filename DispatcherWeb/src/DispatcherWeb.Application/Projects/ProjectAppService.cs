@@ -98,7 +98,7 @@ namespace DispatcherWeb.Projects
         public async Task<PagedResultDto<SelectListDto>> GetActiveOrPendingProjectsSelectList(GetSelectListInput input)
         {
             var query = _projectRepository.GetAll()
-                .Where(x => x.Status != ProjectStatus.Inactive)
+                .Where(x => x.Status != QuoteStatus.Inactive)
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),
@@ -148,7 +148,7 @@ namespace DispatcherWeb.Projects
         {
             var project = model.Id.HasValue ? await _projectRepository.GetAsync(model.Id.Value) : new Project();
 
-            if (project.Status != model.Status && model.Status == ProjectStatus.Inactive)
+            if (project.Status != model.Status && model.Status == QuoteStatus.Inactive)
             {
                 // Whenever the status is changed to inactive, the end date should default to today regardless of whether this is a new project
                 model.EndDate = await GetToday();
@@ -213,14 +213,14 @@ namespace DispatcherWeb.Projects
             var today = await GetToday();
             var project = await _projectRepository.GetAsync(input.Id);
             project.EndDate = today;
-            project.Status = ProjectStatus.Inactive;
+            project.Status = QuoteStatus.Inactive;
 
             var quotes = await _quoteRepository.GetAll().Where(x => x.ProjectId == input.Id).ToListAsync();
 
             foreach (var quote in quotes)
             {
                 quote.InactivationDate = today;
-                quote.Status = ProjectStatus.Inactive;
+                quote.Status = QuoteStatus.Inactive;
             }
         }
 

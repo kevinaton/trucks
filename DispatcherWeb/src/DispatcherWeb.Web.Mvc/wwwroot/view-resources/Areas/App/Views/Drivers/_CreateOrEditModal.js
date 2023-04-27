@@ -425,11 +425,12 @@
                 }
 
                 _modalManager.setBusy(true);
-                await _driverService.editDriver(driver);
+                var editResult = await _driverService.editDriver(driver);
 
                 abp.notify.info('Saved successfully.');
+                _modalManager.setResult(editResult);
                 _modalManager.close();
-                abp.event.trigger('app.createOrEditDriverModalSaved');
+                abp.event.trigger('app.createOrEditDriverModalSaved', editResult);
             }
             finally {
                 _modalManager.setBusy(false);
