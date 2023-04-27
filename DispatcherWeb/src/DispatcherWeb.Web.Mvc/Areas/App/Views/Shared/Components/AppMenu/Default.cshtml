@@ -16,6 +16,7 @@
         || IsGranted(AppPermissions.Pages_Quotes_Edit)
         || IsGranted(AppPermissions.Pages_Trucks)
         || IsGranted(AppPermissions.Pages_Drivers)
+        || IsGranted(AppPermissions.Pages_Locations_Merge)
         || IsGranted(AppPermissions.Pages_Administration_Users_Create)
     )
     {
@@ -41,6 +42,10 @@
                 @if (IsGranted(AppPermissions.Pages_Drivers))
                 {
                     <a class="dropdown-item" href="#" id="CommonAddDriverButton">@L("GlobalAddDriver")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_Locations_Merge))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddLocationButton">@L("GlobalAddLocation")</a>
                 }
                 @if (IsGranted(AppPermissions.Pages_Administration_Users_Create))
                 {

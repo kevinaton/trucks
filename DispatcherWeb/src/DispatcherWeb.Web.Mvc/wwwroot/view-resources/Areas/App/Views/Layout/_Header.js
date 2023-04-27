@@ -318,6 +318,20 @@
             _createOrEditDriverModal.open();
         });
 
+        //Common 'Add Location' button
+
+        var _createOrEditLocationModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Locations/CreateOrEditLocationModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Locations/_CreateOrEditLocationModal.js',
+            modalClass: 'CreateOrEditLocationModal',
+            modalSize: 'lg'
+        });
+
+        $("#CommonAddLocationButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditLocationModal.open();
+        });
+
         //Common 'Add User' button
 
         var _createOrEditUserModal = new app.ModalManager({
