@@ -212,9 +212,9 @@
             abpServiceData: { hideInactive: true },
             optionCreatedCallback: function (option, val) {
                 switch (val.item.status) {
-                    case abp.enums.projectStatus.pending: option.addClass("quote-pending"); break;
-                    case abp.enums.projectStatus.active: option.addClass("quote-active"); break;
-                    case abp.enums.projectStatus.inactive: option.addClass("quote-inactive"); break;
+                    case abp.enums.quoteStatus.pending: option.addClass("quote-pending"); break;
+                    case abp.enums.quoteStatus.active: option.addClass("quote-active"); break;
+                    case abp.enums.quoteStatus.inactive: option.addClass("quote-inactive"); break;
                 }
             }
         });

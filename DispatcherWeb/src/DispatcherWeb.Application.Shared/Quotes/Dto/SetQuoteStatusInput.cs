@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
 
-        public ProjectStatus Status { get; set; }
+        public QuoteStatus Status { get; set; }
     }
 }

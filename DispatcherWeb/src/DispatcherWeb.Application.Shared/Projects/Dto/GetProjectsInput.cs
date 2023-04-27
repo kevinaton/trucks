@@ -8,7 +8,7 @@ namespace DispatcherWeb.Projects.Dto
     public class GetProjectsInput : PagedAndSortedInputDto, IShouldNormalize
     {
         public string Name { get; set; }
-        public ProjectStatus? Status { get; set; }
+        public QuoteStatus? Status { get; set; }
         public DateTime? StartDateStart { get; set; }
         public DateTime? StartDateEnd { get; set; }
         public DateTime? EndDateStart { get; set; }

@@ -21,7 +21,7 @@ namespace DispatcherWeb.Projects.Dto
 
         public DateTime? EndDate { get; set; }
 
-        public ProjectStatus Status { get; set; }
+        public QuoteStatus Status { get; set; }
 
         [StringLength(20)]
         public string PONumber { get; set; }

@@ -348,7 +348,7 @@
             e.preventDefault();
             if ($("#InactivationDate").val() !== '') {
                 var option = $("#Status").getSelectedDropdownOption().val();
-                if (parseInt(option) !== abp.enums.projectStatus.inactive) {
+                if (parseInt(option) !== abp.enums.quoteStatus.inactive) {
                     abp.message.warn('Only inactive quotes can have an inactivation date.');
                     return false;
                 }
@@ -545,7 +545,7 @@
                 return;
             }
             var option = $("#Status").getSelectedDropdownOption().val();
-            if (option == abp.enums.projectStatus.pending || option == abp.enums.projectStatus.active) {
+            if (option == abp.enums.quoteStatus.pending || option == abp.enums.quoteStatus.active) {
                 $("#InactivationDate").val('');
             } else {
                 var now = moment(new Date());

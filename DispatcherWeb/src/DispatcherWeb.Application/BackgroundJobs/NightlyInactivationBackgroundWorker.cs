@@ -60,7 +60,7 @@ namespace DispatcherWeb.BackgroundJobs
 
             var projectsToDeactivate = _projectRepository
                 .GetAllIncluding(x => x.Quotes)
-                .Where(x => x.Status != ProjectStatus.Inactive
+                .Where(x => x.Status != QuoteStatus.Inactive
                         && x.EndDate < lastMidnightDate)
                 .ToList();
 
@@ -69,10 +69,10 @@ namespace DispatcherWeb.BackgroundJobs
             var i = 0;
             foreach (var project in projectsToDeactivate)
             {
-                project.Status = ProjectStatus.Inactive;
+                project.Status = QuoteStatus.Inactive;
                 foreach (var quote in project.Quotes)
                 {
-                    quote.Status = ProjectStatus.Inactive;
+                    quote.Status = QuoteStatus.Inactive;
                     quote.InactivationDate = project.EndDate;
                     totalChildQuotesDeactivated++;
                     i++;
@@ -89,14 +89,14 @@ namespace DispatcherWeb.BackgroundJobs
             CurrentUnitOfWork.SaveChanges();
 
             var quotesToDeactivate = _quoteRepository.GetAll()
-                .Where(x => x.Status != ProjectStatus.Inactive
+                .Where(x => x.Status != QuoteStatus.Inactive
                             && x.InactivationDate < lastMidnightDate)
                 .ToList();
 
             var totalQuotesDeactivated = 0;
             foreach (var quote in quotesToDeactivate)
             {
-                quote.Status = ProjectStatus.Inactive;
+                quote.Status = QuoteStatus.Inactive;
 
                 totalQuotesDeactivated++;
                 if (i++ >= 500)

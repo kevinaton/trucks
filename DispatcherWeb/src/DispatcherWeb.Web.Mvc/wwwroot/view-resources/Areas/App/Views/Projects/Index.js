@@ -121,7 +121,7 @@
                     responsivePriority: 2,
                     width: '10px',
                     render: function (data, type, full, meta) {
-                        if (full.status !== abp.enums.projectStatus.inactive) {
+                        if (full.status !== abp.enums.quoteStatus.inactive) {
                             return '<div class="dropdown">'
                                 + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
                                 + '<ul class="dropdown-menu dropdown-menu-right">'

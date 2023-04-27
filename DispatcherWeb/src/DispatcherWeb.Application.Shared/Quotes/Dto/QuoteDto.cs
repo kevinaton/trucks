@@ -15,6 +15,6 @@ namespace DispatcherWeb.Quotes.Dto
         public List<EmailDeliveryStatus> EmailDeliveryStatuses { get; set; }
         public EmailDeliveryStatus? CalculatedEmailDeliveryStatus => EmailDeliveryStatuses.GetLowestStatus();
         public DateTime? QuoteDate { get; set; }
-        public ProjectStatus Status { get; set; }
+        public QuoteStatus Status { get; set; }
     }
 }

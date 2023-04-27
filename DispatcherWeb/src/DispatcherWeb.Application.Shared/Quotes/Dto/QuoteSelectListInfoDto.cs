@@ -3,7 +3,7 @@
     public class QuoteSelectListInfoDto
     {
         public int? ProjectId { get; set; }
-        public ProjectStatus Status { get; set; }
+        public QuoteStatus Status { get; set; }
         public string ChargeTo { get; set; }
         public string PONumber { get; set; }
         public string SpectrumNumber { get; set; }
