@@ -33,5 +33,10 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             return PartialView("_AddLeaseHaulerStatementModal");
         }
 
+        [Modal]
+        public PartialViewResult SpecifyExportOptionsModal()
+        {
+            return PartialView("_SpecifyExportOptionsModal");
+        }
     }
 }

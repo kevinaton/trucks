@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO.Compression;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
@@ -137,7 +138,7 @@ namespace DispatcherWeb.LeaseHaulerStatements
             }
         }
 
-        private async Task<LeaseHaulerStatementReportDto> GetLeaseHaulerStatementReportDto(EntityDto input)
+        private async Task<LeaseHaulerStatementReportDto> GetLeaseHaulerStatementReportDto(GetLeaseHaulerStatementsToCsvInput input)
         {
             var item = await _leaseHaulerStatementRepository.GetAll()
                 .Where(x => x.Id == input.Id)
@@ -195,10 +196,31 @@ namespace DispatcherWeb.LeaseHaulerStatements
 
         [AbpAuthorize(AppPermissions.Pages_LeaseHaulerStatements)]
         [HttpPost]
-        public async Task<FileDto> GetLeaseHaulerStatementsToCsv(EntityDto input)
+        public async Task<FileDto> GetLeaseHaulerStatementsToCsv(GetLeaseHaulerStatementsToCsvInput input)
         {
             var data = await GetLeaseHaulerStatementReportDto(input);
-            return _leaseHaulerStatementCsvExporter.ExportToFile(data);
+            var filename = $"LeaseHaulerStatement{data.Id}";
+            if (input.SplitByLeaseHauler)
+            {
+                var csvList = data.Tickets
+                    .GroupBy(x => x.CarrierName)
+                    .Select(group => 
+                    {
+                        var carrierData = data.Clone();
+                        carrierData.FileName = $"{filename}-{group.Key}.csv";
+                        carrierData.Tickets = group.ToList();
+                        return _leaseHaulerStatementCsvExporter.ExportToFileBytes(carrierData);
+                    })
+                    .ToList();
+
+                var zipFile = csvList.ToZipFile(filename + ".zip", CompressionLevel.Optimal);
+                return _leaseHaulerStatementCsvExporter.StoreTempFile(zipFile);
+            }
+            else
+            {
+                data.FileName = $"{filename}.csv";
+                return _leaseHaulerStatementCsvExporter.ExportToFile(data);
+            }
         }
 
         [AbpAuthorize(AppPermissions.Pages_LeaseHaulerStatements)]

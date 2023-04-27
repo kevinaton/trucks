@@ -780,14 +780,14 @@ namespace DispatcherWeb.PayStatements
             return item;
         }
 
-        public async Task<DriverPayStatementReport> GetDriverPayStatementReport(GetDriverPayStatementReportInput input)
+        public async Task<FileBytesDto> GetDriverPayStatementReport(GetDriverPayStatementReportInput input)
         {
             var data = await GetPayStatementReportDto(new EntityDto(input.Id));
             var report = _driverPayStatementReportGenerator.GenerateReportAndZip(data, input);
             return report;
         }
 
-        public async Task<DriverPayStatementReport> GetDriverPayStatementWarningsReport(EntityDto input)
+        public async Task<FileBytesDto> GetDriverPayStatementWarningsReport(EntityDto input)
         {
             var data = await _payStatementRepository.GetAll()
                 .Where(x => x.Id == input.Id)
