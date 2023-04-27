@@ -14,6 +14,7 @@
      m-menu-dropdown-timeout="500">
     @if (IsGranted(AppPermissions.Pages_Orders_Edit) 
         || IsGranted(AppPermissions.Pages_Quotes_Edit)
+        || IsGranted(AppPermissions.Pages_DriverMessages)
         || IsGranted(AppPermissions.Pages_Trucks)
         || IsGranted(AppPermissions.Pages_Services_Merge)
         || IsGranted(AppPermissions.Pages_Drivers)
@@ -35,6 +36,10 @@
                 @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
                 {
                     <a class="dropdown-item" href="#" id="CommonAddQuoteButton">@L("GlobalAddQuote")</a>
+                }
+                @if (IsGranted(AppPermissions.Pages_DriverMessages))
+                {
+                    <a class="dropdown-item" href="#" id="CommonAddDriverMessageButton">@L("GlobalAddMessage")</a>
                 }
                 @if (IsGranted(AppPermissions.Pages_Trucks))
                 {

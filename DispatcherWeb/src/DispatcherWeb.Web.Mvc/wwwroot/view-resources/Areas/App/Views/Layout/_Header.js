@@ -292,6 +292,19 @@
             window.location = abp.appPath + 'app/Quotes/Details/';
         });
 
+        //Common 'Add Driver Message' button
+
+        var _sendDriverMessageModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/DriverMessages/SendMessageModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/DriverMessages/_SendMessageModal.js',
+            modalClass: 'SendMessageModal'
+        });
+
+        $('#CommonAddDriverMessageButton').click(function (e) {
+            e.preventDefault();
+            _sendDriverMessageModal.open();
+        });
+
         //Common 'Add Truck' button
 
         var _createOrEditTruckModal = new app.ModalManager({
