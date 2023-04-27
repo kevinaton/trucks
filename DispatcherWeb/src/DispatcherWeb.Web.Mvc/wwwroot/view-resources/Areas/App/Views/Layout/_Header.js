@@ -305,6 +305,20 @@
             _sendDriverMessageModal.open();
         });
 
+        //Common 'Add Lease Hauler' button
+
+        var _createOrEditLeaseHaulerModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/LeaseHaulers/CreateOrEditLeaseHaulerModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/LeaseHaulers/_CreateOrEditLeaseHaulerModal.js',
+            modalClass: 'CreateOrEditLeaseHaulerModal',
+            modalSize: 'lg'
+        });
+
+        $('#CommonAddLeaseHaulerButton').click(function (e) {
+            e.preventDefault();
+            _createOrEditLeaseHaulerModal.open();
+        });
+
         //Common 'Add Truck' button
 
         var _createOrEditTruckModal = new app.ModalManager({
