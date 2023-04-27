@@ -318,6 +318,19 @@
             _createOrEditDriverModal.open();
         });
 
+        //Common 'Add User' button
+
+        var _createOrEditUserModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'App/Users/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/App/Views/Users/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditUserModal'
+        });
+
+        $("#CommonAddUserButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditUserModal.open();
+        });
+
         function init() {
             loadNotifications();
             getRecentlyLinkedUsers();

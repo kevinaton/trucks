@@ -1816,6 +1816,17 @@
 		<text name="RequiresNotification">Requires Notification</text>
 		<text name="ContactName">Contact Name</text>
 		<text name="IncorrectPhoneNumberFormatError">Phone Number should be in the format of +1##########</text>
-		<text name="ADD">ADD</text>
+		<text name="ADD">ADD NEW</text>
+		<text name="GlobalAddOrder">Order</text>
+		<text name="GlobalAddJob">Job</text>
+		<text name="GlobalAddQuote">Quote</text>
+		<text name="GlobalAddMessage">Message</text>
+		<text name="GlobalAddLeaseHauler">Lease Hauler</text>
+		<text name="GlobalAddTruck">Truck</text>
+		<text name="GlobalAddCustomer">Customer</text>
+		<text name="GlobalAddProductOrService">Product/Service</text>
+		<text name="GlobalAddDriver">Driver</text>
+		<text name="GlobalAddLocation">Location</text>
+		<text name="GlobalAddUser">User</text>
 	</texts>
 </localizationDictionary>
