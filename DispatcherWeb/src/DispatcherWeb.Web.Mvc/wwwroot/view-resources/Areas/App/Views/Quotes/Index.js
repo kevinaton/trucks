@@ -140,6 +140,10 @@
                     title: "Contact Name"
                 },
                 {
+                    data: "poNumber",
+                    title: "PO Number"
+                },
+                {
                     responsivePriority: 2,
                     data: null,
                     orderable: false,

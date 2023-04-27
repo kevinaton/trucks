@@ -124,6 +124,7 @@ namespace DispatcherWeb.Quotes
                     QuoteDate = x.ProposalDate,
                     ContactName = x.Contact.Name,
                     SalesPersonName = x.SalesPerson.Name + " " + x.SalesPerson.Surname,
+                    PONumber = x.PONumber,
                     EmailDeliveryStatuses = x.QuoteEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList(),
                     Status = x.Status
                 })
