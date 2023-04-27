@@ -1812,6 +1812,14 @@
                     $(row).addClass('reqtruck-red');
                 }
             },
+            preDrawCallback: function (settings) {
+                // check if filter includes current day or futures dates
+                if (!isPastDate()) {
+                    scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "<span>There are no jobs for this date.</span><br /><button id='#howToAddaJob' class='btn btn-primary btn-sm mt-2'>Click here to see how to add a job</button>";
+                } else {
+                    scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "No data available in table";
+                }
+            },
             drawCallback: function (settings) {
                 $('table [data-toggle="tooltip"]').tooltip();
             }
