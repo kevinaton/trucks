@@ -305,6 +305,19 @@
             _createOrEditTruckModal.open();
         });
 
+        //Common 'Add Product or Service' button
+        var _createOrEditProductOrServiceModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Services/CreateOrEditServiceModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Services/_CreateOrEditServiceModal.js',
+            modalClass: 'CreateOrEditServiceModal',
+            modalSize: 'lg'
+        });
+
+        $('#CommonAddServiceButton').click(function (e) {
+            e.preventDefault();
+            _createOrEditProductOrServiceModal.open();
+        });
+
         //Common 'Add Driver' button
 
         var _createOrEditDriverModal = new app.ModalManager({
