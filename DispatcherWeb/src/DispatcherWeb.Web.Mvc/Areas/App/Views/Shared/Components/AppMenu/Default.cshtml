@@ -16,7 +16,7 @@
         || IsGranted(AppPermissions.Pages_Quotes_Edit)
         || IsGranted(AppPermissions.Pages_DriverMessages)
         || IsGranted(AppPermissions.Pages_Trucks)
-        || IsGranted(AppPermissions.Pages_Services_Merge)
+        || IsGranted(AppPermissions.Pages_Services)
         || IsGranted(AppPermissions.Pages_Drivers)
         || IsGranted(AppPermissions.Pages_Locations)
         || IsGranted(AppPermissions.Pages_Administration_Users_Create)
@@ -45,7 +45,7 @@
                 {
                     <a class="dropdown-item" href="#" id="CommonAddTruckButton">@L("GlobalAddTruck")</a>
                 }
-                @if (IsGranted(AppPermissions.Pages_Services_Merge))
+                @if (IsGranted(AppPermissions.Pages_Services))
                 {
                     <a class="dropdown-item" href="#" id="CommonAddServiceButton">@L("GlobalAddProductOrService")</a>
                 }
