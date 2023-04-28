@@ -426,6 +426,7 @@ namespace DispatcherWeb.Imports.Services
                         ServiceId = _services[rowGroup.Key.ProductDescription.ToLower()],
                         MaterialPricePerUnit = null,
                         FreightPricePerUnit = rowGroup.Average(x => x.HaulPaymentRate),
+                        FreightRateToPayDrivers = rowGroup.Average(x => x.HaulPaymentRate),
                         MaterialPrice = 0,
                         FreightPrice = rowGroup.Sum(x => x.HaulPayment),
                         MaterialUomId = null,
