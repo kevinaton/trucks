@@ -317,7 +317,7 @@ namespace DispatcherWeb.Trucks
                 .GetSelectListResult(input);
 
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
-        public async Task<TruckEditDto> GetTruckForEdit(NullableIdDto input)
+        public async Task<TruckEditDto> GetTruckForEdit(GetTruckForEditInput input)
         {
             TruckEditDto truckEditDto;
 
@@ -402,10 +402,32 @@ namespace DispatcherWeb.Trucks
             {
                 truckEditDto = new TruckEditDto
                 {
+                    TruckCode = input.Name,
                     IsActive = true,
                     Files = new List<TruckFileEditDto>(),
                     InServiceDate = await GetToday()
                 };
+
+                if (input.VehicleCategoryId.HasValue)
+                {
+                    var vehicleCategory = await _vehicleCategoryRepository.GetAll()
+                        .Where(x => x.Id == input.VehicleCategoryId)
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.Name,
+                            x.AssetType,
+                            x.IsPowered
+                        }).FirstOrDefaultAsync();
+
+                    if (vehicleCategory != null)
+                    {
+                        truckEditDto.VehicleCategoryId = vehicleCategory.Id;
+                        truckEditDto.VehicleCategoryName = vehicleCategory.Name;
+                        truckEditDto.VehicleCategoryAssetType = vehicleCategory.AssetType;
+                        truckEditDto.VehicleCategoryIsPowered = vehicleCategory.IsPowered;
+                    }
+                }
             }
 
             await _singleOfficeService.FillSingleOffice(truckEditDto);
