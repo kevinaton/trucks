@@ -475,6 +475,25 @@
                 targetDropdown.change();
             });
 
+            _modalManager.on('app.customerNameExists', function (e) {
+                selectCustomerInControl(e);
+            });
+            _modalManager.on('app.createOrEditCustomerModalSaved', function (e) {
+                selectCustomerInControl(e);
+            });
+            function selectCustomerInControl(e) {
+                var option = new Option(e.item.name, e.item.id, true, true);
+                $(option).data('data', {
+                    id: e.item.id,
+                    text: e.item.name,
+                    item: {
+                        accountNumber: e.item.accountNumber,
+                        customerIsCod: e.item.customerIsCod
+                    }
+                });
+                _customerDropdown.append(option).trigger('change');
+            }
+
             reloadPricing();
             refreshHighlighting();
 
