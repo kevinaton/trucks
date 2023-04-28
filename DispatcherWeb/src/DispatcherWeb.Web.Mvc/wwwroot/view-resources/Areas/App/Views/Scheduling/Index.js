@@ -221,6 +221,12 @@
             modalSize: 'sm'
         });
 
+        var _createOrEditTruckModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Trucks/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Trucks/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditTruckModal'
+        });
+
         var _reassignTrucksModal = abp.helper.createModal('ReassignTrucks', 'Scheduling');
 
         var _createOrEditLeaseHaulerRequestModal = abp.helper.createModal('CreateOrEditLeaseHaulerRequest', 'LeaseHaulerRequests');
@@ -240,9 +246,9 @@
         refreshDateRelatedButtonsVisibility();
 
         $("#TruckTileChooseGroupingButton > .btn").click(function () {
-            refreshView($(this));
+            updateTruckTileContainerVisibility($(this));
         });
-        function refreshView($button) {
+        function updateTruckTileContainerVisibility($button) {
             $button.addClass("active").siblings().removeClass("active");
             var truckTileGroupingCategory = $button.data('category');
             app.localStorage.setItem('truckTileGroupingCategory', truckTileGroupingCategory);
@@ -262,7 +268,7 @@
             app.localStorage.getItem('truckTileGroupingCategory', function (result) {
                 var truckTileGroupingCategory = result || false;
                 var button = $('#TruckTileChooseGroupingButton > .btn[data-category="' + truckTileGroupingCategory + '"]');
-                refreshView(button);
+                updateTruckTileContainerVisibility(button);
             });
         }
         updateTruckTileGroupingContainerVisibilityFromCache();
@@ -297,17 +303,27 @@
                     var truckTilesContainer = truckTilesByCategory.closest(`[data-truck-category-id="${truck.vehicleCategory.id}"`);
                     tileWrapper.clone(true, true).appendTo(truckTilesContainer);
                 });
-                var tiles = $('#TruckTilesByCategory div.schedule-truck-tiles');
-                $.each(tiles, function (ind, tile) {
-                    let $truckGroup = $(tile).parents('div.m-accordion__item');
-                    var $collapsableHeader = $truckGroup.children('div.m-accordion__item-head');
-                    if ($(tile).has('div.truck-tile-wrap').length === 0) {
+
+                if (trucks.length) {
+                    truckTiles.append(getAddTruckTileButton());
+                    $("#TruckTilesNoTrucksMessage").hide();
+                } else {
+                    $("#TruckTilesNoTrucksMessage").show();
+                }
+
+                var groupedTruckTilesContainers = $('#TruckTilesByCategory div.schedule-truck-tiles');
+                $.each(groupedTruckTilesContainers, function (ind, truckTilesContainer) {
+                    let $truckTilesContainer = $(truckTilesContainer);
+                    let $categoryContainer = $truckTilesContainer.parents('div.m-accordion__item');
+                    var $collapsableHeader = $categoryContainer.children('div.m-accordion__item-head');
+                    if ($truckTilesContainer.has('div.truck-tile-wrap').length === 0) {
                         //$collapsableHeader.parent().remove();
-                        $truckGroup.hide();
+                        $categoryContainer.hide();
                         //$collapsableHeader.removeAttr('data-toggle');
                         //$collapsableHeader.find('span:nth-child(3)').remove();
                     } else {
-                        $truckGroup.show();
+                        $categoryContainer.show();
+                        $truckTilesContainer.append(getAddTruckTileButton($truckTilesContainer.data('truck-category-id')));
                         var $dataToggleAttr = $collapsableHeader.attr('data-toggle');
                         if (typeof $dataToggleAttr !== typeof undefined && $dataToggleAttr !== false) {
                             return;
@@ -318,6 +334,14 @@
                 });
                 _trucksWereLoadedOnce = true;
                 updateTruckTileGroupingContainerVisibilityFromCache();
+            });
+        }
+
+        function getAddTruckTileButton(category) {
+            return $('<button type="button" class="btn btn-default add-truck-tile-button" title="Add Truck"><i class="fa fa-plus"></i></button>').click(function () {
+                _createOrEditTruckModal.open({
+                    vehicleCategoryId: category || null
+                });
             });
         }
 
@@ -2061,6 +2085,10 @@
             //reloadDriverAssignments();
         });
 
+        abp.event.on('app.createOrEditTruckModalSaved', function () {
+            reloadTruckTiles();
+        });
+
         function actionMenuHasItems() {
             return _permissions.edit ||
                 _permissions.editTickets ||
@@ -2076,6 +2104,11 @@
             position.y += $(window).scrollTop();
             button.contextMenu({ x: position.x, y: position.y });
         });
+
+        $("#TruckTilesNoTrucksMessage").click(function (e) {
+            e.preventDefault();
+            _createOrEditTruckModal.open();
+        })
 
         $('#AddLeaseHaulerRequestButton').click(function (e) {
             e.preventDefault();

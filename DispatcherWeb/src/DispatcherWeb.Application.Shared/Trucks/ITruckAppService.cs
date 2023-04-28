@@ -11,7 +11,7 @@ namespace DispatcherWeb.Trucks
     {
         Task<PagedResultDto<TruckDto>> GetTrucks(GetTrucksInput input);
         Task<PagedResultDto<SelectListDto>> GetTrucksSelectList(GetTrucksSelectListInput input);
-        Task<TruckEditDto> GetTruckForEdit(NullableIdDto input);
+        Task<TruckEditDto> GetTruckForEdit(GetTruckForEditInput input);
         Task<EditTruckResult> EditTruck(TruckEditDto model);
         Task<SetTruckIsOutOfServiceResult> SetTruckIsOutOfService(SetTruckIsOutOfServiceInput input);
         Task<bool> CanDeleteTruck(EntityDto input);
