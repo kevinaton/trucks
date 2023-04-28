@@ -332,6 +332,20 @@
             _createOrEditTruckModal.open();
         });
 
+        //Common 'Add Customer' button
+
+        var _createOrEditCustomerModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Customers/CreateOrEditCustomerModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Customers/_CreateOrEditCustomerModal.js',
+            modalClass: 'CreateOrEditCustomerModal',
+            modalSize: 'lg'
+        });
+
+        $("#CommonAddCustomerButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditCustomerModal.open();
+        });
+
         //Common 'Add Product or Service' button
         var _createOrEditProductOrServiceModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Services/CreateOrEditServiceModal',
