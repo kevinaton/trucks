@@ -280,6 +280,7 @@ namespace DispatcherWeb.LeaseHaulers
                     FreightUomId = destinationFreightUom.Id,
                     FreightQuantity = sourceOrderLine.FreightQuantity,
                     FreightPricePerUnit = sourceOrderLine.LeaseHaulerRate,
+                    FreightRateToPayDrivers = sourceOrderLine.LeaseHaulerRate,
                     FirstStaggeredTimeOnJob = sourceOrderLine.FirstStaggeredTimeOnJob,
                     MaterialUomId = null,
                     MaterialQuantity = null,
@@ -663,7 +664,12 @@ namespace DispatcherWeb.LeaseHaulers
                                 break;
 
                             case nameof(OrderLine.LeaseHaulerRate):
+                                var oldFreightPricePerUnit = haulingOrderLine.FreightPricePerUnit;
                                 await haulingOrderLineUpdater.UpdateFieldAsync(x => x.FreightPricePerUnit, sourceOrderLine.LeaseHaulerRate); //not a typo
+                                if (oldFreightPricePerUnit == haulingOrderLine.FreightRateToPayDrivers && oldFreightPricePerUnit != haulingOrderLine.FreightPricePerUnit)
+                                {
+                                    await haulingOrderLineUpdater.UpdateFieldAsync(x => x.FreightRateToPayDrivers, sourceOrderLine.LeaseHaulerRate);
+                                }
                                 break;
 
                             case nameof(OrderLine.FirstStaggeredTimeOnJob):
