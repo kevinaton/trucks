@@ -949,7 +949,6 @@
 		<text name="Setting_UseShifts">Use Shifts</text>
 		<text name="Setting_ShiftName">Shift name</text>
 		<text name="PaymentProcessor">Payment Processor</text>
-		<text name="QuoteDefaultNote">Quote Default Note</text>
 		<text name="QuoteEmailSubjectTemplate">Quote Email Subject Template</text>
 		<text name="QuoteEmailBodyTemplate">Quote Email Body Template</text>
 		<text name="InvoiceEmailSubjectTemplate">Invoice Email Subject Template</text>
@@ -1664,6 +1663,7 @@
 		<text name="AddLeaseHaulerStatement">Add LH Statement</text>
 		<text name="CreateTicketsFile">Create Tickets File</text>
 		<text name="ShowTrailersOnSchedule">Show trailers on schedule</text>
+		<text name="AllowSchedulingTrucksWithoutDrivers">Allow scheduling trucks without drivers</text>
 		<text name="ValidateUtilization">Validate Utilization</text>
 		<text name="Verified">Verified</text>
 		<text name="Unverified">Unverified</text>

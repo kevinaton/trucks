@@ -147,14 +147,11 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.Invoice.QuickbooksDesktop.AccountsReceivableAccountName, "Accounts Receivable", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Invoice.QuickbooksDesktop.TaxAccountName, "Sales Tax Payable", scopes: SettingScopes.Tenant),
 
-                new SettingDefinition(AppSettings.Quote.DefaultNotes, DispatcherWebConsts.DefaultSettings.Quote.DefaultNotes, scopes: SettingScopes.Tenant),
-
                 new SettingDefinition(AppSettings.Quote.EmailSubjectTemplate, "Quote for {Project.Name}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.EmailBodyTemplate, "Attached is a quote for your review. Please let me know if you have any questions.\r\n\r\nBest Regards\r\n{User.FirstName} {User.LastName}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.ChangedNotificationEmail.SubjectTemplate, "Quote #{Quote.Id} changed", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.ChangedNotificationEmail.BodyTemplate, "Quote #{Quote.Id} for {Customer.Name} was changed by {ChangedByUser.FirstName} {ChangedByUser.LastName}. You may want to review it to see if you need to send a followup quote. Here is a shortcut to the quote {Quote.Url}\r\n\r\nYou can see the changes here: {QuoteHistory.Url}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.PromptForDisplayingQuarryInfoOnQuotes, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
-                new SettingDefinition(AppSettings.Quote.GeneralTermsAndConditions, DispatcherWebConsts.DefaultSettings.Quote.GeneralTermsAndConditions, scopes: SettingScopes.Tenant),
 
                 new SettingDefinition(AppSettings.Order.EmailSubjectTemplate, "Thank you for your order", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Order.EmailBodyTemplate, "Attached is a copy of your order dated {DeliveryDate} from {CompanyName}.", scopes: SettingScopes.Tenant),
@@ -199,12 +196,12 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.Heartland.PublicKey, GetFromAppSettings(AppSettings.Heartland.PublicKey, ""), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Heartland.SecretKey, SimpleStringCipher.Instance.Encrypt(GetFromAppSettings(AppSettings.Heartland.SecretKey, "")), scopes: SettingScopes.Tenant),
 
-                new SettingDefinition(AppSettings.DispatchingAndMessaging.DispatchVia, "0", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.DispatchVia, DispatchVia.DriverApplication.ToIntString(), scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowSmsMessages, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.SendSmsOnDispatchingObsoleteBool, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.SendSmsOnDispatching, "1", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
-                new SettingDefinition(AppSettings.DispatchingAndMessaging.RequireDriversToEnterTickets, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.RequireDriversToEnterTickets, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.RequireSignature, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.RequireTicketPhoto, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.TextForSignatureView, "", scopes: SettingScopes.Tenant),
@@ -213,8 +210,9 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DriverDispatchSmsTemplate, "Start time: {DeliveryDate} {TimeOnJob} | Customer: {Customer} | From: {LoadAt} | Product: {Quantity} {UOM} {Item} | To: {DeliverTo} | Notes: {Note} | ChargeTo: {ChargeTo}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DriverStartTimeTemplate, "Your start time for {StartDate} is {StartTime}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultStartTime, "2000-01-01T12:00:00", scopes: SettingScopes.Tenant, isVisibleToClients: true),
-                new SettingDefinition(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
-                new SettingDefinition(AppSettings.DispatchingAndMessaging.ValidateUtilization, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.ValidateUtilization, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.AllowCounterSalesForUser, "false", scopes: SettingScopes.User, isVisibleToClients: true), //the value of this setting shouldn't be inherited from AllowCounterSalesForTenant, so these are two different settings
                 new SettingDefinition(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly, "false", scopes: SettingScopes.User, isVisibleToClients: true),

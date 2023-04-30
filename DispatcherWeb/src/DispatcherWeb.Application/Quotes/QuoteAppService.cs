@@ -1356,11 +1356,6 @@ namespace DispatcherWeb.Quotes
             data.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
             data.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
             data.HideLoadAt = input.HideLoadAt;
-            data.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
-
-            data.QuoteGeneralTermsAndConditions = data.QuoteGeneralTermsAndConditions
-                .Replace("{CompanyName}", data.CompanyName)
-                .Replace("{CompanyNameUpperCase}", data.CompanyName.ToUpper());
 
             await SetQuoteCaptureHistory(input.QuoteId);
 
