@@ -20,6 +20,9 @@
             allowMultiOffice: abp.features.isEnabled('App.AllowMultiOfficeFeature'),
             allowSendingOrdersToDifferentTenant: abp.features.isEnabled('App.AllowSendingOrdersToDifferentTenant')
         };
+        var _settings = {
+            validateUtilization: abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization'),
+        };
         var _vehicleCategories = null;
         var _loadingState = false;
         var _trucksWereLoadedOnce = false;
@@ -423,15 +426,14 @@
         }
 
         function canAddTruckWithDriverToOrder(truck, driverId, order) {
-            var validateUtilization = abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization');
             if (isTodayOrFutureDate(order)
-                && (truck.utilization >= 1 && validateUtilization
+                && (truck.utilization >= 1 && _settings.validateUtilization
                     || truckHasNoDriver(truck) && truckCategoryNeedDriver(truck)
                     || truck.isOutOfService
                     || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)) {
                 return false;
             }
-            if (validateUtilization && order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id || olt.driverId === driverId))) {
+            if (_settings.validateUtilization && order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id || olt.driverId === driverId))) {
                 return false;
             }
 
@@ -1131,7 +1133,7 @@
         };
         menuFunctions.fn.activateClosedTrucks = function (element) {
             var rowData = _dtHelper.getRowData(element);
-            if (rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0) {
+            if (_settings.validateUtilization && (rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0)) {
                 abp.notify.error("Increase # of Trucks");
                 return;
             }
@@ -1421,6 +1423,7 @@
                     orderable: false,
                     title: 'Sched. Trucks',
                     width: "65px",
+                    visible: _settings.validateUtilization,
                     //responsivePriority: 1,
                     className: "cell-editable cell-scheduled-trucks all",
                     createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
@@ -1521,7 +1524,7 @@
                         });
 
                         var orderLineIsFullyUtilized = function () {
-                            if (!abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization')) {
+                            if (!_settings.validateUtilization) {
                                 return false;
                             }
                             return rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0;
@@ -1822,19 +1825,8 @@
                     }
                 }
             ],
-            createdRow: function (row, data, index) {
-                if (data.isClosed) {
-                    $(row).addClass('order-closed');
-                }
-                if (isOrderLineShared(data)) {
-                    $(row).addClass('order-shared');
-                }
-                if (!data.isClosed && data.utilization < data.maxUtilization) {
-                    $(row).addClass('order-not-fully-utilized');
-                }
-                if (!data.isClosed && data.scheduledTrucks < data.numberOfTrucks) {
-                    $(row).addClass('reqtruck-red');
-                }
+            createdRow: function (row, rowData, index) {
+                updateRowAppearance(row, rowData);
             },
             preDrawCallback: function (settings) {
                 // check if filter includes current day or futures dates
@@ -1872,16 +1864,18 @@
 
         function updateRowAppearance(element, rowData) {
             var row = $(element).closest('tr');
-            if (!rowData.isClosed && rowData.utilization < rowData.maxUtilization) {
-                row.addClass('order-not-fully-utilized');
-            } else {
-                row.removeClass('order-not-fully-utilized');
-            }
-            if (rowData.scheduledTrucks < rowData.numberOfTrucks) {
-                row.addClass('reqtruck-red');
-            } else {
-                row.removeClass('reqtruck-red');
-            }
+            row.toggleClass('order-closed',
+                rowData.isClosed
+            );
+            row.toggleClass('order-shared',
+                isOrderLineShared(rowData)
+            );
+            row.toggleClass('order-not-fully-utilized',
+                !rowData.isClosed && rowData.utilization < rowData.maxUtilization && _settings.validateUtilization
+            );
+            row.toggleClass('reqtruck-red',
+                !rowData.isClosed && rowData.scheduledTrucks < rowData.numberOfTrucks && _settings.validateUtilization
+            );
         }
 
         function truckHasNoDriver(truck) {
