@@ -163,6 +163,14 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             return PartialView("_ImportWithNoMappingModal", model);
         }
 
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Imports_VehicleUsage)]
+        public IActionResult ImportVehicleModal()
+        {
+            ViewBag.ImportType = ImportType.VehicleUsage;
+            return PartialView("_ImportVehicleModal");
+        }
+
         private static ImportMappingViewModel GetImportMappingViewModel(ISecureFileBlobService secureFileBlobService, Guid id, string fileName, ImportType importType)
         {
             ImportMappingViewModel model = new ImportMappingViewModel

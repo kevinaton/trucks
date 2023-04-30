@@ -1828,5 +1828,8 @@
 		<text name="GlobalAddDriver">Driver</text>
 		<text name="GlobalAddLocation">Location</text>
 		<text name="GlobalAddUser">User</text>
+		<text name="ImportTrucks">Import Trucks</text>
+		<text name="ImportVehicle">Import Mileage/Engine Hours</text>
+		<text name="ImportFuel">Import Fuel</text>
 	</texts>
 </localizationDictionary>
