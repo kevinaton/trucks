@@ -19,6 +19,11 @@
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Imports/_ImportVehicleModal.js',
             modalClass: 'ImportVehicleModal'
         });
+        var _importFuelModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Imports/ImportFuelModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Imports/_ImportFuelModal.js',
+            modalClass: 'ImportFuelModal'
+        });
 
         var $officeIdFilterSelect = $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
@@ -279,6 +284,11 @@
         $("#ImportVehicleButton").click(function (e) {
             e.preventDefault();
             _importVehicleModal.open();
+        });
+
+        $("#ImportFuelButton").click(function (e) {
+            e.preventDefault();
+            _importFuelModal.open();
         });
 
     });

@@ -171,6 +171,14 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             return PartialView("_ImportVehicleModal");
         }
 
+        [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Imports_FuelUsage)]
+        public IActionResult ImportFuelModal()
+        {
+            ViewBag.ImportType = ImportType.FuelUsage;
+            return PartialView("_ImportFuelModal");
+        }
+
         private static ImportMappingViewModel GetImportMappingViewModel(ISecureFileBlobService secureFileBlobService, Guid id, string fileName, ImportType importType)
         {
             ImportMappingViewModel model = new ImportMappingViewModel
