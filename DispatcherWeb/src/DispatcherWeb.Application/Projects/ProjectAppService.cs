@@ -136,7 +136,6 @@ namespace DispatcherWeb.Projects
             {
                 projectEditDto = new ProjectEditDto
                 {
-                    Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                 };
             }
 

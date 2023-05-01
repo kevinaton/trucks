@@ -19,6 +19,7 @@ namespace DispatcherWeb.Configuration.Tenants.Dto
         public DateTime DefaultStartTime { get; set; }
         public bool ShowTrailersOnSchedule { get; set; }
         public bool ValidateUtilization { get; set; }
+        public bool AllowSchedulingTrucksWithoutDrivers { get; set; }
         public bool AllowCounterSalesForTenant { get; set; }
     }
 }
