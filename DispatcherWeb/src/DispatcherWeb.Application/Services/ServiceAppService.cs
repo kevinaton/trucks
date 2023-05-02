@@ -235,7 +235,7 @@ namespace DispatcherWeb.Services
         }
 
         [AbpAuthorize(AppPermissions.Pages_Services)]
-        public async Task<int> EditService(ServiceEditDto model)
+        public async Task<ServiceEditDto> EditService(ServiceEditDto model)
         {
             var service = model.Id.HasValue ? await _serviceRepository.GetAsync(model.Id.Value) : new Service();
 
@@ -246,14 +246,12 @@ namespace DispatcherWeb.Services
             service.IsTaxable = model.IsTaxable;
             service.IncomeAccount = model.IncomeAccount;
 
-            if (model.Id.HasValue)
+            if (!model.Id.HasValue)
             {
-                return model.Id.Value;
+                model.Id = await _serviceRepository.InsertAndGetIdAsync(service);
             }
-            else
-            {
-                return await _serviceRepository.InsertAndGetIdAsync(service);
-            }
+
+            return model;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Services)]

@@ -305,8 +305,14 @@
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
                 showAll: false,
                 allowClear: true,
-                addItemCallback: abp.auth.isGranted('Pages.Services') ? async function (newServiceName) {
-                    _createOrEditServiceModal.open({ name: newServiceName });
+                addItemCallback: abp.auth.isGranted('Pages.Services') ? async function (newItemName) {
+                    var result = await app.getModalResultAsync(
+                        _createOrEditServiceModal.open({ name: newItemName })
+                    );
+                    return {
+                        id: result.id,
+                        name: result.service1
+                    };
                 } : null
             });
 
@@ -331,11 +337,6 @@
             }).change();
 
             abp.helper.ui.syncUomDropdowns(_materialUomDropdown, _freightUomDropdown, _designationDropdown, _materialQuantityInput, _freightQuantityInput);
-
-            _modalManager.on('app.createOrEditServiceModalSaved', function (e) {
-                abp.helper.ui.addAndSetDropdownValue(_serviceDropdown, e.item.Id, e.item.Service1);
-                _serviceDropdown.change();
-            });
 
             reloadPricing();
             refreshHighlighting();
