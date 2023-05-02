@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
@@ -39,6 +40,13 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
         {
             var id = await _quoteAppService.EditQuote(model);
             return RedirectToAction("Details", new { id });
+        }
+
+        [Modal]
+        public async Task<PartialViewResult> CreateOrEditQuoteModal(int? id, int? projectId)
+        {
+            var model = await _quoteAppService.GetQuoteForEdit(new GetQuoteForEditInput(id, projectId));
+            return PartialView("_CreateOrEditQuoteModal", model);
         }
 
         [Modal]

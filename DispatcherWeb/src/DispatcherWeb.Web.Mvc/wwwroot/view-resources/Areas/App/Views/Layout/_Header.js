@@ -287,9 +287,17 @@
 
         //Common 'Add Quote' button
 
+        var _createOrEditQuoteModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
+            modalClass: 'CreateOrEditQuoteModal',
+            modalSize: 'lg'
+        });
+
         $("#CommonAddQuoteButton").click(function (e) {
             e.preventDefault();
-            window.location = abp.appPath + 'app/Quotes/Details/';
+            _createOrEditQuoteModal.open();
+            //window.location = abp.appPath + 'app/Quotes/Details/';
         });
 
         //Common 'Add Driver Message' button

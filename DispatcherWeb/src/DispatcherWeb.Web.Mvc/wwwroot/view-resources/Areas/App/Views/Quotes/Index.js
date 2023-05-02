@@ -16,6 +16,13 @@
             modalSize: 'lg'
         });
 
+        var _createOrEditQuoteModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
+            modalClass: 'CreateOrEditQuoteModal',
+            modalSize: 'lg'
+        });
+
         app.localStorage.getItem('QuotesFilter', function (cachedFilter) {
             if (!cachedFilter) {
                 cachedFilter = {
@@ -178,7 +185,8 @@
 
         quotesTable.on('click', '.btnEditRow', function () {
             var quoteId = _dtHelper.getRowData(this).id;
-            window.location = abp.appPath + 'app/Quotes/Details/' + quoteId;
+            _createOrEditQuoteModal.open({ id: quoteId });
+            //window.location = abp.appPath + 'app/Quotes/Details/' + quoteId;
         });
 
         quotesTable.on('click', '.btnDeleteRow', async function () {
@@ -235,7 +243,8 @@
 
         $("#CreateNewQuoteButton").click(function (e) {
             e.preventDefault();
-            window.location = abp.appPath + 'app/Quotes/Details/';
+            _createOrEditQuoteModal.open();
+            //window.location = abp.appPath + 'app/Quotes/Details/';
         });
 
     });
