@@ -280,9 +280,16 @@
 
         //Common 'Add Order' button
 
+        var _createOrEditOrderModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderModal.js',
+            modalClass: 'CreateOrEditOrderModal',
+            modalSize: 'lg'
+        });
+
         $("#CommonAddOrderButton").click(function (e) {
             e.preventDefault();
-            window.location = abp.appPath + 'app/Orders/Details/';
+            _createOrEditOrderModal.open();
         });
 
         //Common 'Add Quote' button

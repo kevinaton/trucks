@@ -39,6 +39,13 @@
             modalClass: 'PrintOrderWithDeliveryInfoModal'
         });
 
+        var _createOrEditOrderModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderModal.js',
+            modalClass: 'CreateOrEditOrderModal',
+            modalSize: 'lg'
+        });
+
         abp.helper.ui.initControls();
 
         //init the filter controls
@@ -276,7 +283,7 @@
 
         ordersTable.on('click', '.btnEditRow', function () {
             var orderId = _dtHelper.getRowData(this).id;
-            window.location = abp.appPath + 'app/Orders/Details/' + orderId;
+            _createOrEditOrderModal.open({ id: orderId });
         });
 
         ordersTable.on('click', '.btnCopyRow', function () {
@@ -335,7 +342,7 @@
 
         $("#CreateNewOrderButton").click(function (e) {
             e.preventDefault();
-            window.location = abp.appPath + 'app/Orders/Details/';
+            _createOrEditOrderModal.open();
         });
 
         ordersTable.on('click', '.email-delivery-status', function () {
@@ -409,7 +416,7 @@
                     },
                     callback: function () {
                         var orderId = _dtHelper.getRowData(this).id;
-                        window.location = abp.appPath + 'app/Orders/Details/' + orderId;
+                        _createOrEditOrderModal.open({ id: orderId });
                     }
                 },
                 separator1: _permissions.edit ? "-----" : { visible: false },

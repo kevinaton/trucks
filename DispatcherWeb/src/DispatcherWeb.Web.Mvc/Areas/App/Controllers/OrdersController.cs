@@ -256,5 +256,11 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             return PartialView("_CreateOrEditJobModal", model);
         }
        
+        [Modal]
+        public async Task<PartialViewResult> CreateOrEditOrderModal(int? id)
+        {
+            var model = await _orderAppService.GetOrderForEdit(new NullableIdDto(id));
+            return PartialView("_CreateOrEditOrderModal", model);
+        }
     }
 }
