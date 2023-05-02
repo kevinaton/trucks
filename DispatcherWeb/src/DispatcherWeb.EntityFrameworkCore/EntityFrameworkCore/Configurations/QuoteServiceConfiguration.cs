@@ -17,6 +17,10 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .HasColumnType(DispatcherWebConsts.DbTypeDecimal19_4);
 
             builder
+                .Property(e => e.FreightRateToPayDrivers)
+                .HasColumnType(DispatcherWebConsts.DbTypeDecimal19_4);
+
+            builder
                 .Property(e => e.LeaseHaulerRate)
                 .HasColumnType(DispatcherWebConsts.DbTypeDecimal19_4);
 

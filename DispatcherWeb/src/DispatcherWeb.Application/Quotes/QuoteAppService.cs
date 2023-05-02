@@ -493,6 +493,7 @@ namespace DispatcherWeb.Quotes
                         Designation = x.Designation,
                         PricePerUnit = x.PricePerUnit,
                         FreightRate = x.FreightRate,
+                        FreightRateToPayDrivers = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
