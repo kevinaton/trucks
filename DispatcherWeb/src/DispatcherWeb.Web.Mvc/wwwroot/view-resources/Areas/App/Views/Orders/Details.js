@@ -471,7 +471,11 @@
             showAll: false,
             allowClear: true,
             addItemCallback: async function (newItemName) {
-                _createOrEditCustomerModal.open({ name: newItemName });
+                var result = await app.getModalResultAsync(
+                    _createOrEditCustomerModal.open({ name: newItemName })
+                );
+                selectCustomerInControl(result);
+                return false; //we don't want the value to be automatically changed by select2, and instead have custom logic for assigning a new customer, so we're not returning an object
             },
         });
 
@@ -488,9 +492,15 @@
                 if (!customerId) {
                     abp.notify.warn("Select a customer first");
                     $("#CustomerId").focus();
-                    return;
+                    return false;
                 }
-                _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId });
+                var result = await app.getModalResultAsync(
+                    _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId })
+                );
+                contactChildDropdown.updateChildDropdown(function () {
+                    contactChildDropdown.childDropdown.val(result.Id).change();
+                });
+                return false; //we don't want the value to be automatically changed by select2 now
             }
         });
 
@@ -506,9 +516,9 @@
             abpServiceData: { hideInactive: true },
             optionCreatedCallback: function (option, val) {
                 switch (val.item.status) {
-                    case abp.enums.projectStatus.pending: option.addClass("quote-pending"); break;
-                    case abp.enums.projectStatus.active: option.addClass("quote-active"); break;
-                    case abp.enums.projectStatus.inactive: option.addClass("quote-inactive"); break;
+                    case abp.enums.quoteStatus.pending: option.addClass("quote-pending"); break;
+                    case abp.enums.quoteStatus.active: option.addClass("quote-active"); break;
+                    case abp.enums.quoteStatus.inactive: option.addClass("quote-inactive"); break;
                 }
             }
         });
@@ -557,7 +567,7 @@
         quoteChildDropdown.onChildDropdownUpdated(function (data) {
             var hasActiveOrPendingQuotes = false;
             $.each(data.items, function (ind, val) {
-                if (val.item.status === abp.enums.projectStatus.pending || val.item.status === abp.enums.projectStatus.active) {
+                if (val.item.status === abp.enums.quoteStatus.pending || val.item.status === abp.enums.quoteStatus.active) {
                     hasActiveOrPendingQuotes = true;
                 }
             });
@@ -662,13 +672,13 @@
             }
             var newQuoteId = $("#QuoteId").val();
             var option = $("#QuoteId").getSelectedDropdownOption();
-            if (option.data('status') === abp.enums.projectStatus.pending) {
+            if (option.data('status') === abp.enums.quoteStatus.pending) {
                 if (await abp.message.confirm(
                     "This quote is 'Pending'. If you add this quote to the order it will be changed to 'Active'. If you do not want the quote to be activated, select 'Cancel'."
                 )) {
-                    option.data('status', abp.enums.projectStatus.active);
+                    option.data('status', abp.enums.quoteStatus.active);
                     await handleQuoteChangeAsync(newQuoteId, option);
-                    abp.services.app.quote.setQuoteStatus({ id: _quoteId, status: abp.enums.projectStatus.active });
+                    abp.services.app.quote.setQuoteStatus({ id: _quoteId, status: abp.enums.quoteStatus.active });
                 } else {
                     quoteIdChanging = true;
                     //check if the old value is still in the dropdown, and set the quote to "" if not
@@ -1404,30 +1414,18 @@
 
         //Handle popup adding
 
-        abp.event.on('app.customerNameExists', function (e) {
-            selectCustomerInControl(e);
-        });
-        abp.event.on('app.createOrEditCustomerModalSaved', function (e) {
-            selectCustomerInControl(e);
-        });
-        function selectCustomerInControl(e) {
-            var option = new Option(e.item.name, e.item.id, true, true);
+        function selectCustomerInControl(customer) {
+            var option = new Option(customer.name, customer.id, true, true);
             $(option).data('data', {
-                id: e.item.id,
-                text: e.item.name,
+                id: customer.id,
+                text: customer.name,
                 item: {
-                    accountNumber: e.item.accountNumber,
-                    customerIsCod: e.item.customerIsCod
+                    accountNumber: customer.accountNumber,
+                    customerIsCod: customer.customerIsCod
                 }
             });
             $("#CustomerId").append(option).trigger('change');
         }
-
-        abp.event.on('app.createOrEditCustomerContactModalSaved', function (e) {
-            contactChildDropdown.updateChildDropdown(function () {
-                contactChildDropdown.childDropdown.val(e.item.Id).change();
-            });
-        });
 
         $('#IsPending').change(function () {
             if ($(this).prop('checked')) {

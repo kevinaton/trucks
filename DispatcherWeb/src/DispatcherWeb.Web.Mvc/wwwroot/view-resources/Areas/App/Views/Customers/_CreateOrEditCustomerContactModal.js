@@ -52,13 +52,13 @@
 
                 _modalManager.setBusy(true);
                 let newId = await _customerService.editCustomerContact(customerContact);
-
                 abp.notify.info('Saved successfully.');
-                _modalManager.close();
                 customerContact.Id = newId;
                 abp.event.trigger('app.createOrEditCustomerContactModalSaved', {
                     item: customerContact
                 });
+                _modalManager.setResult(customerContact);
+                _modalManager.close();
             }
             finally {
                 _modalManager.setBusy(false);

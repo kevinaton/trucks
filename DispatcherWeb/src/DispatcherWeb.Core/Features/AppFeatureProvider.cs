@@ -121,6 +121,13 @@ namespace DispatcherWeb.Features
             );
 
             context.Create(
+                AppFeatures.Projects,
+                defaultValue: "false",
+                displayName: L("Projects"),
+                inputType: new CheckboxInputType()
+            );
+
+            context.Create(
                 AppFeatures.GpsIntegrationFeature,
                 defaultValue: "false",
                 displayName: L("GpsIntegrationFeature"),

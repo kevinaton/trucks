@@ -5,7 +5,8 @@
       "input": [
         "wwwroot/Common/Scripts/**/*.js",
         "!wwwroot/Common/Scripts/**/*min.js",
-        "!wwwroot/Common/Scripts/Chat/chat.signalr.js"
+        "!wwwroot/Common/Scripts/Chat/chat.signalr.js",
+        "wwwroot/view-resources/Areas/App/Views/Common/_OrganizationTree.js"
       ]
     },
     {
@@ -211,7 +212,6 @@
       "input": [
         "wwwroot/view-resources/Areas/App/Views/Common/_PermissionTree.js",
         "wwwroot/view-resources/Areas/App/Views/Common/Modals/_PermissionTreeModal.js",
-        "wwwroot/view-resources/Areas/App/Views/Common/_OrganizationTree.js",
         "wwwroot/view-resources/Areas/App/Views/Users/_CreateOrEditModal.js",
         "wwwroot/view-resources/Areas/App/Views/Users/_PermissionsModal.js",
         "wwwroot/view-resources/Areas/App/Views/Users/Index.js"

@@ -4,6 +4,7 @@ using Abp.Application.Features;
 using Abp.Application.Services.Dto;
 using Abp.Configuration;
 using Abp.Dependency;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Localization;
 using DispatcherWeb.PayStatements.Dto;
@@ -33,9 +34,9 @@ namespace DispatcherWeb.Orders.Reports
             return $"Warnings for Pay Statement through {model.EndDate:yyyy-MM-dd}".SanitizeFilename();
         }
 
-        public DriverPayStatementReport GenerateReport(PayStatementWarningReportDto model, EntityDto input)
+        public FileBytesDto GenerateReport(PayStatementWarningReportDto model, EntityDto input)
         {
-            var result = new List<DriverPayStatementReport>();
+            var result = new List<FileBytesDto>();
             Document document;
             Section section;
             Paragraph paragraph;
@@ -102,7 +103,7 @@ namespace DispatcherWeb.Orders.Reports
                     paragraph = document.LastSection.AddParagraph(conflict.DriverName + " - " + conflict.Date.ToString("d"));
                 }
             }
-            return new DriverPayStatementReport
+            return new FileBytesDto
             {
                 FileBytes = document.SaveToBytesArray(),
                 FileName = filename + ".pdf",

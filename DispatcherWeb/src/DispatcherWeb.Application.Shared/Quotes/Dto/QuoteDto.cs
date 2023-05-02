@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DispatcherWeb.Quotes.Dto
 {
@@ -12,9 +13,11 @@ namespace DispatcherWeb.Quotes.Dto
         public string CustomerName { get; set; }
         public string ContactName { get; set; }
         public string SalesPersonName { get; set; }
+        [StringLength(20)]
+        public string PONumber { get; set; }
         public List<EmailDeliveryStatus> EmailDeliveryStatuses { get; set; }
         public EmailDeliveryStatus? CalculatedEmailDeliveryStatus => EmailDeliveryStatuses.GetLowestStatus();
         public DateTime? QuoteDate { get; set; }
-        public ProjectStatus Status { get; set; }
+        public QuoteStatus Status { get; set; }
     }
 }

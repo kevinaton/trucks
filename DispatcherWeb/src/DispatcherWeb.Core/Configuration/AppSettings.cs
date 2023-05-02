@@ -196,10 +196,8 @@ namespace DispatcherWeb.Configuration
         public static class Quote
         {
             public const string PromptForDisplayingQuarryInfoOnQuotes = "App.General.PromptForDisplayingQuarryInfoOnQuotes";
-            public const string DefaultNotes = "App.Project.DefaultNotes";
             public const string EmailSubjectTemplate = "App.Quote.EmailSubjectTemplate";
             public const string EmailBodyTemplate = "App.Quote.EmailBodyTemplate";
-            public const string GeneralTermsAndConditions = "App.Quote.GeneralTermsAndConditions";
 
             public static class ChangedNotificationEmail
             {
@@ -327,6 +325,7 @@ namespace DispatcherWeb.Configuration
             public const string TextForSignatureView = "App.DispatchingAndMessaging.TextForSignatureView";
             public const string ShowTrailersOnSchedule = "App.DispatchingAndMessaging.ShowTrailersOnSchedule";
             public const string ValidateUtilization = "App.DispatchingAndMessaging.ValidateUtilization";
+            public const string AllowSchedulingTrucksWithoutDrivers = "App.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers";
             public const string AllowCounterSalesForTenant = "App.DispatchingAndMessaging.AllowCounterSalesForTenant";
             public const string AllowCounterSalesForUser = "App.DispatchingAndMessaging.AllowCounterSalesForUser";
             public const string DefaultLoadAtLocationId = "App.DispatchingAndMessaging.DefaultLoadAtLocationId";

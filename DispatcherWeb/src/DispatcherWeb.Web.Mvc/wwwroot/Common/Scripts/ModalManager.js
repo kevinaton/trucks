@@ -5,6 +5,19 @@
 
     app.modals = app.modals || {};
 
+    app.getModalResultAsync = function (modalPromise) {
+        return new Promise((resolve, reject) => {
+            modalPromise.then((modal, modalObject, modalResultPromise) => {
+                modal.on('hidden.bs.modal', () => {
+                    reject();
+                });
+                modalResultPromise.then(resolve, reject);
+            }, () => {
+                reject();
+            })
+        });
+    };
+
     app.ModalManager = (function () {
 
         var _normalizeOptions = function (options) {
@@ -59,6 +72,8 @@
             var _onOpenCallbacks = [];
             var _onOpenOnceCallbacks = [];
 
+            var _modalResultPromise = null;
+
             function _saveModal() {
                 if (_modalObject && _modalObject.save) {
                     _modalObject.save();
@@ -82,6 +97,11 @@
                     for (let i = 0; i < _onCloseOnceCallbacks.length; i++) {
                         _onCloseOnceCallbacks[i]();
                     }
+
+                    if (_modalResultPromise) {
+                        _modalResultPromise.reject();
+                    }
+
                     _onCloseOnceCallbacks = [];
                 });
 
@@ -100,7 +120,7 @@
                         _onOpenOnceCallbacks[i]();
                     }
                     _onOpenOnceCallbacks = [];
-                    openResultDeferred.resolveWith(_publicApi, [_$modal, _modalObject]);
+                    openResultDeferred.resolveWith(_publicApi, [_$modal, _modalObject, _modalResultPromise]);
                 });
 
                 var modalClass = app.modals[options.modalClass];
@@ -136,6 +156,7 @@
 
                 _args = args || {};
                 _getResultCallback = getResultCallback;
+                _modalResultPromise = $.Deferred();
 
                 var openResultDeferred = $.Deferred();
 
@@ -263,6 +284,7 @@
 
                 setResult: function () {
                     _getResultCallback && _getResultCallback.apply(_publicApi, arguments);
+                    _modalResultPromise && _modalResultPromise.resolveWith(_publicApi, arguments);
                 },
 
                 onClose: _onClose,

@@ -10,6 +10,13 @@
             modalClass: 'AddLeaseHaulerStatementModal'
         });
 
+        var _specifyExportOptionsModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/LeaseHaulerStatements/SpecifyExportOptionsModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/LeaseHaulerStatements/_SpecifyExportOptionsModal.js',
+            modalClass: 'SpecifyExportOptionsModal',
+            modalSize: 'sm'
+        });
+
         $("#DateRangeFilter").daterangepicker({
             locale: {
                 cancelLabel: 'Clear'
@@ -75,14 +82,6 @@
                     },
                 },
                 {
-                    data: "customers",
-                    title: "Customers",
-                    orderable: false,
-                    render: function (data, type, full, meta) {
-                        return data && data.map(x => x.customerName).join(', ') || '';
-                    }
-                },
-                {
                     data: null,
                     orderable: false,
                     autoWidth: false,
@@ -92,7 +91,7 @@
                         return '<div class="dropdown">'
                             + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
                             + '<ul class="dropdown-menu dropdown-menu-right">'
-                            + '<li><a class="btnPrintRow"><i class="fa fa-edit"></i> Print</a></li>'
+                            + '<li><a class="btnPrintRow"><i class="fa fa-edit"></i> Export Statement</a></li>'
                             + '<li><a class="btnDeleteRow"><i class="fa fa-trash"></i> Delete</a></li>'
                             + '</ul>'
                             + '</div>';
@@ -106,11 +105,19 @@
         };
 
 
-        leaseHaulerStatementsTable.on('click', '.btnPrintRow', function () {
+        leaseHaulerStatementsTable.on('click', '.btnPrintRow', async function () {
             var record = _dtHelper.getRowData(this);
             //_printLeaseHaulerStatementModal.open();
+
+            var exportOptions = await _specifyExportOptionsModal.open().then((modal, modalObject) => {
+                return modalObject.getResultPromise();
+            });
+
             _leaseHaulerStatementService
-                .getLeaseHaulerStatementsToCsv({ id: record.id })
+                .getLeaseHaulerStatementsToCsv({
+                    id: record.id,
+                    ...exportOptions
+                })
                 .done(function (result) {
                     app.downloadTempFile(result);
                 });

@@ -632,6 +632,19 @@ div#ByCategory .m-accordion__item-head {
     margin: 5px;
 }
 
+.schedule-truck-tiles .add-truck-tile-button {
+    display: inline-block;
+    padding: 8px 8px;
+    margin: 5px;
+    font-size: 17px;
+    text-align: center;
+    vertical-align: middle;
+    width: 73px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .schedule-truck-tiles .truck-tile.green {
     background-color: var(--success);
 }

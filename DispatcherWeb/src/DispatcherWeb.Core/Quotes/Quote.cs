@@ -72,7 +72,7 @@ namespace DispatcherWeb.Quotes
 
         public bool CaptureHistory { get; set; }
 
-        public ProjectStatus Status { get; set; }
+        public QuoteStatus Status { get; set; }
 
         public long? SalesPersonId { get; set; }
 

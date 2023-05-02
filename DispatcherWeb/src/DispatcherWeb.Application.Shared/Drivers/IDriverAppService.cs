@@ -10,7 +10,7 @@ namespace DispatcherWeb.Drivers
     {
         Task<PagedResultDto<DriverDto>> GetDrivers(GetDriversInput input);
         Task<PagedResultDto<SelectListDto>> GetDriversSelectList(GetDriversSelectListInput input);
-        Task<DriverEditDto> GetDriverForEdit(NullableIdDto input);
+        Task<DriverEditDto> GetDriverForEdit(NullableIdNameDto input);
         Task<EditDriverResult> EditDriver(DriverEditDto model);
         Task<DriverTrucksDto> GetDriverTrucks(EntityDto input);
         Task<bool> IsDriverAssociatedWithTruck(EntityDto input);

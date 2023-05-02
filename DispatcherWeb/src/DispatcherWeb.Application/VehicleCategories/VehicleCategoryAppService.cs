@@ -27,7 +27,7 @@ namespace DispatcherWeb.VehicleCategories
         }
 
         [AbpAuthorize(AppPermissions.Pages_VehicleCategories)]
-        public async Task<bool> CanDeleteVehicleCategory(EntityDto input) => 
+        public async Task<bool> CanDeleteVehicleCategory(EntityDto input) =>
             !await _truckRepository.GetAll().AnyAsync(p => p.VehicleCategoryId == input.Id);
 
         [AbpAuthorize(AppPermissions.Pages_VehicleCategories)]
@@ -87,18 +87,18 @@ namespace DispatcherWeb.VehicleCategories
         public async Task<PagedResultDto<VehicleCategoryDto>> GetVehicleCategories(GetVehicleCategoriesInput input)
         {
             var query = _vehicleCategoryRepository.GetAll()
-                    .WhereIf(!input.Name.IsNullOrEmpty(), x => x.Name.Contains(input.Name))
-                    .WhereIf(input.AssetType.HasValue, x => x.AssetType == input.AssetType.Value)
-                    .WhereIf(input.IsPowered.HasValue, x => x.IsPowered == input.IsPowered.Value)
-                    .Select(x => new VehicleCategoryDto
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        AssetType = x.AssetType,
-                        AssetTypeName = x.AssetType.ToString(),
-                        IsPowered = x.IsPowered,
-                        SortOrder = x.SortOrder,
-                    });
+                .WhereIf(!input.Name.IsNullOrEmpty(), x => x.Name.Contains(input.Name))
+                .WhereIf(input.AssetType.HasValue, x => x.AssetType == input.AssetType.Value)
+                .WhereIf(input.IsPowered.HasValue, x => x.IsPowered == input.IsPowered.Value)
+                .Select(x => new VehicleCategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    AssetType = x.AssetType,
+                    AssetTypeName = x.AssetType.ToString(),
+                    IsPowered = x.IsPowered,
+                    SortOrder = x.SortOrder,
+                });
 
             var totalCount = await query.CountAsync();
 
@@ -108,7 +108,7 @@ namespace DispatcherWeb.VehicleCategories
                 .ToListAsync();
 
             return new PagedResultDto<VehicleCategoryDto>(
-                totalCount,
+                totalCount, 
                 items);
         }
     }

@@ -32,7 +32,7 @@ namespace DispatcherWeb.Quotes.Dto
 
         public DateTime? InactivationDate { get; set; }
 
-        public ProjectStatus Status { get; set; }
+        public QuoteStatus Status { get; set; }
 
         [StringLength(20)]
         public string PONumber { get; set; }

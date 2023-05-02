@@ -45,7 +45,7 @@ namespace DispatcherWeb.Projects
 
         public string Notes { get; set; }
 
-        public ProjectStatus Status { get; set; }
+        public QuoteStatus Status { get; set; }
 
         public virtual ICollection<ProjectService> ProjectServices { get; set; }
 

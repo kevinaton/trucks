@@ -18,7 +18,11 @@
         var _features = {
             allowSharedOrders: abp.features.isEnabled('App.AllowSharedOrdersFeature'),
             allowMultiOffice: abp.features.isEnabled('App.AllowMultiOfficeFeature'),
-            allowSendingOrdersToDifferentTenant: abp.features.isEnabled('App.AllowSendingOrdersToDifferentTenant')
+            allowSendingOrdersToDifferentTenant: abp.features.isEnabled('App.AllowSendingOrdersToDifferentTenant'),
+            leaseHaulers: abp.features.isEnabled('App.AllowLeaseHaulersFeature'),
+        };
+        var _settings = {
+            validateUtilization: abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization'),
         };
         var _vehicleCategories = null;
         var _loadingState = false;
@@ -26,11 +30,7 @@
         var _scheduleTrucks = [];
         var _driverAssignments = [];
 
-        var isGeotabEnabled = abp.features.isEnabled('App.GeotabFeature');
-        var isLeaseHaulerEnabled = abp.features.isEnabled('App.AllowLeaseHaulersFeature');
-        var isSmsIntegrationEnabled = abp.features.isEnabled('App.SmsIntegrationFeature');
         var isDispatchViaGeotabEnabled = false;
-
         var dispatchVia = abp.setting.getInt('App.DispatchingAndMessaging.DispatchVia');
         var allowSmsMessages = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowSmsMessages');
         var hasDispatchPermissions = abp.auth.hasPermission('Pages.Dispatches.Edit');
@@ -221,6 +221,12 @@
             modalSize: 'sm'
         });
 
+        var _createOrEditTruckModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Trucks/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Trucks/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditTruckModal'
+        });
+
         var _reassignTrucksModal = abp.helper.createModal('ReassignTrucks', 'Scheduling');
 
         var _createOrEditLeaseHaulerRequestModal = abp.helper.createModal('CreateOrEditLeaseHaulerRequest', 'LeaseHaulerRequests');
@@ -240,9 +246,9 @@
         refreshDateRelatedButtonsVisibility();
 
         $("#TruckTileChooseGroupingButton > .btn").click(function () {
-            refreshView($(this));
+            updateTruckTileContainerVisibility($(this));
         });
-        function refreshView($button) {
+        function updateTruckTileContainerVisibility($button) {
             $button.addClass("active").siblings().removeClass("active");
             var truckTileGroupingCategory = $button.data('category');
             app.localStorage.setItem('truckTileGroupingCategory', truckTileGroupingCategory);
@@ -262,7 +268,7 @@
             app.localStorage.getItem('truckTileGroupingCategory', function (result) {
                 var truckTileGroupingCategory = result || false;
                 var button = $('#TruckTileChooseGroupingButton > .btn[data-category="' + truckTileGroupingCategory + '"]');
-                refreshView(button);
+                updateTruckTileContainerVisibility(button);
             });
         }
         updateTruckTileGroupingContainerVisibilityFromCache();
@@ -297,17 +303,27 @@
                     var truckTilesContainer = truckTilesByCategory.closest(`[data-truck-category-id="${truck.vehicleCategory.id}"`);
                     tileWrapper.clone(true, true).appendTo(truckTilesContainer);
                 });
-                var tiles = $('#TruckTilesByCategory div.schedule-truck-tiles');
-                $.each(tiles, function (ind, tile) {
-                    let $truckGroup = $(tile).parents('div.m-accordion__item');
-                    var $collapsableHeader = $truckGroup.children('div.m-accordion__item-head');
-                    if ($(tile).has('div.truck-tile-wrap').length === 0) {
+
+                if (trucks.length) {
+                    truckTiles.append(getAddTruckTileButton());
+                    $("#TruckTilesNoTrucksMessage").hide();
+                } else {
+                    $("#TruckTilesNoTrucksMessage").show();
+                }
+
+                var groupedTruckTilesContainers = $('#TruckTilesByCategory div.schedule-truck-tiles');
+                $.each(groupedTruckTilesContainers, function (ind, truckTilesContainer) {
+                    let $truckTilesContainer = $(truckTilesContainer);
+                    let $categoryContainer = $truckTilesContainer.parents('div.m-accordion__item');
+                    var $collapsableHeader = $categoryContainer.children('div.m-accordion__item-head');
+                    if ($truckTilesContainer.has('div.truck-tile-wrap').length === 0) {
                         //$collapsableHeader.parent().remove();
-                        $truckGroup.hide();
+                        $categoryContainer.hide();
                         //$collapsableHeader.removeAttr('data-toggle');
                         //$collapsableHeader.find('span:nth-child(3)').remove();
                     } else {
-                        $truckGroup.show();
+                        $categoryContainer.show();
+                        $truckTilesContainer.append(getAddTruckTileButton($truckTilesContainer.data('truck-category-id')));
                         var $dataToggleAttr = $collapsableHeader.attr('data-toggle');
                         if (typeof $dataToggleAttr !== typeof undefined && $dataToggleAttr !== false) {
                             return;
@@ -318,6 +334,14 @@
                 });
                 _trucksWereLoadedOnce = true;
                 updateTruckTileGroupingContainerVisibilityFromCache();
+            });
+        }
+
+        function getAddTruckTileButton(category) {
+            return $('<button type="button" class="btn btn-default add-truck-tile-button" title="Add Truck"><i class="fa fa-plus"></i></button>').click(function () {
+                _createOrEditTruckModal.open({
+                    vehicleCategoryId: category || null
+                });
             });
         }
 
@@ -399,15 +423,14 @@
         }
 
         function canAddTruckWithDriverToOrder(truck, driverId, order) {
-            var validateUtilization = abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization');
             if (isTodayOrFutureDate(order)
-                && (truck.utilization >= 1 && validateUtilization
+                && (truck.utilization >= 1 && _settings.validateUtilization
                     || truckHasNoDriver(truck) && truckCategoryNeedDriver(truck)
                     || truck.isOutOfService
                     || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)) {
                 return false;
             }
-            if (validateUtilization && order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id || olt.driverId === driverId))) {
+            if (_settings.validateUtilization && order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id || olt.driverId === driverId))) {
                 return false;
             }
 
@@ -531,7 +554,7 @@
 
         function truckCategoryNeedDriver(truck) {
             return truck.vehicleCategory.isPowered &&
-                (isLeaseHaulerEnabled || (!truck.alwaysShowOnSchedule && !truck.isExternal)); //&& truck.officeId !== null
+                (_features.leaseHaulers || (!truck.alwaysShowOnSchedule && !truck.isExternal)); //&& truck.officeId !== null
         }
 
         function getTruckTileOfficeClass(truck) {
@@ -634,69 +657,6 @@
         }
         function hasTrucksPermissions() {
             return _permissions.trucks;
-        }
-
-        function handleQuantityCellCreation(fieldName, saveMethod, shouldRenderFunc) {
-            return function (cell, cellData, rowData, rowIndex, colIndex) {
-                $(cell).empty();
-                if (shouldRenderFunc && !shouldRenderFunc(rowData)) {
-                    $(cell).text('-');
-                    $(cell).removeClass('cell-editable');
-                    return;
-                }
-                if (!hasOrderEditPermissions() || !isAllowedToEditOrder(rowData)) {
-                    $(cell).text(rowData[fieldName]);
-                    $(cell).removeClass('cell-editable');
-                    return;
-                }
-                var editor = $('<input type="text">').appendTo($(cell));
-                editor.val(rowData[fieldName]);
-                editor.focusout(async function () {
-                    var newValue = $(this).val();
-                    if (newValue === (rowData[fieldName] || "").toString()) {
-                        return;
-                    }
-                    if (isNaN(newValue) || parseFloat(newValue) > 1000000 || parseFloat(newValue) < 0) {
-                        abp.message.error('Please enter a valid number!');
-                        $(this).val(rowData[fieldName]);
-                        return;
-                    }
-                    newValue = newValue === "" ? null : abp.utils.round(parseFloat(newValue));
-
-                    var tempRowData = {
-                        materialQuantity: rowData.materialQuantity,
-                        freightQuantity: rowData.freightQuantity
-                    };
-                    tempRowData[fieldName] = newValue;
-
-                    if (!await abp.scheduling.checkExistingDispatchesBeforeSettingQuantityAndNumberOfTrucksZero(
-                        rowData.id, tempRowData.materialQuantity, tempRowData.freightQuantity, rowData.numberOfTrucks
-                    )) {
-                        reloadMainGrid(null, false);
-                        return;
-                    }
-
-                    abp.ui.setBusy(cell);
-                    var saveData = {
-                        orderLineId: rowData.id
-                    };
-                    saveData[fieldName] = newValue;
-                    saveMethod(saveData).done(function (result) {
-                        rowData[fieldName] = result[fieldName];
-                        abp.notify.info('Saved successfully.');
-                        if (newValue === 0 || newValue === null) {
-                            if (!rowData.materialQuantity && !rowData.freightQuantity) {
-                                reloadMainGrid(null, false);
-                                reloadTruckTiles();
-                            }
-                        }
-                    }).fail(function () {
-                        reloadMainGrid(null, false);
-                    }).always(function () {
-                        abp.ui.clearBusy(cell);
-                    });
-                });
-            };
         }
 
         var staggeredIcon = ' <span class="far fa-clock staggered-icon pull-right" title="Staggered"></span>';
@@ -1107,7 +1067,7 @@
         };
         menuFunctions.fn.activateClosedTrucks = function (element) {
             var rowData = _dtHelper.getRowData(element);
-            if (rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0) {
+            if (_settings.validateUtilization && (rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0)) {
                 abp.notify.error("Increase # of Trucks");
                 return;
             }
@@ -1150,7 +1110,6 @@
         }
 
         var scheduleTable = $('#ScheduleTable');
-        //scheduleTable.append('<tfoot><tr>' + '<th></th>'.repeat(16) + '</tr></tfoot>');
         var scheduleGrid = scheduleTable.DataTableInit({
             stateSave: true,
             stateDuration: 0,
@@ -1347,32 +1306,6 @@
                         return abp.utils.replaceAll(span.html(), '\n', '<br>');
                     }
                 },
-                //{
-                //    data: "materialUom",
-                //    title: "Mat. UOM"
-                //},
-                //{
-                //    data: "materialQuantity",
-                //    responsivePriority: 1,
-                //    title: '<span title="Material Quantity">Mat. Qty</span>', //was 'Quantity of material or service'
-                //    width: "65px",
-                //    className: "cell-editable",
-                //    createdCell: handleQuantityCellCreation("materialQuantity", _schedulingService.setOrderLineMaterialQuantity,
-                //        rowData => abp.enums.designations.hasMaterial(rowData.designation))
-                //},
-                //{
-                //    data: "freightUom",
-                //    title: "Freight UOM"
-                //},
-                //{
-                //    data: "freightQuantity",
-                //    responsivePriority: 1,
-                //    title: '<span title="Freight Quantity">Freight Qty</span>', //was 'Quantity of material or service'
-                //    width: "65px",
-                //    className: "cell-editable",
-                //    createdCell: handleQuantityCellCreation("freightQuantity", _schedulingService.setOrderLineFreightQuantity,
-                //        rowData => !abp.enums.designations.materialOnly.includes(rowData.designation))
-                //},
                 {
                     data: "numberOfTrucks",
                     name: "numberOfTrucks",
@@ -1397,6 +1330,7 @@
                     orderable: false,
                     title: 'Sched. Trucks',
                     width: "65px",
+                    visible: _settings.validateUtilization,
                     //responsivePriority: 1,
                     className: "cell-editable cell-scheduled-trucks all",
                     createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
@@ -1497,7 +1431,7 @@
                         });
 
                         var orderLineIsFullyUtilized = function () {
-                            if (!abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization')) {
+                            if (!_settings.validateUtilization) {
                                 return false;
                             }
                             return rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0;
@@ -1798,18 +1732,15 @@
                     }
                 }
             ],
-            createdRow: function (row, data, index) {
-                if (data.isClosed) {
-                    $(row).addClass('order-closed');
-                }
-                if (isOrderLineShared(data)) {
-                    $(row).addClass('order-shared');
-                }
-                if (!data.isClosed && data.utilization < data.maxUtilization) {
-                    $(row).addClass('order-not-fully-utilized');
-                }
-                if (!data.isClosed && data.scheduledTrucks < data.numberOfTrucks) {
-                    $(row).addClass('reqtruck-red');
+            createdRow: function (row, rowData, index) {
+                updateRowAppearance(row, rowData);
+            },
+            preDrawCallback: function (settings) {
+                // check if filter includes current day or futures dates
+                if (!isPastDate()) {
+                    scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "<span>There are no jobs for this date.</span><br /><button id='#howToAddaJob' class='btn btn-primary btn-sm mt-2'>Click here to see how to add a job</button>";
+                } else {
+                    scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "No data available in table";
                 }
             },
             drawCallback: function (settings) {
@@ -1840,16 +1771,18 @@
 
         function updateRowAppearance(element, rowData) {
             var row = $(element).closest('tr');
-            if (!rowData.isClosed && rowData.utilization < rowData.maxUtilization) {
-                row.addClass('order-not-fully-utilized');
-            } else {
-                row.removeClass('order-not-fully-utilized');
-            }
-            if (rowData.scheduledTrucks < rowData.numberOfTrucks) {
-                row.addClass('reqtruck-red');
-            } else {
-                row.removeClass('reqtruck-red');
-            }
+            row.toggleClass('order-closed',
+                rowData.isClosed
+            );
+            row.toggleClass('order-shared',
+                isOrderLineShared(rowData)
+            );
+            row.toggleClass('order-not-fully-utilized',
+                !rowData.isClosed && rowData.utilization < rowData.maxUtilization && _settings.validateUtilization
+            );
+            row.toggleClass('reqtruck-red',
+                !rowData.isClosed && rowData.scheduledTrucks < rowData.numberOfTrucks && _settings.validateUtilization
+            );
         }
 
         function truckHasNoDriver(truck) {
@@ -2053,6 +1986,10 @@
             //reloadDriverAssignments();
         });
 
+        abp.event.on('app.createOrEditTruckModalSaved', function () {
+            reloadTruckTiles();
+        });
+
         function actionMenuHasItems() {
             return _permissions.edit ||
                 _permissions.editTickets ||
@@ -2068,6 +2005,11 @@
             position.y += $(window).scrollTop();
             button.contextMenu({ x: position.x, y: position.y });
         });
+
+        $("#TruckTilesNoTrucksMessage").click(function (e) {
+            e.preventDefault();
+            _createOrEditTruckModal.open();
+        })
 
         $('#AddLeaseHaulerRequestButton').click(function (e) {
             e.preventDefault();

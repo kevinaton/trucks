@@ -124,6 +124,7 @@ namespace DispatcherWeb.Quotes
                     QuoteDate = x.ProposalDate,
                     ContactName = x.Contact.Name,
                     SalesPersonName = x.SalesPerson.Name + " " + x.SalesPerson.Surname,
+                    PONumber = x.PONumber,
                     EmailDeliveryStatuses = x.QuoteEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList(),
                     Status = x.Status
                 })
@@ -165,7 +166,7 @@ namespace DispatcherWeb.Quotes
             }
             var quotes = await _quoteRepository.GetAll()
                 .Where(x => x.CustomerId == input.Id)
-                .WhereIf(input.HideInactive, x => x.Status != ProjectStatus.Inactive)
+                .WhereIf(input.HideInactive, x => x.Status != QuoteStatus.Inactive)
                 .OrderBy(x => x.Name)
                 .Select(x => new SelectListDto<QuoteSelectListInfoDto>
                 {
@@ -273,7 +274,6 @@ namespace DispatcherWeb.Quotes
                 {
                     quoteEditDto = new QuoteEditDto
                     {
-                        Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                     };
                 }
 
@@ -506,9 +506,9 @@ namespace DispatcherWeb.Quotes
                     });
 
                     var project = await _projectRepository.GetAsync(model.ProjectId.Value);
-                    if (project.Status == ProjectStatus.Pending)
+                    if (project.Status == QuoteStatus.Pending)
                     {
-                        project.Status = ProjectStatus.Active;
+                        project.Status = QuoteStatus.Active;
                         await _projectRepository.UpdateAsync(project);
                     }
                 }
@@ -828,9 +828,8 @@ namespace DispatcherWeb.Quotes
                 Directions = order.Directions,
                 Name = input.QuoteName,
                 PONumber = order.PONumber,
-                Status = ProjectStatus.Active,
+                Status = QuoteStatus.Active,
                 SalesPersonId = AbpSession.UserId,
-                Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes),
                 ProposalDate = today,
                 ProposalExpiryDate = today.AddDays(30)
             };
@@ -876,7 +875,7 @@ namespace DispatcherWeb.Quotes
         {
             var quote = await _quoteRepository.GetAsync(model.Id);
             quote.Status = model.Status;
-            if (quote.Status == ProjectStatus.Active && quote.ProjectId.HasValue)
+            if (quote.Status == QuoteStatus.Active && quote.ProjectId.HasValue)
             {
                 var project = await _projectRepository.GetAsync(quote.ProjectId.Value);
                 project.Status = quote.Status;
@@ -925,7 +924,7 @@ namespace DispatcherWeb.Quotes
         {
             var quote = await _quoteRepository.GetAsync(input.Id);
             quote.InactivationDate = await GetToday();
-            quote.Status = ProjectStatus.Inactive;
+            quote.Status = QuoteStatus.Inactive;
         }
 
         //*********************//
@@ -1356,11 +1355,6 @@ namespace DispatcherWeb.Quotes
             data.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
             data.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
             data.HideLoadAt = input.HideLoadAt;
-            data.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
-
-            data.QuoteGeneralTermsAndConditions = data.QuoteGeneralTermsAndConditions
-                .Replace("{CompanyName}", data.CompanyName)
-                .Replace("{CompanyNameUpperCase}", data.CompanyName.ToUpper());
 
             await SetQuoteCaptureHistory(input.QuoteId);
 
@@ -1529,7 +1523,7 @@ namespace DispatcherWeb.Quotes
         {
             var quote = await _quoteRepository.GetAsync(input.Id);
             quote.InactivationDate = null;
-            quote.Status = ProjectStatus.Active;
+            quote.Status = QuoteStatus.Active;
         }
     }
 }

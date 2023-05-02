@@ -45,7 +45,6 @@
         var _unlockFreightPriceButton = null;
         var _wasProductionPay = null;
         var _ratesLastValue = {};
-        var _addLocationTarget = null;
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
@@ -196,9 +195,26 @@
                 showAll: false,
                 allowClear: true,
                 addItemCallback: async function (newItemName) {
-                    _createOrEditCustomerModal.open({ name: newItemName });
+                    var result = await app.getModalResultAsync(
+                        _createOrEditCustomerModal.open({ name: newItemName })
+                    );
+                    selectCustomerInControl(result);
+                    return false;
                 }
             });
+
+            function selectCustomerInControl(customer) {
+                var option = new Option(customer.name, customer.id, true, true);
+                $(option).data('data', {
+                    id: customer.id,
+                    text: customer.name,
+                    item: {
+                        accountNumber: customer.accountNumber,
+                        customerIsCod: customer.customerIsCod
+                    }
+                });
+                _customerDropdown.append(option).trigger('change');
+            }
 
             _$form.find("#JobPriority").select2Init({
                 showAll: true,
@@ -216,9 +232,9 @@
                 abpServiceData: { hideInactive: true },
                 optionCreatedCallback: function (option, val) {
                     switch (val.item.status) {
-                        case abp.enums.projectStatus.pending: option.addClass("quote-pending"); break;
-                        case abp.enums.projectStatus.active: option.addClass("quote-active"); break;
-                        case abp.enums.projectStatus.inactive: option.addClass("quote-inactive"); break;
+                        case abp.enums.quoteStatus.pending: option.addClass("quote-pending"); break;
+                        case abp.enums.quoteStatus.active: option.addClass("quote-active"); break;
+                        case abp.enums.quoteStatus.inactive: option.addClass("quote-inactive"); break;
                     }
                 }
             });
@@ -260,7 +276,7 @@
             quoteChildDropdown.onChildDropdownUpdated(function (data) {
                 var hasActiveOrPendingQuotes = false;
                 $.each(data.items, function (ind, val) {
-                    if (val.item.status === abp.enums.projectStatus.pending || val.item.status === abp.enums.projectStatus.active) {
+                    if (val.item.status === abp.enums.quoteStatus.pending || val.item.status === abp.enums.quoteStatus.active) {
                         hasActiveOrPendingQuotes = true;
                     }
                 });
@@ -367,13 +383,13 @@
                 }
                 var newQuoteId = _quoteDropdown.val();
                 var option = _quoteDropdown.getSelectedDropdownOption();
-                if (option.data('status') === abp.enums.projectStatus.pending) {
+                if (option.data('status') === abp.enums.quoteStatus.pending) {
                     if (await abp.message.confirm(
                         "This quote is 'Pending'. If you add this quote to the order it will be changed to 'Active'. If you do not want the quote to be activated, select 'Cancel'."
                     )) {
-                        option.data('status', abp.enums.projectStatus.active);
+                        option.data('status', abp.enums.quoteStatus.active);
                         await handleQuoteChangeAsync(newQuoteId, option);
-                        abp.services.app.quote.setQuoteStatus({ id: _quoteId, status: abp.enums.projectStatus.active });
+                        abp.services.app.quote.setQuoteStatus({ id: _quoteId, status: abp.enums.quoteStatus.active });
                     } else {
                         quoteIdChanging = true;
                         //check if the old value is still in the dropdown, and set the quote to "" if not
@@ -409,26 +425,37 @@
                 }
             });
 
+            async function addNewLocation(newItemName) {
+                var result = await app.getModalResultAsync(
+                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName })
+                );
+                return {
+                    id: result.id,
+                    name: result.displayName
+                };
+            }
+
             _loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "LoadAtId";
-                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
-                } : undefined
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? addNewLocation : undefined
             });
             _deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "DeliverToId";
-                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
-                } : undefined
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? addNewLocation : undefined
             });
             _serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
                 showAll: false,
                 allowClear: false,
                 addItemCallback: abp.auth.hasPermission('Pages.Services') ? async function (newItemName) {
-                    createOrEditServiceModal.open({ name: newItemName });
+                    var result = await app.getModalResultAsync(
+                        createOrEditServiceModal.open({ name: newItemName })
+                    );
+                    _$form.find("#IsTaxable").val(result.isTaxable ? "True" : "False");
+                    return {
+                        id: result.id,
+                        name: result.service1
+                    };
                 } : undefined
             });
             _materialUomDropdown.select2Uom();
@@ -459,40 +486,6 @@
                 }
                 updateProductionPay();
             }).change();
-
-            _modalManager.on('app.createOrEditServiceModalSaved', function (e) {
-                abp.helper.ui.addAndSetDropdownValue(_serviceDropdown, e.item.Id, e.item.Service1);
-                _$form.find("#IsTaxable").val(e.item.isTaxable ? "True" : "False");
-                _serviceDropdown.change();
-            });
-
-            _modalManager.on('app.createOrEditLocationModalSaved', function (e) {
-                if (!_addLocationTarget) {
-                    return;
-                }
-                var targetDropdown = _$form.find("#" + _addLocationTarget);
-                abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.id, e.item.displayName);
-                targetDropdown.change();
-            });
-
-            _modalManager.on('app.customerNameExists', function (e) {
-                selectCustomerInControl(e);
-            });
-            _modalManager.on('app.createOrEditCustomerModalSaved', function (e) {
-                selectCustomerInControl(e);
-            });
-            function selectCustomerInControl(e) {
-                var option = new Option(e.item.name, e.item.id, true, true);
-                $(option).data('data', {
-                    id: e.item.id,
-                    text: e.item.name,
-                    item: {
-                        accountNumber: e.item.accountNumber,
-                        customerIsCod: e.item.customerIsCod
-                    }
-                });
-                _customerDropdown.append(option).trigger('change');
-            }
 
             reloadPricing();
             refreshHighlighting();
