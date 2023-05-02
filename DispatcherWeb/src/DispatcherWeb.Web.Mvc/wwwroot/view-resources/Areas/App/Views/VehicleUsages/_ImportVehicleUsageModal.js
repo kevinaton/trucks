@@ -50,11 +50,7 @@
                     return;
                 }
 
-                if (typeof window.importFileUploadedCustomCallback === 'function') {
-                    window.importFileUploadedCustomCallback(result);
-                } else {
-                    _importMappingModal.open({ id: result.id, fileName: result.blobName, importType: $('#ImportType').val() });
-                }
+                _importMappingModal.open({ id: result.id, fileName: result.blobName, importType: $('#ImportType').val() });
             },
             error: function error(jqXHR, textStatus, errorThrown) {
                 abp.ui.unblock();
