@@ -5,7 +5,6 @@
         var _quoteAppService = abp.services.app.quote;
         var _$form = null;
         var _designationDropdown = null;
-        var _addLocationTarget = null;
         var _ratesLastValue = {};
 
         this.init = function (modalManager) {
@@ -53,26 +52,36 @@
                 leaseHaulerRateInput.closest('.form-group').hide();
             }
 
+            async function addNewLocation(newItemName) {
+                var result = await app.getModalResultAsync(
+                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName })
+                );
+                return {
+                    id: result.id,
+                    name: result.displayName
+                };
+            }
+
             loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "LoadAtId";
-                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
-                } : undefined
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? addNewLocation : undefined
             });
             deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "DeliverToId";
-                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
-                } : undefined
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? addNewLocation : undefined
             });
             serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
                 showAll: false,
                 allowClear: false,
                 addItemCallback: abp.auth.hasPermission('Pages.Services') ? async function (newItemName) {
-                    createOrEditServiceModal.open({ name: newItemName });
+                    var result = await app.getModalResultAsync(
+                        createOrEditServiceModal.open({ name: newItemName })
+                    );
+                    return {
+                        id: result.id,
+                        name: result.service1
+                    };
                 } : undefined
             });
             materialUomDropdown.select2Uom();
@@ -162,20 +171,6 @@
                 _ratesLastValue.freightRate = newFreightRate;
 
                 recalculate($(this));
-            });
-
-            _modalManager.on('app.createOrEditServiceModalSaved', function (e) {
-                abp.helper.ui.addAndSetDropdownValue(serviceDropdown, e.item.Id, e.item.Service1);
-                serviceDropdown.change();
-            });
-
-            _modalManager.on('app.createOrEditLocationModalSaved', function (e) {
-                if (!_addLocationTarget) {
-                    return;
-                }
-                var targetDropdown = _$form.find("#" + _addLocationTarget);
-                abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.id, e.item.displayName);
-                targetDropdown.change();
             });
 
         };

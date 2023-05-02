@@ -64,6 +64,7 @@
                             abp.event.trigger('app.createOrEditLocationModalSaved', {
                                 item: duplicate
                             });
+                            _modalManager.setResult(duplicate);
                             _modalManager.close();
                             return;
                         }
@@ -71,14 +72,15 @@
                         throw new Error("Form is not valid");
                     }
                 }
-                let data = await _locationService.editLocation(location);
+                let editResult = await _locationService.editLocation(location);
                 abp.notify.info('Saved successfully.');
-                _$form.find("#Id").val(data.id);
-                _locationId = data.id;
-                location.Id = data.id;
+                _$form.find("#Id").val(editResult.id);
+                _locationId = editResult.id;
+                location.Id = editResult.id;
                 abp.event.trigger('app.createOrEditLocationModalSaved', {
-                    item: data
+                    item: editResult
                 });
+                return editResult;
             } finally {
                 abp.ui.clearBusy(_$form);
                 _modalManager.setBusy(false);
@@ -468,7 +470,10 @@
         }
 
         this.save = async function () {
-            await saveLocationAsync();
+            var editResult = await saveLocationAsync();
+            if (editResult) {
+                _modalManager.setResult(editResult);
+            }
             _modalManager.close();
         };
     };

@@ -16,16 +16,15 @@
 
             abp.ui.setBusy(_$form);
             _modalManager.setBusy(true);
-            _serviceService.editService(service).done(function (data) {
+            _serviceService.editService(service).done(function (editResult) {
                 abp.notify.info('Saved successfully.');
-                _$form.find("#Id").val(data);
-                _serviceId = data;
-                service.Id = data;
+                _serviceId = editResult.id;
+                _$form.find("#Id").val(_serviceId);
                 abp.event.trigger('app.createOrEditServiceModalSaved', {
-                    item: service
+                    item: editResult
                 });
                 if (callback)
-                    callback();
+                    callback(editResult);
             }).always(function () {
                 abp.ui.clearBusy(_$form);
                 _modalManager.setBusy(false);
@@ -176,7 +175,10 @@
         };
 
         this.save = function () {
-            saveServiceAsync(function () {
+            saveServiceAsync(function (editResult) {
+                if (editResult) {
+                    _modalManager.setResult(editResult);
+                }
                 _modalManager.close();
             });
         };
