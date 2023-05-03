@@ -45,6 +45,13 @@
                 modalClass: 'CreateOrEditCustomerContactModal'
             });
 
+            const _viewQuoteDeliveriesModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/Quotes/ViewQuoteDeliveriesModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_ViewQuoteDeliveriesModal.js',
+                modalClass: 'ViewQuoteDeliveriesModal',
+                modalSize: 'lg'
+            });
+
             _$form = _modalManager.getModal().find('form');
             //_$form.validate();
 
@@ -323,6 +330,35 @@
 
             abp.event.on('app.createOrEditQuoteServiceModalSaved', function () {
                 reloadQuoteServicesGrid();
+            });
+
+            quoteServicesTable.on('click', '.btnEditRow', function (e) {
+                e.preventDefault();
+                let quoteServiceId = _dtHelper.getRowData(this).id;
+                _createOrEditQuoteServiceModal.open({ id: quoteServiceId });
+            });
+
+            quoteServicesTable.on('click', '.btnDeleteRow', async function (e) {
+                e.preventDefault();
+                let quoteServiceId = _dtHelper.getRowData(this).id;
+                if (await abp.message.confirm('Are you sure you want to delete the item?')) {
+                    _quoteService.deleteQuoteServices({
+                        ids: [quoteServiceId]
+                    }).done(function () {
+                        abp.notify.info('Successfully deleted.');
+                        reloadQuoteServicesGrid();
+                    });
+                }
+            });
+
+            quoteServicesTable.on('click', '.btnShowDeliveriesForRow', function (e) {
+                e.preventDefault();
+                var row = _dtHelper.getRowData(this);
+                _viewQuoteDeliveriesModal.open({
+                    quoteServiceId: row.id,
+                    quotedMaterialQuantity: row.materialQuantity || 0,
+                    quotedFreightQuantity: row.freightQuantity || 0
+                });
             });
         }
 
