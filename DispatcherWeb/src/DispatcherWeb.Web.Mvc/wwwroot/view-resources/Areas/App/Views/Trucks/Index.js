@@ -14,6 +14,21 @@
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Trucks/_AddOutOfServiceReasonModal.js',
             modalClass: 'AddOutOfServiceReasonModal'
         });
+        var _importVehicleModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Imports/ImportVehicleModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Imports/_ImportVehicleModal.js',
+            modalClass: 'ImportVehicleModal'
+        });
+        var _importFuelModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Imports/ImportFuelModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Imports/_ImportFuelModal.js',
+            modalClass: 'ImportFuelModal'
+        });
+        var _importTrucksModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Imports/ImportTrucksModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Imports/_ImportTrucksModal.js',
+            modalClass: 'ImportTrucksModal'
+        });
 
         var $officeIdFilterSelect = $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
@@ -271,6 +286,19 @@
                 });
         });
 
+        $("#ImportVehicleButton").click(function (e) {
+            e.preventDefault();
+            _importVehicleModal.open();
+        });
 
+        $("#ImportFuelButton").click(function (e) {
+            e.preventDefault();
+            _importFuelModal.open();
+        });
+
+        $("#ImportTrucksButton").click(function (e) {
+            e.preventDefault();
+            _importTrucksModal.open();
+        });
     });
 })();

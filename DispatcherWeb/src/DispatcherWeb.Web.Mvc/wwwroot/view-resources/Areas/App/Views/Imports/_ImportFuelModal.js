@@ -1,18 +1,22 @@
 ﻿(function ($) {
-    app.modals.ImportVehicleUsageModal = function () {
+    app.modals.ImportFuelModal = function () {
 
+        var _modalManager;
         var _importMappingModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Imports/ImportMappingModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/App/Views/Imports/_ImportMappingModal.js',
             modalClass: 'ImportMappingModal',
             modalId: 'ImportMappingModal'
         });
+        var _importJacobusEnergyModal = abp.helper.createModal('ImportJacobusEnergy', 'Imports');
+        var _importWithNoMappingModal = abp.helper.createModal('ImportWithNoMapping', 'Imports');
+
+        //var _cancelModal = abp.helper.createModal('Cancel', 'Imports');
+        var _uploadData;
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
         };
-
-        var _uploadData;
 
         function showAndLogImportWarning(text, caption) {
             abp.services.app.importTruxEarnings.logImportWarning({
@@ -21,6 +25,11 @@
             });
             abp.message.warn(text, caption);
         }
+
+        $('#FuelImportType').select2Init({
+            showAll: true,
+            allowClear: false
+        });
 
         $('#ImportFile').fileupload({
             add: function add(e, data) {
@@ -40,17 +49,26 @@
             submit: function submit(e, data) {
                 _uploadData = data;
                 abp.ui.block();
+
+                //_cancelModal.open();
             },
             done: function done(e, data) {
                 var result = data.result.result;
                 //_cancelModal.close();
+                _modalManager.close();
                 abp.ui.unblock();
                 if (result === null) {
                     abp.message.error('There were no rows to import.');
                     return;
                 }
-
-                _importMappingModal.open({ id: result.id, fileName: result.blobName, importType: $('#ImportType').val() });
+                var fuelImportType = $('#FuelImportType');
+                if ($('#NoMapping').length > 0) {
+                    _importWithNoMappingModal.open({ id: result.id, fileName: result.blobName, importType: $('#ImportType').val() });
+                } else if (fuelImportType.length > 0 && fuelImportType.val() === fuelImportType.data('jacobus-value')) {
+                    _importJacobusEnergyModal.open({ id: result.id, fileName: result.blobName, importType: $('#ImportType').val() });
+                } else {
+                    _importMappingModal.open({ id: result.id, fileName: result.blobName, importType: $('#ImportType').val() });
+                }
             },
             error: function error(jqXHR, textStatus, errorThrown) {
                 abp.ui.unblock();

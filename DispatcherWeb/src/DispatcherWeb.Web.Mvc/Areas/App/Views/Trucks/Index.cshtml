@@ -34,7 +34,16 @@
         <div class="col-sm-12 col-md-6 text-center text-md-right mb-3">
             @if (await FeatureChecker.IsEnabledAsync(AppFeatures.QuickbooksImportFeature) && await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Imports_Trucks))
             {
-                <a asp-controller="Imports" asp-action="Trucks" class="btn btn-primary mt-1"> @L("Import")</a>
+                <div class="btn-group dropdown mt-1">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span>@L("Import")</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="#" id="ImportTrucksButton">@L("ImportTrucks")</a>
+                        <a class="dropdown-item" href="#" id="ImportVehicleButton">@L("ImportVehicle")</a>
+                        <a class="dropdown-item" href="#" id="ImportFuelButton">@L("ImportFuel")</a>
+                    </div>
+                </div>
             }
             @if (Model.IsGpsIntegrationConfigured)
             {

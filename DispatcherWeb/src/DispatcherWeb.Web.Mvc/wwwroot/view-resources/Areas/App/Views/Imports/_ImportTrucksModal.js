@@ -1,6 +1,7 @@
 ﻿(function ($) {
-    app.modals.ImportVehicleUsageModal = function () {
+    app.modals.ImportTrucksModal = function () {
 
+        var _modalManager;
         var _importMappingModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Imports/ImportMappingModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/App/Views/Imports/_ImportMappingModal.js',
@@ -44,6 +45,7 @@
             done: function done(e, data) {
                 var result = data.result.result;
                 //_cancelModal.close();
+                _modalManager.close();
                 abp.ui.unblock();
                 if (result === null) {
                     abp.message.error('There were no rows to import.');
