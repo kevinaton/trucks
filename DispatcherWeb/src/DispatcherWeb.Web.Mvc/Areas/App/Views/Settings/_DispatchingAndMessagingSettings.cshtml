@@ -148,6 +148,16 @@
                         </label>
                     </div>
                 }
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers))
+                {
+                    <div class="form-group margin-top-20">
+                        <label for="AllowSchedulingTrucksWithoutDrivers" class="m-checkbox col-lg-12">
+                            <input id="AllowSchedulingTrucksWithoutDrivers" type="checkbox" name="AllowSchedulingTrucksWithoutDrivers" value="true" checked="@(Model.AllowSchedulingTrucksWithoutDrivers ? "checked" : null)">
+                            @L("AllowSchedulingTrucksWithoutDrivers")
+                            <span></span>
+                        </label>
+                    </div>
+                }
                 @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowSmsMessages))
                 {
                     <div class="form-group margin-top-20">

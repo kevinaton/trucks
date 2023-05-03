@@ -274,7 +274,6 @@ namespace DispatcherWeb.Quotes
                 {
                     quoteEditDto = new QuoteEditDto
                     {
-                        Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                     };
                 }
 
@@ -494,6 +493,7 @@ namespace DispatcherWeb.Quotes
                         Designation = x.Designation,
                         PricePerUnit = x.PricePerUnit,
                         FreightRate = x.FreightRate,
+                        FreightRateToPayDrivers = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
@@ -830,7 +830,6 @@ namespace DispatcherWeb.Quotes
                 PONumber = order.PONumber,
                 Status = QuoteStatus.Active,
                 SalesPersonId = AbpSession.UserId,
-                Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes),
                 ProposalDate = today,
                 ProposalExpiryDate = today.AddDays(30)
             };
@@ -1356,11 +1355,6 @@ namespace DispatcherWeb.Quotes
             data.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
             data.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
             data.HideLoadAt = input.HideLoadAt;
-            data.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
-
-            data.QuoteGeneralTermsAndConditions = data.QuoteGeneralTermsAndConditions
-                .Replace("{CompanyName}", data.CompanyName)
-                .Replace("{CompanyNameUpperCase}", data.CompanyName.ToUpper());
 
             await SetQuoteCaptureHistory(input.QuoteId);
 

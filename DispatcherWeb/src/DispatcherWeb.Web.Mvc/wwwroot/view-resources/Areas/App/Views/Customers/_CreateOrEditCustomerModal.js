@@ -36,16 +36,15 @@
 
             abp.ui.setBusy(_$form);
             _modalManager.setBusy(true);
-            _customerService.editCustomer(customer).done(function (data) {
+            _customerService.editCustomer(customer).done(function (editResult) {
                 abp.notify.info('Saved successfully.');
-                _customerId = data.id;
+                _customerId = editResult.id;
                 _$form.find("#Id").val(_customerId);
-                customer = data;
                 abp.event.trigger('app.createOrEditCustomerModalSaved', {
-                    item: customer
+                    item: editResult
                 });
                 if (callback)
-                    callback();
+                    callback(editResult);
             }).always(function () {
                 abp.ui.clearBusy(_$form);
                 _modalManager.setBusy(false);
@@ -87,6 +86,7 @@
                     return false;
                 } else {
                     abp.event.trigger('app.customerNameExists', { item: customer });
+                    _modalManager.setResult(customer);
                     _modalManager.close();
                     return true;
                 }
@@ -316,7 +316,8 @@
             if (await warnIfDuplicateCustomerName(customer.Name)) {
                 return;
             }
-            saveCustomerAsync(function () {
+            saveCustomerAsync(function (editResult) {
+                _modalManager.setResult(editResult);
                 _modalManager.close();
             });
         };

@@ -6,7 +6,6 @@
         var _$form = null;
         var _lastTruckCode = null;
         var _orderLineId = null;
-        var _addLocationTarget = null;
         var _validateTrucksAndDrivers = abp.setting.getBoolean('App.General.ValidateDriverAndTruckOnTickets');
 
         var _selectOrderLineModal = new app.ModalManager({
@@ -44,24 +43,28 @@
             });
             _$form.find('#TicketDateTime').datetimepickerInit();
 
+            async function addNewLocation(newItemName) {
+                var result = await app.getModalResultAsync(
+                    _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName })
+                );
+                return {
+                    id: result.id,
+                    name: result.displayName
+                };
+            }
+
             loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
                 showAll: false,
                 allowClear: true,
-                addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "LoadAtId";
-                    _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
-                } : null
+                addItemCallback: abp.auth.isGranted('Pages.Locations') ? addNewLocation : null
             });
 
             deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
                 showAll: false,
                 allowClear: true,
-                addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "DeliverToId";
-                    _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
-                } : null
+                addItemCallback: abp.auth.isGranted('Pages.Locations') ? addNewLocation : null
             });
 
             _$form.find("select#OfficeId").select2Init({
@@ -187,15 +190,6 @@
                     abp.ui.clearBusy(lockedControls);
                     truckOrDriverIsChanging = false;
                 }
-            });
-
-            _modalManager.on('app.createOrEditLocationModalSaved', function (e) {
-                if (!_addLocationTarget) {
-                    return;
-                }
-                var targetDropdown = _$form.find("#" + _addLocationTarget);
-                abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.id, e.item.displayName);
-                targetDropdown.change();
             });
 
             if (modal.find("#ReadOnly").val() === "true") {

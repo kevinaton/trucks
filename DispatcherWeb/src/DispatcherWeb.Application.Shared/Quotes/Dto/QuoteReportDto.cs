@@ -28,7 +28,6 @@ namespace DispatcherWeb.Quotes.Dto
         public string QuoteNotesFormatted => QuoteNotes
             .Replace("{BaseFuelCost}", QuoteBaseFuelCost.HasValue ? $"{QuoteBaseFuelCost.Value:c2}" : "n/a")
             .Replace("{BaseFuelCost+15}", QuoteBaseFuelCost.HasValue ? $"{(QuoteBaseFuelCost.Value + 0.15M):c2}" : "n/a");
-        public string QuoteGeneralTermsAndConditions { get; set; }
         public string UserFullName { get; set; }
         public string UserEmail { get; set; }
         public string LogoPath { get; set; }

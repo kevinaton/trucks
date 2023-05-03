@@ -77,6 +77,7 @@ namespace DispatcherWeb.Quotes
                 Designation = Designation,
                 FreightQuantity = FreightQuantity,
                 FreightRate = FreightRate,
+                FreightRateToPayDrivers = FreightRateToPayDrivers,
                 FreightUomId = FreightUomId,
                 Id = Id,
                 IsDeleted = IsDeleted,

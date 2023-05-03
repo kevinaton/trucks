@@ -82,6 +82,10 @@ namespace DispatcherWeb.DriverApp.Tickets
             ticket.TicketNumber = model.TicketNumber;
             ticket.TicketPhotoId = model.TicketPhotoId;
             ticket.TicketPhotoFilename = model.TicketPhotoFilename;
+            ticket.UnitOfMeasureId = model.UnitOfMeasureId
+                ?? (dispatchData.Designation.MaterialOnly() || dispatchData.Designation == DesignationEnum.FreightAndMaterial
+                                   ? dispatchData.MaterialUomId
+                                   : dispatchData.FreightUomId);
 
             if (ticket.Id == 0)
             {
@@ -95,9 +99,6 @@ namespace DispatcherWeb.DriverApp.Tickets
                 ticket.CustomerId = dispatchData.CustomerId;
                 ticket.ServiceId = dispatchData.ServiceId;
                 ticket.DriverId = dispatchData.DriverId;
-                ticket.UnitOfMeasureId = dispatchData.Designation.MaterialOnly() || dispatchData.Designation == DesignationEnum.FreightAndMaterial
-                                   ? dispatchData.MaterialUomId
-                                   : dispatchData.FreightUomId;
                 ticket.TenantId = dispatchData.TenantId;
                 ticket.LoadId = model.LoadId;
 

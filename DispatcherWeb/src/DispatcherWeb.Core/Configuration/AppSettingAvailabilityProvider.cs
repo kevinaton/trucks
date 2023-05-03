@@ -43,6 +43,9 @@ namespace DispatcherWeb.Configuration
                 case AppSettings.DispatchingAndMessaging.DefaultStartTime:
                     return true;
 
+                case AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers:
+                    return false; //temp, until the actual functionality is added
+
                 default:
                     return true;
             }

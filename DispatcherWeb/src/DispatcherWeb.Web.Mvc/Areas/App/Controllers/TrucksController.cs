@@ -58,9 +58,9 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             return View(model);
         }
 
-        public async Task<PartialViewResult> CreateOrEditModal(int? id)
+        public async Task<PartialViewResult> CreateOrEditModal(GetTruckForEditInput input)
         {
-            var model = await _truckAppService.GetTruckForEdit(new NullableIdDto(id));
+            var model = await _truckAppService.GetTruckForEdit(input);
             model.IsGpsIntegrationConfigured = await _truckTelematicsAppService.IsGpsIntegrationConfigured();
             return PartialView("_CreateOrEditModal", model);
         }

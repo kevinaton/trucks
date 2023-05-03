@@ -3,8 +3,7 @@
 
         var _profileService = abp.services.app.profile;
         var _initialTimezone = null;
-        var _initialDontShowZeroQuantityWarning = null;
-        var _initialPlaySoundForNotifications = null;
+        var _initialOptionsFormValues = null;
 
         var _modalManager;
         var _$form = null;
@@ -19,8 +18,7 @@
             _$optionsForm = $modal.find('form[name=OptionsModalForm]');
 
             _initialTimezone = _$form.find("[name='Timezone']").val();
-            _initialDontShowZeroQuantityWarning = _$optionsForm.find("#DontShowZeroQuantityWarning").is(":checked");
-            _initialPlaySoundForNotifications = _$optionsForm.find("#PlaySoundForNotifications").is(":checked");
+            _initialOptionsFormValues = getOptionsFormValues();
 
             var $btnEnableGoogleAuthenticator = $modal.find('#btnEnableGoogleAuthenticator');
 
@@ -90,17 +88,21 @@
             });
         };
 
+        function getOptionsFormValues() {
+            var options = _$optionsForm.serializeFormToObject();
+            var hostEmailPreferenceCheckboxes = _$optionsForm.find(".HostEmailPreferenceCheckbox:checked");
+            var hostEmailPreference = hostEmailPreferenceCheckboxes.map((_, x) => Number($(x).val())).toArray().reduce((a, b) => a | b, 0);
+            options.HostEmailPreference = hostEmailPreference;
+            return options;
+        }
+
         this.save = function () {
             if (!_$form.valid()) {
                 return;
             }
 
             var profile = _$form.serializeFormToObject();
-            profile.Options = _$optionsForm.serializeFormToObject();
-
-            var hostEmailPreferenceCheckboxes = _$optionsForm.find(".HostEmailPreferenceCheckbox:checked");
-            var hostEmailPreference = hostEmailPreferenceCheckboxes.map((_, x) => Number($(x).val())).toArray().reduce((a, b) => a | b, 0);
-            profile.Options.HostEmailPreference = hostEmailPreference;
+            profile.Options = getOptionsFormValues();
 
             _modalManager.setBusy(true);
             _profileService.updateCurrentUserProfile(profile)
@@ -116,10 +118,8 @@
                             window.location.reload();
                         });
                     }
-
-                    var newDontShowZeroQuantityWarning = _$optionsForm.find("#DontShowZeroQuantityWarning").is(":checked");
-                    var newPlaySoundForNotifications = _$optionsForm.find("#PlaySoundForNotifications").is(":checked");
-                    if (newDontShowZeroQuantityWarning !== _initialDontShowZeroQuantityWarning || newPlaySoundForNotifications !== _initialPlaySoundForNotifications) {
+                    
+                    if (JSON.stringify(profile.Options) !== JSON.stringify(_initialOptionsFormValues)) {
                         abp.message.info(app.localize('OptionsChangedRefreshPageNotification')).done(function () {
                             window.location.reload();
                         });

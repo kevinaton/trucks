@@ -471,7 +471,11 @@
             showAll: false,
             allowClear: true,
             addItemCallback: async function (newItemName) {
-                _createOrEditCustomerModal.open({ name: newItemName });
+                var result = await app.getModalResultAsync(
+                    _createOrEditCustomerModal.open({ name: newItemName })
+                );
+                selectCustomerInControl(result);
+                return false; //we don't want the value to be automatically changed by select2, and instead have custom logic for assigning a new customer, so we're not returning an object
             },
         });
 
@@ -488,9 +492,15 @@
                 if (!customerId) {
                     abp.notify.warn("Select a customer first");
                     $("#CustomerId").focus();
-                    return;
+                    return false;
                 }
-                _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId });
+                var result = await app.getModalResultAsync(
+                    _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId })
+                );
+                contactChildDropdown.updateChildDropdown(function () {
+                    contactChildDropdown.childDropdown.val(result.Id).change();
+                });
+                return false; //we don't want the value to be automatically changed by select2 now
             }
         });
 
@@ -1404,30 +1414,18 @@
 
         //Handle popup adding
 
-        abp.event.on('app.customerNameExists', function (e) {
-            selectCustomerInControl(e);
-        });
-        abp.event.on('app.createOrEditCustomerModalSaved', function (e) {
-            selectCustomerInControl(e);
-        });
-        function selectCustomerInControl(e) {
-            var option = new Option(e.item.name, e.item.id, true, true);
+        function selectCustomerInControl(customer) {
+            var option = new Option(customer.name, customer.id, true, true);
             $(option).data('data', {
-                id: e.item.id,
-                text: e.item.name,
+                id: customer.id,
+                text: customer.name,
                 item: {
-                    accountNumber: e.item.accountNumber,
-                    customerIsCod: e.item.customerIsCod
+                    accountNumber: customer.accountNumber,
+                    customerIsCod: customer.customerIsCod
                 }
             });
             $("#CustomerId").append(option).trigger('change');
         }
-
-        abp.event.on('app.createOrEditCustomerContactModalSaved', function (e) {
-            contactChildDropdown.updateChildDropdown(function () {
-                contactChildDropdown.childDropdown.val(e.item.Id).change();
-            });
-        });
 
         $('#IsPending').change(function () {
             if ($(this).prop('checked')) {

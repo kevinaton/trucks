@@ -130,9 +130,15 @@
                 if (!customerId) {
                     abp.notify.warn("Select a customer first");
                     $("#CustomerId").focus();
-                    return;
+                    return false;
                 }
-                _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId });
+                var result = await app.getModalResultAsync(
+                    _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId })
+                );
+                contactChildDropdown.updateChildDropdown(function () {
+                    contactChildDropdown.childDropdown.val(result.Id).change();
+                });
+                return false; //we don't want the value to be automatically changed by select2 now
             }
         });
         $("#CustomerId").select2Init({
@@ -140,7 +146,13 @@
             showAll: false,
             allowClear: false,
             addItemCallback: async function (newItemName) {
-                _createOrEditCustomerModal.open({ name: newItemName });
+                var result = await app.getModalResultAsync(
+                    _createOrEditCustomerModal.open({ name: newItemName })
+                );
+                return {
+                    id: result.id,
+                    name: result.name
+                };
             }
         });
         var contactChildDropdown = abp.helper.ui.initChildDropdown({
@@ -516,23 +528,6 @@
             _viewQuoteHistoryModal.open({ id: quoteHistoryId });
         });
 
-        abp.event.on('app.customerNameExists', function (e) {
-            selectCustomerInControl(e);
-        });
-        abp.event.on('app.createOrEditCustomerModalSaved', function (e) {
-            selectCustomerInControl(e);
-        });
-        function selectCustomerInControl(e) {
-            if ($('#CustomerId').val() !== e.item.id.toString()) {
-                abp.helper.ui.addAndSetDropdownValue($("#CustomerId"), e.item.id, e.item.name);
-            }
-        }
-
-        abp.event.on('app.createOrEditCustomerContactModalSaved', function (e) {
-            contactChildDropdown.updateChildDropdown(function () {
-                contactChildDropdown.childDropdown.val(e.item.Id).change();
-            });
-        });
         abp.event.on('app.mergeModalFinished', function () {
             contactChildDropdown.updateChildDropdown(function () {
                 contactChildDropdown.childDropdown.val('').change();
