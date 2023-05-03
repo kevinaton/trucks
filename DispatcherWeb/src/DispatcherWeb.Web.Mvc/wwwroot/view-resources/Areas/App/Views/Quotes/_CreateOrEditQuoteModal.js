@@ -290,7 +290,7 @@
             $("#CreateNewQuoteServiceButton").click(function (e) {
                 e.preventDefault();
 
-                if (_$quoteId) {
+                if (_$quoteId === "") {
                     saveQuoteAsync(function () {
                         reloadQuoteServicesGrid();
                         _createOrEditQuoteServiceModal.open({ quoteId: _$quoteId });
