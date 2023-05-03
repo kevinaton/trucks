@@ -1749,7 +1749,7 @@
         });
 
         function isOrderLineShared(orderLine) {
-            return orderLine.isShared || orderLine.haulingCompanyOrderLineId || orderLine.materialCompanyOrderLineId;
+            return !!(orderLine.isShared || orderLine.haulingCompanyOrderLineId || orderLine.materialCompanyOrderLineId);
         }
 
         function recalculateFooterTotals() {
