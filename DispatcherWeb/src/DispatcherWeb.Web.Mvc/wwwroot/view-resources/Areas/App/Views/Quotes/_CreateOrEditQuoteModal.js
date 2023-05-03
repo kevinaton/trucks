@@ -1,104 +1,71 @@
 (function ($) {
     app.modals.CreateOrEditQuoteModal = function () {
-        let _modalManager
-        let _quoteService = abp.services.app.quote
-        let _$quoteId = null
-        let _dtHelper = abp.helper.dataTables
+        let _modalManager;
+        let _quoteService = abp.services.app.quote;
+        let _$quoteId = null;
+        let _dtHelper = abp.helper.dataTables;
         let _permissions = {
             edit: abp.auth.hasPermission('Pages.Quotes.Edit'),
             createItems: abp.auth.hasPermission('Pages.Quotes.Items.Create')
-        }
-        let statusChanging = false
+        };
+        let statusChanging = false;
 
-        let _$form = null
-        let _$projectInput = null
-        let _$quoteIdInput = null
-        let _$nameInput = null
-        let _$customerInput = null
-        let _$proposalDateInput = null 
-        let _$proposalExpiryDateInput = null 
-        let _$inactivationDateInput = null 
-        let _$quoteSalesPersonIdInput = null 
-        let _$quoteFuelSurchargeCalculationIdInput = null
-        let _$baseFuelCostInput = null
-        let _$statusInput = null
-        let _$contactIdInput = null
+        let _$form = null;
+        let _$quoteIdInput = null;
+        let _$customerInput = null;
+        let _$proposalDateInput = null;
+        let _$proposalExpiryDateInput = null;
+        let _$inactivationDateInput = null;
+        let _$quoteSalesPersonIdInput = null;
+        let _$quoteFuelSurchargeCalculationIdInput = null;
 
-        const saveQuoteAsync = (callback) => {
-            let form = $("#QuoteForm")
-            if (!form.valid()) {
-                form.showValidateMessage()
-                return
-            }
-
-            if (!abp.helper.validateStartEndDates(
-                { value: $("#ProposalDate").val(), title: $('label[for="ProposalDate"]').text() },
-                { value: $("#ProposalExpiryDate").val(), title: $('label[for="ProposalExpiryDate"]').text() },
-                { value: $("#InactivationDate").val(), title: $('label[for="InactivationDate"]').text() }
-            )) {
-                return
-            }
-
-            let quote = form.serializeFormToObject()
-            abp.ui.setBusy(form)
-            _modalManager.setBusy(true)
-
-            _quoteService.editQuote(quote).done(function (data) {
-                abp.notify.info('Saved successfully.')
-
-                $("#QuoteForm").dirtyForms('setClean')
-                $("#QuoteForm").uniform.update()
-
-                if (callback)
-                    callback()
-            }).always(function () {
-                abp.ui.clearBusy(form)
-            })
-        }
+        let _$baseFuelCostInput = null;
+        let _$statusInput = null;
+        let _$contactIdInput = null;
 
         this.init = function (modalManager) {
-            _modalManager = modalManager
+            _modalManager = modalManager;
 
-            var _createOrEditQuoteServiceModal = new app.ModalManager({
+            const _createOrEditQuoteServiceModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteServiceModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteServiceModal.js',
                 modalClass: 'CreateOrEditQuoteServiceModal'
             })
 
-            var _createOrEditCustomerModal = new app.ModalManager({
+            const _createOrEditCustomerModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Customers/CreateOrEditCustomerModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Customers/_CreateOrEditCustomerModal.js',
                 modalClass: 'CreateOrEditCustomerModal',
                 modalSize: 'lg'
             })
 
-            var _createOrEditCustomerContactModal = new app.ModalManager({
+            const _createOrEditCustomerContactModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Customers/CreateOrEditCustomerContactModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Customers/_CreateOrEditCustomerContactModal.js',
                 modalClass: 'CreateOrEditCustomerContactModal'
             })
 
-            _$form = _modalManager.getModal().find('form')
-            _$form.validate()
+            _$form = _modalManager.getModal().find('form');
+            //_$form.validate();
 
-            abp.helper.ui.initControls()
+            abp.helper.ui.initControls();
 
-            _$projectInput = _$form.find('#ProjectName')
-            _$quoteIdInput = _$form.find('#Id')
-            _$nameInput = _$form.find('#Name')
-            _$customerInput = _$form.find('#QuoteCustomer')
-            _$proposalDateInput = _$form.find('#ProposalDate')
-            _$proposalExpiryDateInput = _$form.find('#ProposalExpiryDate')
-            _$inactivationDateInput = _$form.find('#InactivationDate')
-            _$quoteSalesPersonIdInput = _$form.find('#QuoteSalesPersonId')
-            _$quoteFuelSurchargeCalculationIdInput = _$form.find('#QuoteFuelSurchargeCalculationId')
-            _$baseFuelCostInput = _$form.find('#BaseFuelCost')
-            _$statusInput = _$form.find('#Status')
-            _$contactIdInput = _$form.find('#ContactId')
+            _$projectInput = _$form.find('#ProjectName');
+            _$quoteIdInput = _$form.find('#Id');
+            _$nameInput = _$form.find('#Name');
+            _$customerInput = _$form.find('#QuoteCustomer');
+            _$proposalDateInput = _$form.find('#ProposalDate');
+            _$proposalExpiryDateInput = _$form.find('#ProposalExpiryDate');
+            _$inactivationDateInput = _$form.find('#InactivationDate');
+            _$quoteSalesPersonIdInput = _$form.find('#QuoteSalesPersonId');
+            _$quoteFuelSurchargeCalculationIdInput = _$form.find('#QuoteFuelSurchargeCalculationId');
+            _$baseFuelCostInput = _$form.find('#BaseFuelCost');
+            _$statusInput = _$form.find('#Status');
+            _$contactIdInput = _$form.find('#ContactId');
 
-            _$proposalDateInput.datepickerInit()
-            _$proposalExpiryDateInput.datepickerInit()
-            _$inactivationDateInput.datepickerInit()
+            _$proposalDateInput.datepickerInit();
+            _$proposalExpiryDateInput.datepickerInit();
+            _$inactivationDateInput.datepickerInit();
 
             _$quoteSalesPersonIdInput.select2Init({
                 abpServiceMethod: abp.services.app.user.getSalespersonsSelectList,
@@ -140,24 +107,19 @@
                 allowClear: true
             })
 
-            //_quoteId = $("#Id").val()
-            _$quoteId = _$quoteIdInput.val()
-            if (_$quoteId === "") {
-                _$customerInput.data('select2').open()
-                _$customerInput.data('select2').focus()
-            }
+            _$quoteId = _$quoteIdInput.val();
 
-            var contactChildDropdown = abp.helper.ui.initChildDropdown({
+            const contactChildDropdown = abp.helper.ui.initChildDropdown({
                 parentDropdown: _$customerInput,
                 childDropdown: _$contactIdInput,
                 abpServiceMethod: abp.services.app.customer.getContactsForCustomer
             })
 
-            _$customerInput.change(function () {
-                var projectName = $("#ProjectName").val();
-                var customerName = $("#CustomerName").val();
-                $("Name").val(projectName + ' for ' + customerName);
-            })
+            //_$customerInput.change(function () {
+            //    var projectName = $("#ProjectName").val();
+            //    var customerName = $("#CustomerName").val();
+            //    $("Name").val(projectName + ' for ' + customerName);
+            //})
 
             _$statusInput.change(function () {
                 if (statusChanging) {
@@ -181,8 +143,8 @@
                 _$quoteFuelSurchargeCalculationIdInput.removeUnselectedOptions();
             })
 
-            var quoteServicesTable = $('#QuoteServicesTable')
-            var quoteServicesGrid = quoteServicesTable.DataTableInit({
+            const quoteServicesTable = $('#QuoteServicesTable');
+            const quoteServicesGrid = quoteServicesTable.DataTableInit({
                 paging: false,
                 info: false,
                 ordering: true,
@@ -190,26 +152,29 @@
                     emptyTable: app.localize("NoDataInTheTableClick{0}ToAdd", app.localize("AddQuoteItem"))
                 },
                 ajax: function (data, callback, settings) {
-                    if (_$quoteId === '') {
+                    if (_$quoteId === "") {
                         callback(_dtHelper.getEmptyResult());
                         return;
                     }
+
                     var abpData = _dtHelper.toAbpData(data);
                     $.extend(abpData, { quoteId: _$quoteId });
+
                     _quoteService.getQuoteServices(abpData).done(function (abpResult) {
                         callback(_dtHelper.fromAbpResult(abpResult));
-                        //abp.helper.ui.initControls();
-                    });
+                        abp.helper.ui.initControls();
+                    })
                 },
                 footerCallback: function (tfoot, data, start, end, display) {
-                    var materialTotal = data.map(function (x) { return x.extendedMaterialPrice; }).reduce(function (a, b) { return a + b; }, 0);
-                    var serviceTotal = data.map(function (x) { return x.extendedServicePrice; }).reduce(function (a, b) { return a + b; }, 0);
+                    const materialTotal = data.map(function (x) { return x.extendedMaterialPrice; }).reduce(function (a, b) { return a + b; }, 0);
+                    const serviceTotal = data.map(function (x) { return x.extendedServicePrice; }).reduce(function (a, b) { return a + b; }, 0);
 
                     let grid = this;
                     let setTotalFooterValue = function (columnName, total, visible) {
                         let footerCell = grid.api().column(columnName + ':name').footer();
                         $(footerCell).html(visible ? "Total: " + _dtHelper.renderMoney(total) : '');
                     }
+
                     setTotalFooterValue('extendedMaterialPrice', materialTotal, data.length);
                     setTotalFooterValue('extendedServicePrice', serviceTotal, data.length);
                 },
@@ -224,7 +189,7 @@
                         className: 'control responsive',
                         orderable: false,
                         render: function () {
-                            return '';
+                            return ''
                         }
                     },
                     {
@@ -318,53 +283,92 @@
                 ]
             })
 
-            var reloadQuoteServicesGrid = function () {
-                quoteServicesGrid.ajax.reload()
+            const reloadQuoteServicesGrid = () => {
+                quoteServicesGrid.ajax.reload();
             }
 
             $("#CreateNewQuoteServiceButton").click(function (e) {
-                e.preventDefault()
+                e.preventDefault();
 
-                if (_$quoteId === '') {
+                if (_$quoteId) {
                     saveQuoteAsync(function () {
                         reloadQuoteServicesGrid();
-                        _createOrEditQuoteServiceModal.open({ quoteId: _$quoteId })
+                        _createOrEditQuoteServiceModal.open({ quoteId: _$quoteId });
                     });
                 } else {
-                    _createOrEditQuoteServiceModal.open({ quoteId: _$quoteId })
+                    _createOrEditQuoteServiceModal.open({ quoteId: _$quoteId });
                 }
             });
 
             _modalManager.getModal().find(".save-quote-button").click(function (e) {
-                e.preventDefault()
+                e.preventDefault();
                 saveQuoteAsync(function () {
-                    _modalManager.close()
+                    _modalManager.close();
                 });
             });
 
             abp.event.on('app.createOrEditQuoteServiceModalSaved', function () {
-                reloadQuoteServicesGrid()
+                reloadQuoteServicesGrid();
             });
 
             abp.event.on('app.customerNameExists', function (e) {
-                selectCustomerInControl(e)
+                selectCustomerInControl(e);
             });
 
             abp.event.on('app.createOrEditCustomerModalSaved', function (e) {
-                selectCustomerInControl(e)
+                selectCustomerInControl(e);
             });
 
             abp.event.on('app.createOrEditCustomerContactModalSaved', function (e) {
                 contactChildDropdown.updateChildDropdown(function () {
-                    contactChildDropdown.childDropdown.val(e.item.Id).change()
-                })
+                    contactChildDropdown.childDropdown.val(e.item.Id).change();
+                });
             });
-
-            function selectCustomerInControl(e) {
-                if (_$customerInput.val() !== e.item.id.toString()) {
-                    abp.helper.ui.addAndSetDropdownValue(_$customerInput, e.item.id, e.item.name)
-                }
-            }
         }
+
+        this.focusOnDefaultElement = function () {
+            if (_$quoteId === "") {
+                _$customerInput.data('select2').focus();
+            }
+        };
+
+        const selectCustomerInControl = (e) => {
+            if (_$customerInput.val() !== e.item.id.toString()) {
+                abp.helper.ui.addAndSetDropdownValue(_$customerInput, e.item.id, e.item.name);
+            }
+        };
+
+        const saveQuoteAsync = (callback) => {
+            if (_$form) {
+                if (!_$form.valid()) {
+                    form.showValidateMessage();
+                    return;
+                }
+
+                if (!abp.helper.validateStartEndDates(
+                    { value: $("#ProposalDate").val(), title: $('label[for="ProposalDate"]').text() },
+                    { value: $("#ProposalExpiryDate").val(), title: $('label[for="ProposalExpiryDate"]').text() },
+                    { value: $("#InactivationDate").val(), title: $('label[for="InactivationDate"]').text() }
+                )) {
+                    return
+                }
+
+                let quote = form.serializeFormToObject();
+                abp.ui.setBusy(form);
+                _modalManager.setBusy(true);
+
+                _quoteService.editQuote(quote).done(function (data) {
+                    abp.notify.info('Saved successfully.');
+
+                    $("#QuoteForm").dirtyForms('setClean');
+                    $("#QuoteForm").uniform.update();
+
+                    if (callback)
+                        callback();
+                }).always(function () {
+                    abp.ui.clearBusy(form);
+                });
+            }
+        };
     }
 })(jQuery);
