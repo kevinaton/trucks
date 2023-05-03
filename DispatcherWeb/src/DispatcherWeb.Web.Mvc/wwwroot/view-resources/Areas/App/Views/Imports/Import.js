@@ -52,7 +52,9 @@
                     return;
                 }
                 var fuelImportType = $('#FuelImportType');
-                if ($('#NoMapping').length > 0) {
+                if (typeof window.importFileUploadedCustomCallback === 'function') {
+                    window.importFileUploadedCustomCallback(result);
+                } else if ($('#NoMapping').length > 0) {
                     _importWithNoMappingModal.open({ id: result.id, fileName: result.blobName, importType: $('#ImportType').val() });
                 } else if (fuelImportType.length > 0 && fuelImportType.val() === fuelImportType.data('jacobus-value')) {
                     _importJacobusEnergyModal.open({ id: result.id, fileName: result.blobName, importType: $('#ImportType').val() });
