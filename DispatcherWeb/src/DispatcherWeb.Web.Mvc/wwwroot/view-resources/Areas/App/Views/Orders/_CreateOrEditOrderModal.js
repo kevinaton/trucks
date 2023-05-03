@@ -16,6 +16,7 @@
             edit: abp.auth.hasPermission('Pages.Orders.Edit')
         };
         var _modalManager;
+        var _$modal = null;
         var _$form = null;
 
         //Init modals
@@ -98,7 +99,8 @@
         this.init = function (modalManager) {
             _modalManager = modalManager;
 
-            _$form = _modalManager.getModal().find('form');
+            _$modal = _modalManager.getModal(); 
+            _$form = _$modal.find('form');
             _$form.validate();
 
             abp.helper.ui.initControls();
@@ -112,11 +114,11 @@
             function loseFocusAndAwaitBackgroundTasks(callback) {
                 $(':focus').blur();
                 var waitingTime = 0;
-                abp.ui.setBusy(_$form.find("#OrderForm"));
+                abp.ui.setBusy(_$form);
                 function checkBackgroundTasksAndContinue(callback) {
                     waitingTime++;
                     if (waitingTime > 100) { //100ms * 100, 10 seconds
-                        abp.ui.clearBusy(_$form.find("#OrderForm"));
+                        abp.ui.clearBusy(_$form);
                         abp.message.error('Something went wrong. Please refresh the page and try again.');
                         return;
                     }
@@ -126,7 +128,7 @@
                             checkBackgroundTasksAndContinue(callback);
                         }, 100);
                     } else {
-                        abp.ui.clearBusy(_$form.find("#OrderForm"));
+                        abp.ui.clearBusy(_$form);
                         callback && callback();
                     }
                 }
@@ -151,20 +153,19 @@
             }
 
             function saveOrderImmediatelyAsync(callback) {
-                var form = _$form;
-                if (!form.valid()) {
-                    form.showValidateMessage();
+                if (!_$form.valid()) {
+                    _$form.showValidateMessage();
                     return;
                 }
 
-                var order = form.serializeFormToObject();
+                var order = _$form.serializeFormToObject();
                 if (isNewOrder()) {
                     order.OrderLines = _orderLines;
                 }
 
                 order.IsPending = _$form.find("#IsPending").prop("checked");
                 checkForOrderDuplicates(order, function () {
-                    abp.ui.setBusy(form);
+                    abp.ui.setBusy(_$form);
                     _modalManager.setBusy(true);
                     _orderAppService.editOrder(order).done(function (result) {
                         if (!result.completed) {
@@ -192,8 +193,8 @@
                             _orderLinesGridData = null;
                             reloadOrderLinesGridAsync();
                             updateLastModifiedDates();
-                            _$form.find("#OrderForm").dirtyForms('setClean');
-                            _$form.find("#OrderForm").uniform.update();
+                            _$form.dirtyForms('setClean');
+                            _$form.uniform.update();
                             if (result.hasZeroQuantityItems && !abp.setting.getBoolean('App.UserOptions.DontShowZeroQuantityWarning')) {
                                 abp.message.warn(app.localize('MissingQtyOrNbrOfTrucksOnOrderLinesWarning'));
                             }
@@ -203,7 +204,7 @@
                         }
 
                     }).always(function () {
-                        abp.ui.clearBusy(form);
+                        abp.ui.clearBusy(_$form);
                         _modalManager.setBusy(false);
                     });
                 });
@@ -223,8 +224,8 @@
                     _$form.find("#CreatorName").val(result.creatorName);
                     _$form.find("#CreationTime, #LastModificationTime").closest('.hidden-for-new-entity').show();
 
-                    //_$form.find("#OrderForm").dirtyForms('setClean');
-                    //_$form.find("#OrderForm").uniform.update();
+                    //_$form.dirtyForms('setClean');
+                    //_$form.uniform.update();
                 });
             }
 
@@ -277,11 +278,11 @@
             }
 
             function isNewOrChangedOrder() {
-                return isNewOrder() || _$form.find("#OrderForm").dirtyForms('isDirty');
+                return isNewOrder() || _$form.dirtyForms('isDirty');
             }
 
             function showEditingBlocks() {
-                $('.editing-only-block').not(":visible").slideDown();
+                _$form.find('.editing-only-block').not(":visible").slideDown();
             }
 
             async function checkForOrderDuplicates(order, callback) {
@@ -310,7 +311,7 @@
             }
 
             function serializeOrder() {
-                _order = _$form.find("#OrderForm").serializeFormToObject();
+                _order = _$form.serializeFormToObject();
                 _order.FreightTotal = Number(_order.FreightTotal) || 0;
                 _order.MaterialTotal = Number(_order.MaterialTotal) || 0;
                 _order.SalesTaxRate = Number(_order.SalesTaxRate) || 0;
@@ -351,8 +352,8 @@
             function recalculateTotals() {
                 _recalculateTotalsInProgressCount++;
                 if (isNewOrder() && _orderLines) {
-                    var materialTotal = round(_orderLines.map(function (x) { return round(x.materialPrice); }).reduce(function (a, b) { return a + b; }, 0)) || 0.00;
-                    var freightTotal = round(_orderLines.map(function (x) { return round(x.freightPrice); }).reduce(function (a, b) { return a + b; }, 0)) || 0.00;
+                    var materialTotal = round(_orderLines.map(x => round(x.materialPrice)).reduce((a, b) => a + b, 0)) || 0.00;
+                    var freightTotal = round(_orderLines.map(x => round(x.freightPrice)).reduce((a, b) => a + b, 0)) || 0.00;
                     _$form.find("#MaterialTotal").val(materialTotal);
                     _$form.find("#FreightTotal").val(freightTotal);
                 }
@@ -382,8 +383,8 @@
 
             //calculate _materialTotal and _freightTotal values from order line data
             function calculateMaterialAndFreightTotal(data) {
-                _materialTotal = round(data.map(function (x) { return round(x.materialPrice); }).reduce(function (a, b) { return a + b; }, 0)) || 0.00;
-                _freightTotal = round(data.map(function (x) { return round(x.freightPrice); }).reduce(function (a, b) { return a + b; }, 0)) || 0.00;
+                _materialTotal = round(data.map(x => round(x.materialPrice)).reduce((a, b) => a + b, 0)) || 0.00;
+                _freightTotal = round(data.map(x => round(x.freightPrice)).reduce((a, b) => a + b, 0)) || 0.00;
             }
 
             function round(num) {
@@ -391,15 +392,15 @@
             }
 
             function disableOrderEditForHaulingCompany() {
-                $('input,select,textarea').not('#SalesTaxRate, #OrderFuelSurchargeCalculationId, #BaseFuelCost').attr('disabled', true);
+                _$form.find('input,select,textarea').not('#SalesTaxRate, #OrderFuelSurchargeCalculationId, #BaseFuelCost').attr('disabled', true);
                 _$form.find("#CreateNewOrderLineButton").hide();
                 _$form.find("#EditInternalNotesButton").closest('.form-group').hide();
             }
 
             function disableOrderEdit() {
                 _isOrderReadonly = true;
-                $('input,select,textarea').attr('disabled', true);
-                $('#SaveOrderButton').hide();
+                _$form.find('input,select,textarea').attr('disabled', true);
+                _$modal.find('#SaveOrderButton').hide();
                 _$form.find("#CreateNewOrderLineButton").hide();
                 _$form.find("#EditInternalNotesButton").closest('.form-group').hide();
                 if (canEditAnyOrderDirections()) {
@@ -485,7 +486,11 @@
                 showAll: false,
                 allowClear: true,
                 addItemCallback: async function (newItemName) {
-                    _createOrEditCustomerModal.open({ name: newItemName });
+                    var result = await app.getModalResultAsync(
+                        _createOrEditCustomerModal.open({ name: newItemName })
+                    );
+                    selectCustomerInControl(result);
+                    return false;
                 },
             });
 
@@ -502,9 +507,15 @@
                     if (!customerId) {
                         abp.notify.warn("Select a customer first");
                         _$form.find("#OrderCustomerId").focus();
-                        return;
+                        return false;
                     }
-                    _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId });
+                    var result = await app.getModalResultAsync(
+                        _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId })
+                    );
+                    contactChildDropdown.updateChildDropdown(function () {
+                        contactChildDropdown.childDropdown.val(result.Id).change();
+                    });
+                    return false;
                 }
             });
 
@@ -585,9 +596,9 @@
             });
 
             function roundTextboxValueIfNumeric(field) {
-                var value = round($(field).val());
+                var value = round(_$form.find(field).val());
                 if (value !== null) {
-                    $(field).val(value.toFixed(2));
+                    _$form.find(field).val(value.toFixed(2));
                 }
             }
 
@@ -598,20 +609,20 @@
 
             refreshPaymentInfo();
 
-            _$form.find("#OrderForm").dirtyForms();
-            _$form.find("#OrderForm").uniform();
+            _$form.dirtyForms();
+            _$form.uniform();
 
 
             //Quote change handling
 
             function updateInputValueIfSourceIsNotNull(input, sourceValue) {
                 if (sourceValue !== null && sourceValue !== '') {
-                    $(input).val(sourceValue).change();
+                    _$form.find(input).val(sourceValue).change();
                 }
             }
 
             function updateInputValue(input, sourceValue) {
-                $(input).val(sourceValue).change();
+                _$form.find(input).val(sourceValue).change();
             }
 
             var handleQuoteChangeAsync = async function (quoteId, option) {
@@ -737,7 +748,7 @@
             //Init OrderLines grid
 
             var staggeredIcon = ' <span class="far fa-clock staggered-icon pull-right" title="Staggered"></span>';
-            var orderLinesTable = $('#OrderLinesTable');
+            var orderLinesTable = _$form.find('#OrderLinesTable');
             var orderLinesGrid = orderLinesTable.DataTableInit({
                 paging: false,
                 info: false,
@@ -990,7 +1001,7 @@
                     }
                 ],
                 drawCallback: function (settings) {
-                    $('table [data-toggle="tooltip"]').tooltip();
+                    _$form.find('table [data-toggle="tooltip"]').tooltip();
                 }
             });
 
@@ -1018,8 +1029,8 @@
                     if (e && e.orderTaxDetails) {
                         await reloadOrderLinesGridAsync();
                         updateOrderTaxDetails(e.orderTaxDetails);
-                        _$form.find("#OrderForm").dirtyForms('setClean');
-                        _$form.find("#OrderForm").uniform.update();
+                        _$form.dirtyForms('setClean');
+                        _$form.uniform.update();
                         checkIfTaxIsRequired();
                     }
                 }
@@ -1133,8 +1144,8 @@
                     var param = failResult.loadResponseObject.userFriendlyException.parameters;
                     if (param && param.Kind === "EntityDeletedException") {
                         if (param.EntityKind === "Order") {
-                            _$form.find("#OrderForm").dirtyForms('setClean');
-                            _$form.find("#OrderForm").uniform.update();
+                            _$form.dirtyForms('setClean');
+                            _$form.uniform.update();
                             location.href = abp.appPath + 'app/orders/';
                         } else if (param.EntityKind === "OrderLine") {
                             reloadOrderLinesGridAsync();
@@ -1143,7 +1154,7 @@
                 }
             }
 
-            _modalManager.getModal().find("#SaveOrderButton").click(function (e) {
+            _$modal.find("#SaveOrderButton").click(function (e) {
                 e.preventDefault();                
                 saveOrderAsync(function () {
                     reloadOrderLinesGridAsync();
@@ -1164,19 +1175,18 @@
             _$form.find("#SaveDirectionsButton").click(function (e) {
                 e.preventDefault();
 
-                var form = _$form.find("#OrderForm");
-                var formData = form.serializeFormToObject();
+                var formData = _$form.serializeFormToObject();
 
-                abp.ui.setBusy(form);
+                abp.ui.setBusy(_$form);
                 abp.services.app.scheduling.setOrderDirections({
                     orderId: _orderId,
                     directions: formData.Directions
                 }).done(function () {
                     abp.notify.info('Saved successfully.');
-                    form.dirtyForms('setClean');
-                    form.uniform.update();
+                    _$form.dirtyForms('setClean');
+                    _$form.uniform.update();
                 }).always(function () {
-                    abp.ui.clearBusy(form);
+                    abp.ui.clearBusy(_$form);
                 });
             });
 
@@ -1316,7 +1326,7 @@
                 });
             });
 
-            $('.openReceiptButton').click(function (e) {
+            _$form.find('.openReceiptButton').click(function (e) {
                 e.preventDefault();
                 var receiptId = $(this).attr('data-receiptId');
                 saveOrderIfNeededAsync(function () {
@@ -1413,8 +1423,8 @@
                 abp.notify.info('Successfully deleted.');
                 await reloadOrderLinesGridAsync();
                 updateOrderTaxDetails(deleteResult.orderTaxDetails);
-                _$form.find("#OrderForm").dirtyForms('setClean');
-                _$form.find("#OrderForm").uniform.update();
+                _$form.dirtyForms('setClean');
+                _$form.uniform.update();
             }
 
             function updateLineNumbers() {
@@ -1426,39 +1436,27 @@
 
             //Handle popup adding
 
-            _modalManager.on('app.customerNameExists', function (e) {
-                selectCustomerInControl(e);
-            });
-            _modalManager.on('app.createOrEditCustomerModalSaved', function (e) {
-                selectCustomerInControl(e);
-            });
-            function selectCustomerInControl(e) {
-                var option = new Option(e.item.name, e.item.id, true, true);
+            function selectCustomerInControl(customer) {
+                var option = new Option(customer.name, customer.id, true, true);
                 $(option).data('data', {
-                    id: e.item.id,
-                    text: e.item.name,
+                    id: customer.id,
+                    text: customer.name,
                     item: {
-                        accountNumber: e.item.accountNumber,
-                        customerIsCod: e.item.customerIsCod
+                        accountNumber: customer.accountNumber,
+                        customerIsCod: customer.customerIsCod
                     }
                 });
                 _$form.find("#OrderCustomerId").append(option).trigger('change');
             }
 
-            _modalManager.on('app.createOrEditCustomerContactModalSaved', function (e) {
-                contactChildDropdown.updateChildDropdown(function () {
-                    contactChildDropdown.childDropdown.val(e.item.Id).change();
-                });
-            });
-
-            $('#IsPending').change(function () {
+            _$form.find('#IsPending').change(function () {
                 if ($(this).prop('checked')) {
-                    $('#DateTime').removeAttr('required').removeAttr('aria-required');
-                    $('#DateTime').closest('.form-group').removeClass('has-error');
-                    $('#DateTime').closest('.form-group').find('label').removeClass('required-label');
+                    _$form.find('#DateTime').removeAttr('required').removeAttr('aria-required');
+                    _$form.find('#DateTime').closest('.form-group').removeClass('has-error');
+                    _$form.find('#DateTime').closest('.form-group').find('label').removeClass('required-label');
                 } else {
-                    $('#DateTime').attr('required', 'required');
-                    $('#DateTime').closest('.form-group').find('label').addClass('required-label');
+                    _$form.find('#DateTime').attr('required', 'required');
+                    _$form.find('#DateTime').closest('.form-group').find('label').addClass('required-label');
                 }
             });
 
