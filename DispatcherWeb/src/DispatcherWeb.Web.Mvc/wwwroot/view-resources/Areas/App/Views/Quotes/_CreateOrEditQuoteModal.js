@@ -30,20 +30,20 @@
                 viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteServiceModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteServiceModal.js',
                 modalClass: 'CreateOrEditQuoteServiceModal'
-            })
+            });
 
             const _createOrEditCustomerModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Customers/CreateOrEditCustomerModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Customers/_CreateOrEditCustomerModal.js',
                 modalClass: 'CreateOrEditCustomerModal',
                 modalSize: 'lg'
-            })
+            });
 
             const _createOrEditCustomerContactModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Customers/CreateOrEditCustomerContactModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Customers/_CreateOrEditCustomerContactModal.js',
                 modalClass: 'CreateOrEditCustomerContactModal'
-            })
+            });
 
             _$form = _modalManager.getModal().find('form');
             //_$form.validate();
@@ -71,12 +71,12 @@
                 abpServiceMethod: abp.services.app.user.getSalespersonsSelectList,
                 showAll: false,
                 allowClear: false
-            })
+            });
 
             _$statusInput.select2Init({
                 showAll: true,
                 allowClear: false
-            })
+            });
 
             _$contactIdInput.select2Init({
                 showAll: false,
@@ -86,26 +86,38 @@
                     if (!customerId) {
                         abp.notify.warn("Select a customer first");
                         _$customerInput.focus();
-                        return;
+                        return false;
                     }
-                    _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId });
+                    var result = await app.getModalResultAsync(
+                        _createOrEditCustomerContactModal.open({ name: newItemName, customerId: customerId })
+                    );
+                    contactChildDropdown.updateChildDropdown(function () {
+                        contactChildDropdown.childDropdown.val(result.Id).change();
+                    });
+                    return false;
                 }
-            })
+            });
 
             _$customerInput.select2Init({
                 abpServiceMethod: abp.services.app.customer.getActiveCustomersSelectList,
                 showAll: false,
                 allowClear: false,
                 addItemCallback: async function (newItemName) {
-                    _createOrEditCustomerModal.open({ name: newItemName });
+                    var result = await app.getModalResultAsync(
+                        _createOrEditCustomerModal.open({ name: newItemName })
+                    );
+                    return {
+                        id: result.id,
+                        name: result.name
+                    };
                 }
-            })
+            });
 
             _$quoteFuelSurchargeCalculationIdInput.select2Init({
                 abpServiceMethod: abp.services.app.fuelSurchargeCalculation.getFuelSurchargeCalculationsSelectList,
                 showAll: true,
                 allowClear: true
-            })
+            });
 
             _$quoteId = _$quoteIdInput.val();
 
@@ -113,7 +125,7 @@
                 parentDropdown: _$customerInput,
                 childDropdown: _$contactIdInput,
                 abpServiceMethod: abp.services.app.customer.getContactsForCustomer
-            })
+            });
 
             //_$customerInput.change(function () {
             //    var projectName = $("#ProjectName").val();
@@ -132,7 +144,7 @@
                     var now = moment(new Date());
                     _$inactivationDateInput.val(moment(now).format('MM/DD/YYYY'));
                 }
-            })
+            });
 
             _$quoteFuelSurchargeCalculationIdInput.change(function () {
                 let dropdownData = _$quoteFuelSurchargeCalculationIdInput.select2('data');
@@ -141,7 +153,7 @@
                 $("#BaseFuelCostContainer").toggle(canChangeBaseFuelCost);
                 _$baseFuelCostInput.val(selectedOption?.item?.baseFuelCost || 0);
                 _$quoteFuelSurchargeCalculationIdInput.removeUnselectedOptions();
-            })
+            });
 
             const quoteServicesTable = $('#QuoteServicesTable');
             const quoteServicesGrid = quoteServicesTable.DataTableInit({
@@ -166,8 +178,8 @@
                     })
                 },
                 footerCallback: function (tfoot, data, start, end, display) {
-                    const materialTotal = data.map(function (x) { return x.extendedMaterialPrice; }).reduce(function (a, b) { return a + b; }, 0);
-                    const serviceTotal = data.map(function (x) { return x.extendedServicePrice; }).reduce(function (a, b) { return a + b; }, 0);
+                    const materialTotal = data.map(x => x.extendedMaterialPrice).reduce((a, b) => a + b, 0);
+                    const serviceTotal = data.map(x => x.extendedServicePrice).reduce((a, b) => a + b, 0);
 
                     let grid = this;
                     let setTotalFooterValue = function (columnName, total, visible) {
@@ -189,7 +201,7 @@
                         className: 'control responsive',
                         orderable: false,
                         render: function () {
-                            return ''
+                            return '';
                         }
                     },
                     {
@@ -281,11 +293,11 @@
                             + '</div>'
                     }
                 ]
-            })
+            });
 
             const reloadQuoteServicesGrid = () => {
                 quoteServicesGrid.ajax.reload();
-            }
+            };
 
             $("#CreateNewQuoteServiceButton").click(function (e) {
                 e.preventDefault();
@@ -310,31 +322,11 @@
             abp.event.on('app.createOrEditQuoteServiceModalSaved', function () {
                 reloadQuoteServicesGrid();
             });
-
-            abp.event.on('app.customerNameExists', function (e) {
-                selectCustomerInControl(e);
-            });
-
-            abp.event.on('app.createOrEditCustomerModalSaved', function (e) {
-                selectCustomerInControl(e);
-            });
-
-            abp.event.on('app.createOrEditCustomerContactModalSaved', function (e) {
-                contactChildDropdown.updateChildDropdown(function () {
-                    contactChildDropdown.childDropdown.val(e.item.Id).change();
-                });
-            });
         }
 
         this.focusOnDefaultElement = function () {
             if (_$quoteId === "") {
                 _$customerInput.data('select2').focus();
-            }
-        };
-
-        const selectCustomerInControl = (e) => {
-            if (_$customerInput.val() !== e.item.id.toString()) {
-                abp.helper.ui.addAndSetDropdownValue(_$customerInput, e.item.id, e.item.name);
             }
         };
 
@@ -350,7 +342,7 @@
                     { value: $("#ProposalExpiryDate").val(), title: $('label[for="ProposalExpiryDate"]').text() },
                     { value: $("#InactivationDate").val(), title: $('label[for="InactivationDate"]').text() }
                 )) {
-                    return
+                    return;
                 }
 
                 let quote = form.serializeFormToObject();
