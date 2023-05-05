@@ -749,7 +749,7 @@ namespace DispatcherWeb.Scheduling
             }
 
             int? defaultDriverId = await GetDriverIdFromAvailableLeaseHaulerTruck() ?? await GetDefaultDriverId();
-            if (defaultDriverId == null)
+            if (defaultDriverId == null && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers))
             {
                 throw new UserFriendlyException("Cannot add OrderLineTruck for a truck without a default driver!");
             }
@@ -763,7 +763,7 @@ namespace DispatcherWeb.Scheduling
                     .FirstOrDefaultAsync();
                 if (driverAssignment != null)
                 {
-                    if (driverAssignment.DriverId == null)
+                    if (driverAssignment.DriverId == null && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers))
                     {
                         throw new ApplicationException("Cannot add OrderLineTruck for a truck with no driver!");
                     }

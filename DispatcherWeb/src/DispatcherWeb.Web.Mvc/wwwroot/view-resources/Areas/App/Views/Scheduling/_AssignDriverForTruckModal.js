@@ -10,11 +10,20 @@
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
-
             _$form = _modalManager.getModal().find('form');
-            _$form.validate();
+            var modalArgs = modalManager.getArgs();
 
             var allowSubcontractorsToDriveCompanyOwnedTrucks = abp.setting.getBoolean('App.LeaseHaulers.AllowSubcontractorsToDriveCompanyOwnedTrucks');
+            var allowSchedulingTrucksWithoutDrivers = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers');
+
+            if (allowSchedulingTrucksWithoutDrivers) {
+                _$form.find('#DriverId').removeAttr('required');
+                _$form.find('label[for="DriverId"').removeClass('required-label');
+            }
+
+            _$form.validate();
+                        
+            _$form.find("#Message").text(modalArgs.message || '');
 
             var driverIdDropdown = _$form.find("#DriverId");
             _leaseHaulerId = Number(_$form.find("#LeaseHaulerId").val()) || null;
@@ -100,6 +109,10 @@
                     await _driverAssignmentService.setDriverForTruck(input);
                 }
                 abp.notify.info('Saved successfully.');
+                _modalManager.setResult({
+                    driverId: Number(input.DriverId) || null,
+                    driverName: _$form.find("#DriverId").getSelectedDropdownOption().text()
+                });
                 _modalManager.close();
                 abp.event.trigger('app.assignDriverForTruckModalSaved');
             }
