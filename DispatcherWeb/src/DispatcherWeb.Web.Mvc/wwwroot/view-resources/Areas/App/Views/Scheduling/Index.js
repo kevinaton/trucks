@@ -541,14 +541,27 @@
         }
 
         function getTruckTileClass(truck) {
-            if (truck.isOutOfService)
+            if (truck.isOutOfService) {
                 return "gray";
-            if (truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck))
+            }
+            if (truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck)) {
                 return "blue";
-            if (truck.utilization >= 1)
-                return "red";
-            if (truck.utilization > 0)
-                return "yellow";
+            }
+            if (_settings.validateUtilization) {
+                if (truck.utilization >= 1) {
+                    return "red";
+                }
+                if (truck.utilization > 0) {
+                    return "yellow";
+                }
+            } else {
+                if (truck.utilization > 1) {
+                    return "red";
+                }
+                if (truck.utilization === 1) {
+                    return "yellow";
+                }
+            }
             return "green";
         }
 
@@ -1489,7 +1502,7 @@
                             }
                         });
 
-                        askToAssignDriverAndAddTagAgain = async function (tag) {
+                        let askToAssignDriverAndAddTagAgain = async function (tag) {
                             var filterData = _dtHelper.getFilterData();
                             var assignDriverResult = await app.getModalResultAsync(
                                 _assignDriverForTruckModal.open({
