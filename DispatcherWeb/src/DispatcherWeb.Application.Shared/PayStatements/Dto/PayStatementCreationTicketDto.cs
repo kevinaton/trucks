@@ -6,6 +6,7 @@ namespace DispatcherWeb.PayStatements.Dto
     {
         public int TicketId { get; set; }
         public DateTime? TicketDateTime { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         public int DriverId { get; set; }
         public long? UserId { get; set; }
         public decimal Quantity { get; set; }

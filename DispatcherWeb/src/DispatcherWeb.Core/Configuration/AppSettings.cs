@@ -132,6 +132,7 @@ namespace DispatcherWeb.Configuration
             public const string DefaultToProductionPay = "App.TimeAndPay.DefaultToProductionPay";
             public const string PreventProductionPayOnHourlyJobs = "App.TimeAndPay.PreventProductionPayOnHourlyJobs";
             public const string AllowDriverPayRateDifferentFromFreightRate = "App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate";
+            public const string DriverIsPaidForLoadBasedOn = "App.TimeAndPay.DriverIsPaidForLoadBasedOn";
         }
 
         public static class Fuel

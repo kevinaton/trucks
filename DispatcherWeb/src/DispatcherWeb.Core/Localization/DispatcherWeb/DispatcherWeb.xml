@@ -1831,5 +1831,6 @@
 		<text name="ImportTrucks">Import Trucks</text>
 		<text name="ImportVehicle">Import Mileage/Engine Hours</text>
 		<text name="ImportFuel">Import Fuel</text>
+		<text name="DriverIsPaidForLoadBasedOn">Driver is paid for load based on</text>
 	</texts>
 </localizationDictionary>

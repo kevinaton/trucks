@@ -50,6 +50,21 @@
             allowClear: true
         });
 
+        $('#DriverIsPaidForLoadBasedOn').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
+        $('#AllowProductionPay').change(refreshAllowProductionPayControls);
+        refreshAllowProductionPayControls();
+        function refreshAllowProductionPayControls() {
+            if ($('#AllowProductionPay').is(':checked')) {
+                $('#DriverIsPaidForLoadBasedOn').closest('.form-group').show();
+            } else {
+                $('#DriverIsPaidForLoadBasedOn').closest('.form-group').hide();
+            }
+        }
+
         $("#ItemIdToUseForFuelSurchargeOnInvoice").select2Init({
             abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
             allowClear: true,
