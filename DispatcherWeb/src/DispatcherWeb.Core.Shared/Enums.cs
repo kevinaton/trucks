@@ -794,4 +794,12 @@ namespace DispatcherWeb
         [Display(Name = "Marketing")]
         Marketing = 0x8,
     }
+
+    public enum DriverIsPaidForLoadBasedOnEnum
+    {
+        [Display(Name = "Ticket Date")]
+        TicketDate = 1,
+        [Display(Name = "Order Date")]
+        OrderDate = 2,
+    }
 }

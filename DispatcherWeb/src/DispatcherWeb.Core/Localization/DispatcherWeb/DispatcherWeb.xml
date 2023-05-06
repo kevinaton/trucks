@@ -1828,5 +1828,6 @@
 		<text name="GlobalAddDriver">Driver</text>
 		<text name="GlobalAddLocation">Location</text>
 		<text name="GlobalAddUser">User</text>
+		<text name="DriverIsPaidForLoadBasedOn">Driver is paid for load based on</text>
 	</texts>
 </localizationDictionary>
