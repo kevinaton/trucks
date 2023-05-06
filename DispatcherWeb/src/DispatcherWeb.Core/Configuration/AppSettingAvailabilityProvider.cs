@@ -41,10 +41,8 @@ namespace DispatcherWeb.Configuration
                 case AppSettings.DispatchingAndMessaging.ValidateUtilization:
                 case AppSettings.DispatchingAndMessaging.DriverStartTimeTemplate:
                 case AppSettings.DispatchingAndMessaging.DefaultStartTime:
-                    return true;
-
                 case AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers:
-                    return false; //temp, until the actual functionality is added
+                    return true;
 
                 default:
                     return true;

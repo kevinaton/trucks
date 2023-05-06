@@ -282,7 +282,7 @@
 
             var options = {};
             $.extend(options, _dtHelper.getFilterData());
-            _schedulingService.getScheduleTrucks(options).done(function (result) {
+            return _schedulingService.getScheduleTrucks(options).done(function (result) {
                 var trucks = result.items;
                 _scheduleTrucks = trucks;
                 truckTiles.empty();
@@ -425,7 +425,7 @@
         function canAddTruckWithDriverToOrder(truck, driverId, order) {
             if (isTodayOrFutureDate(order)
                 && (truck.utilization >= 1 && _settings.validateUtilization
-                    || truckHasNoDriver(truck) && truckCategoryNeedDriver(truck)
+                    || truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck) && _settings.validateUtilization
                     || truck.isOutOfService
                     || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)) {
                 return false;
@@ -541,18 +541,31 @@
         }
 
         function getTruckTileClass(truck) {
-            if (truck.isOutOfService)
+            if (truck.isOutOfService) {
                 return "gray";
-            if (truckHasNoDriver(truck) && truckCategoryNeedDriver(truck))
+            }
+            if (truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck)) {
                 return "blue";
-            if (truck.utilization >= 1)
-                return "red";
-            if (truck.utilization > 0)
-                return "yellow";
+            }
+            if (_settings.validateUtilization) {
+                if (truck.utilization >= 1) {
+                    return "red";
+                }
+                if (truck.utilization > 0) {
+                    return "yellow";
+                }
+            } else {
+                if (truck.utilization > 1) {
+                    return "red";
+                }
+                if (truck.utilization === 1) {
+                    return "yellow";
+                }
+            }
             return "green";
         }
 
-        function truckCategoryNeedDriver(truck) {
+        function truckCategoryNeedsDriver(truck) {
             return truck.vehicleCategory.isPowered &&
                 (_features.leaseHaulers || (!truck.alwaysShowOnSchedule && !truck.isExternal)); //&& truck.officeId !== null
         }
@@ -577,7 +590,7 @@
 
         function getTruckTileTitle(truck) {
             var title = truck.truckCode;
-            if (truckCategoryNeedDriver(truck)) {
+            if (truckCategoryNeedsDriver(truck)) {
                 title += ' - ' + truck.driverName;
             }
             return title;
@@ -1402,7 +1415,7 @@
                     className: "trucks all",
                     createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
                         $(cell).empty();
-                        var cancelRemoveTag = false;
+                        var cancellingTagRemoval = false;
                         $(cell).css('min-width', '195px');
                         //$(cell).css('white-space', 'normal !important');
                         if (!hasOrderEditPermissions() || !isAllowedToEditOrderTrucks(rowData)) {
@@ -1489,9 +1502,28 @@
                             }
                         });
 
+                        let askToAssignDriverAndAddTagAgain = async function (tag) {
+                            var filterData = _dtHelper.getFilterData();
+                            var assignDriverResult = await app.getModalResultAsync(
+                                _assignDriverForTruckModal.open({
+                                    message: 'There was no driver assigned to this truck. Please select a driver.',
+                                    truckId: tag.truckId,
+                                    truckCode: tag.truckCode,
+                                    leaseHaulerId: tag.leaseHaulerId,
+                                    date: filterData.date,
+                                    shift: filterData.shift,
+                                    officeId: filterData.officeId,
+                                    driverId: null,
+                                    driverName: null
+                                })
+                            );
+                            tag.driverId = assignDriverResult.driverId;
+                            editor.tagsinput('add', tag, { preventPost: false, allowNoDriver: true });
+                        };
+
                         editor.on('beforeItemAdd', function (event) {
-                            if (cancelRemoveTag) {
-                                cancelRemoveTag = false;
+                            if (cancellingTagRemoval) {
+                                cancellingTagRemoval = false;
                                 return;
                             }
                             var tag = event.item;
@@ -1505,6 +1537,12 @@
                                 return;
                             }
                             if (!event.options || !event.options.preventPost) {
+                                if (!tag.driverId && tag.vehicleCategory.isPowered && (!event.options || !event.options.allowNoDriver)) {
+                                    event.cancel = true;
+                                    askToAssignDriverAndAddTagAgain(tag);
+                                    return;
+                                }
+
                                 var onFail = function (errorMessage) {
                                     editor.tagsinput('remove', tag, { preventPost: true });
                                     abp.notify.error(errorMessage || 'Unknown error occurred on saving the OrderTruck');
@@ -1593,11 +1631,11 @@
                                         deleteOrderLineTruck(false);
                                     },
                                     function () {
-                                        cancelRemoveTag = true;
+                                        cancellingTagRemoval = true;
                                         editor.tagsinput('add', tag, { preventPost: true });
                                     },
                                     function () {
-                                        cancelRemoveTag = true;
+                                        cancellingTagRemoval = true;
                                         tag.isDone = true;
                                         editor.tagsinput('add', tag, { preventPost: true });
                                         deleteOrderLineTruck(true);
@@ -1749,7 +1787,7 @@
         });
 
         function isOrderLineShared(orderLine) {
-            return orderLine.isShared || orderLine.haulingCompanyOrderLineId || orderLine.materialCompanyOrderLineId;
+            return !!(orderLine.isShared || orderLine.haulingCompanyOrderLineId || orderLine.materialCompanyOrderLineId);
         }
 
         function recalculateFooterTotals() {
@@ -1882,7 +1920,7 @@
         });
 
         abp.event.on('app.assignDriverForTruckModalSaved', function () {
-            reloadMainGrid(null, false);
+            //reloadMainGrid(null, false);
             reloadTruckTiles();
             reloadDriverAssignments();
         });

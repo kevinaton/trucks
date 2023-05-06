@@ -60,6 +60,7 @@ namespace DispatcherWeb.Dispatching
         public const int MaxNumberOfDispatches = 99;
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
+        private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<Load> _loadRepository;
         private readonly IRepository<Driver> _driverRepository;
@@ -90,6 +91,7 @@ namespace DispatcherWeb.Dispatching
         public DispatchingAppService(
             IRepository<Truck> truckRepository,
             IRepository<OrderLine> orderLineRepository,
+            IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<Load> loadRepository,
             IRepository<Driver> driverRepository,
@@ -120,6 +122,7 @@ namespace DispatcherWeb.Dispatching
         {
             _truckRepository = truckRepository;
             _orderLineRepository = orderLineRepository;
+            _orderLineTruckRepository = orderLineTruckRepository;
             _dispatchRepository = dispatchRepository;
             _loadRepository = loadRepository;
             _driverRepository = driverRepository;
@@ -2215,7 +2218,7 @@ namespace DispatcherWeb.Dispatching
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            await SendCompletedDispatchNotificationIfNeeded(dispatch);
+            await RunPostDispatchCompletionLogic(dispatch);
 
             var newActiveDispatch = await GetFirstOpenDispatch(dispatch.DriverId);
 
@@ -2230,6 +2233,21 @@ namespace DispatcherWeb.Dispatching
                 AfterCompleted = true,
                 ActiveDispatchWasChanged = oldActiveDispatch?.Id != newActiveDispatch?.Id
             });
+        }
+
+        [RemoteService(false)]
+        public async Task RunPostDispatchCompletionLogic(int dispatchId)
+        {
+            await CurrentUnitOfWork.SaveChangesAsync();
+            var dispatch = await _dispatchRepository.GetAsync(dispatchId);
+            await RunPostDispatchCompletionLogic(dispatch);
+        }
+
+        private async Task RunPostDispatchCompletionLogic(Dispatch dispatch)
+        {
+            await CurrentUnitOfWork.SaveChangesAsync();
+            await CompleteOrderLineTrucksOfHourlyDispatchIfNeeded(dispatch);
+            await SendCompletedDispatchNotificationIfNeeded(dispatch);
         }
 
         [RemoteService(false)]
@@ -2277,6 +2295,40 @@ namespace DispatcherWeb.Dispatching
                             RoleFilter = new[] { StaticRoleNames.Tenants.Dispatching }
                         });
                 }
+            }
+        }
+
+        private async Task CompleteOrderLineTrucksOfHourlyDispatchIfNeeded(Dispatch dispatch)
+        {
+            var dispatchData = await _dispatchRepository.GetAll()
+                .Where(x => x.Id == dispatch.Id)
+                .Select(x => new
+                {
+                    x.OrderLine.Designation,
+                    FreightUomName = x.OrderLine.FreightUom.Name,
+                    OrderLineTrucks = x.OrderLine.OrderLineTrucks.Select(t => new
+                    {
+                        t.Id,
+                        t.IsDone,
+                    }).ToList()
+                }).FirstAsync();
+
+            if (dispatchData.Designation.MaterialOnly()
+                || !dispatchData.FreightUomName.ToLower().StartsWith("hour")
+                || dispatch.Status != DispatchStatus.Completed
+                || dispatch.OrderLineTruckId == null)
+            {
+                return;
+            }
+
+            var orderLineTruck = await _orderLineTruckRepository.GetAsync(dispatch.OrderLineTruckId.Value);
+            orderLineTruck.IsDone = true;
+            orderLineTruck.Utilization = 0;
+
+            if (dispatchData.OrderLineTrucks.Where(x => x.Id != orderLineTruck.Id).All(x => x.IsDone))
+            {
+                var orderLine = await _orderLineRepository.GetAsync(dispatch.OrderLineId);
+                orderLine.IsComplete = true;
             }
         }
 

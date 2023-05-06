@@ -185,7 +185,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                 if (dispatch.Status == DispatchStatus.Completed)
                 {
                     await CurrentUnitOfWork.SaveChangesAsync();
-                    await _dispatchingAppService.SendCompletedDispatchNotificationIfNeeded(model.Id);
+                    await _dispatchingAppService.RunPostDispatchCompletionLogic(model.Id);
                 }
             }
 
