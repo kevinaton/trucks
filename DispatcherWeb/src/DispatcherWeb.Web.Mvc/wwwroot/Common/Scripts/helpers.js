@@ -1856,6 +1856,9 @@
     abp.helper.ui.initCannedTextLists = function initCannedTextLists() {
         $('.insert-canned-text-list').each(function () {
             var list = $(this);
+            if (list.hasClass('initialized')) {
+                return;
+            }
             list.find('li[data-id="loading"]').show();
             abp.services.app.cannedText.getCannedTextsSelectList({}).done(function (data) {
                 if (data.items.length > 0) {
@@ -1868,6 +1871,7 @@
                     list.find('li[data-id="no-items"]').show();
                 }
                 list.find('li[data-id="loading"]').hide();
+                list.addClass('initialized');
             });
             var target = $('#' + list.attr('data-target-id'));
             list.on('click', 'li', function (e) {
