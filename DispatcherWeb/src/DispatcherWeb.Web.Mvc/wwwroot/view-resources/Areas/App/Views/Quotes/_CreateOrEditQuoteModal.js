@@ -360,6 +360,8 @@
                     quotedFreightQuantity: row.freightQuantity || 0
                 });
             });
+
+            abp.helper.ui.initCannedTextLists();
         }
 
         this.focusOnDefaultElement = function () {
