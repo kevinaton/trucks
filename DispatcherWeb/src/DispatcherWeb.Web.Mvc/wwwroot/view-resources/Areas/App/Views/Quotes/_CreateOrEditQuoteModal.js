@@ -45,10 +45,23 @@
                 modalClass: 'CreateOrEditCustomerContactModal'
             });
 
+            const _emailQuoteReportModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/Quotes/EmailQuoteReportModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_EmailQuoteReportModal.js',
+                modalClass: 'EmailQuoteReportModal'
+            });
+
             const _viewQuoteDeliveriesModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Quotes/ViewQuoteDeliveriesModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_ViewQuoteDeliveriesModal.js',
                 modalClass: 'ViewQuoteDeliveriesModal',
+                modalSize: 'lg'
+            });
+
+            const _createOrEditQuoteModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
+                modalClass: 'CreateOrEditQuoteModal',
                 modalSize: 'lg'
             });
 
@@ -69,6 +82,20 @@
             _$baseFuelCostInput = _$form.find('#BaseFuelCost');
             _$statusInput = _$form.find('#Status');
             _$contactIdInput = _$form.find('#ContactId');
+
+            function isNewOrChangedQuote() {
+                return _quoteId === '' || _$form.find("#QuoteForm").dirtyForms('isDirty');
+            }
+
+            if (!_permissions.edit) {
+                _modalManager.getModal().find(".save-quote-button").hide();
+                _$form.find("#CopyQuoteButton").hide();
+                _$form.find("#DeleteSelectedQuoteServicesButton").hide();
+
+                if (!_permissions.createItems) {
+                    _$form.find("#CreateNewQuoteServiceButton").hide();
+                }
+            }
 
             _$proposalDateInput.datepickerInit();
             _$proposalExpiryDateInput.datepickerInit();
@@ -358,6 +385,47 @@
                     quoteServiceId: row.id,
                     quotedMaterialQuantity: row.materialQuantity || 0,
                     quotedFreightQuantity: row.freightQuantity || 0
+                });
+            });
+
+            _$form.find("#CopyQuoteButton").click(function (e) {
+                e.preventDefault();
+                saveQuoteAsync(function () {
+                    abp.ui.setBusy();
+                    _quoteService.copyQuote({
+                        id: _quoteId
+                    }).done(function (result) {
+                        _modalManager.close();
+                        abp.ui.clearBusy();
+                        _createOrEditQuoteModal.open({ id: result });
+                    });
+                });
+            });
+
+            function openReport() {
+                abp.helper.promptForHideLoadAtOnQuote().then(function (hideLoadAt) {
+                    window.open(abp.appPath + 'app/quotes/getreport?quoteId=' + _quoteId + '&hideLoadAt=' + hideLoadAt);
+                });
+            }
+
+            _$form.find("#PrintQuoteButton").click(function (e) {
+                e.preventDefault();
+                if (isNewOrChangedQuote() || _$baseFuelCostInput.val() === '') { //force the user to enter the 'base fuel cost' value before allowing to print the quote
+                    saveQuoteAsync(function () {
+                        //popup is being blocked in async
+                        abp.message.success("Quote was saved", "").done(function () {
+                            openReport();
+                        });
+                    });
+                } else {
+                    openReport();
+                }
+            });
+
+            _$form.find("#EmailQuoteButton").click(function (e) {
+                e.preventDefault();
+                saveQuoteAsync(function () {
+                    _emailQuoteReportModal.open({ id: _quoteId });
                 });
             });
         }
