@@ -1460,6 +1460,7 @@
                 }
             });
 
+            abp.helper.ui.initCannedTextLists();
         }
     };
 })(jQuery);
