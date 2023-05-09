@@ -52,6 +52,12 @@
                 modalClass: 'EmailQuoteReportModal'
             });
 
+            const _createOrEditProjectModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/Projects/CreateOrEditProjectModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Projects/_CreateOrEditProjectModal.js',
+                modalClass: 'CreateOrEditProjectModal'
+            });
+
             const _viewQuoteDeliveriesModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Quotes/ViewQuoteDeliveriesModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_ViewQuoteDeliveriesModal.js',
@@ -78,7 +84,7 @@
 
             abp.helper.ui.initControls();
 
-            _$projectInput = _$form.find('#ProjectName');
+            _$projectInput = _$form.find('#QuoteProjectId');
             _$quoteIdInput = _$form.find('#Id');
             _$nameInput = _$form.find('#Name');
             _$customerInput = _$form.find('#QuoteCustomer');
@@ -109,6 +115,21 @@
             _$proposalExpiryDateInput.datepickerInit();
             _$inactivationDateInput.datepickerInit({
                 useCurrent: false
+            });
+
+            _$projectInput.select2Init({
+                abpServiceMethod: abp.services.app.project.getActiveOrPendingProjectsSelectList,
+                showAll: false,
+                allowClear: true,
+                addItemCallback: async function (newItemName) {
+                    let result = await app.getModalResultAsync(
+                        _createOrEditProjectModal.open({ name: newItemName })
+                    );
+                    return {
+                        id: result.id,
+                        name: result.name
+                    };
+                }
             });
 
             _$quoteSalesPersonIdInput.select2Init({
@@ -188,6 +209,28 @@
                     var now = moment(new Date());
                     _$inactivationDateInput.val(moment(now).format('MM/DD/YYYY'));
                 }
+            });
+
+            _$form.find("#GoToProjectButton").click(async function (e) {
+                e.preventDefault();
+                let projectId = _$projectInput.val();
+                if (!projectId) {
+                    return;
+                }
+                let result = await app.getModalResultAsync(
+                    _createOrEditProjectModal.open({ id: projectId })
+                );
+                if (result.name != _$projectInput.getSelectedDropdownOption().text()) {
+                    _$projectInput.val(null).change();
+                    _$projectInput.removeUnselectedOptions();
+                    abp.helper.ui.addAndSetDropdownValue(_$projectInput, result.id, result.name);
+                }
+            });
+
+            _$projectInput.change(function () {
+                let projectId = _$projectInput.val();
+                _$form.find("#projectRelatedButtons").toggle(!!projectId);
+                _$form.find("#noProjectButtons").toggle(!projectId);
             });
 
             _$quoteFuelSurchargeCalculationIdInput.change(function () {

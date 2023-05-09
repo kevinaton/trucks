@@ -362,6 +362,7 @@
         });
 
         //Common 'Add Product or Service' button
+
         var _createOrEditProductOrServiceModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Services/CreateOrEditServiceModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Services/_CreateOrEditServiceModal.js',
@@ -412,6 +413,19 @@
         $("#CommonAddUserButton").click(function (e) {
             e.preventDefault();
             _createOrEditUserModal.open();
+        });
+
+        //Common 'Add Project' button
+
+        var _createOrEditProjectModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'App/Projects/CreateOrEditProjectModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/App/Views/Projects/_CreateOrEditProjectModal.js',
+            modalClass: 'CreateOrEditProjectModal'
+        });
+
+        $("#AddProjectNavbarItem").click(function (e) {
+            e.preventDefault();
+            _createOrEditProjectModal.open();
         });
 
         function init() {

@@ -884,6 +884,7 @@
 		<text name="Note">Note</text>
 		<text name="ProjectsAndQuotes"><![CDATA[Projects & Quotes]]></text>
 		<text name="AddProject">Add Project</text>
+		<text name="AllowProjects">Allow Projects</text>
 		<text name="Projects">Projects</text>
 		<text name="Quotes">Quotes</text>
 		<text name="ProjectHistory">Project History</text>
