@@ -2,6 +2,7 @@
     app.modals.CreateOrEditQuoteModal = function () {
         let _modalManager;
         let _quoteService = abp.services.app.quote;
+        var _quoteHistoryService = abp.services.app.quoteHistory;
         let _quoteId = null;
         let _dtHelper = abp.helper.dataTables;
         let _permissions = {
@@ -62,6 +63,13 @@
                 viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
                 modalClass: 'CreateOrEditQuoteModal',
+                modalSize: 'xl'
+            });
+
+            const _viewQuoteHistoryModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/QuoteHistory/ViewQuoteHistoryModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/QuoteHistory/_ViewQuoteHistoryModal.js',
+                modalClass: 'ViewQuoteHistoryModal',
                 modalSize: 'lg'
             });
 
@@ -341,6 +349,7 @@
                 if (_quoteId === "") {
                     saveQuoteAsync(function () {
                         reloadQuoteServicesGrid();
+                        reloadQuoteHistoryGrid();
                         _createOrEditQuoteServiceModal.open({ quoteId: _quoteId });
                     });
                 } else {
@@ -357,6 +366,7 @@
 
             abp.event.on('app.createOrEditQuoteServiceModalSaved', function () {
                 reloadQuoteServicesGrid();
+                reloadQuoteHistoryGrid();
             });
 
             quoteServicesTable.on('click', '.btnEditRow', function (e) {
@@ -385,6 +395,75 @@
                     quoteServiceId: row.id,
                     quotedMaterialQuantity: row.materialQuantity || 0,
                     quotedFreightQuantity: row.freightQuantity || 0
+                });
+            });
+
+            var quoteHistoryTable = _$form.find('#QuoteHistoryTable');
+            var quoteHistoryGrid = quoteHistoryTable.DataTableInit({
+                ajax: function (data, callback, settings) {
+                    if (_quoteId === '') {
+                        callback(_dtHelper.getEmptyResult());
+                        return;
+                    }
+                    var abpData = _dtHelper.toAbpData(data);
+                    $.extend(abpData, { quoteId: _quoteId });
+                    _quoteHistoryService.getQuoteHistory(abpData).done(function (abpResult) {
+                        callback(_dtHelper.fromAbpResult(abpResult));
+                    });
+                },
+                columns: [
+                    {
+                        width: '20px',
+                        className: 'control responsive',
+                        orderable: false,
+                        render: function () {
+                            return '';
+                        },
+                    },
+                    {
+                        data: "dateTime",
+                        render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(full.dateTime); },
+                        title: "When changed"
+                    },
+                    {
+                        data: "changedByUserName",
+                        render: function (data, type, full, meta) { return _dtHelper.renderText(full.changedByUserName); },
+                        title: "Changed by"
+                    },
+                    {
+                        data: "changeType",
+                        render: function (data, type, full, meta) { return _dtHelper.renderText(full.changeTypeName); },
+                        title: "Type of change"
+                    },
+                    {
+                        data: null,
+                        orderable: false,
+                        name: "Actions",
+                        width: "10px",
+                        responsivePriority: 1,
+                        className: "actions",
+                        defaultContent: '<div class="dropdown action-button">'
+                            + '<ul class="dropdown-menu dropdown-menu-right">'
+                            + '<li><a class="btnShowHistoryDetails"><i class="fa fa-edit"></i> Details</a></li>'
+                            + '</ul>'
+                            + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
+                            + '</div>'
+                    }
+                ],
+                order: [[1, "desc"]]
+
+            });
+
+            var reloadQuoteHistoryGrid = function () {
+                quoteHistoryGrid.ajax.reload();
+            };
+
+            quoteHistoryTable.on('click', '.btnShowHistoryDetails', function (e) {
+                e.preventDefault();
+                var quoteHistoryId = _dtHelper.getRowData(this).id;
+                _viewQuoteHistoryModal.open({
+                    id: quoteHistoryId,
+                    hideGoToQuoteButton: true
                 });
             });
 
