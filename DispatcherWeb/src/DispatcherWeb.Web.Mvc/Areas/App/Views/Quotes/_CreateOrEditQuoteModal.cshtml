@@ -12,6 +12,18 @@
     <form role="form" id="QuoteForm" class="form-validation" novalidate>
         <input type="hidden" asp-for="ProjectId" />
 
+        <div class="d-flex justify-content-end mb-4">
+            @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
+            {
+                <button id="CopyQuoteButton" class="btn btn-primary"><i class="fa fa-copy"></i> @L("CopyQuote")</button>
+            }
+            <button id="PrintQuoteButton" class="btn btn-primary"><i class="fa fa-print"></i> @L("PrintQuote")</button>
+            @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
+            {
+                <button id="EmailQuoteButton" class="btn btn-primary"><i class="fa fa-envelope"></i> @L("EmailQuote")</button>
+            }
+        </div>
+
         <div class="m-portlet__body">
             @if (IsGranted(AppPermissions.Pages_Projects))
             {
@@ -211,6 +223,15 @@
                     <textarea class="form-control" rows="5" asp-for="Notes"></textarea>
                 </div>
             </div>
+        </div>
+
+        <div class="mt-5" style="@(Model.Id > 0 ? "" : "display:none")">
+            <div class="box-header-top py-4 px-0">
+                <h3 class="m-portlet__head-text">
+                    @L("History")
+                </h3>
+            </div>
+            <table class="table table-striped table-bordered table-hover dt-responsive" id="QuoteHistoryTable"></table>
         </div>
     </form>
 </div>

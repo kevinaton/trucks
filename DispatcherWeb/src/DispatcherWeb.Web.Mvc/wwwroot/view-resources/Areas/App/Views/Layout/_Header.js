@@ -298,7 +298,7 @@
             viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
             modalClass: 'CreateOrEditQuoteModal',
-            modalSize: 'lg'
+            modalSize: 'xl'
         });
 
         $("#CommonAddQuoteButton").click(function (e) {
