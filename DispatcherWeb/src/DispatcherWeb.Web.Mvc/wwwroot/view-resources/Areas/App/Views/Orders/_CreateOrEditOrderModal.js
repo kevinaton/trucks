@@ -27,6 +27,13 @@
             modalClass: 'CreateOrEditOrderLineModal'
         });
 
+        var _createOrEditOrderModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderModal.js',
+            modalClass: 'CreateOrEditOrderModal',
+            modalSize: 'lg'
+        });
+
         var _addQuoteBasedOrderLinesModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Orders/AddQuoteBasedOrderLinesModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_AddQuoteBasedOrderLinesModal.js',
@@ -185,10 +192,6 @@
 
                         function notifyAndFinish(result) {
                             abp.notify.info('Saved successfully.');
-                            let orderId = result.id;
-                            _$form.find("#Id").val(orderId);
-                            _orderId = orderId;
-                            history.replaceState({}, "", abp.appPath + 'app/orders/details/' + orderId);
                             showEditingBlocks();
                             _orderLinesGridData = null;
                             reloadOrderLinesGridAsync();
@@ -1315,7 +1318,9 @@
 
             _modalManager.on('app.orderModalCopied', function (e) {
                 abp.ui.setBusy();
-                window.location = abp.appPath + 'app/orders/details/' + e.newOrderId;
+                _modalManager.close();
+                abp.ui.clearBusy();
+                _createOrEditOrderModal.open({ id: e.newOrderId });
             });
 
             _$form.find("#CreateNewReceipt").click(function (e) {

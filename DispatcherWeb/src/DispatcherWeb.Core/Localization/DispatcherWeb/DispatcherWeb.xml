@@ -1624,6 +1624,8 @@
 		<text name="Trux">Trux</text>
 		<text name="ImportTruxEarnings">Import Trux Earnings</text>
 		<text name="AllowImportingLuckStoneEarnings">Allow importing Luck Stone Earnings</text>
+		<text name="EditInvoicedOrdersAndTickets">Edit invoiced orders and tickets</text>
+		<text name="OverrideReadOnlyStateOfOrderLineBlockPrompt">You are about to edit an order or ticket that has already been used in an invoice or pay statement. Changing this value will result in a different value being used in the pay statement or invoice than what was used when it was initially generated. If you are sure you want to do this, click the OK button?</text>
 		<text name="SelectLuckStoneCustomer">Select the Luck Stone customer</text>
 		<text name="LuckStone">Luck Stone</text>
 		<text name="ImportLuckStoneEarnings">Import Luck Stone Earnings</text>

@@ -398,6 +398,7 @@
                 });
             });
 
+            abp.helper.ui.initCannedTextLists();
             var quoteHistoryTable = _$form.find('#QuoteHistoryTable');
             var quoteHistoryGrid = quoteHistoryTable.DataTableInit({
                 ajax: function (data, callback, settings) {
