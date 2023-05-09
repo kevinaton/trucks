@@ -28,17 +28,19 @@
             @if (IsGranted(AppPermissions.Pages_Projects))
             {
                 <div class="form-group m-form__group row">
-                    <label for="ProjectName" class="col-sm-12 col-md-2 col-form-label mb-2">@L("ProjectName"):</label>
+                    <label for="ProjectId" class="col-sm-12 col-md-2 col-form-label mb-2">@L("Project"):</label>
                     <div class="col-sm-12 col-md-5 col-lg-6 mb-2">
-                        <input type="text" readonly class="form-control m-input" asp-for="ProjectName">
+                        <select class="form-control" asp-for="ProjectId" id="QuoteProjectId">
+                            <option value="">Select a project</option>
+                            @if (Model.ProjectId != 0)
+                            {
+                                <option selected value="@Model.ProjectId">@Model.ProjectName</option>
+                            }
+                        </select>
                     </div>
                     <div class="col-sm-12 col-md-5 col-lg-4 mb-2">
                         <div id="projectRelatedButtons" @Html.StyleDisplayNone(!Model.ProjectId.HasValue)>
                             <button type="button" class="btn btn-default" id="GoToProjectButton"><i class="fa fa-reply"></i> @L("GoToProject")</button>
-                            <button type="button" class="btn btn-default" id="RemoveProjectButton"><i class="fa fa-minus-circle"></i> @L("RemoveProject")</button>
-                        </div>
-                        <div id="noProjectButtons" @Html.StyleDisplayNone(Model.ProjectId.HasValue)>
-                            <button type="button" class="btn btn-default" id="AddToProjectButton"><i class="fa fa-plus-circle"></i> @L("AddToProject")</button>
                         </div>
                     </div>
                 </div>

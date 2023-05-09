@@ -121,9 +121,9 @@ namespace DispatcherWeb.Features
             );
 
             context.Create(
-                AppFeatures.Projects,
+                AppFeatures.AllowProjects,
                 defaultValue: "false",
-                displayName: L("Projects"),
+                displayName: L("AllowProjects"),
                 inputType: new CheckboxInputType()
             );
 
