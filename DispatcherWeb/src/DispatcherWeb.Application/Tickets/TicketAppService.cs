@@ -1286,7 +1286,10 @@ namespace DispatcherWeb.Tickets
                     {
                         await EnsureCanAddTickets(ticketModel.OrderLineId.Value, OfficeId);
                     }
-                    await _ticketRepository.EnsureCanEditTicket(ticketModel.Id);
+                    if (!await IsGrantedAsync(AppPermissions.EditInvoicedOrdersAndTickets))
+                    {
+                        await _ticketRepository.EnsureCanEditTicket(ticketModel.Id);
+                    }
 
                     //var driverOrTruckHasChanged = false;
                     if (ticket.DriverId != ticketModel.DriverId)
