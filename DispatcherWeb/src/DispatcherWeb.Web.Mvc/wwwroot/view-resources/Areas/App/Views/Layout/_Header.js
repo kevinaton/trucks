@@ -284,7 +284,7 @@
             viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderModal.js',
             modalClass: 'CreateOrEditOrderModal',
-            modalSize: 'lg'
+            modalSize: 'xl'
         });
 
         $("#CommonAddOrderButton").click(function (e) {
