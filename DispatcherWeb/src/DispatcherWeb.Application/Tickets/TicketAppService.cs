@@ -902,7 +902,7 @@ namespace DispatcherWeb.Tickets
             }
 
             return query
-                .WhereIf(input.OfficeId.HasValue && input.OfficeId.Value != -1, x => x.OfficeId == input.OfficeId.Value)
+                .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId.Value)
                 .WhereIf(input.InvoiceId.HasValue, x => x.InvoiceLine.InvoiceId == input.InvoiceId.Value)
                 .WhereIf(input.CarrierId.HasValue, x => x.CarrierId == input.CarrierId)
                 .WhereIf(input.ServiceId.HasValue, x => x.ServiceId == input.ServiceId)
