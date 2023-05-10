@@ -8,6 +8,7 @@ namespace DispatcherWeb.Tickets.Dto
     {
         public DateTime? Date { get; set; }
         public DateTime? OrderDate { get; set; }
+        public string Office { get; set; }
         public string CustomerName { get; set; }
         public string Product { get; set; }
         public string TicketNumber { get; set; }

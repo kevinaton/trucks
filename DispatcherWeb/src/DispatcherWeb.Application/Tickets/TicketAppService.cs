@@ -893,11 +893,11 @@ namespace DispatcherWeb.Tickets
             if (input.TicketStatus == TicketListStatusFilterEnum.PotentialDuplicateTickets)
             {
                 query = (from ticket in query
-                        join otherTicket in _ticketRepository.GetAll()
-                        on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
-                        equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
-                        where otherTicket != null && otherTicket.Id != ticket.Id
-                        select ticket)
+                         join otherTicket in _ticketRepository.GetAll()
+                         on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
+                         equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
+                         where otherTicket != null && otherTicket.Id != ticket.Id
+                         select ticket)
                         .Distinct();
             }
 
@@ -935,6 +935,7 @@ namespace DispatcherWeb.Tickets
                     Date = t.TicketDateTime,
                     OrderDate = t.OrderLine.Order.DeliveryDate,
                     ShiftRaw = t.OrderLineId.HasValue ? t.OrderLine.Order.Shift : t.Shift,
+                    Office = t.Office.Name,
                     CustomerName = t.Customer != null ? t.Customer.Name : "",
                     QuoteName = t.OrderLine.Order.Quote.Name,
                     JobNumber = t.OrderLine.JobNumber,
