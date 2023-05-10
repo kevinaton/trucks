@@ -1,4 +1,5 @@
 ﻿@using System.Threading.Tasks
+@using Abp.Extensions
 @using Abp.Configuration
 @using Abp.Application.Features
 @using DispatcherWeb.Authorization
@@ -11,7 +12,7 @@
 }
 
 @section Scripts
-{
+    {
     <environment names="Development">
         <script src="~/view-resources/Areas/app/Views/Tickets/Index.js" asp-append-version="true"></script>
         <script src="~/view-resources/Areas/App/Views/Tickets/_CreateOrEditTicketModal.js" asp-append-version="true"></script>
@@ -40,12 +41,12 @@
             @if (IsGranted(AppPermissions.AllowImportingTruxEarnings) && await SettingManager.GetSettingValueAsync<bool>(AppSettings.Trux.AllowImportingTruxEarnings))
             {
                 <a asp-controller="Imports" asp-action="Trux" class="btn btn-primary" data-toggle="tooltip" data-html="true"
-               title="@L("ImportTruxEarnings")"><i class="fas fa-upload"></i> @L("Trux")</a>
+                   title="@L("ImportTruxEarnings")"><i class="fas fa-upload"></i> @L("Trux")</a>
             }
             @if (IsGranted(AppPermissions.AllowImportingLuckStoneEarnings) && await SettingManager.GetSettingValueAsync<bool>(AppSettings.LuckStone.AllowImportingLuckStoneEarnings))
             {
                 <a asp-controller="Imports" asp-action="LuckStone" class="btn btn-primary" data-toggle="tooltip" data-html="true"
-               title="@L("ImportLuckStoneEarnings")"><i class="fas fa-upload"></i> @L("LuckStone")</a>
+                   title="@L("ImportLuckStoneEarnings")"><i class="fas fa-upload"></i> @L("LuckStone")</a>
             }
             <div class="btn-group dropdown">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -59,7 +60,7 @@
             @if (IsGranted(AppPermissions.Pages_Invoices))
             {
                 <button id="InvoiceSelectedTicketsButton" class="btn btn-primary" data-toggle="tooltip" data-html="true"
-                    title="Invoice Selected Tickets">
+                        title="Invoice Selected Tickets">
                     @L("Invoice")
                 </button>
             }
@@ -183,7 +184,8 @@
                             <label class="control-label" for="JobNumberFilter">@L("JobNumber")</label>
                             <input class="form-control m-input filter" id="JobNumberFilter" name="JobNumber" type="text" placeholder="@L("JobNumber")">
                         </div>
-                        @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.SplitBillingByOffices))
+                        @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.SplitBillingByOffices) &&
+                        (await FeatureChecker.GetValueAsync(AppFeatures.AllowMultiOfficeFeature)).To<bool>())
                         {
                             <div class="form-group col-xl-3">
                                 <label class="control-label" for="OfficeIdFilter">@L("Office")</label>

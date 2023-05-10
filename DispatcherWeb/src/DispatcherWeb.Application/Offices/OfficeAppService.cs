@@ -97,7 +97,11 @@ namespace DispatcherWeb.Offices
                     Name = x.Name
                 });
 
-            return await query.GetSelectListResult(input);
+            var officeList = await query.GetSelectListResult(input);
+            var officeItems = officeList.Items.ToList();
+            officeItems.Add(new SelectListDto() { Id = "-1", Name = "[All]" });
+            officeList.Items = officeItems.OrderBy(p => p.Id).ToList();
+            return officeList;
         }
 
         public async Task<OfficeEditDto> GetOfficeForEdit(NullableIdDto input)

@@ -893,16 +893,16 @@ namespace DispatcherWeb.Tickets
             if (input.TicketStatus == TicketListStatusFilterEnum.PotentialDuplicateTickets)
             {
                 query = (from ticket in query
-                        join otherTicket in _ticketRepository.GetAll()
-                        on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
-                        equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
-                        where otherTicket != null && otherTicket.Id != ticket.Id
-                        select ticket)
+                         join otherTicket in _ticketRepository.GetAll()
+                         on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
+                         equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
+                         where otherTicket != null && otherTicket.Id != ticket.Id
+                         select ticket)
                         .Distinct();
             }
 
             return query
-                .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId.Value)
+                .WhereIf(input.OfficeId.HasValue && input.OfficeId.Value != -1, x => x.OfficeId == input.OfficeId.Value)
                 .WhereIf(input.InvoiceId.HasValue, x => x.InvoiceLine.InvoiceId == input.InvoiceId.Value)
                 .WhereIf(input.CarrierId.HasValue, x => x.CarrierId == input.CarrierId)
                 .WhereIf(input.ServiceId.HasValue, x => x.ServiceId == input.ServiceId)
@@ -935,6 +935,7 @@ namespace DispatcherWeb.Tickets
                     Date = t.TicketDateTime,
                     OrderDate = t.OrderLine.Order.DeliveryDate,
                     ShiftRaw = t.OrderLineId.HasValue ? t.OrderLine.Order.Shift : t.Shift,
+                    Office = t.Office.Name,
                     CustomerName = t.Customer != null ? t.Customer.Name : "",
                     QuoteName = t.OrderLine.Order.Quote.Name,
                     JobNumber = t.OrderLine.JobNumber,

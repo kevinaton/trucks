@@ -28,6 +28,7 @@ namespace DispatcherWeb.Tickets.Exporting
                         ("Ticket Date", x => x.Date?.ToString("g")),
                         ("Order Date", x => x.OrderDate?.ToString("d")),
                         ("Shift", x => x.Shift),
+                        ("Office", x => x.Office),
                         ("Customer", x => x.CustomerName),
                         ("Quote Name", x => x.QuoteName),
                         ("Job Nbr", x => x.JobNumber),
