@@ -1461,6 +1461,9 @@
 		<text name="LastMvrDate">Last MVR Date</text>
 		<text name="NextMvrDueDate">Next MVR Due Date</text>
 		<text name="DateOfHire">Date of Hire</text>
+		<text name="TerminationDate">Termination Date</text>
+		<text name="DriverCompany">Driver Company</text>
+		<text name="SelectDriverCompanyForSelectedUserPrompt">This user worked for multiple companies and we can't tell which company this entry is associated with. Please select the correct company in the dropdown below.</text>
 		<text name="UpgradeToAccessThisFunctionality">Please upgrade to access this functionality</text>
 		<text name="SendSyncRequest">Send sync request</text>
 		<text name="CleanupSubscriptions">Cleanup Subscriptions</text>

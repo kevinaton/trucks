@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Drivers.Dto;
 using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.EmployeeTime.Dto
@@ -12,6 +14,12 @@ namespace DispatcherWeb.EmployeeTime.Dto
 
         [Required]
         public long EmployeeId { get; set; }
+
+        public int? DriverId { get; set; }
+
+        public string DriverCompany { get; set; }
+
+        public bool HasSingleDriverCompany { get; set; }
 
         public string EmployeeName { get; set; }
 
@@ -32,5 +40,7 @@ namespace DispatcherWeb.EmployeeTime.Dto
         public string Description { get; set; }
 
         public int? TimeOffId { get; set; }
+
+        public List<DriverCompanyDto> DriverCompanies { get; set; }
     }
 }

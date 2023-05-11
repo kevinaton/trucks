@@ -10,10 +10,10 @@ using Abp.Linq.Extensions;
 using Abp.UI;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Drivers.Dto;
 using DispatcherWeb.Dto;
 using DispatcherWeb.EmployeeTime.Dto;
 using DispatcherWeb.EmployeeTime.Exporting;
-using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.SyncRequests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +27,7 @@ namespace DispatcherWeb.EmployeeTime
         private readonly IRepository<EmployeeTimeClassification> _employeeTimeClassificationRepository;
         private readonly IRepository<Driver> _driverRepository;
         private readonly IEmployeeTimeListCsvExporter _employeeTimeListCsvExporter;
+        private readonly IDriverUserLinkService _driverUserLinkService;
         private readonly ISyncRequestSender _syncRequestSender;
 
         public EmployeeTimeAppService(
@@ -34,13 +35,15 @@ namespace DispatcherWeb.EmployeeTime
             IRepository<EmployeeTimeClassification> employeeTimeClassificationRepository,
             IRepository<Driver> driverRepository,
             IEmployeeTimeListCsvExporter employeeTimeListCsvExporter,
+            IDriverUserLinkService driverUserLinkService,
             ISyncRequestSender syncRequestSender
-                )
+        )
         {
             _employeeTimeRepository = employeeTimeRepository;
             _employeeTimeClassificationRepository = employeeTimeClassificationRepository;
             _driverRepository = driverRepository;
             _employeeTimeListCsvExporter = employeeTimeListCsvExporter;
+            _driverUserLinkService = driverUserLinkService;
             _syncRequestSender = syncRequestSender;
         }
 
@@ -127,6 +130,7 @@ namespace DispatcherWeb.EmployeeTime
                         Id = x.Id,
                         EmployeeId = x.UserId,
                         EmployeeName = x.User.Surname + ", " + x.User.Name,
+                        DriverId = x.DriverId,
                         StartDateTime = x.StartDateTime,
                         EndDateTime = x.EndDateTime,
                         ManualHourAmount = x.ManualHourAmount,
@@ -141,12 +145,13 @@ namespace DispatcherWeb.EmployeeTime
                 {
                     throw new UserFriendlyException("You do not have permission to edit time records of other users");
                 }
-
-                var driverId = await _driverRepository.GetDriverIdByUserIdOrDefault(employeeTimeEditDto.EmployeeId);
-                employeeTimeEditDto.TimeClassificationAllowsManualTime = driverId == 0 ? true : await _employeeTimeClassificationRepository.GetAll()
-                        .Where(x => x.DriverId == driverId && x.TimeClassificationId == employeeTimeEditDto.TimeClassificationId)
+                                
+                employeeTimeEditDto.TimeClassificationAllowsManualTime = employeeTimeEditDto.DriverId > 0 
+                    ? await _employeeTimeClassificationRepository.GetAll()
+                        .Where(x => x.DriverId == employeeTimeEditDto.DriverId && x.TimeClassificationId == employeeTimeEditDto.TimeClassificationId)
                         .Select(e => e.AllowForManualTime)
-                        .FirstOrDefaultAsync();
+                        .FirstOrDefaultAsync()
+                    : true;
             }
             else
             {
@@ -156,6 +161,29 @@ namespace DispatcherWeb.EmployeeTime
                     EmployeeId = indexModel.UserId ?? 0,
                     EmployeeName = indexModel.UserFullName
                 };
+            }
+
+            var driverCompanies = employeeTimeEditDto.EmployeeId != 0
+                ? await _driverUserLinkService.GetCompanyListForUserDrivers(new GetCompanyListForUserDriversInput
+                {
+                    UserId = employeeTimeEditDto.EmployeeId
+                })
+                : new();
+                
+            employeeTimeEditDto.DriverCompanies = driverCompanies;
+            employeeTimeEditDto.HasSingleDriverCompany = driverCompanies.Count < 2;
+            if (input.Id.HasValue)
+            {
+                employeeTimeEditDto.DriverCompany = driverCompanies.FirstOrDefault(x => x.DriverId == employeeTimeEditDto.DriverId)?.CompanyName;
+            }
+            else
+            {
+                var defaultCompany = driverCompanies.Count < 2
+                    ? driverCompanies.FirstOrDefault()
+                    : driverCompanies.FirstOrDefault(x => x.IsActive);
+
+                employeeTimeEditDto.DriverCompany = defaultCompany?.CompanyName;
+                employeeTimeEditDto.DriverId = defaultCompany?.DriverId;
             }
 
             var timezone = await GetTimezone();
@@ -222,18 +250,7 @@ namespace DispatcherWeb.EmployeeTime
             entity.Description = model.Description;
             entity.TenantId = Session.TenantId ?? 0;
             entity.TimeOffId = model.TimeOffId;
-
-            var driver = await _driverRepository.GetAll()
-                .Where(x => x.UserId == entity.UserId)
-                .Select(x => new
-                {
-                    x.Id,
-                    x.IsInactive
-                })
-                .OrderByDescending(x => !x.IsInactive)
-                .FirstOrDefaultAsync();
-
-            entity.DriverId = driver?.Id;
+            entity.DriverId = model.DriverId;
 
             //if (timeClassificationHasChanged)
             //{
@@ -321,10 +338,12 @@ namespace DispatcherWeb.EmployeeTime
         {
             var query = _driverRepository.GetAll()
                 .Where(x => x.User.IsActive && x.OfficeId != null)
+                .Select(x => x.User)
+                .Distinct()
                 .Select(x => new SelectListDto
                 {
-                    Id = x.UserId.ToString(),
-                    Name = x.LastName + ", " + x.FirstName
+                    Id = x.Id.ToString(),
+                    Name = x.Surname + ", " + x.Name
                 });
 
             return await query.GetSelectListResult(input);
