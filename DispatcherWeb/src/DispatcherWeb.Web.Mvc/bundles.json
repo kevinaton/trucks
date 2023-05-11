@@ -307,7 +307,7 @@
         "node_modules/jstree/dist/themes/default/style.css",
         "wwwroot/lib/morris.js/morris.css",
         "node_modules/socicon/css/socicon.css",
-        "node_modules/@fortawesome/fontawesome-free/css/all.css",
+        "wwwroot/lib/fontawesome-pro-6.4.0-web/css/all.css",
         "wwwroot/metronic/vendors/line-awesome/css/line-awesome.css",
         "wwwroot/metronic/vendors/flaticon/flaticon.css",
         "wwwroot/metronic/vendors/flaticon2/flaticon.css",
@@ -318,7 +318,6 @@
         "wwwroot/lib/summernote/dist/summernote.css",
         "wwwroot/lib/bootstrap-markdown/css/bootstrap-markdown.min.css",
         "wwwroot/lib/perfect-scrollbar/css/perfect-scrollbar.css",
-        "wwwroot/metronic/src/vendors/fontawesome5/css/all.min.css",
         "wwwroot/metronic/src/vendors/line-awesome/css/line-awesome.css",
         "wwwroot/metronic/src/vendors/flaticon/css/flaticon.css",
         "wwwroot/metronic/src/vendors/metronic/css/styles.css"
