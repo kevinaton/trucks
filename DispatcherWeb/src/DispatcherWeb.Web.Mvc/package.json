@@ -7,7 +7,6 @@
   "version": "11.0.0",
   "dependencies": {
     "@fancyapps/fancybox": "^3.5.7",
-    "@fortawesome/fontawesome-free": "^5.15.4",
     "@microsoft/signalr": "^5.0.10",
     "@popperjs/core": "^2.10.2",
     "abp-web-resources": "5.4",
@@ -39,7 +38,6 @@
     "dropzone": "^5.9.3",
     "easy-pie-chart": "^2.1.7",
     "famfamfam-flags": "^1.0.0",
-    "font-awesome": "^4.7.0",
     "gmaps": "^0.4.25",
     "gridstack": "^4.2.7",
     "inputmask": "^5.0.6",

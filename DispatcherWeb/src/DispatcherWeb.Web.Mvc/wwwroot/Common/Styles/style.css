@@ -2132,3 +2132,13 @@ div.dataTables_wrapper div.dataTables_length select {
         max-width: 1140px;
     }
 }
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-icon i:before {
+    font-weight: initial;
+    padding: initial;
+}
+
+.m-brand .m-brand__tools .m-brand__toggler {
+    text-indent: initial;
+    height: auto; 
+}
