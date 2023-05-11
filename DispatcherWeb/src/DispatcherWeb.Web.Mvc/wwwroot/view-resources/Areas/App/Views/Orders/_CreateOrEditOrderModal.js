@@ -192,6 +192,9 @@
 
                         function notifyAndFinish(result) {
                             abp.notify.info('Saved successfully.');
+                            let orderId = result.id;
+                            $("#Id").val(orderId);
+                            _orderId = orderId;
                             showEditingBlocks();
                             _orderLinesGridData = null;
                             reloadOrderLinesGridAsync();
