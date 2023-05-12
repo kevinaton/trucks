@@ -18,6 +18,7 @@ namespace DispatcherWeb.Tickets.Exporting
         public FileDto ExportToFile(List<TicketListViewDto> ticketDtos, string fileName)
         {
             var showFuelSurcharge = SettingManager.GetSettingValue<bool>(AppSettings.Fuel.ShowFuelSurcharge);
+            var showFreightRateToPayDriverColumn = SettingManager.GetSettingValue<bool>(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate);
 
             return CreateCsvFile(
                 fileName,
@@ -43,6 +44,7 @@ namespace DispatcherWeb.Tickets.Exporting
                         ("Qty", x => x.Quantity.ToString("N")),
                         ("Revenue", x => x.Revenue.ToString("N")),
                         ("Freight Rate", x => x.FreightRate?.ToString("N")),
+                        (showFreightRateToPayDriverColumn ? "Freight Rate to Pay Driver" ?? "" : null, showFreightRateToPayDriverColumn ? x => x.FreightRateToPayDrivers?.ToString("N") : null),
                         ("Material Rate", x => x.MaterialRate?.ToString("N")),
                         ("Freight Amount", x => x.FreightAmount?.ToString("N")),
                         ("Material Amount", x => x.MaterialAmount?.ToString("N")),

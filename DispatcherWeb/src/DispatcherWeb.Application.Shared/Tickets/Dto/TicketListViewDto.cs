@@ -58,6 +58,7 @@ namespace DispatcherWeb.Tickets.Dto
         public decimal? OrderLineFreightPrice { get; set; }
         public decimal? OrderLineMaterialPrice { get; set; }
         public decimal? FuelSurcharge { get; set; }
+        public decimal? FreightRateToPayDrivers { get; set; }
         public decimal? PriceOverride
         {
             get

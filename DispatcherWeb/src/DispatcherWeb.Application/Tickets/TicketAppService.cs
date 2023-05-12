@@ -972,6 +972,7 @@ namespace DispatcherWeb.Tickets
                     TicketUomId = t.UnitOfMeasureId,
                     MaterialRate = t.OrderLine.MaterialPricePerUnit,
                     FreightRate = t.OrderLine.FreightPricePerUnit,
+                    FreightRateToPayDrivers = t.OrderLine.FreightRateToPayDrivers,
                     FuelSurcharge = t.FuelSurcharge,
                     Revenue = t.Quantity * ((t.OrderLine.MaterialPricePerUnit ?? 0) + (t.OrderLine.FreightPricePerUnit ?? 0)),
                     IsFreightPriceOverridden = t.OrderLine.IsFreightPriceOverridden,
