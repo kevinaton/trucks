@@ -134,32 +134,6 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                     )
                 ).AddItem(
                     new MenuItemDefinition(
-                        AppPageNames.Tenant.ProjectsAndQuotes,
-                        L("Sales"),
-                        customData: new MenuItemCustomData { Id = "SalesNavbarItem" },
-                        icon: "fa-regular fa-tasks",
-                        featureDependency: new SimpleFeatureDependency(AppFeatures.PaidFunctionality)
-                    ).AddItem(
-                        new MenuItemDefinition(
-                            AppPageNames.Tenant.AddProject,
-                            L("AddProject"),
-                            customData: new MenuItemCustomData { Id = "AddProjectNavbarItem" },
-                            url: "app/projects/details",
-                            icon: "fa-regular fa-plus",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Projects)
-                        )
-                    ).AddItem(
-                        new MenuItemDefinition(
-                            AppPageNames.Tenant.Projects,
-                            L("Projects"),
-                            customData: new MenuItemCustomData { Id = "ProjectsNavbarItem" },
-                            url: "app/projects",
-                            icon: "fa-regular fa-search",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Projects)
-                        )
-                    )
-                ).AddItem(
-                    new MenuItemDefinition(
                         AppPageNames.Tenant.Orders,
                         L("Dispatching"),
                         customData: new MenuItemCustomData { Id = "DispatchingNavbarItem" },
