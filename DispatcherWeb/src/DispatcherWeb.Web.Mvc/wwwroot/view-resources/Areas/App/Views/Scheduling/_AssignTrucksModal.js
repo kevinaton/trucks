@@ -13,6 +13,12 @@
         var rowSelectionClass = 'invoice-row-selection';
         var rowSelectAllClass = 'invoice-row-select-all';
 
+        var _assignDriverForTruckModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Scheduling/AssignDriverForTruckModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_AssignDriverForTruckModal.js',
+            modalClass: 'AssignDriverForTruckModal'
+        });
+
         this.init = function (modalManager) {
             _modalManager = modalManager;
 
@@ -45,14 +51,13 @@
 
             function initDriverNameTypeahead() {
                 $driverName.typeahead({
-                },
-                    {
-                        source: getDriverNamesList,
-                        display: function (d) {
-                            return d.firstName + ' ' + d.lastName;
-                        },
-                        limit: 500
-                    });
+                }, {
+                    source: getDriverNamesList,
+                    display: function (d) {
+                        return d.firstName + ' ' + d.lastName;
+                    },
+                    limit: 500
+                });
 
                 //$driverName.on('typeahead:select', function (ev, suggestion) {
                 //    handleDriverNameChange();
@@ -158,21 +163,20 @@
                         className: "checkmark text-center checkbox-only-header",
                         width: "30px",
                         title: " ",
-                        //responsivePriority: 3,
                         responsiveDispalyInHeaderOnly: true
                     },
                     {
                         data: "truckCode",
                         title: "Truck",
-
-                        //className: "cell-editable all",
-                        //width: "85px",
-
                     },
                     {
                         data: "driverName",
                         title: "Driver",
-                        //className: "cell-editable cell-text-wrap all",
+                        render: function (data, type, full, meta) {
+                            let icon = '<i class="fa-regular fa-circle-exclamation text-warning pl-1 assignDriverIcon" data-toggle="tooltip" title="No driver assigned to this truck. You won\'t be able to dispatch without a driver. Click to assign a driver."></i>';
+                            return _dtHelper.renderText(data)
+                                + (!full.driverId ? icon : '');
+                        }
                     },
                     {
                         data: "isApportioned",
@@ -183,12 +187,33 @@
                         data: "bedConstructionName",
                         title: "Bed"
                     }
-                ]
+                ],
+                drawCallback: function (settings) {
+                    trucksTable.find('[data-toggle="tooltip"]').tooltip();
+                }
             });
 
             function reloadGrid() {
                 trucksGrid.ajax.reload(null, false);
             }
+
+            trucksTable.on('click', '.assignDriverIcon', async function (e) {
+                e.preventDefault();
+                var row = _dtHelper.getRowData(this);
+                var result = await app.getModalResultAsync(
+                    _assignDriverForTruckModal.open({
+                        truckId: row.id,
+                        truckCode: row.truckCode,
+                        leaseHaulerId: row.leaseHaulerId,
+                        date: _$form.find("#Date").val(),
+                        shift: _$form.find("#Shift").val(),
+                        officeId: _$form.find("#OfficeId").val()
+                    })
+                );
+                if (result.driverId && result.driverName) {
+                    $(this).closest('td').html(_dtHelper.renderText(result.driverName));
+                }
+            });
 
             trucksTable.on('change', '.' + rowSelectAllClass, function () {
                 if ($(this).is(":checked")) {
