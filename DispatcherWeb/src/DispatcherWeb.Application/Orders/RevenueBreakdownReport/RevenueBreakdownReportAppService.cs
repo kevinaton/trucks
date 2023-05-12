@@ -64,6 +64,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
             report.AddReportHeader($"Revenue Breakdown Report for {input.DeliveryDateBegin:d} - {input.DeliveryDateEnd:d}");
 
             var showFuelSurcharge = await SettingManager.GetSettingValueAsync<bool>(AppSettings.Fuel.ShowFuelSurcharge);
+            var showDriverPayRateColumn = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate);
 
             var revenueBreakdownItems = await GetRevenueBreakdownItems(input);
             if (revenueBreakdownItems.Count == 0)
@@ -84,6 +85,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                 "Freight UOM",
                 "Material Rate",
                 "Freight Rate",
+                showDriverPayRateColumn ? "Driver Pay Rate" : null,
                 "Planned Material Quantity",
                 "Planned Freight Quantity",
                 "Actual Material Quantity",
@@ -113,6 +115,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                     item.FreightUom,
                     item.MaterialRate?.ToString("C", currencyCulture) ?? "",
                     item.FreightRate?.ToString("C", currencyCulture) ?? "",
+                    showDriverPayRateColumn ? item.DriverPayRate?.ToString("C", currencyCulture) : null,
                     item.PlannedMaterialQuantity?.ToString("N4") ?? "",
                     item.PlannedFreightQuantity?.ToString("N4") ?? "",
                     item.ActualMaterialQuantity?.ToString("N4") ?? "",
@@ -176,6 +179,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                     MaterialUom = ol.MaterialUom.Name,
                     FreightUom = ol.FreightUom.Name,
                     FreightRate = ol.FreightPricePerUnit,
+                    DriverPayRate = ol.FreightRateToPayDrivers,
                     MaterialRate = ol.MaterialPricePerUnit,
                     PlannedMaterialQuantity = ol.MaterialQuantity,
                     PlannedFreightQuantity = ol.FreightQuantity,

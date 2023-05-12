@@ -20,6 +20,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
             string freightUom,
             string materialRate,
             string freightRate,
+            string driverPayRate,
             string plannedMaterialQuantity,
             string plannedFreightQuantity,
             string actualMaterialQuantity,
@@ -47,6 +48,10 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
             _csv.WriteField(freightUom);
             _csv.WriteField(materialRate);
             _csv.WriteField(freightRate);
+            if (driverPayRate != null)
+            {
+                _csv.WriteField(driverPayRate);
+            }
             _csv.WriteField(plannedMaterialQuantity);
             _csv.WriteField(plannedFreightQuantity);
             _csv.WriteField(actualMaterialQuantity);
