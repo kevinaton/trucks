@@ -493,11 +493,11 @@ namespace DispatcherWeb.Tickets
             ticket.IsVerified = model.IsVerified;
             ticket.IsBilled = model.IsBilled;
 
-            if (ticket.TruckId == null && !(model.CarrierId > 0))
+            if (ticket.TruckId == null && !(model.CarrierId > 0) && !await SettingManager.AllowCounterSales())
             {
                 throw new UserFriendlyException($"Invalid truck number");
             }
-            if (ticket.DriverId == null && !(model.CarrierId > 0))
+            if (ticket.DriverId == null && !(model.CarrierId > 0) && !await SettingManager.AllowCounterSales())
             {
                 throw new UserFriendlyException("Driver is required");
             }
