@@ -115,7 +115,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
                     item.FreightUom,
                     item.MaterialRate?.ToString("C", currencyCulture) ?? "",
                     item.FreightRate?.ToString("C", currencyCulture) ?? "",
-                    showDriverPayRateColumn ? item.DriverPayRate?.ToString("C", currencyCulture) : null,
+                    showDriverPayRateColumn ? item.DriverPayRate?.ToString("C", currencyCulture) ?? "" : null,
                     item.PlannedMaterialQuantity?.ToString("N4") ?? "",
                     item.PlannedFreightQuantity?.ToString("N4") ?? "",
                     item.ActualMaterialQuantity?.ToString("N4") ?? "",
