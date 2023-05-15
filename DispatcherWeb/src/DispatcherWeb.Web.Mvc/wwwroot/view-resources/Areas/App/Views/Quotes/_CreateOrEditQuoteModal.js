@@ -407,7 +407,7 @@
                 });
             });
 
-            abp.event.on('app.createOrEditQuoteServiceModalSaved', function () {
+            _modalManager.on('app.createOrEditQuoteServiceModalSaved', function () {
                 reloadQuoteServicesGrid();
                 reloadQuoteHistoryGrid();
             });
