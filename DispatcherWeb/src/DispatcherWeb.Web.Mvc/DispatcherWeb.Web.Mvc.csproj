@@ -100,11 +100,16 @@
     <Folder Include="Areas\App\Views\ScheduledReports\" />
     <Folder Include="Areas\App\Views\VehicleServices\" />
     <Folder Include="Areas\App\Views\Services\" />
-    <Folder Include="ClientApp\" />
     <Folder Include="wwwroot\view-resources\Areas\App\Views\ScheduledReports\" />
     <Folder Include="wwwroot\view-resources\Areas\App\Views\Tickets\" />
     <Folder Include="wwwroot\view-resources\Areas\App\Views\VehicleServices\" />
     <Folder Include="wwwroot\view-resources\Areas\App\Views\Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClientApp\build\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
