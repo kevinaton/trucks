@@ -40,6 +40,7 @@ namespace DispatcherWeb.DriverApp.Dispatches.Dto
         public string TruckCode { get; set; }
         public DateTime? AcknowledgedDateTime { get; set; }
         public int? OrderLineTruckId { get; set; }
+        public int SortOrder { get; set; }
 
         public string QuantityWithItem
         {
