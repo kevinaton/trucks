@@ -251,6 +251,7 @@ namespace DispatcherWeb.Configuration.Tenants
             settings.DontValidateDriverAndTruckOnTickets = !await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ValidateDriverAndTruckOnTickets);
             settings.ShowDriverNamesOnPrintedOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ShowDriverNamesOnPrintedOrder);
             settings.SplitBillingByOffices = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.SplitBillingByOffices);
+            settings.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders);
 
             settings.UseShifts = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.UseShifts);
             settings.ShiftName1 = await SettingManager.GetSettingValueAsync(AppSettings.General.ShiftName1);
@@ -830,6 +831,7 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ValidateDriverAndTruckOnTickets, (!input.General.DontValidateDriverAndTruckOnTickets).ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ShowDriverNamesOnPrintedOrder, input.General.ShowDriverNamesOnPrintedOrder.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.SplitBillingByOffices, input.General.SplitBillingByOffices.ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders, input.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DriverOrderNotification.EmailTitle, input.General.DriverOrderEmailTitle);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DriverOrderNotification.EmailBody, input.General.DriverOrderEmailBody);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DriverOrderNotification.Sms, input.General.DriverOrderSms);

@@ -192,6 +192,13 @@
                                 <input class="form-control" style="display: none;" id="Setting_UserDefinedField1" type="text" value="@Model.Settings.General.UserDefinedField1" name="UserDefinedField1" />
                             </div>
                             <div class="form-group">
+                                <label for="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders" class="m-checkbox col-lg-12">
+                                    <input id="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders" type="checkbox" name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders" value="true" checked="@(Model.Settings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders ? "checked" : null)">
+                                    @L("AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders")
+                                    <span></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
                                 <label for="DontValidateDriverAndTruckOnTickets" class="m-checkbox col-lg-12">
                                     <input id="DontValidateDriverAndTruckOnTickets" type="checkbox" name="DontValidateDriverAndTruckOnTickets" value="true" checked=@(Model.Settings.General.DontValidateDriverAndTruckOnTickets ? "checked" : null)>
                                     @L("DontValidateDriverAndTruckOnTickets") <i class="fa fa-info-circle text-primary" id="DontValidateDriverAndTruckOnTicketsInfo" title="@L("DontValidateDriverAndTruckOnTicketsInfo")"></i>

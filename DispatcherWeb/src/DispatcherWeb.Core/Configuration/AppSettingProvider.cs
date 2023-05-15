@@ -167,6 +167,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.General.ShowDriverNamesOnPrintedOrder, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.SplitBillingByOffices, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.PaymentProcessor, "0", scopes: SettingScopes.Tenant),
+                new SettingDefinition(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
 
                 new SettingDefinition(AppSettings.DriverOrderNotification.EmailTitle, "Orders for {DeliveryDate}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.DriverOrderNotification.EmailBody, "Attached is a pdf with your orders for {DeliveryDate}.", scopes: SettingScopes.Tenant),
