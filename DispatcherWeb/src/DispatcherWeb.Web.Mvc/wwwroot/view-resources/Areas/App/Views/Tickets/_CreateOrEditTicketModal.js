@@ -7,6 +7,7 @@
         var _lastTruckCode = null;
         var _orderLineId = null;
         var _validateTrucksAndDrivers = abp.setting.getBoolean('App.General.ValidateDriverAndTruckOnTickets');
+        var _allowCounterSales = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForUser') && abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForTenant');
 
         var _selectOrderLineModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Tickets/SelectOrderLineModal',
@@ -93,9 +94,8 @@
                 showAll: false,
                 allowClear: true
             }).change(function () {
-                var newCarrierId = $(this).val();
-                _$form.find('label[for="TruckCode"],label[for="DriverId"]').toggleClass('required-label', !newCarrierId);
-            }).change();
+                updateTruckAndDriverRequiredness();
+            });
 
             let driverDropdown = _$form.find('#DriverId');
             let truckCodeInput = _$form.find('#TruckCode');
@@ -147,6 +147,13 @@
                     truckOrDriverIsChanging = false;
                 }
             });
+
+
+            var updateTruckAndDriverRequiredness = function () {
+                var carrierId = carrierDropdown.val();
+                _$form.find('label[for="TruckCode"],label[for="DriverId"]').toggleClass('required-label', !carrierId && !_allowCounterSales);
+            };
+            updateTruckAndDriverRequiredness();
 
             driverDropdown.select2Init({
                 abpServiceMethod: abp.services.app.driver.getDriversSelectList,

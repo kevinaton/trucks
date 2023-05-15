@@ -15,6 +15,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport
             string freightUom,
             string materialRate,
             string freightRate,
+            string driverPayRate,
             string plannedMaterialQuantity,
             string plannedFreightQuantity,
             string actualMaterialQuantity,

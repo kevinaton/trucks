@@ -19,6 +19,7 @@ namespace DispatcherWeb.Orders.RevenueBreakdownReport.Dto
         public string FreightUom { get; set; }
         public decimal? MaterialRate { get; set; }
         public decimal? FreightRate { get; set; }
+        public decimal? DriverPayRate { get; set; }
         public decimal? PlannedMaterialQuantity { get; set; }
         public decimal? PlannedFreightQuantity { get; set; }
         public virtual decimal? ActualMaterialQuantity { get; set; }

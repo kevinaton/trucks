@@ -1,0 +1,37 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Designations
+@using DispatcherWeb.Infrastructure.Extensions;
+@using DispatcherWeb.Projects.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@model ProjectEditDto
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit project" : "Add new project"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label class="required-label">@L("Name")</label>
+            <input type="text" class="form-control" required asp-for="Name" />
+        </div>
+        <div class="form-group">
+            <label>@L("Description")</label>
+            <input type="text" class="form-control" asp-for="Description" />
+        </div>
+        <div class="form-group">
+            <label for="StartDate">@L("StartDate")</label>
+            <input type="text" class="form-control" asp-for="StartDate" autocomplete="off" />
+        </div>
+        <div class="form-group">
+            <label for="EndDate">@L("EndDate")</label>
+            <input type="text" class="form-control" asp-for="EndDate" autocomplete="off" />
+        </div>
+        <div class="form-group">
+            <label class="required-label">@L("Status")</label>
+            <select class="form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<QuoteStatus>()" required>
+                <option value="">Select an option</option>
+            </select>
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

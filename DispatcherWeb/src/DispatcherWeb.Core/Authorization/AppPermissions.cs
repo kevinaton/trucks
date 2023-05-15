@@ -122,6 +122,7 @@
         public const string DriverProductionPay = "DriverProductionPay";
         public const string AllowImportingTruxEarnings = "AllowImportingTruxEarnings";
         public const string AllowImportingLuckStoneEarnings = "AllowImportingLuckStoneEarnings";
+        public const string EditInvoicedOrdersAndTickets = "EditInvoicedOrdersAndTickets";
 
         public const string Pages_VehicleService_View = "Pages.VehicleService.View";
         public const string Pages_VehicleService_Edit = "Pages.VehicleService.Edit";

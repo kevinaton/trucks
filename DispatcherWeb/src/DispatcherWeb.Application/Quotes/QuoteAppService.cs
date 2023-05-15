@@ -1355,6 +1355,7 @@ namespace DispatcherWeb.Quotes
             data.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
             data.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
             data.HideLoadAt = input.HideLoadAt;
+            data.ShowProject = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Projects);
 
             await SetQuoteCaptureHistory(input.QuoteId);
 

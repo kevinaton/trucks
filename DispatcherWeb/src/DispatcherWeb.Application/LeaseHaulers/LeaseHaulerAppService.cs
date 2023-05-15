@@ -675,6 +675,15 @@ namespace DispatcherWeb.LeaseHaulers
                     throw new UserFriendlyException(L("UnableToInactivateLhDriverWithRequests"));
                 }
             }
+            if (!driver.IsInactive && !model.DriverIsActive)
+            {
+                driver.TerminationDate = await GetToday();
+            }
+            else if ((driver.IsInactive || model.Id == null) && model.DriverIsActive)
+            {
+                driver.DateOfHire = await GetToday();
+                driver.TerminationDate = null;
+            }
             driver.IsInactive = !model.DriverIsActive;
 
             await _driverRepository.InsertOrUpdateAndGetIdAsync(driver);
