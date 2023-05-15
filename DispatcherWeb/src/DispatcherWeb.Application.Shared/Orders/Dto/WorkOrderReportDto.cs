@@ -25,7 +25,6 @@ namespace DispatcherWeb.Orders.Dto
         public bool OrderIsPending { get; set; }
         public string OfficeName { get; set; }
         public string CustomerName { get; set; }
-        public string ProjectName { get; set; }
         public string ContactFullDetails => string.Join("     ", (new[] { ContactName, ContactPhoneNumber, ContactEmail }).Where(x => !string.IsNullOrWhiteSpace(x)));
         public string ContactName { get; set; }
         public string ContactPhoneNumber { get; set; }
