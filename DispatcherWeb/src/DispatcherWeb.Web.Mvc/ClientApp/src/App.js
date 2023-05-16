@@ -4,9 +4,9 @@ import { Paper, useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import './fontawesome/css/all.css'
-import { SideMenu, DrawerHeader } from './components/DTComponents'
+import { DrawerHeader } from './components/DTComponents'
 import { sideMenuItems } from './common/data/menus'
-import { Appbar } from './components'
+import { Appbar, SideMenu } from './components'
 import Dashboard from './pages/Dashboard'
 import Customers from './pages/Customers'
 import ProductsOrServices from './pages/ProductsOrServices'
@@ -101,9 +101,10 @@ const App = (props) => {
                             <Route path="/products-services" element={<ProductsOrServices />} />
                             <Route path="/drivers" element={<Drivers />} />
                             <Route path="/locations" element={<Locations />} />
+                            <Route path="/dispatching/schedule" element={<Schedule />} />
                             <Route path="/" element={<TruckDispatchList />} />
+                            <Route path="*" element={<TruckDispatchList />} /> {/* Default route */}
                             {/* <Route path="*" element={<TruckDispatchList />} /> */}
-                            <Route path="dispatching/schedule" element={<Schedule />} />
                         </Routes>
                     </Paper>
                 </Box>
