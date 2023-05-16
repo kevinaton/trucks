@@ -1,18 +1,11 @@
 import axios from 'axios'
 
-const baseUrl = process.env.REACT_APP_API_BASE_URL
-const ABP_API_URL = `${baseUrl}/api/services/app`
-const API_URL = `${baseUrl}/api`
+// Get the current domain name
+const currentDomain = window.location.origin
 
-const axiosAbpApi = axios.create({
-    baseURL: ABP_API_URL,
-    withCredentials: true
-})
-
-axiosAbpApi.interceptors.request.use(
-    (response) => response,
-    (error) => Promise.reject(error)
-)
+// Set the base URL dynamically based on the current domain name
+const baseUrl = currentDomain
+const API_URL = `${baseUrl}/api/services/app`
 
 const axiosApi = axios.create({
     baseURL: API_URL,
@@ -24,13 +17,7 @@ axiosApi.interceptors.request.use(
     (error) => Promise.reject(error)
 )
 
-export async function get(useAbp, url, config = {}) {
-    if (useAbp) {
-        return await axiosAbpApi
-            .get(url, { ...config })
-            .then((response) => response.data)
-    }
-
+export async function get(url, config = {}) {
     return await axiosApi
         .get(url, { ...config })
         .then((response) => response.data)

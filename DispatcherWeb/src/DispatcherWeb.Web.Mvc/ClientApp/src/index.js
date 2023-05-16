@@ -19,15 +19,17 @@ setOptions({
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-    <Provider store={store}>
-        <React.Fragment>
+    <React.StrictMode>
+        <Provider store={store}>
             <BrowserRouter>
                 <ThemeProvider theme={theme}>
-                    <App />
+                    <React.Fragment>
+                        <App />
+                    </React.Fragment>
                 </ThemeProvider>
             </BrowserRouter>
-        </React.Fragment>
-    </Provider>
+        </Provider>
+    </React.StrictMode>
 )
 
 // If you want to start measuring performance in your app, pass a function
