@@ -73,6 +73,7 @@ namespace DispatcherWeb.Configuration.Host
                 TimezoneForComparison = timezone,
                 NotificationsEmail = await SettingManager.GetSettingValueAsync(AppSettings.HostManagement.NotificationsEmail),
                 SupportLinkAddress = await SettingManager.GetSettingValueAsync(AppSettings.HostManagement.SupportLinkAddress),
+                DriverAppImageResolution = (DriverAppImageResolutionEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.HostManagement.DriverAppImageResolution),
             };
 
             var defaultTimeZoneId =
@@ -393,6 +394,7 @@ namespace DispatcherWeb.Configuration.Host
             }
             await SettingManager.ChangeSettingForApplicationAsync(AppSettings.HostManagement.NotificationsEmail, settings.NotificationsEmail);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettings.HostManagement.SupportLinkAddress, settings.SupportLinkAddress);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettings.HostManagement.DriverAppImageResolution, settings.DriverAppImageResolution.ToIntString());
         }
 
         private async Task UpdateTenantManagementAsync(TenantManagementSettingsEditDto settings)
