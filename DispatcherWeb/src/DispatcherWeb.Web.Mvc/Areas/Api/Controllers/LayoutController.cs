@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DispatcherWeb.Web.Areas.Api.Controllers
 {
     [Area("api")]
-    [AbpMvcAuthorize(AppPermissions.Pages_Administration_Tenant_Settings)]
+    [AbpMvcAuthorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LayoutController : AbpController
