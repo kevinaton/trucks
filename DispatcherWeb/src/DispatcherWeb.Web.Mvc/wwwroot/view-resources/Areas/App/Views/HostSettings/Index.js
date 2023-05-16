@@ -56,6 +56,11 @@
             }
         }
 
+        $('#DriverAppImageResolution').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
         toggleSmtpCredentialFormGroups();
         toggleTenantManagementFormGroups();
         toggleUserLockOutSettingsFormItems();

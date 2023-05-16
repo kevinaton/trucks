@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
@@ -19,6 +20,7 @@ using DispatcherWeb.Editions;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Security;
 using DispatcherWeb.Timing;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Configuration.Host
 {
@@ -73,6 +75,7 @@ namespace DispatcherWeb.Configuration.Host
                 TimezoneForComparison = timezone,
                 NotificationsEmail = await SettingManager.GetSettingValueAsync(AppSettings.HostManagement.NotificationsEmail),
                 SupportLinkAddress = await SettingManager.GetSettingValueAsync(AppSettings.HostManagement.SupportLinkAddress),
+                DriverAppImageResolution = (DriverAppImageResolutionEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.HostManagement.DriverAppImageResolution),
             };
 
             var defaultTimeZoneId =
@@ -393,6 +396,25 @@ namespace DispatcherWeb.Configuration.Host
             }
             await SettingManager.ChangeSettingForApplicationAsync(AppSettings.HostManagement.NotificationsEmail, settings.NotificationsEmail);
             await SettingManager.ChangeSettingForApplicationAsync(AppSettings.HostManagement.SupportLinkAddress, settings.SupportLinkAddress);
+            if (settings.DriverAppImageResolution != (DriverAppImageResolutionEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.HostManagement.DriverAppImageResolution))
+            {
+                await SettingManager.ChangeSettingForApplicationAsync(AppSettings.HostManagement.DriverAppImageResolution, settings.DriverAppImageResolution.ToIntString());
+                var tenantIds = await TenantManager.Tenants.Select(t => t.Id).ToListAsync();
+                foreach (var id in tenantIds)
+                {
+                    await SetDriverAppImageResolutionForTenant(id, settings.DriverAppImageResolution);
+                }
+            }
+        }
+
+        public async Task SetDriverAppImageResolutionForTenant(int tenantId, DriverAppImageResolutionEnum value)
+        {
+            await SettingManager.ChangeSettingForTenantAsync(tenantId, AppSettings.HostManagement.DriverAppImageResolution, value.ToIntString());
+        }
+
+        public async Task<DriverAppImageResolutionEnum> GetDriverAppImageResolutionForTenant()
+        {
+            return (DriverAppImageResolutionEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.HostManagement.DriverAppImageResolution);
         }
 
         private async Task UpdateTenantManagementAsync(TenantManagementSettingsEditDto settings)

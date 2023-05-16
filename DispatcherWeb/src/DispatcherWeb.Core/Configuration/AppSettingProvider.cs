@@ -98,6 +98,8 @@ namespace DispatcherWeb.Configuration
                     GetFromAppSettings(AppSettings.HostManagement.NotificationsEmail, "joe@dumptruckdispatcher.com")),
                 new SettingDefinition(AppSettings.HostManagement.SupportLinkAddress,
                     GetFromAppSettings(AppSettings.HostManagement.SupportLinkAddress, "https://dumptruckdispatcher.com/doc_category/getting-started/")),
+                new SettingDefinition(AppSettings.HostManagement.DriverAppImageResolution,
+                    GetFromAppSettings(AppSettings.HostManagement.DriverAppImageResolution, DriverAppImageResolutionEnum.Medium.ToIntString()), scopes: SettingScopes.Application | SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Recaptcha.SiteKey, GetFromSettings("Recaptcha:SiteKey"),
                     clientVisibilityProvider: _visibleSettingClientVisibilityProvider),
         new SettingDefinition(AppSettings.General.WebSiteRootAddress, "http://localhost:5000/"),
