@@ -432,7 +432,7 @@
 
         updateCardReadOnlyState(block);
         if (abp.auth.hasPermission('EditInvoicedOrdersAndTickets')
-            && block.orderLine.isReadOnly
+            && block.isReadOnly
             && !block.overrideReadOnlyState
         ) {
             block.ui.overrideReadOnlyStateButton
@@ -716,10 +716,10 @@
     function updateCardReadOnlyState(block) {
         let orderLineTickets = getTicketsForOrderLine(block.orderLine);
         let isReadOnly = !block.overrideReadOnlyState && orderLineTickets.some(t => t.isReadOnly);
-        if (block.orderLine.isReadOnly === isReadOnly) {
+        if (block.isReadOnly === isReadOnly) {
             return;
         }
-        block.orderLine.isReadOnly = isReadOnly;
+        block.isReadOnly = isReadOnly;
 
         let controls = [
             block.ui.driver,
