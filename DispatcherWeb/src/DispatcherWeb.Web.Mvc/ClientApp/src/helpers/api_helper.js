@@ -1,21 +1,24 @@
 import axios from 'axios'
 
-const API_URL = 'https://localhost:44332/api/services/app'
+// Get the current domain name
+const currentDomain = window.location.origin
 
-const apiService = axios.create({
+// Set the base URL dynamically based on the current domain name
+const baseUrl = currentDomain
+const API_URL = `${baseUrl}/api/services/app`
+
+const axiosApi = axios.create({
     baseURL: API_URL,
     withCredentials: true
 })
 
-apiService.interceptors.request.use(
+axiosApi.interceptors.request.use(
     (response) => response,
     (error) => Promise.reject(error)
 )
 
-// export async function get(url, config = {}) {
-//     return await axiosApi
-//         .get(url, { ...config })
-//         .then((response) => response.data)
-// }
-
-export default apiService
+export async function get(url, config = {}) {
+    return await axiosApi
+        .get(url, { ...config })
+        .then((response) => response.data)
+}

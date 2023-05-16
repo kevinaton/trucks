@@ -7,6 +7,9 @@ import { setOptions } from '@mobiscroll/react'
 import { ThemeProvider } from '@mui/material'
 import { theme } from './Theme'
 import { BrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+
+import store from './store'
 
 // Apply options globally to all Mobiscroll components
 setOptions({
@@ -17,11 +20,15 @@ setOptions({
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
-            <ThemeProvider theme={theme}>
-                <App />
-            </ThemeProvider>
-        </BrowserRouter>
+        <Provider store={store}>
+            <BrowserRouter>
+                <ThemeProvider theme={theme}>
+                    <React.Fragment>
+                        <App />
+                    </React.Fragment>
+                </ThemeProvider>
+            </BrowserRouter>
+        </Provider>
     </React.StrictMode>
 )
 
