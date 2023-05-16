@@ -7,6 +7,9 @@ import { setOptions } from '@mobiscroll/react'
 import { ThemeProvider } from '@mui/material'
 import { theme } from './Theme'
 import { BrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+
+import store from './store'
 
 // Apply options globally to all Mobiscroll components
 setOptions({
@@ -16,13 +19,15 @@ setOptions({
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <ThemeProvider theme={theme}>
-                <App />
-            </ThemeProvider>
-        </BrowserRouter>
-    </React.StrictMode>
+    <Provider store={store}>
+        <React.Fragment>
+            <BrowserRouter>
+                <ThemeProvider theme={theme}>
+                    <App />
+                </ThemeProvider>
+            </BrowserRouter>
+        </React.Fragment>
+    </Provider>
 )
 
 // If you want to start measuring performance in your app, pass a function

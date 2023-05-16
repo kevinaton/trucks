@@ -1,21 +1,36 @@
 import axios from 'axios'
 
-const API_URL = 'https://localhost:44332/api/services/app'
+const ABP_API_URL = 'https://localhost:44332/api/services/app'
+const API_URL = 'https://localhost:44332/api'
 
-const apiService = axios.create({
-    baseURL: API_URL,
+const axiosAbpApi = axios.create({
+    baseURL: ABP_API_URL,
     withCredentials: true
 })
 
-apiService.interceptors.request.use(
+axiosAbpApi.interceptors.request.use(
     (response) => response,
     (error) => Promise.reject(error)
 )
 
-// export async function get(url, config = {}) {
-//     return await axiosApi
-//         .get(url, { ...config })
-//         .then((response) => response.data)
-// }
+const axiosApi = axios.create({
+    baseURL: API_URL,
+    withCredentials: true
+})
 
-export default apiService
+axiosApi.interceptors.request.use(
+    (response) => response,
+    (error) => Promise.reject(error)
+)
+
+export async function get(useAbp, url, config = {}) {
+    if (useAbp) {
+        return await axiosAbpApi
+            .get(url, { ...config })
+            .then((response) => response.data)
+    }
+
+    return await axiosApi
+        .get(url, { ...config })
+        .then((response) => response.data)
+}
