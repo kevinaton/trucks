@@ -412,9 +412,9 @@ namespace DispatcherWeb.Configuration.Host
             await SettingManager.ChangeSettingForTenantAsync(tenantId, AppSettings.HostManagement.DriverAppImageResolution, value.ToIntString());
         }
 
-        public async Task<DriverAppImageResolutionEnum> GetDriverAppImageResolutionForTenant()
+        public async Task<DriverAppImageResolutionEnum> GetDriverAppImageResolutionForTenant(int tenantId)
         {
-            return (DriverAppImageResolutionEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.HostManagement.DriverAppImageResolution);
+            return (DriverAppImageResolutionEnum)await SettingManager.GetSettingValueForTenantAsync<int>(AppSettings.HostManagement.DriverAppImageResolution, tenantId);
         }
 
         private async Task UpdateTenantManagementAsync(TenantManagementSettingsEditDto settings)
