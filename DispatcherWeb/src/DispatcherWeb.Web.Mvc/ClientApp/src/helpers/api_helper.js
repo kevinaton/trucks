@@ -1,7 +1,8 @@
 import axios from 'axios'
 
-const ABP_API_URL = 'https://localhost:44332/api/services/app'
-const API_URL = 'https://localhost:44332/api'
+const baseUrl = process.env.REACT_APP_API_BASE_URL
+const ABP_API_URL = `${baseUrl}/api/services/app`
+const API_URL = `${baseUrl}/api`
 
 const axiosAbpApi = axios.create({
     baseURL: ABP_API_URL,
