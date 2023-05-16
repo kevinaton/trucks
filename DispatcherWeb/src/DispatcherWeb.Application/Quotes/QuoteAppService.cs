@@ -479,37 +479,36 @@ namespace DispatcherWeb.Quotes
             {
                 if (model.ProjectId.HasValue)
                 {
-                    //get project services to add to the new quote
-                    var projectServices = await _projectServiceRepository.GetAll()
-                        .Where(x => x.ProjectId == model.ProjectId)
-                        .ToListAsync();
-                    projectServices.Select(x => new QuoteService
-                    {
-                        LoadAtId = x.LoadAtId,
-                        DeliverToId = x.DeliverToId,
-                        ServiceId = x.ServiceId,
-                        MaterialUomId = x.MaterialUomId,
-                        FreightUomId = x.FreightUomId,
-                        Designation = x.Designation,
-                        PricePerUnit = x.PricePerUnit,
-                        FreightRate = x.FreightRate,
-                        FreightRateToPayDrivers = x.FreightRate,
-                        LeaseHaulerRate = x.LeaseHaulerRate,
-                        MaterialQuantity = x.MaterialQuantity,
-                        FreightQuantity = x.FreightQuantity,
-                        Note = x.Note
-                    })
-                    .ToList().ForEach(x =>
-                    {
-                        quote.QuoteServices.Add(x);
-                        _quoteServiceRepository.Insert(x);
-                    });
+                    ////get project services to add to the new quote
+                    //var projectServices = await _projectServiceRepository.GetAll()
+                    //    .Where(x => x.ProjectId == model.ProjectId)
+                    //    .ToListAsync();
+                    //projectServices.Select(x => new QuoteService
+                    //{
+                    //    LoadAtId = x.LoadAtId,
+                    //    DeliverToId = x.DeliverToId,
+                    //    ServiceId = x.ServiceId,
+                    //    MaterialUomId = x.MaterialUomId,
+                    //    FreightUomId = x.FreightUomId,
+                    //    Designation = x.Designation,
+                    //    PricePerUnit = x.PricePerUnit,
+                    //    FreightRate = x.FreightRate,
+                    //    FreightRateToPayDrivers = x.FreightRate,
+                    //    LeaseHaulerRate = x.LeaseHaulerRate,
+                    //    MaterialQuantity = x.MaterialQuantity,
+                    //    FreightQuantity = x.FreightQuantity,
+                    //    Note = x.Note
+                    //})
+                    //.ToList().ForEach(x =>
+                    //{
+                    //    quote.QuoteServices.Add(x);
+                    //    _quoteServiceRepository.Insert(x);
+                    //});
 
                     var project = await _projectRepository.GetAsync(model.ProjectId.Value);
                     if (project.Status == QuoteStatus.Pending)
                     {
                         project.Status = QuoteStatus.Active;
-                        await _projectRepository.UpdateAsync(project);
                     }
                 }
 
