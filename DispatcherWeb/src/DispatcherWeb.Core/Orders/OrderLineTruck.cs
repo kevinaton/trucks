@@ -28,6 +28,9 @@ namespace DispatcherWeb.Orders
         public virtual int? ParentOrderLineTruckId { get; set; }
         public virtual OrderLineTruck ParentOrderLineTruck { get; set; }
 
+        public int? TrailerId { get; set; }
+        public virtual Truck Trailer { get; set; }
+
         public decimal Utilization { get; set; }
 
         [Obsolete]

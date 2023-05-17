@@ -23,7 +23,10 @@ namespace DispatcherWeb.Trucks
 
         public Truck()
         {
-            OrderLineTrucks = new HashSet<OrderLineTruck>();
+            OrderLineTrucksOfTruck = new HashSet<OrderLineTruck>();
+            OrderLineTrucksOfTrailer = new HashSet<OrderLineTruck>();
+            TrailerAssignmentsOfTractor = new HashSet<TrailerAssignment>();
+            TrailerAssignmentsOfTrailer = new HashSet<TrailerAssignment>();
             DriverAssignments = new HashSet<DriverAssignment>();
             SharedTrucks = new HashSet<SharedTruck>();
             Files = new HashSet<TruckFile>();
@@ -73,7 +76,10 @@ namespace DispatcherWeb.Trucks
 
         public virtual Driver DefaultDriver { get; set; }
 
-        public virtual ICollection<OrderLineTruck> OrderLineTrucks { get; set; }
+        public virtual ICollection<OrderLineTruck> OrderLineTrucksOfTruck { get; set; }
+        public virtual ICollection<OrderLineTruck> OrderLineTrucksOfTrailer { get; set; }
+        public virtual ICollection<TrailerAssignment> TrailerAssignmentsOfTractor { get; set; }
+        public virtual ICollection<TrailerAssignment> TrailerAssignmentsOfTrailer { get; set; }
 
         public virtual ICollection<DriverAssignment> DriverAssignments { get; set; }
 

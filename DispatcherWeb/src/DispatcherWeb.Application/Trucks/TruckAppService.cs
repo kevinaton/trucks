@@ -1067,7 +1067,8 @@ namespace DispatcherWeb.Trucks
             bool hasDependencies = await _truckRepository.GetAll()
                 .Where(t => t.Id == input.Id)
                 .Where(t =>
-                    t.OrderLineTrucks.Any() ||
+                    t.OrderLineTrucksOfTruck.Any() ||
+                    t.OrderLineTrucksOfTrailer.Any() ||
                     t.Tickets.Any(ticket => ticket.CarrierId == null) ||
                     t.PreventiveMaintenances.Any() ||
                     t.DriverAssignments.Any() ||

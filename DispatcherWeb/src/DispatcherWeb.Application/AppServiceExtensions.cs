@@ -427,7 +427,7 @@ namespace DispatcherWeb
                     IsActive = t.IsActive,
                     DefaultDriverId = t.DefaultDriverId,
                     DefaultDriverName = t.DefaultDriver.FirstName + " " + t.DefaultDriver.LastName,
-                    UtilizationList = t.OrderLineTrucks
+                    UtilizationList = t.OrderLineTrucksOfTruck
                         .Where(olt => !olt.OrderLine.IsComplete
                                 && olt.OrderLine.Order.DeliveryDate == input.Date
                                 && olt.OrderLine.Order.Shift == input.Shift

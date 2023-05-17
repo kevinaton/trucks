@@ -26,6 +26,7 @@ namespace DispatcherWeb.Orders
             Tickets = new HashSet<Ticket>();
             Dispatches = new HashSet<Dispatch>();
             ReceiptLines = new HashSet<ReceiptLine>();
+            OrderLineVehicleCategories = new HashSet<OrderLineVehicleCategory>();
         }
 
         public int TenantId { get; set; }
@@ -173,5 +174,7 @@ namespace DispatcherWeb.Orders
         public virtual ICollection<Dispatch> Dispatches { get; set; }
 
         public virtual ICollection<ReceiptLine> ReceiptLines { get; set; }
+
+        public virtual ICollection<OrderLineVehicleCategory> OrderLineVehicleCategories { get; set; }
     }
 }

@@ -144,7 +144,7 @@ namespace DispatcherWeb.Scheduling
                 .WhereIf(!input.TruckCode.IsNullOrEmpty(), x => x.TruckCode.StartsWith(input.TruckCode))
                 .WhereIf(input.OnlyTrailers, x => x.VehicleCategory.AssetType == AssetType.Trailer)
                 .WhereIf(input.IsPowered.HasValue, x => x.VehicleCategory.IsPowered == input.IsPowered.Value)
-                .Where(x => x.OrderLineTrucks.All(olt => olt.OrderLine.Id != input.OrderLineId))
+                .Where(x => x.OrderLineTrucksOfTruck.All(olt => olt.OrderLine.Id != input.OrderLineId))
                 .GetScheduleTrucks(input, await SettingManager.UseShifts(),
                     await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature));
 
