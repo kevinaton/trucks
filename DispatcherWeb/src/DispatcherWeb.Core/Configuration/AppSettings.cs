@@ -45,6 +45,7 @@ namespace DispatcherWeb.Configuration
             public const string BillingAddress = "App.HostManagement.BillingAddress";
             public const string NotificationsEmail = "App.HostManagement.NotificationsEmail";
             public const string SupportLinkAddress = "App.HostManagement.SupportLinkAddress";
+            public const string DriverAppImageResolution = "App.HostManagement.DriverAppImageResolution";
         }
 
         public static class DashboardCustomization
