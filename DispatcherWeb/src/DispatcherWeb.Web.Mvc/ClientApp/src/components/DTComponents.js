@@ -1,34 +1,20 @@
 import * as React from 'react'
-import { Link } from 'react-router-dom'
 import {
     Avatar,
-    Box,
     Button,
-    Collapse,
     IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
     Paper,
     Typography,
     FormControl,
     Autocomplete,
     TextField,
     Tooltip,
-    Fade,
-    Toolbar,
-    Menu,
-    MenuList,
-    MenuItem,
     TableCell
 } from '@mui/material'
 import { KeyboardArrowDown } from '@material-ui/icons'
 import { styled } from '@mui/material/styles'
 import MuiDrawer from '@mui/material/Drawer'
 import MuiAppBar from '@mui/material/AppBar'
-import { sideMenuItems } from '../common/data/menus'
 import '../fontawesome/css/all.css'
 
 // Header icon button component

@@ -20,6 +20,7 @@ import { sideMenuItems } from '../../../common/data/menus'
 import { getMenuItems } from '../../../store/actions'
 
 export const SideMenu = ({
+    currentPageName,
     drawerOpen,
     DrawerHeader,
     collapseOpen,
@@ -40,7 +41,6 @@ export const SideMenu = ({
         if (isEmpty(menuItems)) {
             dispatch(getMenuItems())
         } else {
-            console.log('menuItems: ', menuItems)
             const { result } = menuItems
             if (!isEmpty(result) && !isEmpty(result.items)) {
                 setSideMenus(result.items)
@@ -73,7 +73,7 @@ export const SideMenu = ({
             } else if (menu.items) {
                 const updatedSubMenu = menu.items.map((sub) => {
                     if (sub.displayName === value) {
-                        return { ...sub, select: true }
+                        return { ...sub, select: currentPageName === menu.displayName }
                     }
                     return { ...sub, select: false }
                 })
@@ -150,7 +150,7 @@ export const SideMenu = ({
                                     px: 2.5,
                                     ...(isSubMenuOpen && { bgcolor: "#f8f9fa" })
                                 }}
-                                selected={menu.select}
+                                selected={menu.displayName === currentPageName ? true : false}
                                 onClick={
                                     menu.items.length > 0
                                     ? () => handleCollapseOpen(menu)
@@ -228,7 +228,7 @@ export const SideMenu = ({
                                                 >
                                                     <ListItemButton
                                                         sx={{ pl: drawerOpen ? 4 : 2 }}
-                                                        selected={sub.select}
+                                                        selected={sub.displayName === currentPageName ? true : false}
                                                     >
                                                         <ListItemIcon
                                                             sx={{
