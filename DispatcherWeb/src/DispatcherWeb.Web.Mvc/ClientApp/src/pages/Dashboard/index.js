@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Box, Paper, Typography } from '@mui/material'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import NoContent from '../../components/NoContent'
+import { getScheduledTruckCountPartialView } from '../../store/actions'
+import { isEmpty } from 'lodash'
 
 const Dashboard = (props) => {
     const pageName = "Dashboard"
@@ -9,6 +12,24 @@ const Dashboard = (props) => {
     useEffect(() => {
         props.handleCurrentPageName(pageName)
     }, [props])
+
+
+    const [partialViewHtml, setPartialViewHtml] = useState('')
+    
+    const dispatch = useDispatch()
+    const { htmlView } = useSelector(state => ({
+        htmlView: state.DashboardReducer.htmlView
+    }))
+    
+    useEffect(() => {
+        if (isEmpty(htmlView)) {
+            dispatch(getScheduledTruckCountPartialView())
+        } else {
+            const { result } = htmlView
+            setPartialViewHtml(result)
+            //console.log('result: ', result)
+        }
+    }, [dispatch, htmlView])
 
     return (
         <HelmetProvider>
@@ -30,7 +51,8 @@ const Dashboard = (props) => {
                     </Typography>
                 </Box>
                 <Paper>
-                    <NoContent />
+                    <div dangerouslySetInnerHTML={{ __html: partialViewHtml }} />
+                    {/* <NoContent /> */}
                 </Paper>
             </div>
         </HelmetProvider>
