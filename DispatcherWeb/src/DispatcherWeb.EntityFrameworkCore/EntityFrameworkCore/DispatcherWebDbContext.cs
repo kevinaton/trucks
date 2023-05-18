@@ -262,6 +262,8 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<OrderLineVehicleCategory> OrderLineVehicles { get; set; }
 
+        public virtual DbSet<QuoteServiceVehicleCategory> QuoteServiceVehicle { get; set; }
+
         public virtual DbSet<TrailerAssignment> TrailerAssignments { get; set; }
 
         public DispatcherWebDbContext(DbContextOptions<DispatcherWebDbContext> options)
@@ -379,6 +381,7 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new QuoteEmailConfiguration());
             modelBuilder.ApplyConfiguration(new QuoteHistoryConfiguration());
             modelBuilder.ApplyConfiguration(new QuoteServiceConfiguration());
+            modelBuilder.ApplyConfiguration(new QuoteServiceVehicleCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new ServiceConfiguration());
             modelBuilder.ApplyConfiguration(new SharedOrderConfiguration());
             modelBuilder.ApplyConfiguration(new SharedTruckConfiguration());
