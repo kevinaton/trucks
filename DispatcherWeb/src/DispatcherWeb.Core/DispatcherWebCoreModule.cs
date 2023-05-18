@@ -29,6 +29,7 @@ using DispatcherWeb.Localization;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Net.Emailing;
 using DispatcherWeb.Notifications;
+using DispatcherWeb.Services;
 using DispatcherWeb.WebHooks;
 using MailKit.Security;
 using Microsoft.AspNetCore.Hosting;
@@ -121,6 +122,7 @@ namespace DispatcherWeb
             });
 
             IocManager.Register<DashboardConfiguration>();
+            IocManager.Register<IViewRenderService, ViewRenderService>();
         }
 
         public override void Initialize()
