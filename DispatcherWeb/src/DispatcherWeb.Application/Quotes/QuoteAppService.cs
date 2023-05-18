@@ -274,6 +274,7 @@ namespace DispatcherWeb.Quotes
                 {
                     quoteEditDto = new QuoteEditDto
                     {
+                        Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                     };
                 }
 
@@ -829,6 +830,7 @@ namespace DispatcherWeb.Quotes
                 PONumber = order.PONumber,
                 Status = QuoteStatus.Active,
                 SalesPersonId = AbpSession.UserId,
+                Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes),
                 ProposalDate = today,
                 ProposalExpiryDate = today.AddDays(30)
             };
