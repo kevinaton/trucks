@@ -15,10 +15,10 @@ import {
     drawerWidth, 
     AppBar, 
     HeaderIconButton,
-    HeaderButton } from '../../../DTComponents'
+    HeaderButton } from '../../DTComponents'
 import { 
     getSupportLinkAddress
-} from '../../../../store/actions'
+} from '../../../store/actions'
 import { isEmpty } from 'lodash'
 
 export const Appbar = ({

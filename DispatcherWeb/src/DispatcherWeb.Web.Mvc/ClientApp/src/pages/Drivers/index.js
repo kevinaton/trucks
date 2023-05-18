@@ -1,9 +1,14 @@
+import React, { useEffect } from 'react'
 import { Box, Paper, Typography } from '@mui/material'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import NoContent from '../../components/NoContent'
 
-const Drivers = () => {
+const Drivers = (props) => {
     const pageName = "Drivers"
+    
+    useEffect(() => {
+        props.handleCurrentPageName(pageName)
+    }, [props])
 
     return (
         <HelmetProvider>

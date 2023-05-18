@@ -1,19 +1,12 @@
 import * as React from 'react'
-import { Route, Routes } from 'react-router'
 import { Paper, useMediaQuery } from '@mui/material'
 import Box from '@mui/material/Box'
 import CssBaseline from '@mui/material/CssBaseline'
 import './fontawesome/css/all.css'
-import { SideMenu, DrawerHeader } from './components/DTComponents'
+import { RouterConfig } from './navigation/RouterConfig'
+import { DrawerHeader } from './components/DTComponents'
 import { sideMenuItems } from './common/data/menus'
-import { Appbar } from './components'
-import Dashboard from './pages/Dashboard'
-import Customers from './pages/Customers'
-import ProductsOrServices from './pages/ProductsOrServices'
-import Drivers from './pages/Drivers'
-import Locations from './pages/Locations'
-import TruckDispatchList from './pages/TruckDispatchList'
-import Schedule from './pages/Schedule'
+import { Appbar, SideMenu } from './components'
 
 const App = (props) => {
     const [anchorElNav, setAnchorElNav] = React.useState(null)
@@ -29,6 +22,8 @@ const App = (props) => {
         }, {})
     )
 
+    const [currentPageName, setCurrentPageName] = React.useState("")
+
     // Checks screen if it is small
     React.useEffect(() => {
         if (isSmall) {
@@ -40,6 +35,11 @@ const App = (props) => {
         }
 
     }, [isSmall, isBig])
+
+    const handleCurrentPageName = (name) => {
+        document.title = name
+        setCurrentPageName(name)
+    } 
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget)
@@ -72,7 +72,8 @@ const App = (props) => {
                 handleCloseNavMenu={handleCloseNavMenu}
             />
 
-            <SideMenu
+            <SideMenu 
+                currentPageName={currentPageName}
                 drawerOpen={drawerOpen}
                 DrawerHeader={DrawerHeader}
                 collapseOpen={collapseOpen}
@@ -95,16 +96,9 @@ const App = (props) => {
                         }}
                     >
                         <DrawerHeader />
-                        <Routes sx={{ height: "100%", overflow: "auto" }}>
-                            <Route path="/app/dashboard" element={<Dashboard />} />
-                            <Route path="/customers" element={<Customers />} />
-                            <Route path="/products-services" element={<ProductsOrServices />} />
-                            <Route path="/drivers" element={<Drivers />} />
-                            <Route path="/locations" element={<Locations />} />
-                            <Route path="/" element={<TruckDispatchList />} />
-                            {/* <Route path="*" element={<TruckDispatchList />} /> */}
-                            <Route path="dispatching/schedule" element={<Schedule />} />
-                        </Routes>
+
+                        {/* This is the route configuration */}
+                        <RouterConfig handleCurrentPageName={handleCurrentPageName} />
                     </Paper>
                 </Box>
         </Box>
