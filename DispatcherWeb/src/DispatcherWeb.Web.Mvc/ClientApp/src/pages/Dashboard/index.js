@@ -6,8 +6,13 @@ import NoContent from '../../components/NoContent'
 import { getScheduledTruckCountPartialView } from '../../store/actions'
 import { isEmpty } from 'lodash'
 
-const Dashboard = () => {
+const Dashboard = (props) => {
     const pageName = "Dashboard"
+    
+    useEffect(() => {
+        props.handleCurrentPageName(pageName)
+    }, [props])
+
 
     const [partialViewHtml, setPartialViewHtml] = useState('')
     

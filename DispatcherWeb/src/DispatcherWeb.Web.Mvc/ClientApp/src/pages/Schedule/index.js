@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useEffect } from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import {
     Autocomplete,
@@ -35,7 +35,8 @@ import { Tablecell } from '../../components/DTComponents'
 
 const { offices, TruckCode, ScheduleData } = data
 
-const Schedule = () => {
+const Schedule = (props) => {
+    const pageName = "Schedule"
     const [date, setDate] = React.useState(moment())
     const [view, setView] = React.useState("all")
     const [settingsAnchor, setSettingsAnchor] = React.useState(null)
@@ -44,6 +45,10 @@ const Schedule = () => {
     const actionOpen = Boolean(actionAnchor)
     const [isOrderOpen, setIsOrderOpen] = React.useState(false)
     const [isPrintOrderOpen, setIsPrintOrderOpen] = React.useState(false)
+    
+    useEffect(() => {
+        props.handleCurrentPageName(pageName)
+    }, [props])
 
     // Handle toggle button at the top right
     const handleView = (event, newView) => {
@@ -76,10 +81,10 @@ const Schedule = () => {
             <div>
                 <Helmet>
                     <meta charSet="utf-8" />
-                    <title>Schedule</title>
+                    <title>{pageName}</title>
                     <meta name="description" content="Dumptruckdispatcher app" />
                     <meta content="" name="author" />
-                    <meta property="og:title" content="Schedule" />
+                    <meta property="og:title" content={pageName} />
                     <meta
                         property="og:image"
                         content="%PUBLIC_URL%/assets/dumptruckdispatcher-logo-mini.png"
@@ -88,7 +93,7 @@ const Schedule = () => {
 
                 <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between" }}>
                     <Typography variant="h6" component="h2" sx={{ mb: 1 }}>
-                        Schedule
+                        {pageName}
                     </Typography>
                     <ToggleButtonGroup
                         color="primary"
