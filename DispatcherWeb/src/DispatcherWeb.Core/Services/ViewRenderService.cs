@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Abp.Dependency;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace DispatcherWeb.Services
 {
-    public class ViewRenderService : IViewRenderService
+    public class ViewRenderService : IViewRenderService, ITransientDependency
     {
         private readonly IRazorViewEngine _razorViewEngine;
         private readonly ITempDataProvider _tempDataProvider;

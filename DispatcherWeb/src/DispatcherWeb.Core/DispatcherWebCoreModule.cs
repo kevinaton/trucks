@@ -95,9 +95,6 @@ namespace DispatcherWeb
             Configuration.Modules.AbpMailKit().SecureSocketOption = SecureSocketOptions.Auto;
             Configuration.ReplaceService<IMailKitSmtpBuilder, DispatcherWebMailKitSmtpBuilder>(DependencyLifeStyle.Transient);
 
-            // Partial View Rendering
-            IocManager.Register<IViewRenderService, ViewRenderService>(DependencyLifeStyle.Transient);
-
             //Configure roles
             AppRoleConfig.Configure(Configuration.Modules.Zero().RoleManagement);
 
