@@ -41,6 +41,7 @@ namespace DispatcherWeb.Quotes
         private readonly IRepository<QuoteHistoryRecord> _quoteHistoryRepository;
         private readonly IRepository<QuoteFieldDiff> _quoteFieldDiffRepository;
         private readonly IRepository<QuoteEmail> _quoteEmailRepository;
+        private readonly IRepository<QuoteServiceVehicleCategory> _quoteServiceVehicleCategoryRepository;
         private readonly IRepository<Project> _projectRepository;
         private readonly IRepository<ProjectService> _projectServiceRepository;
         private readonly IRepository<Order> _orderRepository;
@@ -59,6 +60,7 @@ namespace DispatcherWeb.Quotes
             IRepository<QuoteHistoryRecord> quoteHistoryRepository,
             IRepository<QuoteFieldDiff> quoteFieldDiffRepository,
             IRepository<QuoteEmail> quoteEmailRepository,
+            IRepository<QuoteServiceVehicleCategory> quoteServiceVehicleCategoryRepository,
             IRepository<Project> projectRepository,
             IRepository<ProjectService> projectServiceRepository,
             IRepository<Order> orderRepository,
@@ -77,6 +79,7 @@ namespace DispatcherWeb.Quotes
             _quoteHistoryRepository = quoteHistoryRepository;
             _quoteFieldDiffRepository = quoteFieldDiffRepository;
             _quoteEmailRepository = quoteEmailRepository;
+            _quoteServiceVehicleCategoryRepository = quoteServiceVehicleCategoryRepository;
             _projectRepository = projectRepository;
             _projectServiceRepository = projectServiceRepository;
             _orderRepository = orderRepository;
@@ -1065,7 +1068,12 @@ namespace DispatcherWeb.Quotes
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
                         JobNumber = x.JobNumber,
-                        Note = x.Note
+                        Note = x.Note,
+                        VehicleCategories = x.QuoteServiceVehicleCategories.Select(vc => new QuoteServiceVehicleCategoryDto
+                        {
+                            Id = vc.VehicleCategory.Id,
+                            Name = vc.VehicleCategory.Name
+                        }).ToList()
                     })
                     .SingleAsync(x => x.Id == input.Id.Value);
             }
@@ -1103,6 +1111,24 @@ namespace DispatcherWeb.Quotes
             var fieldDiffs = await UpdateValuesAndGetDiff(quoteService, model);
 
             await UpdateDiffDisplayValues(quoteService.Id, false, fieldDiffs);
+
+            var existingVehicleCategories = model.Id.HasValue ? await _quoteServiceVehicleCategoryRepository.GetAll()
+                .Where(vc => vc.QuoteServiceId == model.Id)
+                .ToListAsync() : new List<QuoteServiceVehicleCategory>();
+
+            existingVehicleCategories
+                .Where(e => !model.VehicleCategories.Any(m => m.Id == e.VehicleCategoryId))
+                .ToList()
+                .ForEach(x => _quoteServiceVehicleCategoryRepository.Delete(x));
+
+            model.VehicleCategories
+                .Where(m => !existingVehicleCategories.Any(e => e.VehicleCategoryId == m.Id))
+                .ToList()
+                .ForEach(x => _quoteServiceVehicleCategoryRepository.Insert(new QuoteServiceVehicleCategory
+                {
+                    QuoteService = quoteService,
+                    VehicleCategoryId = x.Id
+                }));
 
             if (isNew)
             {

@@ -63,6 +63,7 @@ namespace DispatcherWeb.Orders
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
+        private readonly IRepository<OrderLineVehicleCategory> _orderLineVehicleCategoryRepository;
         private readonly IRepository<SharedOrder> _sharedOrderRepository;
         private readonly IRepository<SharedOrderLine> _sharedOrderLineRepository;
         private readonly IRepository<BilledOrder> _billedOrderRepository;
@@ -100,6 +101,7 @@ namespace DispatcherWeb.Orders
             IRepository<Order> orderRepository,
             IRepository<OrderLine> orderLineRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
+            IRepository<OrderLineVehicleCategory> orderLineVehicleCategoryRepository,
             IRepository<SharedOrder> sharedOrderRepository,
             IRepository<SharedOrderLine> sharedOrderLineRepository,
             IRepository<BilledOrder> billedOrderRepository,
@@ -137,6 +139,7 @@ namespace DispatcherWeb.Orders
             _orderRepository = orderRepository;
             _orderLineRepository = orderLineRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
+            _orderLineVehicleCategoryRepository = orderLineVehicleCategoryRepository;
             _sharedOrderRepository = sharedOrderRepository;
             _sharedOrderLineRepository = sharedOrderLineRepository;
             _billedOrderRepository = billedOrderRepository;
@@ -446,6 +449,7 @@ namespace DispatcherWeb.Orders
                 editOrderLineModel.RequiresCustomerNotification = model.RequiresCustomerNotification;
                 editOrderLineModel.CustomerNotificationContactName = model.CustomerNotificationContactName;
                 editOrderLineModel.CustomerNotificationPhoneNumber = model.CustomerNotificationPhoneNumber;
+                editOrderLineModel.VehicleCategories = model.VehicleCategories;
 
                 var orderLine = await EditOrderLine(editOrderLineModel);
                 await CurrentUnitOfWork.SaveChangesAsync();
@@ -2077,7 +2081,12 @@ namespace DispatcherWeb.Orders
                         CanOverrideTotals = canOverrideTotals,
                         RequiresCustomerNotification = x.RequiresCustomerNotification,
                         CustomerNotificationContactName = x.CustomerNotificationContactName,
-                        CustomerNotificationPhoneNumber = x.CustomerNotificationPhoneNumber
+                        CustomerNotificationPhoneNumber = x.CustomerNotificationPhoneNumber,
+                        VehicleCategories = x.OrderLineVehicleCategories.Select(vc => new OrderLineVehicleCategoryDto
+                        {
+                            Id = vc.VehicleCategory.Id,
+                            Name = vc.VehicleCategory.Name
+                        }).ToList()
                     })
                     .FirstOrDefaultAsync(x => x.Id == input.Id.Value);
 
@@ -2264,7 +2273,8 @@ namespace DispatcherWeb.Orders
                 QuoteServiceId = orderLine.QuoteServiceId,
                 RequiresCustomerNotification = orderLine.RequiresCustomerNotification,
                 CustomerNotificationContactName = orderLine.CustomerNotificationContactName,
-                CustomerNotificationPhoneNumber = orderLine.CustomerNotificationPhoneNumber
+                CustomerNotificationPhoneNumber = orderLine.CustomerNotificationPhoneNumber,
+                VehicleCategories = orderLine.VehicleCategories
             };
 
             if (input.OrderLineId != null)
@@ -2470,6 +2480,24 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.CustomerNotificationPhoneNumber, model.CustomerNotificationPhoneNumber);
 
             await orderLineUpdater.SaveChangesAsync();
+
+            var existingVehicleCategories = model.Id.HasValue ? await _orderLineVehicleCategoryRepository.GetAll()
+                .Where(vc => vc.OrderLineId == model.Id)
+                .ToListAsync() : new List<OrderLineVehicleCategory>();
+
+            existingVehicleCategories
+                .Where(e => !model.VehicleCategories.Any(m => m.Id == e.VehicleCategoryId))
+                .ToList()
+                .ForEach(x => _orderLineVehicleCategoryRepository.Delete(x));
+
+            model.VehicleCategories
+                .Where(m => !existingVehicleCategories.Any(e => e.VehicleCategoryId == m.Id))
+                .ToList()
+                .ForEach(x => _orderLineVehicleCategoryRepository.Insert(new OrderLineVehicleCategory
+                {
+                    OrderLine = orderLine,
+                    VehicleCategoryId = x.Id
+                }));
 
             return orderLine;
         }
