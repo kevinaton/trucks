@@ -274,6 +274,7 @@ namespace DispatcherWeb.Quotes
                 {
                     quoteEditDto = new QuoteEditDto
                     {
+                        Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                     };
                 }
 
@@ -829,6 +830,7 @@ namespace DispatcherWeb.Quotes
                 PONumber = order.PONumber,
                 Status = QuoteStatus.Active,
                 SalesPersonId = AbpSession.UserId,
+                Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes),
                 ProposalDate = today,
                 ProposalExpiryDate = today.AddDays(30)
             };
@@ -1355,6 +1357,11 @@ namespace DispatcherWeb.Quotes
             data.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
             data.HideLoadAt = input.HideLoadAt;
             data.ShowProject = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Projects);
+            data.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
+
+            data.QuoteGeneralTermsAndConditions = data.QuoteGeneralTermsAndConditions
+                .Replace("{CompanyName}", data.CompanyName)
+                .Replace("{CompanyNameUpperCase}", data.CompanyName.ToUpper());
 
             await SetQuoteCaptureHistory(input.QuoteId);
 

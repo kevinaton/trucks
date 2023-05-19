@@ -2140,6 +2140,15 @@ namespace DispatcherWeb.Scheduling
                 return;
             }
 
+            if (!await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization))
+            {
+                foreach (var orderLineTruck in orderLineTrucks)
+                {
+                    orderLineTruck.Utilization = input.Utilization;
+                }
+                return;
+            }
+
             var orderLineMaxUtilization = orderLine.ScheduledTrucks.HasValue ? Convert.ToDecimal(orderLine.ScheduledTrucks.Value) : 0;
             var orderLineUtilization = 0M;
 

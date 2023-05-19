@@ -283,6 +283,23 @@ namespace DispatcherWeb.Quotes
             cell = row.Cells[i++];
             cell.Borders.Bottom.Visible = true;
 
+
+            // Second Page
+
+            if (!string.IsNullOrEmpty(model.QuoteGeneralTermsAndConditions))
+            {
+                section.AddPageBreak();
+                paragraph = document.LastSection.AddParagraph();
+                paragraph.Format.Font.Size = Unit.FromPoint(7.5);
+
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+                paragraph.AddText(model.QuoteGeneralTermsAndConditions);
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+            }
+
             return document.SaveToBytesArray();
         }
     }
