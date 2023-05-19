@@ -146,6 +146,9 @@
         public const string Pages_Reports_DriverActivityDetail = "Pages.Reports.DriverActivityDetail";
         public const string Pages_Reports_RevenueAnalysis = "Pages.Reports.RevenueAnalysis";
 
+        public const string Pages_ActiveReports = "Pages.ActiveReports";
+        public const string Pages_ActiveReports_TenantStatisticsReport = "Pages.ActiveReports.TenantStatisticsReport";
+
         public const string Pages_Imports = "Pages.Imports";
         public const string Pages_Imports_FuelUsage = "Pages.Imports.FuelUsage";
         public const string Pages_Imports_VehicleUsage = "Pages.Imports.VehicleUsage";

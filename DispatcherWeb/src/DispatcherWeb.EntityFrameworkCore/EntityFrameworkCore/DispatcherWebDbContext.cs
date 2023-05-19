@@ -31,6 +31,7 @@ using DispatcherWeb.Payments;
 using DispatcherWeb.PayStatements;
 using DispatcherWeb.Projects;
 using DispatcherWeb.Quotes;
+using DispatcherWeb.Reports;
 using DispatcherWeb.ScheduledReports;
 using DispatcherWeb.SecureFiles;
 using DispatcherWeb.Services;
@@ -260,6 +261,9 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<HostEmailReceiver> HostEmailReceivers { get; set; }
 
+        public virtual DbSet<Report> Reports { get; set; }
+        public virtual DbSet<ReportCategory> ReportCategories { get; set; }
+
         public DispatcherWebDbContext(DbContextOptions<DispatcherWebDbContext> options)
             : base(options)
         {
@@ -389,6 +393,7 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new WialonDeviceTypeConfiguration());
             modelBuilder.ApplyConfiguration(new WorkOrderConfiguration());
             modelBuilder.ApplyConfiguration(new WorkOrderLineConfiguration());
+            modelBuilder.ApplyConfiguration(new ReportConfiguration());
 
             modelBuilder.ConfigurePersistedGrantEntity();
         }

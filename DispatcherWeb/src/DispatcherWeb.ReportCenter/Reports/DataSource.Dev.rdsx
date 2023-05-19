@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<RptDataSource xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>DataSource1</Name>
+    <ConnectionProperties xdt:Transform="Replace">
+		<ConnectString>initial catalog=DispatcherWebDb;integrated security=SSPI;data source=work-pc\sqlexpress;persist security info=False;User Id=dev;Password=Pass123$;Encrypt=False;</ConnectString>
+        <Extension>SQL</Extension>
+        <IntegratedSecurity>true</IntegratedSecurity>
+    </ConnectionProperties>
+</RptDataSource>

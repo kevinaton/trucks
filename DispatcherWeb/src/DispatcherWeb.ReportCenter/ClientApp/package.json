@@ -1,0 +1,21 @@
+{
+  "name": "ar-viewer-deployer",
+  "version": "1.0.0",
+  "description": "ActiveReports Js Viewer Deployer",
+  "author": "GrapeCity",
+  "license": "MIT",
+  "devDependencies": {
+    "@grapecity/ar-viewer": "^16.4.0",
+    "ncp": "^2.0.0"
+  },
+  "scripts": {
+    "activereports": "ncp ./node_modules/@grapecity/ar-viewer/dist ../wwwroot/lib/grapecity",
+    "font_awesome": "ncp ./node_modules/@fortawesome/fontawesome-free ../wwwroot/lib/font-awesome",
+    "gritter": "ncp ./node_modules/gritter ../wwwroot/lib/gritter",
+    "build": "npm run activereports && npm run font_awesome && npm run gritter"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.2.1",
+    "gritter": "^1.7.4"
+  }
+}

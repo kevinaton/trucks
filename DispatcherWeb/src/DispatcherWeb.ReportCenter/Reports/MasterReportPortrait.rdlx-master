@@ -1,0 +1,189 @@
+﻿<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">MasterReportPortrait.rdlx-master</dd:Name>
+	<Body>
+		<Height>14.88189in</Height>
+		<ReportItems>
+			<CustomReportItem Name="MainContentPlaceHolder">
+				<Type>ContentPlaceHolder</Type>
+				<Top>0.875in</Top>
+				<Left>0.393701in</Left>
+				<Width>7.4813in</Width>
+				<Height>13.2195in</Height>
+				<ZIndex>3</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>ConsumeWhiteSpace</Name>
+						<Value>True</Value>
+					</CustomProperty>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Report</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<DataElementName>ContentPlaceHolder1</DataElementName>
+			</CustomReportItem>
+			<CustomReportItem Name="TitleContentPlaceHolder">
+				<Type>ContentPlaceHolder</Type>
+				<Top>0.07873984in</Top>
+				<Left>0.393701in</Left>
+				<Width>2.7559in</Width>
+				<Height>0.5in</Height>
+				<ZIndex>4</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Report Title</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<DataElementName>ContentPlaceHolder2</DataElementName>
+			</CustomReportItem>
+			<Textbox Name="PrintedOnCaptionTextBox">
+				<Top>0.6299209in</Top>
+				<Left>0.393701in</Left>
+				<Width>0.6083in</Width>
+				<Height>0.125in</Height>
+				<Style>
+					<Format>d</Format>
+					<TextAlign>Left</TextAlign>
+					<dd:StyleName xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">GeneralText</dd:StyleName>
+				</Style>
+				<ZIndex>5</ZIndex>
+				<CanGrow>true</CanGrow>
+				<DataElementName>TextBox2</DataElementName>
+				<Value>Printed On</Value>
+			</Textbox>
+			<Textbox Name="PrintedOnValueTextBox">
+				<Top>1.6cm</Top>
+				<Left>2.6cm</Left>
+				<Width>1in</Width>
+				<Height>0.125in</Height>
+				<Style>
+					<Format>d</Format>
+					<TextAlign>Left</TextAlign>
+					<dd:StyleName xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">GeneralText</dd:StyleName>
+				</Style>
+				<ZIndex>7</ZIndex>
+				<CanGrow>true</CanGrow>
+				<DataElementName>Printed On</DataElementName>
+				<Value>=Today</Value>
+			</Textbox>
+			<Textbox Name="PageInfo">
+				<Top>36.6cm</Top>
+				<Left>11.6cm</Left>
+				<Width>3.5in</Width>
+				<Height>0.25in</Height>
+				<Style>
+					<TextAlign>Right</TextAlign>
+					<dd:StyleName xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">GeneralText</dd:StyleName>
+				</Style>
+				<ZIndex>8</ZIndex>
+				<CanGrow>true</CanGrow>
+				<DataElementName>TextBox1</DataElementName>
+				<Value>="Page " &amp; Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+			</Textbox>
+		</ReportItems>
+	</Body>
+	<PageFooter>
+		<Height>0in</Height>
+		<PrintOnFirstPage>true</PrintOnFirstPage>
+		<PrintOnLastPage>true</PrintOnLastPage>
+	</PageFooter>
+	<BottomMargin>0.125in</BottomMargin>
+	<PageHeight>35.6cm</PageHeight>
+	<PageWidth>21.6cm</PageWidth>
+	<TopMargin>0.125in</TopMargin>
+	<Width>8.346457in</Width>
+	<dd:EmbeddedStyleSheets xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
+		<EmbeddedStyleSheet Name="MainStylesheet">
+			<Data>﻿&lt;dd:StyleSheet xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition"&gt;
+  &lt;Style&gt;
+    &lt;FontSize&gt;8pt&lt;/FontSize&gt;
+    &lt;dd:Name&gt;GeneralText&lt;/dd:Name&gt;
+  &lt;/Style&gt;
+  &lt;Style&gt;
+    &lt;FontFamily&gt;Arial&lt;/FontFamily&gt;
+    &lt;FontSize&gt;16pt&lt;/FontSize&gt;
+    &lt;FontStyle&gt;Normal&lt;/FontStyle&gt;
+    &lt;FontWeight&gt;700&lt;/FontWeight&gt;
+    &lt;dd:Name&gt;TitleText&lt;/dd:Name&gt;
+  &lt;/Style&gt;
+  &lt;Style&gt;
+    &lt;FontFamily&gt;Arial&lt;/FontFamily&gt;
+    &lt;FontSize&gt;8.5pt&lt;/FontSize&gt;
+    &lt;FontStyle&gt;Normal&lt;/FontStyle&gt;
+    &lt;FontWeight&gt;400&lt;/FontWeight&gt;
+    &lt;PaddingBottom&gt;3pt&lt;/PaddingBottom&gt;
+    &lt;PaddingLeft&gt;3pt&lt;/PaddingLeft&gt;
+    &lt;PaddingRight&gt;3pt&lt;/PaddingRight&gt;
+    &lt;PaddingTop&gt;3pt&lt;/PaddingTop&gt;
+    &lt;dd:Name&gt;Cell&lt;/dd:Name&gt;
+    &lt;dd:Parent&gt;GeneralText&lt;/dd:Parent&gt;
+  &lt;/Style&gt;
+  &lt;Style&gt;
+    &lt;Format&gt;$#,##0&lt;/Format&gt;
+    &lt;dd:Name&gt;SumCell&lt;/dd:Name&gt;
+    &lt;dd:Parent&gt;Cell&lt;/dd:Parent&gt;
+  &lt;/Style&gt;
+  &lt;Style&gt;
+    &lt;BackgroundColor&gt;WhiteSmoke&lt;/BackgroundColor&gt;
+    &lt;TextAlign&gt;Center&lt;/TextAlign&gt;
+    &lt;VerticalAlign&gt;Middle&lt;/VerticalAlign&gt;
+    &lt;dd:Name&gt;HeaderCell&lt;/dd:Name&gt;
+    &lt;dd:Parent&gt;Cell&lt;/dd:Parent&gt;
+    &lt;BorderStyle&gt;
+      &lt;Default&gt;Solid&lt;/Default&gt;
+    &lt;/BorderStyle&gt;
+  &lt;/Style&gt;
+  &lt;Style&gt;
+    &lt;Format&gt;#&lt;/Format&gt;
+    &lt;dd:Name&gt;QtyCell&lt;/dd:Name&gt;
+    &lt;dd:Parent&gt;Cell&lt;/dd:Parent&gt;
+  &lt;/Style&gt;
+  &lt;Style&gt;
+    &lt;Format&gt;$#,##0.00&lt;/Format&gt;
+    &lt;dd:Name&gt;DecimalSumCell&lt;/dd:Name&gt;
+    &lt;dd:Parent&gt;SumCell&lt;/dd:Parent&gt;
+  &lt;/Style&gt;
+&lt;/dd:StyleSheet&gt;</Data>
+		</EmbeddedStyleSheet>
+	</dd:EmbeddedStyleSheets>
+	<DataSources>
+		<DataSource Name="DataSource1">
+			<DataSourceReference>F:\TruckDispatcher\_Projects\DispatcherWeb\_Codes.GIT\DispatcherWeb\src\DispatcherWeb.ReportCenter\Reports\DataSource.Dev.rdsx</DataSourceReference>
+		</DataSource>
+	</DataSources>
+	<DataSets>
+		<DataSet Name="Tenants">
+			<Fields>
+				<Field Name="Id">
+					<DataField>Id</DataField>
+				</Field>
+				<Field Name="TenantName">
+					<DataField>TenantName</DataField>
+				</Field>
+			</Fields>
+			<Query>
+				<CommandText>SELECT [Id]
+      ,[Name][TenantName]
+  FROM [DispatcherWebDb].[dbo].[AbpTenants]
+  WHERE [IsActive]=1 AND ISNULL([IsDeleted],0)=0
+  ORDER BY [Name]</CommandText>
+				<DataSourceName>DataSource1</DataSourceName>
+			</Query>
+		</DataSet>
+	</DataSets>
+	<CustomProperties>
+		<CustomProperty>
+			<Name>IsMaster</Name>
+			<Value>True</Value>
+		</CustomProperty>
+		<CustomProperty>
+			<Name>PaperOrientation</Name>
+			<Value>Portrait</Value>
+		</CustomProperty>
+	</CustomProperties>
+	<dd:ReportStyleSheet xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
+		<StyleSheetSource>Embedded</StyleSheetSource>
+		<StyleSheetValue>MainStylesheet</StyleSheetValue>
+	</dd:ReportStyleSheet>
+</Report>

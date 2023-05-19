@@ -1,0 +1,23 @@
+﻿@model ReportListViewModel
+@{
+    ViewData["Title"] = "Truck Dispatcher Report Center";
+}
+
+<div class=""> @*text-center*@
+    <h1 class="display-4">Truck Dispatcher Report Center</h1>
+
+    @if (Model.Reports.Any())
+    {
+        <p>You can use the links below to open the reports</p>
+        <hr />
+        @foreach (var report in Model.Reports)
+        {
+            <p><a href="/report/@(report.Path)" target="_blank">@report.NameAndDescription</a></p>
+        }
+    }
+    else
+    {
+        <p>You don't have any reports assigned to you</p>
+        <hr />
+    }
+</div>
