@@ -4,10 +4,10 @@
 		<ReportItems>
 			<CustomReportItem Name="MainContentPlaceHolder">
 				<Type>ContentPlaceHolder</Type>
-				<Top>0.875in</Top>
+				<Top>1.653543in</Top>
 				<Left>0.393701in</Left>
-				<Width>7.4813in</Width>
-				<Height>13.2195in</Height>
+				<Width>7.9476in</Width>
+				<Height>12.2047in</Height>
 				<ZIndex>3</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
@@ -16,7 +16,7 @@
 					</CustomProperty>
 					<CustomProperty>
 						<Name>Text</Name>
-						<Value>Report</Value>
+						<Value>Report Content Section</Value>
 					</CustomProperty>
 				</CustomProperties>
 				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
@@ -34,8 +34,8 @@
 									<Value>=Parameters!EndDate.Value</Value>
 								</Parameter>
 							</dd:DataSetParameters>
-							<Top>0.314961in</Top>
-							<Left>0.393701in</Left>
+							<Top>0.07874in</Top>
+							<Left>0.07874in</Left>
 							<Width>17cm</Width>
 							<Height>4.5431cm</Height>
 							<Style>
@@ -410,8 +410,8 @@
 									<Value>=Parameters!EndDate.Value</Value>
 								</Parameter>
 							</dd:DataSetParameters>
-							<Top>2.260417in</Top>
-							<Left>0.3854167in</Left>
+							<Top>1.968504in</Top>
+							<Left>0.07874in</Left>
 							<Width>17.021cm</Width>
 							<Height>4.5431cm</Height>
 							<Style>
@@ -786,8 +786,8 @@
 									<Value>=Parameters!EndDate.Value</Value>
 								</Parameter>
 							</dd:DataSetParameters>
-							<Top>4.173228in</Top>
-							<Left>0.3869048in</Left>
+							<Top>3.858268in</Top>
+							<Left>0.07291666in</Left>
 							<Width>17.0173cm</Width>
 							<Height>4.5431cm</Height>
 							<Style>
@@ -1162,8 +1162,8 @@
 									<Value>=Parameters!EndDate.Value</Value>
 								</Parameter>
 							</dd:DataSetParameters>
-							<Top>6.141732in</Top>
-							<Left>0.393701in</Left>
+							<Top>5.748031in</Top>
+							<Left>0.07874in</Left>
 							<Width>17cm</Width>
 							<Height>4.5431cm</Height>
 							<Style>
@@ -1538,8 +1538,8 @@
 									<Value>=Parameters!EndDate.Value</Value>
 								</Parameter>
 							</dd:DataSetParameters>
-							<Top>8.188976in</Top>
-							<Left>0.393701in</Left>
+							<Top>7.637795in</Top>
+							<Left>0.07874in</Left>
 							<Width>17cm</Width>
 							<Height>4.5431cm</Height>
 							<Style>
@@ -1914,8 +1914,8 @@
 									<Value>=Parameters!EndDate.Value</Value>
 								</Parameter>
 							</dd:DataSetParameters>
-							<Top>10.2381in</Top>
-							<Left>0.4017857in</Left>
+							<Top>9.527559in</Top>
+							<Left>0.07874in</Left>
 							<Width>16.9795cm</Width>
 							<Height>4.5431cm</Height>
 							<Style>
@@ -2285,20 +2285,21 @@
 				<Type>ContentPlaceHolder</Type>
 				<Top>0.07873984in</Top>
 				<Left>0.393701in</Left>
-				<Width>2.7559in</Width>
-				<Height>0.5in</Height>
+				<Width>5.5118in</Width>
+				<Height>0.3937in</Height>
 				<ZIndex>4</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
 						<Name>Text</Name>
-						<Value>Report Title</Value>
+						<Value>Report Title Section</Value>
 					</CustomProperty>
 				</CustomProperties>
 				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
 					<ReportItems>
 						<Textbox Name="txtTenantStatisticsReport">
-							<Width>2.8346in</Width>
-							<Height>0.5in</Height>
+							<Top>0.08333334in</Top>
+							<Width>2.7559in</Width>
+							<Height>0.315in</Height>
 							<Style>
 								<VerticalAlign>Middle</VerticalAlign>
 								<dd:StyleName>TitleText</dd:StyleName>
@@ -2310,6 +2311,64 @@
 					</ReportItems>
 				</dd:Container>
 				<DataElementName>ContentPlaceHolder2</DataElementName>
+			</CustomReportItem>
+			<CustomReportItem Name="ContentPlaceHolder1">
+				<Type>ContentPlaceHolder</Type>
+				<Top>1.023622in</Top>
+				<Left>0.393701in</Left>
+				<Width>7.95in</Width>
+				<Height>0.5512in</Height>
+				<ZIndex>4</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Search Criteria Section</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
+					<ReportItems>
+						<Textbox Name="TextBox1">
+							<Top>0cm</Top>
+							<Left>1.615082cm</Left>
+							<Width>9.6424cm</Width>
+							<Height>0.6cm</Height>
+							<Style>
+								<FontFamily>Arial</FontFamily>
+								<FontSize>11pt</FontSize>
+								<FontStyle>Normal</FontStyle>
+								<FontWeight>700</FontWeight>
+								<Format>d</Format>
+								<PaddingBottom>2pt</PaddingBottom>
+								<PaddingLeft>2pt</PaddingLeft>
+								<PaddingRight>2pt</PaddingRight>
+								<PaddingTop>2pt</PaddingTop>
+								<TextAlign>Left</TextAlign>
+							</Style>
+							<CanGrow>true</CanGrow>
+							<Value>=Parameters!StartDate.Value &amp; IIF(Parameters!StartDate.Value &lt;&gt; Parameters!EndDate.Value, " - " &amp; Parameters!EndDate.Value, "")</Value>
+						</Textbox>
+						<Textbox Name="TextBox2">
+							<Top>0cm</Top>
+							<Width>1.5497cm</Width>
+							<Height>0.5619cm</Height>
+							<Style>
+								<FontFamily>Arial</FontFamily>
+								<FontSize>11pt</FontSize>
+								<FontStyle>Normal</FontStyle>
+								<FontWeight>400</FontWeight>
+								<PaddingBottom>2pt</PaddingBottom>
+								<PaddingLeft>2pt</PaddingLeft>
+								<PaddingRight>2pt</PaddingRight>
+								<PaddingTop>2pt</PaddingTop>
+								<TextAlign>Left</TextAlign>
+							</Style>
+							<ZIndex>1</ZIndex>
+							<CanGrow>true</CanGrow>
+							<Value>Date:</Value>
+						</Textbox>
+					</ReportItems>
+				</dd:Container>
+				<DataElementName>ContentPlaceHolder3</DataElementName>
 			</CustomReportItem>
 		</ReportItems>
 	</Body>
@@ -2333,18 +2392,6 @@
 					<Value>=Now()</Value>
 				</Values>
 			</DefaultValue>
-		</ReportParameter>
-		<ReportParameter Name="TenantId">
-			<DataType>Integer</DataType>
-			<Nullable>true</Nullable>
-			<Prompt>Tenant</Prompt>
-			<ValidValues>
-				<DataSetReference>
-					<DataSetName>Tenants</DataSetName>
-					<LabelField>TenantName</LabelField>
-					<ValueField>Id</ValueField>
-				</DataSetReference>
-			</ValidValues>
 		</ReportParameter>
 	</ReportParameters>
 	<DataSets>

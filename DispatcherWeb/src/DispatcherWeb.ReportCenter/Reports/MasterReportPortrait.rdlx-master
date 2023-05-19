@@ -5,10 +5,10 @@
 		<ReportItems>
 			<CustomReportItem Name="MainContentPlaceHolder">
 				<Type>ContentPlaceHolder</Type>
-				<Top>0.875in</Top>
+				<Top>1.653543in</Top>
 				<Left>0.393701in</Left>
-				<Width>7.4813in</Width>
-				<Height>13.2195in</Height>
+				<Width>7.9476in</Width>
+				<Height>12.2047in</Height>
 				<ZIndex>3</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
@@ -17,7 +17,7 @@
 					</CustomProperty>
 					<CustomProperty>
 						<Name>Text</Name>
-						<Value>Report</Value>
+						<Value>Report Content Section</Value>
 					</CustomProperty>
 				</CustomProperties>
 				<DataElementName>ContentPlaceHolder1</DataElementName>
@@ -26,20 +26,20 @@
 				<Type>ContentPlaceHolder</Type>
 				<Top>0.07873984in</Top>
 				<Left>0.393701in</Left>
-				<Width>2.7559in</Width>
-				<Height>0.5in</Height>
+				<Width>5.5118in</Width>
+				<Height>0.3937in</Height>
 				<ZIndex>4</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
 						<Name>Text</Name>
-						<Value>Report Title</Value>
+						<Value>Report Title Section</Value>
 					</CustomProperty>
 				</CustomProperties>
 				<DataElementName>ContentPlaceHolder2</DataElementName>
 			</CustomReportItem>
 			<Textbox Name="PrintedOnCaptionTextBox">
-				<Top>0.6299209in</Top>
-				<Left>0.393701in</Left>
+				<Top>0.5354331in</Top>
+				<Left>0.4212601in</Left>
 				<Width>0.6083in</Width>
 				<Height>0.125in</Height>
 				<Style>
@@ -53,8 +53,8 @@
 				<Value>Printed On</Value>
 			</Textbox>
 			<Textbox Name="PrintedOnValueTextBox">
-				<Top>1.6cm</Top>
-				<Left>2.6cm</Left>
+				<Top>1.36cm</Top>
+				<Left>2.67cm</Left>
 				<Width>1in</Width>
 				<Height>0.125in</Height>
 				<Style>
@@ -68,9 +68,9 @@
 				<Value>=Today</Value>
 			</Textbox>
 			<Textbox Name="PageInfo">
-				<Top>36.6cm</Top>
-				<Left>11.6cm</Left>
-				<Width>3.5in</Width>
+				<Top>35.6cm</Top>
+				<Left>12.2cm</Left>
+				<Width>3.5382in</Width>
 				<Height>0.25in</Height>
 				<Style>
 					<TextAlign>Right</TextAlign>
@@ -80,6 +80,63 @@
 				<CanGrow>true</CanGrow>
 				<DataElementName>TextBox1</DataElementName>
 				<Value>="Page " &amp; Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+			</Textbox>
+			<CustomReportItem Name="ContentPlaceHolder1">
+				<Type>ContentPlaceHolder</Type>
+				<Top>1.023622in</Top>
+				<Left>0.393701in</Left>
+				<Width>7.95in</Width>
+				<Height>0.5512in</Height>
+				<ZIndex>4</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Search Criteria Section</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<DataElementName>ContentPlaceHolder3</DataElementName>
+			</CustomReportItem>
+			<Textbox Name="txtTenant">
+				<Top>2cm</Top>
+				<Left>2.6cm</Left>
+				<Width>12.4019cm</Width>
+				<Height>0.5991cm</Height>
+				<Style>
+					<FontFamily>Arial</FontFamily>
+					<FontSize>11pt</FontSize>
+					<FontStyle>Normal</FontStyle>
+					<FontWeight>700</FontWeight>
+					<Format>d</Format>
+					<PaddingBottom>2pt</PaddingBottom>
+					<PaddingLeft>2pt</PaddingLeft>
+					<PaddingRight>2pt</PaddingRight>
+					<PaddingTop>2pt</PaddingTop>
+					<TextAlign>Left</TextAlign>
+					<VerticalAlign>Middle</VerticalAlign>
+				</Style>
+				<CanGrow>true</CanGrow>
+				<DataElementName>TextBox4</DataElementName>
+				<Value>=IIF(Parameters!TenantId.Value=NULL, "ALL", "(" &amp; Parameters!TenantId.Value &amp; ") " &amp; Parameters!TenantId.Label)</Value>
+			</Textbox>
+			<Textbox Name="lblTenant">
+				<Top>0.787402in</Top>
+				<Left>0.393701in</Left>
+				<Width>0.6051in</Width>
+				<Height>0.2362in</Height>
+				<Style>
+					<FontFamily>Arial</FontFamily>
+					<FontSize>11pt</FontSize>
+					<FontStyle>Normal</FontStyle>
+					<FontWeight>400</FontWeight>
+					<Format>d</Format>
+					<TextAlign>Left</TextAlign>
+					<VerticalAlign>Middle</VerticalAlign>
+					<dd:StyleName xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">GeneralText</dd:StyleName>
+				</Style>
+				<ZIndex>5</ZIndex>
+				<CanGrow>true</CanGrow>
+				<DataElementName>TextBox3</DataElementName>
+				<Value>Tenant</Value>
 			</Textbox>
 		</ReportItems>
 	</Body>
@@ -92,7 +149,25 @@
 	<PageHeight>35.6cm</PageHeight>
 	<PageWidth>21.6cm</PageWidth>
 	<TopMargin>0.125in</TopMargin>
-	<Width>8.346457in</Width>
+	<Width>22.3788cm</Width>
+	<ReportParameters>
+		<ReportParameter Name="TenantId">
+			<DataType>String</DataType>
+			<Nullable>true</Nullable>
+			<Prompt>Tenant</Prompt>
+			<ValidValues>
+				<DataSetReference>
+					<DataSetName>Tenants</DataSetName>
+					<LabelField>TenantName</LabelField>
+					<ValueField>Id</ValueField>
+				</DataSetReference>
+				<dd:OrderBy xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
+					<Condition>Label</Condition>
+					<Direction>Ascending</Direction>
+				</dd:OrderBy>
+			</ValidValues>
+		</ReportParameter>
+	</ReportParameters>
 	<dd:EmbeddedStyleSheets xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
 		<EmbeddedStyleSheet Name="MainStylesheet">
 			<Data>﻿&lt;dd:StyleSheet xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition"&gt;
