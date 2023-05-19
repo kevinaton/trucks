@@ -1388,6 +1388,7 @@ namespace DispatcherWeb.Orders
             var order = await _orderRepository.GetAll()
                 .AsNoTracking()
                 .Include(x => x.OrderLines)
+                    .ThenInclude(x => x.OrderLineVehicleCategories)
                 .Include(x => x.SharedOrders)
                 .FirstAsync(x => x.Id == input.OrderId);
 
@@ -1416,40 +1417,53 @@ namespace DispatcherWeb.Orders
                     newOrderLines = order.OrderLines
                         .WhereIf(input.OrderLineId.HasValue, ol => ol.Id == input.OrderLineId)
                         .WhereIf(!allowCopyZeroQuantity && !input.OrderLineId.HasValue, ol => ol.MaterialQuantity > 0 || ol.FreightQuantity > 0 || ol.NumberOfTrucks > 0)
-                        .Select(x => new OrderLine
+                        .Select(x =>
                         {
-                            LineNumber = copySingleOrderLine ? 1 : x.LineNumber,
-                            QuoteServiceId = x.QuoteServiceId,
-                            MaterialQuantity = x.MaterialQuantity,
-                            FreightQuantity = x.FreightQuantity,
-                            NumberOfTrucks = x.NumberOfTrucks,
-                            ScheduledTrucks = input.CopyTrucks ? x.ScheduledTrucks : null,
-                            MaterialPricePerUnit = x.MaterialPricePerUnit,
-                            FreightPricePerUnit = x.FreightPricePerUnit,
-                            IsMaterialPricePerUnitOverridden = x.IsMaterialPricePerUnitOverridden,
-                            IsFreightPricePerUnitOverridden = x.IsFreightPricePerUnitOverridden,
-                            ServiceId = x.ServiceId,
-                            LoadAtId = x.LoadAtId,
-                            DeliverToId = x.DeliverToId,
-                            FreightUomId = x.FreightUomId,
-                            MaterialUomId = x.MaterialUomId,
-                            Designation = x.Designation,
-                            MaterialPrice = x.MaterialPrice,
-                            FreightPrice = x.FreightPrice,
-                            IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
-                            IsFreightPriceOverridden = x.IsFreightPriceOverridden,
-                            LeaseHaulerRate = x.LeaseHaulerRate,
-                            FreightRateToPayDrivers = x.FreightRateToPayDrivers,
-                            TimeOnJob = x.TimeOnJob == null ? null : (currentDate.Date.Add(x.TimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
-                            FirstStaggeredTimeOnJob = x.FirstStaggeredTimeOnJob == null ? null : (currentDate.Date.Add(x.FirstStaggeredTimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
-                            StaggeredTimeKind = x.StaggeredTimeKind,
-                            StaggeredTimeInterval = x.StaggeredTimeInterval,
-                            JobNumber = x.JobNumber,
-                            Note = x.Note,
-                            IsMultipleLoads = x.IsMultipleLoads,
-                            ProductionPay = allowProductionPay && x.ProductionPay,
-                            Order = newOrder,
+                            var newOrderLine = new OrderLine
+                            {
+                                LineNumber = copySingleOrderLine ? 1 : x.LineNumber,
+                                QuoteServiceId = x.QuoteServiceId,
+                                MaterialQuantity = x.MaterialQuantity,
+                                FreightQuantity = x.FreightQuantity,
+                                NumberOfTrucks = x.NumberOfTrucks,
+                                ScheduledTrucks = input.CopyTrucks ? x.ScheduledTrucks : null,
+                                MaterialPricePerUnit = x.MaterialPricePerUnit,
+                                FreightPricePerUnit = x.FreightPricePerUnit,
+                                IsMaterialPricePerUnitOverridden = x.IsMaterialPricePerUnitOverridden,
+                                IsFreightPricePerUnitOverridden = x.IsFreightPricePerUnitOverridden,
+                                ServiceId = x.ServiceId,
+                                LoadAtId = x.LoadAtId,
+                                DeliverToId = x.DeliverToId,
+                                FreightUomId = x.FreightUomId,
+                                MaterialUomId = x.MaterialUomId,
+                                Designation = x.Designation,
+                                MaterialPrice = x.MaterialPrice,
+                                FreightPrice = x.FreightPrice,
+                                IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
+                                IsFreightPriceOverridden = x.IsFreightPriceOverridden,
+                                LeaseHaulerRate = x.LeaseHaulerRate,
+                                FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                                TimeOnJob = x.TimeOnJob == null ? null : (currentDate.Date.Add(x.TimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
+                                FirstStaggeredTimeOnJob = x.FirstStaggeredTimeOnJob == null ? null : (currentDate.Date.Add(x.FirstStaggeredTimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
+                                StaggeredTimeKind = x.StaggeredTimeKind,
+                                StaggeredTimeInterval = x.StaggeredTimeInterval,
+                                JobNumber = x.JobNumber,
+                                Note = x.Note,
+                                IsMultipleLoads = x.IsMultipleLoads,
+                                ProductionPay = allowProductionPay && x.ProductionPay,
+                                Order = newOrder
+                            };
+                            foreach (var vehicleCategory in x.OrderLineVehicleCategories)
+                            {
+                                newOrderLine.OrderLineVehicleCategories.Add(new OrderLineVehicleCategory
+                                {
+                                    OrderLine = newOrderLine,
+                                    VehicleCategoryId = vehicleCategory.VehicleCategoryId
+                                });
+                            }
+                            return newOrderLine;
                         }).ToList();
+
 
                     foreach (var newOrderLine in newOrderLines)
                     {

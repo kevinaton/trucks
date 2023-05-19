@@ -714,6 +714,7 @@ namespace DispatcherWeb.Quotes
             var quote = await _quoteRepository.GetAll()
                 .AsNoTracking()
                 .Include(x => x.QuoteServices)
+                    .ThenInclude(x => x.QuoteServiceVehicleCategories)
                 .FirstAsync(x => x.Id == input.Id);
 
             var today = await GetToday();
@@ -743,23 +744,35 @@ namespace DispatcherWeb.Quotes
                 newQuote.ChargeTo = quote.ChargeTo;
             }
 
-            quote.QuoteServices.Select(s => new QuoteService
+            quote.QuoteServices.Select(s =>
             {
-                LoadAtId = s.LoadAtId,
-                DeliverToId = s.DeliverToId,
-                ServiceId = s.ServiceId,
-                MaterialUomId = s.MaterialUomId,
-                FreightUomId = s.FreightUomId,
-                Designation = s.Designation,
-                PricePerUnit = s.PricePerUnit,
-                FreightRate = s.FreightRate,
-                LeaseHaulerRate = s.LeaseHaulerRate,
-                FreightRateToPayDrivers = s.FreightRateToPayDrivers,
-                MaterialQuantity = s.MaterialQuantity,
-                FreightQuantity = s.FreightQuantity,
-                JobNumber = s.JobNumber,
-                Note = s.Note,
-                Quote = newQuote
+                var newQuoteService = new QuoteService
+                {
+                    LoadAtId = s.LoadAtId,
+                    DeliverToId = s.DeliverToId,
+                    ServiceId = s.ServiceId,
+                    MaterialUomId = s.MaterialUomId,
+                    FreightUomId = s.FreightUomId,
+                    Designation = s.Designation,
+                    PricePerUnit = s.PricePerUnit,
+                    FreightRate = s.FreightRate,
+                    LeaseHaulerRate = s.LeaseHaulerRate,
+                    FreightRateToPayDrivers = s.FreightRateToPayDrivers,
+                    MaterialQuantity = s.MaterialQuantity,
+                    FreightQuantity = s.FreightQuantity,
+                    JobNumber = s.JobNumber,
+                    Note = s.Note,
+                    Quote = newQuote
+                };
+                foreach (var vehicleCategory in s.QuoteServiceVehicleCategories)
+                {
+                    newQuoteService.QuoteServiceVehicleCategories.Add(new QuoteServiceVehicleCategory
+                    {
+                        QuoteService = newQuoteService,
+                        VehicleCategoryId = vehicleCategory.VehicleCategoryId
+                    });
+                }
+                return newQuoteService;
             }).ToList().ForEach(x =>
             {
                 _quoteServiceRepository.Insert(x);
