@@ -170,7 +170,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             AppPageNames.Tenant.Schedule,
                             L("Schedule"),
                             customData: new MenuItemCustomData { Id = "ScheduleNavbarItem" },
-                            url: "dispatching/schedule",
+                            url: "app/redir?route=/dispatching/schedule",
                             icon: "fa fa-calendar",
                             permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Schedule)
                         )
@@ -188,7 +188,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             AppPageNames.Tenant.TruckDispatchList,
                             L("TruckDispatchList"),
                             customData: new MenuItemCustomData { Id = "TruckDispatchListNavbarItem" },
-                            url: "/",
+                            url: "app/redir?route=/dispatching/dispatches/truck-list",
                             icon: "fa fa-calendar-check",
                             permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Dispatches),
                             featureDependency: new DispatchSettingFeatureDependency()
