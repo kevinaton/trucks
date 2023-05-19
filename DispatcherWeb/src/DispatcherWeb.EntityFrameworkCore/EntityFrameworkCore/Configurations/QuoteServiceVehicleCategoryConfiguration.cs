@@ -10,7 +10,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
         {
             builder
                 .HasOne(e => e.QuoteService)
-                .WithMany()
+                .WithMany(e => e.QuoteServiceVehicleCategories)
                 .HasForeignKey(e => e.QuoteServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
             
