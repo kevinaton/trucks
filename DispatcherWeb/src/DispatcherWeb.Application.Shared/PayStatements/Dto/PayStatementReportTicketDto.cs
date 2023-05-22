@@ -23,5 +23,7 @@ namespace DispatcherWeb.PayStatements.Dto
         public int TimeClassificationId { get; set; }
         public string TimeClassificationName { get; set; }
         public bool IsProductionPay { get; set; }
+        public DriverIsPaidForLoadBasedOnEnum DriverIsPaidForLoadBasedOn { get; set; }
+        public DateTime? OrderDeliveryDate { get; set; }
     }
 }
