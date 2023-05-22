@@ -665,6 +665,12 @@ div#ByCategory .m-accordion__item-head {
     background-color: #337ab7;
 }
 
+.schedule-truck-tiles .truck-tile.white {
+    background-color: #fff;
+    color: var(--unavailable);
+    border: 1px solid var(--unavailable);
+}
+
 /*.schedule-table*/ .truck-tag {
     display: inline-block;
     padding: 2px 3px;
