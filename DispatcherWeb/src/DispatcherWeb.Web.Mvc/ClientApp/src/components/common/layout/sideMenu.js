@@ -125,9 +125,10 @@ export const SideMenu = ({
             <List sx={{ p: 0 }}>
                 {sideMenus.map((menu, index) => {
                     const isSubMenuOpen = menu.items.length > 0 && collapseOpen[menu.displayName]
+                    const isMvc = menu.url && !menu.url.startsWith('/app/redir?') ? true : false
                     return (
                         <ListItem
-                            component={menu.url ? Link : "div"}
+                            component={menu.url && !isMvc ? Link : "div"}
                             to={menu.url ? menu.url : {}}
                             key={menu.displayName}
                             disablePadding
@@ -154,7 +155,10 @@ export const SideMenu = ({
                                 onClick={
                                     menu.items.length > 0
                                     ? () => handleCollapseOpen(menu)
-                                    : (event) => handleListItemButton(event.target.textContent)
+                                    : (event) => {
+                                        if (isMvc) window.location.href = `${window.location.origin}/${menu.url}`
+                                        handleListItemButton(event.target.textContent)
+                                    }
                                 }
                             >
                                 <ListItemIcon
@@ -205,9 +209,11 @@ export const SideMenu = ({
                             <Collapse in={isSubMenuOpen} unmountOnExit>
                                 <List>
                                     {menu.items.map((sub) => {
+                                        const isSubMvc = !sub.url.startsWith('/app/redir?') ? true : false
+
                                         return (
                                             <ListItem
-                                                component={Link}
+                                                component={!isSubMvc ? Link : "div"}
                                                 key={sub.displayName}
                                                 to={sub.url}
                                                 disablePadding
@@ -216,9 +222,12 @@ export const SideMenu = ({
                                                     textDecoration: "none",
                                                     color: "#212121"
                                                 }}
-                                                onClick={(event) =>
+                                                onClick={(event) => {
+                                                    if (isSubMvc)
+                                                        window.location.href = `${window.location.origin}/${sub.url}`
+                                                    
                                                     handleListItemButton(event.target.textContent)
-                                                }
+                                                }}
                                             >
                                                 <Tooltip
                                                     title={sub.displayName}
