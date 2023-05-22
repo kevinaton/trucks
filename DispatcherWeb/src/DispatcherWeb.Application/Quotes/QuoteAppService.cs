@@ -767,8 +767,7 @@ namespace DispatcherWeb.Quotes
 
         [AbpAuthorize(
             AppPermissions.Pages_Quotes_Edit,
-            AppPermissions.Pages_Orders_Edit,
-            AppPermissions.Pages_Projects,
+            AppPermissions.Pages_Orders_View,
             RequireAllPermissions = true
         )]
         public async Task<int> CreateQuoteFromOrder(CreateQuoteFromOrderInput input)
@@ -920,7 +919,7 @@ namespace DispatcherWeb.Quotes
             await _quoteRepository.DeleteAsync(input.Id);
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Projects)]
+        [AbpAuthorize(AppPermissions.Pages_Quotes_Edit)]
         public async Task InactivateQuote(EntityDto input)
         {
             var quote = await _quoteRepository.GetAsync(input.Id);
