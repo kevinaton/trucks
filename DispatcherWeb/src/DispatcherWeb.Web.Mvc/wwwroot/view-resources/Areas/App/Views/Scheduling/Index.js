@@ -79,12 +79,6 @@
             modalClass: 'CopyOrderModal'
         });
 
-        var _createQuoteFromOrderModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Orders/CreateQuoteFromOrderModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateQuoteFromOrderModal.js',
-            modalClass: 'CreateQuoteFromOrderModal'
-        });
-
         var _shareOrderLineModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Orders/ShareOrderLineModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_ShareOrderLineModal.js',
