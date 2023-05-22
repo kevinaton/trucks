@@ -400,10 +400,12 @@ namespace DispatcherWeb.Configuration.Tenants
         {
             var settings = new QuoteSettingsEditDto();
             settings.PromptForDisplayingQuarryInfoOnQuotes = await SettingManager.GetSettingValueAsync<bool>(AppSettings.Quote.PromptForDisplayingQuarryInfoOnQuotes);
+            settings.QuoteDefaultNote = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes);
             settings.QuoteEmailSubjectTemplate = await SettingManager.GetSettingValueAsync(AppSettings.Quote.EmailSubjectTemplate);
             settings.QuoteEmailBodyTemplate = await SettingManager.GetSettingValueAsync(AppSettings.Quote.EmailBodyTemplate);
             settings.QuoteChangedNotificationEmailSubjectTemplate = await SettingManager.GetSettingValueAsync(AppSettings.Quote.ChangedNotificationEmail.SubjectTemplate);
             settings.QuoteChangedNotificationEmailBodyTemplate = await SettingManager.GetSettingValueAsync(AppSettings.Quote.ChangedNotificationEmail.BodyTemplate);
+            settings.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
             return settings;
         }
 
@@ -813,11 +815,13 @@ namespace DispatcherWeb.Configuration.Tenants
                 await UpdateLeaseHaulerSettingsAsync(input.LeaseHaulers);
             }
 
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Quote.DefaultNotes, input.Quote.QuoteDefaultNote);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Quote.EmailSubjectTemplate, input.Quote.QuoteEmailSubjectTemplate);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Quote.EmailBodyTemplate, input.Quote.QuoteEmailBodyTemplate);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Quote.ChangedNotificationEmail.SubjectTemplate, input.Quote.QuoteChangedNotificationEmailSubjectTemplate);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Quote.ChangedNotificationEmail.BodyTemplate, input.Quote.QuoteChangedNotificationEmailBodyTemplate);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Quote.PromptForDisplayingQuarryInfoOnQuotes, input.Quote.PromptForDisplayingQuarryInfoOnQuotes.ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Quote.GeneralTermsAndConditions, input.Quote.QuoteGeneralTermsAndConditions);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Order.EmailSubjectTemplate, input.General.OrderEmailSubjectTemplate);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Order.EmailBodyTemplate, input.General.OrderEmailBodyTemplate);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Receipt.EmailSubjectTemplate, input.General.ReceiptEmailSubjectTemplate);
