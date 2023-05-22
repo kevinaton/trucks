@@ -548,6 +548,7 @@
                 if (truck.utilization > 0) {
                     return "yellow";
                 }
+                return "green";
             } else {
                 if (truck.utilization > 1) {
                     return "red";
@@ -555,8 +556,11 @@
                 if (truck.utilization === 1) {
                     return "yellow";
                 }
+                if (truck.utilization > 0) {
+                    return "green";
+                }
+                return "white";
             }
-            return "green";
         }
 
         function truckCategoryNeedsDriver(truck) {
