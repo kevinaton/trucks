@@ -2000,7 +2000,9 @@ namespace DispatcherWeb.Scheduling
                 IsPowered = orderLineTruck.IsPowered,
                 TruckUtilization = truckUtilization,
             });
-            var maxUtilization = Math.Min(1, currentTruckUtilization + remainingTruckUtilization);
+            var maxUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization)
+                ? Math.Min(1, currentTruckUtilization + remainingTruckUtilization)
+                : 1;
             return new OrderLineTruckDetailsDto
             {
                 OrderLineTruckId = input.Id,
