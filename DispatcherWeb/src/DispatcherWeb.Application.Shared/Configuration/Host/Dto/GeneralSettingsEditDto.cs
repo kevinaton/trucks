@@ -40,5 +40,6 @@ namespace DispatcherWeb.Configuration.Host.Dto
         public string ShiftName3 { get; set; }
         public string NotificationsEmail { get; set; }
         public string SupportLinkAddress { get; set; }
+        public DriverAppImageResolutionEnum DriverAppImageResolution { get; set; }
     }
 }

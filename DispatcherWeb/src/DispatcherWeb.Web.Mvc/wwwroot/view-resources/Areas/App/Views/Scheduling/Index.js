@@ -1776,7 +1776,7 @@
             preDrawCallback: function (settings) {
                 // check if filter includes current day or futures dates
                 if (!isPastDate()) {
-                    scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "<span>There are no jobs for this date.</span><br /><button id='#howToAddaJob' class='btn btn-primary btn-sm mt-2'>Click here to see how to add a job</button>";
+                    //scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "<span>There are no jobs for this date.</span><br /><button type='button' id='howToAddaJob' class='btn btn-primary btn-sm mt-2'>Click here to see how to add a job</button>";
                 } else {
                     scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "No data available in table";
                 }
@@ -2042,6 +2042,11 @@
             position.x += $(window).scrollLeft();
             position.y += $(window).scrollTop();
             button.contextMenu({ x: position.x, y: position.y });
+        });
+
+        scheduleTable.on('click', '#howToAddaJob', function (e) {
+            e.preventDefault();
+            userGuiding.previewGuide(86432);
         });
 
         $("#TruckTilesNoTrucksMessage").click(function (e) {

@@ -87,8 +87,12 @@ namespace DispatcherWeb.Quotes
             paragraph.AddText(model.QuoteProposalExpiryDate?.ToShortDateString() ?? "");
 
             paragraph = document.LastSection.AddParagraph();
-            paragraph = document.LastSection.AddParagraph("Project: ");
-            paragraph.AddText(model.ProjectName ?? "");
+            paragraph = document.LastSection.AddParagraph();
+            if (model.ShowProject)
+            {
+                paragraph.AddText("Project: ");
+                paragraph.AddText(model.ProjectName ?? "");
+            }
             paragraph.Format.AddTabStop(Unit.FromCentimeter(10));
             paragraph.AddTab();
             paragraph.AddText("Salesperson:");

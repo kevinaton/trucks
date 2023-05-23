@@ -2,6 +2,7 @@
     app.modals.CreateOrEditQuoteModal = function () {
         let _modalManager;
         let _quoteService = abp.services.app.quote;
+        var _quoteHistoryService = abp.services.app.quoteHistory;
         let _quoteId = null;
         let _dtHelper = abp.helper.dataTables;
         let _permissions = {
@@ -45,10 +46,36 @@
                 modalClass: 'CreateOrEditCustomerContactModal'
             });
 
+            const _emailQuoteReportModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/Quotes/EmailQuoteReportModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_EmailQuoteReportModal.js',
+                modalClass: 'EmailQuoteReportModal'
+            });
+
+            const _createOrEditProjectModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/Projects/CreateOrEditProjectModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Projects/_CreateOrEditProjectModal.js',
+                modalClass: 'CreateOrEditProjectModal'
+            });
+
             const _viewQuoteDeliveriesModal = new app.ModalManager({
                 viewUrl: abp.appPath + 'app/Quotes/ViewQuoteDeliveriesModal',
                 scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_ViewQuoteDeliveriesModal.js',
                 modalClass: 'ViewQuoteDeliveriesModal',
+                modalSize: 'lg'
+            });
+
+            const _createOrEditQuoteModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
+                modalClass: 'CreateOrEditQuoteModal',
+                modalSize: 'xl'
+            });
+
+            const _viewQuoteHistoryModal = new app.ModalManager({
+                viewUrl: abp.appPath + 'app/QuoteHistory/ViewQuoteHistoryModal',
+                scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/QuoteHistory/_ViewQuoteHistoryModal.js',
+                modalClass: 'ViewQuoteHistoryModal',
                 modalSize: 'lg'
             });
 
@@ -57,7 +84,7 @@
 
             abp.helper.ui.initControls();
 
-            _$projectInput = _$form.find('#ProjectName');
+            _$projectInput = _$form.find('#QuoteProjectId');
             _$quoteIdInput = _$form.find('#Id');
             _$nameInput = _$form.find('#Name');
             _$customerInput = _$form.find('#QuoteCustomer');
@@ -70,10 +97,39 @@
             _$statusInput = _$form.find('#Status');
             _$contactIdInput = _$form.find('#ContactId');
 
+            function isNewOrChangedQuote() {
+                return _quoteId === '' || _$form.find("#QuoteForm").dirtyForms('isDirty');
+            }
+
+            if (!_permissions.edit) {
+                _modalManager.getModal().find(".save-quote-button").hide();
+                _$form.find("#CopyQuoteButton").hide();
+                _$form.find("#DeleteSelectedQuoteServicesButton").hide();
+
+                if (!_permissions.createItems) {
+                    _$form.find("#CreateNewQuoteServiceButton").hide();
+                }
+            }
+
             _$proposalDateInput.datepickerInit();
             _$proposalExpiryDateInput.datepickerInit();
             _$inactivationDateInput.datepickerInit({
                 useCurrent: false
+            });
+
+            _$projectInput.select2Init({
+                abpServiceMethod: abp.services.app.project.getActiveOrPendingProjectsSelectList,
+                showAll: false,
+                allowClear: true,
+                addItemCallback: async function (newItemName) {
+                    let result = await app.getModalResultAsync(
+                        _createOrEditProjectModal.open({ name: newItemName })
+                    );
+                    return {
+                        id: result.id,
+                        name: result.name
+                    };
+                }
             });
 
             _$quoteSalesPersonIdInput.select2Init({
@@ -153,6 +209,28 @@
                     var now = moment(new Date());
                     _$inactivationDateInput.val(moment(now).format('MM/DD/YYYY'));
                 }
+            });
+
+            _$form.find("#GoToProjectButton").click(async function (e) {
+                e.preventDefault();
+                let projectId = _$projectInput.val();
+                if (!projectId) {
+                    return;
+                }
+                let result = await app.getModalResultAsync(
+                    _createOrEditProjectModal.open({ id: projectId })
+                );
+                if (result.name != _$projectInput.getSelectedDropdownOption().text()) {
+                    _$projectInput.val(null).change();
+                    _$projectInput.removeUnselectedOptions();
+                    abp.helper.ui.addAndSetDropdownValue(_$projectInput, result.id, result.name);
+                }
+            });
+
+            _$projectInput.change(function () {
+                let projectId = _$projectInput.val();
+                _$form.find("#projectRelatedButtons").toggle(!!projectId);
+                _$form.find("#noProjectButtons").toggle(!projectId);
             });
 
             _$quoteFuelSurchargeCalculationIdInput.change(function () {
@@ -314,6 +392,7 @@
                 if (_quoteId === "") {
                     saveQuoteAsync(function () {
                         reloadQuoteServicesGrid();
+                        reloadQuoteHistoryGrid();
                         _createOrEditQuoteServiceModal.open({ quoteId: _quoteId });
                     });
                 } else {
@@ -328,8 +407,9 @@
                 });
             });
 
-            abp.event.on('app.createOrEditQuoteServiceModalSaved', function () {
+            _modalManager.on('app.createOrEditQuoteServiceModalSaved', function () {
                 reloadQuoteServicesGrid();
+                reloadQuoteHistoryGrid();
             });
 
             quoteServicesTable.on('click', '.btnEditRow', function (e) {
@@ -358,6 +438,117 @@
                     quoteServiceId: row.id,
                     quotedMaterialQuantity: row.materialQuantity || 0,
                     quotedFreightQuantity: row.freightQuantity || 0
+                });
+            });
+
+            abp.helper.ui.initCannedTextLists();
+            var quoteHistoryTable = _$form.find('#QuoteHistoryTable');
+            var quoteHistoryGrid = quoteHistoryTable.DataTableInit({
+                ajax: function (data, callback, settings) {
+                    if (_quoteId === '') {
+                        callback(_dtHelper.getEmptyResult());
+                        return;
+                    }
+                    var abpData = _dtHelper.toAbpData(data);
+                    $.extend(abpData, { quoteId: _quoteId });
+                    _quoteHistoryService.getQuoteHistory(abpData).done(function (abpResult) {
+                        callback(_dtHelper.fromAbpResult(abpResult));
+                    });
+                },
+                columns: [
+                    {
+                        width: '20px',
+                        className: 'control responsive',
+                        orderable: false,
+                        render: function () {
+                            return '';
+                        },
+                    },
+                    {
+                        data: "dateTime",
+                        render: function (data, type, full, meta) { return _dtHelper.renderUtcDateTime(full.dateTime); },
+                        title: "When changed"
+                    },
+                    {
+                        data: "changedByUserName",
+                        render: function (data, type, full, meta) { return _dtHelper.renderText(full.changedByUserName); },
+                        title: "Changed by"
+                    },
+                    {
+                        data: "changeType",
+                        render: function (data, type, full, meta) { return _dtHelper.renderText(full.changeTypeName); },
+                        title: "Type of change"
+                    },
+                    {
+                        data: null,
+                        orderable: false,
+                        name: "Actions",
+                        width: "10px",
+                        responsivePriority: 1,
+                        className: "actions",
+                        defaultContent: '<div class="dropdown action-button">'
+                            + '<ul class="dropdown-menu dropdown-menu-right">'
+                            + '<li><a class="btnShowHistoryDetails"><i class="fa fa-edit"></i> Details</a></li>'
+                            + '</ul>'
+                            + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
+                            + '</div>'
+                    }
+                ],
+                order: [[1, "desc"]]
+
+            });
+
+            var reloadQuoteHistoryGrid = function () {
+                quoteHistoryGrid.ajax.reload();
+            };
+
+            quoteHistoryTable.on('click', '.btnShowHistoryDetails', function (e) {
+                e.preventDefault();
+                var quoteHistoryId = _dtHelper.getRowData(this).id;
+                _viewQuoteHistoryModal.open({
+                    id: quoteHistoryId,
+                    hideGoToQuoteButton: true
+                });
+            });
+
+            _$form.find("#CopyQuoteButton").click(function (e) {
+                e.preventDefault();
+                saveQuoteAsync(function () {
+                    abp.ui.setBusy();
+                    _quoteService.copyQuote({
+                        id: _quoteId
+                    }).done(function (result) {
+                        _modalManager.close();
+                        abp.ui.clearBusy();
+                        _createOrEditQuoteModal.open({ id: result });
+                    });
+                });
+            });
+
+            function openReport() {
+                abp.helper.promptForHideLoadAtOnQuote().then(function (hideLoadAt) {
+                    window.open(abp.appPath + 'app/quotes/getreport?quoteId=' + _quoteId + '&hideLoadAt=' + hideLoadAt);
+                });
+            }
+
+            _$form.find("#PrintQuoteButton").click(function (e) {
+                e.preventDefault();
+                if (isNewOrChangedQuote() || _$baseFuelCostInput.val() === '') { //force the user to enter the 'base fuel cost' value before allowing to print the quote
+                    saveQuoteAsync(function () {
+                        //popup is being blocked in async
+                        abp.message.success("Quote was saved", "").done(function () {
+                            openReport();
+                        });
+                    });
+                } else {
+                    openReport();
+                }
+            });
+
+            _$form.find("#EmailQuoteButton").click(function (e) {
+                e.preventDefault();
+                saveQuoteAsync(function () {
+                    _emailQuoteReportModal.open({ id: _quoteId });
                 });
             });
         }

@@ -61,7 +61,7 @@
                 allowClear: false
             });
 
-            _$statusForm.find("#LicenseExpirationDate, #LastPhysicalDate, #NextPhysicalDueDate, #LastMvrDate, #NextMvrDueDate, #DateOfHire").datepickerInit();
+            _$statusForm.find("#LicenseExpirationDate, #LastPhysicalDate, #NextPhysicalDueDate, #LastMvrDate, #NextMvrDueDate, #DateOfHire, #TerminationDate").datepickerInit();
 
             _$generalForm.find('#OrderNotifyPreferredFormat').change(function () {
                 setRequiredAttributesAccordingToPreferredFormat();

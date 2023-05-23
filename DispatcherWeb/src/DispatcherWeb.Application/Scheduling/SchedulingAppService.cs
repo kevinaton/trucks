@@ -193,7 +193,10 @@ namespace DispatcherWeb.Scheduling
                 trucks.RemoveAll(x => x.Utilization >= 1 && x.VehicleCategory.IsPowered);
             }
 
-            trucks.RemoveAll(x => x.HasNoDriver || !x.HasDefaultDriver && !x.HasDriverAssignment && (!x.IsExternal || x.DriverId == null));
+            if (!await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers))
+            {
+                trucks.RemoveAll(x => x.HasNoDriver || !x.HasDefaultDriver && !x.HasDriverAssignment && (!x.IsExternal || x.DriverId == null));
+            }
 
             var assignedTruckIds = await _orderLineTruckRepository.GetAll()
                 .Where(x => x.OrderLineId == input.OrderLineId)
@@ -206,7 +209,9 @@ namespace DispatcherWeb.Scheduling
             {
                 Id = x.Id,
                 TruckCode = x.TruckCode,
+                LeaseHaulerId = x.LeaseHaulerId,
                 BedConstruction = x.BedConstruction,
+                DriverId = x.DriverId,
                 DriverName = x.DriverName,
                 IsApportioned = x.IsApportioned,
             })

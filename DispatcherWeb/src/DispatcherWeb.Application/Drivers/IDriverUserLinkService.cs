@@ -14,5 +14,6 @@ namespace DispatcherWeb.Drivers
         Task EnsureCanDeleteUser(User user);
         Task EnsureCanUnlinkAsync(Driver driver);
         Task<List<EmployeeTimeClassificationEditDto>> GetDefaultTimeClassifications();
+        Task<List<DriverCompanyDto>> GetCompanyListForUserDrivers(GetCompanyListForUserDriversInput input);
     }
 }
