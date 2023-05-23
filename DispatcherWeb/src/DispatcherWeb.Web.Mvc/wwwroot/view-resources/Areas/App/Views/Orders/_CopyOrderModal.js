@@ -102,7 +102,7 @@
                         if (await abp.message.confirmWithOptions({
                             text: 'Truck' + s + ' ' + conflictingTrucks + ' ' + is + ' already scheduled on an order and can’t be copied. Do you want to continue with copying the remaining trucks?',
                             title: ' ',
-                            cancelButtonText: 'No'
+                            buttons: ['No', 'Yes']
                         })) {
                             _modalManager.setBusy(true);
                             copyOrderTrucksInput.proceedOnConflict = true;
