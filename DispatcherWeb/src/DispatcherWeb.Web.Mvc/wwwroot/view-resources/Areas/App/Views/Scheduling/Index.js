@@ -424,7 +424,7 @@
                     || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)) {
                 return false;
             }
-            if (_settings.validateUtilization && order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id || olt.driverId === driverId))) {
+            if (order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id && olt.driverId === driverId))) {
                 return false;
             }
 
