@@ -8,7 +8,6 @@ import Drivers from '../pages/Drivers'
 import Locations from '../pages/Locations'
 import Schedule from '../pages/Schedule'
 import TruckDispatchList from '../pages/TruckDispatchList'
-import Trucks from '../pages/Trucks'
   
 export const RouterConfig = ({
     handleCurrentPageName
@@ -25,7 +24,6 @@ export const RouterConfig = ({
         { path: "/drivers", component: Drivers },
         { path: "/locations", component: Locations },
         { path: "/dispatching/schedule", component: Schedule },
-        { path: "/app/trucks", component: Trucks },
         { path: "/dispatching/dispatches/truck-list", component: TruckDispatchList }
     ]
 
