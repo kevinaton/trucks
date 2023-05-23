@@ -1,355 +1,386 @@
 {
-    "dispatches": [
-        {
-            "id": "001",
-            "start": "2023-03-15T05:00:00",
-            "end": "2023-03-15T15:00:00",
-            "customer": "ABC Incorporated",
-            "status": "Delivered today at 7:04 am",
-            "loadat": "ABC Quarry Site, County Rd #C, Monticello, Wisconsin(WI), 53570",
-            "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, Georgia(GA), 30281",
-            "item": "#1 Stone",
-            "runUntilStopped": true,
-            "resource": 1
-        },
-        {
-            "id": "002",
-            "start": "2023-03-15T05:05:00",
-            "end": "2023-03-15T15:05:00",
-            "customer": "XYZ Distribution Company",
-            "status": "Acknowledged yesterday at 7:04 pm",
-            "loadat": "ABC Quarry Site, County Rd #C, Monticello, GA, 30270",
-            "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
-            "item": "#1 Stone",
-            "runUntilStopped": true,
-            "resource": 2
-        },
-        {
-            "id": "003",
-            "start": "2023-03-15T05:10:00",
-            "end": "2023-03-15T15:10:00",
-            "customer": "GHS Manufacturing Inc.",
-            "status": "Loaded today at 05:30am",
-            "loadat": "ABC Quarry Site, County Rd #C, Monticello, GA, 30270",
-            "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
-            "item": "#1 Stone",
-            "runUntilStopped": true,
-            "resource": 3
-        },
-        {
-            "id": "004",
-            "start": "2023-03-15T05:00:00",
-            "end": "2023-03-15T15:00:00",
-            "customer": "XYZ Distribution Company",
-            "status": "Loaded today at 09:21am",
-            "loadat": "Middleton Sand Pit, 4 Brown Rd, Monticello, GA, 30270",
-            "deliverto": "Johnson Redi-mix, 101 Main St, Stockbridge, GA, 30281",
-            "item": "10 loads sand",
-            "runUntilStopped": true,
-            "resource": 4
-        },
-        {
-            "id": "005",
-            "start": "2023-03-15T06:35:00",
-            "end": "2023-03-15T11:35:00",
-            "customer": "Fred Flintstone",
-            "status": "Loaded today at 06:46 am",
-            "loadat": "ABC Quarry Site, County Rd #C, Monticello, GA, 30270",
-            "deliverto": "XYZ Development Site, 1 Elm Terrace, Aiken, SC, 29981",
-            "item": "1 load gravel",
-            "runUntilStopped": false,
-            "resource": 5
-        },
-        {
-            "id": "006",
-            "start": "2023-03-15T15:35:00",
-            "end": "2023-03-15T18:00:00",
-            "customer": "Fred Flintstone",
-            "status": "Sent",
-            "loadat": "Vulcan Lakeside Quarry, 4 Brown Rd, Monticello, GA, 30270",
-            "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
-            "item": "1 load #57 stone",
-            "runUntilStopped": false,
-            "resource": 5
-        },
-        {
-            "id": "007",
-            "start": "2023-03-15T06:15:00",
-            "end": "2023-03-15T08:15:00",
-            "customer": "GHS Manufacturing Inc.",
-            "status": "Loaded today at 06:27am",
-            "loadat": "Quality Asphalt, 65 Herron Ct, Monticello, GA, 30270",
-            "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
-            "item": "20 tons asphalt base",
-            "runUntilStopped": false,
-            "resource": 6
-        },
-        {
-            "id": "008",
-            "start": "2023-03-15T09:15:00",
-            "end": "2023-03-15T11:15:00",
-            "customer": "GHS Manufacturing Inc.",
-            "status": "Loaded today at 06:27am",
-            "loadat": "Quality Asphalt, 65 Herron Ct, Monticello, GA, 30270",
-            "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
-            "item": "20 tons asphalt base",
-            "runUntilStopped": false,
-            "resource": 6
-        },
-        {
-            "id": "009",
-            "start": "2023-03-15T12:15:00",
-            "end": "2023-03-15T14:15:00",
-            "customer": "GHS Manufacturing Inc.",
-            "status": "Loaded today at 06:27am",
-            "loadat": "Quality Asphalt, 65 Herron Ct, Monticello, GA, 30270",
-            "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
-            "item": "20 tons asphalt base",
-            "runUntilStopped": false,
-            "resource": 6
-        },
-        {
-            "id": "010",
-            "start": "2023-03-15T06:15:00",
-            "end": "2023-03-15T08:15:00",
-            "customer": "Monticello Redi-mix",
-            "status": "Loaded today at 06:27 am",
-            "loadat": "Middleton Sand Pit, 4 Brown Rd, Monticello, GA, 30270",
-            "deliverto": "Monticello Redi-mix Plant, Fairbrook Ln, Stockbridge, GA, 30281",
-            "item": "20 tons sand",
-            "runUntilStopped": false,
-            "resource": 7
-        },
-        {
-            "id": "011",
-            "start": "2023-03-15T09:15:00",
-            "end": "2023-03-15T11:15:00",
-            "customer": "Monticello Redi-mix",
-            "status": "Sent",
-            "loadat": "Middleton Sand Pit, 4 Brown Rd, Monticello, GA, 30270",
-            "deliverto": "Monticello Redi-mix Plant, Fairbrook Ln, Stockbridge, GA, 30281",
-            "item": "20 tons sand",
-            "runUntilStopped": false,
-            "resource": 7
-        },
-        {
-            "id": "012",
-            "start": "2023-03-15T12:15:00",
-            "end": "2023-03-15T15:15:00",
-            "customer": "Monticello Landscaping",
-            "status": "Sent",
-            "loadat": "Vulcan Lakeside Quarry, 4 Brown Rd, Monticello, GA, 30270",
-            "deliverto": "Monticello Landscaping, Lazy Ln, Stockbridge, GA, 30281",
-            "item": "20 tons crush and run",
-            "runUntilStopped": false,
-            "resource": 7
-        }
-        ],
-        "trucks": [
-        {
-            "id": 1,
-            "name": "Mark Shaun",
-            "color": "#D7EBF6",
-            "truck": "K001",
-            "erIcon": true,
-            "avatar": "dumptruck"
-        },
-        {
-            "id": 2,
-            "name": "Christopher Strauss",
-            "truck": "M002",
-            "color": "#D7EBF6",
-            "erIcon": true,
-            "avatar": "flatbed"
-        },
-        {
-            "id": 3,
-            "name": "Ericke Neeman",
-            "truck": "C003",
-            "color": "#D7EBF6",
-            "erIcon": "",
-            "avatar": "flatbed"
-        },
-        {
-            "id": 4,
-            "name": "Mike McCorkle",
-            "truck": "F004",
-            "color": "#D7EBF6",
-            "erIcon": "",
-            "avatar": "tractortrailer"
-        },
-        {
-            "id": 5,
-            "name": "Bryan Maycock",
-            "truck": "V005",
-            "color": "#D7EBF6",
-            "erIcon": "",
-            "avatar": "dumptruck"
-        },
-        {
-            "id": 6,
-            "name": "John Steven",
-            "truck": "M006",
-            "color": "#D7EBF6",
-            "erIcon": "",
-            "avatar": "tractortrailer"
-        },
-        {
-            "id": 7,
-            "name": "Clark Kent",
-            "truck": "M007",
-            "color": "#D7EBF6",
-            "erIcon": true,
-            "avatar": "dumptruck"
-        }
-        ],
-        "offices": ["Main", "Branch 1", "Branch 2"],
-        "views": [
-        "Open dispatches",
-        "Drivers not clocked in",
-        "Unacknowledged dispatches",
-        "Trucks with drivers and no dispatches",
-        "All trucks"
-        ],
-        "menu": [
-        {
-            "text": "Acknowledge",
-            "icon": "fa-check",
-            "value": "acknowledge"
-        },
-        {
-            "text": "Copy",
-            "icon": "fa-copy",
-            "value": "copy"
-        },
-        {
-            "text": "End Multiple Dispatches",
-            "icon": "fa-rectangle-xmark",
-            "value": "endMultipleDispatches"
-        },
-        {
-            "text": "Send sync request",
-            "icon": "fa-cloud-arrow-up",
-            "value": "sendSyncRequest"
-        },
-        {
-            "text": "Change Dispatch Times",
-            "icon": "fa-clock",
-            "value": "changeDispatchtimes"
-        },
-        {
-            "text": "Cancel",
-            "icon": "fa-xmark",
-            "value": "cancel"
-        }
-        ],
-        "TruckCode": [
-        {
-            "label": "M001",
-            "color": "success"
-        },
-        {
-            "label": "M002",
-            "color": "warning"
-        },
-        {
-            "label": "M003",
-            "color": "success"
-        },
-        {
-            "label": "M004",
-            "color": "success"
-        },
-        {
-            "label": "M005",
-            "color": "error"
-        },
-        {
-            "label": "M006",
-            "color": "success"
-        },
-        {
-            "label": "M007",
-            "color": "success"
-        },
-        {
-            "label": "M008",
-            "color": "success"
-        },
-        {
-            "label": "M009",
-            "color": "success"
-        },
-        {
-            "label": "M010",
-            "color": "success"
-        },
-        {
-            "label": "M011",
-            "color": "warning"
-        },
-        {
-            "label": "M012",
-            "color": "success"
-        },
-        {
-            "label": "M013",
-            "color": "success"
-        },
-        {
-            "label": "M014",
-            "color": "error"
-        },
-        {
-            "label": "M015",
-            "color": "error"
-        },
-        {
-            "label": "M016",
-            "color": "success"
-        },
-        {
-            "label": "M017",
-            "color": "success"
-        },
-        {
-            "label": "M018",
-            "color": "success"
-        }
-        ],
-    
-        "ScheduleData": [
-        {
-            "priority": "low",
-            "checkbox": true,
-            "note": "Lorem ipsum dolor sit amet",
-            "customer": "ABC Construction Company",
-            "job": 122002,
-            "time": "5:00 am",
-            "load": "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
-            "deliver": "Fort McKinley Street, Aria Hill, California",
-            "item": "Freight service",
-            "quantity": "20 load",
-            "required": 2,
-            "scheduled": 2,
-            "trucks": ["M001", "M002"],
-            "closed": false
-        },
-        {
-            "priority": "high",
-            "checkbox": false,
-            "note": "Lorem ipsum dolor sit amet",
-            "customer": "XYZ Logistics Company",
-            "job": 123003,
-            "time": "8:00 pm",
-            "load": "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
-            "deliver": "Fort McKinley Street, Aria Hill, California",
-            "item": "Freight service",
-            "quantity": "2000 lbs",
-            "required": 3,
-            "scheduled": 3,
-            "trucks": ["M003", "M004", "M005"],
-            "closed": true
-        }
-    ]
-}  
+  "dispatches": [
+    {
+      "id": "001",
+      "start": "2023-03-15T05:00:00",
+      "end": "2023-03-15T15:00:00",
+      "customer": "ABC Incorporated",
+      "status": "Delivered today at 7:04 am",
+      "loadat": "ABC Quarry Site, County Rd #C, Monticello, Wisconsin(WI), 53570",
+      "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, Georgia(GA), 30281",
+      "item": "#1 Stone",
+      "runUntilStopped": true,
+      "resource": 1
+    },
+    {
+      "id": "002",
+      "start": "2023-03-15T05:05:00",
+      "end": "2023-03-15T15:05:00",
+      "customer": "XYZ Distribution Company",
+      "status": "Acknowledged yesterday at 7:04 pm",
+      "loadat": "ABC Quarry Site, County Rd #C, Monticello, GA, 30270",
+      "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
+      "item": "#1 Stone",
+      "runUntilStopped": true,
+      "resource": 2
+    },
+    {
+      "id": "003",
+      "start": "2023-03-15T05:10:00",
+      "end": "2023-03-15T15:10:00",
+      "customer": "GHS Manufacturing Inc.",
+      "status": "Loaded today at 05:30am",
+      "loadat": "ABC Quarry Site, County Rd #C, Monticello, GA, 30270",
+      "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
+      "item": "#1 Stone",
+      "runUntilStopped": true,
+      "resource": 3
+    },
+    {
+      "id": "004",
+      "start": "2023-03-15T05:00:00",
+      "end": "2023-03-15T15:00:00",
+      "customer": "XYZ Distribution Company",
+      "status": "Loaded today at 09:21am",
+      "loadat": "Middleton Sand Pit, 4 Brown Rd, Monticello, GA, 30270",
+      "deliverto": "Johnson Redi-mix, 101 Main St, Stockbridge, GA, 30281",
+      "item": "10 loads sand",
+      "runUntilStopped": true,
+      "resource": 4
+    },
+    {
+      "id": "005",
+      "start": "2023-03-15T06:35:00",
+      "end": "2023-03-15T11:35:00",
+      "customer": "Fred Flintstone",
+      "status": "Loaded today at 06:46 am",
+      "loadat": "ABC Quarry Site, County Rd #C, Monticello, GA, 30270",
+      "deliverto": "XYZ Development Site, 1 Elm Terrace, Aiken, SC, 29981",
+      "item": "1 load gravel",
+      "runUntilStopped": false,
+      "resource": 5
+    },
+    {
+      "id": "006",
+      "start": "2023-03-15T15:35:00",
+      "end": "2023-03-15T18:00:00",
+      "customer": "Fred Flintstone",
+      "status": "Sent",
+      "loadat": "Vulcan Lakeside Quarry, 4 Brown Rd, Monticello, GA, 30270",
+      "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
+      "item": "1 load #57 stone",
+      "runUntilStopped": false,
+      "resource": 5
+    },
+    {
+      "id": "007",
+      "start": "2023-03-15T06:15:00",
+      "end": "2023-03-15T08:15:00",
+      "customer": "GHS Manufacturing Inc.",
+      "status": "Loaded today at 06:27am",
+      "loadat": "Quality Asphalt, 65 Herron Ct, Monticello, GA, 30270",
+      "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
+      "item": "20 tons asphalt base",
+      "runUntilStopped": false,
+      "resource": 6
+    },
+    {
+      "id": "008",
+      "start": "2023-03-15T09:15:00",
+      "end": "2023-03-15T11:15:00",
+      "customer": "GHS Manufacturing Inc.",
+      "status": "Loaded today at 06:27am",
+      "loadat": "Quality Asphalt, 65 Herron Ct, Monticello, GA, 30270",
+      "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
+      "item": "20 tons asphalt base",
+      "runUntilStopped": false,
+      "resource": 6
+    },
+    {
+      "id": "009",
+      "start": "2023-03-15T12:15:00",
+      "end": "2023-03-15T14:15:00",
+      "customer": "GHS Manufacturing Inc.",
+      "status": "Loaded today at 06:27am",
+      "loadat": "Quality Asphalt, 65 Herron Ct, Monticello, GA, 30270",
+      "deliverto": "XYZ Development Site, Fairbrook Ln, Stockbridge, GA, 30281",
+      "item": "20 tons asphalt base",
+      "runUntilStopped": false,
+      "resource": 6
+    },
+    {
+      "id": "010",
+      "start": "2023-03-15T06:15:00",
+      "end": "2023-03-15T08:15:00",
+      "customer": "Monticello Redi-mix",
+      "status": "Loaded today at 06:27 am",
+      "loadat": "Middleton Sand Pit, 4 Brown Rd, Monticello, GA, 30270",
+      "deliverto": "Monticello Redi-mix Plant, Fairbrook Ln, Stockbridge, GA, 30281",
+      "item": "20 tons sand",
+      "runUntilStopped": false,
+      "resource": 7
+    },
+    {
+      "id": "011",
+      "start": "2023-03-15T09:15:00",
+      "end": "2023-03-15T11:15:00",
+      "customer": "Monticello Redi-mix",
+      "status": "Sent",
+      "loadat": "Middleton Sand Pit, 4 Brown Rd, Monticello, GA, 30270",
+      "deliverto": "Monticello Redi-mix Plant, Fairbrook Ln, Stockbridge, GA, 30281",
+      "item": "20 tons sand",
+      "runUntilStopped": false,
+      "resource": 7
+    },
+    {
+      "id": "012",
+      "start": "2023-03-15T12:15:00",
+      "end": "2023-03-15T15:15:00",
+      "customer": "Monticello Landscaping",
+      "status": "Sent",
+      "loadat": "Vulcan Lakeside Quarry, 4 Brown Rd, Monticello, GA, 30270",
+      "deliverto": "Monticello Landscaping, Lazy Ln, Stockbridge, GA, 30281",
+      "item": "20 tons crush and run",
+      "runUntilStopped": false,
+      "resource": 7
+    }
+  ],
+  "trucks": [
+    {
+      "id": 1,
+      "name": "Mark Shaun",
+      "color": "#D7EBF6",
+      "truck": "K001",
+      "erIcon": true,
+      "avatar": "dumptruck"
+    },
+    {
+      "id": 2,
+      "name": "Christopher Strauss",
+      "truck": "M002",
+      "color": "#D7EBF6",
+      "erIcon": true,
+      "avatar": "flatbed"
+    },
+    {
+      "id": 3,
+      "name": "Ericke Neeman",
+      "truck": "C003",
+      "color": "#D7EBF6",
+      "erIcon": "",
+      "avatar": "flatbed"
+    },
+    {
+      "id": 4,
+      "name": "Mike McCorkle",
+      "truck": "F004",
+      "color": "#D7EBF6",
+      "erIcon": "",
+      "avatar": "tractortrailer"
+    },
+    {
+      "id": 5,
+      "name": "Bryan Maycock",
+      "truck": "V005",
+      "color": "#D7EBF6",
+      "erIcon": "",
+      "avatar": "dumptruck"
+    },
+    {
+      "id": 6,
+      "name": "John Steven",
+      "truck": "M006",
+      "color": "#D7EBF6",
+      "erIcon": "",
+      "avatar": "tractortrailer"
+    },
+    {
+      "id": 7,
+      "name": "Clark Kent",
+      "truck": "M007",
+      "color": "#D7EBF6",
+      "erIcon": true,
+      "avatar": "dumptruck"
+    }
+  ],
+  "offices": ["Main", "Branch 1", "Branch 2"],
+  "views": [
+    "Open dispatches",
+    "Drivers not clocked in",
+    "Unacknowledged dispatches",
+    "Trucks with drivers and no dispatches",
+    "All trucks"
+  ],
+  "menu": [
+    {
+      "text": "Acknowledge",
+      "icon": "fa-check",
+      "value": "acknowledge"
+    },
+    {
+      "text": "Copy",
+      "icon": "fa-copy",
+      "value": "copy"
+    },
+    {
+      "text": "End Multiple Dispatches",
+      "icon": "fa-rectangle-xmark",
+      "value": "endMultipleDispatches"
+    },
+    {
+      "text": "Send sync request",
+      "icon": "fa-cloud-arrow-up",
+      "value": "sendSyncRequest"
+    },
+    {
+      "text": "Change Dispatch Times",
+      "icon": "fa-clock",
+      "value": "changeDispatchtimes"
+    },
+    {
+      "text": "Cancel",
+      "icon": "fa-xmark",
+      "value": "cancel"
+    }
+  ],
+  "TruckCode": [
+    {
+      "label": "M001",
+      "color": "success"
+    },
+    {
+      "label": "M002",
+      "color": "warning"
+    },
+    {
+      "label": "M003",
+      "color": "success"
+    },
+    {
+      "label": "M004",
+      "color": "success"
+    },
+    {
+      "label": "M005",
+      "color": "error"
+    },
+    {
+      "label": "M006",
+      "color": "success"
+    },
+    {
+      "label": "M007",
+      "color": "success"
+    },
+    {
+      "label": "M008",
+      "color": "success"
+    },
+    {
+      "label": "M009",
+      "color": "success"
+    },
+    {
+      "label": "M010",
+      "color": "success"
+    },
+    {
+      "label": "M011",
+      "color": "warning"
+    },
+    {
+      "label": "M012",
+      "color": "success"
+    },
+    {
+      "label": "M013",
+      "color": "success"
+    },
+    {
+      "label": "M014",
+      "color": "error"
+    },
+    {
+      "label": "M015",
+      "color": "error"
+    },
+    {
+      "label": "M016",
+      "color": "success"
+    },
+    {
+      "label": "M017",
+      "color": "success"
+    },
+    {
+      "label": "M018",
+      "color": "success"
+    }
+  ],
+
+  "ScheduleData": [
+    {
+      "priority": "low",
+      "checkbox": true,
+      "note": "Lorem ipsum dolor sit amet",
+      "customer": "ABC Construction Company",
+      "job": 122002,
+      "time": "5:00 am",
+      "load": "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
+      "deliver": "Fort McKinley Street, Aria Hill, California",
+      "item": "Freight service",
+      "quantity": "20 load",
+      "required": 2,
+      "scheduled": 2,
+      "trucks": ["M001", "M002"],
+      "closed": false
+    },
+    {
+      "priority": "high",
+      "checkbox": false,
+      "note": "Lorem ipsum dolor sit amet",
+      "customer": "XYZ Logistics Company",
+      "job": 123003,
+      "time": "8:00 pm",
+      "load": "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
+      "deliver": "Fort McKinley Street, Aria Hill, California",
+      "item": "Freight service",
+      "quantity": "2000 lbs",
+      "required": 3,
+      "scheduled": 3,
+      "trucks": ["M003", "M004", "M005"],
+      "closed": true
+    }
+  ],
+
+  "Notifications": [
+    {
+      "id": 1005,
+      "isRead": false,
+      "content": "Francis has completed his task.",
+      "time": "1 week ago",
+      "path": "/"
+    },
+    {
+      "id": 1003,
+      "isRead": false,
+      "content": "You don't have drivers yet. Try adding a driver by clicking here.",
+      "time": "2 months ago",
+      "path": "/dispatching/schedule"
+    },
+    {
+      "id": 1002,
+      "isRead": false,
+      "content": "Congratulations on your first dispatch! To learn more about scheduling dispatch, click here.",
+      "time": "1 year ago",
+      "path": "/dispatching/schedule"
+    },
+    {
+      "id": 1001,
+      "isRead": true,
+      "content": "Welcome to Dump Truck Dispatcher. EiLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "time": "2 months ago",
+      "path": "/dispatching/schedule"
+    }
+  ]
+}

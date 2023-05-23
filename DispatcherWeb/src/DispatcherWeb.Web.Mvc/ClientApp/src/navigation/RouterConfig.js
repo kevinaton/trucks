@@ -8,6 +8,7 @@ import Drivers from "../pages/Drivers";
 import Locations from "../pages/Locations";
 import Schedule from "../pages/Schedule";
 import TruckDispatchList from "../pages/TruckDispatchList";
+import Notification from "../pages/Notifications";
 // import Trucks from '../pages/Trucks'
 
 export const RouterConfig = ({ handleCurrentPageName }) => {
