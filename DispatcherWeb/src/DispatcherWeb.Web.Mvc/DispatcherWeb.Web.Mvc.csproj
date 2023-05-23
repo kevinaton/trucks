@@ -105,6 +105,12 @@
     <Folder Include="wwwroot\view-resources\Areas\App\Views\Services\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClientApp\build\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
   <ProjectExtensions>

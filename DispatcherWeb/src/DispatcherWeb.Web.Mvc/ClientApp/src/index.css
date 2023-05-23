@@ -1,0 +1,284 @@
+body {
+    margin: 0;
+    font-family: "poppins", "Roboto", "Droid Sans", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: "auto";
+}
+
+code {
+    font-family: "poppins", "Roboto", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+/* Mobiscroll Custom CSS */
+.md-work-week-cont {
+    position: relative;
+    padding-left: 50px;
+    height: 100%;
+    min-height: 100%;
+}
+
+.md-work-week-avatar {
+    position: absolute;
+    max-height: 50px;
+    max-width: 50px;
+    top: 21px;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    left: 22px;
+}
+
+.md-work-week-name {
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.md-work-week-title {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.md-work-week-title .warning-tooltip {
+    visibility: hidden;
+    background-color: #e4e4e4;
+    color: #141414;
+    text-align: center;
+    padding: 5px;
+    width: 93%;
+    position: absolute;
+    top: 0%;
+    left: 34%;
+    margin-left: -60px;
+    z-index: 999;
+}
+
+.md-work-week-title:hover .warning-tooltip {
+    visibility: visible;
+}
+
+.event-background {
+    margin: 2px 0;
+    z-index: 1;
+    padding: 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: auto;
+}
+
+.event-title {
+    color: #000000;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-compact-title {
+    font-size: 14px;
+    color: #000000;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-status {
+    color: #3a7798;
+    font-size: 11px;
+}
+
+.event-body {
+    color: #303030;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.event-details {
+    color: #303030;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-flex;
+    text-overflow: ellipsis;
+    align-items: center;
+}
+
+.md-lunch-break-class.mbsc-schedule-invalid {
+    text-align: center;
+    align-items: center;
+    font-weight: bold;
+    background: repeating-linear-gradient(
+        -45deg,
+        #f3f3f3,
+        #f3f3f3 11px,
+        #e5e5e5 11px,
+        #e5e5e5 22px
+    );
+}
+
+.md-tooltip-header {
+    padding: 12px 16px;
+    font-weight: 600;
+    background-color: #58a3dc;
+    color: #ffffff;
+}
+
+.md-tooltip-info {
+    padding: 16px 16px 16px 16px;
+    position: relative;
+    line-height: 1.2rem;
+}
+
+.md-tooltip-content {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.tooltip-label {
+    font-weight: 600;
+}
+
+.tooltip-icon {
+    display: inline-flex;
+    align-self: center;
+}
+
+.popup-checkbox {
+    fill: #58a3dc !important;
+    width: 14px !important;
+    height: 14px !important;
+    align-self: center;
+}
+
+.form-checkbox {
+    fill: #58a3dc !important;
+    width: 14px !important;
+    height: 14px !important;
+    align-self: center;
+    margin-left: 16px;
+}
+
+.sets {
+    display: inline-flex;
+    justify-content: flex-end;
+}
+
+.time-range .mbsc-popup-content {
+    overflow: hidden;
+}
+
+.md-item-template {
+    padding: 10px 10px 10px 28px;
+    position: relative;
+    text-align: left;
+    line-height: normal;
+}
+
+.md-item-template-icon {
+    position: absolute;
+    left: 0;
+    width: 45px;
+    height: 45px;
+}
+
+.md-item-template-title {
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.mbsc-timeline-grid.mbsc-flex-1-0 {
+    background: #f7f7f8;
+}
+
+.mbsc-icon {
+    color: #a8b2bb;
+}
+/* Mobiscroll Custom CSS */
+
+/* Icon style */
+.icon {
+    fill: #58a3dc;
+    color: #58a3dc;
+}
+
+.secondary-icon {
+    fill: #a8b2bb;
+    color: #a8b2bb;
+}
+
+.error-icon {
+    color: #dd4b39;
+}
+
+.active-icon {
+    fill: #6aa0ca;
+    color: #6aa0ca;
+}
+/* Icon style */
+
+/* MUI syle override */
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.css-6hp17o-MuiList-root-MuiMenu-list {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.custom-input {
+    border: 1px solid #ffffff;
+}
+/* MUI syle override */
+
+/* Padding configure */
+.pr-1 {
+    padding-right: 2px;
+}
+
+.pr-2 {
+    padding-right: 4px;
+}
+/* Padding configure */

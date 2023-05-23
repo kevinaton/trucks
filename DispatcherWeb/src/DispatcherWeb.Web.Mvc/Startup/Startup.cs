@@ -42,6 +42,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
@@ -319,6 +320,11 @@ namespace DispatcherWeb.Web.Startup
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "ClientApp/build")),
+                RequestPath = "/reactapp"
+            });
             app.UseRouting();
 
 
@@ -403,6 +409,18 @@ namespace DispatcherWeb.Web.Startup
 
                 app.ApplicationServices.GetRequiredService<IAbpAspNetCoreConfiguration>().EndpointConfiguration
                     .ConfigureAllEndpoints(endpoints);
+            });
+
+            app.Use(async (context, next) =>
+            {
+                await next();
+
+                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value))
+                {
+                    context.Request.Path = "/reactapp/index.html"; // Update the path to match your React app's index.html file location
+                    context.Response.StatusCode = 200;
+                    await next();
+                }
             });
 
             if (bool.Parse(_appConfiguration["HealthChecks:HealthChecksEnabled"]))
