@@ -23,6 +23,7 @@
         };
         var _settings = {
             validateUtilization: abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization'),
+            allowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders: abp.setting.getBoolean('App.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders'),
         };
         var _vehicleCategories = null;
         var _loadingState = false;
@@ -425,6 +426,11 @@
                 return false;
             }
             if (order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id && olt.driverId === driverId))) {
+                return false;
+            }
+            if (_settings.allowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders
+                && order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(truck.vehicleCategory.id)
+            ) {
                 return false;
             }
 

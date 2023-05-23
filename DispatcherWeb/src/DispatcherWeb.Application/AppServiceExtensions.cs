@@ -606,6 +606,7 @@ namespace DispatcherWeb
                     HaulingCompanyOrderLineId = ol.HaulingCompanyOrderLineId,
                     MaterialCompanyOrderLineId = ol.MaterialCompanyOrderLineId,
                     SharedOfficeIds = ol.SharedOrderLines.Select(sol => sol.OfficeId).ToArray(),
+                    VehicleCategoryIds = ol.OrderLineVehicleCategories.Select(x => x.VehicleCategoryId).ToList(),
                     Utilization = ol.OrderLineTrucks.Where(t => t.Truck.VehicleCategory.IsPowered).Select(t => t.Utilization).Sum(),
                     Trucks = ol.OrderLineTrucks.Select(olt => new ScheduleOrderLineTruckDto
                     {

@@ -53,6 +53,7 @@ namespace DispatcherWeb.Scheduling.Dto
         public bool IsMaterialPriceOverridden { get; set; }
         public DesignationEnum Designation { get; set; }
         public int[] SharedOfficeIds { get; set; }
+        public List<int> VehicleCategoryIds { get; set; }
         //
         //public decimal? HoursOnDispatches { get; set; }
         //public decimal? HoursOnDispatchesLoaded { get; set; }
