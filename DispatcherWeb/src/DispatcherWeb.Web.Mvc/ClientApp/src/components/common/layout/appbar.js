@@ -16,6 +16,7 @@ import {
     AppBar, 
     HeaderIconButton,
     HeaderButton } from '../../DTComponents'
+import { NotificationBell } from '../dropdowns'
 import { 
     getSupportLinkAddress
 } from '../../../store/actions'
@@ -165,7 +166,9 @@ export const Appbar = ({
 
                 {/* Desktop view */}
                 <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                    <HeaderIconButton aria-label="support" href={linkAddress}>
+                    <HeaderIconButton 
+                        aria-label="support" 
+                        href={linkAddress}>
                         <i
                             className="fa-duotone fa-life-ring icon"
                             style={{
@@ -174,13 +177,11 @@ export const Appbar = ({
                             }}
                         ></i>
                     </HeaderIconButton>
-                    <HeaderIconButton
-                        aria-label="open drawer"
-                        onClick={handleCloseNavMenu}
-                    >
-                        <i className="fa-regular fa-bell icon"></i>
-                    </HeaderIconButton>
+
+                    <NotificationBell />
+
                     <HeaderButton onClick={handleCloseNavMenu} />
+
                     <HeaderIconButton
                         aria-label="open drawer"
                         onClick={handleCloseNavMenu}
