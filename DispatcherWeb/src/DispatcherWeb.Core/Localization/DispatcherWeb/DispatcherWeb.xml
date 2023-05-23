@@ -950,6 +950,7 @@
 		<text name="Setting_UseShifts">Use Shifts</text>
 		<text name="Setting_ShiftName">Shift name</text>
 		<text name="PaymentProcessor">Payment Processor</text>
+		<text name="QuoteDefaultNote">Quote Default Note</text>
 		<text name="QuoteEmailSubjectTemplate">Quote Email Subject Template</text>
 		<text name="QuoteEmailBodyTemplate">Quote Email Body Template</text>
 		<text name="InvoiceEmailSubjectTemplate">Invoice Email Subject Template</text>
@@ -1838,6 +1839,7 @@
 		<text name="ImportVehicle">Import Mileage/Engine Hours</text>
 		<text name="ImportFuel">Import Fuel</text>
 		<text name="DriverIsPaidForLoadBasedOn">Driver is paid for load based on</text>
+		<text name="DriverAppImageResolution">Driver App Image Resolution</text>
 		<text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
 		<text name="TruckTrailerCategory">Truck/Trailer category</text>
 	</texts>

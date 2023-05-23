@@ -5,6 +5,13 @@
         var _quoteService = abp.services.app.quote;
         var _$form = null;
 
+        var _createOrEditQuoteModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
+            modalClass: 'CreateOrEditQuoteModal',
+            modalSize: 'xl'
+        });
+
         this.init = function (modalManager) {
             _modalManager = modalManager;
 
@@ -17,7 +24,7 @@
 
         };
 
-        this.save = function () {
+        this.save = async function () {
             if (!_$form.valid()) {
                 _$form.showValidateMessage();
                 return;
@@ -25,25 +32,26 @@
 
             var formData = _$form.serializeFormToObject();
 
-            _modalManager.setBusy(true);
-            _quoteService.createQuoteFromOrder(formData).done(function (newQuoteId) {
+            try {
+                _modalManager.setBusy(true);
+
+                let newQuoteId = await _quoteService.createQuoteFromOrder(formData);
                 abp.notify.info('Created successfully.');
                 _modalManager.close();
                 abp.event.trigger('app.quoteCreatedFromOrderModal', {
                     newQuoteId: newQuoteId
                 });
-                abp.message.confirmWithOptions({
+                if (await abp.message.confirmWithOptions({
                     text: '',
                     title: 'The new quote has been created. Do you want us to open the quote for you?',
-                    cancelButtonText: 'No'
-                }, function (isConfirmed) {
-                    if (isConfirmed) {
-                        window.location = abp.appPath + 'app/Quotes/Details/' + newQuoteId;
-                    }
-                });
-            }).always(function () {
+                    buttons: ['No', 'Yes']
+                })) {
+                    _createOrEditQuoteModal.open({ id: newQuoteId });
+                }
+            }
+            finally {
                 _modalManager.setBusy(false);
-            });
+            }
         };
     };
 })(jQuery);

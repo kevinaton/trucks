@@ -98,6 +98,8 @@ namespace DispatcherWeb.Configuration
                     GetFromAppSettings(AppSettings.HostManagement.NotificationsEmail, "joe@dumptruckdispatcher.com")),
                 new SettingDefinition(AppSettings.HostManagement.SupportLinkAddress,
                     GetFromAppSettings(AppSettings.HostManagement.SupportLinkAddress, "https://dumptruckdispatcher.com/doc_category/getting-started/")),
+                new SettingDefinition(AppSettings.HostManagement.DriverAppImageResolution,
+                    GetFromAppSettings(AppSettings.HostManagement.DriverAppImageResolution, DriverAppImageResolutionEnum.Medium.ToIntString()), scopes: SettingScopes.Application | SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Recaptcha.SiteKey, GetFromSettings("Recaptcha:SiteKey"),
                     clientVisibilityProvider: _visibleSettingClientVisibilityProvider),
         new SettingDefinition(AppSettings.General.WebSiteRootAddress, "http://localhost:5000/"),
@@ -147,11 +149,13 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.Invoice.QuickbooksDesktop.AccountsReceivableAccountName, "Accounts Receivable", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Invoice.QuickbooksDesktop.TaxAccountName, "Sales Tax Payable", scopes: SettingScopes.Tenant),
 
+                new SettingDefinition(AppSettings.Quote.DefaultNotes, DispatcherWebConsts.DefaultSettings.Quote.DefaultNotes, scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.EmailSubjectTemplate, "Quote for {Project.Name}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.EmailBodyTemplate, "Attached is a quote for your review. Please let me know if you have any questions.\r\n\r\nBest Regards\r\n{User.FirstName} {User.LastName}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.ChangedNotificationEmail.SubjectTemplate, "Quote #{Quote.Id} changed", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.ChangedNotificationEmail.BodyTemplate, "Quote #{Quote.Id} for {Customer.Name} was changed by {ChangedByUser.FirstName} {ChangedByUser.LastName}. You may want to review it to see if you need to send a followup quote. Here is a shortcut to the quote {Quote.Url}\r\n\r\nYou can see the changes here: {QuoteHistory.Url}", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Quote.PromptForDisplayingQuarryInfoOnQuotes, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.Quote.GeneralTermsAndConditions, DispatcherWebConsts.DefaultSettings.Quote.GeneralTermsAndConditions, scopes: SettingScopes.Tenant),
 
                 new SettingDefinition(AppSettings.Order.EmailSubjectTemplate, "Thank you for your order", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Order.EmailBodyTemplate, "Attached is a copy of your order dated {DeliveryDate} from {CompanyName}.", scopes: SettingScopes.Tenant),
