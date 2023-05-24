@@ -36,9 +36,9 @@ import { Tablecell } from '../../components/DTComponents'
 const { offices, TruckCode, ScheduleData } = data
 
 const Schedule = (props) => {
-    const pageName = "Schedule"
+    const pageName = 'Schedule'
     const [date, setDate] = React.useState(moment())
-    const [view, setView] = React.useState("all")
+    const [view, setView] = React.useState('all')
     const [settingsAnchor, setSettingsAnchor] = React.useState(null)
     const settingsOpen = Boolean(settingsAnchor)
     const [actionAnchor, setActionAnchor] = React.useState(null)
@@ -80,32 +80,32 @@ const Schedule = (props) => {
         <HelmetProvider>
             <div>
                 <Helmet>
-                    <meta charSet="utf-8" />
+                    <meta charSet='utf-8' />
                     <title>{pageName}</title>
-                    <meta name="description" content="Dumptruckdispatcher app" />
-                    <meta content="" name="author" />
-                    <meta property="og:title" content={pageName} />
+                    <meta name='description' content='Dumptruckdispatcher app' />
+                    <meta content='' name='author' />
+                    <meta property='og:title' content={pageName} />
                     <meta
-                        property="og:image"
-                        content="%PUBLIC_URL%/assets/dumptruckdispatcher-logo-mini.png"
+                        property='og:image'
+                        content='%PUBLIC_URL%/assets/dumptruckdispatcher-logo-mini.png'
                     />
                 </Helmet>
 
-                <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between" }}>
-                    <Typography variant="h6" component="h2" sx={{ mb: 1 }}>
+                <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant='h6' component='h2' sx={{ mb: 1 }}>
                         {pageName}
                     </Typography>
                     <ToggleButtonGroup
-                        color="primary"
-                        aria-label="View state"
+                        color='primary'
+                        aria-label='View state'
                         exclusive
                         value={view}
                         onChange={handleView}
                     >
-                        <ToggleButton value="all" aria-label="all view">
+                        <ToggleButton value='all' aria-label='all view'>
                             All
                         </ToggleButton>
-                        <ToggleButton value="bycategory" aria-label="By category">
+                        <ToggleButton value='bycategory' aria-label='By category'>
                             By Category
                         </ToggleButton>
                     </ToggleButtonGroup>
@@ -113,50 +113,50 @@ const Schedule = (props) => {
                 <Paper>
                     {/* Filter settings */}
                     <Box
-                        component="form"
+                        component='form'
                         sx={{
                             p: 3,
-                            display: "flex",
-                            flexWrap: "wrap",
+                            display: 'flex',
+                            flexWrap: 'wrap',
                             gap: 2,
-                            justifyContent: "flex-start",
+                            justifyContent: 'flex-start',
                         }}
                     >
                         <LocalizationProvider
                             dateAdapter={AdapterMoment}
-                            adapterLocale="de"
+                            adapterLocale='de'
                         >
                             <DatePicker
-                                label="date"
+                                label='date'
                                 value={date}
                                 onChange={(newVal) => setDate(newVal)}
                                 sx={{ flexShrink: 0 }}
                             />
 
                             <Autocomplete
-                                id="office"
+                                id='office'
                                 options={offices}
                                 sx={{ flex: 1, flexShrink: 0 }}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Office" />
+                                    <TextField {...params} label='Office' />
                                 )}
                             />
 
                             <FormControlLabel
                                 control={<Checkbox />}
-                                label="Hide Completed Orders"
+                                label='Hide Completed Orders'
                                 sx={{ flexShrink: 0, m: 0 }}
                             />
 
                             <FormControlLabel
                                 control={<Checkbox />}
-                                label="Hide Progress Bar"
+                                label='Hide Progress Bar'
                                 sx={{ flexShrink: 1, m: 0 }}
                             />
 
                             <FormControlLabel
                                 control={<Checkbox />}
-                                label="Hide Schedule Progress"
+                                label='Hide Schedule Progress'
                                 sx={{ flexShrink: 1, m: 0 }}
                             />
 
@@ -166,37 +166,37 @@ const Schedule = (props) => {
                                         sx={{ width: 25, height: 25 }}
                                         onClick={handleSettingsClick}
                                     >
-                                        <i className="fa-regular fa-ellipsis-vertical"></i>
+                                        <i className='fa-regular fa-ellipsis-vertical'></i>
                                     </IconButton>
                                 }
-                                sx={{ flex: 1, m: 0, justifyContent: "flex-end" }}
+                                sx={{ flex: 1, m: 0, justifyContent: 'flex-end' }}
                             ></FormControlLabel>
 
                             <Menu
                                 anchorEl={settingsAnchor}
-                                id="settings-menu"
+                                id='settings-menu'
                                 open={settingsOpen}
                                 onClose={handleSettingsClose}
                                 onClick={handleSettingsClose}
                             >
                                 <MenuItem onClick={handleSettingsClose}>
-                                    <i className="fa-regular fa-truck secondary-icon pr-2"></i>{" "}
+                                    <i className='fa-regular fa-truck secondary-icon pr-2'></i>{' '}
                                     Add a lease hauler
                                 </MenuItem>
                                 <MenuItem onClick={handleSettingsClose}>
-                                    <i className="fa-regular fa-check secondary-icon pr-2"></i>{" "}
+                                    <i className='fa-regular fa-check secondary-icon pr-2'></i>{' '}
                                     Mark all jobs complete
                                 </MenuItem>
                                 <MenuItem onClick={handleSettingsClose}>
-                                    <i className="fa-regular fa-plus secondary-icon pr-2"></i> Add
+                                    <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add
                                     job
                                 </MenuItem>
                                 <MenuItem onClick={handleSettingsClose}>
-                                    <i className="fa-regular fa-print secondary-icon pr-2"></i>
+                                    <i className='fa-regular fa-print secondary-icon pr-2'></i>
                                     Print schedule
                                 </MenuItem>
                                 <MenuItem onClick={handleSettingsClose}>
-                                    <i className="fa-regular fa-print secondary-icon pr-2"></i>
+                                    <i className='fa-regular fa-print secondary-icon pr-2'></i>
                                     Print all orders
                                 </MenuItem>
                             </Menu>
@@ -205,7 +205,7 @@ const Schedule = (props) => {
 
                     {/* Truck Map */}
                     <Box sx={{ p: 3 }}>
-                        <Paper variant="outlined" sx={{ p: 1 }}>
+                        <Paper variant='outlined' sx={{ p: 1 }}>
                             <Grid container rowSpacing={1} columnSpacing={1}>
                                 {TruckCode.map((truck) => {
                                     return (
@@ -228,33 +228,33 @@ const Schedule = (props) => {
                         </Paper>
                     </Box>
                     <TableContainer component={Box}>
-                        <Table aria-label="schedule table" size="small">
+                        <Table aria-label='schedule table' size='small'>
                             <TableHead>
-                                <TableRow sx={{ backgroundColor: "#e6e6e6" }}>
-                                    <Tablecell label="Priority" value="" />
-                                    <Tablecell label="Cash on delivery" value="COD" />
-                                    <Tablecell label="Note" value="" />
-                                    <Tablecell label="Customer" value="Customer" />
-                                    <Tablecell label="Job Number" value="Job #" />
+                                <TableRow sx={{ backgroundColor: '#e6e6e6' }}>
+                                    <Tablecell label='Priority' value='' />
+                                    <Tablecell label='Cash on delivery' value='COD' />
+                                    <Tablecell label='Note' value='' />
+                                    <Tablecell label='Customer' value='Customer' />
+                                    <Tablecell label='Job Number' value='Job #' />
                                     <Tablecell
-                                        label="Time on job"
-                                        value={<i className="fa-regular fa-clock"></i>}
+                                        label='Time on job'
+                                        value={<i className='fa-regular fa-clock'></i>}
                                     />
-                                    <Tablecell label="Load at" value="Load At" />
-                                    <Tablecell label="Deliver to" value="Deliver To" />
-                                    <Tablecell label="Item" value="Item" />
-                                    <Tablecell label="Quantity" value="Qty" />
+                                    <Tablecell label='Load at' value='Load At' />
+                                    <Tablecell label='Deliver to' value='Deliver To' />
+                                    <Tablecell label='Item' value='Item' />
+                                    <Tablecell label='Quantity' value='Qty' />
                                     <Tablecell
-                                        label="Required truck"
-                                        value={<i className="fa-regular fa-truck"></i>}
+                                        label='Required truck'
+                                        value={<i className='fa-regular fa-truck'></i>}
                                     />
                                     <Tablecell
-                                        label="Scheduled truck"
-                                        value={<i className="fa-regular fa-truck-clock"></i>}
+                                        label='Scheduled truck'
+                                        value={<i className='fa-regular fa-truck-clock'></i>}
                                     />
-                                    <Tablecell label="Trucks" value="Trucks" />
-                                    <Tablecell label="Closed" value="Closed" />
-                                    <Tablecell label="" value="" />
+                                    <Tablecell label='Trucks' value='Trucks' />
+                                    <Tablecell label='Closed' value='Closed' />
+                                    <Tablecell label='' value='' />
                                 </TableRow>
                             </TableHead>
 
@@ -265,48 +265,48 @@ const Schedule = (props) => {
                                             key={index}
                                             hover={true}
                                             sx={{
-                                                "&.MuiTableRow-root:hover": {
-                                                    backgroundColor: "#F3F7FB"
+                                                '&.MuiTableRow-root:hover': {
+                                                    backgroundColor: '#F3F7FB'
                                                 }
                                             }}
                                         >
                                             <Tablecell
-                                                label="priority"
+                                                label='priority'
                                                 value={
-                                                <i className="fa-solid fa-circle-arrow-up error-icon"></i>
+                                                <i className='fa-solid fa-circle-arrow-up error-icon'></i>
                                                 }
                                             />
                                             <Tablecell
-                                                label="Cash on delivery"
+                                                label='Cash on delivery'
                                                 value={<Checkbox checked={data.checkbox} />}
                                             />
                                             <Tablecell
-                                                label="Notes"
-                                                value={<i className="fa-solid fa-notebook icon"></i>}
+                                                label='Notes'
+                                                value={<i className='fa-solid fa-notebook icon'></i>}
                                             />
-                                            <Tablecell label="Customer" value={data.customer} />
-                                            <Tablecell label="Job number" value={data.job} />
-                                            <Tablecell label="Time on job" value={data.time} />
-                                            <Tablecell label="Load at" value={data.load} />
-                                            <Tablecell label="Deliver to" value={data.deliver} />
-                                            <Tablecell label="Item" value={data.item} />
-                                            <Tablecell label="Quantity" value={data.quantity} />
+                                            <Tablecell label='Customer' value={data.customer} />
+                                            <Tablecell label='Job number' value={data.job} />
+                                            <Tablecell label='Time on job' value={data.time} />
+                                            <Tablecell label='Load at' value={data.load} />
+                                            <Tablecell label='Deliver to' value={data.deliver} />
+                                            <Tablecell label='Item' value={data.item} />
+                                            <Tablecell label='Quantity' value={data.quantity} />
                                             <Tablecell
-                                                label="Required trucks"
+                                                label='Required trucks'
                                                 value={data.required}
                                             />
                                             <Tablecell
-                                                label="Scheduled trucks"
+                                                label='Scheduled trucks'
                                                 value={data.scheduled}
                                             />
                                             <Tablecell
-                                                label="Trucks"
+                                                label='Trucks'
                                                 value={
                                                     <Grid
                                                         sx={{
-                                                            backgroundColor: "#f8f9fa",
+                                                            backgroundColor: '#f8f9fa',
                                                             borderRadius: 1,
-                                                            border: "1px solid #ebedf2",
+                                                            border: '1px solid #ebedf2',
                                                             pb: 1,
                                                             m: 0
                                                         }}
@@ -335,22 +335,22 @@ const Schedule = (props) => {
                                                 }
                                             />
                                             <Tablecell
-                                                label="Closed"
+                                                label='Closed'
                                                 value={<Checkbox checked={data.closed} />}
                                             />
                                             <Tablecell
-                                                label="Action"
+                                                label='Action'
                                                 value={
                                                     <div>
                                                         <IconButton
                                                             sx={{ width: 25, height: 25 }}
                                                             onClick={handleActionClick}
                                                         >
-                                                            <i className="fa-regular fa-ellipsis-vertical"></i>
+                                                            <i className='fa-regular fa-ellipsis-vertical'></i>
                                                         </IconButton>
                                                         <Menu
                                                             anchorEl={actionAnchor}
-                                                            id="settings-menu"
+                                                            id='settings-menu'
                                                             open={actionOpen}
                                                             onClose={handleActionClose}
                                                         >
@@ -358,7 +358,7 @@ const Schedule = (props) => {
                                                                 <ListItemButton onClick={handleActionClose}>
                                                                     <ListItemText
                                                                         primary={
-                                                                            <Typography align="left">
+                                                                            <Typography align='left'>
                                                                                 Edit Job
                                                                             </Typography>
                                                                         }
@@ -374,15 +374,15 @@ const Schedule = (props) => {
                                                                 >
                                                                     <ListItemText
                                                                         primary={
-                                                                            <Typography align="left">
+                                                                            <Typography align='left'>
                                                                                 Order
                                                                             </Typography>
                                                                         }
                                                                     />
                                                                     {isOrderOpen ? (
-                                                                        <i className="fa-regular fa-chevron-down secondary-icon fa-sm"></i>
+                                                                        <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
                                                                     ) : (
-                                                                        <i className="fa-regular fa-chevron-right secondary-icon fa-sm"></i>
+                                                                        <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
                                                                     )}
                                                                 </ListItemButton>
                                                             </ListItem>
@@ -392,31 +392,31 @@ const Schedule = (props) => {
                                                                 onClick={() => {
                                                                     setIsOrderOpen(false)
                                                                 }}
-                                                                timeout="auto"
+                                                                timeout='auto'
                                                                 unmountOnExit
                                                                 sx={{ backgroundColor: grey[100] }}
                                                             >
-                                                                <List component="div" disablePadding>
+                                                                <List component='div' disablePadding>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="View/Edit" />
+                                                                        <ListItemText primary='View/Edit' />
                                                                     </ListItemButton>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="Mark Complete" />
+                                                                        <ListItemText primary='Mark Complete' />
                                                                     </ListItemButton>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="Cancel" />
+                                                                        <ListItemText primary='Cancel' />
                                                                     </ListItemButton>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="Copy" />
+                                                                        <ListItemText primary='Copy' />
                                                                     </ListItemButton>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="Transfer" />
+                                                                        <ListItemText primary='Transfer' />
                                                                     </ListItemButton>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="Change date" />
+                                                                        <ListItemText primary='Change date' />
                                                                     </ListItemButton>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="Delete" />
+                                                                        <ListItemText primary='Delete' />
                                                                     </ListItemButton>
                                                                 </List>
                                                             </Collapse>
@@ -429,15 +429,15 @@ const Schedule = (props) => {
                                                                 >
                                                                 <ListItemText
                                                                     primary={
-                                                                        <Typography align="left">
+                                                                        <Typography align='left'>
                                                                             Print Order
                                                                         </Typography>
                                                                     }
                                                                 />
                                                                     {isPrintOrderOpen ? (
-                                                                        <i className="fa-regular fa-chevron-down secondary-icon fa-sm"></i>
+                                                                        <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
                                                                     ) : (
-                                                                        <i className="fa-regular fa-chevron-right secondary-icon fa-sm"></i>
+                                                                        <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
                                                                     )}
                                                                 </ListItemButton>
                                                             </ListItem>
@@ -447,26 +447,26 @@ const Schedule = (props) => {
                                                                 onClick={() => {
                                                                     setIsPrintOrderOpen(false)
                                                                 }}
-                                                                timeout="auto"
+                                                                timeout='auto'
                                                                 unmountOnExit
                                                                 sx={{ backgroundColor: grey[100] }}
                                                             >
-                                                                <List component="div" disablePadding>
+                                                                <List component='div' disablePadding>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="No Prices" />
+                                                                        <ListItemText primary='No Prices' />
                                                                     </ListItemButton>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="Combined Prices" />
+                                                                        <ListItemText primary='Combined Prices' />
                                                                     </ListItemButton>
                                                                     <ListItemButton>
-                                                                        <ListItemText primary="Separate Prices" />
+                                                                        <ListItemText primary='Separate Prices' />
                                                                     </ListItemButton>
                                                                 </List>
                                                             </Collapse>
                                                             <ListItem disablePadding>
                                                                 <ListItemButton onClick={handleActionClose}>
                                                                     <ListItemText>
-                                                                        <Typography align="left">
+                                                                        <Typography align='left'>
                                                                             Tickets
                                                                         </Typography>
                                                                     </ListItemText>
@@ -475,7 +475,7 @@ const Schedule = (props) => {
                                                             <ListItem disablePadding>
                                                                 <ListItemButton onClick={handleActionClose}>
                                                                     <ListItemText>
-                                                                        <Typography align="left">
+                                                                        <Typography align='left'>
                                                                             View Load History
                                                                         </Typography>
                                                                     </ListItemText>

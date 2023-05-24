@@ -13,8 +13,8 @@ import store from './store'
 
 // Apply options globally to all Mobiscroll components
 setOptions({
-    theme: "material",
-    themeVariant: "light"
+    theme: 'material',
+    themeVariant: 'light'
 })
 
 const root = ReactDOM.createRoot(document.getElementById('root'))

@@ -88,37 +88,37 @@ export const SideMenu = ({
     const drawer = (
         <div>
             <DrawerHeader />
-            <Box sx={{ p: 1, textAlign: "center" }}>
+            <Box sx={{ p: 1, textAlign: 'center' }}>
                 <Button
-                    variant="contained"
-                    sx={{ fontSize: "0.8rem", display: drawerOpen ? "inline" : "none" }}
-                    color="primary"
+                    variant='contained'
+                    sx={{ fontSize: '0.8rem', display: drawerOpen ? 'inline' : 'none' }}
+                    color='primary'
                     fullWidth
-                    size="large"
+                    size='large'
                     startIcon={
                         <i
-                            className="fa-regular fa-plus"
-                            style={{ fontSize: "0.8rem" }}
+                            className='fa-regular fa-plus'
+                            style={{ fontSize: '0.8rem' }}
                         ></i>
                     }
                 >
                     Add New
                 </Button>
                 <Button
-                    variant="contained"
-                    aria-label="add new"
-                    color="primary"
+                    variant='contained'
+                    aria-label='add new'
+                    color='primary'
                     sx={{
-                        display: drawerOpen ? "none" : "block",
-                        minWidth: "36px",
+                        display: drawerOpen ? 'none' : 'block',
+                        minWidth: '36px',
                         p: 0,
-                        width: "100%",
-                        height: "100%",
-                        color: "#ffffff",
-                        backgroundColor: "#67A2D7",
+                        width: '100%',
+                        height: '100%',
+                        color: '#ffffff',
+                        backgroundColor: '#67A2D7',
                     }}
                 >
-                    <i className="fa-regular fa-plus" style={{ fontSize: "0.8rem" }}></i>
+                    <i className='fa-regular fa-plus' style={{ fontSize: '0.8rem' }}></i>
                 </Button>
             </Box>
 
@@ -128,28 +128,28 @@ export const SideMenu = ({
                     const isMvc = menu.url && !menu.url.startsWith('/app/redir?') ? true : false
                     return (
                         <ListItem
-                            component={menu.url && !isMvc ? Link : "div"}
+                            component={menu.url && !isMvc ? Link : 'div'}
                             to={menu.url ? menu.url : {}}
                             key={menu.displayName}
                             disablePadding
                             sx={{
-                                display: "block",
-                                textDecoration: "none",
-                                color: "#212121"
+                                display: 'block',
+                                textDecoration: 'none',
+                                color: '#212121'
                             }}
                         >
                         <Tooltip
                             title={menu.displayName}
-                            placement="right"
+                            placement='right'
                             TransitionComponent={Fade}
                             enterNextDelay={2000}
                         >
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
-                                    justifyContent: drawerOpen ? "initial" : "center",
+                                    justifyContent: drawerOpen ? 'initial' : 'center',
                                     px: 2.5,
-                                    ...(isSubMenuOpen && { bgcolor: "#f8f9fa" })
+                                    ...(isSubMenuOpen && { bgcolor: '#f8f9fa' })
                                 }}
                                 selected={menu.displayName === currentPageName ? true : false}
                                 onClick={
@@ -164,7 +164,7 @@ export const SideMenu = ({
                                 <ListItemIcon
                                     sx={{
                                         minWidth: 0.2,
-                                        justifyContent: "left"
+                                        justifyContent: 'left'
                                     }}
                                 >
                                     <i
@@ -176,15 +176,15 @@ export const SideMenu = ({
                                     ></i>
                                 </ListItemIcon>
                                 <ListItemText
-                                    level="body2"
+                                    level='body2'
                                     primary={
                                         <Typography
-                                            variant="body2"
+                                            variant='body2'
                                             style={{
                                                 fontSize: 14,
-                                                textOverflow: "ellipsis",
-                                                overflow: "hidden",
-                                                whiteSpace: "nowrap"
+                                                textOverflow: 'ellipsis',
+                                                overflow: 'hidden',
+                                                whiteSpace: 'nowrap'
                                             }}
                                         >
                                             {menu.displayName}
@@ -192,15 +192,15 @@ export const SideMenu = ({
                                     }
                                     sx={{
                                         opacity: drawerOpen ? 1 : 0,
-                                        ...(isSubMenuOpen && { color: "#546674" })
+                                        ...(isSubMenuOpen && { color: '#546674' })
                                     }}
                                 />
                             {menu.items.length > 0 &&
                                 drawerOpen &&
                                 (isSubMenuOpen ? (
-                                    <i className="fa-regular fa-chevron-down secondary-icon fa-sm"></i>
+                                    <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
                                 ) : (
-                                    <i className="fa-regular fa-chevron-right secondary-icon fa-sm"></i>
+                                    <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
                                 ))}
                             </ListItemButton>
                         </Tooltip>
@@ -213,14 +213,14 @@ export const SideMenu = ({
 
                                         return (
                                             <ListItem
-                                                component={!isSubMvc ? Link : "div"}
+                                                component={!isSubMvc ? Link : 'div'}
                                                 key={sub.displayName}
                                                 to={sub.url}
                                                 disablePadding
                                                 sx={{
-                                                    display: "block",
-                                                    textDecoration: "none",
-                                                    color: "#212121"
+                                                    display: 'block',
+                                                    textDecoration: 'none',
+                                                    color: '#212121'
                                                 }}
                                                 onClick={(event) => {
                                                     if (isSubMvc)
@@ -231,7 +231,7 @@ export const SideMenu = ({
                                             >
                                                 <Tooltip
                                                     title={sub.displayName}
-                                                    placement="right"
+                                                    placement='right'
                                                     TransitionComponent={Fade}
                                                     enterNextDelay={2000}
                                                 >
@@ -242,7 +242,7 @@ export const SideMenu = ({
                                                         <ListItemIcon
                                                             sx={{
                                                                 minWidth: 0.2,
-                                                                justifyContent: "left"
+                                                                justifyContent: 'left'
                                                             }}
                                                         >
                                                             <i
@@ -257,13 +257,13 @@ export const SideMenu = ({
                                                         <ListItemText
                                                             primary={
                                                                 <Typography
-                                                                    variant="body2"
+                                                                    variant='body2'
                                                                     style={{
-                                                                    display: drawerOpen ? "block" : "none",
+                                                                    display: drawerOpen ? 'block' : 'none',
                                                                     fontSize: 14,
-                                                                    textOverflow: "ellipsis",
-                                                                    overflow: "hidden",
-                                                                    whiteSpace: "nowrap"
+                                                                    textOverflow: 'ellipsis',
+                                                                    overflow: 'hidden',
+                                                                    whiteSpace: 'nowrap'
                                                                     }}
                                                                 >
                                                                     {sub.displayName}
@@ -288,8 +288,8 @@ export const SideMenu = ({
     return (
         <Box>
             <Drawer
-                anchor="left"
-                variant="temporary"
+                anchor='left'
+                variant='temporary'
                 open={drawerOpen}
                 onClose={handleDrawerOpen}
                 ModalProps={{
@@ -298,18 +298,18 @@ export const SideMenu = ({
                     }
                 }}
                 sx={{
-                    display: { xs: "block", sm: "none" }
+                    display: { xs: 'block', sm: 'none' }
                 }}
             >
                 {drawer}
             </Drawer>
 
             <Drawer
-                anchor="left"
-                variant="permanent"
+                anchor='left'
+                variant='permanent'
                 open={drawerOpen}
-                overflow="auto"
-                sx={{ display: { xs: "none", sm: "block" } }}
+                overflow='auto'
+                sx={{ display: { xs: 'none', sm: 'block' } }}
                 ModalProps={{}}
             >
                 {drawer}
