@@ -1973,6 +1973,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     x.Utilization,
                     x.ScheduledTrucks,
+                    x.NumberOfTrucks,
                     x.Date,
                     x.Shift,
                 })
@@ -1984,6 +1985,7 @@ namespace DispatcherWeb.Scheduling
             }
 
             var orderLineMaxUtilization = orderLine.ScheduledTrucks.HasValue ? Convert.ToDecimal(orderLine.ScheduledTrucks.Value) : 0;
+            var orderLineRequestedNumberOfTrucks = orderLine.NumberOfTrucks.HasValue ? Convert.ToDecimal(orderLine.NumberOfTrucks.Value) : 0;
 
             var currentTruckUtilization = orderLineTruck.Utilization;
             var truckUtilization = await _orderLineTruckRepository.GetAll()
@@ -1992,12 +1994,15 @@ namespace DispatcherWeb.Scheduling
             var remainingTruckUtilization = await GetRemainingTruckUtilizationForOrderAsync(new GetRemainingTruckUtilizationForOrderInput
             {
                 OrderMaxUtilization = orderLineMaxUtilization,
+                OrderRequestedNumberOfTrucks = orderLineRequestedNumberOfTrucks,
                 OrderUtilization = orderLine.Utilization,
                 AssetType = orderLineTruck.AssetType,
                 IsPowered = orderLineTruck.IsPowered,
                 TruckUtilization = truckUtilization,
             });
-            var maxUtilization = Math.Min(1, currentTruckUtilization + remainingTruckUtilization);
+            var maxUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization)
+                ? Math.Min(1, currentTruckUtilization + remainingTruckUtilization)
+                : 1;
             return new OrderLineTruckDetailsDto
             {
                 OrderLineTruckId = input.Id,
@@ -2110,6 +2115,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     //x.Utilization,
                     x.ScheduledTrucks,
+                    x.NumberOfTrucks,
                     x.Date,
                     x.Shift,
                 })
@@ -2140,7 +2146,17 @@ namespace DispatcherWeb.Scheduling
                 return;
             }
 
+            if (!await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization))
+            {
+                foreach (var orderLineTruck in orderLineTrucks)
+                {
+                    orderLineTruck.Utilization = input.Utilization;
+                }
+                return;
+            }
+
             var orderLineMaxUtilization = orderLine.ScheduledTrucks.HasValue ? Convert.ToDecimal(orderLine.ScheduledTrucks.Value) : 0;
+            var orderLineRequestedNumberOfTrucks = orderLine.NumberOfTrucks.HasValue ? Convert.ToDecimal(orderLine.NumberOfTrucks.Value) : 0;
             var orderLineUtilization = 0M;
 
             foreach (var orderLineTruck in orderLineTrucks)
@@ -2152,6 +2168,7 @@ namespace DispatcherWeb.Scheduling
                 var remainingTruckUtilization = await GetRemainingTruckUtilizationForOrderAsync(new GetRemainingTruckUtilizationForOrderInput
                 {
                     OrderMaxUtilization = orderLineMaxUtilization,
+                    OrderRequestedNumberOfTrucks = orderLineRequestedNumberOfTrucks,
                     OrderUtilization = orderLineUtilization,
                     AssetType = orderLineTruck.Truck.VehicleCategory.AssetType,
                     IsPowered = orderLineTruck.Truck.VehicleCategory.IsPowered,
@@ -2183,7 +2200,11 @@ namespace DispatcherWeb.Scheduling
         {
             if (!await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization))
             {
-                return 1;
+                if (input.OrderRequestedNumberOfTrucks <= 0)
+                {
+                    return 1;
+                }
+                return Math.Min(input.OrderRequestedNumberOfTrucks, 1);
             }
 
             if (input.OrderMaxUtilization == 0) return 0;

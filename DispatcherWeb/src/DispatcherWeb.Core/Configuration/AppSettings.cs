@@ -198,8 +198,10 @@ namespace DispatcherWeb.Configuration
         public static class Quote
         {
             public const string PromptForDisplayingQuarryInfoOnQuotes = "App.General.PromptForDisplayingQuarryInfoOnQuotes";
+            public const string DefaultNotes = "App.Project.DefaultNotes";
             public const string EmailSubjectTemplate = "App.Quote.EmailSubjectTemplate";
             public const string EmailBodyTemplate = "App.Quote.EmailBodyTemplate";
+            public const string GeneralTermsAndConditions = "App.Quote.GeneralTermsAndConditions";
 
             public static class ChangedNotificationEmail
             {

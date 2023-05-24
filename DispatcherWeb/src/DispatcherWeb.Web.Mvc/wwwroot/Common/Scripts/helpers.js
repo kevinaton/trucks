@@ -781,7 +781,6 @@
         return abp.message.confirmWithOptions({
             text: 'Truck' + s + ' ' + trucksString + ' ' + is + ' ' + message,
             title: ' ',
-            //cancelButtonText: 'No'
             buttons: ['No', 'Yes']
         },
             confirmCallback
