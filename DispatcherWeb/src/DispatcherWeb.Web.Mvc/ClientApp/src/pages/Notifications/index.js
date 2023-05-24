@@ -12,7 +12,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-import NoContent from "../../components/NoContent";
 import data from "../../common/data/data.json";
 import { DataGrid } from "@mui/x-data-grid";
 import { NotificationSettings } from "../../components/DTComponents";
