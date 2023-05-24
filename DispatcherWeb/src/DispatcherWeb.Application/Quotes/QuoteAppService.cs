@@ -829,7 +829,11 @@ namespace DispatcherWeb.Quotes
                     x.LoadAtId,
                     x.DeliverToId,
                     x.MaterialUomId,
-                    x.FreightUomId
+                    x.FreightUomId,
+                    VehicleCategories = x.OrderLineVehicleCategories.Select(vc => new
+                    {
+                        vc.VehicleCategoryId
+                    }).ToList()
                 })
                 .OrderBy(x => x.LineNumber)
                 .ToListAsync();
@@ -857,23 +861,34 @@ namespace DispatcherWeb.Quotes
 
             quote.Id = await _quoteRepository.InsertAndGetIdAsync(quote);
 
-            var quoteServices = orderLines.Select(x => new QuoteService
-            {
-                QuoteId = quote.Id,
-                Designation = x.Designation,
-                JobNumber = x.JobNumber,
-                Note = x.Note,
-                FreightRate = x.FreightPricePerUnit,
-                PricePerUnit = x.MaterialPricePerUnit,
-                LeaseHaulerRate = x.LeaseHaulerRate,
-                FreightRateToPayDrivers = x.FreightRateToPayDrivers,
-                MaterialQuantity = x.MaterialQuantity,
-                FreightQuantity = x.FreightQuantity,
-                ServiceId = x.ServiceId,
-                LoadAtId = x.LoadAtId,
-                DeliverToId = x.DeliverToId,
-                MaterialUomId = x.MaterialUomId,
-                FreightUomId = x.FreightUomId
+            var quoteServices = orderLines.Select(x => {
+                var newQuoteService = new QuoteService
+                {
+                    QuoteId = quote.Id,
+                    Designation = x.Designation,
+                    JobNumber = x.JobNumber,
+                    Note = x.Note,
+                    FreightRate = x.FreightPricePerUnit,
+                    PricePerUnit = x.MaterialPricePerUnit,
+                    LeaseHaulerRate = x.LeaseHaulerRate,
+                    FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                    MaterialQuantity = x.MaterialQuantity,
+                    FreightQuantity = x.FreightQuantity,
+                    ServiceId = x.ServiceId,
+                    LoadAtId = x.LoadAtId,
+                    DeliverToId = x.DeliverToId,
+                    MaterialUomId = x.MaterialUomId,
+                    FreightUomId = x.FreightUomId
+                };
+                foreach (var vehicleCategory in x.VehicleCategories)
+                {
+                    newQuoteService.QuoteServiceVehicleCategories.Add(new QuoteServiceVehicleCategory
+                    {
+                        QuoteService = newQuoteService,
+                        VehicleCategoryId = vehicleCategory.VehicleCategoryId
+                    });
+                }
+                return newQuoteService;
             }).ToList();
 
             foreach (var quoteService in quoteServices)
