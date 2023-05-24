@@ -397,5 +397,23 @@ namespace DispatcherWeb.Drivers
                 throw new UserFriendlyException("Another driver already uses this email");
             }
         }
+
+        public async Task<List<DriverCompanyDto>> GetCompanyListForUserDrivers(GetCompanyListForUserDriversInput input)
+        {
+            var drivers = await _driverRepository.GetAll()
+                .Where(x => input.UserId == x.UserId)
+                .Select(x => new DriverCompanyDto()
+                {
+                    DriverId = x.Id,
+                    CompanyName = x.LeaseHaulerDriver == null ? "Internal driver" : "Lease Hauler: " + x.LeaseHaulerDriver.LeaseHauler.Name,
+                    DateOfHire = x.DateOfHire,
+                    TerminationDate = x.TerminationDate,
+                    IsActive = !x.IsInactive
+                })
+                .OrderBy(x => x.CompanyName)
+                .ToListAsync();
+
+            return drivers;
+        }
     }
 }

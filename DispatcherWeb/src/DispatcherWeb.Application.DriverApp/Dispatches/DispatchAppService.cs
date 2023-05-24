@@ -145,7 +145,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                     AcknowledgedDateTime = di.Acknowledged,
                     //HasTickets = di.Loads.Any(l => l.TicketId != null),
                     //Guid = di.Guid,
-                    //SortOrder = di.SortOrder,
+                    SortOrder = di.SortOrder,
                     //NumberOfAddedLoads = di.NumberOfAddedLoads,
                     //NumberOfLoadsToFinish = di.NumberOfLoadsToFinish,
                 });

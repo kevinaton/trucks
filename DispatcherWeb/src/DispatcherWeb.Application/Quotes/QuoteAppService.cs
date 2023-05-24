@@ -274,6 +274,7 @@ namespace DispatcherWeb.Quotes
                 {
                     quoteEditDto = new QuoteEditDto
                     {
+                        Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                     };
                 }
 
@@ -479,37 +480,36 @@ namespace DispatcherWeb.Quotes
             {
                 if (model.ProjectId.HasValue)
                 {
-                    //get project services to add to the new quote
-                    var projectServices = await _projectServiceRepository.GetAll()
-                        .Where(x => x.ProjectId == model.ProjectId)
-                        .ToListAsync();
-                    projectServices.Select(x => new QuoteService
-                    {
-                        LoadAtId = x.LoadAtId,
-                        DeliverToId = x.DeliverToId,
-                        ServiceId = x.ServiceId,
-                        MaterialUomId = x.MaterialUomId,
-                        FreightUomId = x.FreightUomId,
-                        Designation = x.Designation,
-                        PricePerUnit = x.PricePerUnit,
-                        FreightRate = x.FreightRate,
-                        FreightRateToPayDrivers = x.FreightRate,
-                        LeaseHaulerRate = x.LeaseHaulerRate,
-                        MaterialQuantity = x.MaterialQuantity,
-                        FreightQuantity = x.FreightQuantity,
-                        Note = x.Note
-                    })
-                    .ToList().ForEach(x =>
-                    {
-                        quote.QuoteServices.Add(x);
-                        _quoteServiceRepository.Insert(x);
-                    });
+                    ////get project services to add to the new quote
+                    //var projectServices = await _projectServiceRepository.GetAll()
+                    //    .Where(x => x.ProjectId == model.ProjectId)
+                    //    .ToListAsync();
+                    //projectServices.Select(x => new QuoteService
+                    //{
+                    //    LoadAtId = x.LoadAtId,
+                    //    DeliverToId = x.DeliverToId,
+                    //    ServiceId = x.ServiceId,
+                    //    MaterialUomId = x.MaterialUomId,
+                    //    FreightUomId = x.FreightUomId,
+                    //    Designation = x.Designation,
+                    //    PricePerUnit = x.PricePerUnit,
+                    //    FreightRate = x.FreightRate,
+                    //    FreightRateToPayDrivers = x.FreightRate,
+                    //    LeaseHaulerRate = x.LeaseHaulerRate,
+                    //    MaterialQuantity = x.MaterialQuantity,
+                    //    FreightQuantity = x.FreightQuantity,
+                    //    Note = x.Note
+                    //})
+                    //.ToList().ForEach(x =>
+                    //{
+                    //    quote.QuoteServices.Add(x);
+                    //    _quoteServiceRepository.Insert(x);
+                    //});
 
                     var project = await _projectRepository.GetAsync(model.ProjectId.Value);
                     if (project.Status == QuoteStatus.Pending)
                     {
                         project.Status = QuoteStatus.Active;
-                        await _projectRepository.UpdateAsync(project);
                     }
                 }
 
@@ -767,8 +767,7 @@ namespace DispatcherWeb.Quotes
 
         [AbpAuthorize(
             AppPermissions.Pages_Quotes_Edit,
-            AppPermissions.Pages_Orders_Edit,
-            AppPermissions.Pages_Projects,
+            AppPermissions.Pages_Orders_View,
             RequireAllPermissions = true
         )]
         public async Task<int> CreateQuoteFromOrder(CreateQuoteFromOrderInput input)
@@ -830,6 +829,7 @@ namespace DispatcherWeb.Quotes
                 PONumber = order.PONumber,
                 Status = QuoteStatus.Active,
                 SalesPersonId = AbpSession.UserId,
+                Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes),
                 ProposalDate = today,
                 ProposalExpiryDate = today.AddDays(30)
             };
@@ -919,7 +919,7 @@ namespace DispatcherWeb.Quotes
             await _quoteRepository.DeleteAsync(input.Id);
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Projects)]
+        [AbpAuthorize(AppPermissions.Pages_Quotes_Edit)]
         public async Task InactivateQuote(EntityDto input)
         {
             var quote = await _quoteRepository.GetAsync(input.Id);
@@ -1355,6 +1355,12 @@ namespace DispatcherWeb.Quotes
             data.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
             data.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
             data.HideLoadAt = input.HideLoadAt;
+            data.ShowProject = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Projects);
+            data.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
+
+            data.QuoteGeneralTermsAndConditions = data.QuoteGeneralTermsAndConditions
+                .Replace("{CompanyName}", data.CompanyName)
+                .Replace("{CompanyNameUpperCase}", data.CompanyName.ToUpper());
 
             await SetQuoteCaptureHistory(input.QuoteId);
 

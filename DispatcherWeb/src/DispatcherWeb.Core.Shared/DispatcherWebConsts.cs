@@ -52,5 +52,14 @@ namespace DispatcherWeb
             public const string UserOfficeCopyChargeTo = "Application_UserOfficeCopyDeliverToLoadAtChargeTo";
         }
 
+        public static class DefaultSettings
+        {
+            public static class Quote
+            {
+                public const string DefaultNotes = "";
+                public const string GeneralTermsAndConditions = "";
+            }
+        }
+
     }
 }

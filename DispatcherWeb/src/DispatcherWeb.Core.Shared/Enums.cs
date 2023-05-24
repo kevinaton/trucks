@@ -802,4 +802,12 @@ namespace DispatcherWeb
         [Display(Name = "Order Date")]
         OrderDate = 2,
     }
+
+    public enum DriverAppImageResolutionEnum
+    {
+        Small = 1,
+        Medium = 2,
+        Large = 3,
+        Original = 4,
+    }
 }

@@ -18,13 +18,13 @@ export const RouterConfig = ({
     const navigate = useNavigate()
 
     const routes = [
-        { path: "/dashboard", component: Dashboard },
-        { path: "/customers", component: Customers },
-        { path: "/products-services", component: ProductsOrServices },
-        { path: "/drivers", component: Drivers },
-        { path: "/locations", component: Locations },
-        { path: "/dispatching/schedule", component: Schedule },
-        { path: "/dispatching/dispatches/truck-list", component: TruckDispatchList }
+        { path: '/dashboard', component: Dashboard },
+        { path: '/customers', component: Customers },
+        { path: '/products-services', component: ProductsOrServices },
+        { path: '/drivers', component: Drivers },
+        { path: '/locations', component: Locations },
+        { path: '/dispatching/schedule', component: Schedule },
+        { path: '/dispatching/dispatches/truck-list', component: TruckDispatchList }
     ]
 
     useEffect(() => {
@@ -34,7 +34,7 @@ export const RouterConfig = ({
     }, [targetRoute, navigate])
 
     return (
-        <Routes sx={{ height: "100%", overflow: "auto" }}>
+        <Routes sx={{ height: '100%', overflow: 'auto' }}>
             {routes.map((route, index) => (
                 <Route
                     key={index}

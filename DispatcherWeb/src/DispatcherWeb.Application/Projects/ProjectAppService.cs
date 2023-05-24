@@ -109,7 +109,7 @@ namespace DispatcherWeb.Projects
         }
 
         [AbpAuthorize(AppPermissions.Pages_Projects)]
-        public async Task<ProjectEditDto> GetProjectForEdit(NullableIdDto input)
+        public async Task<ProjectEditDto> GetProjectForEdit(NullableIdNameDto input)
         {
             ProjectEditDto projectEditDto;
 
@@ -136,6 +136,8 @@ namespace DispatcherWeb.Projects
             {
                 projectEditDto = new ProjectEditDto
                 {
+                    Name = input.Name,
+                    Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                 };
             }
 
@@ -155,17 +157,17 @@ namespace DispatcherWeb.Projects
 
             project.Name = model.Name;
             project.Description = model.Description;
-            project.Location = model.Location;
+            //project.Location = model.Location;
             project.StartDate = model.StartDate;
             project.EndDate = model.EndDate;
             project.Status = model.Status;
-            project.PONumber = model.PONumber;
-            project.Directions = model.Directions;
-            project.Notes = model.Notes;
-            if (Session.OfficeCopyChargeTo)
-            {
-                project.ChargeTo = model.ChargeTo;
-            }
+            //project.PONumber = model.PONumber;
+            //project.Directions = model.Directions;
+            //project.Notes = model.Notes;
+            //if (Session.OfficeCopyChargeTo)
+            //{
+            //    project.ChargeTo = model.ChargeTo;
+            //}
 
             model.Id = await _projectRepository.InsertOrUpdateAndGetIdAsync(project);
             return model;

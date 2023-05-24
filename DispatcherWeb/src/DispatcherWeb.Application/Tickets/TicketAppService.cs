@@ -493,11 +493,11 @@ namespace DispatcherWeb.Tickets
             ticket.IsVerified = model.IsVerified;
             ticket.IsBilled = model.IsBilled;
 
-            if (ticket.TruckId == null && !(model.CarrierId > 0))
+            if (ticket.TruckId == null && !(model.CarrierId > 0) && !await SettingManager.AllowCounterSales())
             {
                 throw new UserFriendlyException($"Invalid truck number");
             }
-            if (ticket.DriverId == null && !(model.CarrierId > 0))
+            if (ticket.DriverId == null && !(model.CarrierId > 0) && !await SettingManager.AllowCounterSales())
             {
                 throw new UserFriendlyException("Driver is required");
             }
@@ -893,11 +893,11 @@ namespace DispatcherWeb.Tickets
             if (input.TicketStatus == TicketListStatusFilterEnum.PotentialDuplicateTickets)
             {
                 query = (from ticket in query
-                        join otherTicket in _ticketRepository.GetAll()
-                        on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
-                        equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
-                        where otherTicket != null && otherTicket.Id != ticket.Id
-                        select ticket)
+                         join otherTicket in _ticketRepository.GetAll()
+                         on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
+                         equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
+                         where otherTicket != null && otherTicket.Id != ticket.Id
+                         select ticket)
                         .Distinct();
             }
 
@@ -935,6 +935,7 @@ namespace DispatcherWeb.Tickets
                     Date = t.TicketDateTime,
                     OrderDate = t.OrderLine.Order.DeliveryDate,
                     ShiftRaw = t.OrderLineId.HasValue ? t.OrderLine.Order.Shift : t.Shift,
+                    Office = t.Office.Name,
                     CustomerName = t.Customer != null ? t.Customer.Name : "",
                     QuoteName = t.OrderLine.Order.Quote.Name,
                     JobNumber = t.OrderLine.JobNumber,
@@ -971,6 +972,7 @@ namespace DispatcherWeb.Tickets
                     TicketUomId = t.UnitOfMeasureId,
                     MaterialRate = t.OrderLine.MaterialPricePerUnit,
                     FreightRate = t.OrderLine.FreightPricePerUnit,
+                    FreightRateToPayDrivers = t.OrderLine.FreightRateToPayDrivers,
                     FuelSurcharge = t.FuelSurcharge,
                     Revenue = t.Quantity * ((t.OrderLine.MaterialPricePerUnit ?? 0) + (t.OrderLine.FreightPricePerUnit ?? 0)),
                     IsFreightPriceOverridden = t.OrderLine.IsFreightPriceOverridden,
@@ -1286,7 +1288,10 @@ namespace DispatcherWeb.Tickets
                     {
                         await EnsureCanAddTickets(ticketModel.OrderLineId.Value, OfficeId);
                     }
-                    await _ticketRepository.EnsureCanEditTicket(ticketModel.Id);
+                    if (!await IsGrantedAsync(AppPermissions.EditInvoicedOrdersAndTickets))
+                    {
+                        await _ticketRepository.EnsureCanEditTicket(ticketModel.Id);
+                    }
 
                     //var driverOrTruckHasChanged = false;
                     if (ticket.DriverId != ticketModel.DriverId)

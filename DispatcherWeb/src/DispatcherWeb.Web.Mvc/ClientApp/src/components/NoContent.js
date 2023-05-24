@@ -5,14 +5,14 @@ const NoContent = () => {
     return (
         <Box
             sx={{
-                textAlign: "center",
-                height: "80vh",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
+                textAlign: 'center',
+                height: '80vh',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
             }}
         >
-            <Typography variant="h6" color={grey[400]}>
+            <Typography variant='h6' color={grey[400]}>
                 This page has no content yet.
             </Typography>
         </Box>

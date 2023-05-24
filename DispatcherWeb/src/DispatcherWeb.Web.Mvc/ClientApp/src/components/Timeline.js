@@ -24,38 +24,38 @@ const Timeline = () => {
     const [formOpen, setDispatchOpen] = React.useState(false)
     const [dataDispatches, setDispatches] = React.useState(dispatches)
     const [isEdit, setEdit] = React.useState(false)
-    const [dispatchCustomer, setDispatchCustomer] = React.useState("")
-    const [dispatchTime, setDispatchTime] = React.useState("")
-    const [dispatchLoadAt, setDispatchLoadAt] = React.useState("")
-    const [dispatchDeliverTo, setDispatchDeliverTo] = React.useState("")
-    const [dispatchItem, setDispatchItem] = React.useState("")
+    const [dispatchCustomer, setDispatchCustomer] = React.useState('')
+    const [dispatchTime, setDispatchTime] = React.useState('')
+    const [dispatchLoadAt, setDispatchLoadAt] = React.useState('')
+    const [dispatchDeliverTo, setDispatchDeliverTo] = React.useState('')
+    const [dispatchItem, setDispatchItem] = React.useState('')
     const [dispatchIsRunUntilStopped, setDispatchIsRunUntilStopped] = React.useState(false)
     const [isCompact, setCompact] = React.useState(false)
     const [isTimeRange, setIsTimeRange] = React.useState(false)
     const [tempStartTime, setTempStartTime] = React.useState(null)
     const [tempEndTime, setTempEndTime] = React.useState(null)
-    const [workStart, setWorkStart] = React.useState("05:00")
-    const [workEnd, setWorkEnd] = React.useState("19:00")
+    const [workStart, setWorkStart] = React.useState('05:00')
+    const [workEnd, setWorkEnd] = React.useState('19:00')
     const [rcAnchor, setRcAnchor] = React.useState(null)
     const [isRightClick, setIsRightClick] = React.useState(false)
     const [menuValue, setMenuValue] = React.useState(null)
     const [tempDispatch, setTempDispatch] = React.useState(null)
     const [isCopy, setIsCopy] = React.useState(false)
-    const [newActivity, setNewActivity] = React.useState("")
-    const [newDeliverTo, setNewDeliverTo] = React.useState("")
-    const [newId, setNewId] = React.useState("")
-    const [newItem, setNewItem] = React.useState("")
-    const [newLoadAt, setLoadAt] = React.useState("")
+    const [newActivity, setNewActivity] = React.useState('')
+    const [newDeliverTo, setNewDeliverTo] = React.useState('')
+    const [newId, setNewId] = React.useState('')
+    const [newItem, setNewItem] = React.useState('')
+    const [newLoadAt, setLoadAt] = React.useState('')
     const [newResource, setNewResource] = React.useState(null)
     const [newRunUntilStopped, setNewRunUntilStopped] = React.useState(false)
-    const [newTitle, setNewTitle] = React.useState("")
+    const [newTitle, setNewTitle] = React.useState('')
     const [menuList, setMenuList] = React.useState(menu)
     const [isDispatchTimes, setIsDispatchTimes] = React.useState(false)
     const [dispatchTimesDate, setDispatchTimesDate] = React.useState(new Date())
     const [dispatchTimesStartTime, setDispatchTimesStartTime] = React.useState(null)
     const [dispatchTimesDuration, setDispatchTimesDuration] = React.useState(null)
     const [isSetDisabled, setIsSetDisabled] = React.useState(true)
-    const isSmall = useMediaQuery((theme) => theme.breakpoints.down("lg"))
+    const isSmall = useMediaQuery((theme) => theme.breakpoints.down('lg'))
     const [newRefDate, setNewRefDate] = React.useState(null)
     const [office, setOffice] = React.useState(offices[0])
     const [viewOption, setViewOption] = React.useState(views[0])
@@ -96,10 +96,10 @@ const Timeline = () => {
             e.preventDefault()
         }
 
-        document.addEventListener("contextmenu", handleContextMenu)
+        document.addEventListener('contextmenu', handleContextMenu)
 
         return () => {
-            document.removeEventListener("contextmenu", handleContextMenu)
+            document.removeEventListener('contextmenu', handleContextMenu)
         }
     })
 
@@ -135,7 +135,7 @@ const Timeline = () => {
         (ev) => {
             return {
                 timeline: {
-                    type: "day",
+                    type: 'day',
                     startDay: 1, // Monday
                     endDay: 6, // Friday
                     startTime: workStart,
@@ -144,7 +144,7 @@ const Timeline = () => {
                     timeLabelStep: isSmall ? 120 : 60,
                     weekNumbers: false,
                     currentTimeIndicator: true,
-                    row: "variable"
+                    row: 'variable'
                 }
             }
         },
@@ -160,29 +160,29 @@ const Timeline = () => {
     // Custom Resource view
     const renderMyResource = useCallback((resource) => {
         return (
-            <div className="md-work-week-cont">
-                <div className="md-work-week-name">{resource.name}</div>
-                <div className="md-work-week-title">
-                    {resource.truck}{" "}
+            <div className='md-work-week-cont'>
+                <div className='md-work-week-name'>{resource.name}</div>
+                <div className='md-work-week-title'>
+                    {resource.truck}{' '}
 
                     {resource.erIcon === true ? (
                         <WarningOutlined
-                        style={{ fill: "#DD4B39", width: "12px", height: "12px" }}
+                        style={{ fill: '#DD4B39', width: '12px', height: '12px' }}
                         />
                     ) : (
-                        ""
+                        ''
                     )}
 
                     {resource.erIcon === true ? (
-                        <span className="warning-tooltip">Unacknowledged dispatches</span>
+                        <span className='warning-tooltip'>Unacknowledged dispatches</span>
                     ) : (
-                        ""
+                        ''
                     )}
                 </div>
                 <img
-                    className="md-work-week-avatar"
+                    className='md-work-week-avatar'
                     src={`/reactapp/assets/${resource.avatar}.png`}
-                    alt="Avatar"
+                    alt='Avatar'
                 />
             </div>
         )
@@ -193,13 +193,13 @@ const Timeline = () => {
         (data) => {
             const ev = data.original
             const currentTime = new Date()
-            let bgColor = "#E3E6E9",
-                textColor = "#000000",
-                borderColor = "",
-                iconColor = "#3a7798"
+            let bgColor = '#E3E6E9',
+                textColor = '#000000',
+                borderColor = '',
+                iconColor = '#3a7798'
 
             // Check if dispatch is loaded
-            const isLoaded = data.original.status.toLowerCase().includes("loaded")
+            const isLoaded = data.original.status.toLowerCase().includes('loaded')
 
             // Manage dispatch color
             if (currentTime >= data.startDate && currentTime <= data.endDate) {
@@ -207,78 +207,78 @@ const Timeline = () => {
                 // If dispatch is the last one and
                 if (dispatchesByResource[data.resource][0].id === data.id &&
                     isLoaded === true) {
-                    borderColor = "3px solid #feb811"
+                    borderColor = '3px solid #feb811'
                 }
 
-                bgColor = "#317ab4"
-                textColor = "#ffffff"
-                iconColor = "#ffffff"
+                bgColor = '#317ab4'
+                textColor = '#ffffff'
+                iconColor = '#ffffff'
             } else if (currentTime > data.endDate) {
                 // Past or done dispatches
-                bgColor = "#d6f2ff"
+                bgColor = '#d6f2ff'
             } else {
                 // Future dispatches
-                bgColor = "#E3E6E9"
+                bgColor = '#E3E6E9'
             }
 
             if (isCompact === false) {
                 return (
                     <div
-                        className="event-background"
+                        className='event-background'
                         style={{ background: bgColor, border: borderColor }}
                     >
-                        <div className="event-title" style={{ color: textColor }}>
+                        <div className='event-title' style={{ color: textColor }}>
                             {ev.customer}
                         </div>
-                        <div className="event-status" style={{ color: textColor }}>
+                        <div className='event-status' style={{ color: textColor }}>
                             {ev.status}
                         </div>
-                        <div className="event-body" style={{ color: textColor }}>
+                        <div className='event-body' style={{ color: textColor }}>
                             {ev.loadat}
                         </div>
-                        <div className="event-body" style={{ color: textColor }}>
+                        <div className='event-body' style={{ color: textColor }}>
                             {ev.deliverto}
                         </div>
-                        <div className="event-details" style={{ color: textColor }}>
+                        <div className='event-details' style={{ color: textColor }}>
                             {ev.item ? (
                                 <ShoppingBasket
-                                style={{ fill: iconColor, width: "12px", height: "12px" }}
+                                style={{ fill: iconColor, width: '12px', height: '12px' }}
                                 />
                             ) : (
-                                ""
+                                ''
                             )}
                             {ev.item}
-                            {ev.runUntilStopped === true ? ", " : ""}
+                            {ev.runUntilStopped === true ? ', ' : ''}
                             {ev.runUntilStopped === true ? (
                                 <CheckBox
                                 style={{
                                     fill: iconColor,
-                                    width: "12px",
-                                    height: "12px",
-                                    margin: "0 0 0 4px",
+                                    width: '12px',
+                                    height: '12px',
+                                    margin: '0 0 0 4px',
                                 }}
                                 />
                             ) : (
-                                ""
+                                ''
                             )}
-                            {ev.runUntilStopped === true ? "Run until stopped" : ""}
+                            {ev.runUntilStopped === true ? 'Run until stopped' : ''}
                         </div>
                     </div>
                 )
             } else {
                 return (
                     <div
-                        className="event-background"
+                        className='event-background'
                         style={{ background: bgColor, border: borderColor }}
                     >
-                        <div className="event-compact-title" style={{ color: textColor }}>
+                        <div className='event-compact-title' style={{ color: textColor }}>
                             {ev.customer +
-                                ", Load at:" +
+                                ', Load at:' +
                                 ev.loadat +
-                                ", Deliver  to:" +
+                                ', Deliver  to:' +
                                 ev.deliverto}
                         </div>
-                        <div className="event-status" style={{ color: textColor }}>
+                        <div className='event-status' style={{ color: textColor }}>
                             {ev.status}
                         </div>
                     </div>
@@ -290,8 +290,8 @@ const Timeline = () => {
 
     //  Create dispatch form
     const loadDispatchForm = React.useCallback((event) => {
-        const dispStart = moment(event.start).format("h:mm a")
-        const dispEnd = moment(event.end).format("h:mm a")
+        const dispStart = moment(event.start).format('h:mm a')
+        const dispEnd = moment(event.end).format('h:mm a')
         setDispatchCustomer(event.customer)
         setDispatchTime(`${dispStart} to ${dispEnd}`)
         setDispatchLoadAt(event.loadat)
@@ -306,8 +306,8 @@ const Timeline = () => {
             setDispatches(dataDispatches.filter((item) => item.id !== event.id))
             setTimeout(() => {
                 snackbar({
-                    message: "event deleted",
-                    color: "success",
+                    message: 'event deleted',
+                    color: 'success',
                 })
             })
         },
@@ -373,7 +373,7 @@ const Timeline = () => {
             setIsRightClick(true)
         } else {
             const removedEndMultipleDispatches = menu.filter(
-                (item) => item.value !== "endMultipleDispatches"
+                (item) => item.value !== 'endMultipleDispatches'
             )
             setMenuList(removedEndMultipleDispatches)
             setIsRightClick(true)
@@ -382,12 +382,12 @@ const Timeline = () => {
 
     const rightClickClose = React.useCallback(
         (ev) => {
-            if (ev.value === "cancel") {
+            if (ev.value === 'cancel') {
                 onDeleteDispatch()
-                setTempDispatch("")
+                setTempDispatch('')
             }
 
-            if (ev.value === "copy") {
+            if (ev.value === 'copy') {
                 setIsCopy(true)
 
                 // set new ID
@@ -399,7 +399,7 @@ const Timeline = () => {
                     }
                 })
 
-                setNewId((largestId + 1).toString().padStart(3, "0"))
+                setNewId((largestId + 1).toString().padStart(3, '0'))
                 setNewActivity(tempDispatch.status)
                 setNewDeliverTo(tempDispatch.deliverto)
                 setNewItem(tempDispatch.item)
@@ -409,7 +409,7 @@ const Timeline = () => {
                 setNewTitle(tempDispatch.customer)
             }
 
-            if (ev.value === "endMultipleDispatches") {
+            if (ev.value === 'endMultipleDispatches') {
                 tempDispatch.runUntilStopped = false
                 const index = dataDispatches.findIndex((x) => x.id === tempDispatch.id)
                 const updateDispatch = [...dataDispatches]
@@ -417,18 +417,18 @@ const Timeline = () => {
                 setDispatches(updateDispatch)
             }
 
-            if (ev.value === "changeDispatchtimes") {
+            if (ev.value === 'changeDispatchtimes') {
                 const st = moment(tempDispatch.start)
                 const en = moment(tempDispatch.end)
                 const duration = moment.duration(en.diff(st))
-                const hrs = Math.floor(duration.asHours()).toString().padStart(2, "0")
-                const min = duration.minutes().toString().padStart(2, "0")
+                const hrs = Math.floor(duration.asHours()).toString().padStart(2, '0')
+                const min = duration.minutes().toString().padStart(2, '0')
                 const timeDuration = `${hrs}:${min}`
 
                 // Checks if date is object or ISO
                 if (moment.isDate(tempDispatch.start)) {
-                    setDispatchTimesStartTime(st.format("YYYY-MM-DDTHH:mm:ss"))
-                    setDispatchTimesDate(st.format("YYYY-MM-DDTHH:mm:ss"))
+                    setDispatchTimesStartTime(st.format('YYYY-MM-DDTHH:mm:ss'))
+                    setDispatchTimesDate(st.format('YYYY-MM-DDTHH:mm:ss'))
                 } else {
                     setDispatchTimesStartTime(tempDispatch.start)
                     setDispatchTimesDate(tempDispatch.start)
@@ -438,7 +438,7 @@ const Timeline = () => {
                 setIsDispatchTimes(true)
             }
 
-            setMenuValue("")
+            setMenuValue('')
             setIsRightClick(false)
         },
         [onDeleteDispatch, dataDispatches, tempDispatch]
@@ -447,7 +447,7 @@ const Timeline = () => {
     // Popup
     const responsivePopup = {
         mediumd: {
-            display: "anchored",
+            display: 'anchored',
             width: 400,
             fullscreen: false,
             touchUi: false
@@ -457,7 +457,7 @@ const Timeline = () => {
     // Add dispatch buttons
     const dispatchButtons = React.useMemo(() => {
         return [{
-            text: "Done",
+            text: 'Done',
             handler: () => {
                 setDispatchOpen(false)
             }
@@ -466,7 +466,7 @@ const Timeline = () => {
 
     // Handle add/edit popup form
     const headerText = React.useMemo(
-        () => (isEdit ? "View Dispatch" : "Add Dispatch"),
+        () => (isEdit ? 'View Dispatch' : 'Add Dispatch'),
         [isEdit]
     )
 
@@ -477,11 +477,11 @@ const Timeline = () => {
 
     // Handle closing of working hour popup
     const timeRangeClose = React.useCallback(() => {
-        const sTime = moment(tempStartTime).format("HH:mm").toString()
-        const eTime = moment(tempEndTime).format("HH:mm").toString()
+        const sTime = moment(tempStartTime).format('HH:mm').toString()
+        const eTime = moment(tempEndTime).format('HH:mm').toString()
 
-        setWorkStart(sTime !== "Invalid date" ? sTime : "05:00")
-        setWorkEnd(eTime !== "Invalid date" ? eTime : "19:00")
+        setWorkStart(sTime !== 'Invalid date' ? sTime : '05:00')
+        setWorkEnd(eTime !== 'Invalid date' ? eTime : '19:00')
         setIsTimeRange(false)
     }, [tempStartTime, tempEndTime])
 
@@ -498,14 +498,14 @@ const Timeline = () => {
     const customMenu = useCallback((data) => {
         const item = data.data
         return (
-            <div className="md-item-template">
+            <div className='md-item-template'>
                 {/* <span
                 className={`mbsc-font-icon md-item-template-icon mbsc-icon-${item.icon}`}
                 ></span> */}
-                <span className="mbsc-font-icon md-item-template-icon">
+                <span className='mbsc-font-icon md-item-template-icon'>
                     <i className={`fa-regular ${item.icon} secondary-icon fa-sm`}></i>
                 </span>
-                <div className="md-item-template-title">
+                <div className='md-item-template-title'>
                     <span>{item.text}</span>
                 </div>
             </div>
@@ -559,13 +559,13 @@ const Timeline = () => {
     // Handle cancel on Copy dispatch
     const copyCancel = () => {
         setNewId(null)
-        setNewActivity("")
-        setNewDeliverTo("")
-        setNewItem("")
-        setLoadAt("")
-        setNewResource("")
-        setNewRunUntilStopped("")
-        setNewTitle("")
+        setNewActivity('')
+        setNewDeliverTo('')
+        setNewItem('')
+        setLoadAt('')
+        setNewResource('')
+        setNewRunUntilStopped('')
+        setNewTitle('')
         setTempDispatch(null)
         setIsCopy(false)
     }
@@ -575,15 +575,15 @@ const Timeline = () => {
     // change dispatch times button
     const changeDispatchTimesButtons = React.useMemo(() => {
         return [{
-            text: "Cancel",
+            text: 'Cancel',
             handler: () => {
                 setIsDispatchTimes(false)
-                setDispatchTimesDate("")
-                setDispatchTimesStartTime("")
-                setDispatchTimesDuration("")
+                setDispatchTimesDate('')
+                setDispatchTimesStartTime('')
+                setDispatchTimesDuration('')
             }
         }, {
-            text: "Set",
+            text: 'Set',
             disabled: isSetDisabled,
             handler: () => {
                 const setDate = dispatchTimesDate.slice(0, 10) //Gets set date
@@ -615,7 +615,7 @@ const Timeline = () => {
     ])
 
     const onEventUpdate = React.useCallback((event, int) => {
-        console.log("onEventUpdate")
+        console.log('onEventUpdate')
     }, [])
 
     // Handle the show compact function
@@ -633,64 +633,64 @@ const Timeline = () => {
 
     return (
         <Page>
-            <div className="mbsc-grid">
-                <div className="mbsc-row mbsc-align-items-center">
-                    <div className="mbsc-col-12 mbsc-col-sm-6 mbsc-col-md-4">
+            <div className='mbsc-grid'>
+                <div className='mbsc-row mbsc-align-items-center'>
+                    <div className='mbsc-col-12 mbsc-col-sm-6 mbsc-col-md-4'>
                         <Box sx={{ mt: 3 }}>
                             <SelectField
-                                label={"Office"}
+                                label={'Office'}
                                 value={office}
                                 onChange={handleOffice}
                                 items={offices}
                             />
                         </Box>
                     </div>
-                    <div className="mbsc-col-12 mbsc-col-sm-6 mbsc-col-md-4">
+                    <div className='mbsc-col-12 mbsc-col-sm-6 mbsc-col-md-4'>
                         <Box sx={{ mt: 3 }}>
                             <SelectField
-                                label={"View"}
+                                label={'View'}
                                 value={viewOption}
                                 onChange={handleViews}
                                 items={views}
                             />
                         </Box>
                     </div>
-                    <div className="mbsc-col-12 mbsc-col-sm-12 mbsc-col-md-4 sets">
+                    <div className='mbsc-col-12 mbsc-col-sm-12 mbsc-col-md-4 sets'>
                         {/* Compact */}
                         <Switch
-                            className="sets-switch"
-                            label="Show compact"
+                            className='sets-switch'
+                            label='Show compact'
                             defaultChecked={false}
                             checked={isCompact}
-                            position="start"
+                            position='start'
                             rtl={true}
                             onChange={handleCompact}
                         />
 
                         {/* working hours */}
                         <Button
-                            icon="clock"
-                            variant="flat"
+                            icon='clock'
+                            variant='flat'
                             onClick={timeRangeOpen}
                         ></Button>
 
                         <Popup
-                            className="time-range"
-                            display="center"
+                            className='time-range'
+                            display='center'
                             isOpen={isTimeRange}
                             onClose={timeRangeClose}
-                            touchUi={"auto"}
+                            touchUi={'auto'}
                             showOverlay={true}
                             closeOnOverlayClick={true}
                             contentPadding={false}
                         >
                             <Datepicker
-                                controls={["time"]}
-                                display="inline"
-                                select="range"
-                                touchUi={"auto"}
+                                controls={['time']}
+                                display='inline'
+                                select='range'
+                                touchUi={'auto'}
                                 defaultValue={[workStart, workEnd]}
-                                theme="ios"
+                                theme='ios'
                                 onChange={workingHours}
                             />
                         </Popup>
@@ -715,13 +715,13 @@ const Timeline = () => {
                 onEventDeleted={onEventDeleted}
                 onEventRightClick={onEventRightClick}
                 onEventUpdated={onEventUpdate}
-                returnFormat="iso8601"
-                height={"auto"}
+                returnFormat='iso8601'
+                height={'auto'}
             />
 
             {/* View dispatch form */}
             <Popup
-                display="center"
+                display='center'
                 fullScreen={true}
                 headerText={headerText}
                 anchor={anchor}
@@ -730,44 +730,44 @@ const Timeline = () => {
                 onClose={onClose}
                 responsive={responsivePopup}
             >
-                <div className="mbsc-form-group">
+                <div className='mbsc-form-group'>
                     <Input
-                        label="Customer"
+                        label='Customer'
                         defaultValue={dispatchCustomer}
                         readOnly={true}
-                        inputStyle="outline"
+                        inputStyle='outline'
                     />
                     <Input
-                        label="Time"
+                        label='Time'
                         defaultValue={dispatchTime}
                         readOnly={true}
-                        inputStyle="outline"
+                        inputStyle='outline'
                     />
                     <Input
-                        label="Load at"
+                        label='Load at'
                         defaultValue={dispatchLoadAt}
                         readOnly={true}
-                        inputStyle="outline"
+                        inputStyle='outline'
                     />
                     <Input
-                        label="Deliver to"
+                        label='Deliver to'
                         defaultValue={dispatchDeliverTo}
                         readOnly={true}
-                        inputStyle="outline"
+                        inputStyle='outline'
                     />
                     <Input
-                        label="Item"
+                        label='Item'
                         defaultValue={dispatchItem}
                         readOnly={true}
-                        inputStyle="outline"
+                        inputStyle='outline'
                     />
                     <span
-                        className="tooltip-icon"
+                        className='tooltip-icon'
                         style={{
-                            display: dispatchIsRunUntilStopped === true ? "block" : "none"
+                            display: dispatchIsRunUntilStopped === true ? 'block' : 'none'
                         }}
                     >
-                        <CheckBox className="form-checkbox ma" /> Run until stopped
+                        <CheckBox className='form-checkbox ma' /> Run until stopped
                     </span>
                 </div>
             </Popup>
@@ -776,7 +776,7 @@ const Timeline = () => {
             <Select
                 data={menuList}
                 value={menuValue}
-                display="anchored"
+                display='anchored'
                 isOpen={isRightClick}
                 onClose={rightClickClose}
                 showArrow={false}
@@ -788,54 +788,54 @@ const Timeline = () => {
 
             {/* Copy function time picker */}
             <Datepicker
-                controls={["time"]}
-                display="center"
+                controls={['time']}
+                display='center'
                 isOpen={isCopy}
-                headerText="Set the start time"
+                headerText='Set the start time'
                 closeOnOverlayClick={true}
                 stepMinute={5}
-                touchUi={"auto"}
-                theme="ios"
+                touchUi={'auto'}
+                theme='ios'
                 onCancel={copyCancel}
                 onChange={copyDispatch}
             />
 
             {/* Change dispatch times */}
             <Popup
-                display="center"
-                headerText="Change dispatch times"
+                display='center'
+                headerText='Change dispatch times'
                 isOpen={isDispatchTimes}
                 onClose={closeDispatchTimes}
-                touchUi={"auto"}
+                touchUi={'auto'}
                 showOverlay={true}
                 closeOnOverlayClick={true}
                 buttons={changeDispatchTimesButtons}
             >
                 <Datepicker
-                    controls={["date"]}
+                    controls={['date']}
                     defaultValue={dispatchTimesDate.toLocaleString()}
-                    touchUi={"auto"}
+                    touchUi={'auto'}
                     inputTyping={false}
-                    label="Date"
-                    inputStyle="outline"
-                    returnFormat="iso8601"
+                    label='Date'
+                    inputStyle='outline'
+                    returnFormat='iso8601'
                     onChange={(ev) => setDispatchTimesDate(ev.value)}
                 />
                 <Datepicker
-                    controls={["time"]}
+                    controls={['time']}
                     defaultValue={dispatchTimesStartTime}
-                    touchUi={"auto"}
+                    touchUi={'auto'}
                     inputTyping={false}
-                    label="Start time"
-                    inputStyle="outline"
-                    returnFormat="iso8601"
+                    label='Start time'
+                    inputStyle='outline'
+                    returnFormat='iso8601'
                     onChange={(ev) => setDispatchTimesStartTime(ev.value)}
                 />
                 <Input
-                    placeholder="HH:mm"
+                    placeholder='HH:mm'
                     defaultValue={dispatchTimesDuration}
-                    label="Estimated Dispatch Time"
-                    inputStyle="outline"
+                    label='Estimated Dispatch Time'
+                    inputStyle='outline'
                     onChange={(ev) => {
                         const timeRegex = /^([0-9]{1,2}|[02]?[0-9]|2[0-9]):[0-5][0-9]$/;
                         if (timeRegex.test(ev.target.value)) {

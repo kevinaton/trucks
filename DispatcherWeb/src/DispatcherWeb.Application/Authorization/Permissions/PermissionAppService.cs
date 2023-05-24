@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using DispatcherWeb.Authorization.Permissions.Dto;
@@ -8,6 +9,13 @@ namespace DispatcherWeb.Authorization.Permissions
 {
     public class PermissionAppService : DispatcherWebAppServiceBase, IPermissionAppService
     {
+        public async Task<IListResult<string>> GetGrantedPermissions()
+        {
+            var user = await GetCurrentUserAsync();
+            var grantedPermissions = await UserManager.GetGrantedPermissionsAsync(user);
+            return new ListResultDto<string>(grantedPermissions.Select(x => x.Name).ToList());
+        }
+
         public ListResultDto<FlatPermissionWithLevelDto> GetAllPermissions()
         {
             var permissions = PermissionManager.GetAllPermissions();

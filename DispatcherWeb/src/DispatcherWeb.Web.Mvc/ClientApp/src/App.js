@@ -11,8 +11,8 @@ import { Appbar, SideMenu } from './components'
 const App = (props) => {
     const [anchorElNav, setAnchorElNav] = React.useState(null)
     const [drawerOpen, setDrawerOpen] = React.useState(true)
-    const isSmall = useMediaQuery((theme) => theme.breakpoints.down("lg"))
-    const isBig = useMediaQuery((theme) => theme.breakpoints.up("lg"))
+    const isSmall = useMediaQuery((theme) => theme.breakpoints.down('lg'))
+    const isBig = useMediaQuery((theme) => theme.breakpoints.up('lg'))
     const [collapseOpen, setCollapseOpen] = React.useState(
         sideMenuItems.reduce((acc, menu) => {
             if (menu.submenu) {
@@ -22,7 +22,7 @@ const App = (props) => {
         }, {})
     )
 
-    const [currentPageName, setCurrentPageName] = React.useState("")
+    const [currentPageName, setCurrentPageName] = React.useState('')
 
     // Checks screen if it is small
     React.useEffect(() => {
@@ -84,15 +84,15 @@ const App = (props) => {
             />
       
             <Box 
-                component="main" 
+                component='main' 
                 sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}>
                     <Paper
                         sx={{
-                            backgroundColor: "#f1f5f8",
+                            backgroundColor: '#f1f5f8',
                             padding: 2,
-                            height: "100vh",
-                            overflow: "auto",
-                            pb: "50px",
+                            height: '100vh',
+                            overflow: 'auto',
+                            pb: '50px',
                         }}
                     >
                         <DrawerHeader />

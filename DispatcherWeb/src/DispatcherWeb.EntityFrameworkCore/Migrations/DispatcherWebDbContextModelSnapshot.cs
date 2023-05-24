@@ -2494,6 +2494,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("TerminationDate")
+                        .HasColumnType("date");
+
                     b.Property<string>("TypeOfLicense")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");

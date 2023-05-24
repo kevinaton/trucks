@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Projects;
 using DispatcherWeb.Projects.Dto;
 using DispatcherWeb.Web.Controllers;
+using DispatcherWeb.Web.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.App.Controllers
@@ -26,9 +27,9 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(NullableIdNameDto input)
         {
-            var model = await _projectAppService.GetProjectForEdit(new NullableIdDto(id));
+            var model = await _projectAppService.GetProjectForEdit(input);
             return View(model);
         }
 
@@ -39,6 +40,14 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             return RedirectToAction("Details", new { id });
         }
 
+        [Modal]
+        public async Task<PartialViewResult> CreateOrEditProjectModal(NullableIdNameDto input)
+        {
+            var model = await _projectAppService.GetProjectForEdit(input);
+            return PartialView("_CreateOrEditProjectModal", model);
+        }
+
+        [Modal]
         public async Task<PartialViewResult> CreateOrEditProjectServiceModal(int? id, int? projectId)
         {
             var model = await _projectAppService.GetProjectServiceForEdit(new GetProjectServiceForEditInput(id, projectId));

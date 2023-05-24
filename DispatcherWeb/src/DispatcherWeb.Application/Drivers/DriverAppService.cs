@@ -142,7 +142,8 @@ namespace DispatcherWeb.Drivers
                 NextPhysicalDueDate = x.NextPhysicalDueDate,
                 LastMvrDate = x.LastMvrDate,
                 NextMvrDueDate = x.NextMvrDueDate,
-                DateOfHire = x.DateOfHire
+                DateOfHire = x.DateOfHire,
+                TerminationDate = x.TerminationDate,
             });
 
         [AbpAuthorize(AppPermissions.Pages_Drivers)]
@@ -262,6 +263,11 @@ namespace DispatcherWeb.Drivers
                 }).ToListAsync();
         }
 
+        public async Task<List<DriverCompanyDto>> GetCompanyListForUserDrivers(GetCompanyListForUserDriversInput input)
+        {
+            return await _driverUserLinkService.GetCompanyListForUserDrivers(input);
+        }
+
         [AbpAuthorize(AppPermissions.Pages_Drivers)]
         public async Task<DriverEditDto> GetDriverForEdit(NullableIdNameDto input)
         {
@@ -294,7 +300,8 @@ namespace DispatcherWeb.Drivers
                         NextPhysicalDueDate = x.NextPhysicalDueDate,
                         LastMvrDate = x.LastMvrDate,
                         NextMvrDueDate = x.NextMvrDueDate,
-                        DateOfHire = x.DateOfHire
+                        DateOfHire = x.DateOfHire,
+                        TerminationDate = x.TerminationDate
                     })
                     .FirstAsync();
             }
@@ -472,6 +479,7 @@ namespace DispatcherWeb.Drivers
             driver.LastMvrDate = model.LastMvrDate;
             driver.NextMvrDueDate = model.NextMvrDueDate;
             driver.DateOfHire = model.DateOfHire;
+            driver.TerminationDate = model.TerminationDate;
 
             driver.EmailAddress = model.EmailAddress;
 
