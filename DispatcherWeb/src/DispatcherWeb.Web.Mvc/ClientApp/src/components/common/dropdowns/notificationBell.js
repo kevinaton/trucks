@@ -85,7 +85,8 @@ export const NotificationBell = () => {
                 id="notification-list"
                 anchorEl={anchorNotif} 
                 open={isNotification} 
-                onClose={handleNotifClose}>
+                onClose={handleNotifClose} 
+            >
                     <Paper sx={{ width: 380 }}>
                         <Box 
                             sx={{
@@ -94,7 +95,8 @@ export const NotificationBell = () => {
                                 py: 1,
                                 display: "flex",
                                 justifyContent: "space-between"
-                            }}>
+                            }}
+                        >
                                 <Typography variant="subtitle1" color="white" fontWeight={700}>
                                     {notificationItems.length} Notifications
                                 </Typography>
@@ -114,7 +116,8 @@ export const NotificationBell = () => {
                                     <Modal
                                         open={isNotifSettings}
                                         onClose={handleNotifSettingsClose}
-                                        aria-labelledby="notification-settings">
+                                        aria-labelledby="notification-settings"
+                                    >
                                         <Card
                                             sx={{
                                                 minWidth: 500,
@@ -122,7 +125,8 @@ export const NotificationBell = () => {
                                                 top: "30%",
                                                 left: "50%",
                                                 transform: "translate(-50%, -50%)",
-                                            }}>
+                                            }}
+                                        >
                                             <CardHeader
                                                 action={
                                                     <IconButton
@@ -175,7 +179,8 @@ export const NotificationBell = () => {
                             return (
                                 <MenuItem 
                                     key={index} 
-                                    style={{ flexGrow: 1, whiteSpace: "normal" }}>
+                                    style={{ flexGrow: 1, whiteSpace: "normal" }}
+                                >
                                         <Stack sx={{ width: 1 }}>
                                             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                                                 <Box sx={{ display: "flex" }}>
@@ -183,7 +188,8 @@ export const NotificationBell = () => {
                                                         color="success"
                                                         variant="dot" 
                                                         invisible={notification.isRead} 
-                                                        sx={{ mt: 1.5 }} />
+                                                        sx={{ mt: 1.5 }} 
+                                                    />
 
                                                     <Typography
                                                         component={Link}
@@ -214,18 +220,17 @@ export const NotificationBell = () => {
                                                         height: "1.2rem",
                                                         display:
                                                         notification.isRead === true ? "none" : "block",
-                                                    }}>
-                                                    <i
-                                                        className="fa-regular fa-eye secondary-icon"
-                                                        style={{ fontSize: 12 }}
-                                                    ></i>
+                                                    }}
+                                                >
+                                                    <i className="fa-regular fa-eye secondary-icon" style={{ fontSize: 12 }}></i>
                                                 </IconButton>
                                             </Box>
                                             <Box>
                                                 <Typography
                                                     variant="caption"
                                                     color="grey"
-                                                    sx={{ pl: 1 }}>
+                                                    sx={{ pl: 1 }}
+                                                >
                                                     {notification.time}
                                                 </Typography>
                                             </Box>
