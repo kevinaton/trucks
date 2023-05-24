@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react'
-import { Box, Paper, Typography } from '@mui/material'
-import { Helmet, HelmetProvider } from 'react-helmet-async'
-import NoContent from'../../components/NoContent'
+import React, { useEffect } from "react";
+import { Box, Paper, Typography } from "@mui/material";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import NoContent from "../../components/NoContent";
 
 const Customers = (props) => {
-    const pageName = "Customers"
-    
+    const pageName = "Customers";
+
     useEffect(() => {
-        props.handleCurrentPageName(pageName)
-    }, [props])
+        props.handleCurrentPageName(pageName);
+    }, [props]);
 
     return (
         <HelmetProvider>
@@ -16,7 +16,10 @@ const Customers = (props) => {
                 <Helmet>
                     <meta charSet="utf-8" />
                     <title>{pageName}</title>
-                    <meta name="description" content="Dumptruckdispatcher app" />
+                    <meta
+                        name="description"
+                        content="Dumptruckdispatcher app"
+                    />
                     <meta content="" name="author" />
                     <meta property="og:title" content={pageName} />
                     <meta
@@ -34,7 +37,7 @@ const Customers = (props) => {
                 </Paper>
             </div>
         </HelmetProvider>
-    )
-}
+    );
+};
 
-export default Customers
+export default Customers;

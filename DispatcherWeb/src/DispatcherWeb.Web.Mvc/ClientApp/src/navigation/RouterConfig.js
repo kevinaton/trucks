@@ -11,44 +11,46 @@ import TruckDispatchList from "../pages/TruckDispatchList";
 import Notification from "../pages/Notifications";
 
 export const RouterConfig = ({ handleCurrentPageName }) => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const targetRoute = queryParams.get("route");
-  const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const targetRoute = queryParams.get("route");
+    const navigate = useNavigate();
 
-  const routes = [
-    { path: "/dashboard", component: Dashboard },
-    { path: "/customers", component: Customers },
-    { path: "/products-services", component: ProductsOrServices },
-    { path: "/drivers", component: Drivers },
-    { path: "/locations", component: Locations },
-    { path: "/dispatching/schedule", component: Schedule },
-    {
-      path: "/dispatching/dispatches/truck-list",
-      component: TruckDispatchList,
-    },
-    { path: "/notifications", component: Notification },
-  ];
+    const routes = [
+        { path: "/dashboard", component: Dashboard },
+        { path: "/customers", component: Customers },
+        { path: "/products-services", component: ProductsOrServices },
+        { path: "/drivers", component: Drivers },
+        { path: "/locations", component: Locations },
+        { path: "/dispatching/schedule", component: Schedule },
+        {
+            path: "/dispatching/dispatches/truck-list",
+            component: TruckDispatchList,
+        },
+        { path: "/notifications", component: Notification },
+    ];
 
-  useEffect(() => {
-    if (targetRoute) {
-      navigate(targetRoute);
-    }
-  }, [targetRoute, navigate]);
+    useEffect(() => {
+        if (targetRoute) {
+            navigate(targetRoute);
+        }
+    }, [targetRoute, navigate]);
 
-  return (
-    <Routes sx={{ height: "100%", overflow: "auto" }}>
-      {routes.map((route, index) => (
-        <Route
-          key={index}
-          path={route.path}
-          element={
-            <route.component handleCurrentPageName={handleCurrentPageName} />
-          }
-        />
-      ))}
+    return (
+        <Routes sx={{ height: "100%", overflow: "auto" }}>
+            {routes.map((route, index) => (
+                <Route
+                    key={index}
+                    path={route.path}
+                    element={
+                        <route.component
+                            handleCurrentPageName={handleCurrentPageName}
+                        />
+                    }
+                />
+            ))}
 
-      {targetRoute && <Route path={targetRoute} component={() => null} />}
-    </Routes>
-  );
+            {targetRoute && <Route path={targetRoute} component={() => null} />}
+        </Routes>
+    );
 };

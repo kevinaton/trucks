@@ -188,9 +188,6 @@ namespace DispatcherWeb.Orders.Reports
                 paragraph = document.LastSection.AddParagraph("Customer: ");
                 paragraph.AddText(model.CustomerName ?? "");
 
-                paragraph = document.LastSection.AddParagraph("Project: ");
-                paragraph.AddText(model.ProjectName ?? "");
-
                 paragraph = document.LastSection.AddParagraph("Contact: ");
                 paragraph.AddText(model.ContactFullDetails ?? "");
 

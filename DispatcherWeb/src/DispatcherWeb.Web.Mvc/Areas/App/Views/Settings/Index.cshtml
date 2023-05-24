@@ -516,6 +516,10 @@
                                         </label>
                                     </div>
                                     <div class="form-group">
+                                        <label for="QuoteDefaultNote">@L("QuoteDefaultNote")</label>
+                                        <textarea class="form-control" name="QuoteDefaultNote" rows="7">@Model.Settings.Quote.QuoteDefaultNote</textarea>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="QuoteEmailSubjectTemplate">@L("QuoteEmailSubjectTemplate")</label>
                                         <input type="text" class="form-control" name="QuoteEmailSubjectTemplate" value="@Model.Settings.Quote.QuoteEmailSubjectTemplate">
                                     </div>
@@ -530,6 +534,10 @@
                                     <div class="form-group">
                                         <label for="QuoteChangedNotificationEmailBodyTemplate">@L("QuoteChangedNotificationEmailBodyTemplate")</label>
                                         <textarea class="form-control" name="QuoteChangedNotificationEmailBodyTemplate" rows="7">@Model.Settings.Quote.QuoteChangedNotificationEmailBodyTemplate</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="QuoteGeneralTermsAndConditions">@L("GeneralTermsAndConditions")</label>
+                                        <textarea class="form-control" name="QuoteGeneralTermsAndConditions" rows="12">@Model.Settings.Quote.QuoteGeneralTermsAndConditions</textarea>
                                     </div>
                                 </div>
                             </div>
