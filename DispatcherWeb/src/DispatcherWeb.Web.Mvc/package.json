@@ -8,6 +8,7 @@
   "dependencies": {
     "@fancyapps/fancybox": "^3.5.7",
     "@microsoft/signalr": "^5.0.10",
+    "@mui/x-data-grid": "^6.5.0",
     "@popperjs/core": "^2.10.2",
     "abp-web-resources": "5.4",
     "animate.css": "^3.7.0",
