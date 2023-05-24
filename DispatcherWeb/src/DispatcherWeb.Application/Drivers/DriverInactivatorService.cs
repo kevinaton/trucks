@@ -38,6 +38,10 @@ namespace DispatcherWeb.Drivers
 
             await EnsureCanInactivateDriver(driver);
             driver.IsInactive = true;
+            if (leaseHaulerId.HasValue)
+            {
+                driver.TerminationDate = await GetToday();
+            }
 
             await RemoveDriverAsDefaultDriver(driver.Id);
             await SetInactiveDriverToNullInDriverAssignments(driver);
