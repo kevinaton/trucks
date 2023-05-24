@@ -479,16 +479,34 @@ namespace DispatcherWeb.Trucks
             }
 
             await CreateOrUpdateOutOfServiceHistory(entity, model.IsOutOfService, model.Reason);
-            result.ThereWereAssociatedOrders = await RemoveTruckFromScheduleIfTruckIsOutOfService(entity.Id, model.IsOutOfService);
-            await RemoveTruckFromScheduleAndDriverAssignmentIfTruckIsNotIsActive(entity.Id, model.IsActive, model.InactivationDate);
-            result.ThereWereCanceledDispatches = await CancelUnacknowledgedDispatchesIfTruckIsOutOfServiceOrIsNotIsActive(entity.Id, model.IsOutOfService, model.IsActive);
-            result.ThereWereNotCanceledDispatches = await ThereAreActiveOrLoadedDispatchesAndTruckIsOutOfServiceOrIsNotIsActive(entity.Id, model.IsOutOfService, model.IsActive);
+
+            if (entity.Id > 0)
+            {
+                if (model.IsOutOfService)
+                {
+                    result.ThereWereAssociatedOrders = await RemoveTruckFromScheduleStartingOnDate(entity.Id);
+                }
+                if (!model.IsActive)
+                {
+                    await RemoveTruckFromScheduleStartingOnDate(entity.Id, model.InactivationDate);
+                    await RemoveTruckFromDriverAssignmentStartingOnDate(entity.Id, model.InactivationDate);
+                }
+
+                if (model.IsOutOfService || !model.IsActive)
+                {
+                    result.ThereWereCanceledDispatches = await CancelUnacknowledgedDispatches(entity.Id);
+                    result.ThereWereNotCanceledDispatches = await ThereAreAcknowledgedOrLoadedDispatches(entity.Id);
+                }
+            }
+
             if (await UpdateDefaultDriver())
             {
                 result.ThereAreOrdersInTheFuture = await ThereAreOrdersInTheFuture();
             }
             result.ThereWereAssociatedOrders |= await UpdateOffice();
+
             await ThrowUserFriendlyExceptionIfTruckCodeExists(model.TruckCode, entity.Id, model.OfficeId);
+
             if (model.Id.HasValue && newVehicleCategory.AssetType == AssetType.Trailer && model.IsActive != true)
             {
                 var tractors = await _truckRepository.GetAll().Where(x => x.DefaultTrailerId == model.Id).ToListAsync();
@@ -608,7 +626,7 @@ namespace DispatcherWeb.Trucks
 
             async Task<bool> UpdateOffice()
             {
-                if (!OfficeIsChanged())
+                if (entity.LocationId == model.OfficeId)
                 {
                     return false;
                 }
@@ -619,9 +637,6 @@ namespace DispatcherWeb.Trucks
                     return await RemoveTruckFromScheduleStartingOnDate(model.Id.Value);
                 }
                 return false;
-
-                // Local functions
-                bool OfficeIsChanged() => entity.LocationId != model.OfficeId;
             }
 
             async Task UpdateDefaultTrailer()
@@ -632,7 +647,14 @@ namespace DispatcherWeb.Trucks
                 }
                 if (entity.CanPullTrailer && model.DefaultTrailerId != null)
                 {
-                    var trailer = await _truckRepository.GetAll().Where(t => t.Id == model.DefaultTrailerId).Select(t => new { t.VehicleCategory.AssetType, t.IsActive }).FirstOrDefaultAsync();
+                    var trailer = await _truckRepository.GetAll()
+                        .Where(t => t.Id == model.DefaultTrailerId)
+                        .Select(t => new 
+                        { 
+                            t.VehicleCategory.AssetType, 
+                            t.IsActive 
+                        })
+                        .FirstOrDefaultAsync();
                     if (trailer.AssetType != AssetType.Trailer)
                     {
                         throw new UserFriendlyException("The default trailer must be a trailer!");
@@ -652,22 +674,6 @@ namespace DispatcherWeb.Trucks
                 }
 
                 entity.DefaultTrailerId = model.DefaultTrailerId;
-            }
-            async Task<bool> CancelUnacknowledgedDispatchesIfTruckIsOutOfServiceOrIsNotIsActive(int truckId, bool isOutOfService, bool isActive)
-            {
-                if (truckId == 0 || !isOutOfService && isActive)
-                {
-                    return false;
-                }
-                return await CancelUnacknowledgedDispatches(truckId);
-            }
-            async Task<bool> ThereAreActiveOrLoadedDispatchesAndTruckIsOutOfServiceOrIsNotIsActive(int truckId, bool isOutOfService, bool isActive)
-            {
-                if (truckId == 0 || !isOutOfService && isActive)
-                {
-                    return false;
-                }
-                return await ThereAreAcknowledgedOrLoadedDispatches(truckId);
             }
 
             async Task ThrowUserFriendlyExceptionIfTruckCodeExists(string truckCode, int currentTruckId, int officeId)
@@ -912,26 +918,6 @@ namespace DispatcherWeb.Trucks
                 .OrderByDescending(oosh => oosh.OutOfServiceDate)
                 .FirstAsync();
             outOfServiceHistory.Reason = reason.Truncate(500);
-        }
-        private async Task<bool> RemoveTruckFromScheduleIfTruckIsOutOfService(int truckId, bool isOutOfService)
-        {
-            if (truckId == 0 || !isOutOfService)
-            {
-                return false;
-            }
-
-            return await RemoveTruckFromScheduleStartingOnDate(truckId);
-        }
-
-        private async Task RemoveTruckFromScheduleAndDriverAssignmentIfTruckIsNotIsActive(int truckId, bool isActive, DateTime? inactivationDate)
-        {
-            if (truckId == 0 || isActive)
-            {
-                return;
-            }
-
-            await RemoveTruckFromScheduleStartingOnDate(truckId, inactivationDate);
-            await RemoveTruckFromDriverAssignmentStartingOnDate(truckId, inactivationDate);
         }
 
         private async Task UpdateTruckFiles(int truckId, List<TruckFileEditDto> truckFiles)

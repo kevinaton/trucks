@@ -74,6 +74,8 @@ namespace DispatcherWeb.Trucks
         public int? DefaultTrailerId { get; set; }
         public Truck DefaultTrailer { get; set; }
 
+        public virtual ICollection<Truck> DefaultTractors { get; set; }
+
         public virtual Driver DefaultDriver { get; set; }
 
         public virtual ICollection<OrderLineTruck> OrderLineTrucksOfTruck { get; set; }

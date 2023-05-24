@@ -288,9 +288,10 @@
                     $('<div class="truck-tile"></div>')
                         .data('truck', truck)
                         .addClass(getTruckTileClass(truck))
+                        .addClass(getTruckTileWidthClass(truck))
                         .addClass(getTruckTileOfficeClass(truck))
                         .addClass(getTruckTilePointerClass(truck))
-                        .text(truck.truckCode)
+                        .text(getCombinedTruckCode(truck))
                         .attr('title', getTruckTileTitle(truck))
                         .appendTo(tileWrapper);
                     tileWrapper
@@ -422,7 +423,8 @@
                 && (truck.utilization >= 1 && _settings.validateUtilization
                     || truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck) && _settings.validateUtilization
                     || truck.isOutOfService
-                    || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)) {
+                    || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)
+            ) {
                 return false;
             }
             if (order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id && olt.driverId === driverId))) {
@@ -446,7 +448,10 @@
                 }
 
                 var truckCode = (truck.truckCode || '').toLowerCase();
-                if (!truckCode.startsWith(query)) {
+                var trailerCode = (truck.trailer && truck.trailer.truckCode || '').toLowerCase();
+                if (!truckCode.startsWith(query)
+                    && !trailerCode.startsWith(query)
+                ) {
                     return;
                 }
                 result.push({
@@ -454,7 +459,7 @@
                     parentId: null,
                     orderId: order.orderId,
                     truckId: truck.id,
-                    truckCode: truck.truckCode,
+                    truckCode: getCombinedTruckCode(truck.truckCode),
                     driverId: truck.driverId,
                     textForLookup: truck.truckCode,
                     officeId: truck.officeId,
@@ -569,6 +574,13 @@
             }
         }
 
+        function getTruckTileWidthClass(truck) {
+            if (truck.trailer || truck.tractor) {
+                return 'double-width';
+            }
+            return '';
+        }
+
         function truckCategoryNeedsDriver(truck) {
             return truck.vehicleCategory.isPowered &&
                 (_features.leaseHaulers || (!truck.alwaysShowOnSchedule && !truck.isExternal)); //&& truck.officeId !== null
@@ -590,6 +602,13 @@
                 return 'hand';
             }
             return '';
+        }
+
+        function getCombinedTruckCode(truck) {
+            if (truck.canPullTrailer && truck.trailer) {
+                return truck.truckCode + ' :: ' + truck.trailer.truckCode;
+            }
+            return truck.truckCode;
         }
 
         function getTruckTileTitle(truck) {

@@ -427,6 +427,16 @@ namespace DispatcherWeb
                     IsActive = t.IsActive,
                     DefaultDriverId = t.DefaultDriverId,
                     DefaultDriverName = t.DefaultDriver.FirstName + " " + t.DefaultDriver.LastName,
+                    DefaultTrailer = t.DefaultTrailer == null ? null : new ScheduleTruckTrailerDto
+                    {
+                        Id = t.DefaultTrailer.Id,
+                        TruckCode = t.DefaultTrailer.TruckCode
+                    },
+                    DefaultTractor = t.DefaultTractors.Select(x => new ScheduleTruckTractorDto
+                    {
+                        Id = x.Id,
+                        TruckCode = x.TruckCode,
+                    }).FirstOrDefault(),
                     UtilizationList = t.OrderLineTrucksOfTruck
                         .Where(olt => !olt.OrderLine.IsComplete
                                 && olt.OrderLine.Order.DeliveryDate == input.Date
@@ -447,6 +457,34 @@ namespace DispatcherWeb
                     x.TruckId,
                     x.DriverId,
                     DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
+                })
+                .OrderByDescending(x => x.Id)
+                .ToListAsync();
+
+            var trailerAssignmentsOfTractors = await truckQuery
+                .SelectMany(x => x.TrailerAssignmentsOfTractor)
+                .Where(da => da.Date == input.Date && da.Shift == input.Shift)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.TractorId,
+                    x.TrailerId,
+                    TractorTruckCode = x.Tractor.TruckCode,
+                    TrailerTruckCode = x.Trailer.TruckCode,
+                })
+                .OrderByDescending(x => x.Id)
+                .ToListAsync();
+
+            var trailerAssignmentsOfTrailers = await truckQuery
+                .SelectMany(x => x.TrailerAssignmentsOfTrailer)
+                .Where(da => da.Date == input.Date && da.Shift == input.Shift)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.TractorId,
+                    x.TrailerId,
+                    TractorTruckCode = x.Tractor.TruckCode,
+                    TrailerTruckCode = x.Trailer.TruckCode,
                 })
                 .OrderByDescending(x => x.Id)
                 .ToListAsync();
@@ -507,6 +545,39 @@ namespace DispatcherWeb
                         truck.Utilization = 1;
                     }
                 }
+
+                if (truck.CanPullTrailer)
+                {
+                    var trailerAssignment = trailerAssignmentsOfTractors.FirstOrDefault(x => x.TractorId == truck.Id);
+                    if (trailerAssignment != null)
+                    {
+                        truck.Trailer = trailerAssignment.TrailerId.HasValue ? new ScheduleTruckTrailerDto
+                        {
+                            Id = trailerAssignment.TrailerId.Value,
+                            TruckCode = trailerAssignment.TrailerTruckCode,
+                        } : null;
+                    }
+                    else
+                    {
+                        truck.Trailer = truck.DefaultTrailer;
+                    }
+                }
+                else if (truck.VehicleCategory.AssetType == AssetType.Trailer)
+                {
+                    var trailerAssignment = trailerAssignmentsOfTrailers.FirstOrDefault(x => x.TrailerId == truck.Id);
+                    if (trailerAssignment != null)
+                    {
+                        truck.Tractor = new ScheduleTruckTractorDto
+                        {
+                            Id = trailerAssignment.TractorId,
+                            TruckCode = trailerAssignment.TractorTruckCode,
+                        };
+                    }
+                    else
+                    {
+                        truck.Tractor = truck.DefaultTractor;
+                    }
+                }
             }
 
             return trucks.OrderByTruck();
@@ -539,13 +610,13 @@ namespace DispatcherWeb
 
             trucks.ForEach(x =>
             {
-                if (x.IsExternal)
+                if (!x.IsExternal)
                 {
-                    return;
+                    var driverAssignment = driverAssignments.FirstOrDefault(y => y.TruckId == x.Id);
+                    x.HasNoDriver = driverAssignment != null && driverAssignment.DriverId == null;
+                    x.HasDriverAssignment = driverAssignment?.DriverId != null;
                 }
-                var driverAssignment = driverAssignments.FirstOrDefault(y => y.TruckId == x.Id);
-                x.HasNoDriver = driverAssignment != null && driverAssignment.DriverId == null;
-                x.HasDriverAssignment = driverAssignment?.DriverId != null;
+
             });
 
             return trucks;

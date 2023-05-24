@@ -627,6 +627,10 @@ div#ByCategory .m-accordion__item-head {
     white-space: nowrap;
 }
 
+.schedule-truck-tiles .truck-tile.double-width {
+    width: 156px;
+}
+
 .schedule-truck-tiles .truck-tile-wrap {
     display: inline-block;
     margin: 5px;
