@@ -8,6 +8,7 @@ import Drivers from "../pages/Drivers";
 import Locations from "../pages/Locations";
 import Schedule from "../pages/Schedule";
 import TruckDispatchList from "../pages/TruckDispatchList";
+import Notification from "../pages/Notifications";
 
 export const RouterConfig = ({ handleCurrentPageName }) => {
   const location = useLocation();
@@ -26,6 +27,7 @@ export const RouterConfig = ({ handleCurrentPageName }) => {
       path: "/dispatching/dispatches/truck-list",
       component: TruckDispatchList,
     },
+    { path: "/notifications", component: Notification },
   ];
 
   useEffect(() => {
