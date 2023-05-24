@@ -805,6 +805,8 @@ namespace DispatcherWeb.PayStatements
                             JobNumber = t.Ticket.OrderLine.JobNumber,
                             Quantity = t.Quantity,
                             TicketDateTime = t.Ticket.TicketDateTime,
+                            DriverIsPaidForLoadBasedOn = t.DriverIsPaidForLoadBasedOn,
+                            OrderDeliveryDate = t.Ticket.OrderLine.Order.DeliveryDate,
                             Total = t.Total,
                         }).ToList(),
                         TimeRecords = d.PayStatementTimeRecords.Select(t => new PayStatementReportTimeDto

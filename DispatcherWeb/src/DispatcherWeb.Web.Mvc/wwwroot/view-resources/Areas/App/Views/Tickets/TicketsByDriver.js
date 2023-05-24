@@ -430,6 +430,22 @@
                 .off('click');
         }
 
+        updateCardReadOnlyState(block);
+        if (abp.auth.hasPermission('EditInvoicedOrdersAndTickets')
+            && block.isReadOnly
+            && !block.overrideReadOnlyState
+        ) {
+            block.ui.overrideReadOnlyStateButton
+                .show()
+                .click(() => {
+                    askToOverrideReadOnlyState(block);
+                });
+        } else {
+            block.ui.overrideReadOnlyStateButton
+                .hide()
+                .off('click');
+        }
+
         var noteIcons = $();
         var notes = block.orderLine.orderLineTrucks.filter(olt => olt.driverId === block.driverId && olt.driverNote).map(x => x.driverNote);
         notes.forEach(note => {
@@ -478,6 +494,16 @@
         finally {
             affectedBlocks.forEach(x => x.ui && abp.ui.clearBusy(x.ui.card));
         }
+    }
+
+    async function askToOverrideReadOnlyState(block) {
+        if (!await abp.message.confirm('', app.localize('OverrideReadOnlyStateOfOrderLineBlockPrompt'))) {
+            return;
+        }
+        block.overrideReadOnlyState = true;
+        updateCardReadOnlyState(block);
+        updateCardFromModel(block);
+        block.ui.reloadGrid();
     }
 
     function setInputOrDropdownValue(inputControl, idValue, textValue) {
@@ -688,12 +714,13 @@
     }
 
     function updateCardReadOnlyState(block) {
-        let tickets = getTicketsForOrderLine(block.orderLine);
-        let isReadOnly = tickets.some(t => t.isReadOnly);
-        if (block.orderLine.isReadonly === isReadOnly) {
+        let orderLineTickets = getTicketsForOrderLine(block.orderLine);
+        let isReadOnly = !block.overrideReadOnlyState && orderLineTickets.some(t => t.isReadOnly);
+        if (block.isReadOnly === isReadOnly) {
             return;
         }
-        block.orderLine.isReadOnly = isReadOnly;
+        block.isReadOnly = isReadOnly;
+
         let controls = [
             block.ui.driver,
             //block.ui.customer, //always readonly
@@ -709,6 +736,12 @@
             //block.ui.fuelSurchargeRate //always readonly
         ];
         controls.forEach(c => c.prop('disabled', isReadOnly));
+
+        let blockTickets = getTicketsForOrderLineBlock(block);
+        if (block.overrideReadOnlyState && blockTickets.some(t => t.isReadOnly)) {
+            blockTickets.forEach(t => t.isReadOnly = false);
+            block.ui.reloadGrid();
+        }
     }
 
     async function checkTruckAssignment(block, truckId, driverId) {
@@ -1082,6 +1115,10 @@
         );
 
         ui.form.append(
+            $('<div class="d-flex justify-content-end"></div>').append(
+                renderOverrideReadOnlyStateButton(ui)
+            )
+        ).append(
             $('<div class="row align-items-center">').append(
                 renderDropdownPlaceholder(ui, 'driver', app.localize('Driver'), 'driverId')
             ).append(
@@ -1878,6 +1915,10 @@
         );
 
         return result;
+    }
+
+    function renderOverrideReadOnlyStateButton(ui) {
+        return ui.overrideReadOnlyStateButton = $('<button class="btn btn-default" type="button"><span class="fa fa-edit"></span></button>').hide();
     }
 
     function renderClickableWarningIcon(ui) {

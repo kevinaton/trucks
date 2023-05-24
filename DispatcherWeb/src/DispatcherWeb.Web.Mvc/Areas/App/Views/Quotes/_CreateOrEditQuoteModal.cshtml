@@ -12,21 +12,35 @@
     <form role="form" id="QuoteForm" class="form-validation" novalidate>
         <input type="hidden" asp-for="ProjectId" />
 
+        <div class="d-flex justify-content-end mb-4">
+            @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
+            {
+                <button id="CopyQuoteButton" class="btn btn-primary"><i class="fa fa-copy"></i> @L("CopyQuote")</button>
+            }
+            <button id="PrintQuoteButton" class="btn btn-primary"><i class="fa fa-print"></i> @L("PrintQuote")</button>
+            @if (IsGranted(AppPermissions.Pages_Quotes_Edit))
+            {
+                <button id="EmailQuoteButton" class="btn btn-primary"><i class="fa fa-envelope"></i> @L("EmailQuote")</button>
+            }
+        </div>
+
         <div class="m-portlet__body">
             @if (IsGranted(AppPermissions.Pages_Projects))
             {
                 <div class="form-group m-form__group row">
-                    <label for="ProjectName" class="col-sm-12 col-md-2 col-form-label mb-2">@L("ProjectName"):</label>
+                    <label for="ProjectId" class="col-sm-12 col-md-2 col-form-label mb-2">@L("Project"):</label>
                     <div class="col-sm-12 col-md-5 col-lg-6 mb-2">
-                        <input type="text" readonly class="form-control m-input" asp-for="ProjectName">
+                        <select class="form-control" asp-for="ProjectId" id="QuoteProjectId">
+                            <option value="">Select a project</option>
+                            @if (Model.ProjectId != 0)
+                            {
+                                <option selected value="@Model.ProjectId">@Model.ProjectName</option>
+                            }
+                        </select>
                     </div>
                     <div class="col-sm-12 col-md-5 col-lg-4 mb-2">
                         <div id="projectRelatedButtons" @Html.StyleDisplayNone(!Model.ProjectId.HasValue)>
                             <button type="button" class="btn btn-default" id="GoToProjectButton"><i class="fa fa-reply"></i> @L("GoToProject")</button>
-                            <button type="button" class="btn btn-default" id="RemoveProjectButton"><i class="fa fa-minus-circle"></i> @L("RemoveProject")</button>
-                        </div>
-                        <div id="noProjectButtons" @Html.StyleDisplayNone(Model.ProjectId.HasValue)>
-                            <button type="button" class="btn btn-default" id="AddToProjectButton"><i class="fa fa-plus-circle"></i> @L("AddToProject")</button>
                         </div>
                     </div>
                 </div>
@@ -211,6 +225,15 @@
                     <textarea class="form-control" rows="5" asp-for="Notes"></textarea>
                 </div>
             </div>
+        </div>
+
+        <div class="mt-5" style="@(Model.Id > 0 ? "" : "display:none")">
+            <div class="box-header-top py-4 px-0">
+                <h3 class="m-portlet__head-text">
+                    @L("History")
+                </h3>
+            </div>
+            <table class="table table-striped table-bordered table-hover dt-responsive" id="QuoteHistoryTable"></table>
         </div>
     </form>
 </div>

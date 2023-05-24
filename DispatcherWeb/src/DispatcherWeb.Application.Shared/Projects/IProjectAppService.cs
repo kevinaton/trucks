@@ -10,7 +10,7 @@ namespace DispatcherWeb.Projects
     {
         Task<PagedResultDto<ProjectDto>> GetProjects(GetProjectsInput input);
         Task<PagedResultDto<SelectListDto>> GetProjectsSelectList(GetSelectListInput input);
-        Task<ProjectEditDto> GetProjectForEdit(NullableIdDto input);
+        Task<ProjectEditDto> GetProjectForEdit(NullableIdNameDto input);
         Task<ProjectEditDto> EditProject(ProjectEditDto model);
         Task<bool> CanDeleteProject(EntityDto input);
         Task DeleteProject(EntityDto input);

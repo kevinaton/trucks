@@ -79,12 +79,6 @@
             modalClass: 'CopyOrderModal'
         });
 
-        var _createQuoteFromOrderModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Orders/CreateQuoteFromOrderModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateQuoteFromOrderModal.js',
-            modalClass: 'CreateQuoteFromOrderModal'
-        });
-
         var _shareOrderLineModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Orders/ShareOrderLineModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_ShareOrderLineModal.js',
@@ -430,7 +424,7 @@
                     || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)) {
                 return false;
             }
-            if (_settings.validateUtilization && order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id || olt.driverId === driverId))) {
+            if (order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id && olt.driverId === driverId))) {
                 return false;
             }
 
@@ -554,6 +548,7 @@
                 if (truck.utilization > 0) {
                     return "yellow";
                 }
+                return "green";
             } else {
                 if (truck.utilization > 1) {
                     return "red";
@@ -561,8 +556,11 @@
                 if (truck.utilization === 1) {
                     return "yellow";
                 }
+                if (truck.utilization > 0) {
+                    return "green";
+                }
+                return "white";
             }
-            return "green";
         }
 
         function truckCategoryNeedsDriver(truck) {
@@ -1776,7 +1774,7 @@
             preDrawCallback: function (settings) {
                 // check if filter includes current day or futures dates
                 if (!isPastDate()) {
-                    scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "<span>There are no jobs for this date.</span><br /><button id='#howToAddaJob' class='btn btn-primary btn-sm mt-2'>Click here to see how to add a job</button>";
+                    //scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "<span>There are no jobs for this date.</span><br /><button type='button' id='howToAddaJob' class='btn btn-primary btn-sm mt-2'>Click here to see how to add a job</button>";
                 } else {
                     scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "No data available in table";
                 }
@@ -2042,6 +2040,11 @@
             position.x += $(window).scrollLeft();
             position.y += $(window).scrollTop();
             button.contextMenu({ x: position.x, y: position.y });
+        });
+
+        scheduleTable.on('click', '#howToAddaJob', function (e) {
+            e.preventDefault();
+            userGuiding.previewGuide(86432);
         });
 
         $("#TruckTilesNoTrucksMessage").click(function (e) {

@@ -87,8 +87,12 @@ namespace DispatcherWeb.Quotes
             paragraph.AddText(model.QuoteProposalExpiryDate?.ToShortDateString() ?? "");
 
             paragraph = document.LastSection.AddParagraph();
-            paragraph = document.LastSection.AddParagraph("Project: ");
-            paragraph.AddText(model.ProjectName ?? "");
+            paragraph = document.LastSection.AddParagraph();
+            if (model.ShowProject)
+            {
+                paragraph.AddText("Project: ");
+                paragraph.AddText(model.ProjectName ?? "");
+            }
             paragraph.Format.AddTabStop(Unit.FromCentimeter(10));
             paragraph.AddTab();
             paragraph.AddText("Salesperson:");
@@ -278,6 +282,23 @@ namespace DispatcherWeb.Quotes
             paragraph = cell.AddParagraph("Date");
             cell = row.Cells[i++];
             cell.Borders.Bottom.Visible = true;
+
+
+            // Second Page
+
+            if (!string.IsNullOrEmpty(model.QuoteGeneralTermsAndConditions))
+            {
+                section.AddPageBreak();
+                paragraph = document.LastSection.AddParagraph();
+                paragraph.Format.Font.Size = Unit.FromPoint(7.5);
+
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+                paragraph.AddText(model.QuoteGeneralTermsAndConditions);
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+            }
 
             return document.SaveToBytesArray();
         }

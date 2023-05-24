@@ -19,7 +19,7 @@
         public const string AllowImportingLuckStoneEarnings = "App.AllowImportingLuckStoneEarnings";
         public const string AllowSendingOrdersToDifferentTenant = "App.AllowSendingOrdersToDifferentTenant";
         public const string DriverProductionPayFeature = "App.DriverProductionPayFeature";
-        public const string Projects = "App.Projects";
+        public const string AllowProjects = "App.AllowProjects";
 
         public const string GpsIntegrationFeature = "App.GpsIntegrationFeature";
 

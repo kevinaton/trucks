@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using DispatcherWeb.Drivers.Dto;
@@ -20,5 +21,6 @@ namespace DispatcherWeb.Drivers
         Task<bool> ThereAreDriversToNotifySelectList();
         Task<bool> IsOrderLineShared(int orderLineId);
         Task<DriverPayRateDto> GetDriverPayRate(GetDriverPayRateInput input);
+        Task<List<DriverCompanyDto>> GetCompanyListForUserDrivers(GetCompanyListForUserDriversInput input);
     }
 }

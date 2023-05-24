@@ -45,6 +45,7 @@ namespace DispatcherWeb.Configuration
             public const string BillingAddress = "App.HostManagement.BillingAddress";
             public const string NotificationsEmail = "App.HostManagement.NotificationsEmail";
             public const string SupportLinkAddress = "App.HostManagement.SupportLinkAddress";
+            public const string DriverAppImageResolution = "App.HostManagement.DriverAppImageResolution";
         }
 
         public static class DashboardCustomization
@@ -197,8 +198,10 @@ namespace DispatcherWeb.Configuration
         public static class Quote
         {
             public const string PromptForDisplayingQuarryInfoOnQuotes = "App.General.PromptForDisplayingQuarryInfoOnQuotes";
+            public const string DefaultNotes = "App.Project.DefaultNotes";
             public const string EmailSubjectTemplate = "App.Quote.EmailSubjectTemplate";
             public const string EmailBodyTemplate = "App.Quote.EmailBodyTemplate";
+            public const string GeneralTermsAndConditions = "App.Quote.GeneralTermsAndConditions";
 
             public static class ChangedNotificationEmail
             {

@@ -884,6 +884,7 @@
 		<text name="Note">Note</text>
 		<text name="ProjectsAndQuotes"><![CDATA[Projects & Quotes]]></text>
 		<text name="AddProject">Add Project</text>
+		<text name="AllowProjects">Allow Projects</text>
 		<text name="Projects">Projects</text>
 		<text name="Quotes">Quotes</text>
 		<text name="ProjectHistory">Project History</text>
@@ -949,6 +950,7 @@
 		<text name="Setting_UseShifts">Use Shifts</text>
 		<text name="Setting_ShiftName">Shift name</text>
 		<text name="PaymentProcessor">Payment Processor</text>
+		<text name="QuoteDefaultNote">Quote Default Note</text>
 		<text name="QuoteEmailSubjectTemplate">Quote Email Subject Template</text>
 		<text name="QuoteEmailBodyTemplate">Quote Email Body Template</text>
 		<text name="InvoiceEmailSubjectTemplate">Invoice Email Subject Template</text>
@@ -1460,6 +1462,9 @@
 		<text name="LastMvrDate">Last MVR Date</text>
 		<text name="NextMvrDueDate">Next MVR Due Date</text>
 		<text name="DateOfHire">Date of Hire</text>
+		<text name="TerminationDate">Termination Date</text>
+		<text name="DriverCompany">Driver Company</text>
+		<text name="SelectDriverCompanyForSelectedUserPrompt">This user worked for multiple companies and we can't tell which company this entry is associated with. Please select the correct company in the dropdown below.</text>
 		<text name="UpgradeToAccessThisFunctionality">Please upgrade to access this functionality</text>
 		<text name="SendSyncRequest">Send sync request</text>
 		<text name="CleanupSubscriptions">Cleanup Subscriptions</text>
@@ -1624,6 +1629,8 @@
 		<text name="Trux">Trux</text>
 		<text name="ImportTruxEarnings">Import Trux Earnings</text>
 		<text name="AllowImportingLuckStoneEarnings">Allow importing Luck Stone Earnings</text>
+		<text name="EditInvoicedOrdersAndTickets">Edit invoiced orders and tickets</text>
+		<text name="OverrideReadOnlyStateOfOrderLineBlockPrompt">You are about to edit an order or ticket that has already been used in an invoice or pay statement. Changing this value will result in a different value being used in the pay statement or invoice than what was used when it was initially generated. If you are sure you want to do this, click the OK button?</text>
 		<text name="SelectLuckStoneCustomer">Select the Luck Stone customer</text>
 		<text name="LuckStone">Luck Stone</text>
 		<text name="ImportLuckStoneEarnings">Import Luck Stone Earnings</text>
@@ -1832,5 +1839,6 @@
 		<text name="ImportVehicle">Import Mileage/Engine Hours</text>
 		<text name="ImportFuel">Import Fuel</text>
 		<text name="DriverIsPaidForLoadBasedOn">Driver is paid for load based on</text>
+		<text name="DriverAppImageResolution">Driver App Image Resolution</text>
 	</texts>
 </localizationDictionary>
