@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import {
     Badge,
@@ -16,12 +17,12 @@ import {
     Menu,
     MenuItem,
     Modal,
-    Paper,
     Stack,
     Switch,
     Typography
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
+import moment from 'moment'
 import { HeaderIconButton } from '../../DTComponents'
 import { theme } from '../../../Theme'
 import { 
@@ -33,6 +34,9 @@ import {
     MarkAllAsReadButton,
     ViewAllNotificationsButton } from '../../styled'
 import { notificationItems } from '../../../common/data/notifications'
+import { getUserNotifications } from '../../../store/actions'
+import { isEmpty } from 'lodash'
+import { getFormattedMessageFromUserNotification, getUrl } from '../../../helpers/notification_helper'
 
 export const NotificationBell = ({
     isMobileView
@@ -41,6 +45,49 @@ export const NotificationBell = ({
     const isNotification = Boolean(anchorNotif)
     const [notificationsList, setNotificationsList] = useState(notificationItems)
     const [isNotifSettings, setIsNotifSettings] = useState(false)
+    const [notificationItemsList, setNotificationItemsList] = useState([])
+    const [unReadCount, setUnReadCount] = useState(0)
+
+    const dispatch = useDispatch()
+    const { notifications } = useSelector(state => ({
+        notifications: state.NotificationBellReducer.notifications
+    }))
+
+    useEffect(() => {
+        if (isEmpty(notifications)) {
+            dispatch(getUserNotifications())
+        } else {
+            const { result } = notifications
+            if (!isEmpty(result)) {
+                setUnReadCount(result.unreadCount)
+                
+                const { items } = result
+                if (!isEmpty(items)) {
+                    let notifications = []
+                    
+                    items.forEach((item) => {
+                        const { id, notification, state } = item
+                        if (!isEmpty(notification)) {
+                            const url = getUrl(item)
+
+                            notifications.push({
+                                userNotificationId: id,
+                                text: getFormattedMessageFromUserNotification(notification),
+                                time: moment(notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
+                                state,
+                                data: notification.data,
+                                url,
+                                isUnread: item.state === 'UNREAD'
+                            })
+                        }
+                    })
+                
+                    console.log('notifications: ', notifications)
+                    setNotificationItemsList(notifications)
+                }
+            }
+        }
+    }, [dispatch, notifications])
     
     // Handles the opening of the notification dropdown
     const handleNotifClick = (event) => setAnchorNotif(event.currentTarget)
@@ -139,13 +186,13 @@ export const NotificationBell = ({
                                 </Button>
                             </NotificationHeader>
     
-                            { notificationsList.map((notification, index) => {
+                            { notificationItemsList.map((notification, index) => {
                                 return (
                                     <NotificationItem key={index}>
                                         <Stack 
                                             sx={{ 
                                                 width: 1,
-                                                backgroundColor: notification.isRead ? 'transparent' : '#f1f5f8',
+                                                backgroundColor: !notification.isUnread ? 'transparent' : '#f1f5f8',
                                                 padding: '10px 8px',
                                                 borderRadius: '8px',
                                                 '&:hover': {
@@ -158,13 +205,13 @@ export const NotificationBell = ({
                                                     <Badge 
                                                         color="success"
                                                         variant="dot" 
-                                                        invisible={notification.isRead} 
+                                                        invisible={!notification.isUnread} 
                                                         sx={{ mt: 1.5 }} 
                                                     />
 
                                                     <Typography
                                                         component={Link}
-                                                        to={notification.path}
+                                                        to={notification.url}
                                                         onClick={handleNotifClose}
                                                         sx={{
                                                             pl: 1,
@@ -176,9 +223,9 @@ export const NotificationBell = ({
                                                             textDecoration: "none",
                                                             color: theme.palette.text.primary,
                                                         }}
-                                                        fontWeight={!notification.isRead ? 500 : 400}
+                                                        fontWeight={notification.isUnread ? 500 : 400}
                                                     >
-                                                        {notification.content}
+                                                        {notification.text}
                                                     </Typography>
                                                 </Box>
 
@@ -190,7 +237,7 @@ export const NotificationBell = ({
                                                         width: "1.2rem",
                                                         height: "1.2rem",
                                                         display:
-                                                        notification.isRead === true ? "none" : "block",
+                                                        notification.isUnread !== true ? "none" : "block",
                                                     }}
                                                 >
                                                     <i className="fa-regular fa-eye secondary-icon" style={{ fontSize: 12 }}></i>

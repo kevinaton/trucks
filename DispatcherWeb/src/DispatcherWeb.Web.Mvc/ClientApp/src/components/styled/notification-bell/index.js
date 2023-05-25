@@ -5,7 +5,11 @@ import { theme } from '../../../Theme'
 export const NotificationWrapper = styled(Menu)(({ theme }) => ({
     '& .MuiPaper-root': {
         borderRadius: '8px',
-        boxShadow: '0 0 6px 6px rgba(69, 65, 78, 0.08)'
+        boxShadow: '0 0 6px 6px rgba(69, 65, 78, 0.08)',
+
+        '& .MuiList-root': {
+            padding: 0
+        }
     },
 }))
 
