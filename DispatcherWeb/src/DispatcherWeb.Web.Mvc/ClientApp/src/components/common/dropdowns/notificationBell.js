@@ -24,9 +24,19 @@ import {
 import { grey } from '@mui/material/colors'
 import { HeaderIconButton } from '../../DTComponents'
 import { theme } from '../../../Theme'
+import { 
+    NotificationWrapper, 
+    NotificationContent, 
+    NotificationHeader, 
+    NotificationItem,
+    NotificationFooter,
+    MarkAllAsReadButton,
+    ViewAllNotificationsButton } from '../../styled'
 import { notificationItems } from '../../../common/data/notifications'
 
-export const NotificationBell = () => {
+export const NotificationBell = ({
+    isMobileView
+}) => {
     const [anchorNotif, setAnchorNotif] = useState(null)
     const isNotification = Boolean(anchorNotif)
     const [notificationsList, setNotificationsList] = useState(notificationItems)
@@ -67,121 +77,82 @@ export const NotificationBell = () => {
     // Handles the closing of the notification settings modal
     const handleNotifSettingsClose = () => setIsNotifSettings(false)
 
-    return (
-        <React.Fragment>
-            <HeaderIconButton 
-                id="notification" 
-                aria-haspopup="true" 
-                aria-expanded={isNotification ? "true" : undefined}
-                aria-label="notification"
-                onClick={handleNotifClick}
-            >
-                <Badge color="error" variant="dot" invisible={false}>
-                    <i className="fa-regular fa-bell icon"></i>
-                </Badge>
-            </HeaderIconButton>
-            
-            <Menu 
-                id="notification-list"
-                anchorEl={anchorNotif} 
-                open={isNotification} 
-                onClose={handleNotifClose} 
-            >
-                    <Paper sx={{ width: 380 }}>
-                        <Box 
-                            sx={{
-                                backgroundColor: (theme) => theme.palette.primary.main,
-                                px: 2,
-                                py: 1,
-                                display: "flex",
-                                justifyContent: "space-between"
-                            }}
-                        >
+    if (isMobileView) {
+        return (
+            <React.Fragment>
+                <MenuItem key='notification'>
+                    <IconButton 
+                        id='notification' 
+                        aria-haspopup='true'
+                        aria-expanded={isNotification ? 'true' : undefined}
+                        onClick={handleNotifClick} 
+                        p={0} 
+                        aria-label='open drawer'
+                    >
+                        <i className='fa-regular fa-bell icon'></i>
+                    </IconButton>
+                </MenuItem>
+                <Menu
+                    id='notification-list' 
+                    anchorEl={anchorNotif}
+                    open={isNotification} 
+                    onClose={handleNotifClose}
+                >
+                    <MenuItem to='/' onClick={handleNotifClose}>
+                        Profile
+                    </MenuItem>
+                </Menu>
+            </React.Fragment>
+        )
+    } else {
+        return (
+            <React.Fragment>
+                <HeaderIconButton 
+                    id="notification" 
+                    aria-haspopup="true" 
+                    aria-expanded={isNotification ? "true" : undefined}
+                    aria-label="notification"
+                    onClick={handleNotifClick}
+                >
+                    <Badge color="error" variant="dot" invisible={false}>
+                        <i className="fa-regular fa-bell icon"></i>
+                    </Badge>
+                </HeaderIconButton>
+                
+                <NotificationWrapper 
+                    id="notification-list"
+                    anchorEl={anchorNotif} 
+                    open={isNotification} 
+                >
+                        <NotificationContent>
+                            <NotificationHeader>
                                 <Typography variant="subtitle1" color="white" fontWeight={700}>
-                                    {notificationItems.length} Notifications
+                                    {/* {notificationItems.length} */} Notifications
                                 </Typography>
-                                <Box>
-                                    <Button 
-                                        variant="text" 
-                                        size="small" 
-                                        sx={{ color: "white", fontSize: "caption" }}
-                                        onClick={handleReadAll}>
-                                        Set all as read
-                                    </Button>
-
-                                    <IconButton onClick={handleNotifSettingsOpen}>
-                                        <i className="fa-regular fa-gear" style={{ color: '#fff' }} />
-                                    </IconButton>
-
-                                    <Modal
-                                        open={isNotifSettings}
-                                        onClose={handleNotifSettingsClose}
-                                        aria-labelledby="notification-settings"
-                                    >
-                                        <Card
-                                            sx={{
-                                                minWidth: 500,
-                                                position: "absolute",
-                                                top: "30%",
-                                                left: "50%",
-                                                transform: "translate(-50%, -50%)",
+                                <Button 
+                                    variant="text" 
+                                    size="small" 
+                                    sx={{ color: "white", fontSize: "caption" }}
+                                    onClick={handleNotifClose}
+                                >
+                                    <i className='fa-regular fa-close' />
+                                </Button>
+                            </NotificationHeader>
+    
+                            { notificationsList.map((notification, index) => {
+                                return (
+                                    <NotificationItem key={index}>
+                                        <Stack 
+                                            sx={{ 
+                                                width: 1,
+                                                backgroundColor: notification.isRead ? 'transparent' : '#f1f5f8',
+                                                padding: '10px 8px',
+                                                borderRadius: '8px',
+                                                '&:hover': {
+                                                    backgroundColor: '#f1f5f8'
+                                                }
                                             }}
                                         >
-                                            <CardHeader
-                                                action={
-                                                    <IconButton
-                                                        aria-label="close"
-                                                        onClick={handleNotifSettingsClose}>
-                                                        <i className="fa-regular fa-close"></i>
-                                                    </IconButton>
-                                                }
-                                                title="Notification Settings" />
-
-                                            <CardContent>
-                                                <FormGroup>
-                                                    <FormControlLabel
-                                                        control={<Switch defaultChecked />}
-                                                        label="Receive notifications" />
-
-                                                    <Typography
-                                                        color={theme.palette.text.secondary}
-                                                        variant="caption">
-                                                        This option can be used to completely enable/disable
-                                                        receiving notifications.
-                                                    </Typography>
-
-                                                    <Divider sx={{ my: 3 }} />
-
-                                                    <FormControlLabel
-                                                        control={<Checkbox defaultChecked />}
-                                                        label="On a new user registered with the application." />
-                                                </FormGroup>
-                                            </CardContent>
-
-                                            <CardActions sx={{ justifyContent: "end" }}>
-                                                <Button onClick={handleNotifSettingsClose}>
-                                                    Cancel
-                                                </Button>
-
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={handleNotifSettingsClose}
-                                                    startIcon={<i className="fa-regular fa-save"></i>}>
-                                                    Save
-                                                </Button>
-                                            </CardActions>
-                                        </Card>
-                                    </Modal>
-                                </Box>
-                            </Box>
-
-                        { notificationsList.map((notification, index) => {
-                            return (
-                                <MenuItem 
-                                    key={index} 
-                                    style={{ flexGrow: 1, whiteSpace: "normal" }}
-                                >
-                                        <Stack sx={{ width: 1 }}>
                                             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                                                 <Box sx={{ display: "flex" }}>
                                                     <Badge 
@@ -196,16 +167,16 @@ export const NotificationBell = () => {
                                                         to={notification.path}
                                                         onClick={handleNotifClose}
                                                         sx={{
-                                                        pl: 1,
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        display: "-webkit-box",
-                                                        WebkitLineClamp: "2",
-                                                        WebkitBoxOrient: "vertical",
-                                                        textDecoration: "none",
-                                                        color: theme.palette.text.primary,
+                                                            pl: 1,
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            display: "-webkit-box",
+                                                            WebkitLineClamp: "2",
+                                                            WebkitBoxOrient: "vertical",
+                                                            textDecoration: "none",
+                                                            color: theme.palette.text.primary,
                                                         }}
-                                                        fontWeight={!notification.isRead ? 600 : 400}
+                                                        fontWeight={!notification.isRead ? 500 : 400}
                                                     >
                                                         {notification.content}
                                                     </Typography>
@@ -235,19 +206,90 @@ export const NotificationBell = () => {
                                                 </Typography>
                                             </Box>
                                         </Stack>
-                                </MenuItem>
-                            )
-                        })}
+                                    </NotificationItem>
+                                )
+                            })}
+    
+                            <NotificationFooter>
+                                <IconButton onClick={handleNotifSettingsOpen}>
+                                    <i className="fa-regular fa-gear" style={{ color: grey[500] }} />
+                                </IconButton>
 
-                        <MenuItem sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            backgroundColor: grey[100]
-                        }}>
-                            <Typography color="primary">See more</Typography>
-                        </MenuItem>
-                    </Paper>
-            </Menu>
-        </React.Fragment>
-    )
+                                <Modal
+                                    open={isNotifSettings}
+                                    onClose={handleNotifSettingsClose}
+                                    aria-labelledby="notification-settings"
+                                >
+                                    <Card
+                                        sx={{
+                                            minWidth: 500,
+                                            position: "absolute",
+                                            top: "30%",
+                                            left: "50%",
+                                            transform: "translate(-50%, -50%)",
+                                        }}
+                                    >
+                                        <CardHeader
+                                            action={
+                                                <IconButton
+                                                    aria-label="close"
+                                                    onClick={handleNotifSettingsClose}>
+                                                    <i className="fa-regular fa-close"></i>
+                                                </IconButton>
+                                            }
+                                            title="Notification Settings" />
+
+                                        <CardContent>
+                                            <FormGroup>
+                                                <FormControlLabel
+                                                    control={<Switch defaultChecked />}
+                                                    label="Receive notifications" />
+
+                                                <Typography
+                                                    color={theme.palette.text.secondary}
+                                                    variant="caption">
+                                                    This option can be used to completely enable/disable
+                                                    receiving notifications.
+                                                </Typography>
+
+                                                <Divider sx={{ my: 3 }} />
+
+                                                <FormControlLabel
+                                                    control={<Checkbox defaultChecked />}
+                                                    label="On a new user registered with the application." />
+                                            </FormGroup>
+                                        </CardContent>
+
+                                        <CardActions sx={{ justifyContent: "end" }}>
+                                            <Button onClick={handleNotifSettingsClose}>
+                                                Cancel
+                                            </Button>
+
+                                            <Button
+                                                variant="contained"
+                                                onClick={handleNotifSettingsClose}
+                                                startIcon={<i className="fa-regular fa-save"></i>}>
+                                                Save
+                                            </Button>
+                                        </CardActions>
+                                    </Card>
+                                </Modal>
+
+                                <MarkAllAsReadButton 
+                                    variant="text" 
+                                    size="small" 
+                                    sx={{ fontSize: "caption" }}
+                                    onClick={handleReadAll}>
+                                    <i class="fa-regular fa-check-double"></i> Mark all as read
+                                </MarkAllAsReadButton>
+
+                                <ViewAllNotificationsButton>
+                                    View all notifications
+                                </ViewAllNotificationsButton>
+                            </NotificationFooter>
+                        </NotificationContent>
+                </NotificationWrapper>
+            </React.Fragment>
+        )
+    }
 }

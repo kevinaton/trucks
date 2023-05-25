@@ -127,39 +127,38 @@ export const Appbar = ({
                                 alignContent: 'center',
                             }}
                         >
-                        <MenuItem key='support'>
-                            <HeaderIconButton p={0} aria-label='support'>
-                                <i
-                                    className='fa-duotone fa-life-ring icon'
-                                    style={{
-                                    '--fa-primary-opacity': '0.3',
-                                    '--fa-secondary-opacity': '1',
-                                    }}
-                                ></i>
-                            </HeaderIconButton>
-                        </MenuItem>
-                        <MenuItem key='notification'>
-                            <IconButton p={0} aria-label='open drawer'>
-                                <i className='fa-regular fa-bell icon'></i>
-                            </IconButton>
-                        </MenuItem>
-                        <MenuItem key='user'>
-                            <Button p={0}>
-                                <Avatar
-                                    alt='account'
-                                    src='https://i.pravatar.cc/150?img=3'
-                                    sx={{ mr: 1, width: 24, height: 24 }}
-                                />
-                                <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
-                                    User
-                                </Typography>
-                            </Button>
-                        </MenuItem>
-                        <MenuItem key='message'>
-                            <IconButton p={0} aria-label='open drawer'>
-                                <i className='fa-regular fa-message icon'></i>
-                            </IconButton>
-                        </MenuItem>
+                            <MenuItem key='support'>
+                                <HeaderIconButton p={0} aria-label='support'>
+                                    <i
+                                        className='fa-duotone fa-life-ring icon'
+                                        style={{
+                                            '--fa-primary-opacity': '0.3',
+                                            '--fa-secondary-opacity': '1'
+                                        }}
+                                    ></i>
+                                </HeaderIconButton>
+                            </MenuItem>
+
+                            <NotificationBell isMobileView={true} />
+
+                            <MenuItem key='user'>
+                                <Button p={0}>
+                                    <Avatar
+                                        alt='account'
+                                        src='https://i.pravatar.cc/150?img=3'
+                                        sx={{ mr: 1, width: 24, height: 24 }}
+                                    />
+                                    <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
+                                        User
+                                    </Typography>
+                                </Button>
+                            </MenuItem>
+
+                            <MenuItem key='message'>
+                                <IconButton p={0} aria-label='open drawer'>
+                                    <i className='fa-regular fa-message icon'></i>
+                                </IconButton>
+                            </MenuItem>
                         </MenuList>
                     </Menu>
                 </Box>
@@ -178,7 +177,7 @@ export const Appbar = ({
                         ></i>
                     </HeaderIconButton>
 
-                    <NotificationBell />
+                    <NotificationBell isMobileView={false} />
 
                     <HeaderButton onClick={handleCloseNavMenu} />
 
