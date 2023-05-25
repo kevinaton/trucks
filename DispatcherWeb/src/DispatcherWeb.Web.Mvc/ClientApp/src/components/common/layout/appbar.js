@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     Avatar,
     Box,
@@ -10,10 +10,10 @@ import {
     MenuList,
     Toolbar,
     Typography,
-} from '@mui/material'
-import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents'
-import { getSupportLinkAddress } from '../../../store/actions'
-import { isEmpty } from 'lodash'
+} from '@mui/material';
+import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents';
+import { getSupportLinkAddress } from '../../../store/actions';
+import { isEmpty } from 'lodash';
 
 export const Appbar = ({
     drawerOpen,
@@ -23,23 +23,23 @@ export const Appbar = ({
     anchorElNav,
     handleCloseNavMenu,
 }) => {
-    const [linkAddress, setLinkAddress] = useState(null)
+    const [linkAddress, setLinkAddress] = useState(null);
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { supportLinkAddress } = useSelector((state) => ({
         supportLinkAddress: state.LayoutReducer.supportLinkAddress,
-    }))
+    }));
 
     useEffect(() => {
         if (supportLinkAddress === null) {
-            dispatch(getSupportLinkAddress())
+            dispatch(getSupportLinkAddress());
         } else {
-            const { result } = supportLinkAddress
+            const { result } = supportLinkAddress;
             if (!isEmpty(result)) {
-                setLinkAddress(result)
+                setLinkAddress(result);
             }
         }
-    }, [dispatch, supportLinkAddress])
+    }, [dispatch, supportLinkAddress]);
 
     return (
         <AppBar position="fixed" open={drawerOpen} color="inherit" elevation={5}>
@@ -138,7 +138,7 @@ export const Appbar = ({
                                         sx={{ mr: 1, width: 24, height: 24 }}
                                     />
                                     <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
-                                        User
+                                        Admin
                                     </Typography>
                                 </Button>
                             </MenuItem>
@@ -171,5 +171,5 @@ export const Appbar = ({
                 </Box>
             </Toolbar>
         </AppBar>
-    )
-}
+    );
+};
