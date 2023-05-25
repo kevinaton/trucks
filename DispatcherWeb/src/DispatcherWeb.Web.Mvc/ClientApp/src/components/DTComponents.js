@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from 'react';
 import {
     Avatar,
     Button,
@@ -10,12 +10,12 @@ import {
     TextField,
     Tooltip,
     TableCell
-} from '@mui/material'
-import { KeyboardArrowDown } from '@material-ui/icons'
-import { styled } from '@mui/material/styles'
-import MuiDrawer from '@mui/material/Drawer'
-import MuiAppBar from '@mui/material/AppBar'
-import '../fontawesome/css/all.css'
+} from '@mui/material';
+import { KeyboardArrowDown } from '@material-ui/icons';
+import { styled } from '@mui/material/styles';
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar from '@mui/material/AppBar';
+import '../fontawesome/css/all.css';
 
 // Header icon button component
 export const HeaderIconButton = (props) => {
@@ -31,8 +31,8 @@ export const HeaderIconButton = (props) => {
                 mr: { xs: 0, sm: 2 }
             }}
         />
-    )
-}
+    );
+};
 
 // Header button component
 export const HeaderButton = (props) => {
@@ -45,8 +45,8 @@ export const HeaderButton = (props) => {
                 sx={{ ml: 1, width: 24, height: 24 }}
             />
         </Button>
-    )
-}
+    );
+};
 
 // Main backdraft
 export const BackDraft = (props) => {
@@ -55,8 +55,8 @@ export const BackDraft = (props) => {
             {...props}
             sx={{ backgroundColor: "#f1f5f8", padding: 2, height: "100%" }}
         />
-    )
-}
+    );
+};
 
 // Drawer header
 export const DrawerHeader = styled("div")(({ theme }) => ({
@@ -67,18 +67,18 @@ export const DrawerHeader = styled("div")(({ theme }) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar
-}))
+}));
 
 // Width of the drawer
-export const drawerWidth = 240 // The width of the side menu
+export const drawerWidth = 240; // The width of the side menu
 
 // Customized drawer
 export const Drawer = styled(MuiDrawer, {
     shouldForwardProp: (prop) => {
         if (window.innerWidth < 600) {
-            return prop !== "paper"
+            return prop !== "paper";
         }
-        return prop !== "open"
+        return prop !== "open";
     }
 })(({ theme, open }) => ({
     width: drawerWidth,
@@ -93,7 +93,7 @@ export const Drawer = styled(MuiDrawer, {
         ...closedMixin(theme),
         "& .MuiDrawer-paper": closedMixin(theme)
     })
-}))
+}));
 
 // Custom TableCell
 export const Tablecell = ({ label, value }) => {
@@ -101,8 +101,8 @@ export const Tablecell = ({ label, value }) => {
         <Tooltip title={label} enterNextDelay={2000}>
             <TableCell aria-label={label}>{value}</TableCell>
         </Tooltip>
-    )
-}
+    );
+};
 
 // Customized AppBar
 export const AppBar = styled(MuiAppBar, {
@@ -120,7 +120,7 @@ export const AppBar = styled(MuiAppBar, {
     //     duration: theme.transitions.duration.enteringScreen,
     //   }),
     // }),
-}))
+}));
 
 // Opened mixin. this is used for drawer
 export const openedMixin = (theme) => ({
@@ -130,7 +130,7 @@ export const openedMixin = (theme) => ({
         duration: theme.transitions.duration.enteringScreen
     }),
     overflowX: "auto"
-})
+});
 
 // Closed mixin. this is used for drawer
 export const closedMixin = (theme) => ({
@@ -143,7 +143,7 @@ export const closedMixin = (theme) => ({
     [theme.breakpoints.up("sm")]: {
         width: `calc(${theme.spacing(8)} + 1px)`
     }
-})
+});
 
 export const SelectField = ({ label, value, onChange, items }) => {
     return (
@@ -159,8 +159,8 @@ export const SelectField = ({ label, value, onChange, items }) => {
                 renderInput={(params) => <TextField {...params} label={label} />}
             />
         </FormControl>
-    )
-}
+    );
+};
 
 // Main side menu
 // export const SideMenu = ({

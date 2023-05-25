@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { isEmpty } from 'lodash'
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { isEmpty } from 'lodash';
 import {
     Box,
     Button,
@@ -14,10 +14,10 @@ import {
     ListItemText,
     Tooltip,
     Typography,
-} from '@mui/material'
-import { Drawer } from '../../DTComponents'
-import { sideMenuItems } from '../../../common/data/menus'
-import { getMenuItems } from '../../../store/actions'
+} from '@mui/material';
+import { Drawer } from '../../DTComponents';
+import { sideMenuItems } from '../../../common/data/menus';
+import { getMenuItems } from '../../../store/actions';
 
 export const SideMenu = ({
     currentPageName,
@@ -29,61 +29,61 @@ export const SideMenu = ({
     handleDrawerOpen,
     handleDrawerClose
 }) => {
-    const [menus, setMenus] = useState(sideMenuItems)
-    const [sideMenus, setSideMenus] = useState([])
+    const [menus, setMenus] = useState(sideMenuItems);
+    const [sideMenus, setSideMenus] = useState([]);
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { menuItems } = useSelector(state => ({
         menuItems: state.LayoutReducer.menuItems
-    }))
+    }));
     
     useEffect(() => {
         if (isEmpty(menuItems)) {
-            dispatch(getMenuItems())
+            dispatch(getMenuItems());
         } else {
-            const { result } = menuItems
+            const { result } = menuItems;
             if (!isEmpty(result) && !isEmpty(result.items)) {
-                setSideMenus(result.items)
+                setSideMenus(result.items);
             }
         }
-    }, [dispatch, menuItems])
+    }, [dispatch, menuItems]);
 
     // Handles the collapse function of the sidemenu.
     const handleCollapseOpen = (menu) => {
         setCollapseOpen((prev) => {
-            const newOpenState = { ...prev }
+            const newOpenState = { ...prev };
 
             Object.keys(prev).forEach((name) => {
                 if (name !== menu.displayName && prev[name]) {
-                newOpenState[name] = false
+                    newOpenState[name] = false;
                 }
-            })
+            });
 
-            newOpenState[menu.displayName] = !prev[menu.displayName]
+            newOpenState[menu.displayName] = !prev[menu.displayName];
 
-            return newOpenState
-        })
-    }
+            return newOpenState;
+        });
+    };
 
     // Handles the selection state of the ListItemButton
     const handleListItemButton = (value) => {
         const newSideMenus = sideMenus.map((menu) => {
             if (menu.displayName === value) {
-                return { ...menu, select: true }
+                return { ...menu, select: true };
             } else if (menu.items) {
                 const updatedSubMenu = menu.items.map((sub) => {
                     if (sub.displayName === value) {
-                        return { ...sub, select: currentPageName === menu.displayName }
+                        return { ...sub, select: currentPageName === menu.displayName };
                     }
-                    return { ...sub, select: false }
+                    return { ...sub, select: false };
                 })
-                return { ...menu, submenu: updatedSubMenu, select: false }
+                return { ...menu, submenu: updatedSubMenu, select: false };
             }
-            return { ...menu, select: false }
+            return { ...menu, select: false };
         })
 
-        setMenus(newSideMenus)
-    }
+        setMenus(newSideMenus);
+    };
 
     const drawer = (
         <div>
@@ -283,7 +283,7 @@ export const SideMenu = ({
                 })}
             </List>
         </div>
-    )
+    );
 
     return (
         <Box>
@@ -315,5 +315,5 @@ export const SideMenu = ({
                 {drawer}
             </Drawer>
         </Box>
-    )
-}
+    );
+};

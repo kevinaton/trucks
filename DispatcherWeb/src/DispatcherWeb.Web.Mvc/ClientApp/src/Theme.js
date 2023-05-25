@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material'
+import { createTheme } from '@mui/material';
 
 export const theme = createTheme({
     palette: {
@@ -106,4 +106,4 @@ export const theme = createTheme({
       .fill('none')
       .map((_, i) => `0px ${i + 1}px ${i + 1}px rgba(69, 65, 78, 0.08)`),
     // shadows: { 6: '0 1px 15px 1px rgba(69,65,78,0.1)' },
-})
+});

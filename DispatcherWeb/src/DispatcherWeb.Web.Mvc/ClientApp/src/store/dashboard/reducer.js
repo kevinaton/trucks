@@ -1,11 +1,11 @@
 import { 
     GET_SCHEDULED_TRUCK_COUNT_PARTIAL_VIEW_SUCCESS,
     GET_SCHEDULED_TRUCK_COUNT_PARTIAL_VIEW_FAILURE,
-} from './actionTypes'
+} from './actionTypes';
 
 const INIT_STATE = {
     htmlView: null
-}
+};
 
 const DashboardReducer = (state = INIT_STATE, action) => {
     switch (action.type) {
@@ -13,15 +13,15 @@ const DashboardReducer = (state = INIT_STATE, action) => {
             return {
                 ...state,
                 htmlView: action.payload
-            }
+            };
         case GET_SCHEDULED_TRUCK_COUNT_PARTIAL_VIEW_FAILURE:
             return {
                 ...state,
                 error: action.payload
-            }
+            };
         default:
-            return state
-    }   
-}
+            return state;
+    };
+};
 
-export default DashboardReducer
+export default DashboardReducer;
