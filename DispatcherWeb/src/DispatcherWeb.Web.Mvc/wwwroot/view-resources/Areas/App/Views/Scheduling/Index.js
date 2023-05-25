@@ -24,6 +24,7 @@
         var _settings = {
             validateUtilization: abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization'),
             allowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders: abp.setting.getBoolean('App.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders'),
+            showTrailersOnSchedule: abp.setting.getBoolean('App.DispatchingAndMessaging.ShowTrailersOnSchedule'),
         };
         var _vehicleCategories = null;
         var _loadingState = false;
@@ -418,12 +419,19 @@
             return order.trucks.some(orderTruck => orderTruck.truckId === truck.id);
         }
 
+        function getTractorForTrailer(trailer) {
+            if (trailer.vehicleCategory.assetType !== abp.enums.assetType.trailer || !trailer.tractor) {
+                return null;
+            }
+            return _scheduleTrucks.find(x => x.id === trailer.tractor.id);
+        }
+
         function canAddTruckWithDriverToOrder(truck, driverId, order) {
             if (isTodayOrFutureDate(order)
                 && (truck.utilization >= 1 && _settings.validateUtilization
                     || truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck) && _settings.validateUtilization
                     || truck.isOutOfService
-                    || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)
+                    || truck.vehicleCategory.assetType === abp.enums.assetType.trailer && !getTractorForTrailer(truck))
             ) {
                 return false;
             }
@@ -449,19 +457,35 @@
 
                 var truckCode = (truck.truckCode || '').toLowerCase();
                 var trailerCode = (truck.trailer && truck.trailer.truckCode || '').toLowerCase();
-                if (!truckCode.startsWith(query)
-                    && !trailerCode.startsWith(query)
+                if (!(truckCode.startsWith(query)
+                    || !_settings.showTrailersOnSchedule && trailerCode.startsWith(query))
                 ) {
                     return;
                 }
+
+                var trailer = truck.trailer;
+                if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer) {
+                    var tractor = getTractorForTrailer(truck);
+                    if (!tractor) {
+                        return;
+                    }
+                    trailer = {
+                        id: truck.truckId,
+                        truckCode: truck.truckCode,
+                    };
+                    truck = tractor;
+                }
+
                 result.push({
                     id: 0,
                     parentId: null,
                     orderId: order.orderId,
                     truckId: truck.id,
-                    truckCode: getCombinedTruckCode(truck.truckCode),
+                    truckCode: truck.truckCode,
+                    truckCodeCombined: getCombinedTruckCode(truck),
+                    trailer: trailer,
                     driverId: truck.driverId,
-                    textForLookup: truck.truckCode,
+                    textForLookup: getCombinedTruckCode(truck),
                     officeId: truck.officeId,
                     isExternal: truck.isExternal,
                     leaseHaulerId: truck.leaseHaulerId,
@@ -492,7 +516,7 @@
                         }
 
                         var driverName = ((driverAssignment.driverLastName || '') + ", " + (driverAssignment.driverFirstName || ''));
-                        var driverNameWithTruck = driverName + " - " + (truck.truckCode || '');
+                        var driverNameWithTruck = driverName + " - " + (getCombinedTruckCode(truck) || '');
                         //if (!driverName.toLowerCase().startsWith(query)) { //only matching by driverName causes issues when the text is autocompleted with Tab first and only then they hit Enter, as opposed to just hitting Enter. We need to match against a complete string to avoid issues
                         if (!driverNameWithTruck.toLowerCase().startsWith(query)) {
                             return;
@@ -504,6 +528,8 @@
                             orderId: order.orderId,
                             truckId: truck.id,
                             truckCode: truck.truckCode,
+                            truckCodeCombined: getCombinedTruckCode(truck),
+                            trailer: truck.trailer,
                             driverId: driverAssignment.driverId,
                             textForLookup: driverNameWithTruck,
                             officeId: truck.officeId,
@@ -608,11 +634,14 @@
             if (truck.canPullTrailer && truck.trailer) {
                 return truck.truckCode + ' :: ' + truck.trailer.truckCode;
             }
+            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
+                return truck.tractor.truckCode + ' :: ' + truck.truckCode;
+            }
             return truck.truckCode;
         }
 
         function getTruckTileTitle(truck) {
-            var title = truck.truckCode;
+            var title = getCombinedTruckCode(truck);
             if (truckCategoryNeedsDriver(truck)) {
                 title += ' - ' + truck.driverName;
             }
@@ -1431,7 +1460,7 @@
                     data: null,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        return data.trucks.map(function (t) { return t.truckCode; }).join(', ');
+                        return data.trucks.map(function (t) { return t.truckCodeCombined; }).join(', ');
                     },
                     title: "Trucks",
                     //responsivePriority: 0,
@@ -1447,7 +1476,7 @@
                         var editor = $('<input type="text" class="truck-cell-editor">').appendTo($(cell));
                         editor.tagsinput({
                             itemValue: 'truckId',
-                            itemText: 'truckCode',
+                            itemText: 'truckCodeCombined',
                             allowDuplicates: true,
                             tagClass: function (truck) {
                                 return 'truck-tag ' + getTruckTagClass(truck) + ' truck-office-' + truck.officeId +
@@ -1576,7 +1605,8 @@
                                 _schedulingService.addOrderLineTruck({
                                     orderLineId: rowData.id,
                                     truckId: tag.truckId,
-                                    driverId: tag.driverId
+                                    driverId: tag.driverId,
+                                    trailerId: tag.trailer?.id,
                                 }).done(function (result) {
                                     if (result.isFailed) {
                                         onFail(result.errorMessage);
@@ -1593,18 +1623,6 @@
 
                                         reloadTruckTiles();
                                         reloadDriverAssignments();
-                                        if (tag.canPullTrailer && abp.setting.getBoolean('App.DispatchingAndMessaging.ShowTrailersOnSchedule')) {
-                                            var popupOptions = {
-                                                title: "Select Trailer",
-                                                orderLineId: rowData.id,
-                                                parentId: result.item.id,
-                                                onlyTrailers: true,
-                                                //isPowered: false,
-                                                parentTruckId: result.item.truckId
-                                            };
-                                            $.extend(popupOptions, _dtHelper.getFilterData());
-                                            _addOrderTruckModal.open(popupOptions);
-                                        }
                                     }
                                 }).fail(function () { onFail(); });
                             }

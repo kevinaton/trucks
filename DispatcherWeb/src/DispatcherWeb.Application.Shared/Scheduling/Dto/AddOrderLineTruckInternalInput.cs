@@ -12,6 +12,7 @@
             base.OrderLineId = addOrderLineTruckInput.OrderLineId;
             base.ParentId = addOrderLineTruckInput.ParentId;
             base.DriverId = addOrderLineTruckInput.DriverId;
+            base.TrailerId = addOrderLineTruckInput.TrailerId;
             Utilization = utilization;
         }
         public decimal Utilization { get; set; }

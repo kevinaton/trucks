@@ -685,6 +685,11 @@ namespace DispatcherWeb
                         ParentId = olt.ParentOrderLineTruckId,
                         TruckId = olt.TruckId,
                         TruckCode = olt.Truck.TruckCode,
+                        Trailer = olt.Trailer == null ? null : new ScheduleTruckTrailerDto
+                        {
+                            Id = olt.Trailer.Id,
+                            TruckCode = olt.Trailer.TruckCode
+                        },
                         DriverId = olt.DriverId,
                         OrderId = ol.OrderId,
                         OrderLineId = ol.Id,

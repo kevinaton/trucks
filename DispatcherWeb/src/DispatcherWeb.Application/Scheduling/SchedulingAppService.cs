@@ -637,6 +637,7 @@ namespace DispatcherWeb.Scheduling
                 OrderLineId = input.OrderLineId,
                 TruckId = input.TruckId,
                 DriverId = input.DriverId ?? truck.DriverId,
+                TrailerId = input.TrailerId ?? truck.Trailer?.Id,
                 ParentOrderLineTruckId = input.ParentId,
                 Utilization = utilization,
                 TimeOnJob = await GetTimeOnJobUtcForNewOrderLineTruck(input.OrderLineId, truck.VehicleCategory)
