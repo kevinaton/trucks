@@ -1,25 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import {
     Avatar,
     Box,
     Button,
     IconButton,
     Menu,
-    Badge,
     MenuItem,
     MenuList,
     Toolbar,
     Typography,
-} from "@mui/material";
-import {
-    drawerWidth,
-    AppBar,
-    HeaderIconButton,
-    HeaderButton,
-} from "../../DTComponents";
-import { getSupportLinkAddress } from "../../../store/actions";
-import { isEmpty } from "lodash";
+} from '@mui/material'
+import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents'
+import { getSupportLinkAddress } from '../../../store/actions'
+import { isEmpty } from 'lodash'
 
 export const Appbar = ({
     drawerOpen,
@@ -29,40 +23,36 @@ export const Appbar = ({
     anchorElNav,
     handleCloseNavMenu,
 }) => {
-    const [linkAddress, setLinkAddress] = useState(null);
+    const [linkAddress, setLinkAddress] = useState(null)
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
     const { supportLinkAddress } = useSelector((state) => ({
         supportLinkAddress: state.LayoutReducer.supportLinkAddress,
-    }));
+    }))
 
     useEffect(() => {
         if (supportLinkAddress === null) {
-            dispatch(getSupportLinkAddress());
+            dispatch(getSupportLinkAddress())
         } else {
-            const { result } = supportLinkAddress;
+            const { result } = supportLinkAddress
             if (!isEmpty(result)) {
-                setLinkAddress(result);
+                setLinkAddress(result)
             }
         }
-    }, [dispatch, supportLinkAddress]);
+    }, [dispatch, supportLinkAddress])
 
     return (
-        <AppBar
-            position="fixed"
-            open={drawerOpen}
-            color="inherit"
-            elevation={5}>
+        <AppBar position="fixed" open={drawerOpen} color="inherit" elevation={5}>
             <Toolbar sx={{ p: 0 }} disableGutters>
                 <Box sx={{ flexGrow: 1 }}>
                     {drawerOpen ? (
                         <Box
                             sx={{
                                 ml: 2,
-                                display: "flex",
+                                display: 'flex',
                                 width: drawerWidth - 26,
-                                justifyContent: "space-between",
-                                alignItems: "center",
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
                             }}>
                             <img
                                 alt=""
@@ -70,9 +60,7 @@ export const Appbar = ({
                                 height="100%"
                                 src="/reactapp/assets/dumptruckdispatcher-logo.png"
                             />
-                            <IconButton
-                                onClick={handleDrawerClose}
-                                aria-label="close drawer">
+                            <IconButton onClick={handleDrawerClose} aria-label="close drawer">
                                 <i className="fa-regular fa-bars icon"></i>
                             </IconButton>
                         </Box>
@@ -83,7 +71,7 @@ export const Appbar = ({
                             edge="start"
                             sx={{
                                 ml: 2,
-                                ...(drawerOpen && { display: "none" }),
+                                ...(drawerOpen && { display: 'none' }),
                             }}>
                             <i className="fa-regular fa-bars icon"></i>
                         </IconButton>
@@ -91,7 +79,7 @@ export const Appbar = ({
                 </Box>
 
                 {/* Mobile view */}
-                <Box sx={{ display: { xs: "flex", md: "none" }, padding: 0 }}>
+                <Box sx={{ display: { xs: 'flex', md: 'none' }, padding: 0 }}>
                     <HeaderIconButton
                         aria-label="header-menu"
                         aria-controls="menu-appbar"
@@ -104,43 +92,41 @@ export const Appbar = ({
                         id="menu-appbar"
                         anchorEl={anchorElNav}
                         anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "right",
+                            vertical: 'bottom',
+                            horizontal: 'right',
                         }}
                         keepMounted
                         transformOrigin={{
-                            vertical: "top",
-                            horizontal: "left",
+                            vertical: 'top',
+                            horizontal: 'left',
                         }}
                         open={Boolean(anchorElNav)}
                         onClose={handleCloseNavMenu}
                         elevation={5}
                         sx={{
-                            display: { sm: "flex", md: "none" },
+                            display: { sm: 'flex', md: 'none' },
                             padding: 0,
                         }}>
                         <MenuList
                             className="header-menu"
                             sx={{
-                                display: "flex",
-                                flexDirection: "row",
+                                display: 'flex',
+                                flexDirection: 'row',
                                 padding: 0,
-                                alignContent: "center",
+                                alignContent: 'center',
                             }}>
                             <MenuItem key="support">
                                 <HeaderIconButton p={0} aria-label="support">
                                     <i
                                         className="fa-duotone fa-life-ring icon"
                                         style={{
-                                            "--fa-primary-opacity": "0.3",
-                                            "--fa-secondary-opacity": "1",
+                                            '--fa-primary-opacity': '0.3',
+                                            '--fa-secondary-opacity': '1',
                                         }}></i>
                                 </HeaderIconButton>
                             </MenuItem>
                             <MenuItem key="notification">
-                                <IconButton
-                                    p={0}
-                                    aria-label="open notification">
+                                <IconButton p={0} aria-label="open notification">
                                     <i className="fa-regular fa-bell icon"></i>
                                 </IconButton>
                             </MenuItem>
@@ -151,8 +137,7 @@ export const Appbar = ({
                                         src="https://i.pravatar.cc/150?img=3"
                                         sx={{ mr: 1, width: 24, height: 24 }}
                                     />
-                                    <Typography
-                                        sx={{ fontWeight: 600, fontSize: 12 }}>
+                                    <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
                                         User
                                     </Typography>
                                 </Button>
@@ -167,30 +152,24 @@ export const Appbar = ({
                 </Box>
 
                 {/* Desktop view */}
-                <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                     <HeaderIconButton aria-label="support" href={linkAddress}>
                         <i
                             className="fa-duotone fa-life-ring icon"
                             style={{
-                                "--fa-primary-opacity": "0.3",
-                                "--fa-secondary-opacity": "1",
+                                '--fa-primary-opacity': '0.3',
+                                '--fa-secondary-opacity': '1',
                             }}></i>
                     </HeaderIconButton>
-                    <HeaderIconButton
-                        aria-label="open drawer"
-                        onClick={handleCloseNavMenu}>
-                        <Badge color="error" variant="dot" invisible={false}>
-                            <i className="fa-regular fa-bell icon"></i>
-                        </Badge>
+                    <HeaderIconButton aria-label="open drawer" onClick={handleCloseNavMenu}>
+                        <i className="fa-regular fa-bell icon"></i>
                     </HeaderIconButton>
                     <HeaderButton onClick={handleCloseNavMenu} />
-                    <HeaderIconButton
-                        aria-label="open drawer"
-                        onClick={handleCloseNavMenu}>
+                    <HeaderIconButton aria-label="open drawer" onClick={handleCloseNavMenu}>
                         <i className="fa-regular fa-message-dots icon"></i>
                     </HeaderIconButton>
                 </Box>
             </Toolbar>
         </AppBar>
-    );
-};
+    )
+}
