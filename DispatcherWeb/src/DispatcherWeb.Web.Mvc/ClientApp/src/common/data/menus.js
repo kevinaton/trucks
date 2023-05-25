@@ -62,7 +62,7 @@ const sideMenuItems = [
             {
                 icon: 'fa-regular fa-calendar-lines',
                 name: 'Truck Dispatch List',
-                path: '/dispatching/dispatches/truck-list',
+                path: '/',
                 select: true,
             },
             {

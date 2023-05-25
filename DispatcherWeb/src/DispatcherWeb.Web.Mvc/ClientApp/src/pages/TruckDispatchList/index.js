@@ -4,7 +4,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async'
 import Timeline from '../../components/Timeline'
 
 const TruckDispatchList = (props) => {
-    const pageName = "Truck Dispatch List"
+    const pageName = 'Truck Dispatch List'
     
     useEffect(() => {
         props.handleCurrentPageName(pageName)
@@ -14,18 +14,18 @@ const TruckDispatchList = (props) => {
         <HelmetProvider>
             <div>
                 <Helmet>
-                    <meta charSet="utf-8" />
+                    <meta charSet='utf-8' />
                     <title>{pageName}</title>
-                    <meta name="description" content="Dumptruckdispatcher app" />
-                    <meta content="" name="author" />
-                    <meta property="og:title" content={pageName} />
+                    <meta name='description' content='Dumptruckdispatcher app' />
+                    <meta content='' name='author' />
+                    <meta property='og:title' content={pageName} />
                     <meta
-                        property="og:image"
-                        content="/reactapp/assets/dumptruckdispatcher-logo-mini.png"
+                        property='og:image'
+                        content='/reactapp/assets/dumptruckdispatcher-logo-mini.png'
                     />
                 </Helmet>
                 <Box>
-                    <Typography variant="h6" component="h2" sx={{ mb: 1 }}>
+                    <Typography variant='h6' component='h2' sx={{ mb: 1 }}>
                         {pageName}
                     </Typography>
                 </Box>
