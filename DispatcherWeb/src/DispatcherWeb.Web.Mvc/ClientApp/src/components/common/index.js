@@ -1,2 +1,2 @@
-export * from './layout'
-export * from './dropdowns'
+export * from './layout';
+export * from './dropdowns';

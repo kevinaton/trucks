@@ -1,62 +1,62 @@
-import * as React from 'react'
-import { Paper, useMediaQuery } from '@mui/material'
-import Box from '@mui/material/Box'
-import CssBaseline from '@mui/material/CssBaseline'
-import './fontawesome/css/all.css'
-import { RouterConfig } from './navigation/RouterConfig'
-import { DrawerHeader } from './components/DTComponents'
-import { sideMenuItems } from './common/data/menus'
-import { Appbar, SideMenu } from './components'
+import * as React from 'react';
+import { Paper, useMediaQuery } from '@mui/material';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import './fontawesome/css/all.css';
+import { RouterConfig } from './navigation/RouterConfig';
+import { DrawerHeader } from './components/DTComponents';
+import { sideMenuItems } from './common/data/menus';
+import { Appbar, SideMenu } from './components';
 
 const App = (props) => {
-    const [anchorElNav, setAnchorElNav] = React.useState(null)
-    const [drawerOpen, setDrawerOpen] = React.useState(true)
-    const isSmall = useMediaQuery((theme) => theme.breakpoints.down('lg'))
-    const isBig = useMediaQuery((theme) => theme.breakpoints.up('lg'))
+    const [anchorElNav, setAnchorElNav] = React.useState(null);
+    const [drawerOpen, setDrawerOpen] = React.useState(true);
+    const isSmall = useMediaQuery((theme) => theme.breakpoints.down('lg'));
+    const isBig = useMediaQuery((theme) => theme.breakpoints.up('lg'));
     const [collapseOpen, setCollapseOpen] = React.useState(
         sideMenuItems.reduce((acc, menu) => {
             if (menu.submenu) {
-                acc[menu.name] = false
+                acc[menu.name] = false;
             }
-            return acc
+            return acc;
         }, {})
-    )
+    );
 
-    const [currentPageName, setCurrentPageName] = React.useState('')
+    const [currentPageName, setCurrentPageName] = React.useState('');
 
     // Checks screen if it is small
     React.useEffect(() => {
         if (isSmall) {
-            setDrawerOpen(false)
+            setDrawerOpen(false);
         }
 
         if (isBig) {
-            setDrawerOpen(true)
+            setDrawerOpen(true);
         }
 
-    }, [isSmall, isBig])
+    }, [isSmall, isBig]);
 
     const handleCurrentPageName = (name) => {
-        document.title = name
-        setCurrentPageName(name)
-    } 
+        document.title = name;
+        setCurrentPageName(name);
+    };
 
     const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget)
-    }
+        setAnchorElNav(event.currentTarget);
+    };
     
     const handleCloseNavMenu = () => {
-        setAnchorElNav(null)
-    }
+        setAnchorElNav(null);
+    };
     
     const handleDrawerOpen = () => {
-        setDrawerOpen(true)
-    }
+        setDrawerOpen(true);
+    };
     
     const handleDrawerClose = () => {
-        setDrawerOpen(false)
-        setCollapseOpen(false)
-    }
+        setDrawerOpen(false);
+        setCollapseOpen(false);
+    };
     
     return (
         <Box sx={{ display:'flex' }}>
@@ -102,7 +102,7 @@ const App = (props) => {
                     </Paper>
                 </Box>
         </Box>
-    )
-}
+    );
+};
 
-export default App
+export default App;

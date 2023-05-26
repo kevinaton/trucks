@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react'
-import { Box, Paper, Typography } from '@mui/material'
-import { Helmet, HelmetProvider } from 'react-helmet-async'
-import NoContent from '../../components/NoContent'
+import React, { useEffect } from 'react';
+import { Box, Paper, Typography } from '@mui/material';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import NoContent from '../../components/NoContent';
 
 const Drivers = (props) => {
-    const pageName = 'Drivers'
+    const pageName = 'Drivers';
     
     useEffect(() => {
-        props.handleCurrentPageName(pageName)
-    }, [props])
+        props.handleCurrentPageName(pageName);
+    }, [props]);
 
     return (
         <HelmetProvider>
@@ -34,7 +34,7 @@ const Drivers = (props) => {
                 </Paper>
             </div>
         </HelmetProvider>
-    )
-}
+    );
+};
 
-export default Drivers
+export default Drivers;

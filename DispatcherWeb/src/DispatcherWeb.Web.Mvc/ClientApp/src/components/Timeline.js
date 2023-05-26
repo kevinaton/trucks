@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react'
-import moment from 'moment'
+import React, { useCallback } from 'react';
+import moment from 'moment';
 import {
   Eventcalendar,
   snackbar,
@@ -10,125 +10,125 @@ import {
   Datepicker,
   Button,
   Select,
-} from '@mobiscroll/react'
-import '@mobiscroll/react/dist/css/mobiscroll.min.css'
-import { CheckBox, ShoppingBasket, WarningOutlined } from '@material-ui/icons'
-import { Box, useMediaQuery } from '@mui/material'
-import data from '../common/data/data.json'
-import { SelectField } from './DTComponents'
+} from '@mobiscroll/react';
+import '@mobiscroll/react/dist/css/mobiscroll.min.css';
+import { CheckBox, ShoppingBasket, WarningOutlined } from '@material-ui/icons';
+import { Box, useMediaQuery } from '@mui/material';
+import data from '../common/data/data.json';
+import { SelectField } from './DTComponents';
 
-const { dispatches, trucks, offices, views, menu } = data
+const { dispatches, trucks, offices, views, menu } = data;
 
 const Timeline = () => {
-    const [anchor, setAnchor] = React.useState(null)
-    const [formOpen, setDispatchOpen] = React.useState(false)
-    const [dataDispatches, setDispatches] = React.useState(dispatches)
-    const [isEdit, setEdit] = React.useState(false)
-    const [dispatchCustomer, setDispatchCustomer] = React.useState('')
-    const [dispatchTime, setDispatchTime] = React.useState('')
-    const [dispatchLoadAt, setDispatchLoadAt] = React.useState('')
-    const [dispatchDeliverTo, setDispatchDeliverTo] = React.useState('')
-    const [dispatchItem, setDispatchItem] = React.useState('')
-    const [dispatchIsRunUntilStopped, setDispatchIsRunUntilStopped] = React.useState(false)
-    const [isCompact, setCompact] = React.useState(false)
-    const [isTimeRange, setIsTimeRange] = React.useState(false)
-    const [tempStartTime, setTempStartTime] = React.useState(null)
-    const [tempEndTime, setTempEndTime] = React.useState(null)
-    const [workStart, setWorkStart] = React.useState('05:00')
-    const [workEnd, setWorkEnd] = React.useState('19:00')
-    const [rcAnchor, setRcAnchor] = React.useState(null)
-    const [isRightClick, setIsRightClick] = React.useState(false)
-    const [menuValue, setMenuValue] = React.useState(null)
-    const [tempDispatch, setTempDispatch] = React.useState(null)
-    const [isCopy, setIsCopy] = React.useState(false)
-    const [newActivity, setNewActivity] = React.useState('')
-    const [newDeliverTo, setNewDeliverTo] = React.useState('')
-    const [newId, setNewId] = React.useState('')
-    const [newItem, setNewItem] = React.useState('')
-    const [newLoadAt, setLoadAt] = React.useState('')
-    const [newResource, setNewResource] = React.useState(null)
-    const [newRunUntilStopped, setNewRunUntilStopped] = React.useState(false)
-    const [newTitle, setNewTitle] = React.useState('')
-    const [menuList, setMenuList] = React.useState(menu)
-    const [isDispatchTimes, setIsDispatchTimes] = React.useState(false)
-    const [dispatchTimesDate, setDispatchTimesDate] = React.useState(new Date())
-    const [dispatchTimesStartTime, setDispatchTimesStartTime] = React.useState(null)
-    const [dispatchTimesDuration, setDispatchTimesDuration] = React.useState(null)
-    const [isSetDisabled, setIsSetDisabled] = React.useState(true)
-    const isSmall = useMediaQuery((theme) => theme.breakpoints.down('lg'))
-    const [newRefDate, setNewRefDate] = React.useState(null)
-    const [office, setOffice] = React.useState(offices[0])
-    const [viewOption, setViewOption] = React.useState(views[0])
+    const [anchor, setAnchor] = React.useState(null);
+    const [formOpen, setDispatchOpen] = React.useState(false);
+    const [dataDispatches, setDispatches] = React.useState(dispatches);
+    const [isEdit, setEdit] = React.useState(false);
+    const [dispatchCustomer, setDispatchCustomer] = React.useState('');
+    const [dispatchTime, setDispatchTime] = React.useState('');
+    const [dispatchLoadAt, setDispatchLoadAt] = React.useState('');
+    const [dispatchDeliverTo, setDispatchDeliverTo] = React.useState('');
+    const [dispatchItem, setDispatchItem] = React.useState('');
+    const [dispatchIsRunUntilStopped, setDispatchIsRunUntilStopped] = React.useState(false);
+    const [isCompact, setCompact] = React.useState(false);
+    const [isTimeRange, setIsTimeRange] = React.useState(false);
+    const [tempStartTime, setTempStartTime] = React.useState(null);
+    const [tempEndTime, setTempEndTime] = React.useState(null);
+    const [workStart, setWorkStart] = React.useState('05:00');
+    const [workEnd, setWorkEnd] = React.useState('19:00');
+    const [rcAnchor, setRcAnchor] = React.useState(null);
+    const [isRightClick, setIsRightClick] = React.useState(false);
+    const [menuValue, setMenuValue] = React.useState(null);
+    const [tempDispatch, setTempDispatch] = React.useState(null);
+    const [isCopy, setIsCopy] = React.useState(false);
+    const [newActivity, setNewActivity] = React.useState('');
+    const [newDeliverTo, setNewDeliverTo] = React.useState('');
+    const [newId, setNewId] = React.useState('');
+    const [newItem, setNewItem] = React.useState('');
+    const [newLoadAt, setLoadAt] = React.useState('');
+    const [newResource, setNewResource] = React.useState(null);
+    const [newRunUntilStopped, setNewRunUntilStopped] = React.useState(false);
+    const [newTitle, setNewTitle] = React.useState('');
+    const [menuList, setMenuList] = React.useState(menu);
+    const [isDispatchTimes, setIsDispatchTimes] = React.useState(false);
+    const [dispatchTimesDate, setDispatchTimesDate] = React.useState(new Date());
+    const [dispatchTimesStartTime, setDispatchTimesStartTime] = React.useState(null);
+    const [dispatchTimesDuration, setDispatchTimesDuration] = React.useState(null);
+    const [isSetDisabled, setIsSetDisabled] = React.useState(true);
+    const isSmall = useMediaQuery((theme) => theme.breakpoints.down('lg'));
+    const [newRefDate, setNewRefDate] = React.useState(null);
+    const [office, setOffice] = React.useState(offices[0]);
+    const [viewOption, setViewOption] = React.useState(views[0]);
 
     React.useEffect(() => {
         // Automate updating of the dispatches start and end date
         const AutoDispatchUpdate = () => {
             // Checks data if it is in the current date. if not it will update the dispatch data
-            const currentDate = new Date().toISOString().slice(0, 10) //Gets current date
-            const checkDate = dataDispatches[0].start.slice(0, 10)
+            const currentDate = new Date().toISOString().slice(0, 10); //Gets current date
+            const checkDate = dataDispatches[0].start.slice(0, 10);
 
             if (currentDate !== checkDate) {
                 dataDispatches.forEach((dispatch) => {
-                    const startDate = dispatch.start.slice(0, 10)
-                    const endDate = dispatch.end.slice(0, 10)
+                    const startDate = dispatch.start.slice(0, 10);
+                    const endDate = dispatch.end.slice(0, 10);
 
                     if (startDate !== currentDate || endDate !== currentDate) {
                         // Run the updateDispatch
-                        const startTime = dispatch.start.slice(11) //Get the sart time
-                        const endTime = dispatch.end.slice(11) //Get the end time
+                        const startTime = dispatch.start.slice(11); //Get the sart time
+                        const endTime = dispatch.end.slice(11); //Get the end time
 
-                        dispatch.start = `${currentDate}T${startTime}` //updated the start date of the dispatch
-                        dispatch.end = `${currentDate}T${endTime}` //updated the end date of the dispatch
+                        dispatch.start = `${currentDate}T${startTime}`; //updated the start date of the dispatch
+                        dispatch.end = `${currentDate}T${endTime}`; //updated the end date of the dispatch
 
-                        setDispatches([...dataDispatches, dispatch])
+                        setDispatches([...dataDispatches, dispatch]);
                     }
-                })
+                });
             }
-        }
+        };
 
-        AutoDispatchUpdate()
-    }, [dataDispatches])
+        AutoDispatchUpdate();
+    }, [dataDispatches]);
 
     React.useEffect(() => {
         // handler for context menu
         const handleContextMenu = (e) => {
             // prevent right-click from appearing
-            e.preventDefault()
-        }
+            e.preventDefault();
+        };
 
-        document.addEventListener('contextmenu', handleContextMenu)
+        document.addEventListener('contextmenu', handleContextMenu);
 
         return () => {
-            document.removeEventListener('contextmenu', handleContextMenu)
-        }
-    })
+            document.removeEventListener('contextmenu', handleContextMenu);
+        };
+    });
 
     React.useEffect(() => {
-        setNewRefDate(new Date()) //To refresh timeline if the isCompact changes value
-    }, [isCompact])
+        setNewRefDate(new Date()); //To refresh timeline if the isCompact changes value
+    }, [isCompact]);
 
     const dispatchesByResource = React.useMemo(() => {
-        const result = {}
+        const result = {};
 
         // Group the dispatches by resource truck number
         dataDispatches.forEach((dispatch) => {
             if (!result[dispatch.resource]) {
-                result[dispatch.resource] = []
+                result[dispatch.resource] = [];
             }
-            result[dispatch.resource].push(dispatch)
-        })
+            result[dispatch.resource].push(dispatch);
+        });
 
         // Sort each truck group by the end time in descending order and mark the last dispatch
         Object.keys(result).forEach((resource) => {
-            const group = result[resource]
-            group.sort((a, b) => moment(b.end) - moment(a.end))
+            const group = result[resource];
+            group.sort((a, b) => moment(b.end) - moment(a.end));
             group.forEach((dispatch, index) => {
-                dispatch.last = index === 0
-            })
-        })
+                dispatch.last = index === 0;
+            });
+        });
 
-        return result
-    }, [dataDispatches])
+        return result;
+    }, [dataDispatches]);
 
     // Timeline configuration
     const view = React.useMemo(
@@ -149,12 +149,12 @@ const Timeline = () => {
             }
         },
         [workStart, workEnd, isSmall]
-    )
+    );
 
     // Load trucks
     const resourceTrucks = React.useMemo(() => {
         // Return the truck objects
-        return trucks
+        return trucks;
     }, [])
 
     // Custom Resource view
@@ -185,21 +185,21 @@ const Timeline = () => {
                     alt='Avatar'
                 />
             </div>
-        )
-    }, [])
+        );
+    }, []);
 
     // Custom Dispatch events
     const renderScheduleEvent = useCallback(
         (data) => {
-            const ev = data.original
-            const currentTime = new Date()
+            const ev = data.original;
+            const currentTime = new Date();
             let bgColor = '#E3E6E9',
                 textColor = '#000000',
                 borderColor = '',
-                iconColor = '#3a7798'
+                iconColor = '#3a7798';
 
             // Check if dispatch is loaded
-            const isLoaded = data.original.status.toLowerCase().includes('loaded')
+            const isLoaded = data.original.status.toLowerCase().includes('loaded');
 
             // Manage dispatch color
             if (currentTime >= data.startDate && currentTime <= data.endDate) {
@@ -207,18 +207,18 @@ const Timeline = () => {
                 // If dispatch is the last one and
                 if (dispatchesByResource[data.resource][0].id === data.id &&
                     isLoaded === true) {
-                    borderColor = '3px solid #feb811'
+                    borderColor = '3px solid #feb811';
                 }
 
-                bgColor = '#317ab4'
-                textColor = '#ffffff'
-                iconColor = '#ffffff'
+                bgColor = '#317ab4';
+                textColor = '#ffffff';
+                iconColor = '#ffffff';
             } else if (currentTime > data.endDate) {
                 // Past or done dispatches
-                bgColor = '#d6f2ff'
+                bgColor = '#d6f2ff';
             } else {
                 // Future dispatches
-                bgColor = '#E3E6E9'
+                bgColor = '#E3E6E9';
             }
 
             if (isCompact === false) {
@@ -264,7 +264,7 @@ const Timeline = () => {
                             {ev.runUntilStopped === true ? 'Run until stopped' : ''}
                         </div>
                     </div>
-                )
+                );
             } else {
                 return (
                     <div
@@ -282,7 +282,7 @@ const Timeline = () => {
                             {ev.status}
                         </div>
                     </div>
-                )
+                );
             }
         },
         [isCompact, dispatchesByResource]
@@ -290,159 +290,159 @@ const Timeline = () => {
 
     //  Create dispatch form
     const loadDispatchForm = React.useCallback((event) => {
-        const dispStart = moment(event.start).format('h:mm a')
-        const dispEnd = moment(event.end).format('h:mm a')
-        setDispatchCustomer(event.customer)
-        setDispatchTime(`${dispStart} to ${dispEnd}`)
-        setDispatchLoadAt(event.loadat)
-        setDispatchDeliverTo(event.deliverto)
-        setDispatchItem(event.item)
-        setDispatchIsRunUntilStopped(event.runUntilStopped)
-    }, [])
+        const dispStart = moment(event.start).format('h:mm a');
+        const dispEnd = moment(event.end).format('h:mm a');
+        setDispatchCustomer(event.customer);
+        setDispatchTime(`${dispStart} to ${dispEnd}`);
+        setDispatchLoadAt(event.loadat);
+        setDispatchDeliverTo(event.deliverto);
+        setDispatchItem(event.item);
+        setDispatchIsRunUntilStopped(event.runUntilStopped);
+    }, []);
 
     // Delete event
     const deleteEvent = React.useCallback(
         (event) => {
-            setDispatches(dataDispatches.filter((item) => item.id !== event.id))
+            setDispatches(dataDispatches.filter((item) => item.id !== event.id));
             setTimeout(() => {
                 snackbar({
                     message: 'event deleted',
                     color: 'success',
-                })
-            })
+                });
+            });
         },
         [dataDispatches]
-    )
+    );
 
     // Handle click of delete dispatch
     const onDeleteDispatch = React.useCallback(() => {
-        deleteEvent(tempDispatch)
-    }, [deleteEvent, tempDispatch])
+        deleteEvent(tempDispatch);
+    }, [deleteEvent, tempDispatch]);
 
     const onEventDeleted = React.useCallback(
         (args) => {
-            deleteEvent(args.event)
+            deleteEvent(args.event);
         },
         [deleteEvent]
-    )
+    );
 
     // Events
     const onEventHoverIn = React.useCallback((args) => {
-        setRcAnchor(args.domEvent.target)
-        setAnchor(args.domEvent.target)
-    }, [])
+        setRcAnchor(args.domEvent.target);
+        setAnchor(args.domEvent.target);
+    }, []);
 
-    const onEventHoverOut = React.useCallback(() => {}, [])
+    const onEventHoverOut = React.useCallback(() => {}, []);
 
     const onEventClick = React.useCallback(
         (args) => {
-            setDispatchOpen(true)
-            setEdit(true)
-            loadDispatchForm(args.event)
+            setDispatchOpen(true);
+            setEdit(true);
+            loadDispatchForm(args.event);
         },
         [loadDispatchForm]
-    )
+    );
 
     const onClose = React.useCallback(
         (args) => {
             if (!isEdit) {
-                setDispatches([...dataDispatches])
+                setDispatches([...dataDispatches]);
             }
-            setDispatchOpen(false)
+            setDispatchOpen(false);
         },
         [isEdit, dataDispatches]
-    )
+    );
 
     const onEventCreated = React.useCallback(
         (args) => {
-            setEdit(false)
-            setDispatchOpen(true)
-            loadDispatchForm(args.event)
+            setEdit(false);
+            setDispatchOpen(true);
+            loadDispatchForm(args.event);
         },
         [loadDispatchForm]
-    )
+    );
 
     // Handle right click functionality
     const onEventRightClick = React.useCallback((ev) => {
-        setTempDispatch(ev.event)
-        setRcAnchor(ev.domEvent.target)
+        setTempDispatch(ev.event);
+        setRcAnchor(ev.domEvent.target);
 
         // Adjust menu if to display end multiple dispatches
         if (ev.event.runUntilStopped === true) {
-            setMenuList(menu)
-            setIsRightClick(true)
+            setMenuList(menu);
+            setIsRightClick(true);
         } else {
             const removedEndMultipleDispatches = menu.filter(
                 (item) => item.value !== 'endMultipleDispatches'
-            )
-            setMenuList(removedEndMultipleDispatches)
-            setIsRightClick(true)
+            );
+            setMenuList(removedEndMultipleDispatches);
+            setIsRightClick(true);
         }
-    }, [])
+    }, []);
 
     const rightClickClose = React.useCallback(
         (ev) => {
             if (ev.value === 'cancel') {
-                onDeleteDispatch()
-                setTempDispatch('')
+                onDeleteDispatch();
+                setTempDispatch('');
             }
 
             if (ev.value === 'copy') {
-                setIsCopy(true)
+                setIsCopy(true);
 
                 // set new ID
-                let largestId = 0
+                let largestId = 0;
                 dataDispatches.forEach((dispatch) => {
-                    const idNum = parseInt(dispatch.id, 10)
+                    const idNum = parseInt(dispatch.id, 10);
                     if (idNum > largestId) {
-                        largestId = idNum
+                        largestId = idNum;
                     }
-                })
+                });
 
-                setNewId((largestId + 1).toString().padStart(3, '0'))
-                setNewActivity(tempDispatch.status)
-                setNewDeliverTo(tempDispatch.deliverto)
-                setNewItem(tempDispatch.item)
-                setLoadAt(tempDispatch.loadat)
-                setNewResource(tempDispatch.resource)
-                setNewRunUntilStopped(tempDispatch.runUntilStopped)
-                setNewTitle(tempDispatch.customer)
+                setNewId((largestId + 1).toString().padStart(3, '0'));
+                setNewActivity(tempDispatch.status);
+                setNewDeliverTo(tempDispatch.deliverto);
+                setNewItem(tempDispatch.item);
+                setLoadAt(tempDispatch.loadat);
+                setNewResource(tempDispatch.resource);
+                setNewRunUntilStopped(tempDispatch.runUntilStopped);
+                setNewTitle(tempDispatch.customer);
             }
 
             if (ev.value === 'endMultipleDispatches') {
-                tempDispatch.runUntilStopped = false
-                const index = dataDispatches.findIndex((x) => x.id === tempDispatch.id)
-                const updateDispatch = [...dataDispatches]
-                updateDispatch.splice(index, 1, tempDispatch)
-                setDispatches(updateDispatch)
+                tempDispatch.runUntilStopped = false;
+                const index = dataDispatches.findIndex((x) => x.id === tempDispatch.id);
+                const updateDispatch = [...dataDispatches];
+                updateDispatch.splice(index, 1, tempDispatch);
+                setDispatches(updateDispatch);
             }
 
             if (ev.value === 'changeDispatchtimes') {
-                const st = moment(tempDispatch.start)
-                const en = moment(tempDispatch.end)
-                const duration = moment.duration(en.diff(st))
-                const hrs = Math.floor(duration.asHours()).toString().padStart(2, '0')
-                const min = duration.minutes().toString().padStart(2, '0')
-                const timeDuration = `${hrs}:${min}`
+                const st = moment(tempDispatch.start);
+                const en = moment(tempDispatch.end);
+                const duration = moment.duration(en.diff(st));
+                const hrs = Math.floor(duration.asHours()).toString().padStart(2, '0');
+                const min = duration.minutes().toString().padStart(2, '0');
+                const timeDuration = `${hrs}:${min}`;
 
                 // Checks if date is object or ISO
                 if (moment.isDate(tempDispatch.start)) {
-                    setDispatchTimesStartTime(st.format('YYYY-MM-DDTHH:mm:ss'))
-                    setDispatchTimesDate(st.format('YYYY-MM-DDTHH:mm:ss'))
+                    setDispatchTimesStartTime(st.format('YYYY-MM-DDTHH:mm:ss'));
+                    setDispatchTimesDate(st.format('YYYY-MM-DDTHH:mm:ss'));
                 } else {
-                    setDispatchTimesStartTime(tempDispatch.start)
-                    setDispatchTimesDate(tempDispatch.start)
+                    setDispatchTimesStartTime(tempDispatch.start);
+                    setDispatchTimesDate(tempDispatch.start);
                 }
 
-                setDispatchTimesDuration(timeDuration)
-                setIsDispatchTimes(true)
+                setDispatchTimesDuration(timeDuration);
+                setIsDispatchTimes(true);
             }
 
-            setMenuValue('')
-            setIsRightClick(false)
+            setMenuValue('');
+            setIsRightClick(false);
         },
         [onDeleteDispatch, dataDispatches, tempDispatch]
-    )
+    );
 
     // Popup
     const responsivePopup = {
@@ -452,51 +452,51 @@ const Timeline = () => {
             fullscreen: false,
             touchUi: false
         },
-    }
+    };
 
     // Add dispatch buttons
     const dispatchButtons = React.useMemo(() => {
         return [{
             text: 'Done',
             handler: () => {
-                setDispatchOpen(false)
+                setDispatchOpen(false);
             }
-        }]
-    }, [])
+        }];
+    }, []);
 
     // Handle add/edit popup form
     const headerText = React.useMemo(
         () => (isEdit ? 'View Dispatch' : 'Add Dispatch'),
         [isEdit]
-    )
+    );
 
     // Handle opening of working hour popup
     const timeRangeOpen = React.useCallback((event) => {
-        setIsTimeRange(true)
-    }, [])
+        setIsTimeRange(true);
+    }, []);
 
     // Handle closing of working hour popup
     const timeRangeClose = React.useCallback(() => {
-        const sTime = moment(tempStartTime).format('HH:mm').toString()
-        const eTime = moment(tempEndTime).format('HH:mm').toString()
+        const sTime = moment(tempStartTime).format('HH:mm').toString();
+        const eTime = moment(tempEndTime).format('HH:mm').toString();
 
-        setWorkStart(sTime !== 'Invalid date' ? sTime : '05:00')
-        setWorkEnd(eTime !== 'Invalid date' ? eTime : '19:00')
-        setIsTimeRange(false)
-    }, [tempStartTime, tempEndTime])
+        setWorkStart(sTime !== 'Invalid date' ? sTime : '05:00');
+        setWorkEnd(eTime !== 'Invalid date' ? eTime : '19:00');
+        setIsTimeRange(false);
+    }, [tempStartTime, tempEndTime]);
 
     // get input from working hours popup
     const workingHours = React.useCallback((val) => {
-        let val0 = val.value[0]
-        let val1 = val.value[1]
+        let val0 = val.value[0];
+        let val1 = val.value[1];
 
-        setTempStartTime(val0)
-        setTempEndTime(val1)
-    }, [])
+        setTempStartTime(val0);
+        setTempEndTime(val1);
+    }, []);
 
     // Custom Menu
     const customMenu = useCallback((data) => {
-        const item = data.data
+        const item = data.data;
         return (
             <div className='md-item-template'>
                 {/* <span
@@ -509,20 +509,20 @@ const Timeline = () => {
                     <span>{item.text}</span>
                 </div>
             </div>
-        )
-    }, [])
+        );
+    }, []);
 
     // handle copy time picker
     const copyDispatch = useCallback(
         (event, inst) => {
-            const oldStartTime = new Date(tempDispatch.start)
-            const endTime = new Date(tempDispatch.end)
-            const startTime = new Date(event.value)
+            const oldStartTime = new Date(tempDispatch.start);
+            const endTime = new Date(tempDispatch.end);
+            const startTime = new Date(event.value);
 
             // Set new duration
             // Calculate the hour duration
-            const hrDuration = (endTime.getTime() - oldStartTime.getTime()) / 3600000
-            const newEndTime = new Date(startTime.getTime() + hrDuration * 3600000)
+            const hrDuration = (endTime.getTime() - oldStartTime.getTime()) / 3600000;
+            const newEndTime = new Date(startTime.getTime() + hrDuration * 3600000);
 
             const newCopiedDispatch = {
                 id: newId,
@@ -535,12 +535,12 @@ const Timeline = () => {
                 item: newItem,
                 runUntilStopped: newRunUntilStopped,
                 resource: newResource
-            }
+            };
 
             // Add new copied dispatch to the list of dispatches
-            setDispatches([...dataDispatches, newCopiedDispatch])
+            setDispatches([...dataDispatches, newCopiedDispatch]);
 
-            setIsCopy(false)
+            setIsCopy(false);
         },
         [
             tempDispatch,
@@ -554,57 +554,57 @@ const Timeline = () => {
             newTitle,
             dataDispatches,
         ]
-    )
+    );
 
     // Handle cancel on Copy dispatch
     const copyCancel = () => {
-        setNewId(null)
-        setNewActivity('')
-        setNewDeliverTo('')
-        setNewItem('')
-        setLoadAt('')
-        setNewResource('')
-        setNewRunUntilStopped('')
-        setNewTitle('')
-        setTempDispatch(null)
-        setIsCopy(false)
-    }
+        setNewId(null);
+        setNewActivity('');
+        setNewDeliverTo('');
+        setNewItem('');
+        setLoadAt('');
+        setNewResource('');
+        setNewRunUntilStopped('');
+        setNewTitle('');
+        setTempDispatch(null);
+        setIsCopy(false);
+    };
 
-    const closeDispatchTimes = useCallback((ev) => {}, [])
+    const closeDispatchTimes = useCallback((ev) => {}, []);
 
     // change dispatch times button
     const changeDispatchTimesButtons = React.useMemo(() => {
         return [{
             text: 'Cancel',
             handler: () => {
-                setIsDispatchTimes(false)
-                setDispatchTimesDate('')
-                setDispatchTimesStartTime('')
-                setDispatchTimesDuration('')
+                setIsDispatchTimes(false);
+                setDispatchTimesDate('');
+                setDispatchTimesStartTime('');
+                setDispatchTimesDuration('');
             }
         }, {
             text: 'Set',
             disabled: isSetDisabled,
             handler: () => {
-                const setDate = dispatchTimesDate.slice(0, 10) //Gets set date
+                const setDate = dispatchTimesDate.slice(0, 10); //Gets set date
                 const startTime = moment(
                     `${setDate}T${dispatchTimesStartTime.slice(11)}` // Current Start time
-                )
-                const duration = moment.duration(dispatchTimesDuration)
-                const endTime = moment(startTime).add(duration)
+                );
+                const duration = moment.duration(dispatchTimesDuration);
+                const endTime = moment(startTime).add(duration);
 
-                tempDispatch.start = startTime.format() //Set new start
-                tempDispatch.end = endTime.format() // Set new end
+                tempDispatch.start = startTime.format(); //Set new start
+                tempDispatch.end = endTime.format(); // Set new end
                 const index = dataDispatches.findIndex(
                     (x) => x.id === tempDispatch.id //Locate the current id
-                )
-                const updateDispatch = [...dataDispatches]
-                updateDispatch.splice(index, 1, tempDispatch)
-                setDispatches(updateDispatch)
+                );
+                const updateDispatch = [...dataDispatches];
+                updateDispatch.splice(index, 1, tempDispatch);
+                setDispatches(updateDispatch);
 
-                setIsDispatchTimes(false)
+                setIsDispatchTimes(false);
             }
-        }]
+        }];
     }, [
         dispatchTimesDuration,
         dispatchTimesStartTime,
@@ -612,24 +612,24 @@ const Timeline = () => {
         dispatchTimesDate,
         dataDispatches,
         tempDispatch
-    ])
+    ]);
 
     const onEventUpdate = React.useCallback((event, int) => {
-        console.log('onEventUpdate')
-    }, [])
+        console.log('onEventUpdate');
+    }, []);
 
     // Handle the show compact function
     const handleCompact = useCallback((ev) => {
-        setCompact(ev.target.checked)
-    }, [])
+        setCompact(ev.target.checked);
+    }, []);
 
     const handleOffice = (event, newVal) => {
-        setOffice(newVal)
-    }
+        setOffice(newVal);
+    };
 
     const handleViews = (event, newVal) => {
-        setViewOption(newVal)
-    }
+        setViewOption(newVal);
+    };
 
     return (
         <Page>
@@ -846,7 +846,7 @@ const Timeline = () => {
                 />
             </Popup>
         </Page>
-    )
-}
+    );
+};
 
-export default Timeline
+export default Timeline;
