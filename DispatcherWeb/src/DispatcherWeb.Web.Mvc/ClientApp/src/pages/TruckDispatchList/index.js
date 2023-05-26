@@ -1,14 +1,18 @@
-import React, { useEffect } from 'react'
-import { Box, Typography } from '@mui/material'
-import { Helmet, HelmetProvider } from 'react-helmet-async'
-import Timeline from '../../components/Timeline'
+import React, { useEffect } from 'react';
+import { Box, Typography } from '@mui/material';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import Timeline from '../../components/Timeline';
 
 const TruckDispatchList = (props) => {
+<<<<<<< HEAD
     const pageName = 'Truck Dispatch List'
+=======
+    const pageName = 'Truck Dispatch List';
+>>>>>>> main
     
     useEffect(() => {
-        props.handleCurrentPageName(pageName)
-    }, [props])
+        props.handleCurrentPageName(pageName);
+    }, [props]);
 
     return (
         <HelmetProvider>
@@ -32,7 +36,7 @@ const TruckDispatchList = (props) => {
                 <Timeline />
             </div>
         </HelmetProvider>
-    )
-}
+    );
+};
 
-export default TruckDispatchList
+export default TruckDispatchList;

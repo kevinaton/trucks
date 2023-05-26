@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     Avatar,
     Box,
@@ -11,9 +11,9 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents'
-import { getSupportLinkAddress } from '../../../store/actions'
-import { isEmpty } from 'lodash'
+import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents';
+import { getSupportLinkAddress } from '../../../store/actions';
+import { isEmpty } from 'lodash';
 
 export const Appbar = ({
     drawerOpen,
@@ -60,9 +60,6 @@ export const Appbar = ({
                                 height='100%'
                                 src='/reactapp/assets/dumptruckdispatcher-logo.png'
                             />
-                            <IconButton onClick={handleDrawerClose} aria-label='close drawer'>
-                                <i className='fa-regular fa-bars icon'></i>
-                            </IconButton>
                         </Box>
                     ) : (
                         <IconButton
@@ -80,12 +77,7 @@ export const Appbar = ({
 
                 {/* Mobile view */}
                 <Box sx={{ display: { xs: 'flex', md: 'none' }, padding: 0 }}>
-                    <HeaderIconButton
-                        aria-label='header-menu'
-                        aria-controls='menu-appbar'
-                        aria-haspopup='true'
-                        onClick={handleOpenNavMenu}
-                        color='inherit'>
+                    <HeaderIconButton aria-label='header-menu' color='inherit'>
                         <i className='fa-regular fa-ellipsis-vertical icon'></i>
                     </HeaderIconButton>
                     <Menu

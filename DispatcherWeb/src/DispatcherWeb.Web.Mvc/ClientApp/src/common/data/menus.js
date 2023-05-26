@@ -1,6 +1,6 @@
 import '../../fontawesome/css/all.css';
 
-const sideMenuItems = [
+export const sideMenuItems = [
     {
         icon: 'fa-regular fa-display-chart-up',
         name: 'Dashboard',
@@ -290,5 +290,3 @@ const sideMenuItems = [
         ],
     },
 ];
-
-export { sideMenuItems };

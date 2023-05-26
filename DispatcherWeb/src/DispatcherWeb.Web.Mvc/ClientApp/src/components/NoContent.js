@@ -1,5 +1,5 @@
-import { Box, Typography } from '@mui/material'
-import { grey } from '@mui/material/colors'
+import { Box, Typography } from '@mui/material';
+import { grey } from '@mui/material/colors';
 
 const NoContent = () => {
     return (
@@ -16,7 +16,7 @@ const NoContent = () => {
                 This page has no content yet.
             </Typography>
         </Box>
-    )
-}
+    );
+};
 
-export default NoContent
+export default NoContent;

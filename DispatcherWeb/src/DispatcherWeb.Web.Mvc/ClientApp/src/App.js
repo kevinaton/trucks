@@ -90,9 +90,9 @@ const App = (props) => {
                         height: '100vh',
                         overflow: 'auto',
                         pb: '50px',
-                    }}
-                />
-                <DrawerHeader />
+                    }}>
+                    <DrawerHeader />
+                </Paper>
             </Box>
             <Box component='main' sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}>
                 <Paper

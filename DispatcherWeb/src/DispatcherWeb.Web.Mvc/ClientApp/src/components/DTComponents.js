@@ -10,23 +10,12 @@ import {
     TextField,
     Tooltip,
     TableCell,
-    Modal,
-    Card,
-    CardHeader,
-    CardContent,
-    FormGroup,
-    FormControlLabel,
-    Switch,
-    Divider,
-    Checkbox,
-    CardActions,
 } from '@mui/material';
 import { KeyboardArrowDown } from '@material-ui/icons';
 import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import '../fontawesome/css/all.css';
-import { theme } from '../Theme';
 
 // Header icon button component
 export const HeaderIconButton = (props) => {
@@ -158,74 +147,6 @@ export const SelectField = ({ label, value, onChange, items }) => {
                 renderInput={(params) => <TextField {...params} label={label} />}
             />
         </FormControl>
-    );
-};
-
-// Modal notification settings
-export const NotificationSettings = ({ state, setViewNotifSet }) => {
-    const [isNotifSettings, setIsNotifSettings] = React.useState(false);
-    // Handles the opening of the notification settings modal
-
-    React.useEffect(() => {
-        if (state === true) {
-            setIsNotifSettings(true);
-        }
-    }, [state]);
-
-    const handleNotifSettingsClose = () => {
-        state = false;
-        setViewNotifSet(false);
-        setIsNotifSettings(false);
-    };
-    return (
-        <Modal
-            open={isNotifSettings}
-            onClose={handleNotifSettingsClose}
-            aria-labelledby='notification-settings'>
-            <Card
-                sx={{
-                    minWidth: 500,
-                    position: 'absolute',
-                    top: '30%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                }}>
-                <CardHeader
-                    action={
-                        <IconButton aria-label='close' onClick={handleNotifSettingsClose}>
-                            <i className='fa-regular fa-close'></i>
-                        </IconButton>
-                    }
-                    title='Notification Settings'
-                />
-                <CardContent>
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<Switch defaultChecked />}
-                            label='Receive notifications'
-                        />
-                        <Typography color={theme.palette.text.secondary} variant='caption'>
-                            This option can be used to completely enable/disable receiving
-                            notifications.
-                        </Typography>
-                        <Divider sx={{ my: 3 }} />
-                        <FormControlLabel
-                            control={<Checkbox defaultChecked />}
-                            label='On a new user registered with the application.'
-                        />
-                    </FormGroup>
-                </CardContent>
-                <CardActions sx={{ justifyContent: 'end' }}>
-                    <Button onClick={handleNotifSettingsClose}>Cancel</Button>
-                    <Button
-                        variant='contained'
-                        onClick={handleNotifSettingsClose}
-                        startIcon={<i className='fa-regular fa-save'></i>}>
-                        Save
-                    </Button>
-                </CardActions>
-            </Card>
-        </Modal>
     );
 };
 

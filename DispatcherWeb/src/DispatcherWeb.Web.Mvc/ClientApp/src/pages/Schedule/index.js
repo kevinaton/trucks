@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Helmet, HelmetProvider } from 'react-helmet-async'
+import React, { useEffect } from 'react';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import {
     Autocomplete,
     Box,
@@ -25,17 +25,18 @@ import {
     ListItemButton,
     Collapse,
     List
-} from '@mui/material'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import { grey } from '@mui/material/colors'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import moment from 'moment'
-import data from '../../common/data/data.json'
-import { Tablecell } from '../../components/DTComponents'
+} from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { grey } from '@mui/material/colors';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import moment from 'moment';
+import data from '../../common/data/data.json';
+import { Tablecell } from '../../components/DTComponents';
 
-const { offices, TruckCode, ScheduleData } = data
+const { offices, TruckCode, ScheduleData } = data;
 
 const Schedule = (props) => {
+<<<<<<< HEAD
     const pageName = 'Schedule'
     const [date, setDate] = React.useState(moment())
     const [view, setView] = React.useState('all')
@@ -45,36 +46,47 @@ const Schedule = (props) => {
     const actionOpen = Boolean(actionAnchor)
     const [isOrderOpen, setIsOrderOpen] = React.useState(false)
     const [isPrintOrderOpen, setIsPrintOrderOpen] = React.useState(false)
+=======
+    const pageName = 'Schedule';
+    const [date, setDate] = React.useState(moment());
+    const [view, setView] = React.useState('all');
+    const [settingsAnchor, setSettingsAnchor] = React.useState(null);
+    const settingsOpen = Boolean(settingsAnchor);
+    const [actionAnchor, setActionAnchor] = React.useState(null);
+    const actionOpen = Boolean(actionAnchor);
+    const [isOrderOpen, setIsOrderOpen] = React.useState(false);
+    const [isPrintOrderOpen, setIsPrintOrderOpen] = React.useState(false);
+>>>>>>> main
     
     useEffect(() => {
-        props.handleCurrentPageName(pageName)
-    }, [props])
+        props.handleCurrentPageName(pageName);
+    }, [props]);
 
     // Handle toggle button at the top right
     const handleView = (event, newView) => {
         if (newView !== null) {
-            setView(newView)
+            setView(newView);
         }
-    }
+    };
 
     // Handle click of settings located at the top right
     const handleSettingsClick = (event) => {
-        setSettingsAnchor(event.currentTarget)
-    }
+        setSettingsAnchor(event.currentTarget);
+    };
 
     const handleSettingsClose = () => {
-        setSettingsAnchor(null)
-    }
+        setSettingsAnchor(null);
+    };
 
     // Handle action on table rows
     const handleActionClick = (event) => {
-        setActionAnchor(event.currentTarget)
-    }
+        setActionAnchor(event.currentTarget);
+    };
 
     const handleActionClose = () => {
-        setActionAnchor(null)
-        setIsOrderOpen(false)
-    }
+        setActionAnchor(null);
+        setIsOrderOpen(false);
+    };
 
     return (
         <HelmetProvider>
@@ -494,7 +506,7 @@ const Schedule = (props) => {
                 </Paper>
             </div>
         </HelmetProvider>
-    )
-}
+    );
+};
 
-export default Schedule
+export default Schedule;
