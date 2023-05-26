@@ -1,17 +1,15 @@
-import { useEffect } from 'react'
-import { Routes, Route } from 'react-router'
-import { useLocation, useNavigate } from 'react-router-dom'
-import Dashboard from '../pages/Dashboard'
-import Customers from '../pages/Customers'
-import ProductsOrServices from '../pages/ProductsOrServices'
-import Drivers from '../pages/Drivers'
+import { useEffect } from 'react';
+import { Routes, Route } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Dashboard from '../pages/Dashboard';
+import Customers from '../pages/Customers';
+import ProductsOrServices from '../pages/ProductsOrServices';
+import Drivers from '../pages/Drivers';
 import Locations from '../pages/Locations';
 import Schedule from '../pages/Schedule';
 import TruckDispatchList from '../pages/TruckDispatchList';
-  
-export const RouterConfig = ({
-    handleCurrentPageName
-}) => {
+
+export const RouterConfig = ({ handleCurrentPageName }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const targetRoute = queryParams.get('route');
@@ -24,12 +22,12 @@ export const RouterConfig = ({
         { path: '/drivers', component: Drivers },
         { path: '/locations', component: Locations },
         { path: '/dispatching/schedule', component: Schedule },
-        { path: '/dispatching/dispatches/truck-list', component: TruckDispatchList }
+        { path: '/dispatching/dispatches/truck-list', component: TruckDispatchList },
     ];
 
     useEffect(() => {
         if (targetRoute) {
-          navigate(targetRoute);
+            navigate(targetRoute);
         }
     }, [targetRoute, navigate]);
 

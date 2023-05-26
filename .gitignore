@@ -360,3 +360,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Ignore configuration in appsettings
+# **/src/DispatcherWeb.Web.Mvc/appsettings.json

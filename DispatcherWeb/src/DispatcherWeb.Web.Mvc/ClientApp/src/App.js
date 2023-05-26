@@ -33,7 +33,6 @@ const App = (props) => {
         if (isBig) {
             setDrawerOpen(true);
         }
-
     }, [isSmall, isBig]);
 
     const handleCurrentPageName = (name) => {
@@ -44,22 +43,22 @@ const App = (props) => {
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
-    
+
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
-    
+
     const handleDrawerOpen = () => {
         setDrawerOpen(true);
     };
-    
+
     const handleDrawerClose = () => {
         setDrawerOpen(false);
         setCollapseOpen(false);
     };
-    
+
     return (
-        <Box sx={{ display:'flex' }}>
+        <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             {/* This is the appbar located at the top of the app. */}
 
@@ -72,7 +71,7 @@ const App = (props) => {
                 handleCloseNavMenu={handleCloseNavMenu}
             />
 
-            <SideMenu 
+            <SideMenu
                 currentPageName={currentPageName}
                 drawerOpen={drawerOpen}
                 DrawerHeader={DrawerHeader}
@@ -82,25 +81,34 @@ const App = (props) => {
                 handleDrawerOpen={handleDrawerOpen}
                 handleDrawerClose={handleDrawerClose}
             />
-      
-            <Box 
-                component='main' 
-                sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}>
-                    <Paper
-                        sx={{
-                            backgroundColor: '#f1f5f8',
-                            padding: 2,
-                            height: '100vh',
-                            overflow: 'auto',
-                            pb: '50px',
-                        }}
-                    >
-                        <DrawerHeader />
 
-                        {/* This is the route configuration */}
-                        <RouterConfig handleCurrentPageName={handleCurrentPageName} />
-                    </Paper>
-                </Box>
+            <Box component='main' sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}>
+                <Paper
+                    sx={{
+                        backgroundColor: '#f1f5f8',
+                        padding: 2,
+                        height: '100vh',
+                        overflow: 'auto',
+                        pb: '50px',
+                    }}>
+                    <DrawerHeader />
+                </Paper>
+            </Box>
+            <Box component='main' sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}>
+                <Paper
+                    sx={{
+                        backgroundColor: '#f1f5f8',
+                        padding: 2,
+                        height: '100vh',
+                        overflow: 'auto',
+                        pb: '50px',
+                    }}>
+                    <DrawerHeader />
+
+                    {/* This is the route configuration */}
+                    <RouterConfig handleCurrentPageName={handleCurrentPageName} />
+                </Paper>
+            </Box>
         </Box>
     );
 };

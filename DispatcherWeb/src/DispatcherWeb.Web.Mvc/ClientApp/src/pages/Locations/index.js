@@ -5,7 +5,7 @@ import NoContent from '../../components/NoContent';
 
 const Locations = (props) => {
     const pageName = 'Locations';
-    
+
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);
