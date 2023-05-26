@@ -146,7 +146,7 @@ export const Appbar = ({
                             <Button p={0}>
                                 <Avatar
                                     alt='account'
-                                    src='https://i.pravatar.cc/150?img=3'
+                                    src='/reactapp/assets/images/150.jpg'
                                     sx={{ mr: 1, width: 24, height: 24 }}
                                 />
                                 <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
