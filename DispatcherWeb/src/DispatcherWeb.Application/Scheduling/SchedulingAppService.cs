@@ -1239,8 +1239,9 @@ namespace DispatcherWeb.Scheduling
 
                 ConvertScheduleOrderTimesFromUtc(scheduleOrderLineDto, timezone);
 
+                var validateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization);
                 var remainingUtilization = await GetRemainingTruckUtilizationForOrderLineAsync(scheduleOrderLineDto, truck);
-                if (remainingUtilization < originalOrderLineTruck.Utilization || remainingUtilization == 0)
+                if (validateUtilization && (remainingUtilization < originalOrderLineTruck.Utilization || remainingUtilization == 0))
                 {
                     continue;
                 }
@@ -1251,7 +1252,7 @@ namespace DispatcherWeb.Scheduling
                         existingDriverAssignments.Any(da => da.TruckId == originalOrderLineTruck.TruckId && da.DriverId == null)
                         || !truck.HasDefaultDriver && !existingDriverAssignments.Any(da => da.TruckId == originalOrderLineTruck.TruckId && da.DriverId != null)
                     )
-                    && await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization)
+                    && validateUtilization
                 )
                 {
                     result.SomeTrucksAreNotCopied = true;
@@ -1264,7 +1265,11 @@ namespace DispatcherWeb.Scheduling
 
                 if (utilizationToAssign == 0)
                 {
-                    continue;
+                    if (validateUtilization)
+                    {
+                        continue;
+                    }
+                    utilizationToAssign = 1;
                 }
 
                 passedOrderLineTrucks.Add(new OrderLineTruck
