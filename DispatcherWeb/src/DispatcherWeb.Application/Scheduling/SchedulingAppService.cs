@@ -763,9 +763,16 @@ namespace DispatcherWeb.Scheduling
             // Local functions
             async Task<bool> DriverAssignmentWithDriverExists()
             {
-                DriverAssignment driverAssignment = await _driverAssignmentRepository.GetAll()
+                var driverAssignment = await _driverAssignmentRepository.GetAll()
                     .Where(da => da.TruckId == truckId && da.Date == date && da.Shift == shift)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.DriverId
+                    })
+                    .OrderByDescending(x => x.Id)
                     .FirstOrDefaultAsync();
+
                 if (driverAssignment != null)
                 {
                     if (driverAssignment.DriverId == null && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers))
