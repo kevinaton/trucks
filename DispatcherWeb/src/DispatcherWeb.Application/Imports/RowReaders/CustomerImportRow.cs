@@ -14,7 +14,8 @@ namespace DispatcherWeb.Imports.RowReaders
         public bool IsActive => GetString(CustomerColumn.IsActive, 30) == "Active" || !HasField(CustomerColumn.IsActive);
         public string Name => GetString(CustomerColumn.Name, EntityStringFieldLengths.Customer.Name);
         public string AccountNumber => GetString(CustomerColumn.AccountNumber, EntityStringFieldLengths.Customer.AccountNumber);
-        public string InvoiceEmail => GetString(CustomerColumn.Email, EntityStringFieldLengths.General.Email);
+        public bool IsCod => GetBoolean(CustomerColumn.IsCod);
+        public string InvoiceEmail => GetString(CustomerColumn.InvoiceEmail, EntityStringFieldLengths.General.Email);
         public string Terms => GetString(CustomerColumn.Terms, 100);
 
         public string Address1 => GetString(CustomerColumn.Address1, EntityStringFieldLengths.GeneralAddress.MaxStreetAddressLength);
@@ -36,7 +37,10 @@ namespace DispatcherWeb.Imports.RowReaders
         public string ContactName => GetString(CustomerColumn.ContactName, EntityStringFieldLengths.CustomerContact.Name);
         public string ContactPhone => GetString(CustomerColumn.ContactPhone, EntityStringFieldLengths.General.PhoneNumber);
         public string ContactFax => GetString(CustomerColumn.ContactFax, EntityStringFieldLengths.General.PhoneNumber);
+        public string ContactEmail => GetString(CustomerColumn.ContactEmail, EntityStringFieldLengths.General.Email);
+        public string Contact2Title => GetString(CustomerColumn.Contact2Title, EntityStringFieldLengths.CustomerContact.Title);
         public string Contact2Name => GetString(CustomerColumn.Contact2Name, EntityStringFieldLengths.CustomerContact.Name);
         public string Contact2Phone => GetString(CustomerColumn.Contact2Phone, EntityStringFieldLengths.General.PhoneNumber);
+        public string Contact2Email => GetString(CustomerColumn.Contact2Email, EntityStringFieldLengths.General.Email);
     }
 }
