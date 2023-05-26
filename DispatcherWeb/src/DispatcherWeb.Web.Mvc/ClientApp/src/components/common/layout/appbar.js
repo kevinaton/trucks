@@ -42,7 +42,7 @@ export const Appbar = ({
     }, [dispatch, supportLinkAddress]);
 
     return (
-        <AppBar position="fixed" open={drawerOpen} color="inherit" elevation={5}>
+        <AppBar position='fixed' open={drawerOpen} color='inherit' elevation={5}>
             <Toolbar sx={{ p: 0 }} disableGutters>
                 <Box sx={{ flexGrow: 1 }}>
                     {drawerOpen ? (
@@ -55,41 +55,33 @@ export const Appbar = ({
                                 alignItems: 'center',
                             }}>
                             <img
-                                alt=""
-                                width="30%"
-                                height="100%"
-                                src="/reactapp/assets/dumptruckdispatcher-logo.png"
+                                alt=''
+                                width='30%'
+                                height='100%'
+                                src='/reactapp/assets/dumptruckdispatcher-logo.png'
                             />
-                            <IconButton onClick={handleDrawerClose} aria-label="close drawer">
-                                <i className="fa-regular fa-bars icon"></i>
-                            </IconButton>
                         </Box>
                     ) : (
                         <IconButton
-                            aria-label="open drawer"
+                            aria-label='open drawer'
                             onClick={handleDrawerOpen}
-                            edge="start"
+                            edge='start'
                             sx={{
                                 ml: 2,
                                 ...(drawerOpen && { display: 'none' }),
                             }}>
-                            <i className="fa-regular fa-bars icon"></i>
+                            <i className='fa-regular fa-bars icon'></i>
                         </IconButton>
                     )}
                 </Box>
 
                 {/* Mobile view */}
                 <Box sx={{ display: { xs: 'flex', md: 'none' }, padding: 0 }}>
-                    <HeaderIconButton
-                        aria-label="header-menu"
-                        aria-controls="menu-appbar"
-                        aria-haspopup="true"
-                        onClick={handleOpenNavMenu}
-                        color="inherit">
-                        <i className="fa-regular fa-ellipsis-vertical icon"></i>
+                    <HeaderIconButton aria-label='header-menu' color='inherit'>
+                        <i className='fa-regular fa-ellipsis-vertical icon'></i>
                     </HeaderIconButton>
                     <Menu
-                        id="menu-appbar"
+                        id='menu-appbar'
                         anchorEl={anchorElNav}
                         anchorOrigin={{
                             vertical: 'bottom',
@@ -108,43 +100,43 @@ export const Appbar = ({
                             padding: 0,
                         }}>
                         <MenuList
-                            className="header-menu"
+                            className='header-menu'
                             sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
                                 padding: 0,
                                 alignContent: 'center',
                             }}>
-                            <MenuItem key="support">
-                                <HeaderIconButton p={0} aria-label="support">
+                            <MenuItem key='support'>
+                                <HeaderIconButton p={0} aria-label='support'>
                                     <i
-                                        className="fa-duotone fa-life-ring icon"
+                                        className='fa-duotone fa-life-ring icon'
                                         style={{
                                             '--fa-primary-opacity': '0.3',
                                             '--fa-secondary-opacity': '1',
                                         }}></i>
                                 </HeaderIconButton>
                             </MenuItem>
-                            <MenuItem key="notification">
-                                <IconButton p={0} aria-label="open notification">
-                                    <i className="fa-regular fa-bell icon"></i>
+                            <MenuItem key='notification'>
+                                <IconButton p={0} aria-label='open notification'>
+                                    <i className='fa-regular fa-bell icon'></i>
                                 </IconButton>
                             </MenuItem>
-                            <MenuItem key="user">
+                            <MenuItem key='user'>
                                 <Button p={0}>
                                     <Avatar
-                                        alt="account"
-                                        src="https://i.pravatar.cc/150?img=3"
+                                        alt='account'
+                                        src='https://i.pravatar.cc/150?img=3'
                                         sx={{ mr: 1, width: 24, height: 24 }}
                                     />
                                     <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
-                                        Admin
+                                        User
                                     </Typography>
                                 </Button>
                             </MenuItem>
-                            <MenuItem key="message">
-                                <IconButton p={0} aria-label="open drawer">
-                                    <i className="fa-regular fa-message icon"></i>
+                            <MenuItem key='message'>
+                                <IconButton p={0} aria-label='open drawer'>
+                                    <i className='fa-regular fa-message icon'></i>
                                 </IconButton>
                             </MenuItem>
                         </MenuList>
@@ -153,20 +145,20 @@ export const Appbar = ({
 
                 {/* Desktop view */}
                 <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                    <HeaderIconButton aria-label="support" href={linkAddress}>
+                    <HeaderIconButton aria-label='support' href={linkAddress}>
                         <i
-                            className="fa-duotone fa-life-ring icon"
+                            className='fa-duotone fa-life-ring icon'
                             style={{
                                 '--fa-primary-opacity': '0.3',
                                 '--fa-secondary-opacity': '1',
                             }}></i>
                     </HeaderIconButton>
-                    <HeaderIconButton aria-label="open drawer" onClick={handleCloseNavMenu}>
-                        <i className="fa-regular fa-bell icon"></i>
+                    <HeaderIconButton aria-label='open drawer' onClick={handleCloseNavMenu}>
+                        <i className='fa-regular fa-bell icon'></i>
                     </HeaderIconButton>
                     <HeaderButton onClick={handleCloseNavMenu} />
-                    <HeaderIconButton aria-label="open drawer" onClick={handleCloseNavMenu}>
-                        <i className="fa-regular fa-message-dots icon"></i>
+                    <HeaderIconButton aria-label='open drawer' onClick={handleCloseNavMenu}>
+                        <i className='fa-regular fa-message-dots icon'></i>
                     </HeaderIconButton>
                 </Box>
             </Toolbar>

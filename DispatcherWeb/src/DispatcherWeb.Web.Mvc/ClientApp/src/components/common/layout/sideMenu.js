@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { isEmpty } from 'lodash'
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { isEmpty } from 'lodash';
 import {
     Box,
     Button,
@@ -14,10 +14,10 @@ import {
     ListItemText,
     Tooltip,
     Typography,
-} from '@mui/material'
-import { Drawer } from '../../DTComponents'
-import { sideMenuItems } from '../../../common/data/menus'
-import { getMenuItems } from '../../../store/actions'
+} from '@mui/material';
+import { Drawer } from '../../DTComponents';
+import { sideMenuItems } from '../../../common/data/menus';
+import { getMenuItems } from '../../../store/actions';
 
 export const SideMenu = ({
     currentPageName,
@@ -29,96 +29,96 @@ export const SideMenu = ({
     handleDrawerOpen,
     handleDrawerClose
 }) => {
-    const [menus, setMenus] = useState(sideMenuItems)
-    const [sideMenus, setSideMenus] = useState([])
+    const [menus, setMenus] = useState(sideMenuItems);
+    const [sideMenus, setSideMenus] = useState([]);
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { menuItems } = useSelector(state => ({
         menuItems: state.LayoutReducer.menuItems
-    }))
+    }));
     
     useEffect(() => {
         if (isEmpty(menuItems)) {
-            dispatch(getMenuItems())
+            dispatch(getMenuItems());
         } else {
-            const { result } = menuItems
+            const { result } = menuItems;
             if (!isEmpty(result) && !isEmpty(result.items)) {
-                setSideMenus(result.items)
+                setSideMenus(result.items);
             }
         }
-    }, [dispatch, menuItems])
+    }, [dispatch, menuItems]);
 
     // Handles the collapse function of the sidemenu.
     const handleCollapseOpen = (menu) => {
         setCollapseOpen((prev) => {
-            const newOpenState = { ...prev }
+            const newOpenState = { ...prev };
 
             Object.keys(prev).forEach((name) => {
                 if (name !== menu.displayName && prev[name]) {
-                newOpenState[name] = false
+                    newOpenState[name] = false;
                 }
-            })
+            });
 
-            newOpenState[menu.displayName] = !prev[menu.displayName]
+            newOpenState[menu.displayName] = !prev[menu.displayName];
 
-            return newOpenState
-        })
-    }
+            return newOpenState;
+        });
+    };
 
     // Handles the selection state of the ListItemButton
     const handleListItemButton = (value) => {
         const newSideMenus = sideMenus.map((menu) => {
             if (menu.displayName === value) {
-                return { ...menu, select: true }
+                return { ...menu, select: true };
             } else if (menu.items) {
                 const updatedSubMenu = menu.items.map((sub) => {
                     if (sub.displayName === value) {
-                        return { ...sub, select: currentPageName === menu.displayName }
+                        return { ...sub, select: currentPageName === menu.displayName };
                     }
-                    return { ...sub, select: false }
+                    return { ...sub, select: false };
                 })
-                return { ...menu, submenu: updatedSubMenu, select: false }
+                return { ...menu, submenu: updatedSubMenu, select: false };
             }
-            return { ...menu, select: false }
+            return { ...menu, select: false };
         })
 
-        setMenus(newSideMenus)
-    }
+        setMenus(newSideMenus);
+    };
 
     const drawer = (
         <div>
             <DrawerHeader />
-            <Box sx={{ p: 1, textAlign: "center" }}>
+            <Box sx={{ p: 1, textAlign: 'center' }}>
                 <Button
-                    variant="contained"
-                    sx={{ fontSize: "0.8rem", display: drawerOpen ? "inline" : "none" }}
-                    color="primary"
+                    variant='contained'
+                    sx={{ fontSize: '0.8rem', display: drawerOpen ? 'inline' : 'none' }}
+                    color='primary'
                     fullWidth
-                    size="large"
+                    size='large'
                     startIcon={
                         <i
-                            className="fa-regular fa-plus"
-                            style={{ fontSize: "0.8rem" }}
+                            className='fa-regular fa-plus'
+                            style={{ fontSize: '0.8rem' }}
                         ></i>
                     }
                 >
                     Add New
                 </Button>
                 <Button
-                    variant="contained"
-                    aria-label="add new"
-                    color="primary"
+                    variant='contained'
+                    aria-label='add new'
+                    color='primary'
                     sx={{
-                        display: drawerOpen ? "none" : "block",
-                        minWidth: "36px",
+                        display: drawerOpen ? 'none' : 'block',
+                        minWidth: '36px',
                         p: 0,
-                        width: "100%",
-                        height: "100%",
-                        color: "#ffffff",
-                        backgroundColor: "#67A2D7",
+                        width: '100%',
+                        height: '100%',
+                        color: '#ffffff',
+                        backgroundColor: '#67A2D7',
                     }}
                 >
-                    <i className="fa-regular fa-plus" style={{ fontSize: "0.8rem" }}></i>
+                    <i className='fa-regular fa-plus' style={{ fontSize: '0.8rem' }}></i>
                 </Button>
             </Box>
 
@@ -128,28 +128,28 @@ export const SideMenu = ({
                     const isMvc = menu.url && !menu.url.startsWith('/app/redir?') ? true : false
                     return (
                         <ListItem
-                            component={menu.url && !isMvc ? Link : "div"}
+                            component={menu.url && !isMvc ? Link : 'div'}
                             to={menu.url ? menu.url : {}}
                             key={menu.displayName}
                             disablePadding
                             sx={{
-                                display: "block",
-                                textDecoration: "none",
-                                color: "#212121"
+                                display: 'block',
+                                textDecoration: 'none',
+                                color: '#212121'
                             }}
                         >
                         <Tooltip
                             title={menu.displayName}
-                            placement="right"
+                            placement='right'
                             TransitionComponent={Fade}
                             enterNextDelay={2000}
                         >
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
-                                    justifyContent: drawerOpen ? "initial" : "center",
+                                    justifyContent: drawerOpen ? 'initial' : 'center',
                                     px: 2.5,
-                                    ...(isSubMenuOpen && { bgcolor: "#f8f9fa" })
+                                    ...(isSubMenuOpen && { bgcolor: '#f8f9fa' })
                                 }}
                                 selected={menu.displayName === currentPageName ? true : false}
                                 onClick={
@@ -164,7 +164,7 @@ export const SideMenu = ({
                                 <ListItemIcon
                                     sx={{
                                         minWidth: 0.2,
-                                        justifyContent: "left"
+                                        justifyContent: 'left'
                                     }}
                                 >
                                     <i
@@ -176,15 +176,15 @@ export const SideMenu = ({
                                     ></i>
                                 </ListItemIcon>
                                 <ListItemText
-                                    level="body2"
+                                    level='body2'
                                     primary={
                                         <Typography
-                                            variant="body2"
+                                            variant='body2'
                                             style={{
                                                 fontSize: 14,
-                                                textOverflow: "ellipsis",
-                                                overflow: "hidden",
-                                                whiteSpace: "nowrap"
+                                                textOverflow: 'ellipsis',
+                                                overflow: 'hidden',
+                                                whiteSpace: 'nowrap'
                                             }}
                                         >
                                             {menu.displayName}
@@ -192,15 +192,15 @@ export const SideMenu = ({
                                     }
                                     sx={{
                                         opacity: drawerOpen ? 1 : 0,
-                                        ...(isSubMenuOpen && { color: "#546674" })
+                                        ...(isSubMenuOpen && { color: '#546674' })
                                     }}
                                 />
                             {menu.items.length > 0 &&
                                 drawerOpen &&
                                 (isSubMenuOpen ? (
-                                    <i className="fa-regular fa-chevron-down secondary-icon fa-sm"></i>
+                                    <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
                                 ) : (
-                                    <i className="fa-regular fa-chevron-right secondary-icon fa-sm"></i>
+                                    <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
                                 ))}
                             </ListItemButton>
                         </Tooltip>
@@ -213,14 +213,14 @@ export const SideMenu = ({
 
                                         return (
                                             <ListItem
-                                                component={!isSubMvc ? Link : "div"}
+                                                component={!isSubMvc ? Link : 'div'}
                                                 key={sub.displayName}
                                                 to={sub.url}
                                                 disablePadding
                                                 sx={{
-                                                    display: "block",
-                                                    textDecoration: "none",
-                                                    color: "#212121"
+                                                    display: 'block',
+                                                    textDecoration: 'none',
+                                                    color: '#212121'
                                                 }}
                                                 onClick={(event) => {
                                                     if (isSubMvc)
@@ -231,7 +231,7 @@ export const SideMenu = ({
                                             >
                                                 <Tooltip
                                                     title={sub.displayName}
-                                                    placement="right"
+                                                    placement='right'
                                                     TransitionComponent={Fade}
                                                     enterNextDelay={2000}
                                                 >
@@ -242,7 +242,7 @@ export const SideMenu = ({
                                                         <ListItemIcon
                                                             sx={{
                                                                 minWidth: 0.2,
-                                                                justifyContent: "left"
+                                                                justifyContent: 'left'
                                                             }}
                                                         >
                                                             <i
@@ -257,13 +257,13 @@ export const SideMenu = ({
                                                         <ListItemText
                                                             primary={
                                                                 <Typography
-                                                                    variant="body2"
+                                                                    variant='body2'
                                                                     style={{
-                                                                    display: drawerOpen ? "block" : "none",
+                                                                    display: drawerOpen ? 'block' : 'none',
                                                                     fontSize: 14,
-                                                                    textOverflow: "ellipsis",
-                                                                    overflow: "hidden",
-                                                                    whiteSpace: "nowrap"
+                                                                    textOverflow: 'ellipsis',
+                                                                    overflow: 'hidden',
+                                                                    whiteSpace: 'nowrap'
                                                                     }}
                                                                 >
                                                                     {sub.displayName}
@@ -283,13 +283,13 @@ export const SideMenu = ({
                 })}
             </List>
         </div>
-    )
+    );
 
     return (
         <Box>
             <Drawer
-                anchor="left"
-                variant="temporary"
+                anchor='left'
+                variant='temporary'
                 open={drawerOpen}
                 onClose={handleDrawerOpen}
                 ModalProps={{
@@ -298,22 +298,22 @@ export const SideMenu = ({
                     }
                 }}
                 sx={{
-                    display: { xs: "block", sm: "none" }
+                    display: { xs: 'block', sm: 'none' }
                 }}
             >
                 {drawer}
             </Drawer>
 
             <Drawer
-                anchor="left"
-                variant="permanent"
+                anchor='left'
+                variant='permanent'
                 open={drawerOpen}
-                overflow="auto"
-                sx={{ display: { xs: "none", sm: "block" } }}
+                overflow='auto'
+                sx={{ display: { xs: 'none', sm: 'block' } }}
                 ModalProps={{}}
             >
                 {drawer}
             </Drawer>
         </Box>
-    )
-}
+    );
+};

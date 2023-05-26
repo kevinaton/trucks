@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 import {
     Avatar,
     Button,
@@ -10,23 +10,12 @@ import {
     TextField,
     Tooltip,
     TableCell,
-    Modal,
-    Card,
-    CardHeader,
-    CardContent,
-    FormGroup,
-    FormControlLabel,
-    Switch,
-    Divider,
-    Checkbox,
-    CardActions,
-} from "@mui/material";
-import { KeyboardArrowDown } from "@material-ui/icons";
-import { styled } from "@mui/material/styles";
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar from "@mui/material/AppBar";
-import "../fontawesome/css/all.css";
-import { theme } from "../Theme";
+} from '@mui/material';
+import { KeyboardArrowDown } from '@material-ui/icons';
+import { styled } from '@mui/material/styles';
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar from '@mui/material/AppBar';
+import '../fontawesome/css/all.css';
 
 // Header icon button component
 export const HeaderIconButton = (props) => {
@@ -34,10 +23,10 @@ export const HeaderIconButton = (props) => {
         <IconButton
             {...props}
             sx={{
-                width: { xs: "auto", sm: "16%" },
-                "&:hover": {
-                    xs: { backgroundColor: "transparent" },
-                    sm: { backgroundColor: "default" },
+                width: { xs: 'auto', sm: '16%' },
+                '&:hover': {
+                    xs: { backgroundColor: 'transparent' },
+                    sm: { backgroundColor: 'default' },
                 },
                 mr: { xs: 0, sm: 2 },
             }}
@@ -51,8 +40,8 @@ export const HeaderButton = (props) => {
         <Button {...props} sx={{ mr: 2 }}>
             <Typography sx={{ fontWeight: 600, fontSize: 12 }}>User</Typography>
             <Avatar
-                alt="account"
-                src="https://i.pravatar.cc/150?img=3"
+                alt='account'
+                src='https://i.pravatar.cc/150?img=3'
                 sx={{ ml: 1, width: 24, height: 24 }}
             />
         </Button>
@@ -61,20 +50,15 @@ export const HeaderButton = (props) => {
 
 // Main backdraft
 export const BackDraft = (props) => {
-    return (
-        <Paper
-            {...props}
-            sx={{ backgroundColor: "#f1f5f8", padding: 2, height: "100%" }}
-        />
-    );
+    return <Paper {...props} sx={{ backgroundColor: '#f1f5f8', padding: 2, height: '100%' }} />;
 };
 
 // Drawer header
-export const DrawerHeader = styled("div")(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    "& .MuiDrawer-paper": { borderWidth: 0 },
+export const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    '& .MuiDrawer-paper': { borderWidth: 0 },
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
@@ -87,22 +71,22 @@ export const drawerWidth = 240; // The width of the side menu
 export const Drawer = styled(MuiDrawer, {
     shouldForwardProp: (prop) => {
         if (window.innerWidth < 600) {
-            return prop !== "paper";
+            return prop !== 'paper';
         }
-        return prop !== "open";
+        return prop !== 'open';
     },
 })(({ theme, open }) => ({
     width: drawerWidth,
     zIndex: theme.drawer + 1,
     flexShrink: 0,
-    boxSizing: "border-box",
+    boxSizing: 'border-box',
     ...(open && {
         ...openedMixin(theme),
-        "& .MuiDrawer-paper": openedMixin(theme),
+        '& .MuiDrawer-paper': openedMixin(theme),
     }),
     ...(!open && {
         ...closedMixin(theme),
-        "& .MuiDrawer-paper": closedMixin(theme),
+        '& .MuiDrawer-paper': closedMixin(theme),
     }),
 }));
 
@@ -117,10 +101,10 @@ export const Tablecell = ({ label, value }) => {
 
 // Customized AppBar
 export const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== "open",
+    shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
     zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
@@ -129,22 +113,22 @@ export const AppBar = styled(MuiAppBar, {
 // Opened mixin. this is used for drawer
 export const openedMixin = (theme) => ({
     width: drawerWidth,
-    transition: theme.transitions.create("width", {
+    transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
     }),
-    overflowX: "auto",
+    overflowX: 'auto',
 });
 
 // Closed mixin. this is used for drawer
 export const closedMixin = (theme) => ({
-    transition: theme.transitions.create("width", {
+    transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    overflowX: "auto",
+    overflowX: 'auto',
     width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up('sm')]: {
         width: `calc(${theme.spacing(8)} + 1px)`,
     },
 });
@@ -153,90 +137,16 @@ export const SelectField = ({ label, value, onChange, items }) => {
     return (
         <FormControl sx={{ width: 1 }}>
             <Autocomplete
-                id="selectComp"
+                id='selectComp'
                 value={value}
                 options={items}
                 onChange={onChange}
-                size="small"
+                size='small'
                 label={label}
                 popupIcon={<KeyboardArrowDown />}
-                renderInput={(params) => (
-                    <TextField {...params} label={label} />
-                )}
+                renderInput={(params) => <TextField {...params} label={label} />}
             />
         </FormControl>
-    );
-};
-
-// Modal notification settings
-export const NotificationSettings = ({ state, setViewNotifSet }) => {
-    const [isNotifSettings, setIsNotifSettings] = React.useState(false);
-    // Handles the opening of the notification settings modal
-
-    React.useEffect(() => {
-        if (state === true) {
-            setIsNotifSettings(true);
-        }
-    }, [state]);
-
-    const handleNotifSettingsClose = () => {
-        state = false;
-        setViewNotifSet(false);
-        setIsNotifSettings(false);
-    };
-    return (
-        <Modal
-            open={isNotifSettings}
-            onClose={handleNotifSettingsClose}
-            aria-labelledby="notification-settings">
-            <Card
-                sx={{
-                    minWidth: 500,
-                    position: "absolute",
-                    top: "30%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                }}>
-                <CardHeader
-                    action={
-                        <IconButton
-                            aria-label="close"
-                            onClick={handleNotifSettingsClose}>
-                            <i className="fa-regular fa-close"></i>
-                        </IconButton>
-                    }
-                    title="Notification Settings"
-                />
-                <CardContent>
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<Switch defaultChecked />}
-                            label="Receive notifications"
-                        />
-                        <Typography
-                            color={theme.palette.text.secondary}
-                            variant="caption">
-                            This option can be used to completely enable/disable
-                            receiving notifications.
-                        </Typography>
-                        <Divider sx={{ my: 3 }} />
-                        <FormControlLabel
-                            control={<Checkbox defaultChecked />}
-                            label="On a new user registered with the application."
-                        />
-                    </FormGroup>
-                </CardContent>
-                <CardActions sx={{ justifyContent: "end" }}>
-                    <Button onClick={handleNotifSettingsClose}>Cancel</Button>
-                    <Button
-                        variant="contained"
-                        onClick={handleNotifSettingsClose}
-                        startIcon={<i className="fa-regular fa-save"></i>}>
-                        Save
-                    </Button>
-                </CardActions>
-            </Card>
-        </Modal>
     );
 };
 
