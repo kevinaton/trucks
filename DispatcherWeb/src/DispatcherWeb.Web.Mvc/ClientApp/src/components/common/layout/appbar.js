@@ -5,15 +5,20 @@ import {
     Box,
     Button,
     IconButton,
+    Link,
     Menu,
     MenuItem,
     MenuList,
+    Paper,
     Toolbar,
     Typography,
 } from '@mui/material';
 import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents';
 import { getSupportLinkAddress } from '../../../store/actions';
+import { theme } from '../../../Theme';
 import { isEmpty } from 'lodash';
+
+import { ProfileList } from '../../../common/data/menus';
 
 export const Appbar = ({
     drawerOpen,
@@ -24,11 +29,12 @@ export const Appbar = ({
     handleCloseNavMenu,
 }) => {
     const [linkAddress, setLinkAddress] = useState(null);
-
     const dispatch = useDispatch();
     const { supportLinkAddress } = useSelector((state) => ({
         supportLinkAddress: state.LayoutReducer.supportLinkAddress,
     }));
+    const [anchorProfile, setAnchorProfile] = React.useState(null);
+    const isProfile = Boolean(anchorProfile);
 
     useEffect(() => {
         if (supportLinkAddress === null) {
@@ -40,6 +46,15 @@ export const Appbar = ({
             }
         }
     }, [dispatch, supportLinkAddress]);
+
+    // Handle showing profile menu
+    const handleProfileClick = (event) => {
+        setAnchorProfile(event.currentTarget);
+    };
+
+    const handleProfileClose = (event) => {
+        setAnchorProfile(null);
+    };
 
     return (
         <AppBar position='fixed' open={drawerOpen} color='inherit' elevation={5}>
@@ -156,7 +171,70 @@ export const Appbar = ({
                     <HeaderIconButton aria-label='open drawer' onClick={handleCloseNavMenu}>
                         <i className='fa-regular fa-bell icon'></i>
                     </HeaderIconButton>
-                    <HeaderButton onClick={handleCloseNavMenu} />
+                    <HeaderButton
+                        id='profile'
+                        aria-haspopup='true'
+                        aria-expanded={isProfile ? 'true' : undefined}
+                        onClick={handleProfileClick}
+                        aria-label='profileSettings'
+                    />
+                    <Menu
+                        id='profile-list'
+                        anchorEl={anchorProfile}
+                        open={isProfile}
+                        onClose={handleProfileClose}>
+                        <Paper sx={{ width: 1 }}>
+                            <Box
+                                sx={{
+                                    background: theme.palette.gradient.main,
+                                    px: 2,
+                                    py: 2,
+                                    display: 'flex',
+                                    maxWidth: '300px',
+                                }}>
+                                <Avatar
+                                    alt='account'
+                                    src='https://i.pravatar.cc/150?img=3'
+                                    sx={{ mr: 1, width: 24, height: 24 }}
+                                />
+                                <Typography
+                                    sx={{
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                    }}
+                                    variant='body1'
+                                    fontWeight={700}
+                                    color='white'>
+                                    Admin
+                                </Typography>
+                            </Box>
+                            {ProfileList.map((list, index) => {
+                                return (
+                                    <MenuItem
+                                        component={Link}
+                                        key={index}
+                                        to={list.path}
+                                        sx={{ py: 2 }}>
+                                        <i
+                                            className={`fa-regular ${list.icon} icon`}
+                                            style={{ marginRight: 6 }}></i>
+                                        <Typography>{list.name}</Typography>
+                                    </MenuItem>
+                                );
+                            })}
+                            <MenuItem
+                                sx={{
+                                    py: 2,
+                                    backgroundColor: theme.palette.primary.light,
+                                }}>
+                                <i
+                                    className={`fa-regular fa-right-from-line icon`}
+                                    style={{ marginRight: 6 }}></i>
+                                <Typography>Logout</Typography>
+                            </MenuItem>
+                        </Paper>
+                    </Menu>
                     <HeaderIconButton aria-label='open drawer' onClick={handleCloseNavMenu}>
                         <i className='fa-regular fa-message-dots icon'></i>
                     </HeaderIconButton>
