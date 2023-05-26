@@ -37,7 +37,7 @@ export const HeaderIconButton = (props) => {
 // Header button component
 export const HeaderButton = (props) => {
     return (
-        <Button {...props} sx={{ mr: 2 }}>
+        <Button {...props} sx={{ mr: 2, px: 4 }}>
             <Typography sx={{ fontWeight: 600, fontSize: 12 }}>User</Typography>
             <Avatar
                 alt='account'

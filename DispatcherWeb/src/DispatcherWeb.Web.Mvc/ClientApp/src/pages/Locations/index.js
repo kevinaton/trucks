@@ -4,12 +4,8 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import NoContent from '../../components/NoContent';
 
 const Locations = (props) => {
-<<<<<<< HEAD
-    const pageName = 'Locations'
-=======
     const pageName = 'Locations';
->>>>>>> main
-    
+
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);

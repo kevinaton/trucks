@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react';
 import moment from 'moment';
 import {
-  Eventcalendar,
-  snackbar,
-  Page,
-  Popup,
-  Input,
-  Switch,
-  Datepicker,
-  Button,
-  Select,
+    Eventcalendar,
+    snackbar,
+    Page,
+    Popup,
+    Input,
+    Switch,
+    Datepicker,
+    Button,
+    Select,
 } from '@mobiscroll/react';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { CheckBox, ShoppingBasket, WarningOutlined } from '@material-ui/icons';
@@ -20,47 +20,6 @@ import { SelectField } from './DTComponents';
 const { dispatches, trucks, offices, views, menu } = data;
 
 const Timeline = () => {
-<<<<<<< HEAD
-    const [anchor, setAnchor] = React.useState(null)
-    const [formOpen, setDispatchOpen] = React.useState(false)
-    const [dataDispatches, setDispatches] = React.useState(dispatches)
-    const [isEdit, setEdit] = React.useState(false)
-    const [dispatchCustomer, setDispatchCustomer] = React.useState('')
-    const [dispatchTime, setDispatchTime] = React.useState('')
-    const [dispatchLoadAt, setDispatchLoadAt] = React.useState('')
-    const [dispatchDeliverTo, setDispatchDeliverTo] = React.useState('')
-    const [dispatchItem, setDispatchItem] = React.useState('')
-    const [dispatchIsRunUntilStopped, setDispatchIsRunUntilStopped] = React.useState(false)
-    const [isCompact, setCompact] = React.useState(false)
-    const [isTimeRange, setIsTimeRange] = React.useState(false)
-    const [tempStartTime, setTempStartTime] = React.useState(null)
-    const [tempEndTime, setTempEndTime] = React.useState(null)
-    const [workStart, setWorkStart] = React.useState('05:00')
-    const [workEnd, setWorkEnd] = React.useState('19:00')
-    const [rcAnchor, setRcAnchor] = React.useState(null)
-    const [isRightClick, setIsRightClick] = React.useState(false)
-    const [menuValue, setMenuValue] = React.useState(null)
-    const [tempDispatch, setTempDispatch] = React.useState(null)
-    const [isCopy, setIsCopy] = React.useState(false)
-    const [newActivity, setNewActivity] = React.useState('')
-    const [newDeliverTo, setNewDeliverTo] = React.useState('')
-    const [newId, setNewId] = React.useState('')
-    const [newItem, setNewItem] = React.useState('')
-    const [newLoadAt, setLoadAt] = React.useState('')
-    const [newResource, setNewResource] = React.useState(null)
-    const [newRunUntilStopped, setNewRunUntilStopped] = React.useState(false)
-    const [newTitle, setNewTitle] = React.useState('')
-    const [menuList, setMenuList] = React.useState(menu)
-    const [isDispatchTimes, setIsDispatchTimes] = React.useState(false)
-    const [dispatchTimesDate, setDispatchTimesDate] = React.useState(new Date())
-    const [dispatchTimesStartTime, setDispatchTimesStartTime] = React.useState(null)
-    const [dispatchTimesDuration, setDispatchTimesDuration] = React.useState(null)
-    const [isSetDisabled, setIsSetDisabled] = React.useState(true)
-    const isSmall = useMediaQuery((theme) => theme.breakpoints.down('lg'))
-    const [newRefDate, setNewRefDate] = React.useState(null)
-    const [office, setOffice] = React.useState(offices[0])
-    const [viewOption, setViewOption] = React.useState(views[0])
-=======
     const [anchor, setAnchor] = React.useState(null);
     const [formOpen, setDispatchOpen] = React.useState(false);
     const [dataDispatches, setDispatches] = React.useState(dispatches);
@@ -100,7 +59,6 @@ const Timeline = () => {
     const [newRefDate, setNewRefDate] = React.useState(null);
     const [office, setOffice] = React.useState(offices[0]);
     const [viewOption, setViewOption] = React.useState(views[0]);
->>>>>>> main
 
     React.useEffect(() => {
         // Automate updating of the dispatches start and end date
@@ -138,21 +96,12 @@ const Timeline = () => {
             e.preventDefault();
         };
 
-<<<<<<< HEAD
-        document.addEventListener('contextmenu', handleContextMenu)
-
-        return () => {
-            document.removeEventListener('contextmenu', handleContextMenu)
-        }
-    })
-=======
         document.addEventListener('contextmenu', handleContextMenu);
 
         return () => {
             document.removeEventListener('contextmenu', handleContextMenu);
         };
     });
->>>>>>> main
 
     React.useEffect(() => {
         setNewRefDate(new Date()); //To refresh timeline if the isCompact changes value
@@ -195,9 +144,9 @@ const Timeline = () => {
                     timeLabelStep: isSmall ? 120 : 60,
                     weekNumbers: false,
                     currentTimeIndicator: true,
-                    row: 'variable'
-                }
-            }
+                    row: 'variable',
+                },
+            };
         },
         [workStart, workEnd, isSmall]
     );
@@ -206,7 +155,7 @@ const Timeline = () => {
     const resourceTrucks = React.useMemo(() => {
         // Return the truck objects
         return trucks;
-    }, [])
+    }, []);
 
     // Custom Resource view
     const renderMyResource = useCallback((resource) => {
@@ -215,15 +164,13 @@ const Timeline = () => {
                 <div className='md-work-week-name'>{resource.name}</div>
                 <div className='md-work-week-title'>
                     {resource.truck}{' '}
-
                     {resource.erIcon === true ? (
                         <WarningOutlined
-                        style={{ fill: '#DD4B39', width: '12px', height: '12px' }}
+                            style={{ fill: '#DD4B39', width: '12px', height: '12px' }}
                         />
                     ) : (
                         ''
                     )}
-
                     {resource.erIcon === true ? (
                         <span className='warning-tooltip'>Unacknowledged dispatches</span>
                     ) : (
@@ -242,17 +189,6 @@ const Timeline = () => {
     // Custom Dispatch events
     const renderScheduleEvent = useCallback(
         (data) => {
-<<<<<<< HEAD
-            const ev = data.original
-            const currentTime = new Date()
-            let bgColor = '#E3E6E9',
-                textColor = '#000000',
-                borderColor = '',
-                iconColor = '#3a7798'
-
-            // Check if dispatch is loaded
-            const isLoaded = data.original.status.toLowerCase().includes('loaded')
-=======
             const ev = data.original;
             const currentTime = new Date();
             let bgColor = '#E3E6E9',
@@ -262,28 +198,12 @@ const Timeline = () => {
 
             // Check if dispatch is loaded
             const isLoaded = data.original.status.toLowerCase().includes('loaded');
->>>>>>> main
 
             // Manage dispatch color
             if (currentTime >= data.startDate && currentTime <= data.endDate) {
                 // Present / In-progress dispatches
                 // If dispatch is the last one and
-                if (dispatchesByResource[data.resource][0].id === data.id &&
-                    isLoaded === true) {
-<<<<<<< HEAD
-                    borderColor = '3px solid #feb811'
-                }
-
-                bgColor = '#317ab4'
-                textColor = '#ffffff'
-                iconColor = '#ffffff'
-            } else if (currentTime > data.endDate) {
-                // Past or done dispatches
-                bgColor = '#d6f2ff'
-            } else {
-                // Future dispatches
-                bgColor = '#E3E6E9'
-=======
+                if (dispatchesByResource[data.resource][0].id === data.id && isLoaded === true) {
                     borderColor = '3px solid #feb811';
                 }
 
@@ -296,15 +216,13 @@ const Timeline = () => {
             } else {
                 // Future dispatches
                 bgColor = '#E3E6E9';
->>>>>>> main
             }
 
             if (isCompact === false) {
                 return (
                     <div
                         className='event-background'
-                        style={{ background: bgColor, border: borderColor }}
-                    >
+                        style={{ background: bgColor, border: borderColor }}>
                         <div className='event-title' style={{ color: textColor }}>
                             {ev.customer}
                         </div>
@@ -320,7 +238,7 @@ const Timeline = () => {
                         <div className='event-details' style={{ color: textColor }}>
                             {ev.item ? (
                                 <ShoppingBasket
-                                style={{ fill: iconColor, width: '12px', height: '12px' }}
+                                    style={{ fill: iconColor, width: '12px', height: '12px' }}
                                 />
                             ) : (
                                 ''
@@ -329,12 +247,12 @@ const Timeline = () => {
                             {ev.runUntilStopped === true ? ', ' : ''}
                             {ev.runUntilStopped === true ? (
                                 <CheckBox
-                                style={{
-                                    fill: iconColor,
-                                    width: '12px',
-                                    height: '12px',
-                                    margin: '0 0 0 4px',
-                                }}
+                                    style={{
+                                        fill: iconColor,
+                                        width: '12px',
+                                        height: '12px',
+                                        margin: '0 0 0 4px',
+                                    }}
                                 />
                             ) : (
                                 ''
@@ -347,8 +265,7 @@ const Timeline = () => {
                 return (
                     <div
                         className='event-background'
-                        style={{ background: bgColor, border: borderColor }}
-                    >
+                        style={{ background: bgColor, border: borderColor }}>
                         <div className='event-compact-title' style={{ color: textColor }}>
                             {ev.customer +
                                 ', Load at:' +
@@ -364,21 +281,10 @@ const Timeline = () => {
             }
         },
         [isCompact, dispatchesByResource]
-    )
+    );
 
     //  Create dispatch form
     const loadDispatchForm = React.useCallback((event) => {
-<<<<<<< HEAD
-        const dispStart = moment(event.start).format('h:mm a')
-        const dispEnd = moment(event.end).format('h:mm a')
-        setDispatchCustomer(event.customer)
-        setDispatchTime(`${dispStart} to ${dispEnd}`)
-        setDispatchLoadAt(event.loadat)
-        setDispatchDeliverTo(event.deliverto)
-        setDispatchItem(event.item)
-        setDispatchIsRunUntilStopped(event.runUntilStopped)
-    }, [])
-=======
         const dispStart = moment(event.start).format('h:mm a');
         const dispEnd = moment(event.end).format('h:mm a');
         setDispatchCustomer(event.customer);
@@ -388,7 +294,6 @@ const Timeline = () => {
         setDispatchItem(event.item);
         setDispatchIsRunUntilStopped(event.runUntilStopped);
     }, []);
->>>>>>> main
 
     // Delete event
     const deleteEvent = React.useCallback(
@@ -398,13 +303,8 @@ const Timeline = () => {
                 snackbar({
                     message: 'event deleted',
                     color: 'success',
-<<<<<<< HEAD
-                })
-            })
-=======
                 });
             });
->>>>>>> main
         },
         [dataDispatches]
     );
@@ -469,36 +369,21 @@ const Timeline = () => {
         } else {
             const removedEndMultipleDispatches = menu.filter(
                 (item) => item.value !== 'endMultipleDispatches'
-<<<<<<< HEAD
-            )
-            setMenuList(removedEndMultipleDispatches)
-            setIsRightClick(true)
-=======
             );
             setMenuList(removedEndMultipleDispatches);
             setIsRightClick(true);
->>>>>>> main
         }
     }, []);
 
     const rightClickClose = React.useCallback(
         (ev) => {
             if (ev.value === 'cancel') {
-<<<<<<< HEAD
-                onDeleteDispatch()
-                setTempDispatch('')
-            }
-
-            if (ev.value === 'copy') {
-                setIsCopy(true)
-=======
                 onDeleteDispatch();
                 setTempDispatch('');
             }
 
             if (ev.value === 'copy') {
                 setIsCopy(true);
->>>>>>> main
 
                 // set new ID
                 let largestId = 0;
@@ -507,40 +392,6 @@ const Timeline = () => {
                     if (idNum > largestId) {
                         largestId = idNum;
                     }
-<<<<<<< HEAD
-                })
-
-                setNewId((largestId + 1).toString().padStart(3, '0'))
-                setNewActivity(tempDispatch.status)
-                setNewDeliverTo(tempDispatch.deliverto)
-                setNewItem(tempDispatch.item)
-                setLoadAt(tempDispatch.loadat)
-                setNewResource(tempDispatch.resource)
-                setNewRunUntilStopped(tempDispatch.runUntilStopped)
-                setNewTitle(tempDispatch.customer)
-            }
-
-            if (ev.value === 'endMultipleDispatches') {
-                tempDispatch.runUntilStopped = false
-                const index = dataDispatches.findIndex((x) => x.id === tempDispatch.id)
-                const updateDispatch = [...dataDispatches]
-                updateDispatch.splice(index, 1, tempDispatch)
-                setDispatches(updateDispatch)
-            }
-
-            if (ev.value === 'changeDispatchtimes') {
-                const st = moment(tempDispatch.start)
-                const en = moment(tempDispatch.end)
-                const duration = moment.duration(en.diff(st))
-                const hrs = Math.floor(duration.asHours()).toString().padStart(2, '0')
-                const min = duration.minutes().toString().padStart(2, '0')
-                const timeDuration = `${hrs}:${min}`
-
-                // Checks if date is object or ISO
-                if (moment.isDate(tempDispatch.start)) {
-                    setDispatchTimesStartTime(st.format('YYYY-MM-DDTHH:mm:ss'))
-                    setDispatchTimesDate(st.format('YYYY-MM-DDTHH:mm:ss'))
-=======
                 });
 
                 setNewId((largestId + 1).toString().padStart(3, '0'));
@@ -573,7 +424,6 @@ const Timeline = () => {
                 if (moment.isDate(tempDispatch.start)) {
                     setDispatchTimesStartTime(st.format('YYYY-MM-DDTHH:mm:ss'));
                     setDispatchTimesDate(st.format('YYYY-MM-DDTHH:mm:ss'));
->>>>>>> main
                 } else {
                     setDispatchTimesStartTime(tempDispatch.start);
                     setDispatchTimesDate(tempDispatch.start);
@@ -583,13 +433,8 @@ const Timeline = () => {
                 setIsDispatchTimes(true);
             }
 
-<<<<<<< HEAD
-            setMenuValue('')
-            setIsRightClick(false)
-=======
             setMenuValue('');
             setIsRightClick(false);
->>>>>>> main
         },
         [onDeleteDispatch, dataDispatches, tempDispatch]
     );
@@ -600,25 +445,24 @@ const Timeline = () => {
             display: 'anchored',
             width: 400,
             fullscreen: false,
-            touchUi: false
+            touchUi: false,
         },
     };
 
     // Add dispatch buttons
     const dispatchButtons = React.useMemo(() => {
-        return [{
-            text: 'Done',
-            handler: () => {
-                setDispatchOpen(false);
-            }
-        }];
+        return [
+            {
+                text: 'Done',
+                handler: () => {
+                    setDispatchOpen(false);
+                },
+            },
+        ];
     }, []);
 
     // Handle add/edit popup form
-    const headerText = React.useMemo(
-        () => (isEdit ? 'View Dispatch' : 'Add Dispatch'),
-        [isEdit]
-    );
+    const headerText = React.useMemo(() => (isEdit ? 'View Dispatch' : 'Add Dispatch'), [isEdit]);
 
     // Handle opening of working hour popup
     const timeRangeOpen = React.useCallback((event) => {
@@ -627,15 +471,6 @@ const Timeline = () => {
 
     // Handle closing of working hour popup
     const timeRangeClose = React.useCallback(() => {
-<<<<<<< HEAD
-        const sTime = moment(tempStartTime).format('HH:mm').toString()
-        const eTime = moment(tempEndTime).format('HH:mm').toString()
-
-        setWorkStart(sTime !== 'Invalid date' ? sTime : '05:00')
-        setWorkEnd(eTime !== 'Invalid date' ? eTime : '19:00')
-        setIsTimeRange(false)
-    }, [tempStartTime, tempEndTime])
-=======
         const sTime = moment(tempStartTime).format('HH:mm').toString();
         const eTime = moment(tempEndTime).format('HH:mm').toString();
 
@@ -643,7 +478,6 @@ const Timeline = () => {
         setWorkEnd(eTime !== 'Invalid date' ? eTime : '19:00');
         setIsTimeRange(false);
     }, [tempStartTime, tempEndTime]);
->>>>>>> main
 
     // get input from working hours popup
     const workingHours = React.useCallback((val) => {
@@ -694,7 +528,7 @@ const Timeline = () => {
                 deliverto: newDeliverTo,
                 item: newItem,
                 runUntilStopped: newRunUntilStopped,
-                resource: newResource
+                resource: newResource,
             };
 
             // Add new copied dispatch to the list of dispatches
@@ -718,21 +552,6 @@ const Timeline = () => {
 
     // Handle cancel on Copy dispatch
     const copyCancel = () => {
-<<<<<<< HEAD
-        setNewId(null)
-        setNewActivity('')
-        setNewDeliverTo('')
-        setNewItem('')
-        setLoadAt('')
-        setNewResource('')
-        setNewRunUntilStopped('')
-        setNewTitle('')
-        setTempDispatch(null)
-        setIsCopy(false)
-    }
-
-    const closeDispatchTimes = useCallback((ev) => {}, [])
-=======
         setNewId(null);
         setNewActivity('');
         setNewDeliverTo('');
@@ -746,65 +565,55 @@ const Timeline = () => {
     };
 
     const closeDispatchTimes = useCallback((ev) => {}, []);
->>>>>>> main
 
     // change dispatch times button
     const changeDispatchTimesButtons = React.useMemo(() => {
-        return [{
-            text: 'Cancel',
-            handler: () => {
-<<<<<<< HEAD
-                setIsDispatchTimes(false)
-                setDispatchTimesDate('')
-                setDispatchTimesStartTime('')
-                setDispatchTimesDuration('')
-=======
-                setIsDispatchTimes(false);
-                setDispatchTimesDate('');
-                setDispatchTimesStartTime('');
-                setDispatchTimesDuration('');
->>>>>>> main
-            }
-        }, {
-            text: 'Set',
-            disabled: isSetDisabled,
-            handler: () => {
-                const setDate = dispatchTimesDate.slice(0, 10); //Gets set date
-                const startTime = moment(
-                    `${setDate}T${dispatchTimesStartTime.slice(11)}` // Current Start time
-                );
-                const duration = moment.duration(dispatchTimesDuration);
-                const endTime = moment(startTime).add(duration);
+        return [
+            {
+                text: 'Cancel',
+                handler: () => {
+                    setIsDispatchTimes(false);
+                    setDispatchTimesDate('');
+                    setDispatchTimesStartTime('');
+                    setDispatchTimesDuration('');
+                },
+            },
+            {
+                text: 'Set',
+                disabled: isSetDisabled,
+                handler: () => {
+                    const setDate = dispatchTimesDate.slice(0, 10); //Gets set date
+                    const startTime = moment(
+                        `${setDate}T${dispatchTimesStartTime.slice(11)}` // Current Start time
+                    );
+                    const duration = moment.duration(dispatchTimesDuration);
+                    const endTime = moment(startTime).add(duration);
 
-                tempDispatch.start = startTime.format(); //Set new start
-                tempDispatch.end = endTime.format(); // Set new end
-                const index = dataDispatches.findIndex(
-                    (x) => x.id === tempDispatch.id //Locate the current id
-                );
-                const updateDispatch = [...dataDispatches];
-                updateDispatch.splice(index, 1, tempDispatch);
-                setDispatches(updateDispatch);
+                    tempDispatch.start = startTime.format(); //Set new start
+                    tempDispatch.end = endTime.format(); // Set new end
+                    const index = dataDispatches.findIndex(
+                        (x) => x.id === tempDispatch.id //Locate the current id
+                    );
+                    const updateDispatch = [...dataDispatches];
+                    updateDispatch.splice(index, 1, tempDispatch);
+                    setDispatches(updateDispatch);
 
-                setIsDispatchTimes(false);
-            }
-        }];
+                    setIsDispatchTimes(false);
+                },
+            },
+        ];
     }, [
         dispatchTimesDuration,
         dispatchTimesStartTime,
         isSetDisabled,
         dispatchTimesDate,
         dataDispatches,
-        tempDispatch
+        tempDispatch,
     ]);
 
     const onEventUpdate = React.useCallback((event, int) => {
-<<<<<<< HEAD
-        console.log('onEventUpdate')
-    }, [])
-=======
         console.log('onEventUpdate');
     }, []);
->>>>>>> main
 
     // Handle the show compact function
     const handleCompact = useCallback((ev) => {
@@ -856,11 +665,7 @@ const Timeline = () => {
                         />
 
                         {/* working hours */}
-                        <Button
-                            icon='clock'
-                            variant='flat'
-                            onClick={timeRangeOpen}
-                        ></Button>
+                        <Button icon='clock' variant='flat' onClick={timeRangeOpen}></Button>
 
                         <Popup
                             className='time-range'
@@ -870,8 +675,7 @@ const Timeline = () => {
                             touchUi={'auto'}
                             showOverlay={true}
                             closeOnOverlayClick={true}
-                            contentPadding={false}
-                        >
+                            contentPadding={false}>
                             <Datepicker
                                 controls={['time']}
                                 display='inline'
@@ -916,8 +720,7 @@ const Timeline = () => {
                 buttons={dispatchButtons}
                 isOpen={formOpen}
                 onClose={onClose}
-                responsive={responsivePopup}
-            >
+                responsive={responsivePopup}>
                 <div className='mbsc-form-group'>
                     <Input
                         label='Customer'
@@ -952,9 +755,8 @@ const Timeline = () => {
                     <span
                         className='tooltip-icon'
                         style={{
-                            display: dispatchIsRunUntilStopped === true ? 'block' : 'none'
-                        }}
-                    >
+                            display: dispatchIsRunUntilStopped === true ? 'block' : 'none',
+                        }}>
                         <CheckBox className='form-checkbox ma' /> Run until stopped
                     </span>
                 </div>
@@ -997,8 +799,7 @@ const Timeline = () => {
                 touchUi={'auto'}
                 showOverlay={true}
                 closeOnOverlayClick={true}
-                buttons={changeDispatchTimesButtons}
-            >
+                buttons={changeDispatchTimesButtons}>
                 <Datepicker
                     controls={['date']}
                     defaultValue={dispatchTimesDate.toLocaleString()}
@@ -1027,9 +828,9 @@ const Timeline = () => {
                     onChange={(ev) => {
                         const timeRegex = /^([0-9]{1,2}|[02]?[0-9]|2[0-9]):[0-5][0-9]$/;
                         if (timeRegex.test(ev.target.value)) {
-                            setIsSetDisabled(false)
-                            setDispatchTimesDuration(ev.target.value)
-                        } else setIsSetDisabled(true)
+                            setIsSetDisabled(false);
+                            setDispatchTimesDuration(ev.target.value);
+                        } else setIsSetDisabled(true);
                     }}
                 />
             </Popup>

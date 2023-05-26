@@ -290,3 +290,42 @@ export const sideMenuItems = [
         ],
     },
 ];
+
+export const ProfileList = [
+    {
+        id: 1,
+        name: 'Back to my account',
+        icon: 'fa-angle-left',
+        path: '/',
+    },
+    {
+        id: 2,
+        name: 'Manage linked accounts',
+        icon: 'fa-users-gear',
+        path: '/',
+    },
+    {
+        id: 3,
+        name: 'Login attempts',
+        icon: 'fa-list-check',
+        path: '/',
+    },
+    {
+        id: 4,
+        name: 'Change profile picture',
+        icon: 'fa-square-user',
+        path: '/',
+    },
+    {
+        id: 5,
+        name: 'Upload signature picture',
+        icon: 'fa-signature',
+        path: '/',
+    },
+    {
+        id: 6,
+        name: 'My settings',
+        icon: 'fa-gear',
+        path: '/',
+    },
+];

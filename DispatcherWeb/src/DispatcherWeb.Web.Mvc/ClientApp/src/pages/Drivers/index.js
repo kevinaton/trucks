@@ -4,12 +4,8 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import NoContent from '../../components/NoContent';
 
 const Drivers = (props) => {
-<<<<<<< HEAD
-    const pageName = 'Drivers'
-=======
     const pageName = 'Drivers';
->>>>>>> main
-    
+
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);

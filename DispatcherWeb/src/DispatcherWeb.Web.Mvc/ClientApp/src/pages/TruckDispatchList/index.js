@@ -4,12 +4,8 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import Timeline from '../../components/Timeline';
 
 const TruckDispatchList = (props) => {
-<<<<<<< HEAD
-    const pageName = 'Truck Dispatch List'
-=======
     const pageName = 'Truck Dispatch List';
->>>>>>> main
-    
+
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);
