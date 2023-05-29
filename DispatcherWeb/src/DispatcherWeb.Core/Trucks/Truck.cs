@@ -31,7 +31,8 @@ namespace DispatcherWeb.Trucks
             SharedTrucks = new HashSet<SharedTruck>();
             Files = new HashSet<TruckFile>();
             OutOfServiceHistories = new HashSet<OutOfServiceHistory>();
-            Tickets = new HashSet<Ticket>();
+            TicketsOfTruck = new HashSet<Ticket>();
+            TicketsOfTrailer = new HashSet<Ticket>();
             AvailableLeaseHaulerTrucks = new HashSet<AvailableLeaseHaulerTruck>();
         }
 
@@ -195,7 +196,9 @@ namespace DispatcherWeb.Trucks
 
         public ICollection<OutOfServiceHistory> OutOfServiceHistories { get; set; }
 
-        public ICollection<Ticket> Tickets { get; set; }
+        public ICollection<Ticket> TicketsOfTruck { get; set; }
+
+        public ICollection<Ticket> TicketsOfTrailer { get; set; }
 
         public ICollection<VehicleUsage> VehicleUsages { get; set; }
 

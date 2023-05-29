@@ -1055,9 +1055,12 @@ namespace DispatcherWeb.Trucks
                 .Where(t =>
                     t.OrderLineTrucksOfTruck.Any() ||
                     t.OrderLineTrucksOfTrailer.Any() ||
-                    t.Tickets.Any(ticket => ticket.CarrierId == null) ||
+                    t.TicketsOfTruck.Any(ticket => ticket.CarrierId == null) ||
+                    t.TicketsOfTrailer.Any(ticket => ticket.CarrierId == null) ||
                     t.PreventiveMaintenances.Any() ||
                     t.DriverAssignments.Any() ||
+                    t.TrailerAssignmentsOfTractor.Any() ||
+                    t.TrailerAssignmentsOfTrailer.Any() ||
                     t.SharedTrucks.Any() ||
                     t.WorkOrders.Any()
                 )

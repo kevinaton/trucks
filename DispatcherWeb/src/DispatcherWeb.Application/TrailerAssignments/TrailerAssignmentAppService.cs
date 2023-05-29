@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using DispatcherWeb.Orders;
 using DispatcherWeb.TrailerAssignments.Dto;
 using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +14,17 @@ namespace DispatcherWeb.TrailerAssignments
     {
         private readonly IRepository<TrailerAssignment> _trailerAssignmentRepository;
         private readonly IRepository<Truck> _truckRepository;
+        private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
 
         public TrailerAssignmentAppService(
             IRepository<TrailerAssignment> trailerAssignmentRepository,
-            IRepository<Truck> truckRepository
+            IRepository<Truck> truckRepository,
+            IRepository<OrderLineTruck> orderLineTruckRepository
             )
         {
             _trailerAssignmentRepository = trailerAssignmentRepository;
             _truckRepository = truckRepository;
+            _orderLineTruckRepository = orderLineTruckRepository;
         }
 
         public async Task SetTrailerForTractor(SetTrailerForTractorInput input)
@@ -125,11 +129,15 @@ namespace DispatcherWeb.TrailerAssignments
                     await CurrentUnitOfWork.SaveChangesAsync();
                 }
             }
+        }
 
-            if (input.TractorId.HasValue)
-            {
-                
-            }
+        public async Task SetTrailerForOrderLineTruck(SetTrailerForOrderLineTruckInput input)
+        {
+            var orderLineTruck = await _orderLineTruckRepository.GetAll().FirstAsync(x => x.Id == input.OrderLineTruckId);
+            orderLineTruck.TrailerId = input.TrailerId;
+
+            //todo send driver app sync request if needed
+            //also to the dispatch view
         }
     }
 }

@@ -1661,6 +1661,7 @@ namespace DispatcherWeb.Dispatching
         {
             var dispatchEntity = await _dispatchRepository.GetAll()
                 .Include(d => d.Truck)
+                .Include(d => d.OrderLineTruck)
                 .Include(d => d.OrderLine)
                     .ThenInclude(ol => ol.Order)
                 .FirstOrDefaultAsync(d => d.Guid == input.DispatchTicket.Guid);
@@ -1821,6 +1822,7 @@ namespace DispatcherWeb.Dispatching
                         DeliverToId = dispatchEntity.OrderLine.DeliverToId,
                         TruckId = dispatchEntity.TruckId,
                         TruckCode = dispatchEntity.Truck.TruckCode,
+                        TrailerId = dispatchEntity.OrderLineTruck?.TrailerId,
                         CustomerId = dispatchEntity.OrderLine.Order.CustomerId,
                         ServiceId = dispatchEntity.OrderLine.ServiceId,
                         DriverId = dispatchEntity.DriverId,
