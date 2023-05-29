@@ -1938,6 +1938,11 @@ namespace DispatcherWeb.Orders
                         TimeOnJob = x.TimeOnJob,
                         HasTickets = x.Tickets.Any(),
                         HasOpenDispatches = x.Dispatches.Any(d => !Dispatch.ClosedDispatchStatuses.Contains(d.Status)),
+                        VehicleCategories = x.OrderLineVehicleCategories.Select(vc => new OrderLineVehicleCategoryDto
+                        {
+                            Id = vc.VehicleCategoryId,
+                            Name = vc.VehicleCategory.Name
+                        }).ToList(),
                     })
                     .OrderBy(input.Sorting)
                     //.PageBy(input)
@@ -2008,7 +2013,12 @@ namespace DispatcherWeb.Orders
                         CanOverrideTotals = true,
                         QuoteId = input.QuoteId.Value,
                         HasQuoteBasedPricing = x.Service.QuoteServices.Any(y => y.QuoteId == input.QuoteId
-                            && (y.MaterialUomId == x.MaterialUomId || y.FreightUomId == x.FreightUomId) && y.LoadAtId == x.LoadAtId)
+                            && (y.MaterialUomId == x.MaterialUomId || y.FreightUomId == x.FreightUomId) && y.LoadAtId == x.LoadAtId),
+                        VehicleCategories = x.QuoteServiceVehicleCategories.Select(vc => new OrderLineVehicleCategoryDto
+                        {
+                            Id = vc.VehicleCategoryId,
+                            Name = vc.VehicleCategory.Name
+                        }).ToList(),
                     })
                     .OrderBy(input.Sorting)
                     .ToListAsync();

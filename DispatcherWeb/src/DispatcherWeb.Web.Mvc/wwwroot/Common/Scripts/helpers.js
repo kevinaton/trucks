@@ -1890,6 +1890,14 @@
     };
     abp.helper.ui.initCannedTextLists();
 
+    abp.helper.ui.addAndSetDropdownValues = function addAndSetDropdownValues(dropdown, array) {
+        let values = [];
+        array.forEach(i => {
+            $('<option></option>').text(i.name).attr('value', i.id).appendTo(dropdown);
+            values.push(i.id);
+        });
+        dropdown.val(values).change();
+    };
 
     jQuery.fn.replaceSelectedText = function (newText) {
         var start = $(this).prop('selectionStart');
