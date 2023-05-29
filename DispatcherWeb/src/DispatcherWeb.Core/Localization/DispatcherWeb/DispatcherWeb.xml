@@ -1840,6 +1840,8 @@
 		<text name="ImportFuel">Import Fuel</text>
 		<text name="DriverIsPaidForLoadBasedOn">Driver is paid for load based on</text>
 		<text name="DriverAppImageResolution">Driver App Image Resolution</text>
+		<text name="PayStatement">Pay Statement</text>
+		<text name="LeaseHaulerStatement">Lease Hauler Statement</text>
 		<text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
 		<text name="TruckTrailerCategory">Truck/Trailer category</text>
 	</texts>

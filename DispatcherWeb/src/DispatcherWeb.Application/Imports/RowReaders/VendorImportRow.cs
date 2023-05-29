@@ -11,7 +11,7 @@ namespace DispatcherWeb.Imports.RowReaders
         {
         }
 
-        public bool IsActive => GetString(VendorColumn.IsActive, 30) == "Active" || !HasField(VendorColumn.IsActive);
+        public bool IsActive => GetBoolean(VendorColumn.IsActive, true, "Active");
         public string Name => GetString(VendorColumn.Name, EntityStringFieldLengths.Location.Name * 2);
 
         public string Address => GetString(VendorColumn.Address, EntityStringFieldLengths.GeneralAddress.MaxStreetAddressLength);

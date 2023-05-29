@@ -46,5 +46,7 @@ namespace DispatcherWeb.Tickets.Dto
         public string DriverName { get; set; }
         public string CannotEditReason { get; set; }
         public bool IsReadOnly { get; set; }
+        public bool HasPayStatements { get; set; }
+        public bool HasLeaseHaulerStatements { get; set; }
     }
 }
