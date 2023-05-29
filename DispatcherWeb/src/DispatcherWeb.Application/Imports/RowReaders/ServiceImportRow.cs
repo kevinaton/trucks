@@ -19,7 +19,7 @@ namespace DispatcherWeb.Imports.RowReaders
         public string Uom => GetString(ServiceColumn.Uom, 100);
         public decimal? Price => GetDecimal(ServiceColumn.Price);
 
-        public bool IsTaxable => GetString(ServiceColumn.IsTaxable, 20)?.ToLower().IsIn("tax", "true", "1", "y", "yes") == true;
+        public bool IsTaxable => GetBoolean(ServiceColumn.IsTaxable, "tax");
 
         public string IncomeAccount => GetString(ServiceColumn.IncomeAccount, EntityStringFieldLengths.Service.IncomeAccount);
     }

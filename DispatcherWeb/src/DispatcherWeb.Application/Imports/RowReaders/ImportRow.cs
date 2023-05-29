@@ -63,9 +63,20 @@ namespace DispatcherWeb.Imports.RowReaders
             return resultString;
         }
 
-        protected bool GetBoolean(string fieldName)
+        protected bool GetBoolean(string fieldName, params string[] additionalTrueValues)
         {
-            return GetString(fieldName, 20)?.ToLower().IsIn("true", "1", "y", "yes") == true;
+            return GetBoolean(fieldName, false, additionalTrueValues);
+        }
+
+        protected bool GetBoolean(string fieldName, bool trueIfColumnIsNotSpecified, params string[] additionalTrueValues)
+        {
+            if (!HasField(fieldName))
+            {
+                return trueIfColumnIsNotSpecified;
+            }
+            var cellValue = GetString(fieldName, 20)?.ToLower();
+            var trueValues = new[] { "true", "1", "y", "yes" }.Union(additionalTrueValues.Select(x => x.ToLower())).ToArray();
+            return cellValue.IsIn(trueValues) == true;
         }
 
         protected DateTime? GetDate(string fieldName, bool required = false)
