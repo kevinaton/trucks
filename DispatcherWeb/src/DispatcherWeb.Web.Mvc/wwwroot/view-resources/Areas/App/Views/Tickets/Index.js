@@ -406,6 +406,16 @@
                 }
             },
             {
+                data: "hasPayStatements",
+                render: function (data, type, full, meta) { return _dtHelper.renderCheckbox(full.hasPayStatements); },
+                title: "Pay Stmt"
+            },
+            {
+                data: "hasLeaseHaulerStatements",
+                render: function (data, type, full, meta) { return _dtHelper.renderCheckbox(full.hasLeaseHaulerStatements); },
+                title: "LH Stmt"
+            },
+            {
                 data: 'ticketPhotoId',
                 width: "10px",
                 className: "all",

@@ -135,6 +135,22 @@
                 </label>
             </div>
         </div>
+        <div class="row">
+            <div class="col-6">
+                <label class="m-checkbox">
+                    <input type="checkbox" id="HasPayStatements" name="HasPayStatements" value="true" checked="@(Model.HasPayStatements ? "checked" : null)" disabled />
+                    @L("PayStatement")
+                    <span></span>
+                </label>
+            </div>
+            <div class="col-6">
+                <label class="m-checkbox">
+                    <input type="checkbox" id="HasLeaseHaulerStatements" name="HasLeaseHaulerStatements" value="true" checked="@(Model.HasLeaseHaulerStatements ? "checked" : null)" disabled />
+                    @L("LeaseHaulerStatement")
+                    <span></span>
+                </label>
+            </div>
+        </div>
         @if (Model.Id > 0)
         {
             <hr />
