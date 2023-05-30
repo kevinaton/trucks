@@ -22,6 +22,7 @@ import {
 import { isEmpty } from 'lodash';
 
 export const Appbar = ({
+    isAuthenticated,
     drawerOpen,
     handleDrawerClose,
     handleDrawerOpen,
@@ -37,15 +38,17 @@ export const Appbar = ({
     }));
 
     useEffect(() => {
-        if (supportLinkAddress === null) {
-            dispatch(getSupportLinkAddress());
-        } else {
-            const { result } = supportLinkAddress;
-            if (!isEmpty(result)) {
-                setLinkAddress(result);
+        if (isAuthenticated) {
+            if (supportLinkAddress === null) {
+                dispatch(getSupportLinkAddress());
+            } else {
+                const { result } = supportLinkAddress;
+                if (!isEmpty(result)) {
+                    setLinkAddress(result);
+                }
             }
         }
-    }, [dispatch, supportLinkAddress]);
+    }, [dispatch, supportLinkAddress, isAuthenticated]);
 
     return (
         <AppBar position='fixed' open={drawerOpen} color='inherit' elevation={5}>

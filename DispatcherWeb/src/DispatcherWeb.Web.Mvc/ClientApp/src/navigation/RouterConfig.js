@@ -1,15 +1,17 @@
-import { useEffect } from 'react'
-import { Routes, Route } from 'react-router'
-import { useLocation, useNavigate } from 'react-router-dom'
-import Dashboard from '../pages/Dashboard'
-import Customers from '../pages/Customers'
-import ProductsOrServices from '../pages/ProductsOrServices'
-import Drivers from '../pages/Drivers'
+import React, { useEffect } from 'react';
+import { Routes, Route } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { authProtectedRoutes } from './index';
+import Dashboard from '../pages/Dashboard';
+import Customers from '../pages/Customers';
+import ProductsOrServices from '../pages/ProductsOrServices';
+import Drivers from '../pages/Drivers';
 import Locations from '../pages/Locations';
 import Schedule from '../pages/Schedule';
 import TruckDispatchList from '../pages/TruckDispatchList';
   
 export const RouterConfig = ({
+    isAuthenticated,
     handleCurrentPageName
 }) => {
     const location = useLocation();
@@ -29,21 +31,31 @@ export const RouterConfig = ({
 
     useEffect(() => {
         if (targetRoute) {
-          navigate(targetRoute);
+            navigate(targetRoute);
         }
     }, [targetRoute, navigate]);
 
     return (
-        <Routes sx={{ height: '100%', overflow: 'auto' }}>
-            {routes.map((route, index) => (
-                <Route
-                    key={index}
-                    path={route.path}
-                    element={<route.component handleCurrentPageName={handleCurrentPageName} />}
-                />
-            ))}
-
-            {targetRoute && <Route path={targetRoute} component={() => null} />}
-        </Routes>
+        <React.Fragment>
+            { isAuthenticated && 
+                <Routes sx={{ height: '100%', overflow: 'auto' }}>
+                    { authProtectedRoutes.map((route, index) => {
+                        const Component = route.component;
+        
+                        return (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={
+                                    <Component handleCurrentPageName={handleCurrentPageName} />
+                                }
+                            />
+                        );
+                    })}
+        
+                    {targetRoute && <Route path={targetRoute} component={() => null} />}
+                </Routes>
+            }
+        </React.Fragment>
     );
 };
