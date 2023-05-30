@@ -5,7 +5,7 @@ import NoContent from '../../components/NoContent';
 
 const ProductsOrServices = (props) => {
     const pageName = 'Products/Services';
-    
+
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);

@@ -9,7 +9,7 @@ import {
     Autocomplete,
     TextField,
     Tooltip,
-    TableCell
+    TableCell,
 } from '@mui/material';
 import { KeyboardArrowDown } from '@material-ui/icons';
 import { styled } from '@mui/material/styles';
@@ -23,12 +23,12 @@ export const HeaderIconButton = (props) => {
         <IconButton
             {...props}
             sx={{
-                width: { xs: "auto", sm: "16%" },
-                "&:hover": {
-                    xs: { backgroundColor: "transparent" },
-                    sm: { backgroundColor: "default" }
+                width: { xs: 'auto', sm: '16%' },
+                '&:hover': {
+                    xs: { backgroundColor: 'transparent' },
+                    sm: { backgroundColor: 'default' },
                 },
-                mr: { xs: 0, sm: 2 }
+                mr: { xs: 0, sm: 2 },
             }}
         />
     );
@@ -37,11 +37,11 @@ export const HeaderIconButton = (props) => {
 // Header button component
 export const HeaderButton = (props) => {
     return (
-        <Button {...props} sx={{ mr: 2 }}>
+        <Button {...props} sx={{ mr: 2, px: 4 }}>
             <Typography sx={{ fontWeight: 600, fontSize: 12 }}>User</Typography>
             <Avatar
-                alt="account"
-                src="/reactapp/assets/images/150.jpg"
+                alt='account'
+                src='/reactapp/assets/images/150.jpg'
                 sx={{ ml: 1, width: 24, height: 24 }}
             />
         </Button>
@@ -50,23 +50,18 @@ export const HeaderButton = (props) => {
 
 // Main backdraft
 export const BackDraft = (props) => {
-    return (
-        <Paper
-            {...props}
-            sx={{ backgroundColor: "#f1f5f8", padding: 2, height: "100%" }}
-        />
-    );
+    return <Paper {...props} sx={{ backgroundColor: '#f1f5f8', padding: 2, height: '100%' }} />;
 };
 
 // Drawer header
-export const DrawerHeader = styled("div")(({ theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    "& .MuiDrawer-paper": { borderWidth: 0 },
+export const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    '& .MuiDrawer-paper': { borderWidth: 0 },
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
-    ...theme.mixins.toolbar
+    ...theme.mixins.toolbar,
 }));
 
 // Width of the drawer
@@ -76,23 +71,23 @@ export const drawerWidth = 240; // The width of the side menu
 export const Drawer = styled(MuiDrawer, {
     shouldForwardProp: (prop) => {
         if (window.innerWidth < 600) {
-            return prop !== "paper";
+            return prop !== 'paper';
         }
-        return prop !== "open";
-    }
+        return prop !== 'open';
+    },
 })(({ theme, open }) => ({
     width: drawerWidth,
     zIndex: theme.drawer + 1,
     flexShrink: 0,
-    boxSizing: "border-box",
+    boxSizing: 'border-box',
     ...(open && {
         ...openedMixin(theme),
-        "& .MuiDrawer-paper": openedMixin(theme)
+        '& .MuiDrawer-paper': openedMixin(theme),
     }),
     ...(!open && {
         ...closedMixin(theme),
-        "& .MuiDrawer-paper": closedMixin(theme)
-    })
+        '& .MuiDrawer-paper': closedMixin(theme),
+    }),
 }));
 
 // Custom TableCell
@@ -106,54 +101,47 @@ export const Tablecell = ({ label, value }) => {
 
 // Customized AppBar
 export const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== "open"
+    shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
     zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
-    })
-    // ...(open && {
-    //   marginLeft: drawerWidth,
-    //   transition: theme.transitions.create(["width", "margin"], {
-    //     easing: theme.transitions.easing.sharp,
-    //     duration: theme.transitions.duration.enteringScreen,
-    //   }),
-    // }),
+        duration: theme.transitions.duration.leavingScreen,
+    }),
 }));
 
 // Opened mixin. this is used for drawer
 export const openedMixin = (theme) => ({
     width: drawerWidth,
-    transition: theme.transitions.create("width", {
+    transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen
+        duration: theme.transitions.duration.enteringScreen,
     }),
-    overflowX: "auto"
+    overflowX: 'auto',
 });
 
 // Closed mixin. this is used for drawer
 export const closedMixin = (theme) => ({
-    transition: theme.transitions.create("width", {
+    transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
+        duration: theme.transitions.duration.leavingScreen,
     }),
-    overflowX: "auto",
+    overflowX: 'auto',
     width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up("sm")]: {
-        width: `calc(${theme.spacing(8)} + 1px)`
-    }
+    [theme.breakpoints.up('sm')]: {
+        width: `calc(${theme.spacing(8)} + 1px)`,
+    },
 });
 
 export const SelectField = ({ label, value, onChange, items }) => {
     return (
         <FormControl sx={{ width: 1 }}>
             <Autocomplete
-                id="selectComp"
+                id='selectComp'
                 value={value}
                 options={items}
                 onChange={onChange}
-                size="small"
+                size='small'
                 label={label}
                 popupIcon={<KeyboardArrowDown />}
                 renderInput={(params) => <TextField {...params} label={label} />}
@@ -369,7 +357,7 @@ export const SelectField = ({ label, value, onChange, items }) => {
 //                                                                 }
 //                                                             ></i>
 //                                                         </ListItemIcon>
-                                                        
+
 //                                                         <ListItemText
 //                                                             primary={
 //                                                                 <Typography
