@@ -24,7 +24,7 @@ import {
     ListItemText,
     ListItemButton,
     Collapse,
-    List
+    List,
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { grey } from '@mui/material/colors';
@@ -45,7 +45,7 @@ const Schedule = (props) => {
     const actionOpen = Boolean(actionAnchor);
     const [isOrderOpen, setIsOrderOpen] = React.useState(false);
     const [isPrintOrderOpen, setIsPrintOrderOpen] = React.useState(false);
-    
+
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);
@@ -100,8 +100,7 @@ const Schedule = (props) => {
                         aria-label='View state'
                         exclusive
                         value={view}
-                        onChange={handleView}
-                    >
+                        onChange={handleView}>
                         <ToggleButton value='all' aria-label='all view'>
                             All
                         </ToggleButton>
@@ -120,12 +119,8 @@ const Schedule = (props) => {
                             flexWrap: 'wrap',
                             gap: 2,
                             justifyContent: 'flex-start',
-                        }}
-                    >
-                        <LocalizationProvider
-                            dateAdapter={AdapterMoment}
-                            adapterLocale='de'
-                        >
+                        }}>
+                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='de'>
                             <DatePicker
                                 label='date'
                                 value={date}
@@ -137,9 +132,7 @@ const Schedule = (props) => {
                                 id='office'
                                 options={offices}
                                 sx={{ flex: 1, flexShrink: 0 }}
-                                renderInput={(params) => (
-                                    <TextField {...params} label='Office' />
-                                )}
+                                renderInput={(params) => <TextField {...params} label='Office' />}
                             />
 
                             <FormControlLabel
@@ -164,28 +157,29 @@ const Schedule = (props) => {
                                 control={
                                     <IconButton
                                         sx={{ width: 25, height: 25 }}
-                                        onClick={handleSettingsClick}
-                                    >
+                                        onClick={handleSettingsClick}>
                                         <i className='fa-regular fa-ellipsis-vertical'></i>
                                     </IconButton>
                                 }
-                                sx={{ flex: 1, m: 0, justifyContent: 'flex-end' }}
-                            ></FormControlLabel>
+                                sx={{
+                                    flex: 1,
+                                    m: 0,
+                                    justifyContent: 'flex-end',
+                                }}></FormControlLabel>
 
                             <Menu
                                 anchorEl={settingsAnchor}
                                 id='settings-menu'
                                 open={settingsOpen}
                                 onClose={handleSettingsClose}
-                                onClick={handleSettingsClose}
-                            >
+                                onClick={handleSettingsClose}>
                                 <MenuItem onClick={handleSettingsClose}>
-                                    <i className='fa-regular fa-truck secondary-icon pr-2'></i>{' '}
-                                    Add a lease hauler
+                                    <i className='fa-regular fa-truck secondary-icon pr-2'></i> Add
+                                    a lease hauler
                                 </MenuItem>
                                 <MenuItem onClick={handleSettingsClose}>
-                                    <i className='fa-regular fa-check secondary-icon pr-2'></i>{' '}
-                                    Mark all jobs complete
+                                    <i className='fa-regular fa-check secondary-icon pr-2'></i> Mark
+                                    all jobs complete
                                 </MenuItem>
                                 <MenuItem onClick={handleSettingsClose}>
                                     <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add
@@ -218,11 +212,11 @@ const Schedule = (props) => {
                                                     borderRadius: 0,
                                                     fontSize: 18,
                                                     fontWeight: 600,
-                                                    py: 3
+                                                    py: 3,
                                                 }}
                                             />
                                         </Grid>
-                                    )
+                                    );
                                 })}
                             </Grid>
                         </Paper>
@@ -266,14 +260,13 @@ const Schedule = (props) => {
                                             hover={true}
                                             sx={{
                                                 '&.MuiTableRow-root:hover': {
-                                                    backgroundColor: '#F3F7FB'
-                                                }
-                                            }}
-                                        >
+                                                    backgroundColor: '#F3F7FB',
+                                                },
+                                            }}>
                                             <Tablecell
                                                 label='priority'
                                                 value={
-                                                <i className='fa-solid fa-circle-arrow-up error-icon'></i>
+                                                    <i className='fa-solid fa-circle-arrow-up error-icon'></i>
                                                 }
                                             />
                                             <Tablecell
@@ -282,7 +275,9 @@ const Schedule = (props) => {
                                             />
                                             <Tablecell
                                                 label='Notes'
-                                                value={<i className='fa-solid fa-notebook icon'></i>}
+                                                value={
+                                                    <i className='fa-solid fa-notebook icon'></i>
+                                                }
                                             />
                                             <Tablecell label='Customer' value={data.customer} />
                                             <Tablecell label='Job number' value={data.job} />
@@ -308,12 +303,11 @@ const Schedule = (props) => {
                                                             borderRadius: 1,
                                                             border: '1px solid #ebedf2',
                                                             pb: 1,
-                                                            m: 0
+                                                            m: 0,
                                                         }}
                                                         container
                                                         rowSpacing={1}
-                                                        columnSpacing={1}
-                                                    >
+                                                        columnSpacing={1}>
                                                         {data.trucks.map((truck, index) => {
                                                             return (
                                                                 <Grid item key={index}>
@@ -325,11 +319,11 @@ const Schedule = (props) => {
                                                                             borderRadius: 0,
                                                                             fontSize: 10,
                                                                             fontWeight: 500,
-                                                                            p: 0
+                                                                            p: 0,
                                                                         }}
                                                                     />
                                                                 </Grid>
-                                                            )
+                                                            );
                                                         })}
                                                     </Grid>
                                                 }
@@ -344,18 +338,17 @@ const Schedule = (props) => {
                                                     <div>
                                                         <IconButton
                                                             sx={{ width: 25, height: 25 }}
-                                                            onClick={handleActionClick}
-                                                        >
+                                                            onClick={handleActionClick}>
                                                             <i className='fa-regular fa-ellipsis-vertical'></i>
                                                         </IconButton>
                                                         <Menu
                                                             anchorEl={actionAnchor}
                                                             id='settings-menu'
                                                             open={actionOpen}
-                                                            onClose={handleActionClose}
-                                                        >
+                                                            onClose={handleActionClose}>
                                                             <ListItem disablePadding>
-                                                                <ListItemButton onClick={handleActionClose}>
+                                                                <ListItemButton
+                                                                    onClick={handleActionClose}>
                                                                     <ListItemText
                                                                         primary={
                                                                             <Typography align='left'>
@@ -369,9 +362,10 @@ const Schedule = (props) => {
                                                             <ListItem disablePadding>
                                                                 <ListItemButton
                                                                     onClick={() => {
-                                                                        setIsOrderOpen(!isOrderOpen)
-                                                                    }}
-                                                                >
+                                                                        setIsOrderOpen(
+                                                                            !isOrderOpen
+                                                                        );
+                                                                    }}>
                                                                     <ListItemText
                                                                         primary={
                                                                             <Typography align='left'>
@@ -390,13 +384,14 @@ const Schedule = (props) => {
                                                             <Collapse
                                                                 in={isOrderOpen}
                                                                 onClick={() => {
-                                                                    setIsOrderOpen(false)
+                                                                    setIsOrderOpen(false);
                                                                 }}
                                                                 timeout='auto'
                                                                 unmountOnExit
-                                                                sx={{ backgroundColor: grey[100] }}
-                                                            >
-                                                                <List component='div' disablePadding>
+                                                                sx={{ backgroundColor: grey[100] }}>
+                                                                <List
+                                                                    component='div'
+                                                                    disablePadding>
                                                                     <ListItemButton>
                                                                         <ListItemText primary='View/Edit' />
                                                                     </ListItemButton>
@@ -424,16 +419,17 @@ const Schedule = (props) => {
                                                             <ListItem disablePadding>
                                                                 <ListItemButton
                                                                     onClick={() => {
-                                                                        setIsPrintOrderOpen(!isPrintOrderOpen)
-                                                                    }}
-                                                                >
-                                                                <ListItemText
-                                                                    primary={
-                                                                        <Typography align='left'>
-                                                                            Print Order
-                                                                        </Typography>
-                                                                    }
-                                                                />
+                                                                        setIsPrintOrderOpen(
+                                                                            !isPrintOrderOpen
+                                                                        );
+                                                                    }}>
+                                                                    <ListItemText
+                                                                        primary={
+                                                                            <Typography align='left'>
+                                                                                Print Order
+                                                                            </Typography>
+                                                                        }
+                                                                    />
                                                                     {isPrintOrderOpen ? (
                                                                         <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
                                                                     ) : (
@@ -445,13 +441,14 @@ const Schedule = (props) => {
                                                             <Collapse
                                                                 in={isPrintOrderOpen}
                                                                 onClick={() => {
-                                                                    setIsPrintOrderOpen(false)
+                                                                    setIsPrintOrderOpen(false);
                                                                 }}
                                                                 timeout='auto'
                                                                 unmountOnExit
-                                                                sx={{ backgroundColor: grey[100] }}
-                                                            >
-                                                                <List component='div' disablePadding>
+                                                                sx={{ backgroundColor: grey[100] }}>
+                                                                <List
+                                                                    component='div'
+                                                                    disablePadding>
                                                                     <ListItemButton>
                                                                         <ListItemText primary='No Prices' />
                                                                     </ListItemButton>
@@ -464,7 +461,8 @@ const Schedule = (props) => {
                                                                 </List>
                                                             </Collapse>
                                                             <ListItem disablePadding>
-                                                                <ListItemButton onClick={handleActionClose}>
+                                                                <ListItemButton
+                                                                    onClick={handleActionClose}>
                                                                     <ListItemText>
                                                                         <Typography align='left'>
                                                                             Tickets
@@ -473,7 +471,8 @@ const Schedule = (props) => {
                                                                 </ListItemButton>
                                                             </ListItem>
                                                             <ListItem disablePadding>
-                                                                <ListItemButton onClick={handleActionClose}>
+                                                                <ListItemButton
+                                                                    onClick={handleActionClose}>
                                                                     <ListItemText>
                                                                         <Typography align='left'>
                                                                             View Load History
@@ -486,7 +485,7 @@ const Schedule = (props) => {
                                                 }
                                             />
                                         </TableRow>
-                                    )
+                                    );
                                 })}
                             </TableBody>
                         </Table>

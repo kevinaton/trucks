@@ -5,7 +5,7 @@ import Timeline from '../../components/Timeline';
 
 const TruckDispatchList = (props) => {
     const pageName = 'Truck Dispatch List';
-    
+
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);

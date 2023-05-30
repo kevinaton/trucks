@@ -26,7 +26,7 @@ export const RouterConfig = ({
         { path: '/drivers', component: Drivers },
         { path: '/locations', component: Locations },
         { path: '/dispatching/schedule', component: Schedule },
-        { path: '/dispatching/dispatches/truck-list', component: TruckDispatchList }
+        { path: '/dispatching/dispatches/truck-list', component: TruckDispatchList },
     ];
 
     useEffect(() => {

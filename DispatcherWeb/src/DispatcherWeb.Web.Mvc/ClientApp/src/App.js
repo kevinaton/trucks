@@ -58,7 +58,6 @@ const App = (props) => {
         if (isBig) {
             setDrawerOpen(true);
         }
-
     }, [isSmall, isBig]);
 
     const handleCurrentPageName = (name) => {
@@ -69,22 +68,22 @@ const App = (props) => {
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
-    
+
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
-    
+
     const handleDrawerOpen = () => {
         setDrawerOpen(true);
     };
-    
+
     const handleDrawerClose = () => {
         setDrawerOpen(false);
         setCollapseOpen(false);
     };
-    
+
     return (
-        <Box sx={{ display:'flex' }}>
+        <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             {/* This is the appbar located at the top of the app. */}
 

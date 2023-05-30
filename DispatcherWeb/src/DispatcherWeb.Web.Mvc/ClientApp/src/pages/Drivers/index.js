@@ -5,7 +5,7 @@ import NoContent from '../../components/NoContent';
 
 const Drivers = (props) => {
     const pageName = 'Drivers';
-    
+
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);
