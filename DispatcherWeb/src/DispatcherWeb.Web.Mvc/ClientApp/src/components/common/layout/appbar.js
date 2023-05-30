@@ -214,6 +214,7 @@ export const Appbar = ({
                                     <MenuItem
                                         component={Link}
                                         key={index}
+                                        onClick={handleProfileClose}
                                         to={list.path}
                                         sx={{ py: 2 }}>
                                         <i
