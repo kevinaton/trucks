@@ -4,7 +4,7 @@ import axios from 'axios';
 const currentDomain = window.location.origin;
 
 // Set the base URL dynamically based on the current domain name
-const baseUrl = currentDomain;
+export const baseUrl = currentDomain;
 const API_URL = `${baseUrl}/api/services/app`;
 
 const axiosApi = axios.create({
