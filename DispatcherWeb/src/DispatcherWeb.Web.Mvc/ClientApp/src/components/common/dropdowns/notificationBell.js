@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
     Badge,
     Box,
@@ -20,11 +20,11 @@ import {
     Stack,
     Switch,
     Typography
-} from '@mui/material'
-import { grey } from '@mui/material/colors'
-import moment from 'moment'
-import { HeaderIconButton } from '../../DTComponents'
-import { theme } from '../../../Theme'
+} from '@mui/material';
+import { grey } from '@mui/material/colors';
+import moment from 'moment';
+import { HeaderIconButton } from '../../DTComponents';
+import { theme } from '../../../Theme';
 import { 
     NotificationWrapper, 
     NotificationContent, 
@@ -32,97 +32,99 @@ import {
     NotificationItem,
     NotificationFooter,
     MarkAllAsReadButton,
-    ViewAllNotificationsButton } from '../../styled'
-import { notificationItems } from '../../../common/data/notifications'
-import { getUserNotifications } from '../../../store/actions'
-import { isEmpty } from 'lodash'
-import { getFormattedMessageFromUserNotification, getUrl } from '../../../helpers/notification_helper'
-import { notificationState } from '../../../common/enums/notificationState'
+    ViewAllNotificationsButton 
+} from '../../styled';
+import { notificationItems } from '../../../common/data/notifications';
+import { 
+    getUserNotifications, 
+    setAllNotificationsAsRead as onSetAllNotificationsAsRead,
+    setNotificationAsRead as onSetNotificationAsRead
+} from '../../../store/actions';
+import { isEmpty } from 'lodash';
+import { 
+    getFormattedMessageFromUserNotification, 
+    getUrl,
+    getUserNotificationStateAsString
+} from '../../../helpers/notification_helper';
+import { notificationState } from '../../../common/enums/notificationState';
+import { baseUrl } from '../../../helpers/api_helper';
 
 export const NotificationBell = ({
     isMobileView
 }) => {
-    const [anchorNotif, setAnchorNotif] = useState(null)
-    const isNotification = Boolean(anchorNotif)
-    const [notificationsList, setNotificationsList] = useState(notificationItems)
-    const [isNotifSettings, setIsNotifSettings] = useState(false)
-    const [notificationItemsList, setNotificationItemsList] = useState([])
-    const [unReadCount, setUnReadCount] = useState(0)
+    const [anchorNotif, setAnchorNotif] = useState(null);
+    const isNotification = Boolean(anchorNotif);
+    const [notificationsList, setNotificationsList] = useState(notificationItems);
+    const [isNotifSettings, setIsNotifSettings] = useState(false);
+    const [notificationItemsList, setNotificationItemsList] = useState([]);
+    const [unReadCount, setUnReadCount] = useState(0);
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { notifications } = useSelector(state => ({
-        notifications: state.NotificationBellReducer.notifications
-    }))
+        notifications: state.NotificationReducer.notifications
+    }));
 
     useEffect(() => {
         if (isEmpty(notifications)) {
-            dispatch(getUserNotifications())
+            dispatch(getUserNotifications());
         } else {
-            const { result } = notifications
+            const { result } = notifications;
             if (!isEmpty(result)) {
-                setUnReadCount(result.unreadCount)
+                setUnReadCount(result.unreadCount);
                 
-                const { items } = result
+                const { items } = result;
                 if (!isEmpty(items)) {
-                    let notifications = []
+                    let notifications = [];
                     
                     items.forEach((item) => {
-                        const { id, notification, state } = item
+                        const { id, notification, state } = item;
                         if (!isEmpty(notification)) {
-                            const url = getUrl(item)
+                            const url = getUrl(item);
 
                             notifications.push({
                                 userNotificationId: id,
                                 text: getFormattedMessageFromUserNotification(notification),
                                 time: moment(notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
-                                state,
+                                state: getUserNotificationStateAsString(state),
                                 data: notification.data,
                                 url,
-                                isUnread: item.state === notificationState.UNREAD
-                            })
+                                isUnread: item.state === notificationState.UNREAD,
+                                timeAgo: moment(notification.creationTime).fromNow()
+                            });
                         }
-                    })
+                    });
                 
-                    setNotificationItemsList(notifications)
+                    setNotificationItemsList(notifications);
                 }
             }
         }
-    }, [dispatch, notifications])
+    }, [dispatch, notifications]);
     
     // Handles the opening of the notification dropdown
-    const handleNotifClick = (event) => setAnchorNotif(event.currentTarget)
+    const handleNotifClick = (event) => setAnchorNotif(event.currentTarget);
 
     // Handles the closing of the notification dropdown
-    const handleNotifClose = () => setAnchorNotif(null)
+    const handleNotifClose = () => setAnchorNotif(null);
 
     // Handles the setting of notification to read
     const handleNotifRead = (notif) => {
-        const updatedNotif = notificationsList.map((item) => {
-            if (notif.content===item.content) {
-                return {
-                    ...item,
-                    isRead: true
-                }
-            }
-            return item
-        })
-        setNotificationsList(updatedNotif)
-    }
+        dispatch(onSetNotificationAsRead({
+            id: notif.userNotificationId
+        }));
+    };
 
     // Handles the setting of all notifications to read all
     const handleReadAll = () => {
-        const allRead = notificationsList.map((item) => ({
-            ...item,
-            isRead: true
-        }))
-        setNotificationsList(allRead)
-    }
+        dispatch(onSetAllNotificationsAsRead());
+    };
 
     // Handles the opening of the notification settings modal
-    const handleNotifSettingsOpen = () => setIsNotifSettings(true)
+    const handleNotifSettingsOpen = () => setIsNotifSettings(true);
 
     // Handles the closing of the notification settings modal
-    const handleNotifSettingsClose = () => setIsNotifSettings(false)
+    const handleNotifSettingsClose = () => setIsNotifSettings(false);
+
+    const handleViewAllNotifications = () => window.location.href = `${baseUrl}/app/notifications`;
 
     if (isMobileView) {
         return (
@@ -150,36 +152,36 @@ export const NotificationBell = ({
                     </MenuItem>
                 </Menu>
             </React.Fragment>
-        )
+        );
     } else {
         return (
             <React.Fragment>
                 <HeaderIconButton 
-                    id="notification" 
-                    aria-haspopup="true" 
-                    aria-expanded={isNotification ? "true" : undefined}
-                    aria-label="notification"
+                    id='notification' 
+                    aria-haspopup='true' 
+                    aria-expanded={isNotification ? 'true' : undefined}
+                    aria-label='notification'
                     onClick={handleNotifClick}
                 >
-                    <Badge color="error" variant="dot" invisible={false}>
-                        <i className="fa-regular fa-bell icon"></i>
+                    <Badge color='error' variant='dot' invisible={unReadCount===0}>
+                        <i className='fa-regular fa-bell icon'></i>
                     </Badge>
                 </HeaderIconButton>
                 
                 <NotificationWrapper 
-                    id="notification-list"
+                    id='notification-list'
                     anchorEl={anchorNotif} 
                     open={isNotification} 
                 >
                         <NotificationContent>
                             <NotificationHeader>
-                                <Typography variant="subtitle1" color="white" fontWeight={700}>
-                                    Notifications {/* {`Notifications (${notificationItems.length})`} */}
+                                <Typography variant='subtitle1' color='white' fontWeight={700}>
+                                    {`Notifications ${unReadCount > 0 ? `(${unReadCount})` : ''}`}
                                 </Typography>
                                 <Button 
-                                    variant="text" 
-                                    size="small" 
-                                    sx={{ color: "white", fontSize: "caption" }}
+                                    variant='text' 
+                                    size='small' 
+                                    sx={{ color: 'white', fontSize: 'caption' }}
                                     onClick={handleNotifClose}
                                 >
                                     <i className='fa-regular fa-close' />
@@ -200,56 +202,56 @@ export const NotificationBell = ({
                                                 }
                                             }}
                                         >
-                                            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                                <Box sx={{ display: "flex" }}>
-                                                    <Badge 
-                                                        color="success"
-                                                        variant="dot" 
-                                                        invisible={!notification.isUnread} 
-                                                        sx={{ mt: 1.5 }} 
-                                                    />
+                                            <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                                                <Badge 
+                                                    color='success'
+                                                    variant='dot' 
+                                                    invisible={!notification.isUnread} 
+                                                    sx={{ mt: 1.5 }} 
+                                                />
 
+                                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                                     <Typography
                                                         component={Link}
                                                         to={notification.url}
                                                         onClick={handleNotifClose}
                                                         sx={{
                                                             pl: 1,
-                                                            overflow: "hidden",
-                                                            textOverflow: "ellipsis",
-                                                            display: "-webkit-box",
-                                                            WebkitLineClamp: "2",
-                                                            WebkitBoxOrient: "vertical",
-                                                            textDecoration: "none",
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: '2',
+                                                            WebkitBoxOrient: 'vertical',
+                                                            textDecoration: 'none',
                                                             color: theme.palette.text.primary,
+                                                            fontWeight: notification.isUnread ? 500 : 400
                                                         }}
-                                                        fontWeight={notification.isUnread ? 500 : 400}
                                                     >
                                                         {notification.text}
+                                                    </Typography>
+                                                    
+                                                    <Typography
+                                                        variant='caption'
+                                                        color='grey'
+                                                        sx={{ pl: 1 }}
+                                                    >
+                                                        {notification.timeAgo}
                                                     </Typography>
                                                 </Box>
 
                                                 <IconButton
-                                                    size="small"
+                                                    size='small'
                                                     onClick={() => handleNotifRead(notification)}
                                                     sx={{
                                                         p: 0,
-                                                        width: "1.2rem",
-                                                        height: "1.2rem",
-                                                        display: notification.isUnread !== true ? "none" : "block",
+                                                        width: '1.2rem',
+                                                        height: '1.2rem',
+                                                        display: notification.isUnread === true ? 'none' : 'block',
+                                                        marginLeft: 'auto',
                                                     }}
                                                 >
-                                                    <i className="fa-regular fa-eye secondary-icon" style={{ fontSize: 12 }}></i>
+                                                    <i className='fa-regular fa-eye secondary-icon' style={{ fontSize: 12 }}></i>
                                                 </IconButton>
-                                            </Box>
-                                            <Box>
-                                                <Typography
-                                                    variant="caption"
-                                                    color="grey"
-                                                    sx={{ pl: 1 }}
-                                                >
-                                                    {notification.time}
-                                                </Typography>
                                             </Box>
                                         </Stack>
                                     </NotificationItem>
@@ -258,45 +260,45 @@ export const NotificationBell = ({
     
                             <NotificationFooter>
                                 <IconButton onClick={handleNotifSettingsOpen}>
-                                    <i className="fa-regular fa-gear" style={{ color: grey[500] }} />
+                                    <i className='fa-regular fa-gear' style={{ color: grey[500] }} />
                                 </IconButton>
 
                                 <Modal
                                     open={isNotifSettings}
                                     onClose={handleNotifSettingsClose}
-                                    aria-labelledby="notification-settings"
+                                    aria-labelledby='notification-settings'
                                 >
                                     <Card
                                         sx={{
                                             minWidth: 500,
-                                            position: "absolute",
-                                            top: "30%",
-                                            left: "50%",
-                                            transform: "translate(-50%, -50%)",
+                                            position: 'absolute',
+                                            top: '30%',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%)',
                                         }}
                                     >
                                         <CardHeader
                                             action={
                                                 <IconButton
-                                                    aria-label="close"
+                                                    aria-label='close'
                                                     onClick={handleNotifSettingsClose}
                                                 >
-                                                    <i className="fa-regular fa-close"></i>
+                                                    <i className='fa-regular fa-close'></i>
                                                 </IconButton>
                                             }
-                                            title="Notification Settings" 
+                                            title='Notification Settings' 
                                         />
 
                                         <CardContent>
                                             <FormGroup>
                                                 <FormControlLabel
                                                     control={<Switch defaultChecked />}
-                                                    label="Receive notifications" 
+                                                    label='Receive notifications' 
                                                 />
 
                                                 <Typography
                                                     color={theme.palette.text.secondary}
-                                                    variant="caption"
+                                                    variant='caption'
                                                 >
                                                     This option can be used to completely enable/disable
                                                     receiving notifications.
@@ -306,20 +308,20 @@ export const NotificationBell = ({
 
                                                 <FormControlLabel
                                                     control={<Checkbox defaultChecked />}
-                                                    label="On a new user registered with the application." 
+                                                    label='On a new user registered with the application.' 
                                                 />
                                             </FormGroup>
                                         </CardContent>
 
-                                        <CardActions sx={{ justifyContent: "end" }}>
+                                        <CardActions sx={{ justifyContent: 'end' }}>
                                             <Button onClick={handleNotifSettingsClose}>
                                                 Cancel
                                             </Button>
 
                                             <Button
-                                                variant="contained"
+                                                variant='contained'
                                                 onClick={handleNotifSettingsClose}
-                                                startIcon={<i className="fa-regular fa-save"></i>}
+                                                startIcon={<i className='fa-regular fa-save'></i>}
                                             >
                                                 Save
                                             </Button>
@@ -328,21 +330,21 @@ export const NotificationBell = ({
                                 </Modal>
 
                                 <MarkAllAsReadButton 
-                                    variant="text" 
-                                    size="small" 
-                                    sx={{ fontSize: "caption" }}
+                                    variant='text' 
+                                    size='small' 
+                                    sx={{ fontSize: 'caption' }}
                                     onClick={handleReadAll}
                                 >
-                                    <i class="fa-regular fa-check-double"></i> Mark all as read
+                                    <i class='fa-regular fa-check-double'></i> Set all as read
                                 </MarkAllAsReadButton>
 
-                                <ViewAllNotificationsButton>
-                                    View all notifications
+                                <ViewAllNotificationsButton onClick={handleViewAllNotifications}>
+                                    See all notifications
                                 </ViewAllNotificationsButton>
                             </NotificationFooter>
                         </NotificationContent>
                 </NotificationWrapper>
             </React.Fragment>
-        )
+        );
     }
-}
+};

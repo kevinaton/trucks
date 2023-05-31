@@ -47,9 +47,13 @@ export const NotificationItem = styled(MenuItem)(({ theme }) => ({
     padding: '4px 8px',
 
     '& a': {
-        paddingLeft: '13px',
-        paddingRight: '4px',
+        paddingLeft: '10px',
+        paddingRight: '5px',
         fontSize: '13px'
+    },
+
+    '& div > span': {
+        paddingLeft: '10px'
     },
 
     '&:hover': {
@@ -83,5 +87,9 @@ export const ViewAllNotificationsButton = styled(Button)(({ theme }) => ({
     padding: '3px 6px',
     fontWeight: 400,
     textTransform: 'inherit',
-    letterSpacing: '1px'
+    letterSpacing: '1px',
+
+    '&:hover': {
+        backgroundColor: theme.palette.primary.dark
+    }
 }))
