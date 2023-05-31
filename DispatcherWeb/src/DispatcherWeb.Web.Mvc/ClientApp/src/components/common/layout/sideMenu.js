@@ -20,6 +20,7 @@ import { sideMenuItems } from '../../../common/data/menus';
 import { getMenuItems } from '../../../store/actions';
 
 export const SideMenu = ({
+    isAuthenticated,
     currentPageName,
     drawerOpen,
     DrawerHeader,
@@ -38,15 +39,17 @@ export const SideMenu = ({
     }));
     
     useEffect(() => {
-        if (isEmpty(menuItems)) {
-            dispatch(getMenuItems());
-        } else {
-            const { result } = menuItems;
-            if (!isEmpty(result) && !isEmpty(result.items)) {
-                setSideMenus(result.items);
+        if (isAuthenticated) {
+            if (isEmpty(menuItems)) {
+                dispatch(getMenuItems());
+            } else {
+                const { result } = menuItems;
+                if (!isEmpty(result) && !isEmpty(result.items)) {
+                    setSideMenus(result.items);
+                }
             }
         }
-    }, [dispatch, menuItems]);
+    }, [dispatch, menuItems, isAuthenticated]);
 
     // Handles the collapse function of the sidemenu.
     const handleCollapseOpen = (menu) => {

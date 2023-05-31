@@ -41,7 +41,7 @@ export const HeaderButton = (props) => {
             <Typography sx={{ fontWeight: 600, fontSize: 12 }}>User</Typography>
             <Avatar
                 alt='account'
-                src='https://i.pravatar.cc/150?img=3'
+                src='/reactapp/assets/images/150.jpg'
                 sx={{ ml: 1, width: 24, height: 24 }}
             />
         </Button>

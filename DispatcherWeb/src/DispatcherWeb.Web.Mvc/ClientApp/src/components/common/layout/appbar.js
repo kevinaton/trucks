@@ -21,6 +21,7 @@ import { isEmpty } from 'lodash';
 import { ProfileList } from '../../../common/data/menus';
 
 export const Appbar = ({
+    isAuthenticated,
     drawerOpen,
     handleDrawerClose,
     handleDrawerOpen,
@@ -37,15 +38,17 @@ export const Appbar = ({
     const isProfile = Boolean(anchorProfile);
 
     useEffect(() => {
-        if (supportLinkAddress === null) {
-            dispatch(getSupportLinkAddress());
-        } else {
-            const { result } = supportLinkAddress;
-            if (!isEmpty(result)) {
-                setLinkAddress(result);
+        if (isAuthenticated) {
+            if (supportLinkAddress === null) {
+                dispatch(getSupportLinkAddress());
+            } else {
+                const { result } = supportLinkAddress;
+                if (!isEmpty(result)) {
+                    setLinkAddress(result);
+                }
             }
         }
-    }, [dispatch, supportLinkAddress]);
+    }, [dispatch, supportLinkAddress, isAuthenticated]);
 
     // Handle showing profile menu
     const handleProfileClick = (event) => {
@@ -121,39 +124,41 @@ export const Appbar = ({
                                 flexDirection: 'row',
                                 padding: 0,
                                 alignContent: 'center',
-                            }}>
-                            <MenuItem key='support'>
-                                <HeaderIconButton p={0} aria-label='support'>
-                                    <i
-                                        className='fa-duotone fa-life-ring icon'
-                                        style={{
-                                            '--fa-primary-opacity': '0.3',
-                                            '--fa-secondary-opacity': '1',
-                                        }}></i>
-                                </HeaderIconButton>
-                            </MenuItem>
-                            <MenuItem key='notification'>
-                                <IconButton p={0} aria-label='open notification'>
-                                    <i className='fa-regular fa-bell icon'></i>
-                                </IconButton>
-                            </MenuItem>
-                            <MenuItem key='user'>
-                                <Button p={0}>
-                                    <Avatar
-                                        alt='account'
-                                        src='https://i.pravatar.cc/150?img=3'
-                                        sx={{ mr: 1, width: 24, height: 24 }}
-                                    />
-                                    <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
-                                        User
-                                    </Typography>
-                                </Button>
-                            </MenuItem>
-                            <MenuItem key='message'>
-                                <IconButton p={0} aria-label='open drawer'>
-                                    <i className='fa-regular fa-message icon'></i>
-                                </IconButton>
-                            </MenuItem>
+                            }}
+                        >
+                        <MenuItem key='support'>
+                            <HeaderIconButton p={0} aria-label='support'>
+                                <i
+                                    className='fa-duotone fa-life-ring icon'
+                                    style={{
+                                    '--fa-primary-opacity': '0.3',
+                                    '--fa-secondary-opacity': '1',
+                                    }}
+                                ></i>
+                            </HeaderIconButton>
+                        </MenuItem>
+                        <MenuItem key='notification'>
+                            <IconButton p={0} aria-label='open notification'>
+                                <i className='fa-regular fa-bell icon'></i>
+                            </IconButton>
+                        </MenuItem>
+                        <MenuItem key='user'>
+                            <Button p={0}>
+                                <Avatar
+                                    alt='account'
+                                    src='/reactapp/assets/images/150.jpg'
+                                    sx={{ mr: 1, width: 24, height: 24 }}
+                                />
+                                <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
+                                    User
+                                </Typography>
+                            </Button>
+                        </MenuItem>
+                        <MenuItem key='message'>
+                            <IconButton p={0} aria-label='open drawer'>
+                                <i className='fa-regular fa-message icon'></i>
+                            </IconButton>
+                        </MenuItem>
                         </MenuList>
                     </Menu>
                 </Box>
