@@ -4,14 +4,16 @@ import {
     SET_ALL_NOTIFICATIONS_AS_READ_SUCCESS,
     SET_ALL_NOTIFICATIONS_AS_READ_FAILURE,
     SET_NOTIFICATION_AS_READ_SUCCESS,
-    SET_NOTIFICATION_AS_READ_FAILURE
+    SET_NOTIFICATION_AS_READ_FAILURE,
+    GET_USER_NOTIFICATION_SETTINGS_SUCCESS,
+    GET_USER_NOTIFICATION_SETTINGS_FAILURE,
 } from './actionTypes';
-import { isEmpty } from 'lodash';
 import { notificationState } from '../../common/enums/notificationState';
 
 const INIT_STATE = {
     notifications: null,
-    error: {}
+    error: {},
+    notificationSettings: null
 };
 
 const NotificationReducer = (state = INIT_STATE, action) => {
@@ -85,6 +87,16 @@ const NotificationReducer = (state = INIT_STATE, action) => {
                 ...state,
                 error: action.payload
             };
+        case GET_USER_NOTIFICATION_SETTINGS_SUCCESS:
+            return {
+                ...state,
+                notificationSettings: action.payload
+            };
+        case GET_USER_NOTIFICATION_SETTINGS_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            }
         default:
             return state;
     }   

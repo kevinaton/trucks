@@ -5,25 +5,16 @@ import {
     Badge,
     Box,
     Button,
-    Card,
-    CardActions,
-    CardContent,
-    CardHeader,
-    Checkbox,
-    Divider,
-    FormControlLabel,
-    FormGroup,
     IconButton,
     Menu,
     MenuItem,
-    Modal,
     Stack,
-    Switch,
     Typography
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import moment from 'moment';
 import { HeaderIconButton } from '../../DTComponents';
+import { NotificationSettingsModal } from '../modals'
 import { theme } from '../../../Theme';
 import { 
     NotificationWrapper, 
@@ -193,7 +184,7 @@ export const NotificationBell = ({
                                             sx={{ 
                                                 width: 1,
                                                 backgroundColor: !notification.isUnread ? 'transparent' : '#f1f5f8',
-                                                padding: '10px 8px',
+                                                padding: '6px 8px',
                                                 borderRadius: '8px',
                                                 '&:hover': {
                                                     backgroundColor: '#f1f5f8'
@@ -244,7 +235,7 @@ export const NotificationBell = ({
                                                         p: 0,
                                                         width: '1.2rem',
                                                         height: '1.2rem',
-                                                        display: notification.isUnread === true ? 'none' : 'block',
+                                                        display: notification.isUnread !== true ? 'none' : 'block',
                                                         marginLeft: 'auto',
                                                     }}
                                                 >
@@ -261,71 +252,12 @@ export const NotificationBell = ({
                                     <i className='fa-regular fa-gear' style={{ color: grey[500] }} />
                                 </IconButton>
 
-                                <Modal
+                                <NotificationSettingsModal
                                     open={isNotifSettings}
-                                    onClose={handleNotifSettingsClose}
-                                    aria-labelledby='notification-settings'
-                                >
-                                    <Card
-                                        sx={{
-                                            minWidth: 500,
-                                            position: 'absolute',
-                                            top: '30%',
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                        }}
-                                    >
-                                        <CardHeader
-                                            action={
-                                                <IconButton
-                                                    aria-label='close'
-                                                    onClick={handleNotifSettingsClose}
-                                                >
-                                                    <i className='fa-regular fa-close'></i>
-                                                </IconButton>
-                                            }
-                                            title='Notification Settings' 
-                                        />
-
-                                        <CardContent>
-                                            <FormGroup>
-                                                <FormControlLabel
-                                                    control={<Switch defaultChecked />}
-                                                    label='Receive notifications' 
-                                                />
-
-                                                <Typography
-                                                    color={theme.palette.text.secondary}
-                                                    variant='caption'
-                                                >
-                                                    This option can be used to completely enable/disable
-                                                    receiving notifications.
-                                                </Typography>
-
-                                                <Divider sx={{ my: 3 }} />
-
-                                                <FormControlLabel
-                                                    control={<Checkbox defaultChecked />}
-                                                    label='On a new user registered with the application.' 
-                                                />
-                                            </FormGroup>
-                                        </CardContent>
-
-                                        <CardActions sx={{ justifyContent: 'end' }}>
-                                            <Button onClick={handleNotifSettingsClose}>
-                                                Cancel
-                                            </Button>
-
-                                            <Button
-                                                variant='contained'
-                                                onClick={handleNotifSettingsClose}
-                                                startIcon={<i className='fa-regular fa-save'></i>}
-                                            >
-                                                Save
-                                            </Button>
-                                        </CardActions>
-                                    </Card>
-                                </Modal>
+                                    onClose={handleNotifSettingsClose} 
+                                    labelledBy='notification-settings'
+                                    title='Notification Settings'
+                                />
 
                                 <MarkAllAsReadButton 
                                     variant='text' 

@@ -9,3 +9,6 @@ export const setAllNotificationsAsRead = () => post(url.SET_ALL_NOTIFICATIONS_AS
 
 // set notification as read
 export const setNotificationAsRead = notification => post(url.SET_NOTIFICATION_AS_READ, notification);
+
+// get user notification settings
+export const getUserNotificationSettings = () => get(url.GET_USER_NOTIFICATION_SETTINGS);

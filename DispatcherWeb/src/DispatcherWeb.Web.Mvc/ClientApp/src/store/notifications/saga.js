@@ -2,19 +2,23 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import { 
     GET_USER_NOTIFICATIONS,
     SET_ALL_NOTIFICATIONS_AS_READ,
-    SET_NOTIFICATION_AS_READ } from './actionTypes';
+    SET_NOTIFICATION_AS_READ,
+    GET_USER_NOTIFICATION_SETTINGS } from './actionTypes';
 import {
     getUserNotificationsSuccess,
     getUserNotificationsFailure,
     setAllNotificationsAsReadSuccess,
     setAllNotificationsAsReadFailure,
     setNotificationAsReadSuccess,
-    setNotificationAsReadFailure
+    setNotificationAsReadFailure,
+    getUserNotificationSettingsSuccess,
+    getUserNotificationSettingsFailure
 } from './actions';
 import { 
     getUserNotifications, 
     setAllNotificationsAsRead,
-    setNotificationAsRead } from './service';
+    setNotificationAsRead,
+    getUserNotificationSettings } from './service';
 
 function* fetchUserNotifications() {
     try {
@@ -22,6 +26,15 @@ function* fetchUserNotifications() {
         yield put(getUserNotificationsSuccess(response));
     } catch (error) {
         yield put(getUserNotificationsFailure(error));
+    }
+}
+
+function* fetchUserNotificationSettings() {
+    try {
+        const response = yield call(getUserNotificationSettings);
+        yield put(getUserNotificationSettingsSuccess(response));
+    } catch (error) {
+        yield put(getUserNotificationSettingsFailure(error));
     }
 }
 
@@ -36,7 +49,7 @@ function* onSetAllNotificationsAsRead() {
 
 function* onSetNotificationAsRead({ payload: notification }) {
     try {
-        const response = yield call(setNotificationAsRead, notification);
+        yield call(setNotificationAsRead, notification);
         yield put(setNotificationAsReadSuccess(notification));
     } catch (error) {
         yield put(setNotificationAsReadFailure(error));
@@ -45,6 +58,7 @@ function* onSetNotificationAsRead({ payload: notification }) {
 
 function* notificationSaga() {
     yield takeEvery(GET_USER_NOTIFICATIONS, fetchUserNotifications);
+    yield takeEvery(GET_USER_NOTIFICATION_SETTINGS, fetchUserNotificationSettings);
     yield takeEvery(SET_ALL_NOTIFICATIONS_AS_READ, onSetAllNotificationsAsRead);
     yield takeEvery(SET_NOTIFICATION_AS_READ, onSetNotificationAsRead);
 }

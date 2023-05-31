@@ -7,7 +7,10 @@ import {
     SET_ALL_NOTIFICATIONS_AS_READ_FAILURE,
     SET_NOTIFICATION_AS_READ,
     SET_NOTIFICATION_AS_READ_SUCCESS,
-    SET_NOTIFICATION_AS_READ_FAILURE
+    SET_NOTIFICATION_AS_READ_FAILURE,
+    GET_USER_NOTIFICATION_SETTINGS,
+    GET_USER_NOTIFICATION_SETTINGS_SUCCESS,
+    GET_USER_NOTIFICATION_SETTINGS_FAILURE,
 } from './actionTypes';
 
 export const getUserNotifications = () => ({
@@ -51,4 +54,18 @@ export const setNotificationAsReadSuccess = notification => ({
 export const setNotificationAsReadFailure = error => ({
     type: SET_NOTIFICATION_AS_READ_FAILURE,
     payload: error
-})
+});
+
+export const getUserNotificationSettings = () => ({
+    type: GET_USER_NOTIFICATION_SETTINGS
+});
+
+export const getUserNotificationSettingsSuccess = settings => ({
+    type: GET_USER_NOTIFICATION_SETTINGS_SUCCESS,
+    payload: settings
+});
+
+export const getUserNotificationSettingsFailure = error => ({
+    type: GET_USER_NOTIFICATION_SETTINGS_FAILURE,
+    payload: error
+});
