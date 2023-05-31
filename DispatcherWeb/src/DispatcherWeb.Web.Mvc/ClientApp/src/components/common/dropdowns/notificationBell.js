@@ -34,7 +34,6 @@ import {
     MarkAllAsReadButton,
     ViewAllNotificationsButton 
 } from '../../styled';
-import { notificationItems } from '../../../common/data/notifications';
 import { 
     getUserNotifications, 
     setAllNotificationsAsRead as onSetAllNotificationsAsRead,
@@ -54,7 +53,6 @@ export const NotificationBell = ({
 }) => {
     const [anchorNotif, setAnchorNotif] = useState(null);
     const isNotification = Boolean(anchorNotif);
-    const [notificationsList, setNotificationsList] = useState(notificationItems);
     const [isNotifSettings, setIsNotifSettings] = useState(false);
     const [notificationItemsList, setNotificationItemsList] = useState([]);
     const [unReadCount, setUnReadCount] = useState(0);
