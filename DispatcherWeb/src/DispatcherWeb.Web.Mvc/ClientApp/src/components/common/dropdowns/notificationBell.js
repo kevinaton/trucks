@@ -37,6 +37,7 @@ import { notificationItems } from '../../../common/data/notifications'
 import { getUserNotifications } from '../../../store/actions'
 import { isEmpty } from 'lodash'
 import { getFormattedMessageFromUserNotification, getUrl } from '../../../helpers/notification_helper'
+import { notificationState } from '../../../common/enums/notificationState'
 
 export const NotificationBell = ({
     isMobileView
@@ -77,12 +78,11 @@ export const NotificationBell = ({
                                 state,
                                 data: notification.data,
                                 url,
-                                isUnread: item.state === 'UNREAD'
+                                isUnread: item.state === notificationState.UNREAD
                             })
                         }
                     })
                 
-                    console.log('notifications: ', notifications)
                     setNotificationItemsList(notifications)
                 }
             }
@@ -174,7 +174,7 @@ export const NotificationBell = ({
                         <NotificationContent>
                             <NotificationHeader>
                                 <Typography variant="subtitle1" color="white" fontWeight={700}>
-                                    {/* {notificationItems.length} */} Notifications
+                                    Notifications {/* {`Notifications (${notificationItems.length})`} */}
                                 </Typography>
                                 <Button 
                                     variant="text" 
@@ -236,8 +236,7 @@ export const NotificationBell = ({
                                                         p: 0,
                                                         width: "1.2rem",
                                                         height: "1.2rem",
-                                                        display:
-                                                        notification.isUnread !== true ? "none" : "block",
+                                                        display: notification.isUnread !== true ? "none" : "block",
                                                     }}
                                                 >
                                                     <i className="fa-regular fa-eye secondary-icon" style={{ fontSize: 12 }}></i>
@@ -280,21 +279,25 @@ export const NotificationBell = ({
                                             action={
                                                 <IconButton
                                                     aria-label="close"
-                                                    onClick={handleNotifSettingsClose}>
+                                                    onClick={handleNotifSettingsClose}
+                                                >
                                                     <i className="fa-regular fa-close"></i>
                                                 </IconButton>
                                             }
-                                            title="Notification Settings" />
+                                            title="Notification Settings" 
+                                        />
 
                                         <CardContent>
                                             <FormGroup>
                                                 <FormControlLabel
                                                     control={<Switch defaultChecked />}
-                                                    label="Receive notifications" />
+                                                    label="Receive notifications" 
+                                                />
 
                                                 <Typography
                                                     color={theme.palette.text.secondary}
-                                                    variant="caption">
+                                                    variant="caption"
+                                                >
                                                     This option can be used to completely enable/disable
                                                     receiving notifications.
                                                 </Typography>
@@ -303,7 +306,8 @@ export const NotificationBell = ({
 
                                                 <FormControlLabel
                                                     control={<Checkbox defaultChecked />}
-                                                    label="On a new user registered with the application." />
+                                                    label="On a new user registered with the application." 
+                                                />
                                             </FormGroup>
                                         </CardContent>
 
@@ -315,7 +319,8 @@ export const NotificationBell = ({
                                             <Button
                                                 variant="contained"
                                                 onClick={handleNotifSettingsClose}
-                                                startIcon={<i className="fa-regular fa-save"></i>}>
+                                                startIcon={<i className="fa-regular fa-save"></i>}
+                                            >
                                                 Save
                                             </Button>
                                         </CardActions>
@@ -326,7 +331,8 @@ export const NotificationBell = ({
                                     variant="text" 
                                     size="small" 
                                     sx={{ fontSize: "caption" }}
-                                    onClick={handleReadAll}>
+                                    onClick={handleReadAll}
+                                >
                                     <i class="fa-regular fa-check-double"></i> Mark all as read
                                 </MarkAllAsReadButton>
 

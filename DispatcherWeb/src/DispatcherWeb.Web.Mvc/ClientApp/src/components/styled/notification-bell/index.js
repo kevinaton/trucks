@@ -11,6 +11,10 @@ export const NotificationWrapper = styled(Menu)(({ theme }) => ({
             padding: 0
         }
     },
+
+    '& .MuiBackdrop-root': {
+        backgroundColor: 'rgba(214, 234, 239, 0.61)', // Replace 'your-color-here' with your desired color
+    },
 }))
 
 export const NotificationContent = styled(Paper)(({ theme }) => ({
