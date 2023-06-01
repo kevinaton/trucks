@@ -436,7 +436,9 @@ namespace DispatcherWeb.Tickets
                         IsReadOnly = t.InvoiceLine != null //already invoiced
                                 || t.PayStatementTickets.Any() //already added to pay statements
                                 || t.ReceiptLineId != null //already added to receipts
-                                || t.LeaseHaulerStatementTicket != null //added to lease hauler statements
+                                || t.LeaseHaulerStatementTicket != null, //added to lease hauler statements
+                        HasPayStatements = t.PayStatementTickets.Any(),
+                        HasLeaseHaulerStatements = t.LeaseHaulerStatementTicket != null
                     })
                     .FirstAsync(t => t.Id == input.Id.Value);
 
@@ -949,6 +951,8 @@ namespace DispatcherWeb.Tickets
                     IsBilled = t.IsBilled,
                     TicketPhotoId = t.TicketPhotoId,
                     InvoiceLineId = (int?)t.InvoiceLine.Id,
+                    HasPayStatements = t.PayStatementTickets.Any(),
+                    HasLeaseHaulerStatements = t.LeaseHaulerStatementTicket != null,
                     ReceiptLineId = t.ReceiptLineId,
                     LoadAtNamePlain = t.LoadAt.Name + ", " + t.LoadAt.StreetAddress + ", " + t.LoadAt.City + ", " + t.LoadAt.State, //for sorting
                     LoadAt = t.LoadAt == null ? null : new LocationNameDto

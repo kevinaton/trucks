@@ -136,7 +136,11 @@ namespace DispatcherWeb.Orders.Reports
                 items.AddRange(driverModel.Tickets.Select(t => new PayStatementItemEditDto
                 {
                     ItemKind = PayStatementItemKind.Ticket,
-                    Date = t.TicketDateTime,
+                    Date = t.DriverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.TicketDate
+                        ? t.TicketDateTime
+                        : t.DriverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.OrderDate
+                            ? t.OrderDeliveryDate
+                            : null,
                     Quantity = t.Quantity,
                     Total = t.Total,
                     DriverPayRate = t.DriverPayRate,

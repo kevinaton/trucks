@@ -574,7 +574,7 @@ namespace DispatcherWeb.Dashboard
                 .Select(x => new
                 {
                     Quantity = x.Ticket.Quantity,
-                    FreightRate = x.Ticket.OrderLine.FreightPricePerUnit ?? 0,
+                    FreightRate = x.Ticket.OrderLine.FreightRateToPayDrivers ?? 0,
                     DriverPayRate = x.ProductionPay.PayRate,
                 })
                 .SumAsync(x => Math.Round(x.Quantity * x.FreightRate * x.DriverPayRate / 100, 2));

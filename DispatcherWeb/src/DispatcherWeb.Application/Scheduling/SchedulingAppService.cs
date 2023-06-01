@@ -763,9 +763,16 @@ namespace DispatcherWeb.Scheduling
             // Local functions
             async Task<bool> DriverAssignmentWithDriverExists()
             {
-                DriverAssignment driverAssignment = await _driverAssignmentRepository.GetAll()
+                var driverAssignment = await _driverAssignmentRepository.GetAll()
                     .Where(da => da.TruckId == truckId && da.Date == date && da.Shift == shift)
+                    .Select(x => new
+                    {
+                        x.Id,
+                        x.DriverId
+                    })
+                    .OrderByDescending(x => x.Id)
                     .FirstOrDefaultAsync();
+
                 if (driverAssignment != null)
                 {
                     if (driverAssignment.DriverId == null && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers))
@@ -1239,8 +1246,9 @@ namespace DispatcherWeb.Scheduling
 
                 ConvertScheduleOrderTimesFromUtc(scheduleOrderLineDto, timezone);
 
+                var validateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization);
                 var remainingUtilization = await GetRemainingTruckUtilizationForOrderLineAsync(scheduleOrderLineDto, truck);
-                if (remainingUtilization < originalOrderLineTruck.Utilization || remainingUtilization == 0)
+                if (validateUtilization && (remainingUtilization < originalOrderLineTruck.Utilization || remainingUtilization == 0))
                 {
                     continue;
                 }
@@ -1251,6 +1259,7 @@ namespace DispatcherWeb.Scheduling
                         existingDriverAssignments.Any(da => da.TruckId == originalOrderLineTruck.TruckId && da.DriverId == null)
                         || !truck.HasDefaultDriver && !existingDriverAssignments.Any(da => da.TruckId == originalOrderLineTruck.TruckId && da.DriverId != null)
                     )
+                    && validateUtilization
                 )
                 {
                     result.SomeTrucksAreNotCopied = true;
@@ -1263,7 +1272,11 @@ namespace DispatcherWeb.Scheduling
 
                 if (utilizationToAssign == 0)
                 {
-                    continue;
+                    if (validateUtilization)
+                    {
+                        continue;
+                    }
+                    utilizationToAssign = 1;
                 }
 
                 passedOrderLineTrucks.Add(new OrderLineTruck
@@ -1973,6 +1986,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     x.Utilization,
                     x.ScheduledTrucks,
+                    x.NumberOfTrucks,
                     x.Date,
                     x.Shift,
                 })
@@ -1984,6 +1998,7 @@ namespace DispatcherWeb.Scheduling
             }
 
             var orderLineMaxUtilization = orderLine.ScheduledTrucks.HasValue ? Convert.ToDecimal(orderLine.ScheduledTrucks.Value) : 0;
+            var orderLineRequestedNumberOfTrucks = orderLine.NumberOfTrucks.HasValue ? Convert.ToDecimal(orderLine.NumberOfTrucks.Value) : 0;
 
             var currentTruckUtilization = orderLineTruck.Utilization;
             var truckUtilization = await _orderLineTruckRepository.GetAll()
@@ -1992,12 +2007,15 @@ namespace DispatcherWeb.Scheduling
             var remainingTruckUtilization = await GetRemainingTruckUtilizationForOrderAsync(new GetRemainingTruckUtilizationForOrderInput
             {
                 OrderMaxUtilization = orderLineMaxUtilization,
+                OrderRequestedNumberOfTrucks = orderLineRequestedNumberOfTrucks,
                 OrderUtilization = orderLine.Utilization,
                 AssetType = orderLineTruck.AssetType,
                 IsPowered = orderLineTruck.IsPowered,
                 TruckUtilization = truckUtilization,
             });
-            var maxUtilization = Math.Min(1, currentTruckUtilization + remainingTruckUtilization);
+            var maxUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization)
+                ? Math.Min(1, currentTruckUtilization + remainingTruckUtilization)
+                : 1;
             return new OrderLineTruckDetailsDto
             {
                 OrderLineTruckId = input.Id,
@@ -2110,6 +2128,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     //x.Utilization,
                     x.ScheduledTrucks,
+                    x.NumberOfTrucks,
                     x.Date,
                     x.Shift,
                 })
@@ -2150,6 +2169,7 @@ namespace DispatcherWeb.Scheduling
             }
 
             var orderLineMaxUtilization = orderLine.ScheduledTrucks.HasValue ? Convert.ToDecimal(orderLine.ScheduledTrucks.Value) : 0;
+            var orderLineRequestedNumberOfTrucks = orderLine.NumberOfTrucks.HasValue ? Convert.ToDecimal(orderLine.NumberOfTrucks.Value) : 0;
             var orderLineUtilization = 0M;
 
             foreach (var orderLineTruck in orderLineTrucks)
@@ -2161,6 +2181,7 @@ namespace DispatcherWeb.Scheduling
                 var remainingTruckUtilization = await GetRemainingTruckUtilizationForOrderAsync(new GetRemainingTruckUtilizationForOrderInput
                 {
                     OrderMaxUtilization = orderLineMaxUtilization,
+                    OrderRequestedNumberOfTrucks = orderLineRequestedNumberOfTrucks,
                     OrderUtilization = orderLineUtilization,
                     AssetType = orderLineTruck.Truck.VehicleCategory.AssetType,
                     IsPowered = orderLineTruck.Truck.VehicleCategory.IsPowered,
@@ -2192,7 +2213,11 @@ namespace DispatcherWeb.Scheduling
         {
             if (!await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ValidateUtilization))
             {
-                return 1;
+                if (input.OrderRequestedNumberOfTrucks <= 0)
+                {
+                    return 1;
+                }
+                return Math.Min(input.OrderRequestedNumberOfTrucks, 1);
             }
 
             if (input.OrderMaxUtilization == 0) return 0;

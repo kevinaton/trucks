@@ -23,6 +23,8 @@ namespace DispatcherWeb.Tickets.Dto
         public Guid? TicketPhotoId { get; set; }
         public int? ReceiptLineId { get; set; }
         public int? InvoiceLineId { get; set; }
+        public bool HasPayStatements { get; set; }
+        public bool HasLeaseHaulerStatements { get; set; }
 
         public Shift? ShiftRaw { get; set; }
         public string Shift { get; set; }

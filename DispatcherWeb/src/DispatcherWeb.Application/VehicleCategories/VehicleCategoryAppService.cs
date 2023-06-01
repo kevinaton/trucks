@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.UI;
@@ -27,8 +28,13 @@ namespace DispatcherWeb.VehicleCategories
         }
 
         [AbpAuthorize(AppPermissions.Pages_VehicleCategories)]
-        public async Task<bool> CanDeleteVehicleCategory(EntityDto input) =>
-            !await _truckRepository.GetAll().AnyAsync(p => p.VehicleCategoryId == input.Id);
+        public async Task<bool> CanDeleteVehicleCategory(EntityDto input)
+        {
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.SoftDelete))
+            {
+                return !await _truckRepository.GetAll().AnyAsync(p => p.VehicleCategoryId == input.Id);
+            }
+        }
 
         [AbpAuthorize(AppPermissions.Pages_VehicleCategories)]
         public async Task DeleteVehicleCategory(EntityDto input)
