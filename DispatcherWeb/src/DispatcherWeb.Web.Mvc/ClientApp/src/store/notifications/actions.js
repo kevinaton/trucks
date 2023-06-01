@@ -11,6 +11,9 @@ import {
     GET_USER_NOTIFICATION_SETTINGS,
     GET_USER_NOTIFICATION_SETTINGS_SUCCESS,
     GET_USER_NOTIFICATION_SETTINGS_FAILURE,
+    UPDATE_USER_NOTIFICATION_SETTINGS,
+    UPDATE_USER_NOTIFICATION_SETTINGS_SUCCESS,
+    UPDATE_USER_NOTIFICATION_SETTINGS_FAILURE
 } from './actionTypes';
 
 export const getUserNotifications = () => ({
@@ -67,5 +70,20 @@ export const getUserNotificationSettingsSuccess = settings => ({
 
 export const getUserNotificationSettingsFailure = error => ({
     type: GET_USER_NOTIFICATION_SETTINGS_FAILURE,
+    payload: error
+});
+
+export const updateUserNotificationSettings = settings => ({
+    type: UPDATE_USER_NOTIFICATION_SETTINGS,
+    payload: settings
+});
+
+export const updateUserNotificationSettingsSuccess = settings => ({
+    type: UPDATE_USER_NOTIFICATION_SETTINGS_SUCCESS,
+    payload: settings
+});
+
+export const updateUserNotificationSettingsFailure = error => ({
+    type: UPDATE_USER_NOTIFICATION_SETTINGS_FAILURE,
     payload: error
 });

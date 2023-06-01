@@ -3,7 +3,9 @@ import {
     GET_USER_NOTIFICATIONS,
     SET_ALL_NOTIFICATIONS_AS_READ,
     SET_NOTIFICATION_AS_READ,
-    GET_USER_NOTIFICATION_SETTINGS } from './actionTypes';
+    GET_USER_NOTIFICATION_SETTINGS,
+    UPDATE_USER_NOTIFICATION_SETTINGS } 
+from './actionTypes';
 import {
     getUserNotificationsSuccess,
     getUserNotificationsFailure,
@@ -12,13 +14,17 @@ import {
     setNotificationAsReadSuccess,
     setNotificationAsReadFailure,
     getUserNotificationSettingsSuccess,
-    getUserNotificationSettingsFailure
+    getUserNotificationSettingsFailure,
+    updateUserNotificationSettingsSuccess,
+    updateUserNotificationSettingsFailure
 } from './actions';
 import { 
     getUserNotifications, 
     setAllNotificationsAsRead,
     setNotificationAsRead,
-    getUserNotificationSettings } from './service';
+    getUserNotificationSettings,
+    updateUserNotificationSettings
+} from './service';
 
 function* fetchUserNotifications() {
     try {
@@ -56,11 +62,21 @@ function* onSetNotificationAsRead({ payload: notification }) {
     }
 }
 
+function* onUpdateUserNotificationSettings({ payload: settings }) {
+    try {
+        yield call(updateUserNotificationSettings, settings);
+        yield put(updateUserNotificationSettingsSuccess(settings));
+    } catch (error) {
+        yield put(updateUserNotificationSettingsFailure(error));
+    }
+}
+
 function* notificationSaga() {
     yield takeEvery(GET_USER_NOTIFICATIONS, fetchUserNotifications);
     yield takeEvery(GET_USER_NOTIFICATION_SETTINGS, fetchUserNotificationSettings);
     yield takeEvery(SET_ALL_NOTIFICATIONS_AS_READ, onSetAllNotificationsAsRead);
     yield takeEvery(SET_NOTIFICATION_AS_READ, onSetNotificationAsRead);
+    yield takeEvery(UPDATE_USER_NOTIFICATION_SETTINGS, onUpdateUserNotificationSettings);
 }
 
 export default notificationSaga;

@@ -28,3 +28,9 @@ export async function post(url, data, config = {}) {
         .post(url, data, { ...config })
         .then((response) => response.data);
 };
+
+export async function put(url, data, config = {}) {
+    return await axiosApi
+        .put(url, data, { ...config })
+        .then((response) => response.data);
+};

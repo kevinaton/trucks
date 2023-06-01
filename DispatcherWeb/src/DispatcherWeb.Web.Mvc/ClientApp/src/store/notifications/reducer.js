@@ -7,6 +7,8 @@ import {
     SET_NOTIFICATION_AS_READ_FAILURE,
     GET_USER_NOTIFICATION_SETTINGS_SUCCESS,
     GET_USER_NOTIFICATION_SETTINGS_FAILURE,
+    UPDATE_USER_NOTIFICATION_SETTINGS_SUCCESS,
+    UPDATE_USER_NOTIFICATION_SETTINGS_FAILURE
 } from './actionTypes';
 import { notificationState } from '../../common/enums/notificationState';
 
@@ -97,6 +99,16 @@ const NotificationReducer = (state = INIT_STATE, action) => {
                 ...state,
                 error: action.payload
             }
+        case UPDATE_USER_NOTIFICATION_SETTINGS_SUCCESS:
+            return {
+                ...state,
+                notificationSettings: action.payload
+            };
+        case UPDATE_USER_NOTIFICATION_SETTINGS_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            };
         default:
             return state;
     }   

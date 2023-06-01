@@ -15,7 +15,7 @@ import {
     Switch,
     Typography
 } from '@mui/material';
-import { isEmpty } from 'lodash';
+import { isEmpty, set } from 'lodash';
 import { theme } from '../../../Theme'
 import { getUserNotificationSettings } from '../../../store/actions';
 
@@ -25,6 +25,11 @@ export const NotificationSettingsModal = ({
     labelledBy,
     title
 }) => {
+    const [userNotificationSettings, setUserNotificationSettings] = useState({
+        receiveNotifications: false,
+        notifications: []
+    });
+
     const dispatch = useDispatch();
     const { notificationSettings } = useSelector(state => ({
         notificationSettings: state.NotificationReducer.notificationSettings
@@ -36,10 +41,41 @@ export const NotificationSettingsModal = ({
                 dispatch(getUserNotificationSettings());
             } else {
                 const { result } = notificationSettings;
+                if (!isEmpty(result)) {
+                    setUserNotificationSettings(result);
+                }
+
                 console.log('result: ', result)
             }
         }
     }, [dispatch, open, notificationSettings]);
+
+    const handleToReceiveNotificationsChange = event => {
+        setUserNotificationSettings({
+            ...userNotificationSettings,
+            receiveNotifications: event.target.checked
+        });
+    };
+
+    const handleNotifChange = (event, notif) => {
+        const updatedNotifications = userNotificationSettings.notifications.map((item) => {
+            if (notif.name===item.name) {
+                return {
+                    ...item,
+                    isSubscribed: event.target.checked
+                }
+            }
+            return item
+        });
+        setUserNotificationSettings({
+            ...userNotificationSettings,
+            notifications: updatedNotifications
+        });
+    };
+
+    const handleSave = () => {
+        console.log('userNotificationSettings: ', userNotificationSettings);
+    }
 
     return (
         <Modal
@@ -71,7 +107,12 @@ export const NotificationSettingsModal = ({
                 <CardContent>
                     <FormGroup>
                         <FormControlLabel
-                            control={<Switch defaultChecked />}
+                            control={
+                                <Switch 
+                                    checked={userNotificationSettings.receiveNotifications} 
+                                    onChange={handleToReceiveNotificationsChange}
+                                />
+                            }
                             label='Receive notifications' 
                         />
 
@@ -85,10 +126,26 @@ export const NotificationSettingsModal = ({
 
                         <Divider sx={{ my: 3 }} />
 
-                        <FormControlLabel
-                            control={<Checkbox defaultChecked />}
-                            label='On a new user registered with the application.' 
-                        />
+                        <Typography
+                            color={theme.palette.warning.main} 
+                            variant='caption'
+                        >
+                            You completely disabled receiving notifications. You can enable it and select notification types you want to receive.
+                        </Typography>
+
+                        { userNotificationSettings.notifications.map((notif, index) => {
+                            return (
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox 
+                                            checked={notif.isSubscribed} 
+                                            onChange={(e) => handleNotifChange(e, notif)}
+                                        />
+                                    }
+                                    label={notif.displayName} 
+                                />
+                            )
+                        })}
                     </FormGroup>
                 </CardContent>
 
@@ -99,7 +156,7 @@ export const NotificationSettingsModal = ({
 
                     <Button
                         variant='contained'
-                        onClick={onClose}
+                        onClick={handleSave}
                         startIcon={<i className='fa-regular fa-save'></i>}
                     >
                         Save

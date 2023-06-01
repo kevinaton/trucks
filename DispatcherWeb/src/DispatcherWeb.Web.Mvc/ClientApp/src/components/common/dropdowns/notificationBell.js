@@ -269,7 +269,7 @@ export const NotificationBell = ({
                                 </MarkAllAsReadButton>
 
                                 <ViewAllNotificationsButton onClick={handleViewAllNotifications}>
-                                    See all notifications
+                                    See more
                                 </ViewAllNotificationsButton>
                             </NotificationFooter>
                         </NotificationContent>

@@ -13,3 +13,4 @@ export const GET_USER_NOTIFICATIONS = '/Notification/GetUserNotifications?maxRes
 export const GET_USER_NOTIFICATION_SETTINGS = '/Notification/GetNotificationSettings';
 export const SET_ALL_NOTIFICATIONS_AS_READ = '/Notification/SetAllNotificationsAsRead';
 export const SET_NOTIFICATION_AS_READ = '/Notification/SetNotificationAsRead';
+export const UPDATE_USER_NOTIFICATION_SETTINGS = '/Notification/UpdateNotificationSettings';
