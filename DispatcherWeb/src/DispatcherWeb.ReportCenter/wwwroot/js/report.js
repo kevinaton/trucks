@@ -1,19 +1,22 @@
 ﻿var reportViewerModule = (function () {
 
+    let __viewer;
+
     var _settings = {
         productsInProgressLoading: false
     };
 
-    let __viewer;
     var _initialized = false;
 
     var _init = function (settings) {
         _settings = $.extend(_settings, settings);
 
+        var _reportParams = [{ name: 'TenantId', values: [_settings.tenantId] }];
+
         // Initialize to open the report in the viewer;
         __viewer = GrapeCity.ActiveReports.JSViewer.create({
+
             element: '#viewerContainer',
-            reportParameters: [{ name: 'TenantId', values: [_settings.tenantId] }],
 
             action: (actionType, actionParams) => console.log('Action type: ' + actionType + '; Action parameters: ' + actionParams),
             error: (error) => {
@@ -61,7 +64,7 @@
             }
         });
 
-        __viewer.openReport(`${_settings.reportPathSanitized}`);
+        __viewer.openReport(`${_settings.reportPathSanitized}`, _reportParams);
     };
 
     return {

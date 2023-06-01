@@ -15,10 +15,10 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Migrations\20230518133848_ActiveReports.sql" />
+    <None Remove="Migrations\20230529133117_ActiveReports.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\20230518133848_ActiveReports.sql" />
+    <EmbeddedResource Include="Migrations\20230529133117_ActiveReports.sql" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />

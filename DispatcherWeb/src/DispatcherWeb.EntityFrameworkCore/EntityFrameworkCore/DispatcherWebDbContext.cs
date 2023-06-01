@@ -261,8 +261,8 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<HostEmailReceiver> HostEmailReceivers { get; set; }
 
-        public virtual DbSet<Report> Reports { get; set; }
-        public virtual DbSet<ReportCategory> ReportCategories { get; set; }
+        public virtual DbSet<ActiveReport> ActiveReports { get; set; }
+        public virtual DbSet<ActiveReportCategory> ActiveReportCategories { get; set; }
 
         public DispatcherWebDbContext(DbContextOptions<DispatcherWebDbContext> options)
             : base(options)
@@ -393,7 +393,7 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new WialonDeviceTypeConfiguration());
             modelBuilder.ApplyConfiguration(new WorkOrderConfiguration());
             modelBuilder.ApplyConfiguration(new WorkOrderLineConfiguration());
-            modelBuilder.ApplyConfiguration(new ReportConfiguration());
+            modelBuilder.ApplyConfiguration(new ActiveReportConfiguration());
 
             modelBuilder.ConfigurePersistedGrantEntity();
         }

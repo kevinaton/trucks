@@ -11,7 +11,7 @@ namespace DispatcherWeb.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ReportCategory",
+                name: "ActiveReportCategory",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -27,11 +27,11 @@ namespace DispatcherWeb.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportCategory", x => x.Id);
+                    table.PrimaryKey("PK_ActiveReportCategory", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Report",
+                name: "ActiveReport",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -50,20 +50,19 @@ namespace DispatcherWeb.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Report", x => x.Id);
+                    table.PrimaryKey("PK_ActiveReport", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Report_ReportCategory_CategoryId",
+                        name: "FK_ActiveReport_ActiveReportCategory_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "ReportCategory",
+                        principalTable: "ActiveReportCategory",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Report_CategoryId",
-                table: "Report",
+                name: "IX_ActiveReport_CategoryId",
+                table: "ActiveReport",
                 column: "CategoryId");
-
 
             migrationBuilder.ReadAndExecuteSql();
         }
@@ -71,10 +70,10 @@ namespace DispatcherWeb.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Report");
+                name: "ActiveReport");
 
             migrationBuilder.DropTable(
-                name: "ReportCategory");
+                name: "ActiveReportCategory");
         }
     }
 }

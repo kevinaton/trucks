@@ -6833,7 +6833,7 @@ namespace DispatcherWeb.Migrations
                     b.ToTable("QuoteService");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.Reports.Report", b =>
+            modelBuilder.Entity("DispatcherWeb.Reports.ActiveReport", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -6883,10 +6883,10 @@ namespace DispatcherWeb.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Report");
+                    b.ToTable("ActiveReport");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.Reports.ReportCategory", b =>
+            modelBuilder.Entity("DispatcherWeb.Reports.ActiveReportCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -6920,7 +6920,7 @@ namespace DispatcherWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReportCategory");
+                    b.ToTable("ActiveReportCategory");
                 });
 
             modelBuilder.Entity("DispatcherWeb.ScheduledReports.ScheduledReport", b =>
@@ -10469,12 +10469,12 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.Reports.Report", b =>
+            modelBuilder.Entity("DispatcherWeb.Reports.ActiveReport", b =>
                 {
-                    b.HasOne("DispatcherWeb.Reports.ReportCategory", "Category")
+                    b.HasOne("DispatcherWeb.Reports.ActiveReportCategory", "Category")
                         .WithMany("Report")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -11078,7 +11078,7 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("OrderLines");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.Reports.ReportCategory", b =>
+            modelBuilder.Entity("DispatcherWeb.Reports.ActiveReportCategory", b =>
                 {
                     b.Navigation("Report");
                 });

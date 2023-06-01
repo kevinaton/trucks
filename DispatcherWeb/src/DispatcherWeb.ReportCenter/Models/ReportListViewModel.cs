@@ -1,10 +1,10 @@
-﻿using DispatcherWeb.ReportCenter.Models.DTO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using DispatcherWeb.ActiveReports.Dto;
 
 namespace DispatcherWeb.ReportCenter.Models
 {
     public class ReportListViewModel
     {
-        public List<ReportListItemDto> Reports { get; set; }
+        public List<ActiveReportListItemDto> Reports { get; set; }
     }
 }

@@ -94,6 +94,24 @@
 	<PageWidth>14in</PageWidth>
 	<TopMargin>0.125in</TopMargin>
 	<Width>14in</Width>
+	<ReportParameters>
+		<ReportParameter Name="TenantId">
+			<DataType>Integer</DataType>
+			<Nullable>true</Nullable>
+			<Prompt>Tenant</Prompt>
+			<ValidValues>
+				<DataSetReference>
+					<DataSetName>TenantsDataSet</DataSetName>
+					<LabelField>TenantName</LabelField>
+					<ValueField>TenantId</ValueField>
+				</DataSetReference>
+				<dd:OrderBy xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
+					<Condition>Label</Condition>
+					<Direction>Ascending</Direction>
+				</dd:OrderBy>
+			</ValidValues>
+		</ReportParameter>
+	</ReportParameters>
 	<dd:EmbeddedStyleSheets xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
 		<EmbeddedStyleSheet Name="MainStylesheet">
 			<Data>﻿&lt;dd:StyleSheet xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition"&gt;
@@ -149,27 +167,27 @@
 		</EmbeddedStyleSheet>
 	</dd:EmbeddedStyleSheets>
 	<DataSources>
-		<DataSource Name="DataSource1">
-			<DataSourceReference>F:\TruckDispatcher\_Projects\DispatcherWeb\_Codes.GIT\DispatcherWeb\src\DispatcherWeb.ReportCenter\Reports\DataSource.Dev.rdsx</DataSourceReference>
+		<DataSource Name="TenantsDataSource">
+			<DataSourceReference>DataSource.Dev.rdsx</DataSourceReference>
 		</DataSource>
 	</DataSources>
 	<DataSets>
-		<DataSet Name="Tenants">
+		<DataSet Name="TenantsDataSet">
 			<Fields>
-				<Field Name="Id">
-					<DataField>Id</DataField>
+				<Field Name="TenantId">
+					<DataField>TenantId</DataField>
 				</Field>
 				<Field Name="TenantName">
 					<DataField>TenantName</DataField>
 				</Field>
 			</Fields>
 			<Query>
-				<CommandText>SELECT [Id]
+				<CommandText>SELECT [Id][TenantId]
       ,[Name][TenantName]
-  FROM [DispatcherWebDb].[dbo].[AbpTenants]
+  FROM [dbo].[AbpTenants]
   WHERE [IsActive]=1 AND ISNULL([IsDeleted],0)=0
   ORDER BY [Name]</CommandText>
-				<DataSourceName>DataSource1</DataSourceName>
+				<DataSourceName>TenantsDataSource</DataSourceName>
 			</Query>
 		</DataSet>
 	</DataSets>

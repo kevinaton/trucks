@@ -16,6 +16,7 @@ using DispatcherWeb.Dashboard.RevenueGraph.Dto;
 using DispatcherWeb.Dashboard.RevenueGraph.Factories;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,7 @@ namespace DispatcherWeb.Dashboard
         private readonly IRepository<TenantDailyHistory> _tenantDailyHistoryRepository;
         private readonly IRepository<FuelPurchase> _fuelPurchaseRepository;
         private readonly IRepository<VehicleUsage> _vehicleUsageRepository;
+
         private readonly ITruckTelematicsAppService _truckTelematicsAppService;
         private readonly IDashboardSettingManager _dashboardSettingManager;
         private readonly IRevenueGraphByTicketsDataItemsQueryService _revenueGraphByTicketsDataItemsQueryService;
@@ -683,6 +685,80 @@ namespace DispatcherWeb.Dashboard
             foreach (var setting in userSettings)
             {
                 await _dashboardSettingManager.SetDashboardUserSettingAsync(setting.SettingName, checkedSettings.Contains(setting.SettingName));
+            }
+        }
+
+        public async Task<List<TenantDto>> GetTenants()
+        {
+            var tenants = await TenantManager.Tenants
+                            .Where(t => t.IsActive == true && !t.IsDeleted)
+                            .Select(t => new TenantDto
+                            {
+                                TenantId = t.Id,
+                                TenantName = t.Name
+                            })
+                            .ToListAsync();
+            return tenants;
+        }
+
+        public async Task<List<TenantDailyHistorySummary>> GetTenantStatistics(GetTenantStatisticsInput input)
+        {
+            var summary = new List<TenantDailyHistorySummary> {
+                new TenantDailyHistorySummary() { 
+                    TenantId = input.TenantId ?? 0
+                }
+            };
+
+            try
+            {
+                var tenants = await TenantManager.Tenants
+                            .Where(t => t.CreationTime >= input.StartDate &&
+                                        t.CreationTime <= input.EndDate &&
+                                        t.IsActive == true && !t.IsDeleted)
+                            .ToListAsync();
+
+                var tenantDailyHistoryData = await _tenantDailyHistoryRepository.GetAll()
+                    .WhereIf(input.TenantId.HasValue, tdh => tdh.TenantId == input.TenantId.Value)
+                    .Where(tdh => tdh.Date >= input.StartDate && tdh.Date <= input.EndDate)
+                    .Select(s => new
+                    {
+                        s.TenantId,
+                        TenantName = s.Tenant.Name,
+                        s.Date.Year,
+                        MonthName = s.Date.ToString("MMM"),
+                        MonthNumber = s.Date.Month,
+                        s.ActiveUsers,
+                        s.InternalTrucksScheduled,
+                        s.LeaseHaulerScheduledDeliveries,
+                        s.OrderLinesCreated,
+                        s.TicketsCreated,
+                        s.SmsSent
+                    })
+                    .ToListAsync();
+
+                summary = tenantDailyHistoryData
+                                .GroupBy(p => new { p.TenantId, p.TenantName, p.Year, p.MonthName, p.MonthNumber })
+                                .Select(g => new TenantDailyHistorySummary()
+                                {
+                                    TenantId = g.Key.TenantId,
+                                    TenantName = g.Key.TenantName,
+                                    MonthYear = g.Key.Year,
+                                    MonthName = g.Key.MonthName,
+                                    MonthNumber = g.Key.MonthNumber,
+                                    ActiveUsers = g.Sum(a => a.ActiveUsers),
+                                    TrucksScheduled = g.Sum(a => a.InternalTrucksScheduled) + g.Sum(a => a.LeaseHaulerScheduledDeliveries),
+                                    OrderLines = g.Sum(a => a.OrderLinesCreated),
+                                    Tickets = g.Sum(a => a.TicketsCreated),
+                                    Sms = g.Sum(a => a.SmsSent),
+                                    TenantsAdded = tenants.Where(p => p.CreationTime.Month == g.Key.MonthNumber && p.CreationTime.Year == g.Key.Year).Count()
+                                })
+                                .ToList();
+
+                return summary;
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

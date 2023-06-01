@@ -1,33 +1,34 @@
-﻿using DispatcherWeb.EntityFrameworkCore;
-using DispatcherWeb.ReportCenter.Models.DTO;
-using IdentityModel.Client;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
+using DispatcherWeb.ActiveReports.Dto;
+using DispatcherWeb.ReportCenter.Helpers;
+using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace DispatcherWeb.ReportCenter.Services
 {
     public class ReportAppService
     {
-        private readonly DispatcherWebDbContext _db;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
+        private readonly IServiceProvider _serviceProvider;
 
         private static readonly Dictionary<string, (string Description, string Path, bool HasAccess)> _reportAccessDictionary = new();
 
-        public ReportAppService(DispatcherWebDbContext db, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public ReportAppService(IServiceProvider serviceProvider,
+                                IHttpContextAccessor httpContextAccessor,
+                                IConfiguration configuration)
         {
-            _db = db;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task RefreshReportsDictionary()
@@ -45,7 +46,7 @@ namespace DispatcherWeb.ReportCenter.Services
             }
             else
             {
-                var availableReports = await GetAvailableReports();
+                var activeReports = await GetActiveReports();
                 var contentJson = await response.Content.ReadAsStringAsync();
                 var grantedReportNames = JObject.Parse(contentJson)
                                         .SelectTokens("$..result.items[*]")
@@ -57,25 +58,23 @@ namespace DispatcherWeb.ReportCenter.Services
                     _reportAccessDictionary.Clear();
                 }
 
-                foreach (var (reportName, reportDescription, reportPath) in availableReports)
+                foreach (var report in activeReports)
                 {
                     lock (_reportAccessDictionary)
                     {
-                        var canAccess = grantedReportNames.Any(reportName.Equals);
-                        _reportAccessDictionary.Add(reportName, (reportDescription, reportPath, canAccess));
+                        var canAccess = grantedReportNames.Any(report.Name.Equals);
+                        _reportAccessDictionary.Add(report.Name, (report.Description, report.Path, canAccess));
                     }
                 }
             }
-
-            await Task.CompletedTask.WaitAsync(new CancellationToken(false));
         }
 
-        public async Task<List<ReportListItemDto>> GetAvailableReportsList()
+        public async Task<List<ActiveReportListItemDto>> GetAvailableReportsList()
         {
             await RefreshReportsDictionary();
 
             var reportListItems = _reportAccessDictionary
-                                    .Select(report => new ReportListItemDto()
+                                    .Select(report => new ActiveReportListItemDto()
                                     {
                                         Name = report.Key,
                                         Description = report.Value.Description,
@@ -119,17 +118,54 @@ namespace DispatcherWeb.ReportCenter.Services
             }
         }
 
+        public bool TryGetReport(string reportId, out (string Description, string Path, bool HasAccess) reportInfo)
+        {
+            if (_reportAccessDictionary.Count == 0)
+            {
+                reportInfo = (string.Empty, string.Empty, false);
+                return false;
+            }
+
+            reportInfo = _reportAccessDictionary[reportId.Replace(".rdlx", string.Empty)];
+            return true;
+        }
+
+        public async Task<IReportDataDefinition> GetReportDataDefinition(string reportId, bool initialize = false)
+        {
+            var reportDataDefinition = _serviceProvider.Identify(reportId);
+            if (initialize)
+                await reportDataDefinition.Initialize();
+            return reportDataDefinition;
+        }
+
         #region private methods
 
-        private async Task<List<(string Name, string Description, string Path)>> GetAvailableReports()
+        private async Task<List<ActiveReportListItemDto>> GetActiveReports()
         {
-            var reports = await _db.Reports
-                    .Distinct()
-                    .Select(p => new { p.Name, p.Description, p.Path })
-                    .OrderBy(p => p.Name)
-                    .ToListAsync();
+            var accessToken = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
+            var hostApiUrl = _configuration["IdentityServer:Authority"];
 
-            return reports.Select(p => (p.Name, p.Description, p.Path)).ToList();
+            using var client = new HttpClient();
+            client.SetBearerToken(accessToken);
+            var response = await client.GetAsync($"{hostApiUrl}/api/services/app/activeReports/getActiveReportsList");
+
+            var availableReports = new List<ActiveReportListItemDto>();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+            }
+            else
+            {
+                var contentJson = await response.Content.ReadAsStringAsync();
+
+                availableReports = JObject.Parse(contentJson)
+                                        .SelectTokens("$..result[*]")
+                                        .Select(jtoken => ActiveReportListItemDto.ReadFromJson(jtoken.ToString()))
+                                        .ToList();
+            }
+
+            return availableReports;
         }
 
         #endregion private methods

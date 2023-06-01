@@ -1,13 +1,14 @@
 ﻿<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+	<Author>DumpTruck Dispatcher LLC</Author>
 	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">MasterReportPortrait.rdlx-master</dd:Name>
 	<Body>
-		<Height>14.88189in</Height>
+		<Height>37.8cm</Height>
 		<ReportItems>
 			<CustomReportItem Name="MainContentPlaceHolder">
 				<Type>ContentPlaceHolder</Type>
 				<Top>1.653543in</Top>
 				<Left>0.393701in</Left>
-				<Width>7.9476in</Width>
+				<Width>7.7165in</Width>
 				<Height>12.2047in</Height>
 				<ZIndex>3</ZIndex>
 				<CustomProperties>
@@ -70,7 +71,7 @@
 			<Textbox Name="PageInfo">
 				<Top>35.6cm</Top>
 				<Left>12.2cm</Left>
-				<Width>3.5382in</Width>
+				<Width>3.2283in</Width>
 				<Height>0.25in</Height>
 				<Style>
 					<TextAlign>Right</TextAlign>
@@ -149,23 +150,12 @@
 	<PageHeight>35.6cm</PageHeight>
 	<PageWidth>21.6cm</PageWidth>
 	<TopMargin>0.125in</TopMargin>
-	<Width>22.3788cm</Width>
+	<Width>21.6cm</Width>
 	<ReportParameters>
 		<ReportParameter Name="TenantId">
-			<DataType>String</DataType>
+			<DataType>Integer</DataType>
 			<Nullable>true</Nullable>
 			<Prompt>Tenant</Prompt>
-			<ValidValues>
-				<DataSetReference>
-					<DataSetName>Tenants</DataSetName>
-					<LabelField>TenantName</LabelField>
-					<ValueField>Id</ValueField>
-				</DataSetReference>
-				<dd:OrderBy xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
-					<Condition>Label</Condition>
-					<Direction>Ascending</Direction>
-				</dd:OrderBy>
-			</ValidValues>
 		</ReportParameter>
 	</ReportParameters>
 	<dd:EmbeddedStyleSheets xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
@@ -222,31 +212,6 @@
 &lt;/dd:StyleSheet&gt;</Data>
 		</EmbeddedStyleSheet>
 	</dd:EmbeddedStyleSheets>
-	<DataSources>
-		<DataSource Name="DataSource1">
-			<DataSourceReference>F:\TruckDispatcher\_Projects\DispatcherWeb\_Codes.GIT\DispatcherWeb\src\DispatcherWeb.ReportCenter\Reports\DataSource.Dev.rdsx</DataSourceReference>
-		</DataSource>
-	</DataSources>
-	<DataSets>
-		<DataSet Name="Tenants">
-			<Fields>
-				<Field Name="Id">
-					<DataField>Id</DataField>
-				</Field>
-				<Field Name="TenantName">
-					<DataField>TenantName</DataField>
-				</Field>
-			</Fields>
-			<Query>
-				<CommandText>SELECT [Id]
-      ,[Name][TenantName]
-  FROM [DispatcherWebDb].[dbo].[AbpTenants]
-  WHERE [IsActive]=1 AND ISNULL([IsDeleted],0)=0
-  ORDER BY [Name]</CommandText>
-				<DataSourceName>DataSource1</DataSourceName>
-			</Query>
-		</DataSet>
-	</DataSets>
 	<CustomProperties>
 		<CustomProperty>
 			<Name>IsMaster</Name>

@@ -1,5 +1,11 @@
-﻿using DispatcherWeb.EntityFrameworkCore;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
+using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions;
+using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
 using DispatcherWeb.ReportCenter.Services;
 using GrapeCity.ActiveReports.Aspnetcore.Viewer;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,16 +14,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Text;
 
 namespace DispatcherWeb.ReportCenter
 {
@@ -45,10 +47,10 @@ namespace DispatcherWeb.ReportCenter
                 IdentityModelEventSource.ShowPII = true;
 
             var connectionString = Configuration.GetConnectionString("Default");
-            services.AddDbContext<DispatcherWebDbContext>(options => options.UseSqlServer(connectionString));
 
             services.AddHttpContextAccessor();
             services.AddScoped<ReportAppService>();
+            services.AddScoped<TenantStatisticsReportDataDefinitions>();
 
             services.AddAuthentication(options =>
                     {
@@ -108,11 +110,37 @@ namespace DispatcherWeb.ReportCenter
 
             app.UseReporting(settings =>
             {
-                settings.UseFileStore(new DirectoryInfo($"{env.ContentRootPath}\\Reports\\"));
+                //https://www.grapecity.com/forums/ar-dev/customstore-method-called-multiple-times
+                var cache = new MemoryCache(new MemoryCacheOptions { SizeLimit = 10000 });
+
+                settings.UseEmbeddedTemplates(EmbeddedReportsPrefix, Assembly.GetAssembly(GetType()));
                 settings.UseCompression = true;
+                settings.UseCustomStore(reportId =>
+                {
+                    //cache.Remove(reportId);
+                    return cache.GetOrCreate(reportId, entry =>
+                    {
+                        entry.SetSlidingExpiration(TimeSpan.FromSeconds(30));
+                        entry.SetSize(1000);
+                        reportId = reportId.Replace(".rdlx", string.Empty);
+
+                        var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetService<ReportAppService>();
+                        var reportDataDefinition = reportAppSrvc.GetReportDataDefinition(reportId, true).Result;
+                        return reportDataDefinition.ThisPageReport.Document.PageReport.Report; 
+                    });
+                });
+
+                settings.SetLocateDataSource(args =>
+                {
+                    var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetService<ReportAppService>();
+                    var reportId = args.Report.Description.Replace(".rdlx", string.Empty);
+                    var reportDataDefinition = reportAppSrvc.GetReportDataDefinition(reportId).Result;
+                    return reportDataDefinition.LocateDataSource(args).Result;
+                });
             });
 
             app.UseMvc();
         }
+
     }
 }

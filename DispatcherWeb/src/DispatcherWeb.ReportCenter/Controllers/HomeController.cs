@@ -1,17 +1,16 @@
-﻿using DispatcherWeb.ReportCenter.Models;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using DispatcherWeb.ReportCenter.Models;
 using DispatcherWeb.ReportCenter.Services;
 using DocumentFormat.OpenXml;
 using GrapeCity.Enterprise.Data.Expressions.Tools;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DispatcherWeb.ReportCenter
 {
@@ -47,6 +46,10 @@ namespace DispatcherWeb.ReportCenter
             if (claimsDic.TryGetValue("http://www.aspnetboilerplate.com/identity/claims/tenantId", out string id))
                 tenantId = int.Parse(id);
 
+            /*var startDate = new DateTime(2020, 1, 1);
+            var endDate = new DateTime(2022, 12, 31);
+            var dashboardData = await _reportAppService.GetDashboardData(tenantId, startDate, endDate);*/
+
             var vm = new ReportViewModel
             {
                 ReportPath = reportPath,
@@ -68,26 +71,6 @@ namespace DispatcherWeb.ReportCenter
                     .ToArray();
 
             return new ObjectResult(reports);
-        }
-
-        [HttpGet("report/downloadexportedfile")]
-        public ActionResult DownloadExportedFile([FromServices] IWebHostEnvironment env, string fileName, bool delete)
-        {
-            var exportsPath = $"{env.ContentRootPath}\\Exports\\";
-
-            if (!Directory.Exists(exportsPath))
-                Directory.CreateDirectory(exportsPath);
-
-            var targetFilePath = Path.Combine(exportsPath, fileName);
-
-            if (!System.IO.File.Exists(targetFilePath))
-                return new NotFoundResult();
-
-            byte[] fileByteArray = System.IO.File.ReadAllBytes(targetFilePath);
-            if (delete)
-                System.IO.File.Delete(targetFilePath);
-
-            return File(fileByteArray, "text/csv", fileName);
         }
 
         [Route("/logout")]

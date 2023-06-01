@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DispatcherWeb.EntityFrameworkCore.Configurations
 {
-    public class ReportConfiguration : IEntityTypeConfiguration<Report>
+    public class ActiveReportConfiguration : IEntityTypeConfiguration<ActiveReport>
     {
-        public void Configure(EntityTypeBuilder<Report> builder)
+        public void Configure(EntityTypeBuilder<ActiveReport> builder)
         {
             builder.Property(e => e.Name)
                     .IsRequired()
@@ -24,7 +24,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
             builder.HasOne(e => e.Category)
                     .WithMany(e => e.Report)
                     .HasForeignKey(e => e.CategoryId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
