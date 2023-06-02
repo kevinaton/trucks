@@ -35,7 +35,6 @@ namespace DispatcherWeb.Dashboard
         private readonly IRepository<TenantDailyHistory> _tenantDailyHistoryRepository;
         private readonly IRepository<FuelPurchase> _fuelPurchaseRepository;
         private readonly IRepository<VehicleUsage> _vehicleUsageRepository;
-
         private readonly ITruckTelematicsAppService _truckTelematicsAppService;
         private readonly IDashboardSettingManager _dashboardSettingManager;
         private readonly IRevenueGraphByTicketsDataItemsQueryService _revenueGraphByTicketsDataItemsQueryService;

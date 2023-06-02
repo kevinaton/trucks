@@ -13,11 +13,11 @@ namespace DispatcherWeb.Helpers
         /// <param name="TMigrationSQLScriptType">The migration type the SQL file script is attached to.</param>
         /// <param name="upOrDownScaleFilePrefix">Optional parameter providing a strategy to distinguish between UP or DOWN SQL scripts.</param>
         /// <returns>The content of the SQL file.</returns>
-        public static string ReadAndExecuteSql<TMigrationSQLScriptType>(this TMigrationSQLScriptType migrationSQLScriptType, string upOrDownScaleFilePrefix = "")
-            where TMigrationSQLScriptType : class
+        public static string ReadAndExecuteSql<MigrationBuilderType>(this MigrationBuilderType migrationBuilder, string upOrDownScaleFilePrefix = "")
+            where MigrationBuilderType : MigrationBuilder
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var type = typeof(TMigrationSQLScriptType);
+            var type = typeof(MigrationBuilderType);
             var migrationAttributeName = type.CustomAttributes.FirstOrDefault(p => p.AttributeType == typeof(MigrationAttribute)).ConstructorArguments[0].Value.ToString();
 
             if (!string.IsNullOrEmpty(upOrDownScaleFilePrefix))
@@ -32,6 +32,9 @@ namespace DispatcherWeb.Helpers
             using var stream = assembly.GetManifestResourceStream(sqlFile);
             using StreamReader reader = new(stream);
             var sqlScript = reader.ReadToEnd();
+
+            migrationBuilder.Sql(sqlScript);
+
             return sqlScript;
         }
 
