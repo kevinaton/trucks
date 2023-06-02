@@ -39,6 +39,11 @@ namespace DispatcherWeb.TrailerAssignments
                     TractorId = input.TractorId
                 };
 
+            if (trailerAssignment.Id == 0)
+            {
+                _trailerAssignmentRepository.Insert(trailerAssignment);
+            }
+
             trailerAssignment.TrailerId = input.TrailerId;
             await CurrentUnitOfWork.SaveChangesAsync();
 

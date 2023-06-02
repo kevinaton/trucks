@@ -4,5 +4,6 @@
     {
         public int TractorId { get; set; }
         public int? TrailerId { get; set; }
+        public string TrailerTruckCode { get; set; }
     }
 }

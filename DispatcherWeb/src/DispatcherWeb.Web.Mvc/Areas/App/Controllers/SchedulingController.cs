@@ -11,6 +11,7 @@ using DispatcherWeb.Dispatching.Dto;
 using DispatcherWeb.DriverAssignments.Dto;
 using DispatcherWeb.Scheduling;
 using DispatcherWeb.Scheduling.Dto;
+using DispatcherWeb.TrailerAssignments.Dto;
 using DispatcherWeb.Web.Areas.App.Models.Scheduling;
 using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.Web.Utils;
@@ -182,6 +183,12 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         {
             var model = await _schedulingAppService.GetOrderLineTruckToChangeDriverModel(orderLineTruckId);
             return PartialView("_ChangeDriverForOrderLineTruckModal", model);
+        }
+
+        [Modal]
+        public PartialViewResult SetTrailerForTractorModal(SetTrailerForTractorInput model)
+        {
+            return PartialView("_SetTrailerForTractorModal", model);
         }
 
         public async Task<IActionResult> ShowMap(int orderLineId)
