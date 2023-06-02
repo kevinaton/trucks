@@ -11,8 +11,15 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents';
-import { getSupportLinkAddress } from '../../../store/actions';
+import { 
+    drawerWidth, 
+    AppBar, 
+    HeaderIconButton,
+    HeaderButton } from '../../DTComponents';
+import { NotificationBell } from '../dropdowns';
+import { 
+    getSupportLinkAddress
+} from '../../../store/actions';
 import { isEmpty } from 'lodash';
 
 export const Appbar = ({
@@ -111,46 +118,47 @@ export const Appbar = ({
                                 alignContent: 'center',
                             }}
                         >
-                        <MenuItem key='support'>
-                            <HeaderIconButton p={0} aria-label='support'>
-                                <i
-                                    className='fa-duotone fa-life-ring icon'
-                                    style={{
-                                    '--fa-primary-opacity': '0.3',
-                                    '--fa-secondary-opacity': '1',
-                                    }}
-                                ></i>
-                            </HeaderIconButton>
-                        </MenuItem>
-                        <MenuItem key='notification'>
-                            <IconButton p={0} aria-label='open notification'>
-                                <i className='fa-regular fa-bell icon'></i>
-                            </IconButton>
-                        </MenuItem>
-                        <MenuItem key='user'>
-                            <Button p={0}>
-                                <Avatar
-                                    alt='account'
-                                    src='/reactapp/assets/images/150.jpg'
-                                    sx={{ mr: 1, width: 24, height: 24 }}
-                                />
-                                <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
-                                    User
-                                </Typography>
-                            </Button>
-                        </MenuItem>
-                        <MenuItem key='message'>
-                            <IconButton p={0} aria-label='open drawer'>
-                                <i className='fa-regular fa-message icon'></i>
-                            </IconButton>
-                        </MenuItem>
+                            <MenuItem key='support'>
+                                <HeaderIconButton p={0} aria-label='support'>
+                                    <i
+                                        className='fa-duotone fa-life-ring icon'
+                                        style={{
+                                            '--fa-primary-opacity': '0.3',
+                                            '--fa-secondary-opacity': '1'
+                                        }}
+                                    ></i>
+                                </HeaderIconButton>
+                            </MenuItem>
+
+                            <NotificationBell isMobileView={true} />
+
+                            <MenuItem key='user'>
+                                <Button p={0}>
+                                    <Avatar
+                                        alt='account'
+                                        src='/reactapp/assets/images/150.jpg'
+                                        sx={{ mr: 1, width: 24, height: 24 }}
+                                    />
+                                    <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
+                                        User
+                                    </Typography>
+                                </Button>
+                            </MenuItem>
+
+                            <MenuItem key='message'>
+                                <IconButton p={0} aria-label='open drawer'>
+                                    <i className='fa-regular fa-message icon'></i>
+                                </IconButton>
+                            </MenuItem>
                         </MenuList>
                     </Menu>
                 </Box>
 
                 {/* Desktop view */}
-                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                    <HeaderIconButton aria-label='support' href={linkAddress}>
+                <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                    <HeaderIconButton 
+                        aria-label="support" 
+                        href={linkAddress}>
                         <i
                             className='fa-duotone fa-life-ring icon'
                             style={{
@@ -158,11 +166,15 @@ export const Appbar = ({
                                 '--fa-secondary-opacity': '1',
                             }}></i>
                     </HeaderIconButton>
-                    <HeaderIconButton aria-label='open drawer' onClick={handleCloseNavMenu}>
-                        <i className='fa-regular fa-bell icon'></i>
-                    </HeaderIconButton>
+
+                    <NotificationBell isMobileView={false} />
+
                     <HeaderButton onClick={handleCloseNavMenu} />
-                    <HeaderIconButton aria-label='open drawer' onClick={handleCloseNavMenu}>
+
+                    <HeaderIconButton
+                        aria-label='open drawer'
+                        onClick={handleCloseNavMenu}
+                    >
                         <i className='fa-regular fa-message-dots icon'></i>
                     </HeaderIconButton>
                 </Box>
