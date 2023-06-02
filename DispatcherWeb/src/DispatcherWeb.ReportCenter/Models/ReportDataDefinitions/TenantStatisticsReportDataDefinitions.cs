@@ -63,7 +63,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 using var client = new HttpClient();
                 client.SetBearerToken(accessToken);
 
-                var url = $"{hostApiUrl}/api/services/app/dashboard/getTenantStatistics?tenantId={paramsDic["tenantId"]}&startDate={paramsDic["startDate"]:o}&endDate={paramsDic["endDate"]:o}";
+                var url = $"{hostApiUrl}/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={paramsDic["tenantId"]}&startDate={paramsDic["startDate"]:o}&endDate={paramsDic["endDate"]:o}";
                 var response = await client.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)

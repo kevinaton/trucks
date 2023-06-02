@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DispatcherWeb.ActiveReports.Dto;
+using DispatcherWeb.ActiveReports.ActiveReports.Dto;
 using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace DispatcherWeb.ReportCenter.Services
@@ -146,7 +147,7 @@ namespace DispatcherWeb.ReportCenter.Services
 
             using var client = new HttpClient();
             client.SetBearerToken(accessToken);
-            var response = await client.GetAsync($"{hostApiUrl}/api/services/app/activeReports/getActiveReportsList");
+            var response = await client.GetAsync($"{hostApiUrl}/api/services/activeReports/activeReports/getActiveReportsList");
 
             var availableReports = new List<ActiveReportListItemDto>();
 
@@ -160,7 +161,7 @@ namespace DispatcherWeb.ReportCenter.Services
 
                 availableReports = JObject.Parse(contentJson)
                                         .SelectTokens("$..result[*]")
-                                        .Select(jtoken => ActiveReportListItemDto.ReadFromJson(jtoken.ToString()))
+                                        .Select(jtoken => JsonConvert.DeserializeObject<ActiveReportListItemDto>(jtoken.ToString()))
                                         .ToList();
             }
 

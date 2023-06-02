@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
-using DispatcherWeb.ActiveReports.Dto;
+using DispatcherWeb.ActiveReports.ActiveReports.Dto;
 using DispatcherWeb.Authorization;
 using Microsoft.EntityFrameworkCore;
 
-namespace DispatcherWeb.ActiveReports
+namespace DispatcherWeb.ActiveReports.ActiveReports
 {
     [AbpAuthorize(AppPermissions.Pages_ActiveReports)]
     public class ActiveReportsAppService : DispatcherWebAppServiceBase, IActiveReportsAppService

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DispatcherWeb.Dashboard.Dto
+namespace DispatcherWeb.ActiveReports.TenantStatisticsReport.Dto
 {
     public class GetTenantStatisticsInput
     {

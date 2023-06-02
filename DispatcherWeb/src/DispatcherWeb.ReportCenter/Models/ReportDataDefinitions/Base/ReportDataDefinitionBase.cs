@@ -39,7 +39,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             var hostApiUrl = Configuration["IdentityServer:Authority"];
             var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
 
-            var connStrData = $"jsondoc={hostApiUrl}/api/services/app/dashboard/GetTenants";
+            var connStrData = $"jsondoc={hostApiUrl}/api/services/activeReports/tenantStatisticsReport/GetTenants";
             //var connStrData = $"jsondoc={hostApiUrl}/api/services/app/tenant/GetTenants";
             var connStrHeaders = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
             ds.ConnectionProperties.ConnectString = $"{connStrHeaders};{connStrData}";

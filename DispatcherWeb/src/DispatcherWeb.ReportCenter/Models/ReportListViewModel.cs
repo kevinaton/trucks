@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DispatcherWeb.ActiveReports.Dto;
+using DispatcherWeb.ActiveReports.ActiveReports.Dto;
 
 namespace DispatcherWeb.ReportCenter.Models
 {
