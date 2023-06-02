@@ -87,25 +87,22 @@ namespace DispatcherWeb.ReportCenter.Services
 
         public async Task<bool> CanAccessReport(string reportPath, bool refresh = false)
         {
-            try
+            if (refresh)
             {
-                if (refresh)
-                    await RefreshReportsDictionary();
-
-                var keyValReport = _reportAccessDictionary
-                                    .FirstOrDefault(p => p.Value.Path == reportPath);
-
-                if (!_reportAccessDictionary.Keys.Any() ||
-                    string.IsNullOrEmpty(keyValReport.Key) ||
-                    keyValReport.Value == default)
-                    return false;
-
-                return keyValReport.Value.HasAccess;
+                await RefreshReportsDictionary();
             }
-            catch (Exception ex)
+
+            var keyValReport = _reportAccessDictionary
+                                .FirstOrDefault(p => p.Value.Path == reportPath);
+
+            if (!_reportAccessDictionary.Keys.Any() ||
+                string.IsNullOrEmpty(keyValReport.Key) ||
+                keyValReport.Value == default)
             {
-                throw;
+                return false;
             }
+
+            return keyValReport.Value.HasAccess;
         }
 
         public async Task EnsureCanAccessReport(string reportPath)
@@ -134,7 +131,9 @@ namespace DispatcherWeb.ReportCenter.Services
         {
             var reportDataDefinition = _serviceProvider.Identify(reportId);
             if (initialize)
+            {
                 await reportDataDefinition.Initialize();
+            }
             return reportDataDefinition;
         }
 

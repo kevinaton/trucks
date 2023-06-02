@@ -11,6 +11,7 @@ using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Runtime.Caching.Redis;
 using Abp.Zero.Configuration;
+using DispatcherWeb.ActiveReports;
 using DispatcherWeb.Authentication.TwoFactor;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.DriverApp;

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DispatcherWeb.Migrations
 {
-    public partial class ActiveReports : Migration
+    public partial class AddedActiveReports : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

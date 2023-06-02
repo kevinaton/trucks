@@ -1,4 +1,4 @@
-﻿using DispatcherWeb.Reports;
+﻿using DispatcherWeb.ActiveReports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,7 +22,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
             builder.HasIndex(e => e.CategoryId);
 
             builder.HasOne(e => e.Category)
-                    .WithMany(e => e.Report)
+                    .WithMany(e => e.Reports)
                     .HasForeignKey(e => e.CategoryId)
                     .OnDelete(DeleteBehavior.Restrict);
         }

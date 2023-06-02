@@ -1423,6 +1423,96 @@ namespace DispatcherWeb.Migrations
                     b.ToTable("AbpWebhookSubscriptions");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.ActiveReports.ActiveReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(180)
+                        .HasColumnType("nvarchar(180)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("ActiveReport");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.ActiveReports.ActiveReportCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ActiveReportCategory");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Authorization.Delegation.UserDelegation", b =>
                 {
                     b.Property<long>("Id")
@@ -6833,96 +6923,6 @@ namespace DispatcherWeb.Migrations
                     b.ToTable("QuoteService");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.Reports.ActiveReport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(180)
-                        .HasColumnType("nvarchar(180)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("ActiveReport");
-                });
-
-            modelBuilder.Entity("DispatcherWeb.Reports.ActiveReportCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ActiveReportCategory");
-                });
-
             modelBuilder.Entity("DispatcherWeb.ScheduledReports.ScheduledReport", b =>
                 {
                     b.Property<int>("Id")
@@ -8931,6 +8931,17 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("WebhookEvent");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.ActiveReports.ActiveReport", b =>
+                {
+                    b.HasOne("DispatcherWeb.ActiveReports.ActiveReportCategory", "Category")
+                        .WithMany("Reports")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Authorization.Roles.Role", b =>
                 {
                     b.HasOne("DispatcherWeb.Authorization.Users.User", "CreatorUser")
@@ -10469,17 +10480,6 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.Reports.ActiveReport", b =>
-                {
-                    b.HasOne("DispatcherWeb.Reports.ActiveReportCategory", "Category")
-                        .WithMany("Report")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("DispatcherWeb.Services.OfficeServicePrice", b =>
                 {
                     b.HasOne("DispatcherWeb.UnitsOfMeasure.UnitOfMeasure", "FreightUom")
@@ -10812,6 +10812,11 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("Children");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.ActiveReports.ActiveReportCategory", b =>
+                {
+                    b.Navigation("Reports");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Authorization.Roles.Role", b =>
                 {
                     b.Navigation("Claims");
@@ -11076,11 +11081,6 @@ namespace DispatcherWeb.Migrations
             modelBuilder.Entity("DispatcherWeb.Quotes.QuoteService", b =>
                 {
                     b.Navigation("OrderLines");
-                });
-
-            modelBuilder.Entity("DispatcherWeb.Reports.ActiveReportCategory", b =>
-                {
-                    b.Navigation("Report");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Services.Service", b =>

@@ -1,4 +1,4 @@
-﻿using DispatcherWeb.Reports;
+﻿using DispatcherWeb.ActiveReports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
