@@ -71,6 +71,9 @@ namespace DispatcherWeb.Drivers.Dto
 
         public DateTime? TerminationDate { get; set; }
 
+        [StringLength(10)]
+        public string EmployeeId { get; set; }
+
         public bool IsSingleOffice { get; set; }
         int IOfficeIdNameDto.OfficeId { get => OfficeId ?? 0; set => OfficeId = value; }
     }

@@ -102,6 +102,9 @@ namespace DispatcherWeb.Drivers
         [Column(TypeName = "date")]
         public DateTime? TerminationDate { get; set; }
 
+        [StringLength(10)]
+        public string EmployeeId { get; set; }
+
         //we can add this later if it is needed
         //public bool HasMaterialCompanyDrivers { get; set; }
 

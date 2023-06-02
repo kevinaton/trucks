@@ -1842,5 +1842,6 @@
 		<text name="DriverAppImageResolution">Driver App Image Resolution</text>
 		<text name="PayStatement">Pay Statement</text>
 		<text name="LeaseHaulerStatement">Lease Hauler Statement</text>
+		<text name="EmployeeId">Employee Id</text>
 	</texts>
 </localizationDictionary>
