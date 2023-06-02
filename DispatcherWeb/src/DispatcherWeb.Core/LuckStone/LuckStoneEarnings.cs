@@ -14,12 +14,6 @@ namespace DispatcherWeb.LuckStone
 
         public int TenantId { get; set; }
 
-        [Obsolete]
-        public DateTime TicketDateTimeObsolete { get; set; }
-
-        [Obsolete]
-        public bool TicketDateTimeWasConverted { get; set; }
-
         public DateTime TicketDateTime { get; set; }
 
         [StringLength(EntityStringFieldLengths.LuckStoneEarnings.Site)]
