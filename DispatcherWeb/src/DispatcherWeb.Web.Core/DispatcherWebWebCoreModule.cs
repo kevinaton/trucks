@@ -29,6 +29,7 @@ namespace DispatcherWeb.Web
     [DependsOn(
         typeof(DispatcherWebApplicationModule),
         typeof(DispatcherWebApplicationDriverAppModule),
+        typeof(DispatcherWebApplicationActiveReportsModule),
         typeof(DispatcherWebEntityFrameworkCoreModule),
         typeof(AbpAspNetZeroCoreWebModule),
         typeof(AbpAspNetCoreSignalRModule),
@@ -65,6 +66,13 @@ namespace DispatcherWeb.Web
                 .CreateControllersForAppServices(
                     typeof(DispatcherWebApplicationDriverAppModule).GetAssembly(),
                     moduleName: "driverApp",
+                    useConventionalHttpVerbs: true
+                );
+
+            Configuration.Modules.AbpAspNetCore()
+                .CreateControllersForAppServices(
+                    typeof(DispatcherWebApplicationActiveReportsModule).GetAssembly(),
+                    moduleName: "activeReports",
                     useConventionalHttpVerbs: true
                 );
 
