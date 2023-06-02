@@ -316,6 +316,17 @@ namespace DispatcherWeb.Trucks
                 })
                 .GetSelectListResult(input);
 
+        public async Task<PagedResultDto<SelectListDto>> GetActiveTractorsSelectList(GetSelectListInput input) =>
+            await _truckRepository.GetAll()
+                .Where(x => x.LocationId.HasValue)
+                .Where(t => t.VehicleCategory.AssetType == AssetType.Tractor && t.IsActive)
+                .Select(x => new SelectListDto
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.TruckCode
+                })
+                .GetSelectListResult(input);
+
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
         public async Task<TruckEditDto> GetTruckForEdit(GetTruckForEditInput input)
         {

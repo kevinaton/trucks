@@ -229,6 +229,12 @@
             modalClass: 'SetTrailerForTractorModal'
         });
 
+        var _setTractorForTrailer = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Scheduling/SetTractorForTrailerModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetTractorForTrailerModal.js',
+            modalClass: 'SetTractorForTrailerModal'
+        });
+
         var _reassignTrucksModal = abp.helper.createModal('ReassignTrucks', 'Scheduling');
 
         var _createOrEditLeaseHaulerRequestModal = abp.helper.createModal('CreateOrEditLeaseHaulerRequest', 'LeaseHaulerRequests');
@@ -2821,6 +2827,62 @@
                             officeId: filterData.officeId,
                             tractorId: truck.id,
                             trailerId: null
+                        });
+                        abp.notify.info('Successfully removed.');
+                        reloadTruckTiles();
+                    }
+                },
+                addTractor: {
+                    name: 'Add Tractor',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return !truck.canPullTrailer && !truck.tractor;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+                        var filterData = _dtHelper.getFilterData();
+                        _setTractorForTrailer.open({
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                            trailerId: truck.id
+                        });
+                    }
+                },
+                changeTractor: {
+                    name: 'Change Tractor',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return !truck.canPullTrailer && truck.tractor;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+                        var filterData = _dtHelper.getFilterData();
+                        _setTractorForTrailer.open({
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                            trailerId: truck.id,
+                            tractorId: truck.tractor.id,
+                            tractorTruckCode: truck.tractor.truckCode
+                        });
+                    }
+                },
+                removeTractor: {
+                    name: 'Remove Tractor',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return !truck.canPullTrailer && truck.tractor;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+                        var filterData = _dtHelper.getFilterData();
+                        await abp.services.app.trailerAssignment.setTractorForTrailer({
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                            trailerId: truck.id,
+                            tractorId: null
                         });
                         abp.notify.info('Successfully removed.');
                         reloadTruckTiles();

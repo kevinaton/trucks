@@ -191,6 +191,12 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             return PartialView("_SetTrailerForTractorModal", model);
         }
 
+        [Modal]
+        public PartialViewResult SetTractorForTrailerModal(SetTractorForTrailerInput model)
+        {
+            return PartialView("_SetTractorForTrailerModal", model);
+        }
+
         public async Task<IActionResult> ShowMap(int orderLineId)
         {
             string database = await SettingManager.GetSettingValueAsync(AppSettings.GpsIntegration.Geotab.Database);
