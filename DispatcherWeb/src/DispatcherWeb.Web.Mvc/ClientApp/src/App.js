@@ -111,24 +111,25 @@ const App = (props) => {
     
             <Box 
                 component='main' 
-                sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}>
-                    <Paper
-                        sx={{
-                            backgroundColor: '#f1f5f8',
-                            padding: 2,
-                            height: '100vh',
-                            overflow: 'auto',
-                            pb: '50px',
-                        }}
-                    >
-                        <DrawerHeader />
+                sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}
+            >
+                <Paper
+                    sx={{
+                        backgroundColor: '#f1f5f8',
+                        padding: 2,
+                        height: '100vh',
+                        overflow: 'auto',
+                        pb: '50px',
+                    }}
+                >
+                    <DrawerHeader />
 
-                        {/* This is the route configuration */}
-                        <RouterConfig 
-                            isAuthenticated={isAuthenticated} 
-                            handleCurrentPageName={handleCurrentPageName} />
-                    </Paper>
-                </Box>
+                    {/* This is the route configuration */}
+                    <RouterConfig 
+                        isAuthenticated={isAuthenticated} 
+                        handleCurrentPageName={handleCurrentPageName} />
+                </Paper>
+            </Box>
         </Box>
     );
 };

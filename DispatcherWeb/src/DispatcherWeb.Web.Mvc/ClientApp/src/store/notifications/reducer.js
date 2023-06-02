@@ -8,14 +8,16 @@ import {
     GET_USER_NOTIFICATION_SETTINGS_SUCCESS,
     GET_USER_NOTIFICATION_SETTINGS_FAILURE,
     UPDATE_USER_NOTIFICATION_SETTINGS_SUCCESS,
-    UPDATE_USER_NOTIFICATION_SETTINGS_FAILURE
+    UPDATE_USER_NOTIFICATION_SETTINGS_FAILURE,
+    UPDATE_USER_NOTIFICATION_SETTINGS_RESET
 } from './actionTypes';
 import { notificationState } from '../../common/enums/notificationState';
 
 const INIT_STATE = {
     notifications: null,
     error: {},
-    notificationSettings: null
+    notificationSettings: null,
+    updateSuccess: null
 };
 
 const NotificationReducer = (state = INIT_STATE, action) => {
@@ -102,13 +104,22 @@ const NotificationReducer = (state = INIT_STATE, action) => {
         case UPDATE_USER_NOTIFICATION_SETTINGS_SUCCESS:
             return {
                 ...state,
-                notificationSettings: action.payload
+                notificationSettings: {
+                    ...state.notificationSettings,
+                    result: action.payload
+                },
+                updateSuccess: true
             };
         case UPDATE_USER_NOTIFICATION_SETTINGS_FAILURE:
             return {
                 ...state,
                 error: action.payload
             };
+        case UPDATE_USER_NOTIFICATION_SETTINGS_RESET:
+            return {
+                ...state,
+                updateSuccess: null
+            }
         default:
             return state;
     }   

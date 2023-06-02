@@ -14,7 +14,7 @@ import {
 import { grey } from '@mui/material/colors';
 import moment from 'moment';
 import { HeaderIconButton } from '../../DTComponents';
-import { NotificationSettingsModal } from '../modals'
+import { NotificationSettingsModal } from '../modals';
 import { theme } from '../../../Theme';
 import { 
     NotificationWrapper, 
@@ -22,8 +22,7 @@ import {
     NotificationHeader, 
     NotificationItem,
     NotificationFooter,
-    MarkAllAsReadButton,
-    ViewAllNotificationsButton 
+    MarkAllAsReadButton
 } from '../../styled';
 import { 
     getUserNotifications, 
@@ -252,7 +251,7 @@ export const NotificationBell = ({
                                     <i className='fa-regular fa-gear' style={{ color: grey[500] }} />
                                 </IconButton>
 
-                                <NotificationSettingsModal
+                                <NotificationSettingsModal 
                                     open={isNotifSettings}
                                     onClose={handleNotifSettingsClose} 
                                     labelledBy='notification-settings'
@@ -268,9 +267,9 @@ export const NotificationBell = ({
                                     <i class='fa-regular fa-check-double'></i> Set all as read
                                 </MarkAllAsReadButton>
 
-                                <ViewAllNotificationsButton onClick={handleViewAllNotifications}>
+                                <Button variant='outlined' size='small' onClick={handleViewAllNotifications}>
                                     See more
-                                </ViewAllNotificationsButton>
+                                </Button>
                             </NotificationFooter>
                         </NotificationContent>
                 </NotificationWrapper>

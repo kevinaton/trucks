@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Button,
@@ -15,9 +15,14 @@ import {
     Switch,
     Typography
 } from '@mui/material';
-import { isEmpty, set } from 'lodash';
-import { theme } from '../../../Theme'
-import { getUserNotificationSettings } from '../../../store/actions';
+import { isEmpty } from 'lodash';
+import { theme } from '../../../Theme';
+import { 
+    getUserNotificationSettings, 
+    updateUserNotificationSettings as onUpdateUserNotificationSettings,
+    updateUserNotificationSettingsReset as onResetSaveState
+} from '../../../store/actions';
+import SnackbarContext from '../snackbar/snackbarContext';
 
 export const NotificationSettingsModal = ({
     open,
@@ -29,11 +34,19 @@ export const NotificationSettingsModal = ({
         receiveNotifications: false,
         notifications: []
     });
+    const [hasNoSelectedTypes, setHasNoSelectedTypes] = useState(null);
+    const [showNoSelectionError, setShowNoSelectionError] = useState(false);
 
     const dispatch = useDispatch();
-    const { notificationSettings } = useSelector(state => ({
-        notificationSettings: state.NotificationReducer.notificationSettings
+    const { 
+        notificationSettings,
+        updateSuccess 
+    } = useSelector(state => ({
+        notificationSettings: state.NotificationReducer.notificationSettings,
+        updateSuccess: state.NotificationReducer.updateSuccess
     }));
+
+    const { showSnackbar } = useContext(SnackbarContext);
 
     useEffect(() => {
         if (open) {
@@ -44,11 +57,38 @@ export const NotificationSettingsModal = ({
                 if (!isEmpty(result)) {
                     setUserNotificationSettings(result);
                 }
-
-                console.log('result: ', result)
             }
         }
     }, [dispatch, open, notificationSettings]);
+
+    useEffect(() => {
+        if (updateSuccess) {
+            showSnackbar('Saved successfully', 'success');
+            onClose();
+            dispatch(onResetSaveState());
+        }
+    }, [dispatch, showSnackbar, updateSuccess, onClose]);
+
+    useEffect(() => {
+        if (!isEmpty(userNotificationSettings.notifications)) {
+            const { notifications } = userNotificationSettings;
+            if (!isEmpty(notifications)) {
+                const hasNoSelection = notifications.every((notif) => {
+                    return !notif.isSubscribed;
+                });
+                setHasNoSelectedTypes(hasNoSelection);
+            }
+        }
+    }, [userNotificationSettings]);
+
+    useEffect(() => {
+        if (hasNoSelectedTypes && 
+            !userNotificationSettings.receiveNotifications) {
+            if (!showNoSelectionError) setShowNoSelectionError(true);
+        } else {
+            if (showNoSelectionError) setShowNoSelectionError(false);
+        }
+    }, [showNoSelectionError, hasNoSelectedTypes, userNotificationSettings]);
 
     const handleToReceiveNotificationsChange = event => {
         setUserNotificationSettings({
@@ -74,12 +114,12 @@ export const NotificationSettingsModal = ({
     };
 
     const handleSave = () => {
-        console.log('userNotificationSettings: ', userNotificationSettings);
+        dispatch(onUpdateUserNotificationSettings(userNotificationSettings));
     }
 
     return (
         <Modal
-            open={open}
+            open={!isEmpty(notificationSettings) && open}
             onClose={onClose}
             aria-labelledby={labelledBy}
         >
@@ -104,7 +144,7 @@ export const NotificationSettingsModal = ({
                     title={title} 
                 />
 
-                <CardContent>
+                <CardContent> 
                     <FormGroup>
                         <FormControlLabel
                             control={
@@ -126,12 +166,14 @@ export const NotificationSettingsModal = ({
 
                         <Divider sx={{ my: 3 }} />
 
-                        <Typography
-                            color={theme.palette.warning.main} 
-                            variant='caption'
-                        >
-                            You completely disabled receiving notifications. You can enable it and select notification types you want to receive.
-                        </Typography>
+                        { showNoSelectionError && 
+                            <Typography
+                                color={theme.palette.error.main} 
+                                variant='caption'
+                            >
+                                You completely disabled receiving notifications. You can enable it and select notification types you want to receive.
+                            </Typography>
+                        }
 
                         { userNotificationSettings.notifications.map((notif, index) => {
                             return (
