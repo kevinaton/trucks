@@ -4,6 +4,7 @@ using DispatcherWeb.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    partial class DispatcherWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230602155553_AddedEmployeeIdToDrivers")]
+    partial class AddedEmployeeIdToDrivers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2658,6 +2660,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("StartTimeObsolete")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
@@ -4475,6 +4480,12 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime>("TicketDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("TicketDateTimeObsolete")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("TicketDateTimeWasConverted")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BatchId");
@@ -4821,6 +4832,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime?>("DefaultStartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DefaultStartTimeObsolete")
+                        .HasColumnType("datetime2");
+
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
 
@@ -5106,6 +5120,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime?>("FirstStaggeredTimeOnJob")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("FirstStaggeredTimeOnJobObsolete")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("FreightPrice")
                         .HasColumnType("decimal(19,4)");
 
@@ -5237,6 +5254,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime?>("TimeOnJob")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("TimeOnJobObsolete")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DeliverToId");
@@ -5301,10 +5321,16 @@ namespace DispatcherWeb.Migrations
                     b.Property<int?>("ParentOrderLineTruckId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("TimeOnJob")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("TimeOnJobObsolete")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TruckId")

@@ -33,7 +33,8 @@ namespace DispatcherWeb.Drivers.Exporting
                         ("Last MVR Date", x => x.LastMvrDate?.ToString("d")),
                         ("Next MVR Due Date", x => x.NextMvrDueDate?.ToString("d")),
                         ("Date of Hire", x => x.DateOfHire?.ToString("d")),
-                        ("Termination Date", x => x.TerminationDate?.ToString("d"))
+                        ("Termination Date", x => x.TerminationDate?.ToString("d")),
+                        ("Employee Id", x => x.EmployeeId)
                     );
 
                 }
