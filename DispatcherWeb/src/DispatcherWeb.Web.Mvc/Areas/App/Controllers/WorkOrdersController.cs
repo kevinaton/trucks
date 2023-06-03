@@ -7,10 +7,13 @@ using Abp.IO.Extensions;
 using Abp.Web.Models;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Features;
+using DispatcherWeb.Identity;
 using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Web.Controllers;
 using DispatcherWeb.WorkOrders;
 using DispatcherWeb.WorkOrders.Dto;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DispatcherWeb.Web.Areas.app.Controllers
@@ -20,21 +23,26 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
     public class WorkOrdersController : DispatcherWebControllerBase
     {
         private readonly IWorkOrderAppService _workOrderAppService;
+        private readonly IClientStore _clientStore;
 
         public WorkOrdersController(
-            IWorkOrderAppService workOrderAppService
+            IWorkOrderAppService workOrderAppService,
+            IClientStore clientStore
         )
         {
             _workOrderAppService = workOrderAppService;
+            _clientStore = clientStore;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewBag.ReportCenterHostUrl = await GetOIDCHostUrlAsync();
             return View();
         }
 
         public async Task<IActionResult> Details(int? id)
         {
+            ViewBag.ReportCenterHostUrl = await GetOIDCHostUrlAsync();
             WorkOrderEditDto model = await _workOrderAppService.GetWorkOrderForEdit(new NullableIdDto(id));
             return View(model);
         }
@@ -95,6 +103,16 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             return File(fileContent, "application/octet-stream", fileName);
         }
 
+        #region private methods
 
+        private async Task<string> GetOIDCHostUrlAsync()
+        {
+            var client = await _clientStore.FindClientByIdAsync("reportcenter");
+            var oidcUrl = client.RedirectUris.FirstOrDefault(u => u.EndsWith("signin-oidc"));
+            var oidcUri = new Uri(oidcUrl);
+            return $"{oidcUri.Scheme}://{oidcUri.Authority}";
+        }
+
+        #endregion
     }
 }

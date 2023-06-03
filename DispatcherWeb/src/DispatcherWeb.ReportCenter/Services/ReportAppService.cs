@@ -20,7 +20,7 @@ namespace DispatcherWeb.ReportCenter.Services
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
 
-        private static readonly Dictionary<string, (string Description, string Path, bool HasAccess)> _reportAccessDictionary = new();
+        private readonly Dictionary<string, (string Description, string Path, bool HasAccess)> _reportAccessDictionary = new();
 
         public ReportAppService(IServiceProvider serviceProvider,
                                 IHttpContextAccessor httpContextAccessor,
@@ -89,7 +89,7 @@ namespace DispatcherWeb.ReportCenter.Services
         {
             try
             {
-                if (refresh)
+                if (refresh || _reportAccessDictionary == null || _reportAccessDictionary.Count == 0)
                     await RefreshReportsDictionary();
 
                 var keyValReport = _reportAccessDictionary

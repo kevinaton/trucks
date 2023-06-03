@@ -26,19 +26,12 @@
 	  <None Remove="Reports\Backup\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="Reports\DataSource - Copy.rdsx" />
 	  <None Remove="Reports\MasterReport.rdlx-master" />
-	  <None Remove="Reports\MasterReportPortrait - Copy.rdlx-master" />
 	  <None Remove="Reports\MasterReportPortrait.rdlx-master" />
-	  <None Remove="Reports\TenantStatisticsReport - Copy.rdlx" />
 	  <None Remove="Reports\TenantStatisticsReport.rdlx" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Properties\.gclicx" />
-		<EmbeddedResource Include="Reports\MasterReport.rdlx-master">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\MasterReportPortrait.rdlx-master" />
 		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
@@ -75,6 +68,7 @@
 		<Compile Include="Models\ErrorViewModel.cs" />
 		<Compile Include="Models\ReportDataDefinitions\Base\IReportDataDefinition.cs" />
 		<Compile Include="Models\ReportDataDefinitions\Base\ReportDataDefinitionBase.cs" />
+		<Compile Include="Models\ReportDataDefinitions\VehicleMaintenanceWorkOrderReportDataDefinitions.cs" />
 		<Compile Include="Models\ReportDataDefinitions\TenantStatisticsReportDataDefinitions.cs" />
 		<Compile Include="Models\ReportListViewModel.cs" />
 		<Compile Include="Models\ReportViewModel.cs" />

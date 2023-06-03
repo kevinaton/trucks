@@ -10,11 +10,11 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
         {
             builder.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(30);
+                    .HasMaxLength(80);
 
             builder.Property(e => e.Path)
                     .IsRequired()
-                    .HasMaxLength(30);
+                    .HasMaxLength(80);
 
             builder.Property(e => e.Description)
                     .HasMaxLength(180);

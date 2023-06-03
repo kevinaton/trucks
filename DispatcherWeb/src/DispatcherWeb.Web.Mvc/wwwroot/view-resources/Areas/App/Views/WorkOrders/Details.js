@@ -355,5 +355,12 @@
             }
         });
 
+        $("#PrintWorkOrderButton").click(function (e) {
+            e.preventDefault();
+            var workOrderId = getWorkOrderId();
+            var reportCenterHostUrl = $("#PrintWorkOrderButton").attr("report-center");
+            window.open(`${reportCenterHostUrl}/report/VehicleMaintenanceWorkOrderReport/${workOrderId}/pdf`);
+        });
+
     });
 })();

@@ -2453,7 +2453,7 @@
 	<CustomProperties>
 		<CustomProperty>
 			<Name>MasterReport</Name>
-			<Value>MasterReportPortrait.rdlx-master</Value>
+			<Value>_MasterReportPortrait.rdlx-master</Value>
 		</CustomProperty>
 	</CustomProperties>
 	<dd:ReportStyleSheet xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">

@@ -33,6 +33,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             _environment = environment;
         }
 
+        public override bool HasTenantsParameter => true;
+
         public override async Task Initialize()
         {
             var reportId = "TenantStatisticsReport";

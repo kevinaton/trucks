@@ -11,7 +11,7 @@
     var _init = function (settings) {
         _settings = $.extend(_settings, settings);
 
-        var _reportParams = [{ name: 'TenantId', values: [_settings.tenantId] }];
+        var _reportParams = [{ name: 'TenantId', values: [_settings.tenantId] }, { name: 'EntityId', values: [_settings.entityId] }];
 
         // Initialize to open the report in the viewer;
         __viewer = GrapeCity.ActiveReports.JSViewer.create({

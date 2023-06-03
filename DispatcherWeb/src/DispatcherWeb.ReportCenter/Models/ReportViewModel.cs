@@ -13,6 +13,8 @@ namespace DispatcherWeb.ReportCenter.Models
 
         public List<dynamic> CustomDocExports { get; set; }
 
+        public int? EntityId { get; set; }
+
         public ReportViewModel()
         {
             CustomDocExports = new List<dynamic>();

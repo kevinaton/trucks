@@ -16,6 +16,9 @@ namespace DispatcherWeb.ReportCenter.Helpers
             if (reportId.Equals("TenantStatisticsReport", StringComparison.InvariantCulture))
                 return serviceProvider.GetService<TenantStatisticsReportDataDefinitions>();
 
+            else if (reportId.Equals("VehicleMaintenanceWorkOrderReport", StringComparison.InvariantCulture))
+                return serviceProvider.GetService<VehicleMaintenanceWorkOrderReportDataDefinitions>();
+
             throw new Exception("Report is not registered.");
         }
 

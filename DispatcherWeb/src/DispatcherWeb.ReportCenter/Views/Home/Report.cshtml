@@ -34,9 +34,10 @@
         $(function () {
 
             var _settings = {
-                reportName: '@(Model.ReportPath)',
+                reportPath: '@(Model.ReportPath)',
                 reportPathSanitized: '@($"{Model.ReportPathSanitized}.rdlx")',
-                tenantId: @(Model.TenantId)
+                tenantId: @(Model.TenantId),
+                entityId: @(Model.EntityId.HasValue ? Model.EntityId.Value : "null")
             };
 
             // initialize the report viewer module.

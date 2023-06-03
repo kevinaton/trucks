@@ -35,28 +35,44 @@ namespace DispatcherWeb.ReportCenter
             return View(model);
         }
 
-        [Route("/report/{reportPath}")]
-        public async Task<IActionResult> Report(string reportPath)
+        [Route("/report/{reportPath}/{id:int?}")]
+        public async Task<IActionResult> Report(string reportPath, int? id = null)
         {
             if (!await _reportAppService.CanAccessReport(reportPath))
-                return RedirectToAction("Index");
-
-            var tenantId = 0;
-            var claimsDic = HttpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value);
-            if (claimsDic.TryGetValue("http://www.aspnetboilerplate.com/identity/claims/tenantId", out string id))
-                tenantId = int.Parse(id);
-
-            /*var startDate = new DateTime(2020, 1, 1);
-            var endDate = new DateTime(2022, 12, 31);
-            var dashboardData = await _reportAppService.GetDashboardData(tenantId, startDate, endDate);*/
+                return RedirectToAction("Error");
 
             var vm = new ReportViewModel
             {
                 ReportPath = reportPath,
-                TenantId = tenantId
+                TenantId = 0,
+                EntityId = id
             };
 
+            var claimsDic = HttpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value);
+            if (claimsDic.TryGetValue("http://www.aspnetboilerplate.com/identity/claims/tenantId", out string tenantId))
+                vm.TenantId = int.Parse(tenantId);
+
             return View(vm);
+        }
+
+        [Route("/report/{reportPath}/{id:int?}/Pdf")]
+        public async Task<IActionResult> ReportPdf([FromServices] IWebHostEnvironment env, string reportPath, int? id = null)
+        {
+            if (!await _reportAppService.CanAccessReport(reportPath))
+                return RedirectToAction("Error");
+
+            var reportId = reportPath.Replace(".rdlx", string.Empty);
+            var reportDataDefinition = await _reportAppService.GetReportDataDefinition(reportId);
+            await reportDataDefinition.Initialize();
+
+            var memoryPdfStream = reportDataDefinition.OpenReportAsPdf(id);
+            var memStream = new MemoryStream();
+            memoryPdfStream.WriteTo(memStream);
+
+            await memStream.FlushAsync();
+            memStream.Position = 0;
+
+            return new FileStreamResult(memStream, "application/pdf");
         }
 
         [HttpGet("reports")]
