@@ -29,9 +29,10 @@ import {
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { grey } from '@mui/material/colors';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { linearProgressClasses } from '@mui/material/LinearProgress';
 import moment from 'moment';
 import data from '../../common/data/data.json';
-import { Tablecell } from '../../components/DTComponents';
+import { Tablecell, VerticalLinearProgress } from '../../components/DTComponents';
 
 const { offices, TruckCode, ScheduleData } = data;
 
@@ -45,6 +46,7 @@ const Schedule = (props) => {
     const actionOpen = Boolean(actionAnchor);
     const [isOrderOpen, setIsOrderOpen] = React.useState(false);
     const [isPrintOrderOpen, setIsPrintOrderOpen] = React.useState(false);
+    const [hoveredRow, setHoveredRow] = React.useState(null);
 
     useEffect(() => {
         props.handleCurrentPageName(pageName);
@@ -61,7 +63,6 @@ const Schedule = (props) => {
     const handleSettingsClick = (event) => {
         setSettingsAnchor(event.currentTarget);
     };
-
     const handleSettingsClose = () => {
         setSettingsAnchor(null);
     };
@@ -70,10 +71,17 @@ const Schedule = (props) => {
     const handleActionClick = (event) => {
         setActionAnchor(event.currentTarget);
     };
-
     const handleActionClose = () => {
         setActionAnchor(null);
         setIsOrderOpen(false);
+    };
+
+    // Handle row hover on table
+    const handleRowHover = (index) => {
+        setHoveredRow(index);
+    };
+    const handleRowLeave = () => {
+        setHoveredRow(null);
     };
 
     return (
@@ -221,12 +229,24 @@ const Schedule = (props) => {
                             </Grid>
                         </Paper>
                     </Box>
+
                     <TableContainer component={Box}>
-                        <Table aria-label='schedule table' size='small'>
+                        <Table stickyHeader aria-label='schedule table' size='small'>
                             <TableHead>
-                                <TableRow sx={{ backgroundColor: '#e6e6e6' }}>
-                                    <Tablecell label='Priority' value='' />
-                                    <Tablecell label='Cash on delivery' value='COD' />
+                                <TableRow sx={{ 
+                                    "& th": {
+                                        backgroundColor: grey[200],
+                                    }
+                                }}>
+                                    <Tablecell 
+                                        label='Priority' 
+                                        value={<i className="fa-regular fa-circle"></i>} 
+                                    />
+                                    <Tablecell 
+                                        label='Cash on delivery' 
+                                        value='COD'
+                                        tableCellClasses 
+                                    />
                                     <Tablecell label='Note' value='' />
                                     <Tablecell label='Customer' value='Customer' />
                                     <Tablecell label='Job Number' value='Job #' />
@@ -242,11 +262,7 @@ const Schedule = (props) => {
                                         label='Required truck'
                                         value={<i className='fa-regular fa-truck'></i>}
                                     />
-                                    <Tablecell
-                                        label='Scheduled truck'
-                                        value={<i className='fa-regular fa-truck-clock'></i>}
-                                    />
-                                    <Tablecell label='Trucks' value='Trucks' />
+                                    <Tablecell label='Progress' value='Progress' />
                                     <Tablecell label='Closed' value='Closed' />
                                     <Tablecell label='' value='' />
                                 </TableRow>
@@ -255,236 +271,322 @@ const Schedule = (props) => {
                             <TableBody>
                                 {ScheduleData.map((data, index) => {
                                     return (
-                                        <TableRow
-                                            key={index}
-                                            hover={true}
-                                            sx={{
-                                                '&.MuiTableRow-root:hover': {
-                                                    backgroundColor: '#F3F7FB',
-                                                },
-                                            }}>
-                                            <Tablecell
-                                                label='priority'
-                                                value={
-                                                    <i className='fa-solid fa-circle-arrow-up error-icon'></i>
-                                                }
-                                            />
-                                            <Tablecell
-                                                label='Cash on delivery'
-                                                value={<Checkbox checked={data.checkbox} />}
-                                            />
-                                            <Tablecell
-                                                label='Notes'
-                                                value={
-                                                    <i className='fa-solid fa-notebook icon'></i>
-                                                }
-                                            />
-                                            <Tablecell label='Customer' value={data.customer} />
-                                            <Tablecell label='Job number' value={data.job} />
-                                            <Tablecell label='Time on job' value={data.time} />
-                                            <Tablecell label='Load at' value={data.load} />
-                                            <Tablecell label='Deliver to' value={data.deliver} />
-                                            <Tablecell label='Item' value={data.item} />
-                                            <Tablecell label='Quantity' value={data.quantity} />
-                                            <Tablecell
-                                                label='Required trucks'
-                                                value={data.required}
-                                            />
-                                            <Tablecell
-                                                label='Scheduled trucks'
-                                                value={data.scheduled}
-                                            />
-                                            <Tablecell
-                                                label='Trucks'
-                                                value={
-                                                    <Grid
-                                                        sx={{
-                                                            backgroundColor: '#f8f9fa',
-                                                            borderRadius: 1,
-                                                            border: '1px solid #ebedf2',
-                                                            pb: 1,
-                                                            m: 0,
-                                                        }}
-                                                        container
-                                                        rowSpacing={1}
-                                                        columnSpacing={1}>
-                                                        {data.trucks.map((truck, index) => {
-                                                            return (
-                                                                <Grid item key={index}>
-                                                                    <Chip
-                                                                        label={truck}
-                                                                        onClick={() => {}}
-                                                                        onDelete={() => {}}
-                                                                        sx={{
-                                                                            borderRadius: 0,
-                                                                            fontSize: 10,
-                                                                            fontWeight: 500,
-                                                                            p: 0,
+                                        <React.Fragment key={index}>
+                                            <TableRow
+                                                hover={true}
+                                                onMouseEnter={() => handleRowHover(index)}
+                                                onMouseLeave={() => handleRowLeave}
+                                                sx={{
+                                                    backgroundColor: hoveredRow === index
+                                                        ? (theme) => theme.palette.action.hover
+                                                        : '#ffffff',
+                                                    '&.MuiTableRow-root:hover': {
+                                                        backgroundColor: (theme) =>
+                                                        theme.palette.action.hover,
+                                                    }
+                                                }}
+                                            >
+                                                <Tablecell
+                                                    label='priority'
+                                                    value={
+                                                        <i className='fa-solid fa-circle-arrow-up error-icon'></i>
+                                                    }
+                                                />
+                                                <Tablecell
+                                                    label='Cash on delivery'
+                                                    value={<Checkbox checked={data.checkbox} />}
+                                                />
+                                                <Tablecell
+                                                    label='Notes'
+                                                    value={
+                                                        <i className='fa-solid fa-notebook icon'></i>
+                                                    }
+                                                />
+                                                <Tablecell label='Customer' value={data.customer} />
+                                                <Tablecell label='Job number' value={data.job} />
+                                                <Tablecell label='Time on job' value={data.time} />
+                                                <Tablecell label='Load at' value={data.load} />
+                                                <Tablecell label='Deliver to' value={data.deliver} />
+                                                <Tablecell label='Item' value={data.item} />
+                                                <Tablecell label='Quantity' value={data.quantity} />
+                                                <Tablecell
+                                                    label='Required trucks'
+                                                    value={data.required}
+                                                />
+                                                <Tablecell
+                                                    label="Progress"
+                                                    value={
+                                                        <Box
+                                                            sx={{
+                                                                display: "flex",
+                                                                justifyContent: "space-between",
+                                                            }}
+                                                        >
+                                                            <Box>
+                                                                <VerticalLinearProgress
+                                                                    variant="determinate"
+                                                                    color="secondary"
+                                                                    value={data.amountProgress}
+                                                                    sx={{
+                                                                        [`& .${linearProgressClasses.bar}`]: {
+                                                                        transform: `translateY(${-data.amountProgress}%)!important`,
+                                                                        },
+                                                                    }}
+                                                                />
+                                                                <Typography variant="caption">{`${data.amountProgress}%`}</Typography>
+                                                            </Box>
+                                                            <Box>
+                                                                <VerticalLinearProgress
+                                                                    variant="determinate"
+                                                                    color="secondary"
+                                                                    value={data.schedProgress}
+                                                                    sx={{
+                                                                        [`& .${linearProgressClasses.bar}`]: {
+                                                                        transform: `translateY(${-data.schedProgress}%)!important`,
+                                                                        },
+                                                                    }}
+                                                                />
+                                                                <Typography variant="caption">{`${data.schedProgress}%`}</Typography>
+                                                            </Box>
+                                                        </Box>
+                                                    }
+                                                />
+                                                <Tablecell
+                                                    label='Closed'
+                                                    value={<Checkbox checked={data.closed} />}
+                                                />
+                                                <Tablecell
+                                                    label='Action'
+                                                    value={
+                                                        <div>
+                                                            <IconButton
+                                                                sx={{ width: 25, height: 25 }}
+                                                                onClick={handleActionClick}
+                                                            >
+                                                                <i className='fa-regular fa-ellipsis-vertical'></i>
+                                                            </IconButton>
+                                                            <Menu
+                                                                anchorEl={actionAnchor}
+                                                                id='settings-menu'
+                                                                open={actionOpen}
+                                                                onClose={handleActionClose}
+                                                            >
+                                                                <ListItem disablePadding>
+                                                                    <ListItemButton onClick={handleActionClose}>
+                                                                        <ListItemText
+                                                                            primary={
+                                                                                <Typography align='left'>
+                                                                                    Edit Job
+                                                                                </Typography>
+                                                                            }
+                                                                        />
+                                                                    </ListItemButton>
+                                                                </ListItem>
+
+                                                                <ListItem disablePadding>
+                                                                    <ListItemButton
+                                                                        onClick={() => {
+                                                                            setIsOrderOpen(!isOrderOpen);
                                                                         }}
-                                                                    />
-                                                                </Grid>
-                                                            );
-                                                        })}
-                                                    </Grid>
-                                                }
-                                            />
-                                            <Tablecell
-                                                label='Closed'
-                                                value={<Checkbox checked={data.closed} />}
-                                            />
-                                            <Tablecell
-                                                label='Action'
-                                                value={
-                                                    <div>
-                                                        <IconButton
-                                                            sx={{ width: 25, height: 25 }}
-                                                            onClick={handleActionClick}>
-                                                            <i className='fa-regular fa-ellipsis-vertical'></i>
-                                                        </IconButton>
-                                                        <Menu
-                                                            anchorEl={actionAnchor}
-                                                            id='settings-menu'
-                                                            open={actionOpen}
-                                                            onClose={handleActionClose}>
-                                                            <ListItem disablePadding>
-                                                                <ListItemButton
-                                                                    onClick={handleActionClose}>
-                                                                    <ListItemText
-                                                                        primary={
-                                                                            <Typography align='left'>
-                                                                                Edit Job
-                                                                            </Typography>
-                                                                        }
-                                                                    />
-                                                                </ListItemButton>
-                                                            </ListItem>
+                                                                    >
+                                                                        <ListItemText
+                                                                            primary={
+                                                                                <Typography align='left'>
+                                                                                    Order
+                                                                                </Typography>
+                                                                            }
+                                                                        />
+                                                                        {isOrderOpen ? (
+                                                                            <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
+                                                                        ) : (
+                                                                            <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
+                                                                        )}
+                                                                    </ListItemButton>
+                                                                </ListItem>
 
-                                                            <ListItem disablePadding>
-                                                                <ListItemButton
+                                                                <Collapse
+                                                                    in={isOrderOpen}
                                                                     onClick={() => {
-                                                                        setIsOrderOpen(
-                                                                            !isOrderOpen
-                                                                        );
-                                                                    }}>
-                                                                    <ListItemText
-                                                                        primary={
-                                                                            <Typography align='left'>
-                                                                                Order
-                                                                            </Typography>
-                                                                        }
-                                                                    />
-                                                                    {isOrderOpen ? (
-                                                                        <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
-                                                                    ) : (
-                                                                        <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
-                                                                    )}
-                                                                </ListItemButton>
-                                                            </ListItem>
+                                                                        setIsOrderOpen(false);
+                                                                    }}
+                                                                    timeout='auto'
+                                                                    unmountOnExit
+                                                                    sx={{ backgroundColor: grey[100] }}
+                                                                >
+                                                                    <List component='div' disablePadding>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='View/Edit' />
+                                                                        </ListItemButton>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='Mark Complete' />
+                                                                        </ListItemButton>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='Cancel' />
+                                                                        </ListItemButton>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='Copy' />
+                                                                        </ListItemButton>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='Transfer' />
+                                                                        </ListItemButton>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='Change date' />
+                                                                        </ListItemButton>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='Delete' />
+                                                                        </ListItemButton>
+                                                                    </List>
+                                                                </Collapse>
 
-                                                            <Collapse
-                                                                in={isOrderOpen}
-                                                                onClick={() => {
-                                                                    setIsOrderOpen(false);
-                                                                }}
-                                                                timeout='auto'
-                                                                unmountOnExit
-                                                                sx={{ backgroundColor: grey[100] }}>
-                                                                <List
-                                                                    component='div'
-                                                                    disablePadding>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='View/Edit' />
+                                                                <ListItem disablePadding>
+                                                                    <ListItemButton
+                                                                        onClick={() => {
+                                                                            setIsPrintOrderOpen(!isPrintOrderOpen);
+                                                                        }}
+                                                                    >
+                                                                        <ListItemText
+                                                                            primary={
+                                                                                <Typography align='left'>
+                                                                                    Print Order
+                                                                                </Typography>
+                                                                            }
+                                                                        />
+                                                                        {isPrintOrderOpen ? (
+                                                                            <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
+                                                                        ) : (
+                                                                            <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
+                                                                        )}
                                                                     </ListItemButton>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='Mark Complete' />
-                                                                    </ListItemButton>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='Cancel' />
-                                                                    </ListItemButton>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='Copy' />
-                                                                    </ListItemButton>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='Transfer' />
-                                                                    </ListItemButton>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='Change date' />
-                                                                    </ListItemButton>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='Delete' />
-                                                                    </ListItemButton>
-                                                                </List>
-                                                            </Collapse>
+                                                                </ListItem>
 
-                                                            <ListItem disablePadding>
-                                                                <ListItemButton
+                                                                <Collapse
+                                                                    in={isPrintOrderOpen}
                                                                     onClick={() => {
-                                                                        setIsPrintOrderOpen(
-                                                                            !isPrintOrderOpen
-                                                                        );
-                                                                    }}>
-                                                                    <ListItemText
-                                                                        primary={
+                                                                        setIsPrintOrderOpen(false);
+                                                                    }}
+                                                                    timeout='auto'
+                                                                    unmountOnExit
+                                                                    sx={{ backgroundColor: grey[100] }}
+                                                                >
+                                                                    <List component='div' disablePadding>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='No Prices' />
+                                                                        </ListItemButton>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='Combined Prices' />
+                                                                        </ListItemButton>
+                                                                        <ListItemButton>
+                                                                            <ListItemText primary='Separate Prices' />
+                                                                        </ListItemButton>
+                                                                    </List>
+                                                                </Collapse>
+                                                                <ListItem disablePadding>
+                                                                    <ListItemButton onClick={handleActionClose}>
+                                                                        <ListItemText>
                                                                             <Typography align='left'>
-                                                                                Print Order
+                                                                                Tickets
                                                                             </Typography>
-                                                                        }
-                                                                    />
-                                                                    {isPrintOrderOpen ? (
-                                                                        <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
-                                                                    ) : (
-                                                                        <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
-                                                                    )}
-                                                                </ListItemButton>
-                                                            </ListItem>
+                                                                        </ListItemText>
+                                                                    </ListItemButton>
+                                                                </ListItem>
+                                                                <ListItem disablePadding>
+                                                                    <ListItemButton onClick={handleActionClose}>
+                                                                        <ListItemText>
+                                                                            <Typography align='left'>
+                                                                                View Load History
+                                                                            </Typography>
+                                                                        </ListItemText>
+                                                                    </ListItemButton>
+                                                                </ListItem>
+                                                            </Menu>
+                                                        </div>
+                                                    }
+                                                />
+                                            </TableRow>
 
-                                                            <Collapse
-                                                                in={isPrintOrderOpen}
-                                                                onClick={() => {
-                                                                    setIsPrintOrderOpen(false);
+                                            <TableRow
+                                                hover={true}
+                                                onMouseEnter={() => handleRowHover(index)}
+                                                onMouseLeave={() => handleRowLeave}
+                                                sx={{
+                                                    backgroundColor:
+                                                        hoveredRow === index
+                                                        ? (theme) => theme.palette.action.hover
+                                                        : '#ffffff',
+                                                    '&.MuiTableRow-root:hover': {
+                                                        backgroundColor: (theme) =>
+                                                        theme.palette.action.hover,
+                                                    }
+                                                }}
+                                            >
+                                                <Tablecell
+                                                    label='Trucks'
+                                                    colSpan={14}
+                                                    value={
+                                                        <Box>
+                                                            <Box
+                                                                sx={{
+                                                                    display: 'flex',
+                                                                    alignContent: 'center',
+                                                                    mb: 1
                                                                 }}
-                                                                timeout='auto'
-                                                                unmountOnExit
-                                                                sx={{ backgroundColor: grey[100] }}>
-                                                                <List
-                                                                    component='div'
-                                                                    disablePadding>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='No Prices' />
-                                                                    </ListItemButton>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='Combined Prices' />
-                                                                    </ListItemButton>
-                                                                    <ListItemButton>
-                                                                        <ListItemText primary='Separate Prices' />
-                                                                    </ListItemButton>
-                                                                </List>
-                                                            </Collapse>
-                                                            <ListItem disablePadding>
-                                                                <ListItemButton
-                                                                    onClick={handleActionClose}>
-                                                                    <ListItemText>
-                                                                        <Typography align='left'>
-                                                                            Tickets
-                                                                        </Typography>
-                                                                    </ListItemText>
-                                                                </ListItemButton>
-                                                            </ListItem>
-                                                            <ListItem disablePadding>
-                                                                <ListItemButton
-                                                                    onClick={handleActionClose}>
-                                                                    <ListItemText>
-                                                                        <Typography align='left'>
-                                                                            View Load History
-                                                                        </Typography>
-                                                                    </ListItemText>
-                                                                </ListItemButton>
-                                                            </ListItem>
-                                                        </Menu>
-                                                    </div>
+                                                            >
+                                                                <Typography variant='subtitle2' sx={{ mr: 1 }}>
+                                                                    Trucks assigned
+                                                                </Typography>
+                                                                <Typography
+                                                                    sx={{
+                                                                        px: 1,
+                                                                        w: '10px',
+                                                                        h: '10px',
+                                                                        textAlign: 'center',
+                                                                        backgroundColor: (theme) =>
+                                                                        theme.palette.grey[200],
+                                                                        borderRadius: 80
+                                                                    }}
+                                                                    variant='subtitle2'
+                                                                >
+                                                                    {data.trucks.length}
+                                                                </Typography>
+                                                            </Box>
+
+                                                            <Grid
+                                                                sx={{
+                                                                    backgroundColor: (theme) => theme.palette.background.paper,
+                                                                    borderRadius: 1,
+                                                                    border: '1px solid #ebedf2',
+                                                                    pb: 1,
+                                                                    m: 0
+                                                                }}
+                                                                container
+                                                                rowSpacing={1}
+                                                                columnSpacing={1}
+                                                            >
+                                                                {data.trucks.map((truck, index) => {
+                                                                    return (
+                                                                        <Grid item key={index}>
+                                                                            <Chip
+                                                                                label={truck.name}
+                                                                                onClick={() => {}}
+                                                                                onDelete={() => {}}
+                                                                                variant={truck.variant}
+                                                                                color={truck.color}
+                                                                                sx={{
+                                                                                    borderRadius: 0,
+                                                                                    fontSize: 10,
+                                                                                    fontWeight: 500,
+                                                                                    p: 0
+                                                                                }}
+                                                                            />
+                                                                        </Grid>
+                                                                    );
+                                                                })}
+                                                            </Grid>
+                                                    </Box>
                                                 }
-                                            />
-                                        </TableRow>
+                                                />
+                                            </TableRow>
+                                        </React.Fragment>
                                     );
                                 })}
                             </TableBody>

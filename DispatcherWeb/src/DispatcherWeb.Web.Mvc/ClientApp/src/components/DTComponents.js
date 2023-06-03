@@ -15,6 +15,7 @@ import { KeyboardArrowDown } from '@material-ui/icons';
 import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import '../fontawesome/css/all.css';
 
 // Header icon button component
@@ -64,6 +65,20 @@ export const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
 }));
 
+export const VerticalLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    width: 20,
+    height: 80,
+    borderRadius: 3,
+    [`& .${linearProgressClasses.bar}`]: {
+        backgroundColor: '#e7e7e8',
+    },
+    [`&.${linearProgressClasses.colorSecondary}`]: {
+        borderRadius: 3,
+        opacity: 1,
+        backgroundColor: '#4ea8fb',
+    },
+}));
+
 // Width of the drawer
 export const drawerWidth = 240; // The width of the side menu
 
@@ -91,10 +106,12 @@ export const Drawer = styled(MuiDrawer, {
 }));
 
 // Custom TableCell
-export const Tablecell = ({ label, value }) => {
+export const Tablecell = ({ label, value, colSpan }) => {
     return (
         <Tooltip title={label} enterNextDelay={2000}>
-            <TableCell aria-label={label}>{value}</TableCell>
+            <TableCell style={{ borderBottom: 'none' }} aria-label={label} colSpan={colSpan}>
+                {value}
+            </TableCell>
         </Tooltip>
     );
 };
