@@ -17,6 +17,7 @@ namespace DispatcherWeb.Tickets.Dto
         public int? TruckId { get; set; }
         public string TruckCode { get; set; }
         public int? TrailerId { get; set; }
+        public string TrailerTruckCode { get; set; }
         public int? DriverId { get; set; }
         public string DriverName { get; set; }
     }

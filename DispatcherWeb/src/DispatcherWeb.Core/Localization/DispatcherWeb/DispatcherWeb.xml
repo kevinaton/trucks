@@ -1845,5 +1845,6 @@
 		<text name="EmployeeId">Employee Id</text>
 		<text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
 		<text name="TruckTrailerCategory">Truck/Trailer category</text>
+		<text name="Trailer">Trailer</text>
 	</texts>
 </localizationDictionary>

@@ -246,6 +246,11 @@ namespace DispatcherWeb.Trucks
                 query = _orderLineTruckRepository.GetAll()
                     .Where(x => x.OrderLineId == input.OrderLineId)
                     .Select(x => x.Truck)
+                    .Union(
+                        _orderLineTruckRepository.GetAll()
+                        .Where(x => x.OrderLineId == input.OrderLineId)
+                        .Select(x => x.Trailer)
+                    )
                     .Distinct();
             }
             query = query
@@ -259,6 +264,8 @@ namespace DispatcherWeb.Trucks
                 .WhereIf(!input.IncludeLeaseHaulerTrucks, x => x.LocationId.HasValue)
                 .WhereIf(input.InServiceOnly, x => !x.IsOutOfService)
                 .WhereIf(input.ActiveOnly, x => x.IsActive)
+                .WhereIf(input.AssetType.HasValue, x => x.VehicleCategory.AssetType == input.AssetType)
+                .WhereIf(input.CanPullTrailer.HasValue, x => x.CanPullTrailer == input.CanPullTrailer)
                 .WhereIf(input.ExcludeTrailers, x => x.VehicleCategory.IsPowered);
 
             return await query

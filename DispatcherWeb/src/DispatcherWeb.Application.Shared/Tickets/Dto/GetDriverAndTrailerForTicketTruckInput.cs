@@ -2,7 +2,7 @@
 
 namespace DispatcherWeb.Tickets.Dto
 {
-    public class GetDriverForTicketTruckInput
+    public class GetDriverAndTrailerForTicketTruckInput
     {
         public int? TruckId { get; set; }
         public string TruckCode { get; set; }

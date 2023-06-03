@@ -104,6 +104,7 @@ namespace DispatcherWeb.Tickets.Dto
             public int? TruckId { get; set; }
             public string TruckCode { get; set; } //only as a fallback value when TruckId is null or doesn't belong to a real truck
             public int? TrailerId { get; set; }
+            public string TrailerTruckCode { get; set; }
             public int? DriverId { get; set; }
             public Guid? TicketPhotoId { get; set; }
             public int? ReceiptLineId { get; set; }

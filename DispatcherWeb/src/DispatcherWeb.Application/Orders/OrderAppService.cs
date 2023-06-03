@@ -2387,10 +2387,14 @@ namespace DispatcherWeb.Orders
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<ResetOverriddenOrderLineValuesOutput> ResetOverriddenOrderLineValues(EntityDto input)
+        public async Task<ResetOverriddenOrderLineValuesOutput> ResetOverriddenOrderLineValues(ResetOverriddenOrderLineValuesInput input)
         {
             var orderLineUpdater = _orderLineUpdaterFactory.Create(input.Id);
             var orderLine = await orderLineUpdater.GetEntityAsync();
+            if (input.OverrideReadOnlyState && await PermissionChecker.IsGrantedAsync(AppPermissions.EditInvoicedOrdersAndTickets))
+            {
+                orderLineUpdater.SuppressReadOnlyChecker();
+            }
             await orderLineUpdater.UpdateFieldAsync(o => o.IsMaterialPriceOverridden, false);
             await orderLineUpdater.UpdateFieldAsync(o => o.IsFreightPriceOverridden, false);
             await orderLineUpdater.UpdateFieldAsync(o => o.MaterialPrice, orderLine.MaterialPricePerUnit * orderLine.MaterialQuantity ?? 0);

@@ -98,6 +98,12 @@ namespace DispatcherWeb.Orders
             return _order ?? (_order = await _orderRepository.GetAsync(orderLine.OrderId));
         }
 
+        private bool _suppressReadOnlyChecker = false;
+        public void SuppressReadOnlyChecker(bool suppressReadOnlyChecker = true)
+        {
+            _suppressReadOnlyChecker = suppressReadOnlyChecker;
+        }
+
         protected override async Task UpdateFieldAsync<TField>(OrderLine orderLine, string fieldName, TField oldValue, TField newValue, Action<TField> setValue)
         {
             if (oldValue is string)
@@ -112,7 +118,10 @@ namespace DispatcherWeb.Orders
                 return;
             }
 
-            await GetReadonlyChecker(orderLine).ThrowIfFieldIsReadonlyAsync(fieldName);
+            if (!_suppressReadOnlyChecker)
+            {
+                await GetReadonlyChecker(orderLine).ThrowIfFieldIsReadonlyAsync(fieldName);
+            }
 
             setValue(newValue);
 
