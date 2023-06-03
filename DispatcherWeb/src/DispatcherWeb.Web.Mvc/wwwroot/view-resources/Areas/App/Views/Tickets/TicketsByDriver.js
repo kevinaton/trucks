@@ -445,11 +445,15 @@
                 .hide()
                 .off('click');
         }
+
         if (block.orderLine.note) {
             block.ui.orderLineNoteIcon
                 .prop('title', abp.utils.replaceAll(block.orderLine.note, '\n', '<br>'))
                 .tooltip()
                 .show();
+        } else {
+            block.ui.orderLineNoteIcon
+                .hide();
         }
 
         var noteIcons = $();
