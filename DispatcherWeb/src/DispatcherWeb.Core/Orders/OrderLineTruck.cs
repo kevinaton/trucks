@@ -33,12 +33,6 @@ namespace DispatcherWeb.Orders
 
         public decimal Utilization { get; set; }
 
-        [Obsolete]
-        public int Sequence { get; set; }
-
-        [Obsolete]
-        public DateTime? TimeOnJobObsolete { get; set; }
-
         public DateTime? TimeOnJob { get; set; }
 
         public bool IsDone { get; set; }

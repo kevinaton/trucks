@@ -63,6 +63,7 @@ namespace DispatcherWeb.Tickets.Dto
             public decimal FreightTotal { get; set; }
             public bool IsMaterialTotalOverridden { get; set; }
             public bool IsFreightTotalOverridden { get; set; }
+            public string Note { get; set; }
         }
 
         public class DriverDto
