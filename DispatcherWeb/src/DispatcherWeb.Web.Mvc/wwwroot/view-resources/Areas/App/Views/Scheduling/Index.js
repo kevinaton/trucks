@@ -229,6 +229,12 @@
             modalClass: 'SetTrailerForTractorModal'
         });
 
+        var _setTrailerForOrderLineTruck = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Scheduling/SetTrailerForOrderLineTruckModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetTrailerForOrderLineTruckModal.js',
+            modalClass: 'SetTrailerForOrderLineTruckModal'
+        });
+
         var _setTractorForTrailer = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Scheduling/SetTractorForTrailerModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetTractorForTrailerModal.js',
@@ -2615,7 +2621,28 @@
                         var orderLineTruckId = $(this).data('item').id;
                         _changeDriverForOrderLineTruckModal.open({ orderLineTruckId: orderLineTruckId });
                     }
-                }
+                },
+                changeTrailer: {
+                    name: 'Change trailer',
+                    visible: function () {
+                        var truck = $(this).data('item');
+                        return truck.canPullTrailer;
+                    },
+                    callback: async function () {
+                        var item = $(this).data('item');
+                        var filterData = _dtHelper.getFilterData();
+                        _setTrailerForOrderLineTruck.open({
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                            tractorId: item.truckId,
+                            orderLineTruckId: item.id,
+                            trailerId: item.trailer && item.trailer.id || null,
+                            trailerTruckCode: item.trailer && item.trailer.truckCode|| null,
+                            message: 'Select trailer for truck ' + item.truckCode + ' for single job'
+                        });
+                    }
+                },
             }
         });
 
@@ -2777,7 +2804,7 @@
                     }
                 },
                 addTrailer: {
-                    name: 'Add Trailer',
+                    name: 'Add trailer',
                     visible: function () {
                         var truck = $(this).data('truck');
                         return truck.canPullTrailer && !truck.trailer;
@@ -2794,7 +2821,7 @@
                     }
                 },
                 changeTrailer: {
-                    name: 'Change Trailer',
+                    name: 'Change trailer',
                     visible: function () {
                         var truck = $(this).data('truck');
                         return truck.canPullTrailer && truck.trailer;
@@ -2813,7 +2840,7 @@
                     }
                 },
                 removeTrailer: {
-                    name: 'Remove Trailer',
+                    name: 'Remove trailer',
                     visible: function () {
                         var truck = $(this).data('truck');
                         return truck.canPullTrailer && truck.trailer;
@@ -2833,7 +2860,7 @@
                     }
                 },
                 addTractor: {
-                    name: 'Add Tractor',
+                    name: 'Add tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.canPullTrailer && !truck.tractor;
@@ -2850,7 +2877,7 @@
                     }
                 },
                 changeTractor: {
-                    name: 'Change Tractor',
+                    name: 'Change tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.canPullTrailer && truck.tractor;
@@ -2869,7 +2896,7 @@
                     }
                 },
                 removeTractor: {
-                    name: 'Remove Tractor',
+                    name: 'Remove tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.canPullTrailer && truck.tractor;
