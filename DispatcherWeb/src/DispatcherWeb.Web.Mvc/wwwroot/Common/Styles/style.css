@@ -2147,3 +2147,7 @@ div.dataTables_wrapper div.dataTables_length select {
     text-indent: initial;
     height: auto; 
 }
+
+.order-line-note-icon {
+    margin: 0.85rem 1.15rem 0 0;
+}

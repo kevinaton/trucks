@@ -445,6 +445,12 @@
                 .hide()
                 .off('click');
         }
+        if (block.orderLine.note) {
+            block.ui.orderLineNoteIcon
+                .prop('title', abp.utils.replaceAll(block.orderLine.note, '\n', '<br>'))
+                .tooltip()
+                .show();
+        }
 
         var noteIcons = $();
         var notes = block.orderLine.orderLineTrucks.filter(olt => olt.driverId === block.driverId && olt.driverNote).map(x => x.driverNote);
@@ -1116,6 +1122,7 @@
 
         ui.form.append(
             $('<div class="d-flex justify-content-end"></div>').append(
+                renderOrderLineNoteIcon(ui),
                 renderOverrideReadOnlyStateButton(ui)
             )
         ).append(
@@ -1919,6 +1926,10 @@
 
     function renderOverrideReadOnlyStateButton(ui) {
         return ui.overrideReadOnlyStateButton = $('<button class="btn btn-default" type="button"><span class="fa fa-edit"></span></button>').hide();
+    }
+
+    function renderOrderLineNoteIcon(ui) {
+        return ui.orderLineNoteIcon = $('<i class="la la-files-o directions-icon order-line-note-icon" data-toggle="tooltip" data-html="true"></i>').hide();
     }
 
     function renderClickableWarningIcon(ui) {

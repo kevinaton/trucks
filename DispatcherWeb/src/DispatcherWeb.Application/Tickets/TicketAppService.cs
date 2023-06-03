@@ -1040,6 +1040,7 @@ namespace DispatcherWeb.Tickets
                     FreightTotal = x.FreightPrice,
                     IsMaterialTotalOverridden = x.IsMaterialPriceOverridden,
                     IsFreightTotalOverridden = x.IsFreightPriceOverridden,
+                    Note = x.Note,
                     OrderLineTrucks = x.OrderLineTrucks.Select(t => new TicketsByDriverResult.OrderLineTruckDto
                     {
                         Id = t.Id,
