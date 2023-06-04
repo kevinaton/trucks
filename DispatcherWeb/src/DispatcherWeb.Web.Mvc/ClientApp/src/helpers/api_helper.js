@@ -22,3 +22,15 @@ export async function get(url, config = {}) {
         .get(url, { ...config })
         .then((response) => response.data);
 };
+
+export async function post(url, data, config = {}) {
+    return await axiosApi
+        .post(url, data, { ...config })
+        .then((response) => response.data);
+};
+
+export async function put(url, data, config = {}) {
+    return await axiosApi
+        .put(url, data, { ...config })
+        .then((response) => response.data);
+};
