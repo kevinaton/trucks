@@ -5,19 +5,20 @@ import { isEmpty } from 'lodash';
 import {
     Box,
     Button,
-    Collapse,
     Fade,
     List,
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Popover,
     Tooltip,
     Typography,
 } from '@mui/material';
 import { Drawer } from '../../DTComponents';
 import { sideMenuItems } from '../../../common/data/menus';
 import { getMenuItems } from '../../../store/actions';
+import { theme } from '../../../Theme';
 
 export const SideMenu = ({
     isAuthenticated,
@@ -28,16 +29,17 @@ export const SideMenu = ({
     isSmall,
     setCollapseOpen,
     handleDrawerOpen,
-    handleDrawerClose
+    handleDrawerClose,
 }) => {
     const [menus, setMenus] = useState(sideMenuItems);
     const [sideMenus, setSideMenus] = useState([]);
+    const [subAnchorEl, setSubAnchorEl] = React.useState(null);
 
     const dispatch = useDispatch();
-    const { menuItems } = useSelector(state => ({
-        menuItems: state.LayoutReducer.menuItems
+    const { menuItems } = useSelector((state) => ({
+        menuItems: state.LayoutReducer.menuItems,
     }));
-    
+
     useEffect(() => {
         if (isAuthenticated) {
             if (isEmpty(menuItems)) {
@@ -79,13 +81,30 @@ export const SideMenu = ({
                         return { ...sub, select: currentPageName === menu.displayName };
                     }
                     return { ...sub, select: false };
-                })
+                });
                 return { ...menu, submenu: updatedSubMenu, select: false };
             }
             return { ...menu, select: false };
-        })
+        });
 
         setMenus(newSideMenus);
+    };
+
+    // Handles opening of submenu
+    const handlePopoverOpen = (event, menu) => {
+        setSubAnchorEl(event.currentTarget);
+        handleCollapseOpen(menu);
+    };
+
+    // Handles closing of submenu
+    const handlePopoverClose = (menu) => {
+        setSubAnchorEl(null);
+        setCollapseOpen((prev) => {
+            return {
+                ...prev,
+                [menu.name]: false,
+            };
+        });
     };
 
     const drawer = (
@@ -99,12 +118,8 @@ export const SideMenu = ({
                     fullWidth
                     size='large'
                     startIcon={
-                        <i
-                            className='fa-regular fa-plus'
-                            style={{ fontSize: '0.8rem' }}
-                        ></i>
-                    }
-                >
+                        <i className='fa-regular fa-plus' style={{ fontSize: '0.8rem' }}></i>
+                    }>
                     Add New
                 </Button>
                 <Button
@@ -119,16 +134,15 @@ export const SideMenu = ({
                         height: '100%',
                         color: '#ffffff',
                         backgroundColor: '#67A2D7',
-                    }}
-                >
+                    }}>
                     <i className='fa-regular fa-plus' style={{ fontSize: '0.8rem' }}></i>
                 </Button>
             </Box>
 
             <List sx={{ p: 0 }}>
                 {sideMenus.map((menu, index) => {
-                    const isSubMenuOpen = menu.items.length > 0 && collapseOpen[menu.displayName]
-                    const isMvc = menu.url && !menu.url.startsWith('/app/redir?') ? true : false
+                    const isSubMenuOpen = menu.items.length > 0 && collapseOpen[menu.displayName];
+                    const isMvc = menu.url && !menu.url.startsWith('/app/redir?') ? true : false;
                     return (
                         <ListItem
                             component={menu.url && !isMvc ? Link : 'div'}
@@ -138,151 +152,172 @@ export const SideMenu = ({
                             sx={{
                                 display: 'block',
                                 textDecoration: 'none',
-                                color: '#212121'
-                            }}
-                        >
-                        <Tooltip
-                            title={menu.displayName}
-                            placement='right'
-                            TransitionComponent={Fade}
-                            enterNextDelay={2000}
-                        >
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: drawerOpen ? 'initial' : 'center',
-                                    px: 2.5,
-                                    ...(isSubMenuOpen && { bgcolor: '#f8f9fa' })
-                                }}
-                                selected={menu.displayName === currentPageName ? true : false}
-                                onClick={
-                                    menu.items.length > 0
-                                    ? () => handleCollapseOpen(menu)
-                                    : (event) => {
-                                        if (isMvc) window.location.href = `${window.location.origin}/${menu.url}`
-                                        handleListItemButton(event.target.textContent)
-                                    }
-                                }
-                            >
-                                <ListItemIcon
+                                color: theme.palette.text.primary,
+                            }}>
+                            <Tooltip
+                                title={menu.displayName}
+                                placement='right'
+                                TransitionComponent={Fade}
+                                enterNextDelay={2000}>
+                                <ListItemButton
                                     sx={{
-                                        minWidth: 0.2,
-                                        justifyContent: 'left'
+                                        minHeight: 48,
+                                        justifyContent: drawerOpen ? 'initial' : 'center',
+                                        px: 2.5,
+                                        ...(isSubMenuOpen && {
+                                            bgcolor: theme.palette.action.hover,
+                                        }),
                                     }}
-                                >
-                                    <i
-                                        className={
-                                            menu.select
-                                                ? `${menu.icon} secondary-icon active-icon`
-                                                : `${menu.icon} secondary-icon`
+                                    selected={menu.displayName === currentPageName ? true : false}
+                                    onMouseOver={
+                                        menu.items.length > 0
+                                            ? (event) => handlePopoverOpen(event, menu)
+                                            : (event) => {
+                                                  handleListItemButton(event.target.textContent);
+                                              }
+                                    }
+                                    onClick={() => {
+                                        if (isMvc)
+                                            window.location.href = `${window.location.origin}/${menu.url}`;
+                                    }}>
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: 0.2,
+                                            justifyContent: 'left',
+                                        }}>
+                                        <i
+                                            className={
+                                                menu.select
+                                                    ? `${menu.icon} secondary-icon active-icon`
+                                                    : `${menu.icon} secondary-icon`
+                                            }></i>
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        level='body2'
+                                        primary={
+                                            <Typography
+                                                variant='body2'
+                                                style={{
+                                                    fontSize: 14,
+                                                    textOverflow: 'ellipsis',
+                                                    overflow: 'hidden',
+                                                    whiteSpace: 'nowrap',
+                                                }}>
+                                                {menu.displayName}
+                                            </Typography>
                                         }
-                                    ></i>
-                                </ListItemIcon>
-                                <ListItemText
-                                    level='body2'
-                                    primary={
-                                        <Typography
-                                            variant='body2'
-                                            style={{
-                                                fontSize: 14,
-                                                textOverflow: 'ellipsis',
-                                                overflow: 'hidden',
-                                                whiteSpace: 'nowrap'
-                                            }}
-                                        >
-                                            {menu.displayName}
-                                        </Typography>
-                                    }
-                                    sx={{
-                                        opacity: drawerOpen ? 1 : 0,
-                                        ...(isSubMenuOpen && { color: '#546674' })
+                                        sx={{
+                                            opacity: drawerOpen ? 1 : 0,
+                                            ...(isSubMenuOpen && { color: '#546674' }),
+                                        }}
+                                    />
+                                    {menu.items.length > 0 &&
+                                        drawerOpen &&
+                                        (isSubMenuOpen ? (
+                                            <i className='fa-regular fa-chevron-left secondary-icon fa-sm'></i>
+                                        ) : (
+                                            <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
+                                        ))}
+                                </ListItemButton>
+                            </Tooltip>
+
+                            {menu.items.length > 0 && (
+                                <Popover
+                                    open={Boolean(subAnchorEl) && isSubMenuOpen}
+                                    anchorEl={subAnchorEl}
+                                    onClose={handlePopoverClose}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
                                     }}
-                                />
-                            {menu.items.length > 0 &&
-                                drawerOpen &&
-                                (isSubMenuOpen ? (
-                                    <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
-                                ) : (
-                                    <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
-                                ))}
-                            </ListItemButton>
-                        </Tooltip>
+                                    transformOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                    PaperProps={{
+                                        sx: {
+                                            overflow: 'auto',
+                                            mt: 1,
+                                        },
+                                    }}>
+                                    <List onMouseLeave={handlePopoverClose}>
+                                        {menu.items.map((sub) => {
+                                            const isSubMvc = !sub.url.startsWith('/app/redir?')
+                                                ? true
+                                                : false;
 
-                        {menu.items.length > 0 && (
-                            <Collapse in={isSubMenuOpen} unmountOnExit>
-                                <List>
-                                    {menu.items.map((sub) => {
-                                        const isSubMvc = !sub.url.startsWith('/app/redir?') ? true : false
+                                            return (
+                                                <ListItem
+                                                    component={!isSubMvc ? Link : 'div'}
+                                                    key={sub.displayName}
+                                                    to={sub.url}
+                                                    disablePadding
+                                                    sx={{
+                                                        display: 'block',
+                                                        textDecoration: 'none',
+                                                        color: theme.palette.text.primary,
+                                                        minWidth: 140,
+                                                    }}
+                                                    onClick={(event) => {
+                                                        if (isSubMvc)
+                                                            window.location.href = `${window.location.origin}/${sub.url}`;
 
-                                        return (
-                                            <ListItem
-                                                component={!isSubMvc ? Link : 'div'}
-                                                key={sub.displayName}
-                                                to={sub.url}
-                                                disablePadding
-                                                sx={{
-                                                    display: 'block',
-                                                    textDecoration: 'none',
-                                                    color: '#212121'
-                                                }}
-                                                onClick={(event) => {
-                                                    if (isSubMvc)
-                                                        window.location.href = `${window.location.origin}/${sub.url}`
-                                                    
-                                                    handleListItemButton(event.target.textContent)
-                                                }}
-                                            >
-                                                <Tooltip
-                                                    title={sub.displayName}
-                                                    placement='right'
-                                                    TransitionComponent={Fade}
-                                                    enterNextDelay={2000}
-                                                >
-                                                    <ListItemButton
-                                                        sx={{ pl: drawerOpen ? 4 : 2 }}
-                                                        selected={sub.displayName === currentPageName ? true : false}
-                                                    >
-                                                        <ListItemIcon
-                                                            sx={{
-                                                                minWidth: 0.2,
-                                                                justifyContent: 'left'
-                                                            }}
-                                                        >
-                                                            <i
-                                                                className={
-                                                                    sub.select
-                                                                        ? `${sub.icon} secondary-icon active-icon`
-                                                                        : `${sub.icon} secondary-icon`
+                                                        handleListItemButton(
+                                                            event.target.textContent
+                                                        );
+                                                    }}>
+                                                    <Tooltip
+                                                        title={sub.displayName}
+                                                        placement='right'
+                                                        TransitionComponent={Fade}
+                                                        enterNextDelay={2000}>
+                                                        <ListItemButton
+                                                            sx={{ pl: drawerOpen ? 4 : 2 }}
+                                                            selected={
+                                                                sub.displayName === currentPageName
+                                                                    ? true
+                                                                    : false
+                                                            }>
+                                                            <ListItemIcon
+                                                                sx={{
+                                                                    minWidth: 0.2,
+                                                                    justifyContent: 'left',
+                                                                }}>
+                                                                <i
+                                                                    className={
+                                                                        sub.select
+                                                                            ? `${sub.icon} secondary-icon active-icon`
+                                                                            : `${sub.icon} secondary-icon`
+                                                                    }></i>
+                                                            </ListItemIcon>
+                                                            <ListItemText
+                                                                primary={
+                                                                    <Typography
+                                                                        variant='body2'
+                                                                        style={{
+                                                                            display: drawerOpen
+                                                                                ? 'block'
+                                                                                : 'none',
+                                                                            fontSize: 14,
+                                                                            textOverflow:
+                                                                                'ellipsis',
+                                                                            overflow: 'hidden',
+                                                                            whiteSpace: 'nowrap',
+                                                                        }}>
+                                                                        {sub.displayName}
+                                                                    </Typography>
                                                                 }
-                                                            ></i>
-                                                        </ListItemIcon>
-                                                        
-                                                        <ListItemText
-                                                            primary={
-                                                                <Typography
-                                                                    variant='body2'
-                                                                    style={{
-                                                                    display: drawerOpen ? 'block' : 'none',
-                                                                    fontSize: 14,
-                                                                    textOverflow: 'ellipsis',
-                                                                    overflow: 'hidden',
-                                                                    whiteSpace: 'nowrap'
-                                                                    }}
-                                                                >
-                                                                    {sub.displayName}
-                                                                </Typography>
-                                                            }
-                                                        />
-                                                    </ListItemButton>
-                                                </Tooltip>
-                                            </ListItem>
-                                        )
-                                    })}
-                                </List>
-                            </Collapse>
-                        )}
+                                                            />
+                                                        </ListItemButton>
+                                                    </Tooltip>
+                                                </ListItem>
+                                            );
+                                        })}
+                                    </List>
+                                </Popover>
+                            )}
                         </ListItem>
-                    )
+                    );
                 })}
             </List>
         </div>
@@ -298,12 +333,11 @@ export const SideMenu = ({
                 ModalProps={{
                     BackdropProps: {
                         onClick: handleDrawerClose,
-                    }
+                    },
                 }}
                 sx={{
-                    display: { xs: 'block', sm: 'none' }
-                }}
-            >
+                    display: { xs: 'block', sm: 'none' },
+                }}>
                 {drawer}
             </Drawer>
 
@@ -313,8 +347,7 @@ export const SideMenu = ({
                 open={drawerOpen}
                 overflow='auto'
                 sx={{ display: { xs: 'none', sm: 'block' } }}
-                ModalProps={{}}
-            >
+                ModalProps={{}}>
                 {drawer}
             </Drawer>
         </Box>
