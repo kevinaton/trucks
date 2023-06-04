@@ -32,6 +32,7 @@
             var loadAtDropdown = _$form.find("#LoadAtId");
             var deliverToDropdown = _$form.find("#DeliverToId");
             var serviceDropdown = _$form.find("#ServiceId");
+            var vehicleCategoriesDropdown = _$form.find("#VehicleCategories");
             var materialUomDropdown = _$form.find("#MaterialUomId");
             var freightUomDropdown = _$form.find("#FreightUomId");
             var designationDropdown = _designationDropdown = _$form.find("#Designation");
@@ -83,6 +84,11 @@
                         name: result.service1
                     };
                 } : undefined
+            });
+            vehicleCategoriesDropdown.select2Init({
+                abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
+                showAll: true,
+                allowClear: true
             });
             materialUomDropdown.select2Uom();
             freightUomDropdown.select2Uom();
@@ -190,6 +196,7 @@
             }
 
             var quoteService = _$form.serializeFormToObject();
+            quoteService.VehicleCategories = _$form.find("#VehicleCategories").select2('data').map(x => ({ id: x.id, name: x.name }));
 
             _modalManager.setBusy(true);
             _quoteAppService.editQuoteService(quoteService).done(function () {

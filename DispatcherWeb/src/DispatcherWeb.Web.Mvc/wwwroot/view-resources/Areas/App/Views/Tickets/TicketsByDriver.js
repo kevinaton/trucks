@@ -10,6 +10,7 @@
     var _drivers = [];
     var _trucks = [];
     var _driverAssignments = [];
+    var _trailerAssignments = [];
     var _dailyFuelCost = null;
     var _$currentFuelCostInput = $('#CurrentFuelCost');
     var _hasOpenOrders = false;
@@ -149,6 +150,7 @@
         _drivers = [];
         _trucks = [];
         _driverAssignments = [];
+        _trailerAssignments = [];
         _dailyFuelCost = null;
         _hasOpenOrders = false;
         _orderLineBlocks.forEach(function (block) {
@@ -190,6 +192,9 @@
             }
             if (result.driverAssignments && result.driverAssignments.length) {
                 _driverAssignments = result.driverAssignments;
+            }
+            if (result.trailerAssignments && result.trailerAssignments.length) {
+                _trailerAssignments = result.trailerAssignments;
             }
             if (result.leaseHaulers && result.leaseHaulers.length) {
                 _leaseHaulers = result.leaseHaulers;
@@ -492,7 +497,7 @@
         var affectedBlocks = _orderLineBlocks.filter(o => o.orderLine.id === block.orderLine.id);
         try {
             affectedBlocks.forEach(x => x.ui && abp.ui.setBusy(x.ui.card));
-            let result = await _orderService.resetOverriddenOrderLineValues({ id: block.orderLine.id });
+            let result = await _orderService.resetOverriddenOrderLineValues({ id: block.orderLine.id, overrideReadOnlyState: block.overrideReadOnlyState || false });
             block.orderLine.materialTotal = result.materialTotal;
             block.orderLine.freightTotal = result.freightTotal;
             block.orderLine.isFreightTotalOverridden = false;
@@ -779,8 +784,22 @@
 
     function getAssignedTruckForBlock(block) {
         let driverId = block.driver && block.driver.id || null;
-        if (!driverId) {
+        if (!driverId || !block.orderLine) {
             return null;
+        }
+        let orderLineTrucks = block.orderLine.orderLineTrucks.filter(x => x.driverId === driverId);
+        let truckId = null;
+        if (orderLineTrucks.length === 1)
+        {
+            truckId = orderLineTrucks[0].truckId;
+        }
+        if (orderLineTrucks.length) {
+            truckId = orderLineTrucks
+                .reduce((a, b) => a.id > b.id ? a : b, orderLineTrucks[0].id)
+                .truckId;
+        }
+        if (truckId) {
+            return _trucks.find(x => x.id === truckId);
         }
         let driverAssignment = _driverAssignments.find(x => x.driverId === driverId && x.shift === block.orderLine.shift);
         if (driverAssignment) {
@@ -789,8 +808,37 @@
         return _trucks.find(x => x.defaultDriverId === driverId);
     }
 
+    function getAssignedTrailerForTruckAndBlock(truck, block) {
+        let driverId = block.driver && block.driver.id || null;
+        if (!truck || !truck.canPullTrailer || !block.orderLine || !driverId) {
+            return null;
+        }
+        let orderLineTrucks = block.orderLine.orderLineTrucks.filter(x => x.driverId === driverId && x.truckId === truck.id);
+        let trailerId = null;
+        if (orderLineTrucks.length === 1) {
+            trailerId = orderLineTrucks[0].trailerId;
+        }
+        if (orderLineTrucks.length) {
+            trailerId = orderLineTrucks
+                .reduce((a, b) => a.id > b.id ? a : b, orderLineTrucks[0].id)
+                .trailerId;
+        }
+        if (trailerId) {
+            return _trucks.find(x => x.id === trailerId);
+        }
+        let trailerAssignment = _trailerAssignments.find(x => x.tractorId === truckId && x.shift === block.orderLine.shift);
+        if (trailerAssignment) {
+            return _trucks.find(x => x.id === trailerAssignment.trailerId);
+        }
+        if (truck.defaultTrailerId) {
+            return _trucks.find(x => x.id === truck.defaultTrailerId);
+        }
+        return null;
+    }
+
     function getEmptyTicket(block) {
         let truck = getAssignedTruckForBlock(block);
+        let trailer = getAssignedTrailerForTruckAndBlock(truck, block);
         return {
             id: 0,
             orderLineId: block.orderLine.id,
@@ -803,6 +851,8 @@
             uomId: block.orderLine.uomId,
             truckId: truck && truck.id || null,
             truckCode: truck && truck.truckCode || null,
+            trailerId: trailer && trailer.id || null,
+            trailerTruckCode: trailer && trailer.truckCode || null,
             ticketPhotoId: null,
             receiptLineId: null,
             isReadOnly: false
@@ -1580,6 +1630,7 @@
                                     allOffices: true,
                                     includeLeaseHaulerTrucks: true,
                                     activeOnly: true,
+                                    excludeTrailers: true,
                                     //orderLineId: _validateTrucksAndDrivers ? _orderLineId : null
                                 },
                                 showAll: false,
@@ -1596,6 +1647,28 @@
                                 return true;
                             },
                         }
+                    },
+                    {
+                        data: 'trailerTruckCode',
+                        title: 'Trailer',
+                        width: '90px',
+                        className: 'all',
+                        editable: {
+                            editor: _dtHelper.editors.dropdown,
+                            idField: 'trailerId',
+                            nameField: 'trailerTruckCode',
+                            dropdownOptions: {
+                                abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
+                                abpServiceParams: {
+                                    allOffices: true,
+                                    includeLeaseHaulerTrucks: true,
+                                    activeOnly: true,
+                                    assetType: abp.enums.assetType.trailer,
+                                },
+                                showAll: false,
+                                allowClear: true
+                            },
+                        },
                     },
                     {
                         data: 'ticketPhotoId',

@@ -80,6 +80,7 @@ namespace DispatcherWeb.Orders.Dto
         public string OrderShiftName { get; set; }
         public bool ShowDriverNamesOnPrintedOrder { get; set; }
         public bool ShowSignatureColumn { get; set; }
+        public bool ShowTruckCategories { get; set; }
         public CultureInfo CurrencyCulture { get; set; }
 
         public class TruckDriverDto

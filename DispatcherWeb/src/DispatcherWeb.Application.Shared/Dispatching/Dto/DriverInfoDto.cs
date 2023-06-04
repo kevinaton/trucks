@@ -134,6 +134,7 @@ namespace DispatcherWeb.Dispatching.Dto
         public int NumberOfAddedLoads { get; set; }
         public bool ProductionPay { get; set; }
         public string TruckCode { get; set; }
+        public string TrailerTruckCode { get; set; }
         public bool HasTickets { get; set; }
     }
 }

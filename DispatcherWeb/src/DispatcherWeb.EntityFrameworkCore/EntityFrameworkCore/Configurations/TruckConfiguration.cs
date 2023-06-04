@@ -12,12 +12,18 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .HasOne(e => e.DefaultDriver)
                 .WithMany(e => e.DefaultTrucks)
                 .HasForeignKey(e => e.DefaultDriverId)
-                ;
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder
                 .HasOne(e => e.VehicleCategory)
                 .WithMany()
                 .HasForeignKey(e => e.VehicleCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .HasOne(e => e.DefaultTrailer)
+                .WithMany(e => e.DefaultTractors)
+                .HasForeignKey(e => e.DefaultTrailerId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

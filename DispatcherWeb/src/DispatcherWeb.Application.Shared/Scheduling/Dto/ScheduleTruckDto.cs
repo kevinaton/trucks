@@ -28,6 +28,12 @@ namespace DispatcherWeb.Scheduling.Dto
         public string DefaultDriverName { get; set; }
         public int? DefaultDriverId { get; set; }
 
+        public ScheduleTruckTrailerDto DefaultTrailer { get; set; }
+        public ScheduleTruckTractorDto DefaultTractor { get; set; }
+
+        public ScheduleTruckTractorDto Tractor { get; set; }
+        public ScheduleTruckTrailerDto Trailer { get; set; }
+
         public void CopyAllFieldsTo(ScheduleTruckDto other)
         {
             other.CopyAllFieldsFrom(this);
@@ -61,6 +67,10 @@ namespace DispatcherWeb.Scheduling.Dto
             IsApportioned = other.IsApportioned;
             DefaultDriverName = other.DefaultDriverName;
             DefaultDriverId = other.DefaultDriverId;
+            DefaultTrailer = other.DefaultTrailer;
+            DefaultTractor = other.DefaultTractor;
+            Trailer = other.Trailer;
+            Tractor = other.Tractor;
         }
     }
 }

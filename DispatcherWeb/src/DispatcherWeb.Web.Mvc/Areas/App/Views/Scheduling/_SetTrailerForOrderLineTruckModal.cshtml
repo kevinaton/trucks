@@ -1,0 +1,26 @@
+﻿@using System.Threading.Tasks
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@using DispatcherWeb.TrailerAssignments.Dto
+@model SetTrailerForOrderLineTruckInput
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Change trailer"))
+
+<div class="modal-body">
+    <form role="form" novalidate class="form-validation">
+        <input type="hidden" asp-for="OrderLineTruckId" />
+        <div class="form-group">
+            <h5 id="Message"></h5>
+        </div>
+        <div class="form-group">
+            <label class="required-label" for="TrailerId">Trailer</label>
+            <select class="form-control" asp-for="TrailerId" required>
+                <option value="">Select a trailer</option>
+                @if (Model.TrailerId.HasValue)
+                {
+                    <option value="@Model.TrailerId" selected>@Model.TrailerTruckCode</option>
+                }
+            </select>
+        </div>
+    </form>
+</div>
+
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalFooterWithSaveAndCancel.cshtml")

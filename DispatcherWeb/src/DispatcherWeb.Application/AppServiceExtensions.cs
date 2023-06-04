@@ -285,7 +285,10 @@ namespace DispatcherWeb
                             Note = s.Note,
                             NumberOfTrucks = s.NumberOfTrucks ?? 0,
                             TimeOnJob = s.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? s.FirstStaggeredTimeOnJob : s.TimeOnJob,
-                            IsTimeStaggered = s.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLineTrucks.Any(olt => olt.TimeOnJob != null)
+                            IsTimeStaggered = s.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLineTrucks.Any(olt => olt.TimeOnJob != null),
+                            OrderLineVehicleCategories = s.OrderLineVehicleCategories
+                                .Select(vc => vc.VehicleCategory.Name)
+                                .ToList()
                         }).ToList(),
                     DeliveryInfoItems = o.Order.OrderLines
                         .SelectMany(x => x.Tickets)
@@ -427,7 +430,17 @@ namespace DispatcherWeb
                     IsActive = t.IsActive,
                     DefaultDriverId = t.DefaultDriverId,
                     DefaultDriverName = t.DefaultDriver.FirstName + " " + t.DefaultDriver.LastName,
-                    UtilizationList = t.OrderLineTrucks
+                    DefaultTrailer = t.DefaultTrailer == null ? null : new ScheduleTruckTrailerDto
+                    {
+                        Id = t.DefaultTrailer.Id,
+                        TruckCode = t.DefaultTrailer.TruckCode
+                    },
+                    DefaultTractor = t.DefaultTractors.Select(x => new ScheduleTruckTractorDto
+                    {
+                        Id = x.Id,
+                        TruckCode = x.TruckCode,
+                    }).FirstOrDefault(),
+                    UtilizationList = t.OrderLineTrucksOfTruck
                         .Where(olt => !olt.OrderLine.IsComplete
                                 && olt.OrderLine.Order.DeliveryDate == input.Date
                                 && olt.OrderLine.Order.Shift == input.Shift
@@ -447,6 +460,34 @@ namespace DispatcherWeb
                     x.TruckId,
                     x.DriverId,
                     DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
+                })
+                .OrderByDescending(x => x.Id)
+                .ToListAsync();
+
+            var trailerAssignmentsOfTractors = await truckQuery
+                .SelectMany(x => x.TrailerAssignmentsOfTractor)
+                .Where(da => da.Date == input.Date && da.Shift == input.Shift)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.TractorId,
+                    x.TrailerId,
+                    TractorTruckCode = x.Tractor.TruckCode,
+                    TrailerTruckCode = x.Trailer.TruckCode,
+                })
+                .OrderByDescending(x => x.Id)
+                .ToListAsync();
+
+            var trailerAssignmentsOfTrailers = await truckQuery
+                .SelectMany(x => x.TrailerAssignmentsOfTrailer)
+                .Where(da => da.Date == input.Date && da.Shift == input.Shift)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.TractorId,
+                    x.TrailerId,
+                    TractorTruckCode = x.Tractor.TruckCode,
+                    TrailerTruckCode = x.Trailer.TruckCode,
                 })
                 .OrderByDescending(x => x.Id)
                 .ToListAsync();
@@ -507,6 +548,39 @@ namespace DispatcherWeb
                         truck.Utilization = 1;
                     }
                 }
+
+                if (truck.CanPullTrailer)
+                {
+                    var trailerAssignment = trailerAssignmentsOfTractors.FirstOrDefault(x => x.TractorId == truck.Id);
+                    if (trailerAssignment != null)
+                    {
+                        truck.Trailer = trailerAssignment.TrailerId.HasValue ? new ScheduleTruckTrailerDto
+                        {
+                            Id = trailerAssignment.TrailerId.Value,
+                            TruckCode = trailerAssignment.TrailerTruckCode,
+                        } : null;
+                    }
+                    else
+                    {
+                        truck.Trailer = truck.DefaultTrailer;
+                    }
+                }
+                else if (truck.VehicleCategory.AssetType == AssetType.Trailer)
+                {
+                    var trailerAssignment = trailerAssignmentsOfTrailers.FirstOrDefault(x => x.TrailerId == truck.Id);
+                    if (trailerAssignment != null)
+                    {
+                        truck.Tractor = new ScheduleTruckTractorDto
+                        {
+                            Id = trailerAssignment.TractorId,
+                            TruckCode = trailerAssignment.TractorTruckCode,
+                        };
+                    }
+                    else
+                    {
+                        truck.Tractor = truck.DefaultTractor;
+                    }
+                }
             }
 
             return trucks.OrderByTruck();
@@ -539,13 +613,13 @@ namespace DispatcherWeb
 
             trucks.ForEach(x =>
             {
-                if (x.IsExternal)
+                if (!x.IsExternal)
                 {
-                    return;
+                    var driverAssignment = driverAssignments.FirstOrDefault(y => y.TruckId == x.Id);
+                    x.HasNoDriver = driverAssignment != null && driverAssignment.DriverId == null;
+                    x.HasDriverAssignment = driverAssignment?.DriverId != null;
                 }
-                var driverAssignment = driverAssignments.FirstOrDefault(y => y.TruckId == x.Id);
-                x.HasNoDriver = driverAssignment != null && driverAssignment.DriverId == null;
-                x.HasDriverAssignment = driverAssignment?.DriverId != null;
+
             });
 
             return trucks;
@@ -606,6 +680,7 @@ namespace DispatcherWeb
                     HaulingCompanyOrderLineId = ol.HaulingCompanyOrderLineId,
                     MaterialCompanyOrderLineId = ol.MaterialCompanyOrderLineId,
                     SharedOfficeIds = ol.SharedOrderLines.Select(sol => sol.OfficeId).ToArray(),
+                    VehicleCategoryIds = ol.OrderLineVehicleCategories.Select(x => x.VehicleCategoryId).ToList(),
                     Utilization = ol.OrderLineTrucks.Where(t => t.Truck.VehicleCategory.IsPowered).Select(t => t.Utilization).Sum(),
                     Trucks = ol.OrderLineTrucks.Select(olt => new ScheduleOrderLineTruckDto
                     {
@@ -613,6 +688,11 @@ namespace DispatcherWeb
                         ParentId = olt.ParentOrderLineTruckId,
                         TruckId = olt.TruckId,
                         TruckCode = olt.Truck.TruckCode,
+                        Trailer = olt.Trailer == null ? null : new ScheduleTruckTrailerDto
+                        {
+                            Id = olt.Trailer.Id,
+                            TruckCode = olt.Trailer.TruckCode
+                        },
                         DriverId = olt.DriverId,
                         OrderId = ol.OrderId,
                         OrderLineId = ol.Id,

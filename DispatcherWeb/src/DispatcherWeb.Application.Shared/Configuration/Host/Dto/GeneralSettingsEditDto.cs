@@ -41,5 +41,6 @@ namespace DispatcherWeb.Configuration.Host.Dto
         public string NotificationsEmail { get; set; }
         public string SupportLinkAddress { get; set; }
         public DriverAppImageResolutionEnum DriverAppImageResolution { get; set; }
+        public bool AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders { get; set; }
     }
 }
