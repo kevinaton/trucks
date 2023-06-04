@@ -192,7 +192,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         }
 
         [Modal]
-        public PartialViewResult SetTrailerForOrderLineTruckModal(SetTrailerForTractorInput model)
+        public PartialViewResult SetTrailerForOrderLineTruckModal(SetTrailerForOrderLineTruckInput model)
         {
             return PartialView("_SetTrailerForOrderLineTruckModal", model);
         }

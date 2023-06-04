@@ -33,10 +33,6 @@
 
             _modalManager.setBusy(true);
             _trailerAssignmentService.setTrailerForOrderLineTruck({
-                date: formData.Date,
-                shift: formData.Shift,
-                officeId: formData.OfficeId,
-                tractorId: formData.TractorId,
                 trailerId: formData.TrailerId,
                 orderLineTruckId: formData.OrderLineTruckId
             }).done(function () {
