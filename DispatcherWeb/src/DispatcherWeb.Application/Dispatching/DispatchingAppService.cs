@@ -1356,6 +1356,7 @@ namespace DispatcherWeb.Dispatching
                 Designation = di.OrderLine.Designation,
                 TimeOnJob = di.TimeOnJob,
                 TruckCode = di.Truck.TruckCode,
+                TrailerTruckCode = di.OrderLineTruck.Trailer.TruckCode,
                 LoadAtName = di.OrderLine.LoadAt.Name,
                 LoadAt = di.OrderLine.LoadAt == null ? null : new LocationAddressDto
                 {

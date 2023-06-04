@@ -590,6 +590,12 @@
         }
 
         function getTruckTileClass(truck) {
+            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
+                let tractor = _scheduleTrucks.find(x => x.id === truck.tractor.id);
+                if (tractor) {
+                    return getTruckTileClass(tractor);
+                }
+            }
             if (truck.isOutOfService) {
                 return "gray";
             }
@@ -659,6 +665,12 @@
         }
 
         function getTruckTileTitle(truck) {
+            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
+                let tractor = _scheduleTrucks.find(x => x.id === truck.tractor.id);
+                if (tractor) {
+                    return getTruckTileTitle(tractor);
+                }
+            }
             var title = getCombinedTruckCode(truck);
             if (truckCategoryNeedsDriver(truck)) {
                 title += ' - ' + truck.driverName;
