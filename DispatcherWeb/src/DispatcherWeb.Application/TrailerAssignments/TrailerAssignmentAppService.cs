@@ -1,8 +1,15 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
+using Abp.Timing;
+using DispatcherWeb.Dispatching;
+using DispatcherWeb.DriverApplication;
+using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.Orders;
+using DispatcherWeb.SyncRequests;
 using DispatcherWeb.TrailerAssignments.Dto;
 using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;
@@ -15,16 +22,25 @@ namespace DispatcherWeb.TrailerAssignments
         private readonly IRepository<TrailerAssignment> _trailerAssignmentRepository;
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
+        private readonly IRepository<Dispatch> _dispatchRepository;
+        private readonly IDriverApplicationPushSender _driverApplicationPushSender;
+        private readonly ISyncRequestSender _syncRequestSender;
 
         public TrailerAssignmentAppService(
             IRepository<TrailerAssignment> trailerAssignmentRepository,
             IRepository<Truck> truckRepository,
-            IRepository<OrderLineTruck> orderLineTruckRepository
+            IRepository<OrderLineTruck> orderLineTruckRepository,
+            IRepository<Dispatch> dispatchRepository,
+            IDriverApplicationPushSender driverApplicationPushSender,
+            ISyncRequestSender syncRequestSender
             )
         {
             _trailerAssignmentRepository = trailerAssignmentRepository;
             _truckRepository = truckRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
+            _dispatchRepository = dispatchRepository;
+            _driverApplicationPushSender = driverApplicationPushSender;
+            _syncRequestSender = syncRequestSender;
         }
 
         public async Task SetTrailerForTractor(SetTrailerForTractorInput input)
@@ -139,10 +155,37 @@ namespace DispatcherWeb.TrailerAssignments
         public async Task SetTrailerForOrderLineTruck(SetTrailerForOrderLineTruckInput input)
         {
             var orderLineTruck = await _orderLineTruckRepository.GetAll().FirstAsync(x => x.Id == input.OrderLineTruckId);
+            if (orderLineTruck.TrailerId == input.TrailerId)
+            {
+                return;
+            }
+
             orderLineTruck.TrailerId = input.TrailerId;
 
-            //todo send driver app sync request if needed
-            //also to the dispatch view
+            var affectedDispatches = await _dispatchRepository.GetAll()
+                .Where(x => x.OrderLineTruckId == orderLineTruck.OrderLineId)
+                .ToListAsync();
+
+            await SendSyncRequestForAffectedDispatches(affectedDispatches, "Updated Trailer for dispatch(es)");
+        }
+
+        private async Task SendSyncRequestForAffectedDispatches(List<Dispatch> affectedDispatches, string logMessage)
+        {
+            if (affectedDispatches.Any())
+            {
+                affectedDispatches.ForEach(d => d.LastModificationTime = Clock.Now);
+                await CurrentUnitOfWork.SaveChangesAsync();
+                foreach (var dispatchGroup in affectedDispatches.GroupBy(x => x.DriverId))
+                {
+                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchGroup.Key)
+                    {
+                        LogMessage = $"{logMessage} {string.Join(", ", dispatchGroup.Select(x => x.Id))}"
+                    });
+                }
+                await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                    .AddChanges(EntityEnum.Dispatch, affectedDispatches.Select(x => x.ToChangedEntity()))
+                    .AddLogMessage(logMessage));
+            }
         }
     }
 }
