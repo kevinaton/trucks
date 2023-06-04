@@ -967,6 +967,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     OrderLineId = input.DestinationOrderLineId,
                     TruckId = sourceOrderLineTruck.TruckId,
+                    TrailerId = sourceOrderLineTruck.TrailerId,
                     DriverId = sourceOrderLineTruck.DriverId,
                     ParentId = sourceOrderLineTruck.ParentOrderLineTruckId,
                     Utilization = !sourceOrderLineTruck.IsDone ? sourceOrderLineTruck.Utilization : 1,
@@ -1782,6 +1783,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     OrderLineId = input.DestinationOrderLineId,
                     TruckId = sourceOrderLineTruck.TruckId,
+                    TrailerId = sourceOrderLineTruck.TrailerId,
                     DriverId = sourceOrderLineTruck.DriverId,
                     ParentId = sourceOrderLineTruck.ParentOrderLineTruckId,
                     Utilization = !sourceOrderLineTruck.IsDone ? sourceOrderLineTruck.Utilization : 1,
@@ -1838,18 +1840,6 @@ namespace DispatcherWeb.Scheduling
                 {
                     //throw new UserFriendlyException(addOrderTruckResult.ErrorMessage);
                     throw new UserFriendlyException("There are too many trucks being assigned to the new order line. Please increase the scheduled number of trucks or reduce the number of trucks being assigned.");
-                }
-
-                var truck = trucks.FirstOrDefault(x => x.Id == truckId);
-                if (truck != null && truck.CanPullTrailer && truck.DefaultTrailerId.HasValue && await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule))
-                {
-                    await AddOrderLineTruckInternal(new AddOrderLineTruckInternalInput
-                    {
-                        OrderLineId = input.OrderLineId,
-                        TruckId = truck.DefaultTrailerId.Value,
-                        Utilization = 1,
-                        ParentId = addOrderTruckResult.Item.Id
-                    });
                 }
             }
         }
