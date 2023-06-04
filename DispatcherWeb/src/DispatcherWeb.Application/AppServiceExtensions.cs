@@ -285,7 +285,10 @@ namespace DispatcherWeb
                             Note = s.Note,
                             NumberOfTrucks = s.NumberOfTrucks ?? 0,
                             TimeOnJob = s.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? s.FirstStaggeredTimeOnJob : s.TimeOnJob,
-                            IsTimeStaggered = s.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLineTrucks.Any(olt => olt.TimeOnJob != null)
+                            IsTimeStaggered = s.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLineTrucks.Any(olt => olt.TimeOnJob != null),
+                            OrderLineVehicleCategories = s.OrderLineVehicleCategories
+                                .Select(vc => vc.VehicleCategory.Name)
+                                .ToList()
                         }).ToList(),
                     DeliveryInfoItems = o.Order.OrderLines
                         .SelectMany(x => x.Tickets)

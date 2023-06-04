@@ -2854,6 +2854,7 @@ namespace DispatcherWeb.Orders
                     && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp);
             var shiftDictionary = await SettingManager.GetShiftDictionary();
             var currentCulture = await SettingManager.GetCurrencyCultureAsync();
+            var showTruckCategories = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders);
             input.Date = input.Date?.Date;
 
             var data = await GetWorkOrderReportQuery(input).ToListAsync();
@@ -2884,6 +2885,7 @@ namespace DispatcherWeb.Orders
                 x.ShowDriverNamesOnPrintedOrder = showDriverNamesOnPrintedOrder;
                 x.OrderShiftName = x.OrderShift.HasValue && shiftDictionary.ContainsKey(x.OrderShift.Value) ? shiftDictionary[x.OrderShift.Value] : "";
                 x.ShowSignatureColumn = showSignatureColumn;
+                x.ShowTruckCategories = showTruckCategories;
                 x.CurrencyCulture = currentCulture;
             });
 
