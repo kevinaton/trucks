@@ -55,6 +55,7 @@ namespace DispatcherWeb.Scheduling
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<Ticket> _ticketRepository;
         private readonly IRepository<DriverAssignment> _driverAssignmentRepository;
+        private readonly IRepository<TrailerAssignment> _trailerAssignmentRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<AvailableLeaseHaulerTruck> _availableLeaseHaulerTruckRepository;
         private readonly IRepository<LeaseHauler> _leaseHaulerRepository;
@@ -79,6 +80,7 @@ namespace DispatcherWeb.Scheduling
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<Ticket> ticketRepository,
             IRepository<DriverAssignment> driverAssignmentRepository,
+            IRepository<TrailerAssignment> trailerAssignmentRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<AvailableLeaseHaulerTruck> availableLeaseHaulerTruckRepository,
             IRepository<LeaseHauler> leaseHaulerRepository,
@@ -103,6 +105,7 @@ namespace DispatcherWeb.Scheduling
             _orderLineTruckRepository = orderLineTruckRepository;
             _ticketRepository = ticketRepository;
             _driverAssignmentRepository = driverAssignmentRepository;
+            _trailerAssignmentRepository = trailerAssignmentRepository;
             _dispatchRepository = dispatchRepository;
             _availableLeaseHaulerTruckRepository = availableLeaseHaulerTruckRepository;
             _leaseHaulerRepository = leaseHaulerRepository;
@@ -1173,10 +1176,15 @@ namespace DispatcherWeb.Scheduling
                 {
                     t.Id,
                     t.DefaultDriverId,
+                    t.DefaultTrailerId,
                     t.LocationId
                 }).ToListAsync();
 
             var existingDriverAssignments = await _driverAssignmentRepository.GetAll()
+                .Where(x => x.Date == newOrder.Date && x.Shift == newOrder.Shift)
+                .ToListAsync();
+
+            var existingTrailerAssignments = await _trailerAssignmentRepository.GetAll()
                 .Where(x => x.Date == newOrder.Date && x.Shift == newOrder.Shift)
                 .ToListAsync();
 
@@ -1238,6 +1246,30 @@ namespace DispatcherWeb.Scheduling
                     }
                 }
 
+                int? newTrailerId = null;
+                if (truck.CanPullTrailer)
+                {
+                    var existingTrailerAssignment = existingTrailerAssignments.FirstOrDefault(ta => ta.TractorId == truck.Id);
+                    if (existingTrailerAssignment != null)
+                    {
+                        newTrailerId = existingTrailerAssignment.TrailerId;
+                    }
+                    else
+                    {
+                        newTrailerId = truckInfo.DefaultTrailerId;
+                        var newTrailerAssignment = new TrailerAssignment()
+                        {
+                            Date = newOrder.Date.Value,
+                            Shift = newOrder.Shift,
+                            TractorId = truck.Id,
+                            TrailerId = newTrailerId,
+                            OfficeId = truckInfo.LocationId,
+                        };
+                        existingTrailerAssignments.Add(newTrailerAssignment);
+                        await _trailerAssignmentRepository.InsertAsync(newTrailerAssignment);
+                    }
+                }
+
                 int newOrderLineId = MapOriginalOrderLineIdToNewOrderLineId(originalOrderLineTruck.OrderLineId);
 
                 var scheduleOrderLineDto = await _orderLineRepository.GetAll()
@@ -1285,7 +1317,7 @@ namespace DispatcherWeb.Scheduling
                     OrderLineId = newOrderLineId,
                     TruckId = originalOrderLineTruck.TruckId,
                     DriverId = newDriverId,
-                    ParentOrderLineTruckId = originalOrderLineTruck.ParentOrderLineTruckId,
+                    TrailerId = newTrailerId,
                     Utilization = utilizationToAssign,
                     TimeOnJob = newOrder.Date.Value.AddTimeOrNull(originalOrderLineTruck.TimeOnJob?.ConvertTimeZoneTo(timezone))?.ConvertTimeZoneFrom(timezone),
                 });
