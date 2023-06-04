@@ -37,6 +37,7 @@ namespace DispatcherWeb.Tickets.Exporting
                         ("Ticket #", x => x.TicketNumber),
                         ("Carrier", x => x.Carrier),
                         ("Truck", x => x.Truck),
+                        ("Trailer", x => x.Trailer),
                         ("Driver", x => x.DriverName),
                         ("Load At", x => x.LoadAtName),
                         ("Deliver To", x => x.DeliverToName),

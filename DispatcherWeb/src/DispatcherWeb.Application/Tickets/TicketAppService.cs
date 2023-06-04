@@ -1058,6 +1058,7 @@ namespace DispatcherWeb.Tickets
                     Uom = t.UnitOfMeasure != null ? t.UnitOfMeasure.Name : "",
                     Carrier = t.Carrier != null ? t.Carrier.Name : "",
                     Truck = t.Truck.TruckCode ?? t.TruckCode,
+                    Trailer = t.Trailer.TruckCode,
                     DriverName = t.Driver == null ? null : t.Driver.LastName + ", " + t.Driver.FirstName,
                     IsBilled = t.IsBilled,
                     TicketPhotoId = t.TicketPhotoId,
