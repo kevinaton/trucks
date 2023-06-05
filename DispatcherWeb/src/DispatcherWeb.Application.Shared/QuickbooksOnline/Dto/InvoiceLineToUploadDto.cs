@@ -32,7 +32,6 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         decimal IOrderLineTaxDetails.MaterialPrice => MaterialExtendedAmount;
         decimal IOrderLineTaxDetails.FreightPrice => FreightExtendedAmount;
 
-        public string PONumber { get; set; }
         public string JobNumber { get; set; }
         public ChildInvoiceLineKind? ChildInvoiceLineKind { get; set; }
 
@@ -79,7 +78,6 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
                 ItemType = ItemType,
                 ItemIncomeAccount = ItemIncomeAccount,
                 Ticket = Ticket?.Clone(),
-                PONumber = PONumber,
                 JobNumber = JobNumber
             };
         }

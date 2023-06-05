@@ -20,8 +20,8 @@ namespace DispatcherWeb.Tickets
         Task MarkAsBilledTicket(EntityDto input);
         Task<IList<TicketOrderLineDto>> LookForExistingOrderLines(LookForExistingOrderLinesInput input);
         Task<TicketPhotoDto> GetTicketPhotosForInvoice(int invoiceId);
-        Task<GetDriverForTicketTruckResult> GetDriverForTicketTruck(GetDriverForTicketTruckInput input);
-        Task<GetTruckForTicketDriverResult> GetTruckForTicketDriver(GetTruckForTicketDriverInput input);
+        Task<GetDriverAndTrailerForTicketTruckResult> GetDriverAndTrailerForTicketTruck(GetDriverAndTrailerForTicketTruckInput input);
+        Task<GetTruckAndTrailerForTicketDriverResult> GetTruckAndTrailerForTicketDriver(GetTruckAndTrailerForTicketDriverInput input);
         Task<Document> GetTicketPrintOut(GetTicketPrintOutInput input);
     }
 }

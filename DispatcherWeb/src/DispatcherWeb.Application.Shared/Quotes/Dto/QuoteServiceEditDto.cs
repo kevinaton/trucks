@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Infrastructure;
 using Newtonsoft.Json;
@@ -59,5 +60,7 @@ namespace DispatcherWeb.Quotes.Dto
 
         [StringLength(EntityStringFieldLengths.OrderLine.Note)]
         public string Note { get; set; }
+
+        public List<QuoteServiceVehicleCategoryDto> VehicleCategories { get; set; }
     }
 }

@@ -138,6 +138,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                     }).ToList(),
                     TruckId = di.TruckId,
                     TruckCode = di.Truck.TruckCode,
+                    TrailerTruckCode = di.OrderLineTruck.Trailer.TruckCode,
                     OrderLineTruckId = di.OrderLineTruckId,
                     //WasMultipleLoads = di.WasMultipleLoads,
                     //SignatureId = di.Loads.OrderByDescending(l => l.Id).Select(l => l.SignatureId).FirstOrDefault(), //.DefaultIfEmpty((Guid?)null)

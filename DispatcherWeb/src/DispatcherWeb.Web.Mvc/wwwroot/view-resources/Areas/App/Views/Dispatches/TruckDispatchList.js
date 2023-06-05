@@ -400,6 +400,8 @@
                     dispatchDiv.append(
                         $('<div>').text(`${deliveryDate} ${timeOnJob} ${shiftName}`)
                     ).append(
+                        $('<div>').text(dispatch.trailerTruckCode)
+                    ).append(
                         $('<div>').text(dispatch.customerName)
                     ).append(
                         $('<div>').text(dispatch.loadAtName)

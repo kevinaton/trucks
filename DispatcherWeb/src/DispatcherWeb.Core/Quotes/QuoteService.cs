@@ -14,6 +14,11 @@ namespace DispatcherWeb.Quotes
     [Table("QuoteService")]
     public class QuoteService : FullAuditedEntity, IMustHaveTenant
     {
+        public QuoteService()
+        {
+            QuoteServiceVehicleCategories = new HashSet<QuoteServiceVehicleCategory>();
+        }
+
         public int TenantId { get; set; }
 
         [Required(ErrorMessage = "Service/Product Item is a required field")]
@@ -64,6 +69,8 @@ namespace DispatcherWeb.Quotes
         public virtual Location LoadAt { get; set; }
 
         public virtual Location DeliverTo { get; set; }
+
+        public virtual ICollection<QuoteServiceVehicleCategory> QuoteServiceVehicleCategories { get; set; }
 
         public QuoteService Clone()
         {

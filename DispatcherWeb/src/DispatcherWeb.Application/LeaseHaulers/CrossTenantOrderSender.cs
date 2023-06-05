@@ -839,6 +839,17 @@ namespace DispatcherWeb.LeaseHaulers
                         CanPullTrailer = x.Truck.CanPullTrailer,
                     },
                     TruckCode = x.TruckCode,
+                    Trailer = x.TrailerId == null ? null : new TruckDto
+                    {
+                        Id = x.Trailer.Id,
+                        TenantId = x.Trailer.TenantId,
+                        TruckCode = x.Trailer.TruckCode,
+                        VehicleCategoryId = x.Trailer.VehicleCategoryId,
+                        DefaultDriver = null,
+                        IsActive = x.Trailer.IsActive,
+                        InactivationDate = x.Trailer.InactivationDate,
+                        CanPullTrailer = x.Trailer.CanPullTrailer,
+                    },
                     Driver = x.DriverId == null ? null : new DriverDto
                     {
                         Id = x.Driver.Id,
@@ -1004,6 +1015,12 @@ namespace DispatcherWeb.LeaseHaulers
                     {
                         var truck = await FindOrCreateMaterialCompanyTruckAsync(sourceTicket.Truck, destinationLeaseHauler.Id);
                         destinationTicket.TruckId = truck.Id;
+                    }
+
+                    if (sourceTicket.Trailer != null)
+                    {
+                        var trailer = await FindOrCreateMaterialCompanyTruckAsync(sourceTicket.Trailer, destinationLeaseHauler.Id);
+                        destinationTicket.TrailerId = trailer.Id;
                     }
 
                     if (sourceTicket.Driver != null)

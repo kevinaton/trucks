@@ -110,6 +110,16 @@
             <input class="form-control" type="text" asp-for="TruckCode">
         </div>
         <div class="form-group">
+            <label asp-for="TrailerId">@L("Trailer")</label>
+            <select class="form-control" asp-for="TrailerId">
+                <option value="">Select a Trailer</option>
+                @if (Model.TrailerId > 0)
+                {
+                    <option selected value="@Model.TrailerId">@Model.TrailerTruckCode</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
             <label asp-for="DriverId" class="required-label">@L("Driver")</label>
             <select class="form-control" asp-for="DriverId">
                 <option value="">Select a Driver</option>

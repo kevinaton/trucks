@@ -221,6 +221,7 @@ async function updateCurrentView() {
         //$("#acknowledgeDispatchView #DispatchId").val(_currentDispatch.dispatchId);
         //$("#acknowledgeDispatchView #Guid").val(_currentDispatch.guid);
         $(".deliveryDate").text(dayjs(_currentDispatch.date, App.Consts.DateTimeFormat).format(App.Consts.DateFormat));
+        $(".trailerTruckCode").text(_currentDispatch.trailerTruckCode).closest('.form-group').toggle(!!_currentDispatch.trailerTruckCode);
         $(".shiftName").text(_info.useShifts ? getShiftName(_currentDispatch.shift) : "");
         $(".timeOnJob").text(_currentDispatch.timeOnJob ? dayjs(_currentDispatch.timeOnJob, App.Consts.DateTimeFormat).format(App.Consts.ShortTimeFormat) : '');
         $(".customerName").text(_currentDispatch.customerName);
