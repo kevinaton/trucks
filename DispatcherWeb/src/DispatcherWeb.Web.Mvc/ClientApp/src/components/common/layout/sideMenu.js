@@ -207,7 +207,6 @@ export const SideMenu = ({
                                             </Typography>
                                         }
                                         sx={{
-                                            opacity: drawerOpen ? 1 : 0,
                                             ...(isSubMenuOpen && { color: '#546674' }),
                                         }}
                                     />
