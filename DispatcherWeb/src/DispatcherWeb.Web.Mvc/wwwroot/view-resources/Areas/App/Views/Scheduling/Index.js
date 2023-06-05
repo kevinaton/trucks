@@ -669,9 +669,10 @@
             if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer) {
                 title += '\n' + truck.vehicleCategory.name;
                 title += ' ' + truck.bedConstructionFormatted;
-                title += truck.year ? ' ' + truck.year : '';
-                title += truck.make ? ' ' + truck.make : '';
-                title += truck.model ? ' ' + truck.model : '';
+                title += '\n';
+                title += truck.year ? truck.year + ' ' : '';
+                title += truck.make ? truck.make + ' ' : '';
+                title += truck.model ? truck.model + ' ' : '';
             }
             if (truckCategoryNeedsDriver(truck)) {
                 title += ' - ' + truck.driverName;
