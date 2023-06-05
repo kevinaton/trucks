@@ -2,6 +2,9 @@ import {
     GET_USER_NOTIFICATIONS,
     GET_USER_NOTIFICATIONS_SUCCESS,
     GET_USER_NOTIFICATIONS_FAILURE,
+    GET_USER_PRIORITY_NOTIFICATIONS,
+    GET_USER_PRIORITY_NOTIFICATIONS_SUCCESS,
+    GET_USER_PRIORITY_NOTIFICATIONS_FAILURE,
     SET_ALL_NOTIFICATIONS_AS_READ,
     SET_ALL_NOTIFICATIONS_AS_READ_SUCCESS,
     SET_ALL_NOTIFICATIONS_AS_READ_FAILURE,
@@ -28,6 +31,20 @@ export const getUserNotificationsSuccess = notifications => ({
 
 export const getUserNotificationsFailure = error => ({
     type: GET_USER_NOTIFICATIONS_FAILURE,
+    payload: error
+});
+
+export const getUserPriorityNotifications = () => ({
+    type: GET_USER_PRIORITY_NOTIFICATIONS
+});
+
+export const getUserPriorityNotificationsSuccess = priorityNotifications => ({
+    type: GET_USER_PRIORITY_NOTIFICATIONS_SUCCESS,
+    payload: priorityNotifications
+});
+
+export const getUserPriorityNotificationsFailure = error => ({
+    type: GET_USER_PRIORITY_NOTIFICATIONS_FAILURE,
     payload: error
 });
 

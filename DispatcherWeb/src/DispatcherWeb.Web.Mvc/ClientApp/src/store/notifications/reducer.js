@@ -1,6 +1,8 @@
 import {
     GET_USER_NOTIFICATIONS_SUCCESS,
     GET_USER_NOTIFICATIONS_FAILURE,
+    GET_USER_PRIORITY_NOTIFICATIONS_SUCCESS,
+    GET_USER_PRIORITY_NOTIFICATIONS_FAILURE,
     SET_ALL_NOTIFICATIONS_AS_READ_SUCCESS,
     SET_ALL_NOTIFICATIONS_AS_READ_FAILURE,
     SET_NOTIFICATION_AS_READ_SUCCESS,
@@ -15,6 +17,7 @@ import { notificationState } from '../../common/enums/notificationState';
 
 const INIT_STATE = {
     notifications: null,
+    priorityNotifications: null,
     error: {},
     notificationSettings: null,
     updateSuccess: null
@@ -32,6 +35,16 @@ const NotificationReducer = (state = INIT_STATE, action) => {
                 ...state,
                 error: action.payload
             };
+        case GET_USER_PRIORITY_NOTIFICATIONS_SUCCESS:
+            return {
+                ...state,
+                priorityNotifications: action.payload
+            };
+        case GET_USER_PRIORITY_NOTIFICATIONS_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            }
         case SET_ALL_NOTIFICATIONS_AS_READ_SUCCESS: {
             const items = state.notifications.result.items.map(notification => {
                 return {

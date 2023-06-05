@@ -26,6 +26,7 @@ import {
 } from '../../styled';
 import { 
     getUserNotifications, 
+    getUserPriorityNotifications,
     setAllNotificationsAsRead as onSetAllNotificationsAsRead,
     setNotificationAsRead as onSetNotificationAsRead
 } from '../../../store/actions';
@@ -45,11 +46,13 @@ export const NotificationBell = ({
     const isNotification = Boolean(anchorNotif);
     const [isNotifSettings, setIsNotifSettings] = useState(false);
     const [notificationItemsList, setNotificationItemsList] = useState([]);
+    const [priorityNotificationItemsList, setPriorityNotificationItemsList] = useState([]);
     const [unReadCount, setUnReadCount] = useState(0);
 
     const dispatch = useDispatch();
-    const { notifications } = useSelector(state => ({
-        notifications: state.NotificationReducer.notifications
+    const { notifications, priorityNotifications } = useSelector(state => ({
+        notifications: state.NotificationReducer.notifications,
+        priorityNotifications: state.NotificationReducer.priorityNotifications
     }));
 
     useEffect(() => {
@@ -62,14 +65,14 @@ export const NotificationBell = ({
                 
                 const { items } = result;
                 if (!isEmpty(items)) {
-                    let notifications = [];
+                    let userNotifications = [];
                     
                     items.forEach((item) => {
                         const { id, notification, state } = item;
                         if (!isEmpty(notification)) {
                             const url = getUrl(item);
 
-                            notifications.push({
+                            userNotifications.push({
                                 userNotificationId: id,
                                 text: getFormattedMessageFromUserNotification(notification),
                                 time: moment(notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
@@ -82,11 +85,45 @@ export const NotificationBell = ({
                         }
                     });
                 
-                    setNotificationItemsList(notifications);
+                    setNotificationItemsList(userNotifications);
                 }
             }
         }
     }, [dispatch, notifications]);
+
+    useEffect(() => {
+        if (isEmpty(priorityNotifications)) {
+            dispatch(getUserPriorityNotifications());
+        } else {
+            const { result } = priorityNotifications;
+            if (!isEmpty(result)) {
+                const { items } = result;
+                if (!isEmpty(items)) {
+                    let userPriorityNotifications = [];
+                    
+                    items.forEach((item) => {
+                        const { id, notification, state } = item;
+                        if (!isEmpty(notification)) {
+                            const url = getUrl(item);
+
+                            userPriorityNotifications.push({
+                                userNotificationId: id,
+                                text: getFormattedMessageFromUserNotification(notification),
+                                time: moment(notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
+                                state: getUserNotificationStateAsString(state),
+                                data: notification.data,
+                                url,
+                                isUnread: item.state === notificationState.UNREAD,
+                                timeAgo: moment(notification.creationTime).fromNow()
+                            });
+                        }
+                    });
+                
+                    setPriorityNotificationItemsList(userPriorityNotifications);
+                }
+            }
+        }
+    }, [dispatch, priorityNotifications]);
     
     // Handles the opening of the notification dropdown
     const handleNotifClick = (event) => setAnchorNotif(event.currentTarget);
