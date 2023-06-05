@@ -8,7 +8,6 @@ import { ThemeProvider } from '@mui/material';
 import { theme } from './Theme';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import SnackbarProvider from './components/common/snackbar/snackbarProvider';
 
 import store from './store';
 
@@ -25,9 +24,7 @@ root.render(
             <BrowserRouter>
                 <ThemeProvider theme={theme}>
                     <React.Fragment>
-                        <SnackbarProvider>
-                            <App />
-                        </SnackbarProvider>
+                        <App />
                     </React.Fragment>
                 </ThemeProvider>
             </BrowserRouter>
