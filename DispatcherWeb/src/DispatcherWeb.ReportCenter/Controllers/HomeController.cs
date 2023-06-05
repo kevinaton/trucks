@@ -39,16 +39,15 @@ namespace DispatcherWeb.ReportCenter
         public async Task<IActionResult> Report(string reportPath)
         {
             if (!await _reportAppService.CanAccessReport(reportPath))
-                return RedirectToAction("Index");
+            {
+                throw new Exception("You have no access to this report.");
+                //return RedirectToAction("Index");
+            }
 
             var tenantId = 0;
             var claimsDic = HttpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value);
             if (claimsDic.TryGetValue("http://www.aspnetboilerplate.com/identity/claims/tenantId", out string id))
                 tenantId = int.Parse(id);
-
-            /*var startDate = new DateTime(2020, 1, 1);
-            var endDate = new DateTime(2022, 12, 31);
-            var dashboardData = await _reportAppService.GetDashboardData(tenantId, startDate, endDate);*/
 
             var vm = new ReportViewModel
             {

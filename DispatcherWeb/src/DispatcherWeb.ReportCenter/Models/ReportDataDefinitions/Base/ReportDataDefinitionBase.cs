@@ -74,18 +74,6 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             return tenantsListDataSet;
         }
 
-        public int TenantId
-        {
-            get
-            {
-                var tenantId = 0;
-                var claimsDic = HttpContextAccessor.HttpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value);
-                if (claimsDic.TryGetValue("http://www.aspnetboilerplate.com/identity/claims/tenantId", out string id))
-                    tenantId = int.Parse(id);
-                return tenantId;
-            }
-        }
-
         /// <summary>
         /// Should be called after when PageReport has been instantiated and loaded with the report.
         /// </summary>

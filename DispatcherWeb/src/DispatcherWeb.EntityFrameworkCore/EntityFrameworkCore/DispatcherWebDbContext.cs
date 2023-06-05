@@ -262,6 +262,7 @@ namespace DispatcherWeb.EntityFrameworkCore
         public virtual DbSet<HostEmailReceiver> HostEmailReceivers { get; set; }
 
         public virtual DbSet<ActiveReport> ActiveReports { get; set; }
+
         public virtual DbSet<ActiveReportCategory> ActiveReportCategories { get; set; }
 
         public DispatcherWebDbContext(DbContextOptions<DispatcherWebDbContext> options)

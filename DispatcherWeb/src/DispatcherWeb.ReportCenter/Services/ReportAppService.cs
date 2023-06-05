@@ -20,8 +20,9 @@ namespace DispatcherWeb.ReportCenter.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
+        private bool _initialized = false;
 
-        private static readonly Dictionary<string, (string Description, string Path, bool HasAccess)> _reportAccessDictionary = new();
+        private readonly Dictionary<string, (string Description, string Path, bool HasAccess)> _reportAccessDictionary = new();
 
         public ReportAppService(IServiceProvider serviceProvider,
                                 IHttpContextAccessor httpContextAccessor,
@@ -32,8 +33,11 @@ namespace DispatcherWeb.ReportCenter.Services
             _serviceProvider = serviceProvider;
         }
 
-        public async Task RefreshReportsDictionary()
+        public async Task Initialize()
         {
+            if (_initialized)
+                return;
+
             var accessToken = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
             var hostApiUrl = _configuration["IdentityServer:Authority"];
 
@@ -67,12 +71,13 @@ namespace DispatcherWeb.ReportCenter.Services
                         _reportAccessDictionary.Add(report.Name, (report.Description, report.Path, canAccess));
                     }
                 }
+                _initialized = true;
             }
         }
 
         public async Task<List<ActiveReportListItemDto>> GetAvailableReportsList()
         {
-            await RefreshReportsDictionary();
+            await Initialize();
 
             var reportListItems = _reportAccessDictionary
                                     .Select(report => new ActiveReportListItemDto()
@@ -86,12 +91,9 @@ namespace DispatcherWeb.ReportCenter.Services
             return reportListItems;
         }
 
-        public async Task<bool> CanAccessReport(string reportPath, bool refresh = false)
+        public async Task<bool> CanAccessReport(string reportPath)
         {
-            if (refresh)
-            {
-                await RefreshReportsDictionary();
-            }
+            await Initialize();
 
             var keyValReport = _reportAccessDictionary
                                 .FirstOrDefault(p => p.Value.Path == reportPath);
@@ -116,27 +118,35 @@ namespace DispatcherWeb.ReportCenter.Services
             }
         }
 
-        public bool TryGetReport(string reportId, out (string Description, string Path, bool HasAccess) reportInfo)
+        public async Task<(bool Success, (string Description, string Path, bool HasAccess) ReportInfo)> TryGetReport(string reportId)
         {
+            await Initialize();
+
             if (_reportAccessDictionary.Count == 0)
             {
-                reportInfo = (string.Empty, string.Empty, false);
-                return false;
+                return (false, (string.Empty, string.Empty, false));
             }
 
-            reportInfo = _reportAccessDictionary[reportId.Replace(".rdlx", string.Empty)];
-            return true;
+            var reportInfo = _reportAccessDictionary[reportId.Replace(".rdlx", string.Empty)];
+            return (true, reportInfo);
         }
 
         public async Task<IReportDataDefinition> GetReportDataDefinition(string reportId, bool initialize = false)
         {
             var reportDataDefinition = _serviceProvider.Identify(reportId);
+            
             if (initialize)
             {
                 await reportDataDefinition.Initialize();
             }
+
             return reportDataDefinition;
         }
+
+        #region static methods
+
+
+        #endregion
 
         #region private methods
 

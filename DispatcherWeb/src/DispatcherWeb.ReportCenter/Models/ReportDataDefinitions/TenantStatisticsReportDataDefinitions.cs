@@ -36,15 +36,16 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
         public override async Task Initialize()
         {
             var reportId = "TenantStatisticsReport";
+            var getReportInfoResult = await _reportAppService.TryGetReport(reportId);
 
-            if (!_reportAppService.TryGetReport(reportId, out var reportInf))
+            if(!getReportInfoResult.Success)
                 throw new Exception("Report is not registered.");
 
-            if (!reportInf.HasAccess)
+            if (!getReportInfoResult.ReportInfo.HasAccess)
                 throw new Exception("You do not have access to view this report.");
 
             var reportsDirPath = new DirectoryInfo($"{_environment.ContentRootPath}\\Reports\\");
-            var reportPath = $"{Path.Combine(reportsDirPath.FullName, reportInf.Path)}.rdlx";
+            var reportPath = $"{Path.Combine(reportsDirPath.FullName, getReportInfoResult.ReportInfo.Path)}.rdlx";
 
             ThisPageReport = new PageReport(new FileInfo(reportPath));
 

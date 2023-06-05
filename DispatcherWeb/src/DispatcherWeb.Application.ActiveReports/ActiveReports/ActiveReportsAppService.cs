@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Abp.Authorization;
+﻿using Abp.Authorization;
 using Abp.Domain.Repositories;
 using DispatcherWeb.ActiveReports.ActiveReports.Dto;
 using DispatcherWeb.Authorization;

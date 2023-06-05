@@ -36,11 +36,11 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Properties\.gclicx" />
 		<EmbeddedResource Include="Reports\MasterReport.rdlx-master">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Reports\MasterReportPortrait.rdlx-master" />
 		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
@@ -119,8 +119,8 @@
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="IsEmtry=$(IsEmtry)" Targets="ClientBuild" />
 	</Target>
 	<Target Name="ClientBuild" Condition=" '$(IsEmtry)' == 'true'">
-		<Exec WorkingDirectory="ClientApp" Command="npm install -force" />
-		<Exec WorkingDirectory="ClientApp" Command="npm run build" />
+		<Exec WorkingDirectory="ClientApp" Command="yarn install --force" />
+		<Exec WorkingDirectory="ClientApp" Command="yarn run build" />
 	</Target>
 	<ItemGroup>
 		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="16.2.1" />
