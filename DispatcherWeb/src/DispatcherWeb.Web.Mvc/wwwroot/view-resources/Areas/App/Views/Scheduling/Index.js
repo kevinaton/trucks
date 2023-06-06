@@ -2101,6 +2101,10 @@
             reloadTruckTiles();
         });
 
+        abp.event.on('app.createOrEditOrderModalSaved', function () {
+            reloadMainGrid(null, false);
+        });
+
         function actionMenuHasItems() {
             return _permissions.edit ||
                 _permissions.editTickets ||
