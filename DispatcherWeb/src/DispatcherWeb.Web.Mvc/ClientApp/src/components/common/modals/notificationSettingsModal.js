@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Button,
@@ -15,6 +15,7 @@ import {
     Switch,
     Typography
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import { isEmpty } from 'lodash';
 import { theme } from '../../../Theme';
 import { 
@@ -22,7 +23,6 @@ import {
     updateUserNotificationSettings as onUpdateUserNotificationSettings,
     updateUserNotificationSettingsReset as onResetSaveState
 } from '../../../store/actions';
-import SnackbarContext from '../snackbar/snackbarContext';
 
 export const NotificationSettingsModal = ({
     open,
@@ -45,8 +45,8 @@ export const NotificationSettingsModal = ({
         notificationSettings: state.NotificationReducer.notificationSettings,
         updateSuccess: state.NotificationReducer.updateSuccess
     }));
-
-    const { showSnackbar } = useContext(SnackbarContext);
+    
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if (open) {
@@ -63,11 +63,11 @@ export const NotificationSettingsModal = ({
 
     useEffect(() => {
         if (updateSuccess) {
-            showSnackbar('Saved successfully', 'success');
+            enqueueSnackbar('Saved successfully', { variant: 'success' });
             onClose();
             dispatch(onResetSaveState());
         }
-    }, [dispatch, showSnackbar, updateSuccess, onClose]);
+    }, [dispatch, enqueueSnackbar, updateSuccess, onClose]);
 
     useEffect(() => {
         if (!isEmpty(userNotificationSettings.notifications)) {

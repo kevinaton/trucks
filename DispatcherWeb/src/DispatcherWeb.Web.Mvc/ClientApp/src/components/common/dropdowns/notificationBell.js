@@ -12,6 +12,7 @@ import {
     Typography
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { useSnackbar, closeSnackbar } from 'notistack';
 import moment from 'moment';
 import { HeaderIconButton } from '../../DTComponents';
 import { NotificationSettingsModal } from '../modals';
@@ -26,10 +27,11 @@ import {
 } from '../../styled';
 import { 
     getUserNotifications, 
+    getUserPriorityNotifications,
     setAllNotificationsAsRead as onSetAllNotificationsAsRead,
     setNotificationAsRead as onSetNotificationAsRead
 } from '../../../store/actions';
-import { isEmpty } from 'lodash';
+import _, { isEmpty } from 'lodash';
 import { 
     getFormattedMessageFromUserNotification, 
     getUrl,
@@ -46,11 +48,15 @@ export const NotificationBell = ({
     const [isNotifSettings, setIsNotifSettings] = useState(false);
     const [notificationItemsList, setNotificationItemsList] = useState([]);
     const [unReadCount, setUnReadCount] = useState(0);
+    const [initializedPrioNotif, setInitializedPrioNotif] = useState(false);
 
     const dispatch = useDispatch();
-    const { notifications } = useSelector(state => ({
-        notifications: state.NotificationReducer.notifications
+    const { notifications, priorityNotifications } = useSelector(state => ({
+        notifications: state.NotificationReducer.notifications,
+        priorityNotifications: state.NotificationReducer.priorityNotifications
     }));
+    
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if (isEmpty(notifications)) {
@@ -62,14 +68,14 @@ export const NotificationBell = ({
                 
                 const { items } = result;
                 if (!isEmpty(items)) {
-                    let notifications = [];
+                    let userNotifications = [];
                     
                     items.forEach((item) => {
                         const { id, notification, state } = item;
                         if (!isEmpty(notification)) {
                             const url = getUrl(item);
 
-                            notifications.push({
+                            userNotifications.push({
                                 userNotificationId: id,
                                 text: getFormattedMessageFromUserNotification(notification),
                                 time: moment(notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
@@ -82,11 +88,66 @@ export const NotificationBell = ({
                         }
                     });
                 
-                    setNotificationItemsList(notifications);
+                    setNotificationItemsList(userNotifications);
                 }
             }
         }
     }, [dispatch, notifications]);
+
+    useEffect(() => {
+        const init = async () => {
+            if (isEmpty(priorityNotifications)) {
+                dispatch(getUserPriorityNotifications());
+            } else {
+                const { result } = priorityNotifications;
+                if (!isEmpty(result) && !initializedPrioNotif) {
+                    let { items } = result;
+                    if (!isEmpty(items)) {
+                        items = _.uniqBy(items, 'id');
+
+                        for (const item of items) {
+                            await new Promise((resolve) => setTimeout(resolve, 1000));
+                            
+                            const { id, notification } = item;
+                            if (!isEmpty(notification)) {
+                                const msg = getFormattedMessageFromUserNotification(notification);
+                                enqueueSnackbar(msg, {
+                                    variant: 'warning',
+                                    preventDuplicate: true, 
+                                    persist: true,
+                                    action: snackbarId => (
+                                        <IconButton 
+                                            onClick={(e) => handleDismissPriorityNotif(e, snackbarId, id)}
+                                            size='small' 
+                                        >
+                                            <i className='fa-regular fa-close'></i>
+                                        </IconButton>
+                                    )
+                                })
+                            }
+                        }
+
+                        setInitializedPrioNotif(true);
+                    }
+                }
+            }
+        };
+
+        init();
+    }, [
+        dispatch, 
+        initializedPrioNotif,
+        priorityNotifications,
+        enqueueSnackbar
+    ]);
+
+    // Handles the closing of the priority notification
+    const handleDismissPriorityNotif = (e, snackbarId, id) => {
+        e.preventDefault();
+
+        handleNotifRead({ userNotificationId: id });
+        closeSnackbar(snackbarId);
+    };
     
     // Handles the opening of the notification dropdown
     const handleNotifClick = (event) => setAnchorNotif(event.currentTarget);

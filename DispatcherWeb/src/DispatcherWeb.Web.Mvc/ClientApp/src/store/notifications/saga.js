@@ -1,6 +1,7 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import { 
     GET_USER_NOTIFICATIONS,
+    GET_USER_PRIORITY_NOTIFICATIONS,
     SET_ALL_NOTIFICATIONS_AS_READ,
     SET_NOTIFICATION_AS_READ,
     GET_USER_NOTIFICATION_SETTINGS,
@@ -9,6 +10,8 @@ from './actionTypes';
 import {
     getUserNotificationsSuccess,
     getUserNotificationsFailure,
+    getUserPriorityNotificationsSuccess,
+    getUserPriorityNotificationsFailure,
     setAllNotificationsAsReadSuccess,
     setAllNotificationsAsReadFailure,
     setNotificationAsReadSuccess,
@@ -20,6 +23,7 @@ import {
 } from './actions';
 import { 
     getUserNotifications, 
+    getUserPriorityNotifications,
     setAllNotificationsAsRead,
     setNotificationAsRead,
     getUserNotificationSettings,
@@ -32,6 +36,15 @@ function* fetchUserNotifications() {
         yield put(getUserNotificationsSuccess(response));
     } catch (error) {
         yield put(getUserNotificationsFailure(error));
+    }
+}
+
+function* fetchUserPriorityNotifications() {
+    try {
+        const response = yield call(getUserPriorityNotifications);
+        yield put(getUserPriorityNotificationsSuccess(response));
+    } catch (error) {
+        yield put(getUserPriorityNotificationsFailure(error));
     }
 }
 
@@ -73,6 +86,7 @@ function* onUpdateUserNotificationSettings({ payload: settings }) {
 
 function* notificationSaga() {
     yield takeEvery(GET_USER_NOTIFICATIONS, fetchUserNotifications);
+    yield takeEvery(GET_USER_PRIORITY_NOTIFICATIONS, fetchUserPriorityNotifications);
     yield takeEvery(GET_USER_NOTIFICATION_SETTINGS, fetchUserNotificationSettings);
     yield takeEvery(SET_ALL_NOTIFICATIONS_AS_READ, onSetAllNotificationsAsRead);
     yield takeEvery(SET_NOTIFICATION_AS_READ, onSetNotificationAsRead);

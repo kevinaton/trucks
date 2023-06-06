@@ -4,6 +4,9 @@ import * as url from '../../helpers/url_helper';
 // get user notifications
 export const getUserNotifications = () => get(url.GET_USER_NOTIFICATIONS);
 
+// get user priority notifications
+export const getUserPriorityNotifications = () => get(url.GET_USER_PRIORITY_NOTIFICATIONS);
+
 // set all notifications as read
 export const setAllNotificationsAsRead = () => post(url.SET_ALL_NOTIFICATIONS_AS_READ);
 
