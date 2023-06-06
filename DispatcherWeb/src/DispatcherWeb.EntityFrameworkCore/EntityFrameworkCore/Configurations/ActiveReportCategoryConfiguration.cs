@@ -1,4 +1,4 @@
-﻿using DispatcherWeb.Reports;
+﻿using DispatcherWeb.ActiveReports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +10,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
         {
             builder.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(30);
+                    .HasMaxLength(100);
         }
     }
 }

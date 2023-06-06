@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DispatcherWeb.Reports
+namespace DispatcherWeb.ActiveReports
 {
     [Table("ActiveReportCategory")]
     public partial class ActiveReportCategory : FullAuditedEntity
     {
         public ActiveReportCategory()
         {
-            Report = new HashSet<ActiveReport>();
+            Reports = new HashSet<ActiveReport>();
         }
 
         public string Name { get; set; }
 
-        public virtual ICollection<ActiveReport> Report { get; set; }
+        public virtual ICollection<ActiveReport> Reports { get; set; }
     }
 }

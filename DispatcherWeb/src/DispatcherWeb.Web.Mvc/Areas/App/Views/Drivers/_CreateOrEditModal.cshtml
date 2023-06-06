@@ -1,6 +1,7 @@
 ﻿@using System.Threading.Tasks
 @using DispatcherWeb.Drivers.Dto
 @using DispatcherWeb.Infrastructure.Extensions
+@using DispatcherWeb.Infrastructure;
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @model DriverEditDto
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Driver: " + Model.FullName : "Create new driver"))
@@ -55,11 +56,11 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="EmailAddress">@L("EmailAddress")</label>
-                    <input class="form-control" type="text" asp-for="EmailAddress" maxlength="256">
+                    <input class="form-control" type="text" asp-for="EmailAddress" maxlength="@EntityStringFieldLengths.Driver.EmailAddress">
                 </div>
                 <div class="form-group">
                     <label asp-for="CellPhoneNumber">@L("CellPhoneNumber")</label>
-                    <input class="form-control" type="text" asp-for="CellPhoneNumber" placeholder="Cell Phone Number (format: +15554321)" maxlength="15">
+                    <input class="form-control" type="text" asp-for="CellPhoneNumber" placeholder="Cell Phone Number (format: +15554321)" maxlength="@EntityStringFieldLengths.General.PhoneNumber">
                 </div>
                 <div class="form-group">
                     <label class="control-label" asp-for="OrderNotifyPreferredFormat">@L("PreferredFormat")</label>
@@ -82,6 +83,10 @@
                         <label>@L("ZipCode")</label>
                         <input class="form-control" type="text" asp-for="ZipCode">
                     </div>
+                </div>
+                <div class="form-group">
+                    <label>@L("EmployeeId")</label>
+                    <input class="form-control" type="text" asp-for="EmployeeId" maxlength="@EntityStringFieldLengths.Driver.EmployeeId">
                 </div>
             </form>
         </div>

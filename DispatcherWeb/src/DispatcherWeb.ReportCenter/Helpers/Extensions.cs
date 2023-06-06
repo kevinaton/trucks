@@ -14,7 +14,7 @@ namespace DispatcherWeb.ReportCenter.Helpers
         public static IReportDataDefinition Identify(this IServiceProvider serviceProvider, string reportId)
         {
             if (reportId.Equals("TenantStatisticsReport", StringComparison.InvariantCulture))
-                return serviceProvider.GetService<TenantStatisticsReportDataDefinitions>();
+                return serviceProvider.GetRequiredService<TenantStatisticsReportDataDefinitions>();
 
             else if (reportId.Equals("VehicleMaintenanceWorkOrderReport", StringComparison.InvariantCulture))
                 return serviceProvider.GetService<VehicleMaintenanceWorkOrderReportDataDefinitions>();

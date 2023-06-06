@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DispatcherWeb.ReportCenter.Helpers;
 using GrapeCity.ActiveReports;
 using GrapeCity.ActiveReports.PageReportModel;
 using GrapeCity.ActiveReports.Web.Viewer;
@@ -27,6 +28,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         public virtual bool HasTenantsParameter { get; private set; }
 
+        public virtual string ReportId { get; private set; }
+
         public ReportDataDefinitionBase(IConfiguration configuration, IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
         {
             Configuration = configuration;
@@ -45,7 +48,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             var hostApiUrl = Configuration["IdentityServer:Authority"];
             var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
 
-            var connStrData = $"jsondoc={hostApiUrl}/api/services/app/dashboard/GetTenants";
+            var connStrData = $"jsondoc={hostApiUrl}/api/services/activeReports/tenantStatisticsReport/GetTenants";
+            //var connStrData = $"jsondoc={hostApiUrl}/api/services/app/dashboard/GetTenants";
             //var connStrData = $"jsondoc={hostApiUrl}/api/services/app/tenant/GetTenants";
 
             var connStrHeaders = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";

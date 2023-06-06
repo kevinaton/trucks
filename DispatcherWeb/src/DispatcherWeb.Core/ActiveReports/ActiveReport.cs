@@ -1,16 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities.Auditing;
 
-namespace DispatcherWeb.Reports
+namespace DispatcherWeb.ActiveReports
 {
     [Table("ActiveReport")]
     public partial class ActiveReport : FullAuditedEntity
     {
-        public ActiveReport()
-        {
-
-        }
-
         public string Name { get; set; }
         public string Description { get; set; }
         public string Path { get; set; }

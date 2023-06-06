@@ -11,6 +11,7 @@ using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Runtime.Caching.Redis;
 using Abp.Zero.Configuration;
+using DispatcherWeb.ActiveReports;
 using DispatcherWeb.Authentication.TwoFactor;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.DriverApp;
@@ -29,6 +30,7 @@ namespace DispatcherWeb.Web
     [DependsOn(
         typeof(DispatcherWebApplicationModule),
         typeof(DispatcherWebApplicationDriverAppModule),
+        typeof(DispatcherWebApplicationActiveReportsModule),
         typeof(DispatcherWebEntityFrameworkCoreModule),
         typeof(AbpAspNetZeroCoreWebModule),
         typeof(AbpAspNetCoreSignalRModule),
@@ -65,6 +67,13 @@ namespace DispatcherWeb.Web
                 .CreateControllersForAppServices(
                     typeof(DispatcherWebApplicationDriverAppModule).GetAssembly(),
                     moduleName: "driverApp",
+                    useConventionalHttpVerbs: true
+                );
+
+            Configuration.Modules.AbpAspNetCore()
+                .CreateControllersForAppServices(
+                    typeof(DispatcherWebApplicationActiveReportsModule).GetAssembly(),
+                    moduleName: "activeReports",
                     useConventionalHttpVerbs: true
                 );
 

@@ -31,7 +31,7 @@ using DispatcherWeb.Payments;
 using DispatcherWeb.PayStatements;
 using DispatcherWeb.Projects;
 using DispatcherWeb.Quotes;
-using DispatcherWeb.Reports;
+using DispatcherWeb.ActiveReports;
 using DispatcherWeb.ScheduledReports;
 using DispatcherWeb.SecureFiles;
 using DispatcherWeb.Services;
@@ -261,7 +261,14 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<HostEmailReceiver> HostEmailReceivers { get; set; }
 
+        public virtual DbSet<OrderLineVehicleCategory> OrderLineVehicles { get; set; }
+
+        public virtual DbSet<QuoteServiceVehicleCategory> QuoteServiceVehicle { get; set; }
+
+        public virtual DbSet<TrailerAssignment> TrailerAssignments { get; set; }
+
         public virtual DbSet<ActiveReport> ActiveReports { get; set; }
+
         public virtual DbSet<ActiveReportCategory> ActiveReportCategories { get; set; }
 
         public DispatcherWebDbContext(DbContextOptions<DispatcherWebDbContext> options)
@@ -359,6 +366,8 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderEmailConfiguration());
             modelBuilder.ApplyConfiguration(new OrderLineConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderLineTruckConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderLineVehicleCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new OrderPaymentConfiguration());
             modelBuilder.ApplyConfiguration(new OrderTruckConfiguration());
             modelBuilder.ApplyConfiguration(new PaymentConfiguration());
@@ -377,6 +386,7 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new QuoteEmailConfiguration());
             modelBuilder.ApplyConfiguration(new QuoteHistoryConfiguration());
             modelBuilder.ApplyConfiguration(new QuoteServiceConfiguration());
+            modelBuilder.ApplyConfiguration(new QuoteServiceVehicleCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new ServiceConfiguration());
             modelBuilder.ApplyConfiguration(new SharedOrderConfiguration());
             modelBuilder.ApplyConfiguration(new SharedTruckConfiguration());
@@ -385,6 +395,7 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new TrackableEmailConfiguration());
             modelBuilder.ApplyConfiguration(new TrackableEmailEventConfiguration());
             modelBuilder.ApplyConfiguration(new TrackableEmailReceiverConfiguration());
+            modelBuilder.ApplyConfiguration(new TrailerAssignmentConfiguration());
             modelBuilder.ApplyConfiguration(new TruckConfiguration());
             modelBuilder.ApplyConfiguration(new TruckPositionConfiguration());
             modelBuilder.ApplyConfiguration(new TruxEarningsConfiguration());

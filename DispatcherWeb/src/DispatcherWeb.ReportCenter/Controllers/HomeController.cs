@@ -35,28 +35,32 @@ namespace DispatcherWeb.ReportCenter
             return View(model);
         }
 
-        [Route("/report/{reportPath}/{id:int?}")]
-        public async Task<IActionResult> Report(string reportPath, int? id = null)
+        [Route("/report/{reportPath}/{entityId:int?}")]
+        public async Task<IActionResult> Report(string reportPath, int? entityId = null)
         {
             if (!await _reportAppService.CanAccessReport(reportPath))
-                return RedirectToAction("Error");
+            {
+                throw new Exception("You have no access to this report.");
+                //return RedirectToAction("Index");
+            }
+
+            var tenantId = 0;
+            var claimsDic = HttpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value);
+            if (claimsDic.TryGetValue("http://www.aspnetboilerplate.com/identity/claims/tenantId", out string id))
+                tenantId = int.Parse(id);
 
             var vm = new ReportViewModel
             {
                 ReportPath = reportPath,
-                TenantId = 0,
-                EntityId = id
+                TenantId = tenantId,
+                EntityId = entityId
             };
-
-            var claimsDic = HttpContext.User.Claims.ToDictionary(c => c.Type, c => c.Value);
-            if (claimsDic.TryGetValue("http://www.aspnetboilerplate.com/identity/claims/tenantId", out string tenantId))
-                vm.TenantId = int.Parse(tenantId);
 
             return View(vm);
         }
 
         [Route("/report/{reportPath}/{id:int?}/Pdf")]
-        public async Task<IActionResult> ReportPdf([FromServices] IWebHostEnvironment env, string reportPath, int? id = null)
+        public async Task<IActionResult> ReportPdf(string reportPath, int? id = null)
         {
             if (!await _reportAppService.CanAccessReport(reportPath))
                 return RedirectToAction("Error");

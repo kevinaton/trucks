@@ -22,6 +22,7 @@ namespace DispatcherWeb.Configuration
             public const string ShiftName1 = "App.General.ShiftName1";
             public const string ShiftName2 = "App.General.ShiftName2";
             public const string ShiftName3 = "App.General.ShiftName3";
+            public const string AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = "App.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders";
         }
 
         public static class Trux

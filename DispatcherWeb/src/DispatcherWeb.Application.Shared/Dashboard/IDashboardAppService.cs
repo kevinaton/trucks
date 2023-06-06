@@ -17,6 +17,5 @@ namespace DispatcherWeb.Dashboard
         Task<GetTenantDashboardStatusDataOutput> GetDriverMVRStatusData();
         Task<RevenueChartsDataDto> GetRevenueChartsData(GetRevenueChartsDataInput input);
         Task<List<DashboardSettingDto>> GetDashboardSettings();
-        Task<List<TenantDailyHistorySummary>> GetTenantStatistics(GetTenantStatisticsInput input);
     }
 }

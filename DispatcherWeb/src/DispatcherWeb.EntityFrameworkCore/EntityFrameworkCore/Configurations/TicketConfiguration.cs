@@ -37,6 +37,16 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .HasForeignKey(e => e.DeliverToId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(e => e.Truck)
+                .WithMany(e => e.TicketsOfTruck)
+                .HasForeignKey(e => e.TruckId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(e => e.Trailer)
+                .WithMany(e => e.TicketsOfTrailer)
+                .HasForeignKey(e => e.TrailerId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

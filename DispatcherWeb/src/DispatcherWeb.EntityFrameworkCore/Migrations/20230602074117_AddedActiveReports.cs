@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DispatcherWeb.Migrations
 {
-    public partial class ActiveReports : Migration
+    public partial class AddedActiveReports : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,7 @@ namespace DispatcherWeb.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -36,7 +36,7 @@ namespace DispatcherWeb.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(180)", maxLength: 180, nullable: true),
                     Path = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
@@ -64,7 +64,8 @@ namespace DispatcherWeb.Migrations
                 table: "ActiveReport",
                 column: "CategoryId");
 
-            migrationBuilder.ReadAndExecuteSql();
+            var sql = this.ReadSql();
+            migrationBuilder.Sql(sql);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

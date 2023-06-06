@@ -55,6 +55,7 @@ namespace DispatcherWeb.Scheduling
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<Ticket> _ticketRepository;
         private readonly IRepository<DriverAssignment> _driverAssignmentRepository;
+        private readonly IRepository<TrailerAssignment> _trailerAssignmentRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<AvailableLeaseHaulerTruck> _availableLeaseHaulerTruckRepository;
         private readonly IRepository<LeaseHauler> _leaseHaulerRepository;
@@ -79,6 +80,7 @@ namespace DispatcherWeb.Scheduling
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<Ticket> ticketRepository,
             IRepository<DriverAssignment> driverAssignmentRepository,
+            IRepository<TrailerAssignment> trailerAssignmentRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<AvailableLeaseHaulerTruck> availableLeaseHaulerTruckRepository,
             IRepository<LeaseHauler> leaseHaulerRepository,
@@ -103,6 +105,7 @@ namespace DispatcherWeb.Scheduling
             _orderLineTruckRepository = orderLineTruckRepository;
             _ticketRepository = ticketRepository;
             _driverAssignmentRepository = driverAssignmentRepository;
+            _trailerAssignmentRepository = trailerAssignmentRepository;
             _dispatchRepository = dispatchRepository;
             _availableLeaseHaulerTruckRepository = availableLeaseHaulerTruckRepository;
             _leaseHaulerRepository = leaseHaulerRepository;
@@ -144,7 +147,7 @@ namespace DispatcherWeb.Scheduling
                 .WhereIf(!input.TruckCode.IsNullOrEmpty(), x => x.TruckCode.StartsWith(input.TruckCode))
                 .WhereIf(input.OnlyTrailers, x => x.VehicleCategory.AssetType == AssetType.Trailer)
                 .WhereIf(input.IsPowered.HasValue, x => x.VehicleCategory.IsPowered == input.IsPowered.Value)
-                .Where(x => x.OrderLineTrucks.All(olt => olt.OrderLine.Id != input.OrderLineId))
+                .Where(x => x.OrderLineTrucksOfTruck.All(olt => olt.OrderLine.Id != input.OrderLineId))
                 .GetScheduleTrucks(input, await SettingManager.UseShifts(),
                     await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature));
 
@@ -637,6 +640,7 @@ namespace DispatcherWeb.Scheduling
                 OrderLineId = input.OrderLineId,
                 TruckId = input.TruckId,
                 DriverId = input.DriverId ?? truck.DriverId,
+                TrailerId = input.TrailerId ?? truck.Trailer?.Id,
                 ParentOrderLineTruckId = input.ParentId,
                 Utilization = utilization,
                 TimeOnJob = await GetTimeOnJobUtcForNewOrderLineTruck(input.OrderLineId, truck.VehicleCategory)
@@ -963,6 +967,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     OrderLineId = input.DestinationOrderLineId,
                     TruckId = sourceOrderLineTruck.TruckId,
+                    TrailerId = sourceOrderLineTruck.TrailerId,
                     DriverId = sourceOrderLineTruck.DriverId,
                     ParentId = sourceOrderLineTruck.ParentOrderLineTruckId,
                     Utilization = !sourceOrderLineTruck.IsDone ? sourceOrderLineTruck.Utilization : 1,
@@ -1172,10 +1177,15 @@ namespace DispatcherWeb.Scheduling
                 {
                     t.Id,
                     t.DefaultDriverId,
+                    t.DefaultTrailerId,
                     t.LocationId
                 }).ToListAsync();
 
             var existingDriverAssignments = await _driverAssignmentRepository.GetAll()
+                .Where(x => x.Date == newOrder.Date && x.Shift == newOrder.Shift)
+                .ToListAsync();
+
+            var existingTrailerAssignments = await _trailerAssignmentRepository.GetAll()
                 .Where(x => x.Date == newOrder.Date && x.Shift == newOrder.Shift)
                 .ToListAsync();
 
@@ -1237,6 +1247,30 @@ namespace DispatcherWeb.Scheduling
                     }
                 }
 
+                int? newTrailerId = null;
+                if (truck.CanPullTrailer)
+                {
+                    var existingTrailerAssignment = existingTrailerAssignments.FirstOrDefault(ta => ta.TractorId == truck.Id);
+                    if (existingTrailerAssignment != null)
+                    {
+                        newTrailerId = existingTrailerAssignment.TrailerId;
+                    }
+                    else
+                    {
+                        newTrailerId = truckInfo.DefaultTrailerId;
+                        var newTrailerAssignment = new TrailerAssignment()
+                        {
+                            Date = newOrder.Date.Value,
+                            Shift = newOrder.Shift,
+                            TractorId = truck.Id,
+                            TrailerId = newTrailerId,
+                            OfficeId = truckInfo.LocationId,
+                        };
+                        existingTrailerAssignments.Add(newTrailerAssignment);
+                        await _trailerAssignmentRepository.InsertAsync(newTrailerAssignment);
+                    }
+                }
+
                 int newOrderLineId = MapOriginalOrderLineIdToNewOrderLineId(originalOrderLineTruck.OrderLineId);
 
                 var scheduleOrderLineDto = await _orderLineRepository.GetAll()
@@ -1284,7 +1318,7 @@ namespace DispatcherWeb.Scheduling
                     OrderLineId = newOrderLineId,
                     TruckId = originalOrderLineTruck.TruckId,
                     DriverId = newDriverId,
-                    ParentOrderLineTruckId = originalOrderLineTruck.ParentOrderLineTruckId,
+                    TrailerId = newTrailerId,
                     Utilization = utilizationToAssign,
                     TimeOnJob = newOrder.Date.Value.AddTimeOrNull(originalOrderLineTruck.TimeOnJob?.ConvertTimeZoneTo(timezone))?.ConvertTimeZoneFrom(timezone),
                 });
@@ -1749,6 +1783,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     OrderLineId = input.DestinationOrderLineId,
                     TruckId = sourceOrderLineTruck.TruckId,
+                    TrailerId = sourceOrderLineTruck.TrailerId,
                     DriverId = sourceOrderLineTruck.DriverId,
                     ParentId = sourceOrderLineTruck.ParentOrderLineTruckId,
                     Utilization = !sourceOrderLineTruck.IsDone ? sourceOrderLineTruck.Utilization : 1,
@@ -1805,18 +1840,6 @@ namespace DispatcherWeb.Scheduling
                 {
                     //throw new UserFriendlyException(addOrderTruckResult.ErrorMessage);
                     throw new UserFriendlyException("There are too many trucks being assigned to the new order line. Please increase the scheduled number of trucks or reduce the number of trucks being assigned.");
-                }
-
-                var truck = trucks.FirstOrDefault(x => x.Id == truckId);
-                if (truck != null && truck.CanPullTrailer && truck.DefaultTrailerId.HasValue && await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule))
-                {
-                    await AddOrderLineTruckInternal(new AddOrderLineTruckInternalInput
-                    {
-                        OrderLineId = input.OrderLineId,
-                        TruckId = truck.DefaultTrailerId.Value,
-                        Utilization = 1,
-                        ParentId = addOrderTruckResult.Item.Id
-                    });
                 }
             }
         }

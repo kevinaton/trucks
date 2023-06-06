@@ -63,6 +63,7 @@ namespace DispatcherWeb.Orders
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
+        private readonly IRepository<OrderLineVehicleCategory> _orderLineVehicleCategoryRepository;
         private readonly IRepository<SharedOrder> _sharedOrderRepository;
         private readonly IRepository<SharedOrderLine> _sharedOrderLineRepository;
         private readonly IRepository<BilledOrder> _billedOrderRepository;
@@ -100,6 +101,7 @@ namespace DispatcherWeb.Orders
             IRepository<Order> orderRepository,
             IRepository<OrderLine> orderLineRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
+            IRepository<OrderLineVehicleCategory> orderLineVehicleCategoryRepository,
             IRepository<SharedOrder> sharedOrderRepository,
             IRepository<SharedOrderLine> sharedOrderLineRepository,
             IRepository<BilledOrder> billedOrderRepository,
@@ -137,6 +139,7 @@ namespace DispatcherWeb.Orders
             _orderRepository = orderRepository;
             _orderLineRepository = orderLineRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
+            _orderLineVehicleCategoryRepository = orderLineVehicleCategoryRepository;
             _sharedOrderRepository = sharedOrderRepository;
             _sharedOrderLineRepository = sharedOrderLineRepository;
             _billedOrderRepository = billedOrderRepository;
@@ -446,6 +449,7 @@ namespace DispatcherWeb.Orders
                 editOrderLineModel.RequiresCustomerNotification = model.RequiresCustomerNotification;
                 editOrderLineModel.CustomerNotificationContactName = model.CustomerNotificationContactName;
                 editOrderLineModel.CustomerNotificationPhoneNumber = model.CustomerNotificationPhoneNumber;
+                editOrderLineModel.VehicleCategories = model.VehicleCategories;
 
                 var orderLine = await EditOrderLine(editOrderLineModel);
                 await CurrentUnitOfWork.SaveChangesAsync();
@@ -1384,6 +1388,7 @@ namespace DispatcherWeb.Orders
             var order = await _orderRepository.GetAll()
                 .AsNoTracking()
                 .Include(x => x.OrderLines)
+                    .ThenInclude(x => x.OrderLineVehicleCategories)
                 .Include(x => x.SharedOrders)
                 .FirstAsync(x => x.Id == input.OrderId);
 
@@ -1412,40 +1417,53 @@ namespace DispatcherWeb.Orders
                     newOrderLines = order.OrderLines
                         .WhereIf(input.OrderLineId.HasValue, ol => ol.Id == input.OrderLineId)
                         .WhereIf(!allowCopyZeroQuantity && !input.OrderLineId.HasValue, ol => ol.MaterialQuantity > 0 || ol.FreightQuantity > 0 || ol.NumberOfTrucks > 0)
-                        .Select(x => new OrderLine
+                        .Select(x =>
                         {
-                            LineNumber = copySingleOrderLine ? 1 : x.LineNumber,
-                            QuoteServiceId = x.QuoteServiceId,
-                            MaterialQuantity = x.MaterialQuantity,
-                            FreightQuantity = x.FreightQuantity,
-                            NumberOfTrucks = x.NumberOfTrucks,
-                            ScheduledTrucks = input.CopyTrucks ? x.ScheduledTrucks : null,
-                            MaterialPricePerUnit = x.MaterialPricePerUnit,
-                            FreightPricePerUnit = x.FreightPricePerUnit,
-                            IsMaterialPricePerUnitOverridden = x.IsMaterialPricePerUnitOverridden,
-                            IsFreightPricePerUnitOverridden = x.IsFreightPricePerUnitOverridden,
-                            ServiceId = x.ServiceId,
-                            LoadAtId = x.LoadAtId,
-                            DeliverToId = x.DeliverToId,
-                            FreightUomId = x.FreightUomId,
-                            MaterialUomId = x.MaterialUomId,
-                            Designation = x.Designation,
-                            MaterialPrice = x.MaterialPrice,
-                            FreightPrice = x.FreightPrice,
-                            IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
-                            IsFreightPriceOverridden = x.IsFreightPriceOverridden,
-                            LeaseHaulerRate = x.LeaseHaulerRate,
-                            FreightRateToPayDrivers = x.FreightRateToPayDrivers,
-                            TimeOnJob = x.TimeOnJob == null ? null : (currentDate.Date.Add(x.TimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
-                            FirstStaggeredTimeOnJob = x.FirstStaggeredTimeOnJob == null ? null : (currentDate.Date.Add(x.FirstStaggeredTimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
-                            StaggeredTimeKind = x.StaggeredTimeKind,
-                            StaggeredTimeInterval = x.StaggeredTimeInterval,
-                            JobNumber = x.JobNumber,
-                            Note = x.Note,
-                            IsMultipleLoads = x.IsMultipleLoads,
-                            ProductionPay = allowProductionPay && x.ProductionPay,
-                            Order = newOrder,
+                            var newOrderLine = new OrderLine
+                            {
+                                LineNumber = copySingleOrderLine ? 1 : x.LineNumber,
+                                QuoteServiceId = x.QuoteServiceId,
+                                MaterialQuantity = x.MaterialQuantity,
+                                FreightQuantity = x.FreightQuantity,
+                                NumberOfTrucks = x.NumberOfTrucks,
+                                ScheduledTrucks = input.CopyTrucks ? x.ScheduledTrucks : null,
+                                MaterialPricePerUnit = x.MaterialPricePerUnit,
+                                FreightPricePerUnit = x.FreightPricePerUnit,
+                                IsMaterialPricePerUnitOverridden = x.IsMaterialPricePerUnitOverridden,
+                                IsFreightPricePerUnitOverridden = x.IsFreightPricePerUnitOverridden,
+                                ServiceId = x.ServiceId,
+                                LoadAtId = x.LoadAtId,
+                                DeliverToId = x.DeliverToId,
+                                FreightUomId = x.FreightUomId,
+                                MaterialUomId = x.MaterialUomId,
+                                Designation = x.Designation,
+                                MaterialPrice = x.MaterialPrice,
+                                FreightPrice = x.FreightPrice,
+                                IsMaterialPriceOverridden = x.IsMaterialPriceOverridden,
+                                IsFreightPriceOverridden = x.IsFreightPriceOverridden,
+                                LeaseHaulerRate = x.LeaseHaulerRate,
+                                FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                                TimeOnJob = x.TimeOnJob == null ? null : (currentDate.Date.Add(x.TimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
+                                FirstStaggeredTimeOnJob = x.FirstStaggeredTimeOnJob == null ? null : (currentDate.Date.Add(x.FirstStaggeredTimeOnJob.Value.ConvertTimeZoneTo(timezone).TimeOfDay)).ConvertTimeZoneFrom(timezone),
+                                StaggeredTimeKind = x.StaggeredTimeKind,
+                                StaggeredTimeInterval = x.StaggeredTimeInterval,
+                                JobNumber = x.JobNumber,
+                                Note = x.Note,
+                                IsMultipleLoads = x.IsMultipleLoads,
+                                ProductionPay = allowProductionPay && x.ProductionPay,
+                                Order = newOrder
+                            };
+                            foreach (var vehicleCategory in x.OrderLineVehicleCategories)
+                            {
+                                newOrderLine.OrderLineVehicleCategories.Add(new OrderLineVehicleCategory
+                                {
+                                    OrderLine = newOrderLine,
+                                    VehicleCategoryId = vehicleCategory.VehicleCategoryId
+                                });
+                            }
+                            return newOrderLine;
                         }).ToList();
+
 
                     foreach (var newOrderLine in newOrderLines)
                     {
@@ -1920,6 +1938,11 @@ namespace DispatcherWeb.Orders
                         TimeOnJob = x.TimeOnJob,
                         HasTickets = x.Tickets.Any(),
                         HasOpenDispatches = x.Dispatches.Any(d => !Dispatch.ClosedDispatchStatuses.Contains(d.Status)),
+                        VehicleCategories = x.OrderLineVehicleCategories.Select(vc => new OrderLineVehicleCategoryDto
+                        {
+                            Id = vc.VehicleCategoryId,
+                            Name = vc.VehicleCategory.Name
+                        }).ToList(),
                     })
                     .OrderBy(input.Sorting)
                     //.PageBy(input)
@@ -1990,7 +2013,12 @@ namespace DispatcherWeb.Orders
                         CanOverrideTotals = true,
                         QuoteId = input.QuoteId.Value,
                         HasQuoteBasedPricing = x.Service.QuoteServices.Any(y => y.QuoteId == input.QuoteId
-                            && (y.MaterialUomId == x.MaterialUomId || y.FreightUomId == x.FreightUomId) && y.LoadAtId == x.LoadAtId)
+                            && (y.MaterialUomId == x.MaterialUomId || y.FreightUomId == x.FreightUomId) && y.LoadAtId == x.LoadAtId),
+                        VehicleCategories = x.QuoteServiceVehicleCategories.Select(vc => new OrderLineVehicleCategoryDto
+                        {
+                            Id = vc.VehicleCategoryId,
+                            Name = vc.VehicleCategory.Name
+                        }).ToList(),
                     })
                     .OrderBy(input.Sorting)
                     .ToListAsync();
@@ -2077,7 +2105,12 @@ namespace DispatcherWeb.Orders
                         CanOverrideTotals = canOverrideTotals,
                         RequiresCustomerNotification = x.RequiresCustomerNotification,
                         CustomerNotificationContactName = x.CustomerNotificationContactName,
-                        CustomerNotificationPhoneNumber = x.CustomerNotificationPhoneNumber
+                        CustomerNotificationPhoneNumber = x.CustomerNotificationPhoneNumber,
+                        VehicleCategories = x.OrderLineVehicleCategories.Select(vc => new OrderLineVehicleCategoryDto
+                        {
+                            Id = vc.VehicleCategory.Id,
+                            Name = vc.VehicleCategory.Name
+                        }).ToList()
                     })
                     .FirstOrDefaultAsync(x => x.Id == input.Id.Value);
 
@@ -2264,7 +2297,8 @@ namespace DispatcherWeb.Orders
                 QuoteServiceId = orderLine.QuoteServiceId,
                 RequiresCustomerNotification = orderLine.RequiresCustomerNotification,
                 CustomerNotificationContactName = orderLine.CustomerNotificationContactName,
-                CustomerNotificationPhoneNumber = orderLine.CustomerNotificationPhoneNumber
+                CustomerNotificationPhoneNumber = orderLine.CustomerNotificationPhoneNumber,
+                VehicleCategories = orderLine.VehicleCategories
             };
 
             if (input.OrderLineId != null)
@@ -2353,10 +2387,14 @@ namespace DispatcherWeb.Orders
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<ResetOverriddenOrderLineValuesOutput> ResetOverriddenOrderLineValues(EntityDto input)
+        public async Task<ResetOverriddenOrderLineValuesOutput> ResetOverriddenOrderLineValues(ResetOverriddenOrderLineValuesInput input)
         {
             var orderLineUpdater = _orderLineUpdaterFactory.Create(input.Id);
             var orderLine = await orderLineUpdater.GetEntityAsync();
+            if (input.OverrideReadOnlyState && await PermissionChecker.IsGrantedAsync(AppPermissions.EditInvoicedOrdersAndTickets))
+            {
+                orderLineUpdater.SuppressReadOnlyChecker();
+            }
             await orderLineUpdater.UpdateFieldAsync(o => o.IsMaterialPriceOverridden, false);
             await orderLineUpdater.UpdateFieldAsync(o => o.IsFreightPriceOverridden, false);
             await orderLineUpdater.UpdateFieldAsync(o => o.MaterialPrice, orderLine.MaterialPricePerUnit * orderLine.MaterialQuantity ?? 0);
@@ -2470,6 +2508,24 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.CustomerNotificationPhoneNumber, model.CustomerNotificationPhoneNumber);
 
             await orderLineUpdater.SaveChangesAsync();
+
+            var existingVehicleCategories = model.Id.HasValue ? await _orderLineVehicleCategoryRepository.GetAll()
+                .Where(vc => vc.OrderLineId == model.Id)
+                .ToListAsync() : new List<OrderLineVehicleCategory>();
+
+            existingVehicleCategories
+                .Where(e => !model.VehicleCategories.Any(m => m.Id == e.VehicleCategoryId))
+                .ToList()
+                .ForEach(x => _orderLineVehicleCategoryRepository.Delete(x));
+
+            model.VehicleCategories
+                .Where(m => !existingVehicleCategories.Any(e => e.VehicleCategoryId == m.Id))
+                .ToList()
+                .ForEach(x => _orderLineVehicleCategoryRepository.Insert(new OrderLineVehicleCategory
+                {
+                    OrderLine = orderLine,
+                    VehicleCategoryId = x.Id
+                }));
 
             return orderLine;
         }
@@ -2798,6 +2854,7 @@ namespace DispatcherWeb.Orders
                     && !await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.HideTicketControlsInDriverApp);
             var shiftDictionary = await SettingManager.GetShiftDictionary();
             var currentCulture = await SettingManager.GetCurrencyCultureAsync();
+            var showTruckCategories = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders);
             input.Date = input.Date?.Date;
 
             var data = await GetWorkOrderReportQuery(input).ToListAsync();
@@ -2828,6 +2885,7 @@ namespace DispatcherWeb.Orders
                 x.ShowDriverNamesOnPrintedOrder = showDriverNamesOnPrintedOrder;
                 x.OrderShiftName = x.OrderShift.HasValue && shiftDictionary.ContainsKey(x.OrderShift.Value) ? shiftDictionary[x.OrderShift.Value] : "";
                 x.ShowSignatureColumn = showSignatureColumn;
+                x.ShowTruckCategories = showTruckCategories;
                 x.CurrencyCulture = currentCulture;
             });
 

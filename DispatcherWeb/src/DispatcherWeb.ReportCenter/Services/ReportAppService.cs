@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DispatcherWeb.ActiveReports.Dto;
+using DispatcherWeb.ActiveReports.ActiveReports.Dto;
 using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace DispatcherWeb.ReportCenter.Services
@@ -19,6 +20,7 @@ namespace DispatcherWeb.ReportCenter.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
+        private bool _initialized = false;
 
         private readonly Dictionary<string, (string Description, string Path, bool HasAccess)> _reportAccessDictionary = new();
 
@@ -31,8 +33,11 @@ namespace DispatcherWeb.ReportCenter.Services
             _serviceProvider = serviceProvider;
         }
 
-        public async Task RefreshReportsDictionary()
+        public async Task Initialize()
         {
+            if (_initialized)
+                return;
+
             var accessToken = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
             var hostApiUrl = _configuration["IdentityServer:Authority"];
 
@@ -66,12 +71,13 @@ namespace DispatcherWeb.ReportCenter.Services
                         _reportAccessDictionary.Add(report.Name, (report.Description, report.Path, canAccess));
                     }
                 }
+                _initialized = true;
             }
         }
 
         public async Task<List<ActiveReportListItemDto>> GetAvailableReportsList()
         {
-            await RefreshReportsDictionary();
+            await Initialize();
 
             var reportListItems = _reportAccessDictionary
                                     .Select(report => new ActiveReportListItemDto()
@@ -85,27 +91,21 @@ namespace DispatcherWeb.ReportCenter.Services
             return reportListItems;
         }
 
-        public async Task<bool> CanAccessReport(string reportPath, bool refresh = false)
+        public async Task<bool> CanAccessReport(string reportPath)
         {
-            try
+            await Initialize();
+
+            var keyValReport = _reportAccessDictionary
+                                .FirstOrDefault(p => p.Value.Path == reportPath);
+
+            if (!_reportAccessDictionary.Keys.Any() ||
+                string.IsNullOrEmpty(keyValReport.Key) ||
+                keyValReport.Value == default)
             {
-                if (refresh || _reportAccessDictionary == null || _reportAccessDictionary.Count == 0)
-                    await RefreshReportsDictionary();
-
-                var keyValReport = _reportAccessDictionary
-                                    .FirstOrDefault(p => p.Value.Path == reportPath);
-
-                if (!_reportAccessDictionary.Keys.Any() ||
-                    string.IsNullOrEmpty(keyValReport.Key) ||
-                    keyValReport.Value == default)
-                    return false;
-
-                return keyValReport.Value.HasAccess;
+                return false;
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
+
+            return keyValReport.Value.HasAccess;
         }
 
         public async Task EnsureCanAccessReport(string reportPath)
@@ -118,25 +118,35 @@ namespace DispatcherWeb.ReportCenter.Services
             }
         }
 
-        public bool TryGetReport(string reportId, out (string Description, string Path, bool HasAccess) reportInfo)
+        public async Task<(bool Success, (string Description, string Path, bool HasAccess) ReportInfo)> TryGetReport(string reportId)
         {
+            await Initialize();
+
             if (_reportAccessDictionary.Count == 0)
             {
-                reportInfo = (string.Empty, string.Empty, false);
-                return false;
+                return (false, (string.Empty, string.Empty, false));
             }
 
-            reportInfo = _reportAccessDictionary[reportId.Replace(".rdlx", string.Empty)];
-            return true;
+            var reportInfo = _reportAccessDictionary[reportId.Replace(".rdlx", string.Empty)];
+            return (true, reportInfo);
         }
 
         public async Task<IReportDataDefinition> GetReportDataDefinition(string reportId, bool initialize = false)
         {
             var reportDataDefinition = _serviceProvider.Identify(reportId);
+            
             if (initialize)
+            {
                 await reportDataDefinition.Initialize();
+            }
+
             return reportDataDefinition;
         }
+
+        #region static methods
+
+
+        #endregion
 
         #region private methods
 
@@ -147,7 +157,7 @@ namespace DispatcherWeb.ReportCenter.Services
 
             using var client = new HttpClient();
             client.SetBearerToken(accessToken);
-            var response = await client.GetAsync($"{hostApiUrl}/api/services/app/activeReports/getActiveReportsList");
+            var response = await client.GetAsync($"{hostApiUrl}/api/services/activeReports/activeReports/getActiveReportsList");
 
             var availableReports = new List<ActiveReportListItemDto>();
 
@@ -161,7 +171,7 @@ namespace DispatcherWeb.ReportCenter.Services
 
                 availableReports = JObject.Parse(contentJson)
                                         .SelectTokens("$..result[*]")
-                                        .Select(jtoken => ActiveReportListItemDto.ReadFromJson(jtoken.ToString()))
+                                        .Select(jtoken => JsonConvert.DeserializeObject<ActiveReportListItemDto>(jtoken.ToString()))
                                         .ToList();
             }
 

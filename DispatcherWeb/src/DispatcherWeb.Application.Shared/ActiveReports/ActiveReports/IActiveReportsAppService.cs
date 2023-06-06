@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abp.Application.Services;
-using DispatcherWeb.ActiveReports.Dto;
+using DispatcherWeb.ActiveReports.ActiveReports.Dto;
 
-namespace DispatcherWeb.ActiveReports
+namespace DispatcherWeb.ActiveReports.ActiveReports
 {
     public interface IActiveReportsAppService : IApplicationService
     {

@@ -35,18 +35,21 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
         public override bool HasTenantsParameter => true;
 
+        public override string ReportId
+            => GetType().Name.Replace("DataDefinitions", string.Empty);
+
         public override async Task Initialize()
         {
-            var reportId = "TenantStatisticsReport";
+            var getReportInfoResult = await _reportAppService.TryGetReport(ReportId);
 
-            if (!_reportAppService.TryGetReport(reportId, out var reportInf))
+            if (!getReportInfoResult.Success)
                 throw new Exception("Report is not registered.");
 
-            if (!reportInf.HasAccess)
+            if (!getReportInfoResult.ReportInfo.HasAccess)
                 throw new Exception("You do not have access to view this report.");
 
             var reportsDirPath = new DirectoryInfo($"{_environment.ContentRootPath}\\Reports\\");
-            var reportPath = $"{Path.Combine(reportsDirPath.FullName, reportInf.Path)}.rdlx";
+            var reportPath = $"{Path.Combine(reportsDirPath.FullName, getReportInfoResult.ReportInfo.Path)}.rdlx";
 
             ThisPageReport = new PageReport(new FileInfo(reportPath));
 
@@ -65,7 +68,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 using var client = new HttpClient();
                 client.SetBearerToken(accessToken);
 
-                var url = $"{hostApiUrl}/api/services/app/dashboard/getTenantStatistics?tenantId={paramsDic["tenantId"]}&startDate={paramsDic["startDate"]:o}&endDate={paramsDic["endDate"]:o}";
+                var url = $"{hostApiUrl}/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={paramsDic["tenantId"]}&startDate={paramsDic["startDate"]:o}&endDate={paramsDic["endDate"]:o}";
                 var response = await client.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)

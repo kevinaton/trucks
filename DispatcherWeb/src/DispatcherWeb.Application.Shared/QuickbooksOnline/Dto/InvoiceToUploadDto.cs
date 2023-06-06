@@ -14,6 +14,7 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public DateTime? DueDate { get; set; }
         public DateTime? IssueDate { get; set; }
         public string Message { get; set; }
+        public string PONumber { get; set; }
         public decimal Tax { get; set; }
         public decimal TaxRate { get; set; }
         public decimal TotalAmount { get; set; }
@@ -44,18 +45,7 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
                 return jobNumber;
             }
 
-            if (InvoiceLines == null || Customer == null)
-            {
-                return null;
-            }
-
-            var poNumbers = InvoiceLines.Select(x => x.PONumber).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList();
-            if (poNumbers.Count <= 1)
-            {
-                return poNumbers.FirstOrDefault();
-            }
-
-            return null;
+            return PONumber;
         }
     }
 }

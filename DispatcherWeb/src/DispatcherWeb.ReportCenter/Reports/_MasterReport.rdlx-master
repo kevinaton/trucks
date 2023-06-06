@@ -168,7 +168,7 @@
 	</dd:EmbeddedStyleSheets>
 	<DataSources>
 		<DataSource Name="TenantsDataSource">
-			<DataSourceReference>_DataSource.Dev.rdsx</DataSourceReference>
+			<DataSourceReference>DataSource.rdsx</DataSourceReference>
 		</DataSource>
 	</DataSources>
 	<DataSets>

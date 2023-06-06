@@ -38,18 +38,21 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
         public override bool HasTenantsParameter => false;
 
+        public override string ReportId
+            => GetType().Name.Replace("DataDefinitions", string.Empty);
+
         public override async Task Initialize()
         {
-            var reportId = "VehicleMaintenanceWorkOrderReport";
+            var getReportResult = await _reportAppService.TryGetReport(ReportId);
 
-            if (!_reportAppService.TryGetReport(reportId, out var reportInf))
+            if (!getReportResult.Success)
                 throw new Exception("Report is not registered.");
 
-            if (!reportInf.HasAccess)
+            if (!getReportResult.ReportInfo.HasAccess)
                 throw new Exception("You do not have access to view this report.");
 
             var reportsDirPath = new DirectoryInfo($"{_environment.ContentRootPath}\\Reports\\");
-            var reportPath = $"{Path.Combine(reportsDirPath.FullName, reportInf.Path)}.rdlx";
+            var reportPath = $"{Path.Combine(reportsDirPath.FullName, getReportResult.ReportInfo.Path)}.rdlx";
             ThisPageReport = new PageReport(new FileInfo(reportPath));
 
             await base.Initialize();
@@ -154,6 +157,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
             return "[]";
         }
+
+        
 
         #endregion
     }

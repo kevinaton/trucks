@@ -1,7 +1,6 @@
 using System.Linq;
-using Newtonsoft.Json;
 
-namespace DispatcherWeb.ActiveReports.Dto
+namespace DispatcherWeb.ActiveReports.ActiveReports.Dto
 {
     public class ActiveReportListItemDto
     {
@@ -9,8 +8,5 @@ namespace DispatcherWeb.ActiveReports.Dto
         public string Description { get; set; }
         public string NameAndDescription => string.Join(" - ", new[] { Name, Description }.Where(x => !string.IsNullOrWhiteSpace(x)));
         public string Path { get; set; }
-
-        public static ActiveReportListItemDto ReadFromJson(string jsonSource) =>
-            JsonConvert.DeserializeObject<ActiveReportListItemDto>(jsonSource);
     }
 }

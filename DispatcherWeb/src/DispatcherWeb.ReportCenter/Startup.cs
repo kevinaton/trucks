@@ -93,6 +93,8 @@ namespace DispatcherWeb.ReportCenter
                 app.UseExceptionHandler("/error");
             }
 
+            app.UseHsts();
+
             app.UseStatusCodePages();
 
             app.UseHttpsRedirection();
@@ -123,7 +125,7 @@ namespace DispatcherWeb.ReportCenter
                         entry.SetSize(1000);
                         reportId = reportId.Replace(".rdlx", string.Empty);
 
-                        var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetService<ReportAppService>();
+                        var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<ReportAppService>();
                         var reportDataDefinition = reportAppSrvc.GetReportDataDefinition(reportId, true).Result;
                         return reportDataDefinition.ThisPageReport.Document.PageReport.Report; 
                     });
@@ -131,8 +133,8 @@ namespace DispatcherWeb.ReportCenter
 
                 settings.SetLocateDataSource(args =>
                 {
-                    var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetService<ReportAppService>();
-                    var reportId = args.Report.Description.Replace(".rdlx", string.Empty);
+                    var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<ReportAppService>();
+                    var reportId = args.Report.Description.Replace(".rdlx", string.Empty);                    
                     var reportDataDefinition = reportAppSrvc.GetReportDataDefinition(reportId).Result;
                     return reportDataDefinition.LocateDataSource(args).Result;
                 });
