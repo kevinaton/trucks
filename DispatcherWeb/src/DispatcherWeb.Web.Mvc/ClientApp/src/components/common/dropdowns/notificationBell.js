@@ -14,6 +14,7 @@ import {
 import { grey } from '@mui/material/colors';
 import { useSnackbar, closeSnackbar } from 'notistack';
 import moment from 'moment';
+import { HubConnectionBuilder } from '@microsoft/signalr';
 import { HeaderIconButton } from '../../DTComponents';
 import { NotificationSettingsModal } from '../modals';
 import { theme } from '../../../Theme';
@@ -26,6 +27,7 @@ import {
     MarkAllAsReadButton
 } from '../../styled';
 import { 
+    getUserSettingsByName,
     getUserNotifications, 
     getUserPriorityNotifications,
     setAllNotificationsAsRead as onSetAllNotificationsAsRead,
@@ -49,14 +51,85 @@ export const NotificationBell = ({
     const [notificationItemsList, setNotificationItemsList] = useState([]);
     const [unReadCount, setUnReadCount] = useState(0);
     const [initializedPrioNotif, setInitializedPrioNotif] = useState(false);
+    const [soundEnabled, setSoundEnabled] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
 
     const dispatch = useDispatch();
-    const { notifications, priorityNotifications } = useSelector(state => ({
+    const { 
+        userSettings,
+        notifications, 
+        priorityNotifications 
+    } = useSelector(state => ({
+        userSettings: state.UserReducer.userSettings,
         notifications: state.NotificationReducer.notifications,
         priorityNotifications: state.NotificationReducer.priorityNotifications
     }));
     
     const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+        dispatch(getUserSettingsByName('App.UserOptions.PlaySoundForNotifications'));
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (!isEmpty(userSettings) && isEmpty(soundEnabled)) {
+            setSoundEnabled(userSettings.result);
+        }
+    }, [userSettings, soundEnabled]);
+    
+    useEffect(() => {
+        console.log('soundEnabled: ', soundEnabled)
+        console.log('soundEnabled !== null: ', soundEnabled !== null)
+        console.log('!isConnected: ', !isConnected)
+
+        let connection;
+
+        if (soundEnabled !== null && !isConnected) {
+            connection = new HubConnectionBuilder()
+                .withUrl(`${baseUrl}/signalr`)
+                .withAutomaticReconnect()
+                .build();
+
+            connection.start()
+                .then(() => {
+                    setIsConnected(true);
+                    console.log('SignalR connection established');
+
+                    connection.on('getNotification', (notification) => {
+                        console.log('notification: ', notification);
+                        if (soundEnabled) {
+                            const audioNotification = new Audio('/reactapp/sounds/notification.mp3');
+                            audioNotification.play();
+                        }
+                        // const msg = getFormattedMessageFromUserNotification(notification);
+                        // enqueueSnackbar(msg, {
+                        //     variant: 'warning',
+                        //     preventDuplicate: true,
+                        //     action: (key) => (
+                        //         <Button
+                        //             onClick={() => { 
+                        //                 closeSnackbar(key);
+                        //                 handleNotificationClick(notification);
+                        //             }}
+                        //             style={{ color: theme.palette.common.white }}
+                        //         >
+                        //             View
+                        //         </Button>
+                        //     )
+                        // });
+                    }); 
+                })
+                .catch(error => console.log('SignalR connection error: ', error));
+        }
+
+        // Cleanup function for disconnecting the SignalR connection
+        return () => {
+            if (connection && connection.state === 'Connected') {
+                connection.stop();
+                console.log('SignalR connection closed');
+            }
+        };
+    }, [soundEnabled, isConnected]);
 
     useEffect(() => {
         if (isEmpty(notifications)) {
