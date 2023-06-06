@@ -38,5 +38,6 @@ namespace DispatcherWeb.Quotes.Dto
         public List<QuoteReportItemDto> Items { get; set; }
         public bool HideLoadAt { get; set; }
         public bool ShowProject { get; set; }
+        public bool ShowTruckCategories { get; set; }
     }
 }
