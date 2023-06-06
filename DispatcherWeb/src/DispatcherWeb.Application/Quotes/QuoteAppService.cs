@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.IO;
 using Abp.Linq.Extensions;
@@ -1383,7 +1384,10 @@ namespace DispatcherWeb.Quotes
                             State = s.DeliverTo.State
                         },
                         JobNumber = s.JobNumber,
-                        Note = s.Note
+                        Note = s.Note,
+                        QuoteServiceVehicleCategories = s.QuoteServiceVehicleCategories
+                            .Select(vc => vc.VehicleCategory.Name)
+                            .ToList()
                     }).ToList()
                 })
                 .FirstAsync();
@@ -1410,6 +1414,7 @@ namespace DispatcherWeb.Quotes
             data.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
             data.HideLoadAt = input.HideLoadAt;
             data.ShowProject = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Projects);
+            data.ShowTruckCategories = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders);
             data.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
 
             data.QuoteGeneralTermsAndConditions = data.QuoteGeneralTermsAndConditions

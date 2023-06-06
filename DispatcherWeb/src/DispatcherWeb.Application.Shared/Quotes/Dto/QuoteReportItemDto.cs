@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DispatcherWeb.Common.Dto;
 using Newtonsoft.Json;
 
@@ -27,6 +28,7 @@ namespace DispatcherWeb.Quotes.Dto
         public decimal? Rate => FreightRate.HasValue || PricePerUnit.HasValue ? (FreightRate ?? 0) + (PricePerUnit ?? 0) : (decimal?)null;
         public string JobNumber { get; set; }
         public string Note { get; set; }
+        public List<string> QuoteServiceVehicleCategories { get; set; }
 
         public string QuantityFormatted
         {
