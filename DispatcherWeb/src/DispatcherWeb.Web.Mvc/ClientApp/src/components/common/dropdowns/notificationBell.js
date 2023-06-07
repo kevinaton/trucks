@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -14,7 +14,6 @@ import {
 import { grey } from '@mui/material/colors';
 import { useSnackbar, closeSnackbar } from 'notistack';
 import moment from 'moment';
-import { HubConnectionBuilder } from '@microsoft/signalr';
 import { HeaderIconButton } from '../../DTComponents';
 import { NotificationSettingsModal } from '../modals';
 import { theme } from '../../../Theme';
@@ -41,6 +40,7 @@ import {
 } from '../../../helpers/notification_helper';
 import { notificationState } from '../../../common/enums/notificationState';
 import { baseUrl } from '../../../helpers/api_helper';
+import SignalRContext from '../../common/signalr/signalrContext';
 
 export const NotificationBell = ({
     isMobileView
@@ -52,7 +52,6 @@ export const NotificationBell = ({
     const [unReadCount, setUnReadCount] = useState(0);
     const [initializedPrioNotif, setInitializedPrioNotif] = useState(false);
     const [soundEnabled, setSoundEnabled] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
 
     const dispatch = useDispatch();
     const { 
@@ -65,6 +64,7 @@ export const NotificationBell = ({
         priorityNotifications: state.NotificationReducer.priorityNotifications
     }));
     
+    const connection = useContext(SignalRContext);
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -78,58 +78,57 @@ export const NotificationBell = ({
     }, [userSettings, soundEnabled]);
     
     useEffect(() => {
-        console.log('soundEnabled: ', soundEnabled)
-        console.log('soundEnabled !== null: ', soundEnabled !== null)
-        console.log('!isConnected: ', !isConnected)
+        if (soundEnabled !== null && connection) {
+            connection.on('getNotification', (newNotification) => {
+                console.log('notification: ', newNotification);
+                if (soundEnabled) {
+                    const audioNotification = new Audio('/reactapp/sounds/notification.mp3');
+                    audioNotification.play();
+                }
 
-        let connection;
+                const { id, notification, state } = newNotification;
+                if (!isEmpty(notification)) {
+                    const url = getUrl(newNotification);
 
-        if (soundEnabled !== null && !isConnected) {
-            connection = new HubConnectionBuilder()
-                .withUrl(`${baseUrl}/signalr`)
-                .withAutomaticReconnect()
-                .build();
+                    const msg = getFormattedMessageFromUserNotification(notification);
+                    const data = {
+                        userNotificationId: id,
+                        text: getFormattedMessageFromUserNotification(notification),
+                        time: moment(notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
+                        state: getUserNotificationStateAsString(state),
+                        data: notification.data,
+                        url,
+                        isUnread: newNotification.state === notificationState.UNREAD,
+                        timeAgo: moment(notification.creationTime).fromNow()
+                    };
+                    
+                    setNotificationItemsList(prevState => [data, ...prevState]);
 
-            connection.start()
-                .then(() => {
-                    setIsConnected(true);
-                    console.log('SignalR connection established');
-
-                    connection.on('getNotification', (notification) => {
-                        console.log('notification: ', notification);
-                        if (soundEnabled) {
-                            const audioNotification = new Audio('/reactapp/sounds/notification.mp3');
-                            audioNotification.play();
-                        }
-                        // const msg = getFormattedMessageFromUserNotification(notification);
-                        // enqueueSnackbar(msg, {
-                        //     variant: 'warning',
-                        //     preventDuplicate: true,
-                        //     action: (key) => (
-                        //         <Button
-                        //             onClick={() => { 
-                        //                 closeSnackbar(key);
-                        //                 handleNotificationClick(notification);
-                        //             }}
-                        //             style={{ color: theme.palette.common.white }}
-                        //         >
-                        //             View
-                        //         </Button>
-                        //     )
-                        // });
-                    }); 
-                })
-                .catch(error => console.log('SignalR connection error: ', error));
+                    const { notificationName } = notification;
+                    if (notificationName === 'App.PriorityNotification') {
+                        enqueueSnackbar(msg, {
+                            variant: 'warning',
+                            preventDuplicate: true,
+                            persist: true,
+                            action: snackbarId => (
+                                <IconButton 
+                                    onClick={(e) => handleDismissPriorityNotif(e, snackbarId, id)}
+                                    size='small' 
+                                >
+                                    <i className='fa-regular fa-close'></i>
+                                </IconButton>
+                            )
+                        });
+                    } else {
+                        enqueueSnackbar(msg, {
+                            variant: 'info',
+                            preventDuplicate: true
+                        });
+                    }
+                }
+            }); 
         }
-
-        // Cleanup function for disconnecting the SignalR connection
-        return () => {
-            if (connection && connection.state === 'Connected') {
-                connection.stop();
-                console.log('SignalR connection closed');
-            }
-        };
-    }, [soundEnabled, isConnected]);
+    }, [connection, soundEnabled, enqueueSnackbar]);
 
     useEffect(() => {
         if (isEmpty(notifications)) {
