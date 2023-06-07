@@ -665,13 +665,15 @@
         }
 
         function getTruckTileTitle(truck) {
-            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
-                let tractor = _scheduleTrucks.find(x => x.id === truck.tractor.id);
-                if (tractor) {
-                    return getTruckTileTitle(tractor);
-                }
-            }
             var title = getCombinedTruckCode(truck);
+            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer) {
+                title += '\n' + truck.vehicleCategory.name;
+                title += ' ' + truck.bedConstructionFormatted;
+                title += '\n';
+                title += truck.year ? truck.year + ' ' : '';
+                title += truck.make ? truck.make + ' ' : '';
+                title += truck.model ? truck.model + ' ' : '';
+            }
             if (truckCategoryNeedsDriver(truck)) {
                 title += ' - ' + truck.driverName;
             }
@@ -2097,6 +2099,10 @@
 
         abp.event.on('app.createOrEditTruckModalSaved', function () {
             reloadTruckTiles();
+        });
+
+        abp.event.on('app.createOrEditOrderModalSaved', function () {
+            reloadMainGrid(null, false);
         });
 
         function actionMenuHasItems() {
