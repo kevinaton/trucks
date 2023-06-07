@@ -2876,7 +2876,7 @@
                     name: 'Add tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return !truck.canPullTrailer && !truck.tractor;
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && !truck.tractor;
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
@@ -2893,7 +2893,7 @@
                     name: 'Change tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return !truck.canPullTrailer && truck.tractor;
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor;
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
@@ -2912,7 +2912,7 @@
                     name: 'Remove tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return !truck.canPullTrailer && truck.tractor;
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor;
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
