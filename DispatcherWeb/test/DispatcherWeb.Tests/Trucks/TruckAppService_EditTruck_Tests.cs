@@ -672,11 +672,11 @@ namespace DispatcherWeb.Tests.Trucks
             var trailer = await CreateTruck("501", await CreateTrailerVehicleCategory());
 
             // Act
-            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.DefaultTrailerId = trailer.Id));
+            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.CurrentTrailerId = trailer.Id));
 
             // Assert
             var createdTruck = await UsingDbContextAsync(async context => await context.Trucks.FindAsync(result.Id));
-            createdTruck.DefaultTrailerId.ShouldBe(trailer.Id);
+            createdTruck.CurrentTrailerId.ShouldBe(trailer.Id);
         }
 
         [Fact]
@@ -685,14 +685,14 @@ namespace DispatcherWeb.Tests.Trucks
             // Arrange
             var truck = await CreateTruck("401", await CreateTractorVehicleCategory(), canPullTrailer: true);
             var trailer = await CreateTruck("501", await CreateTrailerVehicleCategory());
-            await UpdateEntity(truck, t => t.DefaultTrailerId = trailer.Id);
+            await UpdateEntity(truck, t => t.CurrentTrailerId = trailer.Id);
 
             // Act
-            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.DefaultTrailerId = null));
+            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.CurrentTrailerId = null));
 
             // Assert
             var updatedTruck = await UsingDbContextAsync(async context => await context.Trucks.FindAsync(result.Id));
-            updatedTruck.DefaultTrailerId.ShouldBeNull();
+            updatedTruck.CurrentTrailerId.ShouldBeNull();
         }
 
         [Fact]
@@ -703,7 +703,7 @@ namespace DispatcherWeb.Tests.Trucks
             var trailer = await CreateTruck("501", await CreateTrailerVehicleCategory());
 
             // Act, Assert
-            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.DefaultTrailerId = trailer.Id)).ShouldThrowAsync(typeof(ArgumentException));
+            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.CurrentTrailerId = trailer.Id)).ShouldThrowAsync(typeof(ArgumentException));
         }
 
         [Fact]
@@ -714,7 +714,7 @@ namespace DispatcherWeb.Tests.Trucks
             var trailer = await CreateTruck("101");
 
             // Act, Assert
-            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.DefaultTrailerId = trailer.Id)).ShouldThrowAsync(typeof(ArgumentException));
+            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.CurrentTrailerId = trailer.Id)).ShouldThrowAsync(typeof(ArgumentException));
         }
 
         [Fact]
@@ -726,7 +726,7 @@ namespace DispatcherWeb.Tests.Trucks
             await UpdateEntity(trailer, t => t.IsActive = false);
 
             // Act, Assert
-            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.DefaultTrailerId = trailer.Id)).ShouldThrowAsync(typeof(ArgumentException));
+            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.CurrentTrailerId = trailer.Id)).ShouldThrowAsync(typeof(ArgumentException));
         }
 
         [Fact]
@@ -738,16 +738,16 @@ namespace DispatcherWeb.Tests.Trucks
             var truck = await CreateTruck("401", tractors, canPullTrailer: true);
             var truck2 = await CreateTruck("402", tractors, canPullTrailer: true);
             var trailer = await CreateTruck("501", trailers);
-            await UpdateEntity(truck2, t => t.DefaultTrailerId = trailer.Id);
+            await UpdateEntity(truck2, t => t.CurrentTrailerId = trailer.Id);
 
             // Act
-            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.DefaultTrailerId = trailer.Id));
+            var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(truck, t => t.CurrentTrailerId = trailer.Id));
 
             // Assert
             var updatedTruck = await UsingDbContextAsync(async context => await context.Trucks.FindAsync(truck.Id));
-            updatedTruck.DefaultTrailerId.ShouldBe(trailer.Id);
+            updatedTruck.CurrentTrailerId.ShouldBe(trailer.Id);
             var updatedTruck2 = await UsingDbContextAsync(async context => await context.Trucks.FindAsync(truck2.Id));
-            updatedTruck2.DefaultTrailerId.ShouldBeNull();
+            updatedTruck2.CurrentTrailerId.ShouldBeNull();
         }
 
         [Fact]
@@ -756,7 +756,7 @@ namespace DispatcherWeb.Tests.Trucks
             // Arrange
             var truck = await CreateTruck("401", await CreateTractorVehicleCategory(), canPullTrailer: true);
             var trailer = await CreateTruck("501", await CreateTrailerVehicleCategory());
-            await UpdateEntity(truck, t => t.DefaultTrailerId = trailer.Id);
+            await UpdateEntity(truck, t => t.CurrentTrailerId = trailer.Id);
 
             // Act, Assert
             var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(trailer, t =>
@@ -773,7 +773,7 @@ namespace DispatcherWeb.Tests.Trucks
             var truck = await CreateTruck("401", await CreateTractorVehicleCategory(), canPullTrailer: true);
             var trailer = await CreateTruck("501", await CreateTrailerVehicleCategory());
             var dumpTrucks = await CreateVehicleCategory();
-            await UpdateEntity(truck, t => t.DefaultTrailerId = trailer.Id);
+            await UpdateEntity(truck, t => t.CurrentTrailerId = trailer.Id);
 
             // Act, Assert
             var result = await _truckAppService.EditTruck(CreateTruckEditDtoFromTruck(trailer, t => t.VehicleCategoryId = dumpTrucks.Id))

@@ -10,7 +10,6 @@
     var _drivers = [];
     var _trucks = [];
     var _driverAssignments = [];
-    var _trailerAssignments = [];
     var _dailyFuelCost = null;
     var _$currentFuelCostInput = $('#CurrentFuelCost');
     var _hasOpenOrders = false;
@@ -150,7 +149,6 @@
         _drivers = [];
         _trucks = [];
         _driverAssignments = [];
-        _trailerAssignments = [];
         _dailyFuelCost = null;
         _hasOpenOrders = false;
         _orderLineBlocks.forEach(function (block) {
@@ -192,9 +190,6 @@
             }
             if (result.driverAssignments && result.driverAssignments.length) {
                 _driverAssignments = result.driverAssignments;
-            }
-            if (result.trailerAssignments && result.trailerAssignments.length) {
-                _trailerAssignments = result.trailerAssignments;
             }
             if (result.leaseHaulers && result.leaseHaulers.length) {
                 _leaseHaulers = result.leaseHaulers;
@@ -826,12 +821,8 @@
         if (trailerId) {
             return _trucks.find(x => x.id === trailerId);
         }
-        let trailerAssignment = _trailerAssignments.find(x => x.tractorId === truckId && x.shift === block.orderLine.shift);
-        if (trailerAssignment) {
-            return _trucks.find(x => x.id === trailerAssignment.trailerId);
-        }
-        if (truck.defaultTrailerId) {
-            return _trucks.find(x => x.id === truck.defaultTrailerId);
+        if (truck.currentTrailerId) {
+            return _trucks.find(x => x.id === truck.currentTrailerId);
         }
         return null;
     }

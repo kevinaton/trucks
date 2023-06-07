@@ -21,9 +21,9 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-                .HasOne(e => e.DefaultTrailer)
-                .WithMany(e => e.DefaultTractors)
-                .HasForeignKey(e => e.DefaultTrailerId)
+                .HasOne(e => e.CurrentTrailer)
+                .WithMany(e => e.CurrentTractors)
+                .HasForeignKey(e => e.CurrentTrailerId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

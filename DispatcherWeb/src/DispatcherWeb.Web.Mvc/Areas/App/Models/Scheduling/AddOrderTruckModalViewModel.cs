@@ -11,7 +11,7 @@ namespace DispatcherWeb.Web.Areas.App.Models.Scheduling
         public bool OnlyTrailers { get; set; }
         public bool? IsPowered { get; set; }
         public string Title { get; set; }
-        public int? DefaultTrailerId { get; set; }
+        public int? CurrentTrailerId { get; set; }
         public int ParentTruckId { get; set; }
     }
 }

@@ -24,7 +24,7 @@
                 isPowered: model.IsPowered
             }).done(function (result) {
                 $.each(result.items, function (ind, val) {
-                    var optionTag = val.truckId === parseInt(model.DefaultTrailerId) ? '<option selected="selected"></option>' : '<option></option>';
+                    var optionTag = val.truckId === parseInt(model.CurrentTrailerId) ? '<option selected="selected"></option>' : '<option></option>';
                     $(optionTag).text(val.truckCode).attr('value', val.truckId).appendTo($("#TruckId"));
                 });
             });

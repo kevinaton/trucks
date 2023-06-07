@@ -28,7 +28,7 @@ namespace DispatcherWeb.Trucks.Exporting
                         (L("BedConstruction"), x => x.BedConstruction.GetDisplayName()),
                         (L("CanPullTrailer"), x => x.CanPullTrailer.ToYesNoString()),
                         (L("DefaultDriver"), x => x.DefaultDriverName),
-                        (L("DefaultTrailer"), x => x.DefaultTrailerCode),
+                        (L("CurrentTrailer"), x => x.CurrentTrailerCode),
                         (L("IsActive"), x => x.IsActive.ToYesNoString()),
                         (L("InactivationDate"), x => x.InactivationDate?.ToShortDateString()),
                         (L("OutOfService"), x => x.IsOutOfService.ToYesNoString()),
