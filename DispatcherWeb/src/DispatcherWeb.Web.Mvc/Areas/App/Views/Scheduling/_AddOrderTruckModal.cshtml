@@ -14,7 +14,7 @@
         <input type="hidden" asp-for="IsPowered" value="@Model.IsPowered?.ToString().ToLowerInvariant()" />
         <input type="hidden" asp-for="ParentId" />
         <input type="hidden" asp-for="ParentTruckId" />
-        <input type="hidden" asp-for="DefaultTrailerId" />
+        <input type="hidden" asp-for="CurrentTrailerId" />
         <div class="form-group">
             <label class="required-label">Select Trailer</label>
             <select class="form-control" required asp-for="TruckId">

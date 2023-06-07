@@ -1188,7 +1188,7 @@
 		<text name="FreightRateToPayDriversShort">Driver Pay Freight Rate</text>
 		<text name="TruckCode">Truck Code</text>
 		<text name="DefaultDriver">Default Driver</text>
-		<text name="DefaultTrailer">Default Trailer</text>
+		<text name="CurrentTrailer">Current Trailer</text>
 		<text name="OutOfService">Out of Service</text>
 		<text name="CurrentMileage">Current Mileage</text>
 		<text name="CurrentHours">Current Hours</text>

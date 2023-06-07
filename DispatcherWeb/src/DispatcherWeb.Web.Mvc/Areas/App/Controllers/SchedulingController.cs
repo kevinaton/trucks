@@ -44,7 +44,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         [Modal]
         public async Task<PartialViewResult> AddOrderTruckModal(AddOrderTruckModalViewModel model)
         {
-            model.DefaultTrailerId = await _schedulingAppService.GetDefaultTrailerId(model.ParentTruckId);
+            model.CurrentTrailerId = await _schedulingAppService.GetCurrentTrailerId(model.ParentTruckId);
             return PartialView("_AddOrderTruckModal", model);
         }
 

@@ -264,8 +264,6 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<QuoteServiceVehicleCategory> QuoteServiceVehicle { get; set; }
 
-        public virtual DbSet<TrailerAssignment> TrailerAssignments { get; set; }
-
         public DispatcherWebDbContext(DbContextOptions<DispatcherWebDbContext> options)
             : base(options)
         {
@@ -390,7 +388,6 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new TrackableEmailConfiguration());
             modelBuilder.ApplyConfiguration(new TrackableEmailEventConfiguration());
             modelBuilder.ApplyConfiguration(new TrackableEmailReceiverConfiguration());
-            modelBuilder.ApplyConfiguration(new TrailerAssignmentConfiguration());
             modelBuilder.ApplyConfiguration(new TruckConfiguration());
             modelBuilder.ApplyConfiguration(new TruckPositionConfiguration());
             modelBuilder.ApplyConfiguration(new TruxEarningsConfiguration());
