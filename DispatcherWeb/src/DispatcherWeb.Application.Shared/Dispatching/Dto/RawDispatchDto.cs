@@ -27,9 +27,8 @@ namespace DispatcherWeb.Dispatching.Dto
         [JsonIgnore]
         public LocationNameDto DeliverTo { get; set; }
         public string Item { get; set; }
-        public decimal? Quantity { get; set; }
-        public string Uom { get; set; }
         public Guid Guid { get; set; }
         public bool IsMultipleLoads { get; set; }
+        public int? FilledTicketCount { get; set; }
     }
 }

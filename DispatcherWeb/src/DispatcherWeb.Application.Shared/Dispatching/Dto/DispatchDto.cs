@@ -30,8 +30,6 @@ namespace DispatcherWeb.Dispatching.Dto
         public string ShortGuid { get; set; }
         public Guid Guid { get; set; }
         public DispatchStatus DispatchStatus { get; set; }
-        public decimal? Quantity { get; set; }
-        public string Uom { get; set; }
         public bool IsMultipleLoads { get; set; }
     }
 }

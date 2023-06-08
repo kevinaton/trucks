@@ -200,7 +200,7 @@ namespace DispatcherWeb.Dispatching
             var query = filteredQuery.ToRawDispatchDto();
 
             return query
-                .WhereIf(input.MissingTickets, d => d.Status == DispatchStatus.Completed && (d.Quantity == null || d.Quantity == 0));
+                .WhereIf(input.MissingTickets, d => d.Status == DispatchStatus.Completed && (d.FilledTicketCount == null || d.FilledTicketCount == 0));
 
         }
 
@@ -210,7 +210,6 @@ namespace DispatcherWeb.Dispatching
             return
                 from d in query
                 from l in d.Loads.DefaultIfEmpty()
-                from t in l.Tickets.DefaultIfEmpty()
                 select new RawDispatchDto
                 {
                     Id = d.Id,
@@ -242,10 +241,9 @@ namespace DispatcherWeb.Dispatching
                         State = d.OrderLine.DeliverTo.State
                     },
                     Item = d.OrderLine.Service.Service1,
-                    Quantity = t != null ? t.Quantity : (decimal?)null,
-                    Uom = t != null ? t.UnitOfMeasure.Name : null,
                     Guid = d.Guid,
                     IsMultipleLoads = d.IsMultipleLoads,
+                    FilledTicketCount = l.Tickets.Count(t => t.Quantity > 0),
                 };
         }
 
@@ -270,8 +268,6 @@ namespace DispatcherWeb.Dispatching
                 DeliverTo = d.DeliverTo,
                 DeliverToNamePlain = d.DeliverToNamePlain,
                 Item = d.Item,
-                Quantity = d.Quantity,
-                Uom = d.Uom,
                 Cancelable = d.Status != DispatchStatus.Completed && d.Status != DispatchStatus.Canceled,
                 Guid = d.Guid,
                 ShortGuid = d.Guid.ToShortGuid(),
