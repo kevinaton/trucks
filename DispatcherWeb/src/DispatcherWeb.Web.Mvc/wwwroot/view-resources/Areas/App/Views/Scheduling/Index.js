@@ -2848,7 +2848,10 @@
                             officeId: filterData.officeId,
                             tractorId: truck.id,
                             trailerId: truck.trailer.id,
-                            trailerTruckCode: truck.trailer.truckCode
+                            trailerTruckCode: truck.trailer.truckCode,
+                            modalSubtitle: truck.truckCode + ' is currently coupled to ' + truck.trailer.truckCode
+                                + ' - ' + truck.vehicleCategory.name + ' ' + truck.make + ' ' + truck.model + ' '
+                                + truck.bedConstructionFormatted + ' bed'
                         });
                     }
                 },
