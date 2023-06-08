@@ -265,8 +265,6 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<QuoteServiceVehicleCategory> QuoteServiceVehicle { get; set; }
 
-        public virtual DbSet<TrailerAssignment> TrailerAssignments { get; set; }
-
         public virtual DbSet<ActiveReport> ActiveReports { get; set; }
 
         public virtual DbSet<ActiveReportCategory> ActiveReportCategories { get; set; }
