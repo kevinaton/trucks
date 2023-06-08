@@ -2652,7 +2652,7 @@
                             message: 'Select trailer for truck ' + item.truckCode + ' for single job',
                             orderLineTruckId: item.id,
                             trailerId: item.trailer && item.trailer.id || null,
-                            trailerTruckCode: item.trailer && item.trailer.truckCode|| null,
+                            trailerTruckCode: item.trailer && item.trailer.truckCode || null,
                         });
                     }
                 },
