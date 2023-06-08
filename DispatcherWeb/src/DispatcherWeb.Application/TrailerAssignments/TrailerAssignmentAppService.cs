@@ -86,7 +86,7 @@ namespace DispatcherWeb.TrailerAssignments
             orderLineTruck.TrailerId = input.TrailerId;
 
             var affectedDispatches = await _dispatchRepository.GetAll()
-                .Where(x => x.OrderLineTruckId == orderLineTruck.OrderLineId)
+                .Where(x => x.OrderLineTruckId == input.OrderLineTruckId)
                 .ToListAsync();
 
             await SendSyncRequestForAffectedDispatches(affectedDispatches, "Updated Trailer for dispatch(es)");
