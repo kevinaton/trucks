@@ -12,6 +12,8 @@ import { Appbar, SideMenu } from './components';
 import { getUserInfo } from './store/actions';
 import { isEmpty } from 'lodash';
 import { baseUrl } from './helpers/api_helper';
+import * as signalR from '@microsoft/signalr';
+import SignalRContext from './components/common/signalr/signalrContext';
 
 const App = (props) => {
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -26,10 +28,10 @@ const App = (props) => {
             return acc;
         }, {})
     );
-
     const [currentPageName, setCurrentPageName] = useState('');
-
     const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const [connection, setConnection] = useState(null);
+
     const userInfo = useSelector(state => state.UserReducer.userInfo);
     const dispatch = useDispatch();
 
@@ -49,6 +51,44 @@ const App = (props) => {
 
         checkLoginStatus();
     }, [dispatch, userInfo]);
+
+    useEffect(() => {
+        if (isAuthenticated && isEmpty(connection)) {
+            const startConnection = (transport) => {
+                const url = `${baseUrl}/signalr`;
+                const newConnection = new signalR.HubConnectionBuilder()
+                    .withUrl(url, transport)
+                    .withAutomaticReconnect()
+                    .build();
+
+                newConnection.onclose((err) => {
+                    if (err) {
+                        console.log('Connection closed with error: ', err);
+                    } else {
+                        console.log('Disconnected');
+                    }
+
+                    setTimeout(() => {
+                        newConnection.start();
+                    }, 5000);
+                });
+
+                newConnection
+                    .start()
+                    .then(() => {
+                        setConnection(newConnection);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        if (transport !== signalR.HttpTransportType.LongPolling) {
+                            return startConnection(transport + 1);
+                        }
+                    });
+            };
+            
+            startConnection(signalR.HttpTransportType.WebSockets)
+        }
+    }, [isAuthenticated, connection]);
 
     // Checks screen if it is small
     useEffect(() => {
@@ -91,54 +131,56 @@ const App = (props) => {
                 horizontal: 'right' 
             }}
         >
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
-                {/* This is the appbar located at the top of the app. */}
+            <SignalRContext.Provider value={connection}>
+                <Box sx={{ display: 'flex' }}>
+                    <CssBaseline />
+                    {/* This is the appbar located at the top of the app. */}
 
-                <Appbar 
-                    isAuthenticated={isAuthenticated}
-                    drawerOpen={drawerOpen}
-                    handleDrawerClose={handleDrawerClose}
-                    handleDrawerOpen={handleDrawerOpen}
-                    handleOpenNavMenu={handleOpenNavMenu}
-                    anchorElNav={anchorElNav}
-                    handleCloseNavMenu={handleCloseNavMenu}
-                />
+                    <Appbar 
+                        isAuthenticated={isAuthenticated}
+                        drawerOpen={drawerOpen}
+                        handleDrawerClose={handleDrawerClose}
+                        handleDrawerOpen={handleDrawerOpen}
+                        handleOpenNavMenu={handleOpenNavMenu}
+                        anchorElNav={anchorElNav}
+                        handleCloseNavMenu={handleCloseNavMenu}
+                    />
 
-                <SideMenu 
-                    isAuthenticated={isAuthenticated}
-                    currentPageName={currentPageName}
-                    drawerOpen={drawerOpen}
-                    DrawerHeader={DrawerHeader}
-                    collapseOpen={collapseOpen}
-                    isSmall={isSmall}
-                    setCollapseOpen={setCollapseOpen}
-                    handleDrawerOpen={handleDrawerOpen}
-                    handleDrawerClose={handleDrawerClose}
-                />
-        
-                <Box 
-                    component='main' 
-                    sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}
-                >
-                    <Paper
-                        sx={{
-                            backgroundColor: '#f1f5f8',
-                            padding: 2,
-                            height: '100vh',
-                            overflow: 'auto',
-                            pb: '50px',
-                        }}
+                    <SideMenu 
+                        isAuthenticated={isAuthenticated}
+                        currentPageName={currentPageName}
+                        drawerOpen={drawerOpen}
+                        DrawerHeader={DrawerHeader}
+                        collapseOpen={collapseOpen}
+                        isSmall={isSmall}
+                        setCollapseOpen={setCollapseOpen}
+                        handleDrawerOpen={handleDrawerOpen}
+                        handleDrawerClose={handleDrawerClose}
+                    />
+            
+                    <Box 
+                        component='main' 
+                        sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}
                     >
-                        <DrawerHeader />
+                        <Paper
+                            sx={{
+                                backgroundColor: '#f1f5f8',
+                                padding: 2,
+                                height: '100vh',
+                                overflow: 'auto',
+                                pb: '50px',
+                            }}
+                        >
+                            <DrawerHeader />
 
-                        {/* This is the route configuration */}
-                        <RouterConfig 
-                            isAuthenticated={isAuthenticated} 
-                            handleCurrentPageName={handleCurrentPageName} />
-                    </Paper>
+                            {/* This is the route configuration */}
+                            <RouterConfig 
+                                isAuthenticated={isAuthenticated} 
+                                handleCurrentPageName={handleCurrentPageName} />
+                        </Paper>
+                    </Box>
                 </Box>
-            </Box>
+            </SignalRContext.Provider>
         </SnackbarProvider>
     );
 };

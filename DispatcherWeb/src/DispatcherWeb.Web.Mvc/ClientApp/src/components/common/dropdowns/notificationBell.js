@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -26,6 +26,7 @@ import {
     MarkAllAsReadButton
 } from '../../styled';
 import { 
+    getUserSettingByName,
     getUserNotifications, 
     getUserPriorityNotifications,
     setAllNotificationsAsRead as onSetAllNotificationsAsRead,
@@ -39,6 +40,7 @@ import {
 } from '../../../helpers/notification_helper';
 import { notificationState } from '../../../common/enums/notificationState';
 import { baseUrl } from '../../../helpers/api_helper';
+import SignalRContext from '../../common/signalr/signalrContext';
 
 export const NotificationBell = ({
     isMobileView
@@ -49,14 +51,83 @@ export const NotificationBell = ({
     const [notificationItemsList, setNotificationItemsList] = useState([]);
     const [unReadCount, setUnReadCount] = useState(0);
     const [initializedPrioNotif, setInitializedPrioNotif] = useState(false);
+    const [soundEnabled, setSoundEnabled] = useState(null);
 
     const dispatch = useDispatch();
-    const { notifications, priorityNotifications } = useSelector(state => ({
+    const { 
+        userSettings,
+        notifications, 
+        priorityNotifications 
+    } = useSelector(state => ({
+        userSettings: state.UserReducer.userSettings,
         notifications: state.NotificationReducer.notifications,
         priorityNotifications: state.NotificationReducer.priorityNotifications
     }));
     
+    const connection = useContext(SignalRContext);
     const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+        dispatch(getUserSettingByName('App.UserOptions.PlaySoundForNotifications'));
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (!isEmpty(userSettings) && !isEmpty(userSettings.result) && isEmpty(soundEnabled)) {
+            setSoundEnabled(Boolean(userSettings.result));
+        }
+    }, [userSettings, soundEnabled]);
+    
+    useEffect(() => {
+        if (soundEnabled !== null && connection) {
+            connection.on('getNotification', (newNotification) => {
+                if (soundEnabled) {
+                    const audioNotification = new Audio('/reactapp/sounds/notification.mp3');
+                    audioNotification.play();
+                }
+
+                const { id, notification, state } = newNotification;
+                if (!isEmpty(notification)) {
+                    const url = getUrl(newNotification);
+
+                    const msg = getFormattedMessageFromUserNotification(notification);
+                    const data = {
+                        userNotificationId: id,
+                        text: getFormattedMessageFromUserNotification(notification),
+                        time: moment(notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
+                        state: getUserNotificationStateAsString(state),
+                        data: notification.data,
+                        url,
+                        isUnread: newNotification.state === notificationState.UNREAD,
+                        timeAgo: moment(notification.creationTime).fromNow()
+                    };
+                    
+                    setNotificationItemsList(prevState => [data, ...prevState]);
+
+                    const { notificationName } = notification;
+                    if (notificationName === 'App.PriorityNotification') {
+                        enqueueSnackbar(msg, {
+                            variant: 'warning',
+                            preventDuplicate: true,
+                            persist: true,
+                            action: snackbarId => (
+                                <IconButton 
+                                    onClick={(e) => handleDismissPriorityNotif(e, snackbarId, id)}
+                                    size='small' 
+                                >
+                                    <i className='fa-regular fa-close'></i>
+                                </IconButton>
+                            )
+                        });
+                    } else {
+                        enqueueSnackbar(msg, {
+                            variant: 'info',
+                            preventDuplicate: true
+                        });
+                    }
+                }
+            }); 
+        }
+    }, [connection, soundEnabled, enqueueSnackbar]);
 
     useEffect(() => {
         if (isEmpty(notifications)) {
