@@ -433,32 +433,32 @@
     ],
     "Friends": [
         {
-            "avatar": "https://i.pravatar.cc/150?img=14",
+            "avatar": "/reactapp/assets/avatars/img-14.jpg",
             "name": "John Doe",
             "status": "success"
         },
         {
-            "avatar": "https://i.pravatar.cc/150?u=fake@pravatar.com",
+            "avatar": "/reactapp/assets/avatars/img-150.jpg",
             "name": "Micah Median",
             "status": "warning"
         },
         {
-            "avatar": "https://i.pravatar.cc/150?img=24",
+            "avatar": "/reactapp/assets/avatars/img-24.jpg",
             "name": "Jeamar Library",
             "status": "success"
         },
         {
-            "avatar": "https://i.pravatar.cc/150?img=23",
+            "avatar": "/reactapp/assets/avatars/img-23.jpg",
             "name": "Rose Lim",
             "status": "error"
         },
         {
-            "avatar": "https://i.pravatar.cc/150?img=65",
+            "avatar": "/reactapp/assets/avatars/img-65.jpg",
             "name": "Jonathon John",
             "status": "success"
         },
         {
-            "avatar": "https://i.pravatar.cc/150?img=35",
+            "avatar": "/reactapp/assets/avatars/img-35.jpg",
             "name": "Gabriel Mel",
             "status": "success"
         }

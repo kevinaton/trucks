@@ -1,10 +1,13 @@
 import {
     GET_USER_INFO_SUCCESS,
-    GET_USER_INFO_FAILURE
+    GET_USER_INFO_FAILURE,
+    GET_USER_SETTING_SUCCESS,
+    GET_USER_SETTING_FAILURE
 } from './actionTypes';
 
 const INIT_STATE = {
-    userInfo: null
+    userInfo: null,
+    userSettings: null
 };
 
 const UserReducer = (state = INIT_STATE, action) => {
@@ -19,6 +22,16 @@ const UserReducer = (state = INIT_STATE, action) => {
                 ...state,
                 error: action.payload
             };
+        case GET_USER_SETTING_SUCCESS:
+            return {
+                ...state,
+                userSetting: action.payload
+            }
+        case GET_USER_SETTING_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            }
         default:
             return state;
     };

@@ -34,7 +34,6 @@ export const NotificationSettingsModal = ({
         receiveNotifications: false,
         notifications: []
     });
-    const [hasNoSelectedTypes, setHasNoSelectedTypes] = useState(null);
     const [showNoSelectionError, setShowNoSelectionError] = useState(false);
 
     const dispatch = useDispatch();
@@ -70,25 +69,12 @@ export const NotificationSettingsModal = ({
     }, [dispatch, enqueueSnackbar, updateSuccess, onClose]);
 
     useEffect(() => {
-        if (!isEmpty(userNotificationSettings.notifications)) {
-            const { notifications } = userNotificationSettings;
-            if (!isEmpty(notifications)) {
-                const hasNoSelection = notifications.every((notif) => {
-                    return !notif.isSubscribed;
-                });
-                setHasNoSelectedTypes(hasNoSelection);
-            }
-        }
-    }, [userNotificationSettings]);
-
-    useEffect(() => {
-        if (hasNoSelectedTypes && 
-            !userNotificationSettings.receiveNotifications) {
+        if (!userNotificationSettings.receiveNotifications) {
             if (!showNoSelectionError) setShowNoSelectionError(true);
         } else {
             if (showNoSelectionError) setShowNoSelectionError(false);
         }
-    }, [showNoSelectionError, hasNoSelectedTypes, userNotificationSettings]);
+    }, [showNoSelectionError, userNotificationSettings]);
 
     const handleToReceiveNotificationsChange = event => {
         setUserNotificationSettings({
