@@ -315,7 +315,7 @@ namespace DispatcherWeb.Trucks
         public async Task<PagedResultDto<SelectListDto>> GetActiveTrailersSelectList(GetSelectListInput input) =>
             await _truckRepository.GetAll()
                 .Where(x => x.LocationId.HasValue)
-                .Where(t => t.VehicleCategory.AssetType == AssetType.Trailer && t.IsActive)
+                .Where(t => t.VehicleCategory.AssetType == AssetType.Trailer && t.IsActive && !t.IsOutOfService)
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),
@@ -326,7 +326,7 @@ namespace DispatcherWeb.Trucks
         public async Task<PagedResultDto<SelectListDto>> GetActiveTractorsSelectList(GetSelectListInput input) =>
             await _truckRepository.GetAll()
                 .Where(x => x.LocationId.HasValue)
-                .Where(t => t.VehicleCategory.AssetType == AssetType.Tractor && t.IsActive)
+                .Where(t => t.CanPullTrailer && t.IsActive && !t.IsOutOfService)
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),
