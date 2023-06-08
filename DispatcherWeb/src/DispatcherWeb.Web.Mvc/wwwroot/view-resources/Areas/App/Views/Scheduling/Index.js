@@ -492,6 +492,9 @@
                         truckCode: truck.truckCode,
                     };
                     truck = tractor;
+                    if (!canAddTruckWithDriverToOrder(truck, truck.driverId, order)) {
+                        return;
+                    }
                 }
 
                 result.push({
