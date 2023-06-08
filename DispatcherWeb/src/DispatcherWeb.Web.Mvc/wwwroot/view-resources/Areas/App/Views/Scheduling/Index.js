@@ -488,10 +488,16 @@
                         return;
                     }
                     trailer = {
-                        id: truck.truckId,
+                        id: truck.id,
                         truckCode: truck.truckCode,
                     };
                     truck = tractor;
+                    if (!canAddTruckWithDriverToOrder(truck, truck.driverId, order)) {
+                        return;
+                    }
+                    if (result.some(r => r.truckId === truck.id && r.trailer && r.trailer.id === trailer.id)) {
+                        return;
+                    }
                 }
 
                 result.push({

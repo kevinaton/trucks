@@ -651,6 +651,15 @@ namespace DispatcherWeb.Scheduling
             }
             await SaveOrThrowConcurrencyErrorAsync();
 
+            var trailerTruckCode = truck.Trailer?.TruckCode;
+            if (orderLineTruck.TrailerId.HasValue && orderLineTruck.TrailerId != truck.Trailer?.Id)
+            {
+                trailerTruckCode = await _truckRepository.GetAll()
+                    .Where(x => x.Id == orderLineTruck.Id)
+                    .Select(x => x.TruckCode)
+                    .FirstOrDefaultAsync();
+            }
+
             return new AddOrderTruckResult
             {
                 Item = new ScheduleOrderLineTruckDto
@@ -658,6 +667,12 @@ namespace DispatcherWeb.Scheduling
                     Id = orderLineTruck.Id,
                     OrderLineId = orderLineTruck.OrderLineId,
                     TruckId = orderLineTruck.TruckId,
+                    DriverId = orderLineTruck.DriverId,
+                    Trailer = orderLineTruck.TrailerId.HasValue ? new ScheduleTruckTrailerDto
+                    {
+                        Id = orderLineTruck.TrailerId.Value,
+                        TruckCode = trailerTruckCode
+                    } : null,
                     OfficeId = truck.OfficeId,
                     IsExternal = truck.IsExternal,
                     ParentId = orderLineTruck.ParentOrderLineTruckId,
