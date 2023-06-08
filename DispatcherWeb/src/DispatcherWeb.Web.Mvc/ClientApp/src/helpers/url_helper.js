@@ -15,3 +15,7 @@ export const GET_USER_NOTIFICATION_SETTINGS = '/Notification/GetNotificationSett
 export const SET_ALL_NOTIFICATIONS_AS_READ = '/Notification/SetAllNotificationsAsRead';
 export const SET_NOTIFICATION_AS_READ = '/Notification/SetNotificationAsRead';
 export const UPDATE_USER_NOTIFICATION_SETTINGS = '/Notification/UpdateNotificationSettings';
+
+//Scheduling
+export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';
+export const GET_SCHEDULE_ORDERS = '/Scheduling/GetScheduleOrders';
