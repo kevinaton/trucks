@@ -1,9 +1,10 @@
-﻿using Abp.Application.Services;
+﻿using System.Threading.Tasks;
+using Abp.Application.Services;
 
 namespace DispatcherWeb.UserSettings
 {
     public interface IUserSettingsAppService : IApplicationService
     {
-        string GetUserSettingsByName(string settingName);
+        Task<string> GetUserSettingsByName(string settingName);
     }
 }
