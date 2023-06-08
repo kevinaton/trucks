@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
-using Abp.Domain.Uow;
 using Abp.Timing;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverApplication;
@@ -19,7 +18,6 @@ namespace DispatcherWeb.TrailerAssignments
     [AbpAuthorize]
     public class TrailerAssignmentAppService : DispatcherWebAppServiceBase, ITrailerAssignmentAppService
     {
-        private readonly IRepository<TrailerAssignment> _trailerAssignmentRepository;
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
@@ -27,7 +25,6 @@ namespace DispatcherWeb.TrailerAssignments
         private readonly ISyncRequestSender _syncRequestSender;
 
         public TrailerAssignmentAppService(
-            IRepository<TrailerAssignment> trailerAssignmentRepository,
             IRepository<Truck> truckRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<Dispatch> dispatchRepository,
@@ -35,7 +32,6 @@ namespace DispatcherWeb.TrailerAssignments
             ISyncRequestSender syncRequestSender
             )
         {
-            _trailerAssignmentRepository = trailerAssignmentRepository;
             _truckRepository = truckRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
             _dispatchRepository = dispatchRepository;
@@ -45,110 +41,37 @@ namespace DispatcherWeb.TrailerAssignments
 
         public async Task SetTrailerForTractor(SetTrailerForTractorInput input)
         {
-            var trailerAssignment = await GetTrailerAssignmentQuery(input)
-                .Where(x => input.TractorId == x.TractorId)
-                .FirstOrDefaultAsync() ?? new TrailerAssignment
-                {
-                    Date = input.Date,
-                    Shift = input.Shift,
-                    OfficeId = input.OfficeId,
-                    TractorId = input.TractorId
-                };
+            var tractor = await _truckRepository.GetAll()
+                .Where(x => x.Id == input.TractorId)
+                .FirstAsync();
 
-            if (trailerAssignment.Id == 0)
+            tractor.CurrentTrailerId = input.TrailerId;
+
+            if (input.TrailerId.HasValue)
             {
-                _trailerAssignmentRepository.Insert(trailerAssignment);
+                var otherTractors = await _truckRepository.GetAll()
+                    .Where(x => x.CurrentTrailerId == input.TrailerId.Value && x.Id != input.TractorId)
+                    .ToListAsync();
+
+                otherTractors.ForEach(x => x.CurrentTrailerId = null);
             }
-
-            trailerAssignment.TrailerId = input.TrailerId;
-            await CurrentUnitOfWork.SaveChangesAsync();
-
-            await RemoveTrailerAssignmentDuplicates(new RemoveTrailerAssignmentDuplicatesInput
-            {
-                Date = input.Date,
-                Shift = input.Shift,
-                OfficeId = input.OfficeId,
-                TractorId = input.TractorId,
-                TrailerId = input.TrailerId,
-            });
         }
 
         public async Task SetTractorForTrailer(SetTractorForTrailerInput input)
         {
+            var otherTractors = await _truckRepository.GetAll()
+                .Where(x => x.CurrentTrailerId == input.TrailerId && x.Id != input.TractorId)
+                .ToListAsync();
+
+            otherTractors.ForEach(x => x.CurrentTrailerId = null);
+
             if (input.TractorId.HasValue)
             {
-                await SetTrailerForTractor(new SetTrailerForTractorInput()
-                {
-                    Date = input.Date,
-                    Shift = input.Shift,
-                    OfficeId = input.OfficeId,
-                    TractorId = input.TractorId.Value,
-                    TrailerId = input.TrailerId,
-                });
-            }
-            else
-            {
-                await RemoveTrailerAssignmentDuplicates(new RemoveTrailerAssignmentDuplicatesInput()
-                {
-                    Date = input.Date,
-                    Shift = input.Shift,
-                    OfficeId = input.OfficeId,
-                    TractorId = null,
-                    TrailerId = input.TrailerId,
-                });
-            }
-        }
+                var tractor = await _truckRepository.GetAll()
+                    .Where(x => x.Id == input.TractorId.Value)
+                    .FirstAsync();
 
-        private IQueryable<TrailerAssignment> GetTrailerAssignmentQuery(TrailerAssignmentInputBase input)
-        {
-            return _trailerAssignmentRepository.GetAll()
-                .Where(x => input.Date == x.Date
-                    && input.Shift == x.Shift
-                    && input.OfficeId == x.OfficeId
-                );
-        }
-
-        private async Task RemoveTrailerAssignmentDuplicates(RemoveTrailerAssignmentDuplicatesInput input)
-        {
-            if (input.TrailerId.HasValue)
-            {
-                //make sure there are no other tractors with the target trailer assigned
-
-                var incorrectTrailerAssignments = await GetTrailerAssignmentQuery(input)
-                    .Where(x => x.TrailerId == input.TrailerId && x.TractorId != input.TractorId)
-                    .ToListAsync();
-                if (incorrectTrailerAssignments.Any())
-                {
-                    incorrectTrailerAssignments.ForEach(x => x.TrailerId = null);
-                    await CurrentUnitOfWork.SaveChangesAsync();
-                }
-
-                var tractorIdsWithDefaultTargetTrailer = await _truckRepository.GetAll()
-                    .Where(x => x.DefaultTrailerId == input.TrailerId && x.Id != input.TractorId)
-                    .Select(x => x.Id)
-                    .ToListAsync();
-                if (tractorIdsWithDefaultTargetTrailer.Any())
-                {
-                    var trailerAssignments = await GetTrailerAssignmentQuery(input)
-                        .Where(x => tractorIdsWithDefaultTargetTrailer.Contains(x.TractorId))
-                        .ToListAsync();
-
-                    foreach (var tractorId in tractorIdsWithDefaultTargetTrailer)
-                    {
-                        if (!trailerAssignments.Any(x => x.TractorId == tractorId))
-                        {
-                            _trailerAssignmentRepository.Insert(new TrailerAssignment
-                            {
-                                Date = input.Date,
-                                Shift = input.Shift,
-                                OfficeId = input.OfficeId,
-                                TractorId = tractorId,
-                                TrailerId = null,
-                            });
-                        }
-                    }
-                    await CurrentUnitOfWork.SaveChangesAsync();
-                }
+                tractor.CurrentTrailerId = input.TrailerId;
             }
         }
 
@@ -163,7 +86,7 @@ namespace DispatcherWeb.TrailerAssignments
             orderLineTruck.TrailerId = input.TrailerId;
 
             var affectedDispatches = await _dispatchRepository.GetAll()
-                .Where(x => x.OrderLineTruckId == orderLineTruck.OrderLineId)
+                .Where(x => x.OrderLineTruckId == input.OrderLineTruckId)
                 .ToListAsync();
 
             await SendSyncRequestForAffectedDispatches(affectedDispatches, "Updated Trailer for dispatch(es)");
