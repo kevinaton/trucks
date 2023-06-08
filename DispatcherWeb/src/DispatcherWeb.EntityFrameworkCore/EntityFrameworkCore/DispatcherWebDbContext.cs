@@ -1,5 +1,6 @@
 ﻿using Abp.IdentityServer4vNext;
 using Abp.Zero.EntityFrameworkCore;
+using DispatcherWeb.ActiveReports;
 using DispatcherWeb.Authorization.Delegation;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
@@ -31,7 +32,6 @@ using DispatcherWeb.Payments;
 using DispatcherWeb.PayStatements;
 using DispatcherWeb.Projects;
 using DispatcherWeb.Quotes;
-using DispatcherWeb.ActiveReports;
 using DispatcherWeb.ScheduledReports;
 using DispatcherWeb.SecureFiles;
 using DispatcherWeb.Services;
@@ -327,7 +327,8 @@ namespace DispatcherWeb.EntityFrameworkCore
                 b.HasIndex(e => new { e.TenantId, e.TargetUserId });
             });
 
-
+            modelBuilder.ApplyConfiguration(new ActiveReportConfiguration());
+            modelBuilder.ApplyConfiguration(new ActiveReportCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new AuditLogConfiguration());
             modelBuilder.ApplyConfiguration(new AvailableLeaseHaulerTruckConfiguration());
             modelBuilder.ApplyConfiguration(new BilledOrderConfiguration());
@@ -395,7 +396,6 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new TrackableEmailConfiguration());
             modelBuilder.ApplyConfiguration(new TrackableEmailEventConfiguration());
             modelBuilder.ApplyConfiguration(new TrackableEmailReceiverConfiguration());
-            modelBuilder.ApplyConfiguration(new TrailerAssignmentConfiguration());
             modelBuilder.ApplyConfiguration(new TruckConfiguration());
             modelBuilder.ApplyConfiguration(new TruckPositionConfiguration());
             modelBuilder.ApplyConfiguration(new TruxEarningsConfiguration());
@@ -404,8 +404,7 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new WialonDeviceTypeConfiguration());
             modelBuilder.ApplyConfiguration(new WorkOrderConfiguration());
             modelBuilder.ApplyConfiguration(new WorkOrderLineConfiguration());
-            modelBuilder.ApplyConfiguration(new ActiveReportConfiguration());
-
+            
             modelBuilder.ConfigurePersistedGrantEntity();
         }
     }

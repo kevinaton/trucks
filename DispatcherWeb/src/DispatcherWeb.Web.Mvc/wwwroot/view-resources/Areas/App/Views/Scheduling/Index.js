@@ -665,13 +665,15 @@
         }
 
         function getTruckTileTitle(truck) {
-            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
-                let tractor = _scheduleTrucks.find(x => x.id === truck.tractor.id);
-                if (tractor) {
-                    return getTruckTileTitle(tractor);
-                }
-            }
             var title = getCombinedTruckCode(truck);
+            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer) {
+                title += '\n' + truck.vehicleCategory.name;
+                title += ' ' + truck.bedConstructionFormatted;
+                title += '\n';
+                title += truck.year ? truck.year + ' ' : '';
+                title += truck.make ? truck.make + ' ' : '';
+                title += truck.model ? truck.model + ' ' : '';
+            }
             if (truckCategoryNeedsDriver(truck)) {
                 title += ' - ' + truck.driverName;
             }
@@ -2099,6 +2101,10 @@
             reloadTruckTiles();
         });
 
+        abp.event.on('app.createOrEditOrderModalSaved', function () {
+            reloadMainGrid(null, false);
+        });
+
         function actionMenuHasItems() {
             return _permissions.edit ||
                 _permissions.editTickets ||
@@ -2870,7 +2876,7 @@
                     name: 'Add tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return !truck.canPullTrailer && !truck.tractor;
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && !truck.tractor;
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
@@ -2887,7 +2893,7 @@
                     name: 'Change tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return !truck.canPullTrailer && truck.tractor;
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor;
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
@@ -2906,7 +2912,7 @@
                     name: 'Remove tractor',
                     visible: function () {
                         var truck = $(this).data('truck');
-                        return !truck.canPullTrailer && truck.tractor;
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor;
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');

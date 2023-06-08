@@ -1,14 +1,19 @@
 ﻿<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
-	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">_MasterReport.rdlx-master</dd:Name>
+	<Author>DumpTruck Dispatcher LLC</Author>
+<<<<<<<< HEAD:DispatcherWeb/src/DispatcherWeb.ReportCenter/Reports/_MasterReportPortrait.rdlx-master
+	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">_MasterReportPortrait</dd:Name>
+========
+	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">_MasterReportLegalPortrait.rdlx-master</dd:Name>
+>>>>>>>> feature/10854-ActiveReports-Proof-of-Concept:DispatcherWeb/src/DispatcherWeb.ReportCenter/Reports/_MasterReportLegalPortrait.rdlx-master
 	<Body>
-		<Height>5in</Height>
+		<Height>27.9cm</Height>
 		<ReportItems>
 			<CustomReportItem Name="MainContentPlaceHolder">
 				<Type>ContentPlaceHolder</Type>
-				<Top>0.875in</Top>
-				<Left>0.125in</Left>
-				<Width>13.75in</Width>
-				<Height>4.125in</Height>
+				<Top>1.417382in</Top>
+				<Left>0.393701in</Left>
+				<Width>7.8042in</Width>
+				<Height>8.9763in</Height>
 				<ZIndex>3</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
@@ -17,29 +22,29 @@
 					</CustomProperty>
 					<CustomProperty>
 						<Name>Text</Name>
-						<Value>Report</Value>
+						<Value>Report Content Section</Value>
 					</CustomProperty>
 				</CustomProperties>
 				<DataElementName>ContentPlaceHolder1</DataElementName>
 			</CustomReportItem>
 			<CustomReportItem Name="TitleContentPlaceHolder">
 				<Type>ContentPlaceHolder</Type>
-				<Top>0.125in</Top>
-				<Left>0.125in</Left>
-				<Width>3.0246in</Width>
-				<Height>0.5in</Height>
+				<Top>0.07873984in</Top>
+				<Left>0.393701in</Left>
+				<Width>5.5118in</Width>
+				<Height>0.3937in</Height>
 				<ZIndex>4</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
 						<Name>Text</Name>
-						<Value>Report Title</Value>
+						<Value>Report Title Section</Value>
 					</CustomProperty>
 				</CustomProperties>
 				<DataElementName>ContentPlaceHolder2</DataElementName>
 			</CustomReportItem>
 			<Textbox Name="PrintedOnCaptionTextBox">
-				<Top>0.7in</Top>
-				<Left>0.1416667in</Left>
+				<Top>0.5354331in</Top>
+				<Left>0.4212601in</Left>
 				<Width>0.6083in</Width>
 				<Height>0.125in</Height>
 				<Style>
@@ -53,8 +58,8 @@
 				<Value>Printed On</Value>
 			</Textbox>
 			<Textbox Name="PrintedOnValueTextBox">
-				<Top>0.7in</Top>
-				<Left>0.75in</Left>
+				<Top>1.36cm</Top>
+				<Left>2.67cm</Left>
 				<Width>1in</Width>
 				<Height>0.125in</Height>
 				<Style>
@@ -67,34 +72,110 @@
 				<DataElementName>Printed On</DataElementName>
 				<Value>=Today</Value>
 			</Textbox>
-		</ReportItems>
-	</Body>
-	<PageFooter>
-		<Height>0.5in</Height>
-		<PrintOnFirstPage>true</PrintOnFirstPage>
-		<PrintOnLastPage>true</PrintOnLastPage>
-		<ReportItems>
 			<Textbox Name="PageInfo">
-				<Top>0.125in</Top>
-				<Left>10.375in</Left>
-				<Width>3.5in</Width>
-				<Height>0.25in</Height>
+				<Top>26.6cm</Top>
+				<Left>14.63146cm</Left>
+				<Width>2.4409in</Width>
+				<Height>0.1574in</Height>
 				<Style>
 					<TextAlign>Right</TextAlign>
 					<dd:StyleName xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">GeneralText</dd:StyleName>
 				</Style>
+				<ZIndex>8</ZIndex>
 				<CanGrow>true</CanGrow>
 				<DataElementName>TextBox1</DataElementName>
 				<Value>="Page " &amp; Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
 			</Textbox>
+			<CustomReportItem Name="ContentPlaceHolder1">
+				<Type>ContentPlaceHolder</Type>
+				<Top>0.9448618in</Top>
+				<Left>0.393701in</Left>
+				<Width>7.7953in</Width>
+				<Height>0.4725in</Height>
+				<ZIndex>4</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Search Criteria Section</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<DataElementName>ContentPlaceHolder3</DataElementName>
+			</CustomReportItem>
+			<Textbox Name="txtTenantInMaster">
+<<<<<<<< HEAD:DispatcherWeb/src/DispatcherWeb.ReportCenter/Reports/_MasterReportPortrait.rdlx-master
+				<Top>2cm</Top>
+========
+				<Top>1.799949cm</Top>
+>>>>>>>> feature/10854-ActiveReports-Proof-of-Concept:DispatcherWeb/src/DispatcherWeb.ReportCenter/Reports/_MasterReportLegalPortrait.rdlx-master
+				<Left>2.6cm</Left>
+				<Width>12.4019cm</Width>
+				<Height>0.5991cm</Height>
+				<Style>
+					<FontFamily>Arial</FontFamily>
+					<FontSize>11pt</FontSize>
+					<FontStyle>Normal</FontStyle>
+					<FontWeight>700</FontWeight>
+					<Format>d</Format>
+					<PaddingBottom>2pt</PaddingBottom>
+					<PaddingLeft>2pt</PaddingLeft>
+					<PaddingRight>2pt</PaddingRight>
+					<PaddingTop>2pt</PaddingTop>
+					<TextAlign>Left</TextAlign>
+					<VerticalAlign>Middle</VerticalAlign>
+				</Style>
+				<CanGrow>true</CanGrow>
+				<DataElementName>TextBox4</DataElementName>
+				<Value>=IIF(Parameters!TenantId.Value=NULL, "ALL", "(" &amp; Parameters!TenantId.Value &amp; ") " &amp; Parameters!TenantId.Label)</Value>
+			</Textbox>
+			<Textbox Name="lblTenantInMaster">
+<<<<<<<< HEAD:DispatcherWeb/src/DispatcherWeb.ReportCenter/Reports/_MasterReportPortrait.rdlx-master
+				<Top>0.787402in</Top>
+========
+				<Top>0.7086619in</Top>
+>>>>>>>> feature/10854-ActiveReports-Proof-of-Concept:DispatcherWeb/src/DispatcherWeb.ReportCenter/Reports/_MasterReportLegalPortrait.rdlx-master
+				<Left>0.393701in</Left>
+				<Width>0.6051in</Width>
+				<Height>0.2362in</Height>
+				<Style>
+					<FontFamily>Arial</FontFamily>
+					<FontSize>11pt</FontSize>
+					<FontStyle>Normal</FontStyle>
+					<FontWeight>400</FontWeight>
+					<Format>d</Format>
+					<TextAlign>Left</TextAlign>
+					<VerticalAlign>Middle</VerticalAlign>
+					<dd:StyleName xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">GeneralText</dd:StyleName>
+				</Style>
+				<ZIndex>5</ZIndex>
+				<CanGrow>true</CanGrow>
+				<DataElementName>TextBox3</DataElementName>
+				<Value>Tenant</Value>
+			</Textbox>
 		</ReportItems>
+	</Body>
+	<PageFooter>
+		<Height>0cm</Height>
+		<PrintOnFirstPage>true</PrintOnFirstPage>
+		<PrintOnLastPage>true</PrintOnLastPage>
 	</PageFooter>
 	<BottomMargin>0.125in</BottomMargin>
-	<PageHeight>8.5in</PageHeight>
-	<PageWidth>14in</PageWidth>
+	<PageHeight>27.9cm</PageHeight>
+	<PageWidth>21.6cm</PageWidth>
 	<TopMargin>0.125in</TopMargin>
-	<Width>14in</Width>
+	<Width>21.6cm</Width>
 	<ReportParameters>
+		<ReportParameter Name="EntityId">
+<<<<<<<< HEAD:DispatcherWeb/src/DispatcherWeb.ReportCenter/Reports/_MasterReportPortrait.rdlx-master
+			<DataType>Integer</DataType>
+			<Nullable>true</Nullable>
+			<Prompt>EntityId</Prompt>
+			<Hidden>true</Hidden>
+========
+			<DataType>Integer</DataType>
+			<Nullable>true</Nullable>
+			<Prompt>EntityId</Prompt>
+			<Hidden>true</Hidden>
+		</ReportParameter>
 		<ReportParameter Name="TenantId">
 			<DataType>Integer</DataType>
 			<Nullable>true</Nullable>
@@ -102,14 +183,11 @@
 			<ValidValues>
 				<DataSetReference>
 					<DataSetName>TenantsDataSet</DataSetName>
-					<LabelField>TenantName</LabelField>
-					<ValueField>TenantId</ValueField>
+					<LabelField>tenantName</LabelField>
+					<ValueField>tenantId</ValueField>
 				</DataSetReference>
-				<dd:OrderBy xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
-					<Condition>Label</Condition>
-					<Direction>Ascending</Direction>
-				</dd:OrderBy>
 			</ValidValues>
+>>>>>>>> feature/10854-ActiveReports-Proof-of-Concept:DispatcherWeb/src/DispatcherWeb.ReportCenter/Reports/_MasterReportLegalPortrait.rdlx-master
 		</ReportParameter>
 	</ReportParameters>
 	<dd:EmbeddedStyleSheets xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
@@ -168,37 +246,36 @@
 	</dd:EmbeddedStyleSheets>
 	<DataSources>
 		<DataSource Name="TenantsDataSource">
-			<DataSourceReference>DataSource.rdsx</DataSourceReference>
+			<ConnectionProperties>
+				<ConnectString>jsondoc=_TenantsDS.json</ConnectString>
+				<DataProvider>JSON</DataProvider>
+			</ConnectionProperties>
 		</DataSource>
 	</DataSources>
 	<DataSets>
 		<DataSet Name="TenantsDataSet">
 			<Fields>
-				<Field Name="TenantId">
-					<DataField>TenantId</DataField>
+				<Field Name="tenantId">
+					<DataField>tenantId</DataField>
 				</Field>
-				<Field Name="TenantName">
-					<DataField>TenantName</DataField>
+				<Field Name="tenantName">
+					<DataField>tenantName</DataField>
 				</Field>
 			</Fields>
 			<Query>
-				<CommandText>SELECT [Id][TenantId]
-      ,[Name][TenantName]
-  FROM [dbo].[AbpTenants]
-  WHERE [IsActive]=1 AND ISNULL([IsDeleted],0)=0
-  ORDER BY [Name]</CommandText>
+				<CommandText>$.result.[*]</CommandText>
 				<DataSourceName>TenantsDataSource</DataSourceName>
 			</Query>
 		</DataSet>
 	</DataSets>
 	<CustomProperties>
 		<CustomProperty>
-			<Name>PaperOrientation</Name>
-			<Value>Landscape</Value>
-		</CustomProperty>
-		<CustomProperty>
 			<Name>IsMaster</Name>
 			<Value>True</Value>
+		</CustomProperty>
+		<CustomProperty>
+			<Name>PaperOrientation</Name>
+			<Value>Portrait</Value>
 		</CustomProperty>
 	</CustomProperties>
 	<dd:ReportStyleSheet xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">

@@ -13,7 +13,6 @@ namespace DispatcherWeb.Tickets.Dto
         public List<DriverDto> Drivers { get; set; }
         public List<TicketDto> Tickets { get; set; }
         public List<DriverAssignmentDto> DriverAssignments { get; set; }
-        public List<TrailerAssignmentDto> TrailerAssignments { get; set; }
         public bool HasOpenOrders { get; set; }
         public List<TruckDto> Trucks { get; set; }
         public List<LeaseHaulerDto> LeaseHaulers { get; set; }
@@ -82,7 +81,7 @@ namespace DispatcherWeb.Tickets.Dto
             public bool IsActive { get; set; }
             public int? LeaseHaulerId { get; set; }
             public int? DefaultDriverId { get; set; }
-            public int? DefaultTrailerId { get; set; }
+            public int? CurrentTrailerId { get; set; }
             public bool CanPullTrailer { get; set; }
             public VehicleCategoryDto VehicleCategory { get; set; }
         }
@@ -128,14 +127,6 @@ namespace DispatcherWeb.Tickets.Dto
             public Shift? Shift { get; set; }
             public int TruckId { get; set; }
             public int? DriverId { get; set; }
-        }
-
-        public class TrailerAssignmentDto
-        {
-            public int Id { get; set; }
-            public Shift? Shift { get; set; }
-            public int TractorId { get; set; }
-            public int? TrailerId { get; set; }
         }
 
         public class LeaseHaulerDto

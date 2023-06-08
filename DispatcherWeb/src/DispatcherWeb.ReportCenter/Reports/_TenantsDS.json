@@ -1,0 +1,209 @@
+{
+  "result": [
+    {
+      "tenantId": 1,
+      "tenantName": "default"
+    },
+    {
+      "tenantId": 2,
+      "tenantName": "demo"
+    },
+    {
+      "tenantId": 4,
+      "tenantName": "default 2"
+    },
+    {
+      "tenantId": 5,
+      "tenantName": "rex"
+    },
+    {
+      "tenantId": 6,
+      "tenantName": "oksana"
+    },
+    {
+      "tenantId": 8,
+      "tenantName": "rashed"
+    },
+    {
+      "tenantId": 9,
+      "tenantName": "evgeniy"
+    },
+    {
+      "tenantId": 10,
+      "tenantName": "test"
+    },
+    {
+      "tenantId": 11,
+      "tenantName": "nazmul"
+    },
+    {
+      "tenantId": 13,
+      "tenantName": "manish"
+    },
+    {
+      "tenantId": 14,
+      "tenantName": "gaurav"
+    },
+    {
+      "tenantId": 24,
+      "tenantName": "aleksey"
+    },
+    {
+      "tenantId": 29,
+      "tenantName": "joe"
+    },
+    {
+      "tenantId": 31,
+      "tenantName": "evgeniy2"
+    },
+    {
+      "tenantId": 414,
+      "tenantName": "vinod8"
+    },
+    {
+      "tenantId": 466,
+      "tenantName": "natalia"
+    },
+    {
+      "tenantId": 472,
+      "tenantName": "a first tenant in the list to get deleted by auto tests"
+    },
+    {
+      "tenantId": 474,
+      "tenantName": "vinod13"
+    },
+    {
+      "tenantId": 484,
+      "tenantName": "vinod16"
+    },
+    {
+      "tenantId": 485,
+      "tenantName": "vinod17"
+    },
+    {
+      "tenantId": 486,
+      "tenantName": "google"
+    },
+    {
+      "tenantId": 487,
+      "tenantName": "vinod90"
+    },
+    {
+      "tenantId": 488,
+      "tenantName": "vinod91"
+    },
+    {
+      "tenantId": 489,
+      "tenantName": "kinjalben"
+    },
+    {
+      "tenantId": 490,
+      "tenantName": "jovan"
+    },
+    {
+      "tenantId": 491,
+      "tenantName": "divya"
+    },
+    {
+      "tenantId": 493,
+      "tenantName": "vinod20"
+    },
+    {
+      "tenantId": 495,
+      "tenantName": "jovansingleoffice"
+    },
+    {
+      "tenantId": 496,
+      "tenantName": "jovanmultioffice"
+    },
+    {
+      "tenantId": 498,
+      "tenantName": "free"
+    },
+    {
+      "tenantId": 499,
+      "tenantName": "aleksey10103"
+    },
+    {
+      "tenantId": 501,
+      "tenantName": "testdefaultsettings"
+    },
+    {
+      "tenantId": 502,
+      "tenantName": "divya3"
+    },
+    {
+      "tenantId": 503,
+      "tenantName": "stanjames"
+    },
+    {
+      "tenantId": 504,
+      "tenantName": "Divya Sathish"
+    },
+    {
+      "tenantId": 505,
+      "tenantName": "scottdorsey"
+    },
+    {
+      "tenantId": 507,
+      "tenantName": "testjoe20220307"
+    },
+    {
+      "tenantId": 508,
+      "tenantName": "aleksey2"
+    },
+    {
+      "tenantId": 509,
+      "tenantName": "froiltest"
+    },
+    {
+      "tenantId": 510,
+      "tenantName": "Super Pruuylan"
+    },
+    {
+      "tenantId": 511,
+      "tenantName": "jeff"
+    },
+    {
+      "tenantId": 512,
+      "tenantName": "grace"
+    },
+    {
+      "tenantId": 513,
+      "tenantName": "gracefree"
+    },
+    {
+      "tenantId": 514,
+      "tenantName": "divya"
+    },
+    {
+      "tenantId": 515,
+      "tenantName": "Newdemo"
+    },
+    {
+      "tenantId": 516,
+      "tenantName": "DivyaFreeedition"
+    },
+    {
+      "tenantId": 517,
+      "tenantName": "Divyastandardedition"
+    },
+    {
+      "tenantId": 518,
+      "tenantName": "Divyaliteedition"
+    },
+    {
+      "tenantId": 519,
+      "tenantName": "Divyapremiumedition"
+    },
+    {
+      "tenantId": 520,
+      "tenantName": "Divya1Freeedition"
+    }
+  ],
+  "targetUrl": null,
+  "success": true,
+  "error": null,
+  "unAuthorizedRequest": false,
+  "__abp": true
+}

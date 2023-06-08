@@ -38,7 +38,7 @@ namespace DispatcherWeb.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(180)", maxLength: 180, nullable: true),
-                    Path = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),

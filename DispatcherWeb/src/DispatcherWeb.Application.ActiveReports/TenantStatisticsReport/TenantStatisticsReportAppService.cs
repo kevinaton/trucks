@@ -82,6 +82,8 @@ namespace DispatcherWeb.ActiveReports.TenantStatisticsReport
                                 Sms = g.Sum(a => a.SmsSent),
                                 TenantsAdded = tenants.Where(p => p.CreationTime.Month == g.Key.MonthNumber && p.CreationTime.Year == g.Key.Year).Count()
                             })
+                            .OrderBy(p => p.MonthNumber)
+                            .ThenBy(p => p.MonthYear)
                             .ToList();
 
             return summary;

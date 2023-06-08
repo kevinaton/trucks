@@ -15,23 +15,29 @@
 		<NoWarn>NU1701</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Content Remove="Reports\Backup 2\**" />
-	  <Content Remove="Reports\Backup\**" />
-	  <EmbeddedResource Remove="Reports\Backup 2\**" />
-	  <EmbeddedResource Remove="Reports\Backup\**" />
-	  <None Remove="Reports\Backup 2\**" />
-	  <None Remove="Reports\Backup\**" />
+	  <Content Remove="Reports\_TenantsDS.json" />
+	  <Content Remove="Reports\_TenantStatisticsReportDS.json" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Reports\_MasterReportLegalPortrait.rdlx-master" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Properties\.gclicx" />
 		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
+		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master" />
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="ClientApp\package.json" />
 		<None Include="Properties\launchSettings.json" />
+		<None Include="Reports\_TenantsDS.json">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Include="Reports\_TenantStatisticsReportDS.json">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
 		<None Include="wwwroot\lib\grapecity\jsViewer.min.js" />
 		<Resource Include="Properties\licenses.licx" />
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
@@ -92,6 +98,15 @@
 		</None>
 		<None Update="Reports\DataSource.rdsx">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\_DataSource.Dev.rdsx">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\_DataSource.QA.rdsx">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\_DataSource.rdsx">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 	<Target Name="BeforeClientBuild" BeforeTargets="BeforeBuild">

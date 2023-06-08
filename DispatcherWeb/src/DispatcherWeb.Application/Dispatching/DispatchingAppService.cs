@@ -1761,6 +1761,7 @@ namespace DispatcherWeb.Dispatching
         {
             var dispatchEntity = await _dispatchRepository.GetAll()
                 .Include(d => d.Truck)
+                .Include(d => d.OrderLineTruck)
                 .Include(d => d.OrderLine)
                     .ThenInclude(ol => ol.Order)
                 .FirstOrDefaultAsync(d => d.Guid == input.DispatchTicket.Guid);

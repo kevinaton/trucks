@@ -47,7 +47,6 @@ namespace DispatcherWeb.Tickets
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
         private readonly IRepository<DriverAssignment> _driverAssignmentRepository;
-        private readonly IRepository<TrailerAssignment> _trailerAssignmentRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<Driver> _driverRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
@@ -68,7 +67,6 @@ namespace DispatcherWeb.Tickets
             IRepository<Truck> truckRepository,
             IRepository<OrderLine> orderLineRepository,
             IRepository<DriverAssignment> driverAssignmentRepository,
-            IRepository<TrailerAssignment> trailerAssignmentRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<Driver> driverRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
@@ -89,7 +87,6 @@ namespace DispatcherWeb.Tickets
             _truckRepository = truckRepository;
             _orderLineRepository = orderLineRepository;
             _driverAssignmentRepository = driverAssignmentRepository;
-            _trailerAssignmentRepository = trailerAssignmentRepository;
             _dispatchRepository = dispatchRepository;
             _driverRepository = driverRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
@@ -1200,7 +1197,7 @@ namespace DispatcherWeb.Tickets
                     },
                     LeaseHaulerId = (int?)x.LeaseHaulerTruck.LeaseHaulerId,
                     DefaultDriverId = x.DefaultDriverId,
-                    DefaultTrailerId = x.DefaultTrailerId,
+                    CurrentTrailerId = x.CurrentTrailerId,
                 }).ToListAsync();
 
             result.DriverAssignments = await _driverAssignmentRepository.GetAll()
@@ -1211,16 +1208,6 @@ namespace DispatcherWeb.Tickets
                     Shift = x.Shift,
                     TruckId = x.TruckId,
                     DriverId = x.DriverId
-                }).ToListAsync();
-
-            result.TrailerAssignments = await _trailerAssignmentRepository.GetAll()
-                .Where(x => x.Date == input.Date)
-                .Select(x => new TicketsByDriverResult.TrailerAssignmentDto
-                {
-                    Id = x.Id,
-                    Shift = x.Shift,
-                    TractorId = x.TractorId,
-                    TrailerId = x.TrailerId,
                 }).ToListAsync();
 
             result.Tickets = await _ticketRepository.GetAll()

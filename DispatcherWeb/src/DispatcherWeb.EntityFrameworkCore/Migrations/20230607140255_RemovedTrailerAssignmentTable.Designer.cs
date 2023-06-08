@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    [Migration("20230602074117_AddedActiveReports")]
-    partial class AddedActiveReports
+    [Migration("20230607140255_RemovedTrailerAssignmentTable")]
+    partial class RemovedTrailerAssignmentTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1425,96 +1425,6 @@ namespace DispatcherWeb.Migrations
                     b.ToTable("AbpWebhookSubscriptions");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.ActiveReports.ActiveReport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(180)
-                        .HasColumnType("nvarchar(180)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("ActiveReport");
-                });
-
-            modelBuilder.Entity("DispatcherWeb.ActiveReports.ActiveReportCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ActiveReportCategory");
-                });
-
             modelBuilder.Entity("DispatcherWeb.Authorization.Delegation.UserDelegation", b =>
                 {
                     b.Property<long>("Id")
@@ -2517,6 +2427,10 @@ namespace DispatcherWeb.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("EmployeeId")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.Property<DateTime?>("EmploymentStartDate")
                         .HasColumnType("date");
 
@@ -2744,9 +2658,6 @@ namespace DispatcherWeb.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<DateTime?>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartTimeObsolete")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TenantId")
@@ -4566,12 +4477,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime>("TicketDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("TicketDateTimeObsolete")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("TicketDateTimeWasConverted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BatchId");
@@ -4918,9 +4823,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime?>("DefaultStartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DefaultStartTimeObsolete")
-                        .HasColumnType("datetime2");
-
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
 
@@ -5206,9 +5108,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime?>("FirstStaggeredTimeOnJob")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("FirstStaggeredTimeOnJobObsolete")
-                        .HasColumnType("datetime2");
-
                     b.Property<decimal>("FreightPrice")
                         .HasColumnType("decimal(19,4)");
 
@@ -5340,9 +5239,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<DateTime?>("TimeOnJob")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("TimeOnJobObsolete")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DeliverToId");
@@ -5407,17 +5303,14 @@ namespace DispatcherWeb.Migrations
                     b.Property<int?>("ParentOrderLineTruckId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Sequence")
-                        .HasColumnType("int");
-
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("TimeOnJob")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("TimeOnJobObsolete")
-                        .HasColumnType("datetime2");
+                    b.Property<int?>("TrailerId")
+                        .HasColumnType("int");
 
                     b.Property<int>("TruckId")
                         .HasColumnType("int");
@@ -5433,9 +5326,58 @@ namespace DispatcherWeb.Migrations
 
                     b.HasIndex("ParentOrderLineTruckId");
 
+                    b.HasIndex("TrailerId");
+
                     b.HasIndex("TruckId");
 
                     b.ToTable("OrderLineTruck");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.Orders.OrderLineVehicleCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("OrderLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleCategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderLineId");
+
+                    b.HasIndex("VehicleCategoryId");
+
+                    b.ToTable("OrderLineVehicleCategory");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Orders.OrderTruck", b =>
@@ -5903,6 +5845,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<Guid?>("TicketPhotoId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("TrailerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("TruckCode")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
@@ -5936,6 +5881,8 @@ namespace DispatcherWeb.Migrations
                     b.HasIndex("ReceiptLineId");
 
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("TrailerId");
 
                     b.HasIndex("TruckId");
 
@@ -6925,6 +6872,53 @@ namespace DispatcherWeb.Migrations
                     b.ToTable("QuoteService");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.Quotes.QuoteServiceVehicleCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("QuoteServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleCategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuoteServiceId");
+
+                    b.HasIndex("VehicleCategoryId");
+
+                    b.ToTable("QuoteServiceVehicleCategory");
+                });
+
             modelBuilder.Entity("DispatcherWeb.ScheduledReports.ScheduledReport", b =>
                 {
                     b.Property<int>("Id")
@@ -7555,10 +7549,10 @@ namespace DispatcherWeb.Migrations
                     b.Property<decimal>("CurrentMileage")
                         .HasColumnType("decimal(19,1)");
 
-                    b.Property<int?>("DefaultDriverId")
+                    b.Property<int?>("CurrentTrailerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DefaultTrailerId")
+                    b.Property<int?>("DefaultDriverId")
                         .HasColumnType("int");
 
                     b.Property<long?>("DeleterUserId")
@@ -7713,9 +7707,9 @@ namespace DispatcherWeb.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DefaultDriverId");
+                    b.HasIndex("CurrentTrailerId");
 
-                    b.HasIndex("DefaultTrailerId");
+                    b.HasIndex("DefaultDriverId");
 
                     b.HasIndex("LocationId");
 
@@ -8933,17 +8927,6 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("WebhookEvent");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.ActiveReports.ActiveReport", b =>
-                {
-                    b.HasOne("DispatcherWeb.ActiveReports.ActiveReportCategory", "Category")
-                        .WithMany("Reports")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("DispatcherWeb.Authorization.Roles.Role", b =>
                 {
                     b.HasOne("DispatcherWeb.Authorization.Users.User", "CreatorUser")
@@ -9892,10 +9875,15 @@ namespace DispatcherWeb.Migrations
                         .WithMany()
                         .HasForeignKey("ParentOrderLineTruckId");
 
+                    b.HasOne("DispatcherWeb.Trucks.Truck", "Trailer")
+                        .WithMany("OrderLineTrucksOfTrailer")
+                        .HasForeignKey("TrailerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("DispatcherWeb.Trucks.Truck", "Truck")
-                        .WithMany("OrderLineTrucks")
+                        .WithMany("OrderLineTrucksOfTruck")
                         .HasForeignKey("TruckId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Driver");
@@ -9904,7 +9892,28 @@ namespace DispatcherWeb.Migrations
 
                     b.Navigation("ParentOrderLineTruck");
 
+                    b.Navigation("Trailer");
+
                     b.Navigation("Truck");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.Orders.OrderLineVehicleCategory", b =>
+                {
+                    b.HasOne("DispatcherWeb.Orders.OrderLine", "OrderLine")
+                        .WithMany("OrderLineVehicleCategories")
+                        .HasForeignKey("OrderLineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.VehicleCategories.VehicleCategory", "VehicleCategory")
+                        .WithMany()
+                        .HasForeignKey("VehicleCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("OrderLine");
+
+                    b.Navigation("VehicleCategory");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Orders.OrderTruck", b =>
@@ -10104,9 +10113,15 @@ namespace DispatcherWeb.Migrations
                         .WithMany()
                         .HasForeignKey("ServiceId");
 
+                    b.HasOne("DispatcherWeb.Trucks.Truck", "Trailer")
+                        .WithMany("TicketsOfTrailer")
+                        .HasForeignKey("TrailerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("DispatcherWeb.Trucks.Truck", "Truck")
-                        .WithMany("Tickets")
-                        .HasForeignKey("TruckId");
+                        .WithMany("TicketsOfTruck")
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DispatcherWeb.UnitsOfMeasure.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
@@ -10131,6 +10146,8 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("ReceiptLine");
 
                     b.Navigation("Service");
+
+                    b.Navigation("Trailer");
 
                     b.Navigation("Truck");
 
@@ -10482,6 +10499,25 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.Quotes.QuoteServiceVehicleCategory", b =>
+                {
+                    b.HasOne("DispatcherWeb.Quotes.QuoteService", "QuoteService")
+                        .WithMany("QuoteServiceVehicleCategories")
+                        .HasForeignKey("QuoteServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.VehicleCategories.VehicleCategory", "VehicleCategory")
+                        .WithMany()
+                        .HasForeignKey("VehicleCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("QuoteService");
+
+                    b.Navigation("VehicleCategory");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Services.OfficeServicePrice", b =>
                 {
                     b.HasOne("DispatcherWeb.UnitsOfMeasure.UnitOfMeasure", "FreightUom")
@@ -10575,13 +10611,15 @@ namespace DispatcherWeb.Migrations
 
             modelBuilder.Entity("DispatcherWeb.Trucks.Truck", b =>
                 {
+                    b.HasOne("DispatcherWeb.Trucks.Truck", "CurrentTrailer")
+                        .WithMany("CurrentTractors")
+                        .HasForeignKey("CurrentTrailerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("DispatcherWeb.Drivers.Driver", "DefaultDriver")
                         .WithMany("DefaultTrucks")
-                        .HasForeignKey("DefaultDriverId");
-
-                    b.HasOne("DispatcherWeb.Trucks.Truck", "DefaultTrailer")
-                        .WithMany()
-                        .HasForeignKey("DefaultTrailerId");
+                        .HasForeignKey("DefaultDriverId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("DispatcherWeb.Offices.Office", "Office")
                         .WithMany("Trucks")
@@ -10594,9 +10632,9 @@ namespace DispatcherWeb.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("DefaultDriver");
+                    b.Navigation("CurrentTrailer");
 
-                    b.Navigation("DefaultTrailer");
+                    b.Navigation("DefaultDriver");
 
                     b.Navigation("Office");
 
@@ -10814,11 +10852,6 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("Children");
                 });
 
-            modelBuilder.Entity("DispatcherWeb.ActiveReports.ActiveReportCategory", b =>
-                {
-                    b.Navigation("Reports");
-                });
-
             modelBuilder.Entity("DispatcherWeb.Authorization.Roles.Role", b =>
                 {
                     b.Navigation("Claims");
@@ -10995,6 +11028,8 @@ namespace DispatcherWeb.Migrations
 
                     b.Navigation("OrderLineTrucks");
 
+                    b.Navigation("OrderLineVehicleCategories");
+
                     b.Navigation("ReceiptLines");
 
                     b.Navigation("SharedOrderLines");
@@ -11083,6 +11118,8 @@ namespace DispatcherWeb.Migrations
             modelBuilder.Entity("DispatcherWeb.Quotes.QuoteService", b =>
                 {
                     b.Navigation("OrderLines");
+
+                    b.Navigation("QuoteServiceVehicleCategories");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Services.Service", b =>
@@ -11112,13 +11149,17 @@ namespace DispatcherWeb.Migrations
                 {
                     b.Navigation("AvailableLeaseHaulerTrucks");
 
+                    b.Navigation("CurrentTractors");
+
                     b.Navigation("DriverAssignments");
 
                     b.Navigation("Files");
 
                     b.Navigation("LeaseHaulerTruck");
 
-                    b.Navigation("OrderLineTrucks");
+                    b.Navigation("OrderLineTrucksOfTrailer");
+
+                    b.Navigation("OrderLineTrucksOfTruck");
 
                     b.Navigation("OutOfServiceHistories");
 
@@ -11126,7 +11167,9 @@ namespace DispatcherWeb.Migrations
 
                     b.Navigation("SharedTrucks");
 
-                    b.Navigation("Tickets");
+                    b.Navigation("TicketsOfTrailer");
+
+                    b.Navigation("TicketsOfTruck");
 
                     b.Navigation("VehicleUsages");
 

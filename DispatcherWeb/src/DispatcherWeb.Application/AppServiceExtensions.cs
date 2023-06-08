@@ -423,6 +423,9 @@ namespace DispatcherWeb
                         SortOrder = t.VehicleCategory.SortOrder,
                     },
                     BedConstruction = t.BedConstruction,
+                    Year = t.Year,
+                    Make = t.Make,
+                    Model = t.Model,
                     IsApportioned = t.IsApportioned,
                     AlwaysShowOnSchedule = t.LeaseHaulerTruck.AlwaysShowOnSchedule == true,
                     CanPullTrailer = t.CanPullTrailer,
@@ -430,12 +433,12 @@ namespace DispatcherWeb
                     IsActive = t.IsActive,
                     DefaultDriverId = t.DefaultDriverId,
                     DefaultDriverName = t.DefaultDriver.FirstName + " " + t.DefaultDriver.LastName,
-                    DefaultTrailer = t.DefaultTrailer == null ? null : new ScheduleTruckTrailerDto
+                    Trailer = t.CurrentTrailer == null ? null : new ScheduleTruckTrailerDto
                     {
-                        Id = t.DefaultTrailer.Id,
-                        TruckCode = t.DefaultTrailer.TruckCode
+                        Id = t.CurrentTrailer.Id,
+                        TruckCode = t.CurrentTrailer.TruckCode
                     },
-                    DefaultTractor = t.DefaultTractors.Select(x => new ScheduleTruckTractorDto
+                    Tractor = t.CurrentTractors.Select(x => new ScheduleTruckTractorDto
                     {
                         Id = x.Id,
                         TruckCode = x.TruckCode,
@@ -460,34 +463,6 @@ namespace DispatcherWeb
                     x.TruckId,
                     x.DriverId,
                     DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
-                })
-                .OrderByDescending(x => x.Id)
-                .ToListAsync();
-
-            var trailerAssignmentsOfTractors = await truckQuery
-                .SelectMany(x => x.TrailerAssignmentsOfTractor)
-                .Where(da => da.Date == input.Date && da.Shift == input.Shift)
-                .Select(x => new
-                {
-                    x.Id,
-                    x.TractorId,
-                    x.TrailerId,
-                    TractorTruckCode = x.Tractor.TruckCode,
-                    TrailerTruckCode = x.Trailer.TruckCode,
-                })
-                .OrderByDescending(x => x.Id)
-                .ToListAsync();
-
-            var trailerAssignmentsOfTrailers = await truckQuery
-                .SelectMany(x => x.TrailerAssignmentsOfTrailer)
-                .Where(da => da.Date == input.Date && da.Shift == input.Shift)
-                .Select(x => new
-                {
-                    x.Id,
-                    x.TractorId,
-                    x.TrailerId,
-                    TractorTruckCode = x.Tractor.TruckCode,
-                    TrailerTruckCode = x.Trailer.TruckCode,
                 })
                 .OrderByDescending(x => x.Id)
                 .ToListAsync();
@@ -546,39 +521,6 @@ namespace DispatcherWeb
                     if (truck.SharedWithOfficeId != null && truck.SharedWithOfficeId != input.OfficeId)
                     {
                         truck.Utilization = 1;
-                    }
-                }
-
-                if (truck.CanPullTrailer)
-                {
-                    var trailerAssignment = trailerAssignmentsOfTractors.FirstOrDefault(x => x.TractorId == truck.Id);
-                    if (trailerAssignment != null)
-                    {
-                        truck.Trailer = trailerAssignment.TrailerId.HasValue ? new ScheduleTruckTrailerDto
-                        {
-                            Id = trailerAssignment.TrailerId.Value,
-                            TruckCode = trailerAssignment.TrailerTruckCode,
-                        } : null;
-                    }
-                    else
-                    {
-                        truck.Trailer = truck.DefaultTrailer;
-                    }
-                }
-                else if (truck.VehicleCategory.AssetType == AssetType.Trailer)
-                {
-                    var trailerAssignment = trailerAssignmentsOfTrailers.FirstOrDefault(x => x.TrailerId == truck.Id);
-                    if (trailerAssignment != null)
-                    {
-                        truck.Tractor = new ScheduleTruckTractorDto
-                        {
-                            Id = trailerAssignment.TractorId,
-                            TruckCode = trailerAssignment.TractorTruckCode,
-                        };
-                    }
-                    else
-                    {
-                        truck.Tractor = truck.DefaultTractor;
                     }
                 }
             }
