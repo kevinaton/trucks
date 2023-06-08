@@ -4,6 +4,6 @@ namespace DispatcherWeb.UserSettings
 {
     public interface IUserSettingsAppService : IApplicationService
     {
-        bool? GetUserSettingsByName(string settingName);
+        string GetUserSettingsByName(string settingName);
     }
 }

@@ -72,15 +72,14 @@ export const NotificationBell = ({
     }, [dispatch]);
 
     useEffect(() => {
-        if (!isEmpty(userSettings) && isEmpty(soundEnabled)) {
-            setSoundEnabled(userSettings.result);
+        if (!isEmpty(userSettings) && !isEmpty(userSettings.result) && isEmpty(soundEnabled)) {
+            setSoundEnabled(Boolean(userSettings.result));
         }
     }, [userSettings, soundEnabled]);
     
     useEffect(() => {
         if (soundEnabled !== null && connection) {
             connection.on('getNotification', (newNotification) => {
-                console.log('notification: ', newNotification);
                 if (soundEnabled) {
                     const audioNotification = new Audio('/reactapp/sounds/notification.mp3');
                     audioNotification.play();
