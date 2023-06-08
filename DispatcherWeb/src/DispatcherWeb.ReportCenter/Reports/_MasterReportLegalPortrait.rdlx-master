@@ -1,15 +1,15 @@
 ﻿<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
 	<Author>DumpTruck Dispatcher LLC</Author>
-	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">MasterReportPortrait.rdlx-master</dd:Name>
+	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">_MasterReportLegalPortrait.rdlx-master</dd:Name>
 	<Body>
-		<Height>37.8cm</Height>
+		<Height>27.9cm</Height>
 		<ReportItems>
 			<CustomReportItem Name="MainContentPlaceHolder">
 				<Type>ContentPlaceHolder</Type>
-				<Top>1.653543in</Top>
+				<Top>1.417382in</Top>
 				<Left>0.393701in</Left>
-				<Width>7.7165in</Width>
-				<Height>12.2047in</Height>
+				<Width>7.8042in</Width>
+				<Height>8.9763in</Height>
 				<ZIndex>3</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
@@ -69,10 +69,10 @@
 				<Value>=Today</Value>
 			</Textbox>
 			<Textbox Name="PageInfo">
-				<Top>35.6cm</Top>
-				<Left>12.2cm</Left>
-				<Width>3.2283in</Width>
-				<Height>0.25in</Height>
+				<Top>26.6cm</Top>
+				<Left>14.63146cm</Left>
+				<Width>2.4409in</Width>
+				<Height>0.1574in</Height>
 				<Style>
 					<TextAlign>Right</TextAlign>
 					<dd:StyleName xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">GeneralText</dd:StyleName>
@@ -84,10 +84,10 @@
 			</Textbox>
 			<CustomReportItem Name="ContentPlaceHolder1">
 				<Type>ContentPlaceHolder</Type>
-				<Top>1.023622in</Top>
+				<Top>0.9448618in</Top>
 				<Left>0.393701in</Left>
-				<Width>7.95in</Width>
-				<Height>0.5512in</Height>
+				<Width>7.7953in</Width>
+				<Height>0.4725in</Height>
 				<ZIndex>4</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
@@ -97,8 +97,8 @@
 				</CustomProperties>
 				<DataElementName>ContentPlaceHolder3</DataElementName>
 			</CustomReportItem>
-			<Textbox Name="txtTenant">
-				<Top>2cm</Top>
+			<Textbox Name="txtTenantInMaster">
+				<Top>1.799949cm</Top>
 				<Left>2.6cm</Left>
 				<Width>12.4019cm</Width>
 				<Height>0.5991cm</Height>
@@ -119,8 +119,8 @@
 				<DataElementName>TextBox4</DataElementName>
 				<Value>=IIF(Parameters!TenantId.Value=NULL, "ALL", "(" &amp; Parameters!TenantId.Value &amp; ") " &amp; Parameters!TenantId.Label)</Value>
 			</Textbox>
-			<Textbox Name="lblTenant">
-				<Top>0.787402in</Top>
+			<Textbox Name="lblTenantInMaster">
+				<Top>0.7086619in</Top>
 				<Left>0.393701in</Left>
 				<Width>0.6051in</Width>
 				<Height>0.2362in</Height>
@@ -142,20 +142,33 @@
 		</ReportItems>
 	</Body>
 	<PageFooter>
-		<Height>0in</Height>
+		<Height>0cm</Height>
 		<PrintOnFirstPage>true</PrintOnFirstPage>
 		<PrintOnLastPage>true</PrintOnLastPage>
 	</PageFooter>
 	<BottomMargin>0.125in</BottomMargin>
-	<PageHeight>35.6cm</PageHeight>
+	<PageHeight>27.9cm</PageHeight>
 	<PageWidth>21.6cm</PageWidth>
 	<TopMargin>0.125in</TopMargin>
 	<Width>21.6cm</Width>
 	<ReportParameters>
+		<ReportParameter Name="EntityId">
+			<DataType>Integer</DataType>
+			<Nullable>true</Nullable>
+			<Prompt>EntityId</Prompt>
+			<Hidden>true</Hidden>
+		</ReportParameter>
 		<ReportParameter Name="TenantId">
 			<DataType>Integer</DataType>
 			<Nullable>true</Nullable>
 			<Prompt>Tenant</Prompt>
+			<ValidValues>
+				<DataSetReference>
+					<DataSetName>TenantsDataSet</DataSetName>
+					<LabelField>tenantName</LabelField>
+					<ValueField>tenantId</ValueField>
+				</DataSetReference>
+			</ValidValues>
 		</ReportParameter>
 	</ReportParameters>
 	<dd:EmbeddedStyleSheets xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
@@ -212,6 +225,30 @@
 &lt;/dd:StyleSheet&gt;</Data>
 		</EmbeddedStyleSheet>
 	</dd:EmbeddedStyleSheets>
+	<DataSources>
+		<DataSource Name="TenantsDataSource">
+			<ConnectionProperties>
+				<ConnectString>jsondoc=_TenantsDS.json</ConnectString>
+				<DataProvider>JSON</DataProvider>
+			</ConnectionProperties>
+		</DataSource>
+	</DataSources>
+	<DataSets>
+		<DataSet Name="TenantsDataSet">
+			<Fields>
+				<Field Name="tenantId">
+					<DataField>tenantId</DataField>
+				</Field>
+				<Field Name="tenantName">
+					<DataField>tenantName</DataField>
+				</Field>
+			</Fields>
+			<Query>
+				<CommandText>$.result.[*]</CommandText>
+				<DataSourceName>TenantsDataSource</DataSourceName>
+			</Query>
+		</DataSet>
+	</DataSets>
 	<CustomProperties>
 		<CustomProperty>
 			<Name>IsMaster</Name>

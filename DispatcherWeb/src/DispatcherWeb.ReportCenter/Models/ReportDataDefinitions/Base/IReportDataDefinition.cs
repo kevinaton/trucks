@@ -8,6 +8,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
     {
         PageReport ThisPageReport { get; set; }
 
+        bool HasTenantsParameter { get; }
+
         Task<object> LocateDataSource(LocateDataSourceArgs arg);
 
         Task Initialize();

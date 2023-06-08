@@ -21,6 +21,11 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         public IHttpContextAccessor HttpContextAccessor { get; internal set; }
 
+        public virtual bool HasTenantsParameter { get; private set; }
+
+        public string ReportId =>
+            GetType().UnderlyingSystemType.Name.Replace("DataDefinitions", string.Empty);
+
         public ReportDataDefinitionBase(IConfiguration configuration, IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
         {
             Configuration = configuration;
@@ -28,9 +33,6 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             HttpContextAccessor = httpContextAccessor;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public async Task<DataSource> TenantsListDataSource()
         {
             var ds = new DataSource { Name = "TenantsDataSource" };
@@ -38,7 +40,6 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
             var hostApiUrl = Configuration["IdentityServer:Authority"];
             var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-
             var connStrData = $"jsondoc={hostApiUrl}/api/services/activeReports/tenantStatisticsReport/GetTenants";
             var connStrHeaders = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
             ds.ConnectionProperties.ConnectString = $"{connStrHeaders};{connStrData}";
@@ -46,9 +47,6 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             return ds;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         public IDataSet TenantsListDataSet()
         {
             DataSet tenantsListDataSet = new()
@@ -82,38 +80,31 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             if (ThisPageReport == null)
                 return;
 
-            if (!ThisPageReport.Report.DataSources.Any(d => d.Name.Equals("TenantsDataSource")))
+            // Need to remove first the existing datasource for Tenants setup in the report (in the MasterReport)
+            var tenantsDataSource = ThisPageReport.Report.DataSources.FirstOrDefault(d => d.Name.Equals("TenantsDataSource"));
+            ThisPageReport.Report.DataSources.Remove(tenantsDataSource);
+
+            tenantsDataSource = ThisPageReport.Document.PageReport.Report.DataSources.FirstOrDefault(d => d.Name.Equals("TenantsDataSource"));
+            ThisPageReport.Document.PageReport.Report.DataSources.Remove(tenantsDataSource);
+
+            var tenantsDataSet = ThisPageReport.Report.DataSets.FirstOrDefault(d => d.Name.Equals("TenantsDataSet"));
+
+            if (!HasTenantsParameter)
             {
+                // Remove existing dataset configured for the datasource
+                ThisPageReport.Report.DataSets.Remove(tenantsDataSet);
+
+                // Remove/Hide the Tenant parameter
+                var tenantParameter = ThisPageReport.Report.ReportParameters.FirstOrDefault(p => p.Name.Equals("TenantId"));
+                ThisPageReport.Report.ReportParameters.Remove(tenantParameter);
+            }
+            else
+            {
+                // Recreate the datasource for Tenants; Dataset is already setup in its query to use the datasource name
                 var tenantsListDataSource = await TenantsListDataSource();
                 ThisPageReport.Report.DataSources.Add(tenantsListDataSource);
-            }
 
-            if (!ThisPageReport.Report.DataSets.Any(d => d.Name.Equals("TenantsDataSet")))
-            {
-                var tenantsListDataSet = TenantsListDataSet();
-                ThisPageReport.Report.DataSets.Add(tenantsListDataSet);
-
-                if (ThisPageReport.Document.PageReport.Report.ReportParameters.Any(p => p.Name == "TenantId"))
-                {
-                    var tenantParam = ThisPageReport.Document.PageReport.Report.ReportParameters.FirstOrDefault(p => p.Name == "TenantId");
-                    tenantParam.ValidValues.DataSetReference = new DataSetReference()
-                    {
-                        DataSetName = tenantsListDataSet.Name,
-                        LabelField = "tenantName",
-                        ValueField = "tenantId"
-                    };
-                }
-
-                if (ThisPageReport.Report.ReportParameters.Any(p => p.Name == "TenantId"))
-                {
-                    var tenantParam = ThisPageReport.Report.ReportParameters.FirstOrDefault(p => p.Name == "TenantId");
-                    tenantParam.ValidValues.DataSetReference = new DataSetReference()
-                    {
-                        DataSetName = tenantsListDataSet.Name,
-                        LabelField = "tenantName",
-                        ValueField = "tenantId"
-                    };
-                }
+                ThisPageReport.Document.PageReport.Report.DataSources.Add(tenantsListDataSource);
             }
         }
 

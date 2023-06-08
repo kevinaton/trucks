@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json.Linq;
 using HttpClient = System.Net.Http.HttpClient;
 
 namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
@@ -33,12 +32,13 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             _environment = environment;
         }
 
+        public override bool HasTenantsParameter => true;
+
         public override async Task Initialize()
         {
-            var reportId = "TenantStatisticsReport";
-            var getReportInfoResult = await _reportAppService.TryGetReport(reportId);
+            var getReportInfoResult = await _reportAppService.TryGetReport(ReportId);
 
-            if(!getReportInfoResult.Success)
+            if (!getReportInfoResult.Success)
                 throw new Exception("Report is not registered.");
 
             if (!getReportInfoResult.ReportInfo.HasAccess)
@@ -48,6 +48,11 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             var reportPath = $"{Path.Combine(reportsDirPath.FullName, getReportInfoResult.ReportInfo.Path)}.rdlx";
 
             ThisPageReport = new PageReport(new FileInfo(reportPath));
+            var tenantStatisticsDataSource = ThisPageReport.Report.DataSources.FirstOrDefault(d => d.Name.Equals("TenantsStatisticsDataSource"));
+            tenantStatisticsDataSource.ConnectionProperties.ConnectString = "jsondoc=";
+
+            tenantStatisticsDataSource = ThisPageReport.Document.PageReport.Report.DataSources.FirstOrDefault(d => d.Name.Equals("TenantsStatisticsDataSource"));
+            tenantStatisticsDataSource.ConnectionProperties.ConnectString = "jsondoc=";
 
             await base.Initialize();
         }
@@ -59,12 +64,13 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 var accessToken = await base.HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
                 var headers = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
                 var hostApiUrl = Configuration["IdentityServer:Authority"];
-                var paramsDic = arg.Parameters.ToDictionary(p => p.Name, p => p.Value);
+                var paramsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
 
                 using var client = new HttpClient();
                 client.SetBearerToken(accessToken);
 
-                var url = $"{hostApiUrl}/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={paramsDic["tenantId"]}&startDate={paramsDic["startDate"]:o}&endDate={paramsDic["endDate"]:o}";
+                var tenantId = paramsDic.ContainsKey("TenantId") ? paramsDic["TenantId"] : null;
+                var url = $"{hostApiUrl}/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={tenantId}&startDate={paramsDic["StartDate"]:o}&endDate={paramsDic["EndDate"]:o}";
                 var response = await client.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
@@ -74,8 +80,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 else
                 {
                     var contentJson = await response.Content.ReadAsStringAsync();
-                    var resultJson = JObject.Parse(contentJson)["result"].ToString();
-                    return resultJson;
+                    return contentJson;
                 }
             }
             return string.Empty;
