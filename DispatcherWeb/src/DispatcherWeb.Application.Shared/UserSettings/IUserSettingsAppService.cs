@@ -5,6 +5,6 @@ namespace DispatcherWeb.UserSettings
 {
     public interface IUserSettingsAppService : IApplicationService
     {
-        Task<string> GetUserSettingsByName(string settingName);
+        Task<string> GetUserSettingByName(string settingName);
     }
 }

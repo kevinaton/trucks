@@ -26,7 +26,7 @@ import {
     MarkAllAsReadButton
 } from '../../styled';
 import { 
-    getUserSettingsByName,
+    getUserSettingByName,
     getUserNotifications, 
     getUserPriorityNotifications,
     setAllNotificationsAsRead as onSetAllNotificationsAsRead,
@@ -68,7 +68,7 @@ export const NotificationBell = ({
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        dispatch(getUserSettingsByName('App.UserOptions.PlaySoundForNotifications'));
+        dispatch(getUserSettingByName('App.UserOptions.PlaySoundForNotifications'));
     }, [dispatch]);
 
     useEffect(() => {

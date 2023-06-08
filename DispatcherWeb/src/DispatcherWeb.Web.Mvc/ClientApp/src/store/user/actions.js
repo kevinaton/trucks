@@ -2,9 +2,9 @@ import {
     GET_USER_INFO,
     GET_USER_INFO_SUCCESS,
     GET_USER_INFO_FAILURE,
-    GET_USER_SETTINGS,
-    GET_USER_SETTINGS_SUCCESS,
-    GET_USER_SETTINGS_FAILURE
+    GET_USER_SETTING,
+    GET_USER_SETTING_SUCCESS,
+    GET_USER_SETTING_FAILURE
 } from './actionTypes';
 
 export const getUserInfo = () => ({
@@ -21,17 +21,17 @@ export const getUserInfoFailure = error => ({
     payload: error
 });
 
-export const getUserSettingsByName = settingName => ({
-    type: GET_USER_SETTINGS,
+export const getUserSettingByName = settingName => ({
+    type: GET_USER_SETTING,
     payload: settingName
 });
 
-export const getUserSettingsByNameSuccess = userSettings => ({
-    type: GET_USER_SETTINGS_SUCCESS,
-    payload: userSettings
+export const getUserSettingByNameSuccess = userSetting => ({
+    type: GET_USER_SETTING_SUCCESS,
+    payload: userSetting
 });
 
-export const getUserSettingsByNameFailure = error => ({
-    type: GET_USER_SETTINGS_FAILURE,
+export const getUserSettingByNameFailure = error => ({
+    type: GET_USER_SETTING_FAILURE,
     payload: error
 });

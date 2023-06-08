@@ -1,6 +1,6 @@
 //User
 export const GET_CURRENT_LOGIN_INFO = '/Session/GetCurrentLoginInformations';
-export const GET_USER_SETTINGS = '/UserSettings/GetUserSettingsByName';
+export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 
 //Layout
 export const GET_MENU_ITEMS = '/Layout/GetMenu';

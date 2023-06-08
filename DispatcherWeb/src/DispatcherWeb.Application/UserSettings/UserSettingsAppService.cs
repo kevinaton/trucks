@@ -21,7 +21,7 @@ namespace DispatcherWeb.UserSettings
             _scopedIocResolver = scopedIocResolver;
         }
 
-        public async Task<string> GetUserSettingsByName(string settingName)
+        public async Task<string> GetUserSettingByName(string settingName)
         {
             var settingDefinition = _settingDefinitionManager.GetSettingDefinition(settingName);
             if (settingDefinition.ClientVisibilityProvider == null 
