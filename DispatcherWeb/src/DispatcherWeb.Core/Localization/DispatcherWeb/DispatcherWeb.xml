@@ -1846,6 +1846,6 @@
 		<text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
 		<text name="TruckTrailerCategory">Truck/Trailer category</text>
 		<text name="Trailer">Trailer</text>
-		<text name="ThereWereTractorsAssociatedWithThisTrailer">There were tractors associated with this truck. Those tractors has been removed from the truck.</text>
+		<text name="ThereWasTractorAssociatedWithThisTrailer">There was a tractor associated with this trailer. This tractor has been removed from the trailer.</text>
 	</texts>
 </localizationDictionary>

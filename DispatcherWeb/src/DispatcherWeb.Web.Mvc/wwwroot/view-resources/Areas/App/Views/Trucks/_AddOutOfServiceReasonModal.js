@@ -34,7 +34,7 @@
                 message += result.thereWereAssociatedOrders ? app.localize('ThereWereOrdersAssociatedWithThisTruck') + '\n' : '';
                 message += result.thereWereCanceledDispatches ? app.localize('ThereWereCanceledDispatches') + '\n' : '';
                 message += result.thereWereNotCanceledDispatches ? app.localize('ThereWereNotCanceledDispatches') + '\n' : '';
-                message += result.thereWereAssociatedTractors ? app.localize('ThereWereTractorsAssociatedWithThisTrailer') + '\n' : '';
+                message += result.thereWereAssociatedTractors ? app.localize('ThereWasTractorAssociatedWithThisTrailer') + '\n' : '';
                 if (message) {
                     abp.message.info(message, 'Message');
                 }

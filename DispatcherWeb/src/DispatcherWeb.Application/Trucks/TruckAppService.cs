@@ -555,6 +555,7 @@ namespace DispatcherWeb.Trucks
                 if (model.IsOutOfService)
                 {
                     result.ThereWereAssociatedOrders = await RemoveTruckFromScheduleStartingOnDate(entity.Id);
+                    result.ThereWereAssociatedTractors = await RemoveAssociatedTractors(entity.Id);
                 }
                 if (!model.IsActive)
                 {
