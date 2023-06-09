@@ -555,6 +555,7 @@ namespace DispatcherWeb.Trucks
                 if (model.IsOutOfService)
                 {
                     result.ThereWereAssociatedOrders = await RemoveTruckFromScheduleStartingOnDate(entity.Id);
+                    result.ThereWereAssociatedTractors = await RemoveAssociatedTractors(entity.Id);
                 }
                 if (!model.IsActive)
                 {
@@ -1013,6 +1014,7 @@ namespace DispatcherWeb.Trucks
                 result.ThereWereAssociatedOrders = await RemoveTruckFromScheduleStartingOnDate(truck.Id);
                 result.ThereWereCanceledDispatches = await CancelUnacknowledgedDispatches(truck.Id);
                 result.ThereWereNotCanceledDispatches = await ThereAreAcknowledgedOrLoadedDispatches(truck.Id);
+                result.ThereWereAssociatedTractors = await RemoveAssociatedTractors(truck.Id);
             }
             truck.IsOutOfService = input.IsOutOfService;
             return result;
@@ -1117,6 +1119,17 @@ namespace DispatcherWeb.Trucks
 
         private async Task<bool> ThereAreAcknowledgedOrLoadedDispatches(int truckId) =>
             await _dispatchRepository.GetAll().AnyAsync(d => d.TruckId == truckId && (d.Status == DispatchStatus.Acknowledged || d.Status == DispatchStatus.Loaded));
+        
+        private async Task<bool> RemoveAssociatedTractors(int trailerId)
+        {
+            var tractors = await _truckRepository.GetAll()
+                .Where(x => x.CurrentTrailerId == trailerId)
+                .ToListAsync();
+
+            tractors.ForEach(x => x.CurrentTrailerId = null);
+
+            return tractors.Count > 0;
+        }
 
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
         public async Task<bool> CanDeleteTruck(EntityDto input)
