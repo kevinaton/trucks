@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import {
     Autocomplete,
@@ -31,12 +32,14 @@ import { grey } from '@mui/material/colors';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { linearProgressClasses } from '@mui/material/LinearProgress';
 import moment from 'moment';
+import { getOffices } from '../../store/actions';
 import data from '../../common/data/data.json';
 import { Tablecell, VerticalLinearProgress } from '../../components/DTComponents';
+import TruckMap from './truck-map';
 
 const { offices, TruckCode, ScheduleData } = data;
 
-const Schedule = (props) => {
+const Schedule = props => {
     const pageName = 'Schedule';
     const [date, setDate] = React.useState(moment());
     const [view, setView] = React.useState('all');
@@ -47,6 +50,16 @@ const Schedule = (props) => {
     const [isOrderOpen, setIsOrderOpen] = React.useState(false);
     const [isPrintOrderOpen, setIsPrintOrderOpen] = React.useState(false);
     const [hoveredRow, setHoveredRow] = React.useState(null);
+
+    const dispatch = useDispatch();
+
+    const { offices } = useSelector((state) => ({
+        offices: state.OfficeReducer.offices
+    }));
+
+    useEffect(() => {
+        dispatch(getOffices());
+    }, [dispatch]);
 
     useEffect(() => {
         props.handleCurrentPageName(pageName);
@@ -117,6 +130,7 @@ const Schedule = (props) => {
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Box>
+
                 <Paper>
                     {/* Filter settings */}
                     <Box
@@ -205,32 +219,9 @@ const Schedule = (props) => {
                         </LocalizationProvider>
                     </Box>
 
-                    {/* Truck Map */}
-                    <Box sx={{ p: 3 }}>
-                        <Paper variant='outlined' sx={{ p: 1 }}>
-                            <Grid container rowSpacing={1} columnSpacing={1}>
-                                {TruckCode.map((truck) => {
-                                    return (
-                                        <Grid item key={truck.label}>
-                                            <Chip
-                                                label={truck.label}
-                                                color={truck.color}
-                                                onClick={() => {}}
-                                                sx={{
-                                                    borderRadius: 0,
-                                                    fontSize: 18,
-                                                    fontWeight: 600,
-                                                    py: 3,
-                                                }}
-                                            />
-                                        </Grid>
-                                    );
-                                })}
-                            </Grid>
-                        </Paper>
-                    </Box>
+                    <TruckMap />
 
-                    <TableContainer component={Box}>
+                    {/* <TableContainer component={Box}>
                         <Table stickyHeader aria-label='schedule table' size='small'>
                             <TableHead>
                                 <TableRow sx={{ 
@@ -591,7 +582,7 @@ const Schedule = (props) => {
                                 })}
                             </TableBody>
                         </Table>
-                    </TableContainer>
+                    </TableContainer> */}
                 </Paper>
             </div>
         </HelmetProvider>

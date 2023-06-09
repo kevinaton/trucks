@@ -6,8 +6,8 @@ import {
 } from './actionTypes';
 
 const INIT_STATE = {
-    scheduleTrucks: [],
-    scheduleOrders: [],
+    scheduleTrucks: null,
+    scheduleOrders: null,
 };
 
 const SchedulingReducer = (state = INIT_STATE, action) => {

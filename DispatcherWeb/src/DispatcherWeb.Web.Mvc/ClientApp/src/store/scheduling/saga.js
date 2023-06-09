@@ -8,18 +8,18 @@ import {
 } from './actions';
 import { getScheduleTrucks, getScheduleOrders } from './service';
 
-function* fetchScheduleTrucks() {
+function* fetchScheduleTrucks({ payload: filter }) {
     try {
-        const response = yield call(getScheduleTrucks);
+        const response = yield call(getScheduleTrucks, filter);
         yield put(getScheduleTrucksSuccess(response));
     } catch (error) {
         yield put(getScheduleTrucksFailure(error));
     }
 }
 
-function* fetchScheduleOrders() {
+function* fetchScheduleOrders({ payload: filter }) {
     try {
-        const response = yield call(getScheduleOrders);
+        const response = yield call(getScheduleOrders, filter);
         yield put(getScheduleOrdersSuccess(response));
     } catch (error) {
         yield put(getScheduleOrdersFailure(error));
