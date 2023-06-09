@@ -11,6 +11,33 @@
         <input type="hidden" asp-for="Shift" />
         <input type="hidden" asp-for="TractorId" />
         <div class="form-group">
+            <p id="ModalSubtitle"></p>
+        </div>
+        <div class="form-group">
+            <label for="VehicleCategoryId">Category</label>
+            <select class="form-control" id="VehicleCategoryId" name="VehicleCategoryId">
+                <option value="">&nbsp;</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>@L("BedConstruction")</label>
+            <select class="form-control" id="BedConstruction" name="BedConstruction" asp-items="Html.GetEnumSelectListOrderedByName<BedConstructionEnum>()">
+                <option value="">&nbsp;</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Make">Make</label>
+            <select class="form-control" id="Make" name="Make">
+                <option value="">&nbsp;</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Model">Model</label>
+            <select class="form-control" id="Model" name="Model">
+                <option value="">&nbsp;</option>
+            </select>
+        </div>
+        <div class="form-group">
             <label class="required-label" for="TrailerId">Trailer</label>
             <select class="form-control" asp-for="TrailerId" required>
                 <option value="">Select a trailer</option>

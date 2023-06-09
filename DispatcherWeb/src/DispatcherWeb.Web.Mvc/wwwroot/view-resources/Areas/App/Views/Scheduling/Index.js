@@ -488,10 +488,16 @@
                         return;
                     }
                     trailer = {
-                        id: truck.truckId,
+                        id: truck.id,
                         truckCode: truck.truckCode,
                     };
                     truck = tractor;
+                    if (!canAddTruckWithDriverToOrder(truck, truck.driverId, order)) {
+                        return;
+                    }
+                    if (result.some(r => r.truckId === truck.id && r.trailer && r.trailer.id === trailer.id)) {
+                        return;
+                    }
                 }
 
                 result.push({
@@ -2652,7 +2658,7 @@
                             message: 'Select trailer for truck ' + item.truckCode + ' for single job',
                             orderLineTruckId: item.id,
                             trailerId: item.trailer && item.trailer.id || null,
-                            trailerTruckCode: item.trailer && item.trailer.truckCode|| null,
+                            trailerTruckCode: item.trailer && item.trailer.truckCode || null,
                         });
                     }
                 },
@@ -2848,7 +2854,10 @@
                             officeId: filterData.officeId,
                             tractorId: truck.id,
                             trailerId: truck.trailer.id,
-                            trailerTruckCode: truck.trailer.truckCode
+                            trailerTruckCode: truck.trailer.truckCode,
+                            modalSubtitle: truck.truckCode + ' is currently coupled to ' + truck.trailer.truckCode
+                                + ' - ' + truck.vehicleCategory.name + ' ' + truck.make + ' ' + truck.model + ' '
+                                + truck.bedConstructionFormatted + ' bed'
                         });
                     }
                 },
