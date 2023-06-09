@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using GrapeCity.BI.Data.DataProviders;
 using System.Collections.Generic;
+using GrapeCity.Enterprise.Data.Expressions;
 
 namespace DispatcherWeb.ReportCenter.Helpers
 {
@@ -73,6 +74,27 @@ namespace DispatcherWeb.ReportCenter.Helpers
 
             parameters.Add(parameter);
             return true;
+        }
+
+        public static void HideTenantLabels(this ReportComponentCollection components)
+        {
+            var hiddenVisibility = new Visibility()
+            {
+                Hidden = ExpressionInfo.Parse("true", ExpressionResultType.Boolean)
+            };
+            var txtTenantInMaster = (TextBox)components.FirstOrDefault(c => c is TextBox box && box.Name.Equals("txtTenantInMaster"));
+            if (txtTenantInMaster != null) txtTenantInMaster.Visibility = hiddenVisibility;
+            var lblTenantInMaster = (TextBox)components.FirstOrDefault(c => c is TextBox box && box.Name.Equals("lblTenantInMaster"));
+            if (lblTenantInMaster != null) lblTenantInMaster.Visibility = hiddenVisibility;
+        }
+
+        public static void ResetDataSourceConnectionString(this DataSourceCollection dataSources, string dataSourceName)
+        {
+            var tenantStatisticsDataSource = dataSources.FirstOrDefault(d => d.Name.Equals(dataSourceName));
+            if (tenantStatisticsDataSource != null)
+            {
+                tenantStatisticsDataSource.ConnectionProperties.ConnectString = "jsondoc=";
+            }
         }
     }
 }

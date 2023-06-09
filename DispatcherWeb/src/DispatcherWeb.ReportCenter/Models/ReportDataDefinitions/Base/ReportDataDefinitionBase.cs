@@ -7,7 +7,6 @@ using DispatcherWeb.ReportCenter.Helpers;
 using GrapeCity.ActiveReports;
 using GrapeCity.ActiveReports.PageReportModel;
 using GrapeCity.ActiveReports.Web.Viewer;
-using GrapeCity.Enterprise.Data.Expressions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -46,10 +45,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             var hostApiUrl = Configuration["IdentityServer:Authority"];
             var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
             var connStrData = $"jsondoc={hostApiUrl}/api/services/activeReports/tenantStatisticsReport/GetTenants";
-            //var connStrData = $"jsondoc={hostApiUrl}/api/services/app/dashboard/GetTenants";
-            //var connStrData = $"jsondoc={hostApiUrl}/api/services/app/tenant/GetTenants";
-
             var connStrHeaders = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
+
             ds.ConnectionProperties.ConnectString = $"{connStrHeaders};{connStrData}";
 
             return ds;
@@ -89,29 +86,27 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
                 return;
 
             // Need to remove first the existing datasource for Tenants setup in the report (in the MasterReport)
-            var tenantsDataSource = ThisPageReport.Report.DataSources.FirstOrDefault(d => d.Name.Equals("TenantsDataSource"));
-            ThisPageReport.Report.DataSources.Remove(tenantsDataSource);
-
-            tenantsDataSource = ThisPageReport.Document.PageReport.Report.DataSources.FirstOrDefault(d => d.Name.Equals("TenantsDataSource"));
-            ThisPageReport.Document.PageReport.Report.DataSources.Remove(tenantsDataSource);
-
-            var tenantsDataSet = ThisPageReport.Report.DataSets.FirstOrDefault(d => d.Name.Equals("TenantsDataSet"));
+            ThisPageReport.Report.DataSources.Remove(d => d.Name.Equals("TenantsDataSource"));
+            ThisPageReport.Document.PageReport.Report.DataSources.Remove(d => d.Name.Equals("TenantsDataSource"));
 
             if (!HasTenantsParameter)
             {
                 // Remove existing dataset configured for the datasource
-                ThisPageReport.Report.DataSets.Remove(tenantsDataSet);
+                ThisPageReport.Report.DataSets.Remove(d => d.Name.Equals("TenantsDataSet"));
+                ThisPageReport.Document.PageReport.Report.DataSets.Remove(d => d.Name.Equals("TenantsDataSet"));
 
                 // Remove/Hide the Tenant parameter
-                var tenantParameter = ThisPageReport.Report.ReportParameters.FirstOrDefault(p => p.Name.Equals("TenantId"));
-                ThisPageReport.Report.ReportParameters.Remove(tenantParameter);
+                ThisPageReport.Report.ReportParameters.Remove(p => p.Name.Equals("TenantId"));
+                ThisPageReport.Document.PageReport.Report.ReportParameters.Remove(p => p.Name.Equals("TenantId"));
+
+                ThisPageReport.Report.Body.Components.HideTenantLabels();
+                ThisPageReport.Document.PageReport.Report.Body.Components.HideTenantLabels();
             }
             else
             {
                 // Recreate the datasource for Tenants; Dataset is already setup in its query to use the datasource name
                 var tenantsListDataSource = await TenantsListDataSource();
                 ThisPageReport.Report.DataSources.Add(tenantsListDataSource);
-
                 ThisPageReport.Document.PageReport.Report.DataSources.Add(tenantsListDataSource);
             }
         }

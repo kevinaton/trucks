@@ -1,13 +1,78 @@
 ﻿<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+	<PageHeader>
+		<Height>0in</Height>
+		<ReportItems>
+			<CustomReportItem Name="TitleContentPlaceHolder">
+				<Type>ContentPlaceHolder</Type>
+				<Top>0.07873964in</Top>
+				<Left>0.3937008in</Left>
+				<Width>5.5118in</Width>
+				<Height>0.315in</Height>
+				<ZIndex>4</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Report Title Section</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
+					<ReportItems>
+						<CustomReportItem Name="txtReportTitle">
+							<Type>InputField</Type>
+							<Width>9.8cm</Width>
+							<Height>0.75cm</Height>
+							<Style>
+								<FontFamily>Arial</FontFamily>
+								<FontSize>14pt</FontSize>
+								<FontStyle>Normal</FontStyle>
+								<FontWeight>700</FontWeight>
+								<PaddingBottom>2pt</PaddingBottom>
+								<PaddingLeft>2pt</PaddingLeft>
+								<PaddingRight>2pt</PaddingRight>
+								<PaddingTop>2pt</PaddingTop>
+							</Style>
+							<CustomProperties>
+								<CustomProperty>
+									<Name>DisplayName</Name>
+									<Value>InputField</Value>
+								</CustomProperty>
+								<CustomProperty>
+									<Name>Value</Name>
+									<Value>Tenant Statistics Report</Value>
+								</CustomProperty>
+							</CustomProperties>
+							<DataElementName>InputField1</DataElementName>
+						</CustomReportItem>
+					</ReportItems>
+				</dd:Container>
+				<DataElementName>ContentPlaceHolder2</DataElementName>
+			</CustomReportItem>
+			<CustomReportItem Name="ContentPlaceHolder1">
+				<Type>ContentPlaceHolder</Type>
+				<Top>2.2cm</Top>
+				<Left>1.2cm</Left>
+				<Width>7.7151in</Width>
+				<Height>0.4725in</Height>
+				<ZIndex>9</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Search Criteria Section</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<DataElementName>ContentPlaceHolder3</DataElementName>
+			</CustomReportItem>
+		</ReportItems>
+	</PageHeader>
 	<Body>
 		<Height>0in</Height>
 		<ReportItems>
 			<CustomReportItem Name="MainContentPlaceHolder">
 				<Type>ContentPlaceHolder</Type>
-				<Top>1.574862in</Top>
+				<Top>0.2cm</Top>
 				<Left>0.393701in</Left>
 				<Width>7.8042in</Width>
-				<Height>8.9763in</Height>
+				<Height>8.4252in</Height>
 				<ZIndex>3</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
@@ -25,7 +90,7 @@
 							<DataSetName>TenantStatisticsDataSet</DataSetName>
 							<Left>0.4cm</Left>
 							<Width>18.2cm</Width>
-							<Height>1.417323in</Height>
+							<Height>1.338583in</Height>
 							<Style>
 								<BackgroundColor>=""</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
@@ -373,10 +438,10 @@
 						</dd:DVChart>
 						<dd:DVChart Name="Chart3">
 							<DataSetName>TenantStatisticsDataSet</DataSetName>
-							<Top>7.8cm</Top>
+							<Top>7.4cm</Top>
 							<Left>0.4cm</Left>
 							<Width>18.2cm</Width>
-							<Height>3.600006cm</Height>
+							<Height>3.400006cm</Height>
 							<Style>
 								<BackgroundColor>=""</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
@@ -724,10 +789,10 @@
 						</dd:DVChart>
 						<dd:DVChart Name="Chart4">
 							<DataSetName>TenantStatisticsDataSet</DataSetName>
-							<Top>11.40001cm</Top>
+							<Top>10.80001cm</Top>
 							<Left>0.4cm</Left>
 							<Width>18.2cm</Width>
-							<Height>3.799992cm</Height>
+							<Height>3.599992cm</Height>
 							<Style>
 								<BackgroundColor>=""</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
@@ -1075,10 +1140,10 @@
 						</dd:DVChart>
 						<dd:DVChart Name="Chart5">
 							<DataSetName>TenantStatisticsDataSet</DataSetName>
-							<Top>18.7998cm</Top>
+							<Top>17.80001cm</Top>
 							<Left>0.415773cm</Left>
 							<Width>18.2cm</Width>
-							<Height>3.8cm</Height>
+							<Height>3.6cm</Height>
 							<Style>
 								<BackgroundColor>=""</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
@@ -1426,10 +1491,10 @@
 						</dd:DVChart>
 						<dd:DVChart Name="Chart6">
 							<DataSetName>TenantStatisticsDataSet</DataSetName>
-							<Top>15.2cm</Top>
+							<Top>14.4cm</Top>
 							<Left>0.415774cm</Left>
 							<Width>18.2cm</Width>
-							<Height>3.599802cm</Height>
+							<Height>3.399802cm</Height>
 							<Style>
 								<BackgroundColor>=""</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
@@ -1777,10 +1842,10 @@
 						</dd:DVChart>
 						<dd:DVChart Name="Chart1">
 							<DataSetName>TenantStatisticsDataSet</DataSetName>
-							<Top>3.6cm</Top>
+							<Top>3.4cm</Top>
 							<Left>0.4157738cm</Left>
 							<Width>18.1842cm</Width>
-							<Height>4.2cm</Height>
+							<Height>4cm</Height>
 							<Style>
 								<BackgroundColor>=""</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
@@ -2131,95 +2196,6 @@
 				</dd:Container>
 				<DataElementName>ContentPlaceHolder1</DataElementName>
 			</CustomReportItem>
-			<CustomReportItem Name="TitleContentPlaceHolder">
-				<Type>ContentPlaceHolder</Type>
-				<Top>0.07873984in</Top>
-				<Left>0.393701in</Left>
-				<Width>5.5118in</Width>
-				<Height>0.3937in</Height>
-				<ZIndex>4</ZIndex>
-				<CustomProperties>
-					<CustomProperty>
-						<Name>Text</Name>
-						<Value>Report Title Section</Value>
-					</CustomProperty>
-				</CustomProperties>
-				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
-					<ReportItems>
-						<Textbox Name="txtTenantStatisticsReport">
-							<Top>0.08333334in</Top>
-							<Width>2.7559in</Width>
-							<Height>0.315in</Height>
-							<Style>
-								<VerticalAlign>Middle</VerticalAlign>
-								<dd:StyleName>TitleText</dd:StyleName>
-							</Style>
-							<CanGrow>true</CanGrow>
-							<DataElementOutput>Output</DataElementOutput>
-							<Value>Tenant Statistics Report</Value>
-						</Textbox>
-					</ReportItems>
-				</dd:Container>
-				<DataElementName>ContentPlaceHolder2</DataElementName>
-			</CustomReportItem>
-			<CustomReportItem Name="ContentPlaceHolder1">
-				<Type>ContentPlaceHolder</Type>
-				<Top>1.023622in</Top>
-				<Left>0.393701in</Left>
-				<Width>7.7953in</Width>
-				<Height>0.4725in</Height>
-				<ZIndex>4</ZIndex>
-				<CustomProperties>
-					<CustomProperty>
-						<Name>Text</Name>
-						<Value>Search Criteria Section</Value>
-					</CustomProperty>
-				</CustomProperties>
-				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
-					<ReportItems>
-						<Textbox Name="TextBox1">
-							<Top>0cm</Top>
-							<Left>1.615082cm</Left>
-							<Width>9.6424cm</Width>
-							<Height>0.6cm</Height>
-							<Style>
-								<FontFamily>Arial</FontFamily>
-								<FontSize>11pt</FontSize>
-								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
-								<Format>d</Format>
-								<PaddingBottom>2pt</PaddingBottom>
-								<PaddingLeft>2pt</PaddingLeft>
-								<PaddingRight>2pt</PaddingRight>
-								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Left</TextAlign>
-							</Style>
-							<CanGrow>true</CanGrow>
-							<Value>=Parameters!StartDate.Value &amp; IIF(Parameters!StartDate.Value &lt;&gt; Parameters!EndDate.Value, " - " &amp; Parameters!EndDate.Value, "")</Value>
-						</Textbox>
-						<Textbox Name="TextBox2">
-							<Top>0cm</Top>
-							<Width>1.5497cm</Width>
-							<Height>0.5619cm</Height>
-							<Style>
-								<FontFamily>Arial</FontFamily>
-								<FontSize>11pt</FontSize>
-								<FontStyle>Normal</FontStyle>
-								<FontWeight>400</FontWeight>
-								<PaddingBottom>2pt</PaddingBottom>
-								<PaddingLeft>2pt</PaddingLeft>
-								<PaddingRight>2pt</PaddingRight>
-								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Left</TextAlign>
-							</Style>
-							<ZIndex>1</ZIndex>
-							<CanGrow>true</CanGrow>
-							<Value>Date:</Value>
-						</Textbox>
-					</ReportItems>
-				</dd:Container>
-				<DataElementName>ContentPlaceHolder3</DataElementName>
-			</CustomReportItem>
 		</ReportItems>
 	</Body>
 	<Description>TenantStatisticsReport</Description>
@@ -2299,7 +2275,7 @@
 	<CustomProperties>
 		<CustomProperty>
 			<Name>MasterReport</Name>
-			<Value>_MasterReportLegalPortrait.rdlx-master</Value>
+			<Value>_MasterReportLetterPortrait.rdlx-master</Value>
 		</CustomProperty>
 	</CustomProperties>
 	<dd:ReportStyleSheet xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">

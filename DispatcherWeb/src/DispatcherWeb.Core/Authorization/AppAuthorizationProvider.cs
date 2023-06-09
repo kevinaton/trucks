@@ -156,7 +156,7 @@ namespace DispatcherWeb.Authorization
             reports.CreateChildPermission(AppPermissions.Pages_Reports_RevenueAnalysis, L("RevenueAnalysis"), multiTenancySides: MultiTenancySides.Tenant);
 
             var activeReports = pages.CreateChildPermission(AppPermissions.Pages_ActiveReports, L("ActiveReports"), multiTenancySides: MultiTenancySides.Host | MultiTenancySides.Tenant);
-            activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_TenantStatisticsReport, L("TenantStatisticsReport"), multiTenancySides: MultiTenancySides.Tenant);
+            activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_TenantStatisticsReport, L("TenantStatisticsReport"), multiTenancySides: MultiTenancySides.Host);
             activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_VehicleMaintenanceWorkOrderReport, L("VehicleMaintenanceWorkOrderReport"), multiTenancySides: MultiTenancySides.Tenant);
 
             var imports = pages.CreateChildPermission(AppPermissions.Pages_Imports, L("Imports"), multiTenancySides: MultiTenancySides.Tenant);

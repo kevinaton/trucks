@@ -1,13 +1,79 @@
 ﻿<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
+	<PageHeader>
+		<Height>0in</Height>
+		<ReportItems>
+			<CustomReportItem Name="TitleContentPlaceHolder">
+				<Type>ContentPlaceHolder</Type>
+				<Top>0.07873964in</Top>
+				<Left>0.3937008in</Left>
+				<Width>5.5118in</Width>
+				<Height>0.315in</Height>
+				<ZIndex>4</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Report Title Section</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
+					<ReportItems>
+						<CustomReportItem Name="txtReportTitle">
+							<Type>InputField</Type>
+							<Top>0.009862211in</Top>
+							<Width>11.9cm</Width>
+							<Height>0.75cm</Height>
+							<Style>
+								<FontFamily>Arial</FontFamily>
+								<FontSize>14pt</FontSize>
+								<FontStyle>Normal</FontStyle>
+								<FontWeight>700</FontWeight>
+								<PaddingBottom>2pt</PaddingBottom>
+								<PaddingLeft>2pt</PaddingLeft>
+								<PaddingRight>2pt</PaddingRight>
+								<PaddingTop>2pt</PaddingTop>
+							</Style>
+							<CustomProperties>
+								<CustomProperty>
+									<Name>DisplayName</Name>
+									<Value>InputField</Value>
+								</CustomProperty>
+								<CustomProperty>
+									<Name>Value</Name>
+									<Value>Vehicle Maintenance Work Order  Report</Value>
+								</CustomProperty>
+							</CustomProperties>
+							<DataElementName>InputField21</DataElementName>
+						</CustomReportItem>
+					</ReportItems>
+				</dd:Container>
+				<DataElementName>ContentPlaceHolder2</DataElementName>
+			</CustomReportItem>
+			<CustomReportItem Name="ContentPlaceHolder1">
+				<Type>ContentPlaceHolder</Type>
+				<Top>2.2cm</Top>
+				<Left>1.2cm</Left>
+				<Width>7.7151in</Width>
+				<Height>0.4725in</Height>
+				<ZIndex>9</ZIndex>
+				<CustomProperties>
+					<CustomProperty>
+						<Name>Text</Name>
+						<Value>Search Criteria Section</Value>
+					</CustomProperty>
+				</CustomProperties>
+				<DataElementName>ContentPlaceHolder3</DataElementName>
+			</CustomReportItem>
+		</ReportItems>
+	</PageHeader>
 	<Body>
 		<Height>0in</Height>
 		<ReportItems>
 			<CustomReportItem Name="MainContentPlaceHolder">
 				<Type>ContentPlaceHolder</Type>
-				<Top>1.653543in</Top>
+				<Top>0.2cm</Top>
 				<Left>0.393701in</Left>
-				<Width>7.7165in</Width>
-				<Height>12.2047in</Height>
+				<Width>7.8042in</Width>
+				<Height>8.4252in</Height>
 				<ZIndex>3</ZIndex>
 				<CustomProperties>
 					<CustomProperty>
@@ -22,8 +88,8 @@
 				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
 					<ReportItems>
 						<Textbox Name="TextBox1">
-							<Top>0.176389cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>0.002662cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -45,12 +111,13 @@
 								</BorderStyle>
 							</Style>
 							<CanGrow>true</CanGrow>
-							<Value>=Fields!Id.Value</Value>
+							<DataElementName>id</DataElementName>
+							<Value>=first(Fields!id.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField1">
 							<Type>InputField</Type>
-							<Top>0.1737267cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>0cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -86,8 +153,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField2">
 							<Type>InputField</Type>
-							<Top>0.739051cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>0.565324cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -119,8 +186,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox2">
-							<Top>0.739051cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>0.565324cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -143,12 +210,12 @@
 							</Style>
 							<ZIndex>3</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox5</DataElementName>
-							<Value>=Fields!VehicleServiceTypeName.Value</Value>
+							<DataElementName>vehicle Service Type Name</DataElementName>
+							<Value>=First(Fields!vehicleServiceTypeName.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox3">
-							<Top>1.869676cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>1.695949cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -172,13 +239,13 @@
 							</Style>
 							<ZIndex>4</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox6</DataElementName>
-							<Value>=Fields!StartDate.Value</Value>
+							<DataElementName>completion Date</DataElementName>
+							<Value>=First(Fields!completionDate.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField3">
 							<Type>InputField</Type>
-							<Top>1.869676cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>1.695949cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -211,8 +278,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField4">
 							<Type>InputField</Type>
-							<Top>1.301713cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>1.127986cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -244,8 +311,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox4">
-							<Top>1.301713cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>1.127986cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -269,12 +336,12 @@
 							</Style>
 							<ZIndex>7</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox7</DataElementName>
-							<Value>=Fields!IssueDate.Value</Value>
+							<DataElementName>issue Date</DataElementName>
+							<Value>=First(Fields!issueDate.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox5">
-							<Top>3.557662cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>3.383935cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -297,13 +364,13 @@
 							</Style>
 							<ZIndex>8</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox8</DataElementName>
-							<Value>=Fields!TruckCode.Value</Value>
+							<DataElementName>truck Code</DataElementName>
+							<Value>=First(Fields!truckCode.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField5">
 							<Type>InputField</Type>
-							<Top>3.557662cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>3.383935cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -336,8 +403,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField6">
 							<Type>InputField</Type>
-							<Top>4.120323cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>3.946596cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -369,8 +436,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox6">
-							<Top>4.120324cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>3.946597cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -393,12 +460,12 @@
 							</Style>
 							<ZIndex>11</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox9</DataElementName>
-							<Value>=Fields!Note.Value</Value>
+							<DataElementName>note</DataElementName>
+							<Value>=First(Fields!note.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox7">
-							<Top>2.995cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>2.821273cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -421,13 +488,13 @@
 							</Style>
 							<ZIndex>12</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox10</DataElementName>
-							<Value>=Fields!Status.Value</Value>
+							<DataElementName>status</DataElementName>
+							<Value>=Sum(Fields!status.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField7">
 							<Type>InputField</Type>
-							<Top>2.995cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>2.821273cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -460,8 +527,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField8">
 							<Type>InputField</Type>
-							<Top>2.432338cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>2.258611cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -493,8 +560,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox8">
-							<Top>2.432338cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>2.258611cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -518,12 +585,11 @@
 							</Style>
 							<ZIndex>15</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox11</DataElementName>
-							<Value>=Fields!CompletionDate.Value</Value>
+							<Value>=First(Fields!completionDate.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox9">
-							<Top>5.250949cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>5.077222cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -546,13 +612,13 @@
 							</Style>
 							<ZIndex>16</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox12</DataElementName>
-							<Value>=Fields!Hours.Value</Value>
+							<DataElementName>hours</DataElementName>
+							<Value>=Sum(Fields!hours.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField9">
 							<Type>InputField</Type>
-							<Top>5.250948cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>5.077221cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -585,8 +651,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField10">
 							<Type>InputField</Type>
-							<Top>4.682985cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>4.509258cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -618,8 +684,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox10">
-							<Top>4.682986cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>4.509259cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -642,12 +708,12 @@
 							</Style>
 							<ZIndex>19</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox13</DataElementName>
-							<Value>=Fields!Odometer.Value</Value>
+							<DataElementName>odometer</DataElementName>
+							<Value>=Sum(Fields!odometer.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox13">
-							<Top>8.06956cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>7.895833cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -671,12 +737,12 @@
 							<ZIndex>24</ZIndex>
 							<CanGrow>true</CanGrow>
 							<DataElementName>TextBox16</DataElementName>
-							<Value>=IIF(Fields!IsTotalPartsCostOverridden.Value="True", "Yes", "No")</Value>
+							<Value>=IIF(Fields!isTotalPartsCostOverridden.Value="True", "Yes", "No")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField13">
 							<Type>InputField</Type>
-							<Top>8.061597cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>7.88787cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -709,8 +775,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField14">
 							<Type>InputField</Type>
-							<Top>8.629561cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>8.455834cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -742,8 +808,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox14">
-							<Top>8.632222cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>8.458495cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -766,12 +832,12 @@
 							</Style>
 							<ZIndex>27</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox17</DataElementName>
-							<Value>=Fields!Tax.Value</Value>
+							<DataElementName>tax</DataElementName>
+							<Value>=Sum(Fields!tax.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox15">
-							<Top>9.757547cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>9.58382cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -794,13 +860,13 @@
 							</Style>
 							<ZIndex>28</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox18</DataElementName>
-							<Value>=Fields!TotalCost.Value</Value>
+							<DataElementName>total Cost</DataElementName>
+							<Value>=Sum(Fields!totalCost.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField15">
 							<Type>InputField</Type>
-							<Top>9.754886cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>9.581159cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -833,8 +899,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField16">
 							<Type>InputField</Type>
-							<Top>9.192222cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>9.018495cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -866,8 +932,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox16">
-							<Top>9.194885cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>9.021158cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -890,12 +956,12 @@
 							</Style>
 							<ZIndex>31</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox19</DataElementName>
-							<Value>=Fields!Discount.Value</Value>
+							<DataElementName>discount</DataElementName>
+							<Value>=Sum(Fields!discount.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox17">
-							<Top>6.938935cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>6.765208cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -919,12 +985,12 @@
 							<ZIndex>32</ZIndex>
 							<CanGrow>true</CanGrow>
 							<DataElementName>TextBox20</DataElementName>
-							<Value>=IIF(Fields!IsTotalLaborCostOverridden.Value, "Yes", "No")</Value>
+							<Value>=IIF(Fields!isTotalLaborCostOverridden.Value, "Yes", "No")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField17">
 							<Type>InputField</Type>
-							<Top>6.938935cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>6.765208cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -957,8 +1023,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField18">
 							<Type>InputField</Type>
-							<Top>7.501597cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>7.32787cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -990,8 +1056,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox18">
-							<Top>7.501597cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>7.32787cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -1014,12 +1080,12 @@
 							</Style>
 							<ZIndex>35</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox21</DataElementName>
-							<Value>=Fields!TotalPartsCost.Value</Value>
+							<DataElementName>total Parts Cost</DataElementName>
+							<Value>=Sum(Fields!totalPartsCost.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox19">
-							<Top>6.376273cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>6.202546cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -1042,13 +1108,13 @@
 							</Style>
 							<ZIndex>36</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox22</DataElementName>
-							<Value>=Fields!TotalLaborCost.Value</Value>
+							<DataElementName>total Labor Cost</DataElementName>
+							<Value>=Sum(Fields!totalLaborCost.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField19">
 							<Type>InputField</Type>
-							<Top>6.376274cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>6.202547cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -1081,8 +1147,8 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField20">
 							<Type>InputField</Type>
-							<Top>5.813611cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>5.639884cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -1114,8 +1180,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox20">
-							<Top>5.813611cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>5.639884cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -1138,13 +1204,13 @@
 							</Style>
 							<ZIndex>39</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox23</DataElementName>
-							<Value>=Fields!AssignedToName.Value</Value>
+							<DataElementName>assigned To Name</DataElementName>
+							<Value>=First(Fields!assignedToName.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField11">
 							<Type>InputField</Type>
-							<Top>10.31755cm</Top>
-							<Left>0.2498843cm</Left>
+							<Top>10.14382cm</Top>
+							<Left>0.199999cm</Left>
 							<Width>5.3501cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
@@ -1176,8 +1242,8 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox11">
-							<Top>10.32021cm</Top>
-							<Left>5.602956cm</Left>
+							<Top>10.14648cm</Top>
+							<Left>5.553071cm</Left>
 							<Width>4.8947cm</Width>
 							<Height>0.56cm</Height>
 							<Style>
@@ -1200,12 +1266,12 @@
 							</Style>
 							<ZIndex>41</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox15</DataElementName>
-							<Value>=Fields!PicturesCount.Value</Value>
+							<DataElementName>pictures Count</DataElementName>
+							<Value>=Sum(Fields!picturesCount.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Table Name="Table1">
-							<Top>11.8cm</Top>
-							<Left>0.2976562cm</Left>
+							<Top>11.62627cm</Top>
+							<Left>0.247771cm</Left>
 							<Width>19cm</Width>
 							<Height>1.2cm</Height>
 							<Style>
@@ -1351,8 +1417,8 @@
 															</BorderWidth>
 														</Style>
 														<CanGrow>true</CanGrow>
-														<DataElementName>Vehicle Service Name</DataElementName>
-														<Value>=Fields!VehicleServiceName.Value</Value>
+														<DataElementName>vehicle Service Name</DataElementName>
+														<Value>=Fields!vehicleServiceName.Value</Value>
 													</Textbox>
 												</ReportItems>
 											</TableCell>
@@ -1372,8 +1438,8 @@
 															</BorderWidth>
 														</Style>
 														<CanGrow>true</CanGrow>
-														<DataElementName>Note</DataElementName>
-														<Value>=Fields!Note.Value</Value>
+														<DataElementName>note</DataElementName>
+														<Value>=Fields!note.Value</Value>
 													</Textbox>
 												</ReportItems>
 											</TableCell>
@@ -1393,8 +1459,8 @@
 															</BorderWidth>
 														</Style>
 														<CanGrow>true</CanGrow>
-														<DataElementName>Labor Time</DataElementName>
-														<Value>=Fields!LaborTime.Value</Value>
+														<DataElementName>labor Time</DataElementName>
+														<Value>=Fields!laborTime.Value</Value>
 													</Textbox>
 												</ReportItems>
 											</TableCell>
@@ -1414,8 +1480,8 @@
 															</BorderWidth>
 														</Style>
 														<CanGrow>true</CanGrow>
-														<DataElementName>Labor Rate</DataElementName>
-														<Value>=Fields!LaborRate.Value</Value>
+														<DataElementName>labor Rate</DataElementName>
+														<Value>=Fields!laborRate.Value</Value>
 													</Textbox>
 												</ReportItems>
 											</TableCell>
@@ -1435,8 +1501,8 @@
 															</BorderWidth>
 														</Style>
 														<CanGrow>true</CanGrow>
-														<DataElementName>Labor Cost</DataElementName>
-														<Value>=Fields!LaborCost.Value</Value>
+														<DataElementName>labor Cost</DataElementName>
+														<Value>=Fields!laborCost.Value</Value>
 													</Textbox>
 												</ReportItems>
 											</TableCell>
@@ -1456,8 +1522,8 @@
 															</BorderWidth>
 														</Style>
 														<CanGrow>true</CanGrow>
-														<DataElementName>Parts Cost</DataElementName>
-														<Value>=Fields!PartsCost.Value</Value>
+														<DataElementName>parts Cost</DataElementName>
+														<Value>=Fields!partsCost.Value</Value>
 													</Textbox>
 												</ReportItems>
 											</TableCell>
@@ -1488,8 +1554,8 @@
 						</Table>
 						<CustomReportItem Name="InputField12">
 							<Type>InputField</Type>
-							<Top>11.2cm</Top>
-							<Left>0.2976562cm</Left>
+							<Top>11.02627cm</Top>
+							<Left>0.247771cm</Left>
 							<Width>18.9971cm</Width>
 							<Height>0.5798cm</Height>
 							<Style>
@@ -1521,52 +1587,6 @@
 				</dd:Container>
 				<DataElementName>ContentPlaceHolder1</DataElementName>
 			</CustomReportItem>
-			<CustomReportItem Name="TitleContentPlaceHolder">
-				<Type>ContentPlaceHolder</Type>
-				<Top>0.07873984in</Top>
-				<Left>0.393701in</Left>
-				<Width>5.5118in</Width>
-				<Height>0.3937in</Height>
-				<ZIndex>4</ZIndex>
-				<CustomProperties>
-					<CustomProperty>
-						<Name>Text</Name>
-						<Value>Report Title Section</Value>
-					</CustomProperty>
-				</CustomProperties>
-				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
-					<ReportItems>
-						<Textbox Name="txtTenantStatisticsReport">
-							<Top>0.08333334in</Top>
-							<Width>4.6457in</Width>
-							<Height>0.315in</Height>
-							<Style>
-								<VerticalAlign>Middle</VerticalAlign>
-								<dd:StyleName>TitleText</dd:StyleName>
-							</Style>
-							<CanGrow>true</CanGrow>
-							<DataElementOutput>Output</DataElementOutput>
-							<Value>Vehicle Maintenance Work Order Report</Value>
-						</Textbox>
-					</ReportItems>
-				</dd:Container>
-				<DataElementName>ContentPlaceHolder2</DataElementName>
-			</CustomReportItem>
-			<CustomReportItem Name="ContentPlaceHolder1">
-				<Type>ContentPlaceHolder</Type>
-				<Top>1.023622in</Top>
-				<Left>0.393701in</Left>
-				<Width>7.95in</Width>
-				<Height>0.5512in</Height>
-				<ZIndex>4</ZIndex>
-				<CustomProperties>
-					<CustomProperty>
-						<Name>Text</Name>
-						<Value>Search Criteria Section</Value>
-					</CustomProperty>
-				</CustomProperties>
-				<DataElementName>ContentPlaceHolder3</DataElementName>
-			</CustomReportItem>
 		</ReportItems>
 	</Body>
 	<Description>VehicleMaintenanceWorkOrderReport</Description>
@@ -1574,89 +1594,138 @@
 	<DataSources>
 		<DataSource Name="VehicleMaintenanceWorkOrderDataSource">
 			<ConnectionProperties>
+				<ConnectString>jsondoc=_VehicleMaintenanceWorkOrder.json</ConnectString>
 				<DataProvider>JSON</DataProvider>
 			</ConnectionProperties>
 		</DataSource>
 		<DataSource Name="VehicleMaintenanceWorkOrderLinesDataSource">
 			<ConnectionProperties>
+				<ConnectString>jsondoc=_VehicleMaintenanceWorkOrderLines.json</ConnectString>
 				<DataProvider>JSON</DataProvider>
 			</ConnectionProperties>
 		</DataSource>
 	</DataSources>
 	<DataSets>
-		<DataSet Name="VehicleMaintenanceWorkOrderDataSet">
+		<DataSet Name="VehicleMaintenanceWorkOrderLinesDataSet">
 			<Fields>
-				<Field Name="Id">
+				<Field Name="id">
 					<DataField>id</DataField>
 				</Field>
-				<Field Name="VehicleServiceTypeId">
-					<DataField>vehicleServiceTypeId</DataField>
+				<Field Name="vehicleServiceName">
+					<DataField>vehicleServiceName</DataField>
 				</Field>
-				<Field Name="VehicleServiceTypeName">
-					<DataField>vehicleServiceTypeName</DataField>
-				</Field>
-				<Field Name="IssueDate">
-					<DataField>issueDate</DataField>
-				</Field>
-				<Field Name="StartDate">
-					<DataField>startDate</DataField>
-				</Field>
-				<Field Name="CompletionDate">
-					<DataField>completionDate</DataField>
-				</Field>
-				<Field Name="Status">
-					<DataField>status</DataField>
-				</Field>
-				<Field Name="TruckId">
-					<DataField>truckId</DataField>
-				</Field>
-				<Field Name="TruckCode">
-					<DataField>truckCode</DataField>
-				</Field>
-				<Field Name="Note">
+				<Field Name="note">
 					<DataField>note</DataField>
 				</Field>
-				<Field Name="Odometer">
-					<DataField>odometer</DataField>
+				<Field Name="laborTime">
+					<DataField>laborTime</DataField>
 				</Field>
-				<Field Name="Hours">
-					<DataField>hours</DataField>
+				<Field Name="laborCost">
+					<DataField>laborCost</DataField>
 				</Field>
-				<Field Name="AssignedToId">
-					<DataField>assignedToId</DataField>
+				<Field Name="laborRate">
+					<DataField>laborRate</DataField>
 				</Field>
-				<Field Name="AssignedToName">
-					<DataField>assignedToName</DataField>
+				<Field Name="partsCost">
+					<DataField>partsCost</DataField>
 				</Field>
-				<Field Name="TotalLaborCost">
-					<DataField>totalLaborCost</DataField>
+			</Fields>
+			<Query>
+				<CommandText>$.result.items.[*]</CommandText>
+				<DataSourceName>VehicleMaintenanceWorkOrderLinesDataSource</DataSourceName>
+			</Query>
+		</DataSet>
+		<DataSet Name="VehicleMaintenanceWorkOrderDataSet">
+			<Fields>
+				<Field Name="id">
+					<DataField>result.id</DataField>
 				</Field>
-				<Field Name="IsTotalLaborCostOverridden">
-					<DataField>isTotalLaborCostOverridden</DataField>
+				<Field Name="vehicleServiceTypeId">
+					<DataField>result.vehicleServiceTypeId</DataField>
 				</Field>
-				<Field Name="TotalPartsCost">
-					<DataField>totalPartsCost</DataField>
+				<Field Name="vehicleServiceTypeName">
+					<DataField>result.vehicleServiceTypeName</DataField>
 				</Field>
-				<Field Name="IsTotalPartsCostOverridden">
-					<DataField>isTotalPartsCostOverridden</DataField>
+				<Field Name="issueDate">
+					<DataField>result.issueDate</DataField>
 				</Field>
-				<Field Name="Tax">
-					<DataField>tax</DataField>
+				<Field Name="startDate">
+					<DataField>result.startDate</DataField>
 				</Field>
-				<Field Name="Discount">
-					<DataField>discount</DataField>
+				<Field Name="completionDate">
+					<DataField>result.completionDate</DataField>
 				</Field>
-				<Field Name="TotalCost">
-					<DataField>totalCost</DataField>
+				<Field Name="status">
+					<DataField>result.status</DataField>
 				</Field>
-				<Field Name="WorkOrderLines">
-					<DataField>workOrderLines</DataField>
+				<Field Name="truckId">
+					<DataField>result.truckId</DataField>
 				</Field>
-				<Field Name="Pictures">
-					<DataField>pictures</DataField>
+				<Field Name="truckCode">
+					<DataField>result.truckCode</DataField>
 				</Field>
-				<Field Name="PicturesCount">
-					<DataField>picturesCount</DataField>
+				<Field Name="note">
+					<DataField>result.note</DataField>
+				</Field>
+				<Field Name="odometer">
+					<DataField>result.odometer</DataField>
+				</Field>
+				<Field Name="hours">
+					<DataField>result.hours</DataField>
+				</Field>
+				<Field Name="assignedToId">
+					<DataField>result.assignedToId</DataField>
+				</Field>
+				<Field Name="assignedToName">
+					<DataField>result.assignedToName</DataField>
+				</Field>
+				<Field Name="totalLaborCost">
+					<DataField>result.totalLaborCost</DataField>
+				</Field>
+				<Field Name="isTotalLaborCostOverridden">
+					<DataField>result.isTotalLaborCostOverridden</DataField>
+				</Field>
+				<Field Name="totalPartsCost">
+					<DataField>result.totalPartsCost</DataField>
+				</Field>
+				<Field Name="isTotalPartsCostOverridden">
+					<DataField>result.isTotalPartsCostOverridden</DataField>
+				</Field>
+				<Field Name="tax">
+					<DataField>result.tax</DataField>
+				</Field>
+				<Field Name="discount">
+					<DataField>result.discount</DataField>
+				</Field>
+				<Field Name="totalCost">
+					<DataField>result.totalCost</DataField>
+				</Field>
+				<Field Name="workOrderLines">
+					<DataField>result.workOrderLines</DataField>
+				</Field>
+				<Field Name="pictures">
+					<DataField>result.pictures</DataField>
+				</Field>
+				<Field Name="[*]">
+					<DataField>result.pictures[*]</DataField>
+				</Field>
+				<Field Name="picturesCount">
+					<DataField>result.picturesCount</DataField>
+				</Field>
+				<Field Name="targetUrl">
+					<DataField>targetUrl</DataField>
+				</Field>
+				<Field Name="success">
+					<DataField>success</DataField>
+				</Field>
+				<Field Name="error">
+					<DataField>error</DataField>
+				</Field>
+				<Field Name="unAuthorizedRequest">
+					<DataField>unAuthorizedRequest</DataField>
+				</Field>
+				<Field Name="['__abp']">
+					<DataField>['__abp']</DataField>
 				</Field>
 			</Fields>
 			<Query>
@@ -1664,37 +1733,11 @@
 				<DataSourceName>VehicleMaintenanceWorkOrderDataSource</DataSourceName>
 			</Query>
 		</DataSet>
-		<DataSet Name="VehicleMaintenanceWorkOrderLinesDataSet">
-			<Fields>
-				<Field Name="VehicleServiceName">
-					<DataField>vehicleServiceName</DataField>
-				</Field>
-				<Field Name="Note">
-					<DataField>note</DataField>
-				</Field>
-				<Field Name="LaborTime">
-					<DataField>laborTime</DataField>
-				</Field>
-				<Field Name="LaborCost">
-					<DataField>laborCost</DataField>
-				</Field>
-				<Field Name="LaborRate">
-					<DataField>laborRate</DataField>
-				</Field>
-				<Field Name="PartsCost">
-					<DataField>partsCost</DataField>
-				</Field>
-			</Fields>
-			<Query>
-				<CommandText>$.items.[*]</CommandText>
-				<DataSourceName>VehicleMaintenanceWorkOrderLinesDataSource</DataSourceName>
-			</Query>
-		</DataSet>
 	</DataSets>
 	<CustomProperties>
 		<CustomProperty>
 			<Name>MasterReport</Name>
-			<Value>_MasterReportPortrait.rdlx-master</Value>
+			<Value>_MasterReportLetterPortrait.rdlx-master</Value>
 		</CustomProperty>
 	</CustomProperties>
 	<dd:ReportStyleSheet xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">

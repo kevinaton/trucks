@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
 using DispatcherWeb.ReportCenter.Services;
 using GrapeCity.ActiveReports;
@@ -13,7 +14,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json.Linq;
 using HttpClient = System.Net.Http.HttpClient;
 using Settings = GrapeCity.ActiveReports.Export.Pdf.Page.Settings;
 
@@ -38,9 +38,6 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
         public override bool HasTenantsParameter => false;
 
-        public override string ReportId
-            => GetType().Name.Replace("DataDefinitions", string.Empty);
-
         public override async Task Initialize()
         {
             var getReportResult = await _reportAppService.TryGetReport(ReportId);
@@ -53,7 +50,12 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
             var reportsDirPath = new DirectoryInfo($"{_environment.ContentRootPath}\\Reports\\");
             var reportPath = $"{Path.Combine(reportsDirPath.FullName, getReportResult.ReportInfo.Path)}.rdlx";
+
             ThisPageReport = new PageReport(new FileInfo(reportPath));
+            ThisPageReport.Report.DataSources.ResetDataSourceConnectionString("VehicleMaintenanceWorkOrderDataSource");
+            ThisPageReport.Document.PageReport.Report.DataSources.ResetDataSourceConnectionString("VehicleMaintenanceWorkOrderDataSource");
+            ThisPageReport.Report.DataSources.ResetDataSourceConnectionString("VehicleMaintenanceWorkOrderLinesDataSource");
+            ThisPageReport.Document.PageReport.Report.DataSources.ResetDataSourceConnectionString("VehicleMaintenanceWorkOrderLinesDataSource");
 
             await base.Initialize();
         }
@@ -90,6 +92,43 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
         #region private members
 
+        internal async Task<string> GetVehicleMaintenanceWorkOrderLinesDataSource(LocateDataSourceArgs arg)
+        {
+            var paramsDic = arg.Parameters.ToDictionary(p => p.Name, p => p.Value);
+            var reportParamsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
+            int? entityId = null;
+            if (reportParamsDic["EntityId"] != null)
+                entityId = int.Parse(reportParamsDic["EntityId"].ToString());
+
+            var result = await GetVehicleMaintenanceWorkOrderLinesJson(entityId);
+            return result;
+        }
+
+        internal async Task<string> GetVehicleMaintenanceWorkOrderLinesJson(int? entityId)
+        {
+            var hostApiUrl = Configuration["IdentityServer:Authority"];
+            var accessToken = await base.HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
+
+            using var client = new HttpClient();
+            client.SetBearerToken(accessToken);
+
+            var url = $"{hostApiUrl}/api/services/app/workorder/GetWorkOrderLines?id={entityId}";
+            var response = await client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+            }
+            else
+            {
+                var contentJson = await response.Content.ReadAsStringAsync();
+                //var resultJson = JObject.Parse(contentJson)["result"].ToString();
+                return contentJson;
+            }
+
+            return "[]";
+        }
+
         internal async Task<string> GetVehicleMaintenanceWorkOrderDataSource(LocateDataSourceArgs arg)
         {
             var accessToken = await base.HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
@@ -111,54 +150,12 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             else
             {
                 var contentJson = await response.Content.ReadAsStringAsync();
-                var resultJson = JObject.Parse(contentJson)["result"].ToString();
-                return resultJson;
+                //var resultJson = JObject.Parse(contentJson)["result"].ToString();
+                return contentJson;
             }
 
             return "{}";
         }
-        internal async Task<string> GetVehicleMaintenanceWorkOrderLinesDataSource(LocateDataSourceArgs arg)
-        {
-            var accessToken = await base.HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-            //var headers = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
-            var hostApiUrl = Configuration["IdentityServer:Authority"];
-            var paramsDic = arg.Parameters.ToDictionary(p => p.Name, p => p.Value);
-            var reportParamsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
-            int? entityId = null;
-            if (reportParamsDic["EntityId"] != null)
-                entityId = int.Parse(reportParamsDic["EntityId"].ToString());
-
-            var result = await GetVehicleMaintenanceWorkOrderLinesJson(entityId);
-            return result;
-        }
-
-        internal async Task<string> GetVehicleMaintenanceWorkOrderLinesJson(int? entityId)
-        {
-            var hostApiUrl = Configuration["IdentityServer:Authority"];
-            //var headers = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
-            var accessToken = await base.HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-
-            using var client = new HttpClient();
-            client.SetBearerToken(accessToken);
-
-            var url = $"{hostApiUrl}/api/services/app/workorder/GetWorkOrderLines?id={entityId}";
-            var response = await client.GetAsync(url);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                Console.WriteLine(response.StatusCode);
-            }
-            else
-            {
-                var contentJson = await response.Content.ReadAsStringAsync();
-                var resultJson = JObject.Parse(contentJson)["result"].ToString();
-                return resultJson;
-            }
-
-            return "[]";
-        }
-
-        
 
         #endregion
     }

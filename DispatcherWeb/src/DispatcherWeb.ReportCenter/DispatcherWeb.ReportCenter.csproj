@@ -19,14 +19,18 @@
 	  <Content Remove="Reports\_TenantStatisticsReportDS.json" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="Reports\VehicleMaintenanceWorkOrderReport.rdlx" />
 	  <None Remove="Reports\_MasterReportLegalPortrait.rdlx-master" />
+	  <None Remove="Reports\_MasterReportLetterPortrait.rdlx-master" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Properties\.gclicx" />
 		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
+		<EmbeddedResource Include="Reports\VehicleMaintenanceWorkOrderReport.rdlx" />
 		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master" />
+		<EmbeddedResource Include="Reports\_MasterReportLetterPortrait.rdlx-master" />
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
@@ -98,15 +102,6 @@
 		</None>
 		<None Update="Reports\DataSource.rdsx">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\_DataSource.Dev.rdsx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\_DataSource.QA.rdsx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\_DataSource.rdsx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 	<Target Name="BeforeClientBuild" BeforeTargets="BeforeBuild">

@@ -1,0 +1,21 @@
+{
+  "result": {
+    "totalCount": 1,
+    "items": [
+      {
+        "id": 1509,
+        "vehicleServiceName": "Brake Inspection",
+        "note": "",
+        "laborTime": 4.00,
+        "laborCost": 40.0000,
+        "laborRate": 40.0000,
+        "partsCost": 222.0000
+      }
+    ]
+  },
+  "targetUrl": null,
+  "success": true,
+  "error": null,
+  "unAuthorizedRequest": false,
+  "__abp": true
+}

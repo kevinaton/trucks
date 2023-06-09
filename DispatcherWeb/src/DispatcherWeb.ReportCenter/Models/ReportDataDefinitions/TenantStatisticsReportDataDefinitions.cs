@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
 using DispatcherWeb.ReportCenter.Services;
 using GrapeCity.ActiveReports;
@@ -48,11 +49,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             var reportPath = $"{Path.Combine(reportsDirPath.FullName, getReportInfoResult.ReportInfo.Path)}.rdlx";
 
             ThisPageReport = new PageReport(new FileInfo(reportPath));
-            var tenantStatisticsDataSource = ThisPageReport.Report.DataSources.FirstOrDefault(d => d.Name.Equals("TenantsStatisticsDataSource"));
-            tenantStatisticsDataSource.ConnectionProperties.ConnectString = "jsondoc=";
-
-            tenantStatisticsDataSource = ThisPageReport.Document.PageReport.Report.DataSources.FirstOrDefault(d => d.Name.Equals("TenantsStatisticsDataSource"));
-            tenantStatisticsDataSource.ConnectionProperties.ConnectString = "jsondoc=";
+            ThisPageReport.Report.DataSources.ResetDataSourceConnectionString("TenantsStatisticsDataSource");
+            ThisPageReport.Document.PageReport.Report.DataSources.ResetDataSourceConnectionString("TenantsStatisticsDataSource");
 
             await base.Initialize();
         }
