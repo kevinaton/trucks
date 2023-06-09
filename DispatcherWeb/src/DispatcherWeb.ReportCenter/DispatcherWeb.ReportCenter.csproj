@@ -91,31 +91,6 @@
 		<PackageReference Include="Z.Expressions.Eval" Version="5.0.3" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Update="Reports\DataSource.Dev.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\DataSource.QA.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\DataSource.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-	<Target Name="BeforeClientBuild" BeforeTargets="BeforeBuild">
-		<ReadLinesFromFile File="wwwroot\custom-locale.json">
-			<Output TaskParameter="Lines" ItemName="CustomLocale" />
-		</ReadLinesFromFile>
-		<PropertyGroup>
-			<IsEmtry Condition=" '@(CustomLocale)' == '' ">true</IsEmtry>
-			<IsEmtry Condition=" '@(CustomLocale)' != '' ">false</IsEmtry>
-		</PropertyGroup>
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Properties="IsEmtry=$(IsEmtry)" Targets="ClientBuild" />
-	</Target>
-	<Target Name="ClientBuild" Condition=" '$(IsEmtry)' == 'true'">
-		<Exec WorkingDirectory="ClientApp" Command="yarn install --force" />
-		<Exec WorkingDirectory="ClientApp" Command="yarn run build" />
-	</Target>
-	<ItemGroup>
 		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="16.2.1" />
 	</ItemGroup>
 	<ItemGroup>
