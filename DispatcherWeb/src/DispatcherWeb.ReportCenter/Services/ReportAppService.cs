@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DispatcherWeb.ActiveReports.ActiveReports.Dto;
 using DispatcherWeb.ReportCenter.Helpers;
+using DispatcherWeb.ReportCenter.Models;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
@@ -75,12 +75,13 @@ namespace DispatcherWeb.ReportCenter.Services
             }
         }
 
-        public async Task<List<ActiveReportListItemDto>> GetAvailableReportsList()
+        public async Task<List<ActiveReportItemDto>> GetAvailableReportsList()
         {
             await Initialize();
 
             var reportListItems = _reportAccessDictionary
-                                    .Select(report => new ActiveReportListItemDto()
+                                    .Where(r => r.Value.HasAccess)
+                                    .Select(report => new ActiveReportItemDto()
                                     {
                                         Name = report.Key,
                                         Description = report.Value.Description,
@@ -134,7 +135,7 @@ namespace DispatcherWeb.ReportCenter.Services
         public async Task<IReportDataDefinition> GetReportDataDefinition(string reportId, bool initialize = false)
         {
             var reportDataDefinition = _serviceProvider.Identify(reportId);
-            
+
             if (initialize)
             {
                 await reportDataDefinition.Initialize();
@@ -150,7 +151,7 @@ namespace DispatcherWeb.ReportCenter.Services
 
         #region private methods
 
-        private async Task<List<ActiveReportListItemDto>> GetActiveReports()
+        private async Task<List<ActiveReportItemDto>> GetActiveReports()
         {
             var accessToken = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
             var hostApiUrl = _configuration["IdentityServer:Authority"];
@@ -159,7 +160,7 @@ namespace DispatcherWeb.ReportCenter.Services
             client.SetBearerToken(accessToken);
             var response = await client.GetAsync($"{hostApiUrl}/api/services/activeReports/activeReports/getActiveReportsList");
 
-            var availableReports = new List<ActiveReportListItemDto>();
+            var availableReports = new List<ActiveReportItemDto>();
 
             if (!response.IsSuccessStatusCode)
             {
@@ -171,7 +172,7 @@ namespace DispatcherWeb.ReportCenter.Services
 
                 availableReports = JObject.Parse(contentJson)
                                         .SelectTokens("$..result[*]")
-                                        .Select(jtoken => JsonConvert.DeserializeObject<ActiveReportListItemDto>(jtoken.ToString()))
+                                        .Select(jtoken => JsonConvert.DeserializeObject<ActiveReportItemDto>(jtoken.ToString()))
                                         .ToList();
             }
 

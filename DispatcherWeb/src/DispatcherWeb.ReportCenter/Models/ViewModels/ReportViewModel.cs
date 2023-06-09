@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace DispatcherWeb.ReportCenter.Models
+namespace DispatcherWeb.ReportCenter.Models.ViewModels
 {
     public class ReportViewModel
     {

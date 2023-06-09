@@ -61,14 +61,16 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="Controllers\HomeController.cs" />
+		<Compile Include="Models\ActiveReportItemDto.cs" />
+		<Compile Include="Models\UserFriendlyException.cs" />
 		<Compile Include="Helpers\Extensions.cs" />
 		<Compile Include="Helpers\ReportingAuthMiddleware.cs" />
-		<Compile Include="Models\ErrorViewModel.cs" />
+		<Compile Include="Models\ViewModels\ErrorViewModel.cs" />
 		<Compile Include="Models\ReportDataDefinitions\Base\IReportDataDefinition.cs" />
 		<Compile Include="Models\ReportDataDefinitions\Base\ReportDataDefinitionBase.cs" />
 		<Compile Include="Models\ReportDataDefinitions\TenantStatisticsReportDataDefinitions.cs" />
-		<Compile Include="Models\ReportListViewModel.cs" />
-		<Compile Include="Models\ReportViewModel.cs" />
+		<Compile Include="Models\ViewModels\ReportListViewModel.cs" />
+		<Compile Include="Models\ViewModels\ReportViewModel.cs" />
 		<Compile Include="Program.cs" />
 		<Compile Include="Services\ReportAppService.cs" />
 		<Compile Include="Startup.cs" />
@@ -98,15 +100,6 @@
 		<None Update="Reports\DataSource.rdsx">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="Reports\_DataSource.Dev.rdsx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\_DataSource.QA.rdsx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\_DataSource.rdsx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 	<Target Name="BeforeClientBuild" BeforeTargets="BeforeBuild">
 		<ReadLinesFromFile File="wwwroot\custom-locale.json">
@@ -128,9 +121,6 @@
 	<ItemGroup>
 		<Folder Include="wwwroot\lib\gritter\" />
 		<Folder Include="wwwroot\images\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\DispatcherWeb.Application.Shared\DispatcherWeb.Application.Shared.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Update="wwwroot\favicon.ico">
