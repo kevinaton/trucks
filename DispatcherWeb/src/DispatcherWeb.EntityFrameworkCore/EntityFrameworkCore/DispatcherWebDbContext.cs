@@ -1,5 +1,6 @@
 ﻿using Abp.IdentityServer4vNext;
 using Abp.Zero.EntityFrameworkCore;
+using DispatcherWeb.ActiveReports;
 using DispatcherWeb.Authorization.Delegation;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
@@ -264,6 +265,10 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<QuoteServiceVehicleCategory> QuoteServiceVehicle { get; set; }
 
+        public virtual DbSet<ActiveReport> ActiveReports { get; set; }
+
+        public virtual DbSet<ActiveReportCategory> ActiveReportCategories { get; set; }
+
         public DispatcherWebDbContext(DbContextOptions<DispatcherWebDbContext> options)
             : base(options)
         {
@@ -320,7 +325,8 @@ namespace DispatcherWeb.EntityFrameworkCore
                 b.HasIndex(e => new { e.TenantId, e.TargetUserId });
             });
 
-
+            modelBuilder.ApplyConfiguration(new ActiveReportConfiguration());
+            modelBuilder.ApplyConfiguration(new ActiveReportCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new AuditLogConfiguration());
             modelBuilder.ApplyConfiguration(new AvailableLeaseHaulerTruckConfiguration());
             modelBuilder.ApplyConfiguration(new BilledOrderConfiguration());
@@ -396,7 +402,7 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new WialonDeviceTypeConfiguration());
             modelBuilder.ApplyConfiguration(new WorkOrderConfiguration());
             modelBuilder.ApplyConfiguration(new WorkOrderLineConfiguration());
-
+            
             modelBuilder.ConfigurePersistedGrantEntity();
         }
     }
