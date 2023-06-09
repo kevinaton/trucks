@@ -277,6 +277,53 @@ namespace DispatcherWeb.Trucks
                 .GetSelectListResult(input);
         }
 
+        public async Task<List<SelectListDto>> GetBedConstructions(GetBedConstructionsInput input)
+        {
+            var bedConstructions = await _truckRepository.GetAll()
+                .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
+                .Select(x => new
+                {
+                    x.BedConstruction
+                })
+                .Distinct()
+                .ToListAsync();
+
+            return bedConstructions
+                .Select(x => new SelectListDto
+                {
+                    Id = x.BedConstruction.ToIntString(),
+                    Name = x.BedConstruction.GetDisplayName()
+                })
+                .ToList();
+        }
+
+        public async Task<PagedResultDto<SelectListDto>> GetMakesSelectList(GetMakesSelectListInput input)
+        {
+            return await _truckRepository.GetAll()
+                .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
+                .Select(x => new SelectListDto
+                {
+                    Id = x.Make,
+                    Name = x.Make
+                })
+                .Distinct()
+                .GetSelectListResult(input);
+        }
+
+        public async Task<PagedResultDto<SelectListDto>> GetModelsSelectList(GetModelsSelectListInput input)
+        {
+            return await _truckRepository.GetAll()
+                .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
+                .WhereIf(!string.IsNullOrEmpty(input.Make), x => x.Make == input.Make)
+                .Select(x => new SelectListDto
+                {
+                    Id = x.Model,
+                    Name = x.Model
+                })
+                .Distinct()
+                .GetSelectListResult(input);
+        }
+
         public async Task<PagedResultDto<SelectListDto>> GetVehicleCategoriesSelectList(GetVehicleCategoriesSelectListInput input)
         {
             var categoriesInUse = input.IsInUse == true ? await _truckRepository.GetAll().Select(x => x.VehicleCategoryId).Distinct().ToListAsync() : new List<int>();
@@ -284,6 +331,7 @@ namespace DispatcherWeb.Trucks
             return await _vehicleCategoryRepository.GetAll()
                 .WhereIf(input.IsPowered.HasValue, x => x.IsPowered == input.IsPowered)
                 .WhereIf(input.IsInUse == true, x => categoriesInUse.Contains(x.Id))
+                .WhereIf(input.AssetType.HasValue, x => x.AssetType == input.AssetType)
                 .Select(x => new SelectListDto<VehicleCategorySelectListInfoDto>
                 {
                     Id = x.Id.ToString(),
@@ -312,10 +360,14 @@ namespace DispatcherWeb.Trucks
                 .ToListAsync();
         }
 
-        public async Task<PagedResultDto<SelectListDto>> GetActiveTrailersSelectList(GetSelectListInput input) =>
+        public async Task<PagedResultDto<SelectListDto>> GetActiveTrailersSelectList(GetActiveTrailersSelectListInput input) =>
             await _truckRepository.GetAll()
                 .Where(x => x.LocationId.HasValue)
                 .Where(t => t.VehicleCategory.AssetType == AssetType.Trailer && t.IsActive && !t.IsOutOfService)
+                .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
+                .WhereIf(input.BedConstruction.HasValue, x => x.BedConstruction == input.BedConstruction)
+                .WhereIf(!string.IsNullOrEmpty(input.Make), x => x.Make == input.Make)
+                .WhereIf(!string.IsNullOrEmpty(input.Model), x => x.Model == input.Model)
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),

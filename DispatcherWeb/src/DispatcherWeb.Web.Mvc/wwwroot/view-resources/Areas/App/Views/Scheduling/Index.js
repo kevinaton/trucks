@@ -2658,7 +2658,7 @@
                             message: 'Select trailer for truck ' + item.truckCode + ' for single job',
                             orderLineTruckId: item.id,
                             trailerId: item.trailer && item.trailer.id || null,
-                            trailerTruckCode: item.trailer && item.trailer.truckCode|| null,
+                            trailerTruckCode: item.trailer && item.trailer.truckCode || null,
                         });
                     }
                 },
@@ -2854,7 +2854,10 @@
                             officeId: filterData.officeId,
                             tractorId: truck.id,
                             trailerId: truck.trailer.id,
-                            trailerTruckCode: truck.trailer.truckCode
+                            trailerTruckCode: truck.trailer.truckCode,
+                            modalSubtitle: truck.truckCode + ' is currently coupled to ' + truck.trailer.truckCode
+                                + ' - ' + truck.vehicleCategory.name + ' ' + truck.make + ' ' + truck.model + ' '
+                                + truck.bedConstructionFormatted + ' bed'
                         });
                     }
                 },
