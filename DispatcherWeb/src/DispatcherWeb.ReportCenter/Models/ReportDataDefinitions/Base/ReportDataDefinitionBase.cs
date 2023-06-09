@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
 using GrapeCity.ActiveReports;
@@ -42,12 +44,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             var ds = new DataSource { Name = "TenantsDataSource" };
             ds.ConnectionProperties.DataProvider = "JSON";
 
-            var hostApiUrl = Configuration["IdentityServer:Authority"];
-            var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-            var connStrData = $"jsondoc={hostApiUrl}/api/services/activeReports/tenantStatisticsReport/GetTenants";
-            var connStrHeaders = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
-
-            ds.ConnectionProperties.ConnectString = $"{connStrHeaders};{connStrData}";
+            var tenantsJson = await GetTenantsJson();
+            ds.ConnectionProperties.ConnectString = $"jsondata={tenantsJson}";
 
             return ds;
         }
@@ -95,17 +93,19 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
                 ThisPageReport.Report.DataSets.Remove(d => d.Name.Equals("TenantsDataSet"));
                 ThisPageReport.Document.PageReport.Report.DataSets.Remove(d => d.Name.Equals("TenantsDataSet"));
 
-                // Remove/Hide the Tenant parameter
+                // Remove/Hide the Tenant parameter 
                 ThisPageReport.Report.ReportParameters.Remove(p => p.Name.Equals("TenantId"));
                 ThisPageReport.Document.PageReport.Report.ReportParameters.Remove(p => p.Name.Equals("TenantId"));
 
-                ThisPageReport.Report.Body.Components.HideTenantLabels();
-                ThisPageReport.Document.PageReport.Report.Body.Components.HideTenantLabels();
+                // and the labels located in the header component
+                var pageHeaderFooters = ThisPageReport.Document.PageReport.Report.Components.Where(c => c is PageHeaderFooter);
+                pageHeaderFooters.ToList().ForEach(c => ((PageHeaderFooter)c).Components.HideTenantLabels());
             }
             else
             {
                 // Recreate the datasource for Tenants; Dataset is already setup in its query to use the datasource name
                 var tenantsListDataSource = await TenantsListDataSource();
+
                 ThisPageReport.Report.DataSources.Add(tenantsListDataSource);
                 ThisPageReport.Document.PageReport.Report.DataSources.Add(tenantsListDataSource);
             }
@@ -135,6 +135,32 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
             return null;
         }
+
+        #region private methods
+
+        private async Task<string> GetTenantsJson()
+        {
+            var hostApiUrl = Configuration["IdentityServer:Authority"];
+            var url = $"{hostApiUrl}/api/services/activeReports/tenantStatisticsReport/GetTenants";
+            var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var response = await client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+            }
+            else
+            {
+                var contentJson = await response.Content.ReadAsStringAsync();
+                return contentJson;
+            }
+
+            return string.Empty;
+        }
+
+        #endregion
     }
 }
-

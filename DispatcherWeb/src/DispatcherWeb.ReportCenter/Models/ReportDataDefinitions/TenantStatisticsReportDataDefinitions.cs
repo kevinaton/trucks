@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
 using DispatcherWeb.ReportCenter.Services;
 using GrapeCity.ActiveReports;
 using GrapeCity.ActiveReports.Web.Viewer;
-using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -59,15 +59,14 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
         {
             if (arg.DataSet.Name.Equals("TenantStatisticsDataSet"))
             {
-                var accessToken = await base.HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-                var headers = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
-                var hostApiUrl = Configuration["IdentityServer:Authority"];
                 var paramsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
+                var tenantId = paramsDic.ContainsKey("TenantId") ? paramsDic["TenantId"] : null;
+                var hostApiUrl = Configuration["IdentityServer:Authority"];
+                var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
 
                 using var client = new HttpClient();
-                client.SetBearerToken(accessToken);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                var tenantId = paramsDic.ContainsKey("TenantId") ? paramsDic["TenantId"] : null;
                 var url = $"{hostApiUrl}/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={tenantId}&startDate={paramsDic["StartDate"]:o}&endDate={paramsDic["EndDate"]:o}";
                 var response = await client.GetAsync(url);
 

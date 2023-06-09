@@ -7,6 +7,7 @@ using System.Linq;
 using GrapeCity.BI.Data.DataProviders;
 using System.Collections.Generic;
 using GrapeCity.Enterprise.Data.Expressions;
+using System.Text;
 
 namespace DispatcherWeb.ReportCenter.Helpers
 {
@@ -88,6 +89,18 @@ namespace DispatcherWeb.ReportCenter.Helpers
             if (lblTenantInMaster != null) lblTenantInMaster.Visibility = hiddenVisibility;
         }
 
+        public static void HideTenantLabels(this ReportItemCollection items)
+        {
+            var hiddenVisibility = new Visibility()
+            {
+                Hidden = ExpressionInfo.Parse("true", ExpressionResultType.Boolean)
+            };
+            var txtTenantInMaster = (TextBox)items.FirstOrDefault(c => c is TextBox box && box.Name.Equals("txtTenantInMaster"));
+            if (txtTenantInMaster != null) txtTenantInMaster.Visibility = hiddenVisibility;
+            var lblTenantInMaster = (TextBox)items.FirstOrDefault(c => c is TextBox box && box.Name.Equals("lblTenantInMaster"));
+            if (lblTenantInMaster != null) lblTenantInMaster.Visibility = hiddenVisibility;
+        }
+
         public static void ResetDataSourceConnectionString(this DataSourceCollection dataSources, string dataSourceName)
         {
             var tenantStatisticsDataSource = dataSources.FirstOrDefault(d => d.Name.Equals(dataSourceName));
@@ -95,6 +108,28 @@ namespace DispatcherWeb.ReportCenter.Helpers
             {
                 tenantStatisticsDataSource.ConnectionProperties.ConnectString = "jsondoc=";
             }
+        }
+
+        public static string AggregateMessages(this Exception ex) =>
+                            ex.GetInnerExceptions().Aggregate(new StringBuilder(), (sb, e) => sb.AppendLine(e.Message), sb => sb.ToString());
+
+        public static IEnumerable<Exception> GetInnerExceptions(this Exception ex, int maxDepth = 5)
+        {
+            if (ex == null || maxDepth <= 0)
+            {
+                yield break;
+            }
+
+            yield return ex;
+
+            if (ex is AggregateException ax)
+            {
+                foreach (var i in ax.InnerExceptions.SelectMany(ie => GetInnerExceptions(ie, maxDepth - 1)))
+                    yield return i;
+            }
+
+            foreach (var i in GetInnerExceptions(ex.InnerException, maxDepth - 1))
+                yield return i;
         }
     }
 }

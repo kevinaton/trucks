@@ -2,13 +2,16 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models;
+using DispatcherWeb.ReportCenter.Models.ViewModels;
 using DispatcherWeb.ReportCenter.Services;
 using DocumentFormat.OpenXml;
 using GrapeCity.Enterprise.Data.Expressions.Tools;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,8 +43,7 @@ namespace DispatcherWeb.ReportCenter
         {
             if (!await _reportAppService.CanAccessReport(reportPath))
             {
-                throw new Exception("You have no access to this report.");
-                //return RedirectToAction("Index");
+                throw new UserFriendlyException("You have no access to this report.");
             }
 
             var tenantId = 0;
@@ -106,8 +108,12 @@ namespace DispatcherWeb.ReportCenter
         [Route("/error")]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? ControllerContext.HttpContext.TraceIdentifier });
+            var exceptionHandlerFeature = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
+            return View(new ErrorViewModel
+            {
+                RequestId = System.Diagnostics.Activity.Current?.Id ?? ControllerContext.HttpContext.TraceIdentifier,
+                ErrorMessage = exceptionHandlerFeature.Error is UserFriendlyException ? exceptionHandlerFeature.Error.AggregateMessages() : string.Empty
+            });
         }
-
     }
 }

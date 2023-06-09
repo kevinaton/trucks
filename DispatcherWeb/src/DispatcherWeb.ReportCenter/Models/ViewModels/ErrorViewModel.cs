@@ -1,4 +1,4 @@
-﻿namespace DispatcherWeb.ReportCenter.Models
+﻿namespace DispatcherWeb.ReportCenter.Models.ViewModels
 {
     public class ErrorViewModel
     {
