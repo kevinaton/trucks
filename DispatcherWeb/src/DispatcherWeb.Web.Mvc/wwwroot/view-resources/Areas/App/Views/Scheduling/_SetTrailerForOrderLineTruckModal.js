@@ -15,7 +15,6 @@
             abp.helper.ui.initControls();
 
             var modalArgs = modalManager.getArgs();
-            var modalArgs = modalManager.getArgs();
             var vehicleCategoryDropdown = _$form.find('#VehicleCategoryId');
             var bedConstructionDropdown = _$form.find('#BedConstruction');
             var makeDropdown = _$form.find('#Make');
