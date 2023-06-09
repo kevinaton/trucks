@@ -421,12 +421,9 @@
                 var message = '';
                 message += editResult.thereAreOrdersInTheFuture ? app.localize('ThereAreOrdersInTheFuture') + '\n' : '';
                 message += editResult.thereWereAssociatedOrders ? app.localize('ThereWereOrdersAssociatedWithThisTruck') + '\n' : '';
-                message += editResult.thereWereCanceledDispatches
-                    ? app.localize('ThereWereCanceledDispatches') + '\n'
-                    : '';
-                message += editResult.thereWereNotCanceledDispatches
-                    ? app.localize('ThereWereNotCanceledDispatches') + '\n'
-                    : '';
+                message += editResult.thereWereCanceledDispatches ? app.localize('ThereWereCanceledDispatches') + '\n' : '';
+                message += editResult.thereWereNotCanceledDispatches ? app.localize('ThereWereNotCanceledDispatches') + '\n' : '';
+                message += editResult.thereWereAssociatedTractors ? app.localize('ThereWasTractorAssociatedWithThisTrailer') + '\n' : '';
                 if (message) {
                     abp.message.info(message, 'Message');
                 }
