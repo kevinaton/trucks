@@ -15,14 +15,9 @@
 		<NoWarn>NU1701</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Content Remove="Reports\_TenantsDS.json" />
-	  <Content Remove="Reports\_TenantStatisticsReportDS.json" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Reports\_MasterReportLegalPortrait.rdlx-master" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="Properties\.gclicx" />
+		<EmbeddedResource Include="Properties\.gclicx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
@@ -32,14 +27,16 @@
 	<ItemGroup>
 		<None Include="ClientApp\package.json" />
 		<None Include="Properties\launchSettings.json" />
-		<None Include="Reports\_TenantsDS.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Include="Reports\_TenantStatisticsReportDS.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
+		<EmbeddedResource Include="Reports\_TenantsDS.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Reports\_TenantStatisticsReportDS.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 		<None Include="wwwroot\lib\grapecity\jsViewer.min.js" />
-		<Resource Include="Properties\licenses.licx" />
+		<Resource Include="Properties\licenses.licx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map" />
@@ -116,7 +113,7 @@
 		<Exec WorkingDirectory="ClientApp" Command="yarn run build" />
 	</Target>
 	<ItemGroup>
-		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="16.2.1" />
+		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="16.4.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="wwwroot\lib\gritter\" />

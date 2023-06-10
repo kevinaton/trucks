@@ -8,6 +8,7 @@ using GrapeCity.BI.Data.DataProviders;
 using System.Collections.Generic;
 using GrapeCity.Enterprise.Data.Expressions;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace DispatcherWeb.ReportCenter.Helpers
 {
@@ -116,5 +117,9 @@ namespace DispatcherWeb.ReportCenter.Helpers
             foreach (var i in GetInnerExceptions(ex.InnerException, maxDepth - 1))
                 yield return i;
         }
+
+        public static string GetMethodName([CallerMemberName] string methodname = null) =>
+            methodname ?? string.Empty;
+
     }
 }

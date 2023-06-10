@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using HttpClient = System.Net.Http.HttpClient;
 
 namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
@@ -25,9 +27,10 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                                         IHttpContextAccessor httpContextAccessor,
                                         IServiceProvider serviceProvider,
                                         IHostEnvironment environment,
-                                        ReportAppService reportAppService)
+                                        ReportAppService reportAppService,
+                                        ILoggerFactory loggerFactory)
 
-                    : base(configuration, serviceProvider, httpContextAccessor)
+                    : base(configuration, serviceProvider, httpContextAccessor, loggerFactory)
         {
             _reportAppService = reportAppService;
             _environment = environment;
@@ -73,10 +76,12 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.WriteLine(response.StatusCode);
+                    Logger.Log(LogLevel.Error, $"Error: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
                 }
                 else
                 {
                     var contentJson = await response.Content.ReadAsStringAsync();
+                    Logger.Log(LogLevel.Information, $"Success: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
                     return contentJson;
                 }
             }
