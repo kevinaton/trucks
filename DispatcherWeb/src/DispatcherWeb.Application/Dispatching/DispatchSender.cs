@@ -146,7 +146,7 @@ namespace DispatcherWeb.Dispatching
                     da.Date == input.DeliveryDate &&
                     da.Shift == input.Shift &&
                     da.DriverId != null &&
-                    da.Truck.OrderLineTrucks.Any(olt =>
+                    da.Truck.OrderLineTrucksOfTruck.Any(olt =>
                         olt.OrderLine.Order.DeliveryDate == input.DeliveryDate &&
                         olt.OrderLine.Order.Shift == input.Shift &&
                         input.OfficeIds.Contains(olt.OrderLine.Order.LocationId) &&

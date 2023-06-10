@@ -336,6 +336,14 @@
             reloadMainGrid(null, false);
         });
 
+        abp.event.on('app.createOrEditOrderModalSaved', function () {
+            reloadMainGrid(null, false);
+        });
+
+        abp.event.on('app.createOrEditJobModalSaved', function () {
+            reloadMainGrid(null, false);
+        });
+
         //$(".filter").change(function () {
         //    reloadMainGrid();
         //});

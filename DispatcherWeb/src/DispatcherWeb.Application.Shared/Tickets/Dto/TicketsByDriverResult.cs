@@ -62,6 +62,7 @@ namespace DispatcherWeb.Tickets.Dto
             public decimal FreightTotal { get; set; }
             public bool IsMaterialTotalOverridden { get; set; }
             public bool IsFreightTotalOverridden { get; set; }
+            public string Note { get; set; }
         }
 
         public class DriverDto
@@ -80,6 +81,14 @@ namespace DispatcherWeb.Tickets.Dto
             public bool IsActive { get; set; }
             public int? LeaseHaulerId { get; set; }
             public int? DefaultDriverId { get; set; }
+            public int? CurrentTrailerId { get; set; }
+            public bool CanPullTrailer { get; set; }
+            public VehicleCategoryDto VehicleCategory { get; set; }
+        }
+
+        public class VehicleCategoryDto
+        {
+            public AssetType AssetType { get; set; }
         }
 
         public class TicketDto
@@ -93,6 +102,8 @@ namespace DispatcherWeb.Tickets.Dto
             public string UomName { get; set; }
             public int? TruckId { get; set; }
             public string TruckCode { get; set; } //only as a fallback value when TruckId is null or doesn't belong to a real truck
+            public int? TrailerId { get; set; }
+            public string TrailerTruckCode { get; set; }
             public int? DriverId { get; set; }
             public Guid? TicketPhotoId { get; set; }
             public int? ReceiptLineId { get; set; }
@@ -105,6 +116,7 @@ namespace DispatcherWeb.Tickets.Dto
         {
             public int? DriverId { get; set; }
             public int TruckId { get; set; }
+            public int? TrailerId { get; set; }
             public int Id { get; set; }
             public string DriverNote { get; set; }
         }

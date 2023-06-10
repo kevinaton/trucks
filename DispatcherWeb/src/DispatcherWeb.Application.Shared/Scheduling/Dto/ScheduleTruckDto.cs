@@ -24,9 +24,16 @@ namespace DispatcherWeb.Scheduling.Dto
         public bool IsExternal { get; set; }
         public int? LeaseHaulerId { get; set; }
         public BedConstructionEnum BedConstruction { get; set; }
+        public string BedConstructionFormatted => BedConstruction.GetDisplayName();
+        public int? Year { get; set; }
+        public string Make { get; set; }
+        public string Model { get; set; }
         public bool IsApportioned { get; set; }
         public string DefaultDriverName { get; set; }
         public int? DefaultDriverId { get; set; }
+
+        public ScheduleTruckTractorDto Tractor { get; set; }
+        public ScheduleTruckTrailerDto Trailer { get; set; }
 
         public void CopyAllFieldsTo(ScheduleTruckDto other)
         {
@@ -58,9 +65,14 @@ namespace DispatcherWeb.Scheduling.Dto
             IsExternal = other.IsExternal;
             LeaseHaulerId = other.LeaseHaulerId;
             BedConstruction = other.BedConstruction;
+            Year = other.Year;
+            Make = other.Make;
+            Model = other.Model;
             IsApportioned = other.IsApportioned;
             DefaultDriverName = other.DefaultDriverName;
             DefaultDriverId = other.DefaultDriverId;
+            Trailer = other.Trailer;
+            Tractor = other.Tractor;
         }
     }
 }

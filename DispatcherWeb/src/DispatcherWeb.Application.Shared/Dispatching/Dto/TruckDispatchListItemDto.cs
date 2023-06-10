@@ -43,6 +43,7 @@ namespace DispatcherWeb.Dispatching.Dto
             public DateTime DeliveryDate { get; set; }
             public Shift? Shift { get; set; }
             public DateTime? TimeOnJob { get; set; }
+            public string TrailerTruckCode { get; set; }
             public string CustomerName { get; set; }
             public string LoadAtName => LoadAt?.FormattedAddress;
             [JsonIgnore]

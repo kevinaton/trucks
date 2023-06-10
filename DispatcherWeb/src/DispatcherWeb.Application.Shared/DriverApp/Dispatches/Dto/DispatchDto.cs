@@ -38,6 +38,7 @@ namespace DispatcherWeb.DriverApp.Dispatches.Dto
         public List<TicketDto> Tickets { get; set; }
         public int TruckId { get; set; }
         public string TruckCode { get; set; }
+        public string TrailerTruckCode { get; set; }
         public DateTime? AcknowledgedDateTime { get; set; }
         public int? OrderLineTruckId { get; set; }
         public int SortOrder { get; set; }

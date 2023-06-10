@@ -34,9 +34,7 @@ namespace DispatcherWeb.Dispatching.Exporting
                         ("Job Nbr", x => x.JobNumber),
                         ("Load At", x => x.LoadAtName),
                         ("Deliver To", x => x.DeliverToName),
-                        ("Item", x => x.Item),
-                        ("Quantity", x => x.Quantity?.ToString("N")),
-                        ("UOM", x => x.Uom)
+                        ("Item", x => x.Item)
                     );
                 }
             );

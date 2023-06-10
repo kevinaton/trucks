@@ -14,5 +14,9 @@ namespace DispatcherWeb.Trucks.Dto
         //public bool ExcludeLeaseHaulers { get; set; }
         public bool IncludeLeaseHaulerTrucks { get; set; }
         public int? OrderLineId { get; set; }
+
+        public AssetType? AssetType { get; set; }
+
+        public bool? CanPullTrailer { get; set; }
     }
 }

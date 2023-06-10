@@ -1188,7 +1188,7 @@
 		<text name="FreightRateToPayDriversShort">Driver Pay Freight Rate</text>
 		<text name="TruckCode">Truck Code</text>
 		<text name="DefaultDriver">Default Driver</text>
-		<text name="DefaultTrailer">Default Trailer</text>
+		<text name="CurrentTrailer">Current Trailer</text>
 		<text name="OutOfService">Out of Service</text>
 		<text name="CurrentMileage">Current Mileage</text>
 		<text name="CurrentHours">Current Hours</text>
@@ -1840,5 +1840,14 @@
 		<text name="ImportFuel">Import Fuel</text>
 		<text name="DriverIsPaidForLoadBasedOn">Driver is paid for load based on</text>
 		<text name="DriverAppImageResolution">Driver App Image Resolution</text>
+		<text name="PayStatement">Pay Statement</text>
+		<text name="LeaseHaulerStatement">Lease Hauler Statement</text>
+		<text name="EmployeeId">Employee Id</text>
+		<text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
+		<text name="TruckTrailerCategory">Truck/Trailer category</text>
+		<text name="Trailer">Trailer</text>
+		<text name="ThereWasTractorAssociatedWithThisTrailer">There was a tractor associated with this trailer. This tractor has been removed from the trailer.</text>
+		<text name="ActiveReports">Active Reports</text>
+		<text name="TenantStatisticsReport">Tenant Statistics Report</text>
 	</texts>
 </localizationDictionary>

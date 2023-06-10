@@ -585,6 +585,15 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
 
+                // ActiveReports
+                {
+                    AppPermissions.Pages_ActiveReports, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                    }
+                },
+                
                 // Schedule
                 {
                     AppPermissions.Pages_Schedule, new[]

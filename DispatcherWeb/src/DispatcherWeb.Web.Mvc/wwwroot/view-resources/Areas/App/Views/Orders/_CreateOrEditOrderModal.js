@@ -205,6 +205,7 @@
                                 abp.message.warn(app.localize('MissingQtyOrNbrOfTrucksOnOrderLinesWarning'));
                             }
                             checkIfTaxIsRequired();
+                            abp.event.trigger('app.createOrEditOrderModalSaved');
                             if (callback)
                                 callback();
                         }

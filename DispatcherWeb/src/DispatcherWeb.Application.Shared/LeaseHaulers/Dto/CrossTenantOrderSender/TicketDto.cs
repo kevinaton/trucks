@@ -11,6 +11,7 @@ namespace DispatcherWeb.LeaseHaulers.Dto.CrossTenantOrderSender
         public decimal Quantity { get; set; }
         public TruckDto Truck { get; set; }
         public string TruckCode { get; set; }
+        public TruckDto Trailer { get; set; }
         public ServiceDto Service { get; set; }
         public LocationDto DeliverTo { get; set; }
         public LocationDto LoadAt { get; set; }

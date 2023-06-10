@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Infrastructure;
@@ -115,5 +116,7 @@ namespace DispatcherWeb.Orders.Dto
 
         [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationPhoneNumber)]
         public string CustomerNotificationPhoneNumber { get; set; }
+
+        public List<OrderLineVehicleCategoryDto> VehicleCategories { get; set; }
     }
 }

@@ -23,12 +23,14 @@ namespace DispatcherWeb.Trucks
 
         public Truck()
         {
-            OrderLineTrucks = new HashSet<OrderLineTruck>();
+            OrderLineTrucksOfTruck = new HashSet<OrderLineTruck>();
+            OrderLineTrucksOfTrailer = new HashSet<OrderLineTruck>();
             DriverAssignments = new HashSet<DriverAssignment>();
             SharedTrucks = new HashSet<SharedTruck>();
             Files = new HashSet<TruckFile>();
             OutOfServiceHistories = new HashSet<OutOfServiceHistory>();
-            Tickets = new HashSet<Ticket>();
+            TicketsOfTruck = new HashSet<Ticket>();
+            TicketsOfTrailer = new HashSet<Ticket>();
             AvailableLeaseHaulerTrucks = new HashSet<AvailableLeaseHaulerTruck>();
         }
 
@@ -68,12 +70,15 @@ namespace DispatcherWeb.Trucks
 
         public int? DefaultDriverId { get; set; }
 
-        public int? DefaultTrailerId { get; set; }
-        public Truck DefaultTrailer { get; set; }
+        public int? CurrentTrailerId { get; set; }
+        public Truck CurrentTrailer { get; set; }
+
+        public virtual ICollection<Truck> CurrentTractors { get; set; }
 
         public virtual Driver DefaultDriver { get; set; }
 
-        public virtual ICollection<OrderLineTruck> OrderLineTrucks { get; set; }
+        public virtual ICollection<OrderLineTruck> OrderLineTrucksOfTruck { get; set; }
+        public virtual ICollection<OrderLineTruck> OrderLineTrucksOfTrailer { get; set; }
 
         public virtual ICollection<DriverAssignment> DriverAssignments { get; set; }
 
@@ -187,7 +192,9 @@ namespace DispatcherWeb.Trucks
 
         public ICollection<OutOfServiceHistory> OutOfServiceHistories { get; set; }
 
-        public ICollection<Ticket> Tickets { get; set; }
+        public ICollection<Ticket> TicketsOfTruck { get; set; }
+
+        public ICollection<Ticket> TicketsOfTrailer { get; set; }
 
         public ICollection<VehicleUsage> VehicleUsages { get; set; }
 

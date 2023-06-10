@@ -16,6 +16,7 @@ namespace DispatcherWeb.Tickets.Dto
         public string Uom { get; set; }
         public string Carrier { get; set; }
         public string Truck { get; set; }
+        public string Trailer { get; set; }
         public string DriverName { get; set; }
         public string JobNumber { get; set; }
         public string QuoteName { get; set; }
@@ -23,6 +24,8 @@ namespace DispatcherWeb.Tickets.Dto
         public Guid? TicketPhotoId { get; set; }
         public int? ReceiptLineId { get; set; }
         public int? InvoiceLineId { get; set; }
+        public bool HasPayStatements { get; set; }
+        public bool HasLeaseHaulerStatements { get; set; }
 
         public Shift? ShiftRaw { get; set; }
         public string Shift { get; set; }

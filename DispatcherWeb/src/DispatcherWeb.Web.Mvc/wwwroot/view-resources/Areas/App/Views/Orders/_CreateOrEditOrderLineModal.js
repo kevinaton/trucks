@@ -20,6 +20,7 @@
         var _materialUomDropdown = null;
         var _freightUomDropdown = null;
         var _designationDropdown = null;
+        var _vehicleCategoriesDropdown = null;
         var _isMaterialPricePerUnitOverriddenInput = null;
         var _isFreightPricePerUnitOverriddenInput = null;
         var _materialQuantityInput = null;
@@ -114,6 +115,7 @@
             _materialUomDropdown = _$form.find("#MaterialUomId");
             _freightUomDropdown = _$form.find("#FreightUomId");
             _designationDropdown = _$form.find("#Designation");
+            _vehicleCategoriesDropdown = _$form.find("#VehicleCategories");
             _isMaterialPricePerUnitOverriddenInput = _$form.find("#IsMaterialPricePerUnitOverridden");
             _isFreightPricePerUnitOverriddenInput = _$form.find("#IsFreightPricePerUnitOverridden");
             _materialQuantityInput = _$form.find("#MaterialQuantity");
@@ -180,6 +182,11 @@
             _designationDropdown.select2Init({
                 showAll: true,
                 allowClear: false
+            });
+            _vehicleCategoriesDropdown.select2Init({
+                abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
+                showAll: true,
+                allowClear: true
             });
 
             _designationDropdown.change(function () {
@@ -733,6 +740,7 @@
             _orderLine.requiresCustomerNotification = !!orderLine.RequiresCustomerNotification;
             _orderLine.customerNotificationContactName = orderLine.CustomerNotificationContactName;
             _orderLine.customerNotificationPhoneNumber = orderLine.CustomerNotificationPhoneNumber;
+            _orderLine.vehicleCategories = _$form.find("#VehicleCategories").select2('data').map(x => ({ id: x.id, name: x.title }));
 
             if (this.saveCallback) {
                 this.saveCallback(_orderLine);
@@ -841,6 +849,9 @@
             _$form.find("#TimeOnJob").val(_orderLine.timeOnJob);
             _$form.find("#JobNumber").val(_orderLine.jobNumber);
             _$form.find("#Note").val(_orderLine.note);
+            if (_orderLine.vehicleCategories) {
+                abp.helper.ui.addAndSetDropdownValues(_$form.find("#VehicleCategories"), _orderLine.vehicleCategories);
+            }
 
             _quoteId = _$form.find("#QuoteId").val();
             _quoteServiceId = _$form.find("#QuoteServiceId").val();
