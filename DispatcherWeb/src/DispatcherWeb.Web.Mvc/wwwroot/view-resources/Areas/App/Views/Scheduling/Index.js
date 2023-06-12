@@ -41,12 +41,6 @@
         var showDispatchViaGeotabItems = isDispatchViaGeotabEnabled && hasDispatchPermissions;
         var showProgressColumn = dispatchVia === abp.enums.dispatchVia.driverApplication;
 
-        var _addOrderTruckModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Scheduling/AddOrderTruckModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_AddOrderTruckModal.js',
-            modalClass: 'AddOrderTruckModal'
-        });
-
         var _setTruckUtilizationModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Scheduling/SetTruckUtilizationModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetTruckUtilizationModal.js',
@@ -1991,12 +1985,6 @@
             resetPaging = resetPaging === undefined ? true : resetPaging;
             scheduleGrid.ajax.reload(callback, resetPaging);
         }
-
-        abp.event.on('app.addOrderTruckModalSaved', function () {
-            reloadMainGrid(null, false);
-            reloadTruckTiles();
-            reloadDriverAssignments();
-        });
 
         abp.event.on('app.assignDriverForTruckModalSaved', function () {
             //reloadMainGrid(null, false);

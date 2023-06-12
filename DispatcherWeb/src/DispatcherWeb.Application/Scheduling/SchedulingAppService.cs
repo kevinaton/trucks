@@ -746,8 +746,8 @@ namespace DispatcherWeb.Scheduling
         public async Task<bool> IsTrailerAssignedToAnotherTruck(IsTrailerAssignedToAnotherTruckInput input)
         {
             return await _orderLineTruckRepository.GetAll()
-                .Where(olt => olt.TruckId == input.TrailerId &&
-                              olt.ParentOrderLineTruck.TruckId != input.ParentTruckId &&
+                .Where(olt => olt.TrailerId == input.TrailerId &&
+                              olt.TruckId != input.TruckId &&
                               olt.OrderLine.Order.DeliveryDate == input.Date &&
                               olt.OrderLine.Order.Shift == input.Shift &&
                               !olt.IsDone)
