@@ -730,9 +730,6 @@ namespace DispatcherWeb.Scheduling
             return null;
         }
 
-        public async Task<int?> GetCurrentTrailerId(int truckId) =>
-            await _truckRepository.GetAll().Where(t => t.Id == truckId).Select(t => t.CurrentTrailerId).FirstOrDefaultAsync();
-
         public async Task<decimal> GetTruckUtilization(GetTruckUtilizationInput input)
         {
             return await _orderLineTruckRepository.GetAll()

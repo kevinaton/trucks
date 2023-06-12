@@ -6,6 +6,7 @@
         var _truckService = abp.services.app.truck;
         var _dispatchingService = abp.services.app.dispatching;
         var _driverAssignmentService = abp.services.app.driverAssignment;
+        var _trailerAssignmentService = abp.services.app.trailerAssignment;
         var _dtHelper = abp.helper.dataTables;
         var _permissions = {
             edit: abp.auth.hasPermission('Pages.Orders.Edit'),
@@ -217,16 +218,10 @@
             modalClass: 'CreateOrEditTruckModal'
         });
 
-        var _setTrailerForTractorModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Scheduling/SetTrailerForTractorModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetTrailerForTractorModal.js',
-            modalClass: 'SetTrailerForTractorModal'
-        });
-
-        var _setTrailerForOrderLineTruck = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Scheduling/SetTrailerForOrderLineTruckModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetTrailerForOrderLineTruckModal.js',
-            modalClass: 'SetTrailerForOrderLineTruckModal'
+        var _selectTrailerModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Scheduling/SelectTrailerModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SelectTrailerModal.js',
+            modalClass: 'SelectTrailerModal'
         });
 
         var _setTractorForTrailer = new app.ModalManager({
@@ -1981,6 +1976,34 @@
             }
         }
 
+        async function setTrailerForTractorAsync(options) {
+            var filterData = _dtHelper.getFilterData();
+            await _trailerAssignmentService.setTrailerForTractor({
+                date: filterData.date,
+                shift: filterData.shift,
+                officeId: filterData.officeId,
+                ...options
+            });
+
+            abp.notify.info('Saved successfully.');
+
+            reloadMainGrid(null, false);
+            reloadTruckTiles();
+            //reloadDriverAssignments();
+        }
+
+        async function setTrailerForOrderLineTruckAsync(options) {
+            await _trailerAssignmentService.setTrailerForOrderLineTruck({
+                ...options
+            });
+
+            abp.notify.info('Saved successfully.');
+
+            reloadMainGrid(null, false);
+            reloadTruckTiles();
+            //reloadDriverAssignments();
+        }
+
         function reloadMainGrid(callback, resetPaging) {
             resetPaging = resetPaging === undefined ? true : resetPaging;
             scheduleGrid.ajax.reload(callback, resetPaging);
@@ -2642,11 +2665,17 @@
                     },
                     callback: async function () {
                         var item = $(this).data('item');
-                        _setTrailerForOrderLineTruck.open({
-                            message: 'Select trailer for truck ' + item.truckCode + ' for single job',
+                        let trailer = await app.getModalResultAsync(
+                            _selectTrailerModal.open({
+                                message: 'Select trailer for truck ' + item.truckCode + ' for single job',
+                                trailerId: item.trailer && item.trailer.id || null,
+                                trailerTruckCode: item.trailer && item.trailer.truckCode || null,
+                            })
+                        );
+
+                        await setTrailerForOrderLineTruckAsync({
                             orderLineTruckId: item.id,
-                            trailerId: item.trailer && item.trailer.id || null,
-                            trailerTruckCode: item.trailer && item.trailer.truckCode || null,
+                            trailerId: trailer.trailerId
                         });
                     }
                 },
@@ -2818,12 +2847,14 @@
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
-                        var filterData = _dtHelper.getFilterData();
-                        _setTrailerForTractorModal.open({
-                            date: filterData.date,
-                            shift: filterData.shift,
-                            officeId: filterData.officeId,
+
+                        let trailer = await app.getModalResultAsync(
+                            _selectTrailerModal.open()
+                        );
+
+                        await setTrailerForTractorAsync({
                             tractorId: truck.id,
+                            trailerId: trailer.trailerId
                         });
                     }
                 },
@@ -2835,17 +2866,20 @@
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
-                        var filterData = _dtHelper.getFilterData();
-                        _setTrailerForTractorModal.open({
-                            date: filterData.date,
-                            shift: filterData.shift,
-                            officeId: filterData.officeId,
+
+                        let trailer = await app.getModalResultAsync(
+                            _selectTrailerModal.open({
+                                trailerId: truck.trailer.id,
+                                trailerTruckCode: truck.trailer.truckCode,
+                                modalSubtitle: truck.truckCode + ' is currently coupled to ' + truck.trailer.truckCode
+                                    + ' - ' + truck.vehicleCategory.name + ' ' + truck.make + ' ' + truck.model + ' '
+                                    + truck.bedConstructionFormatted + ' bed'
+                            })
+                        );
+
+                        await setTrailerForTractorAsync({
                             tractorId: truck.id,
-                            trailerId: truck.trailer.id,
-                            trailerTruckCode: truck.trailer.truckCode,
-                            modalSubtitle: truck.truckCode + ' is currently coupled to ' + truck.trailer.truckCode
-                                + ' - ' + truck.vehicleCategory.name + ' ' + truck.make + ' ' + truck.model + ' '
-                                + truck.bedConstructionFormatted + ' bed'
+                            trailerId: trailer.trailerId
                         });
                     }
                 },
