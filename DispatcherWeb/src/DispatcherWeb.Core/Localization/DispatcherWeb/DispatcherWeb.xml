@@ -1849,5 +1849,6 @@
 		<text name="ThereWasTractorAssociatedWithThisTrailer">There was a tractor associated with this trailer. This tractor has been removed from the trailer.</text>
 		<text name="ActiveReports">Active Reports</text>
 		<text name="TenantStatisticsReport">Tenant Statistics Report</text>
+		<text name="YouHaveScheduledTrucksWithNoDrivers">You have scheduled trucks with no drivers. Please add a driver to each truck scheduled before trying to dispatch again.</text>
 	</texts>
 </localizationDictionary>

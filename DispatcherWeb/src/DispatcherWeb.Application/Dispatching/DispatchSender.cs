@@ -303,13 +303,28 @@ namespace DispatcherWeb.Dispatching
                     }
                 }
             }
+
+            if (_orderLines != null)
+            {
+                foreach (var orderLine in _orderLines)
+                {
+                    orderLine.OrderLineTrucks ??= new List<OrderLineTruckDto>();
+                }
+            }
         }
 
         private async Task<List<OrderLineTruckDto>> GetOrderLineTrucksForDispatchMessageAsync(IQueryable<OrderLineTruck> orderLineTrucks)
         {
-            var result = await orderLineTrucks
+            var query = orderLineTrucks
                 //.Where(olt => !olt.IsDone)
-                .WhereIf(!await FeatureChecker.AllowLeaseHaulersFeature(), olt => olt.Truck.LocationId != null && olt.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule != true)
+                .WhereIf(!await FeatureChecker.AllowLeaseHaulersFeature(), olt => olt.Truck.LocationId != null && olt.Truck.LeaseHaulerTruck.AlwaysShowOnSchedule != true);
+
+            if (await query.AnyAsync(x => x.Truck.VehicleCategory.IsPowered && x.DriverId == null))
+            {
+                throw new UserFriendlyException(L("YouHaveScheduledTrucksWithNoDrivers"));
+            }
+
+            var result = await query
                 .Where(x => x.DriverId != null)
                 .Select(x => new OrderLineTruckDto
                 {
