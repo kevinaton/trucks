@@ -12,7 +12,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         bool HasTenantsParameter { get; }
 
-        Task<object> LocateDataSource(LocateDataSourceArgs arg);
+        Task<(bool IsMasterDataSource, object DataSourceJson)> LocateDataSource(LocateDataSourceArgs arg);
 
         Task Initialize();
 

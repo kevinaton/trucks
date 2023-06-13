@@ -26,10 +26,10 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
         private readonly ReportAppService _reportAppService;
         private readonly IHostEnvironment _environment;
 
-        public VehicleMaintenanceWorkOrderReportDataDefinitions(IConfiguration configuration,
-                                        IHttpContextAccessor httpContextAccessor,
-                                        IHostEnvironment environment,
+        public VehicleMaintenanceWorkOrderReportDataDefinitions(IHostEnvironment environment,
                                         ReportAppService reportAppService,
+                                        IConfiguration configuration,
+                                        IHttpContextAccessor httpContextAccessor,
                                         ILoggerFactory loggerFactory)
 
                     : base(configuration, httpContextAccessor, loggerFactory)
@@ -78,18 +78,24 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             return memStream;
         }
 
-        public override async Task<object> LocateDataSource(LocateDataSourceArgs arg)
+        public override async Task<(bool IsMasterDataSource, object DataSourceJson)> LocateDataSource(LocateDataSourceArgs arg)
         {
-            var json = string.Empty;
+            var contentJson = _emptyArrayInResult;
+            var (isMasterDataSource, dataSourceJson) = await base.LocateDataSource(arg);
+            if (isMasterDataSource)
+            {
+                return (isMasterDataSource, dataSourceJson);
+            }
+
             if (arg.DataSet.Name.Equals("VehicleMaintenanceWorkOrderDataSet"))
             {
-                json = await GetVehicleMaintenanceWorkOrderDataSource(arg);
+                contentJson = await GetVehicleMaintenanceWorkOrderDataSource(arg);
             }
             else if (arg.DataSet.Name.Equals("VehicleMaintenanceWorkOrderLinesDataSet"))
             {
-                json = await GetVehicleMaintenanceWorkOrderLinesDataSource(arg);
+                contentJson = await GetVehicleMaintenanceWorkOrderLinesDataSource(arg);
             }
-            return json;
+            return (isMasterDataSource, contentJson);
         }
 
         #region private members
