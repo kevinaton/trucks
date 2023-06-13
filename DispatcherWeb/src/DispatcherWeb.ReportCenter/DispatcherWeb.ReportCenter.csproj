@@ -19,9 +19,11 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master" />
+		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
@@ -96,6 +98,9 @@
 		</None>
 		<None Update="Reports\DataSource.rdsx">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\_MasterReportLetterPortrait.rdlx-master">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 	<Target Name="BeforeClientBuild" BeforeTargets="BeforeBuild">
