@@ -30,9 +30,11 @@
                 showAll: true,
                 allowClear: true
             });
-            vehicleCategoryDropdown.change(updateCategoryControls);
 
-            refreshControlsVisibillity();
+            vehicleCategoryDropdown.change(updateCategoryControls);
+            makeDropdown.change(refreshMakeControlsVisibillity);
+
+            refreshCategoryControlsVisibillity();
 
             async function updateCategoryControls() {
                 try {
@@ -50,17 +52,23 @@
                     abp.ui.clearBusy(bedConstructionDropdown.closest('.form-group'));
                 }
 
-                refreshControlsVisibillity();
+                refreshCategoryControlsVisibillity();
             }
 
-            function refreshControlsVisibillity() {
+            function refreshCategoryControlsVisibillity() {
                 if (vehicleCategoryDropdown.val() == '') {
                     bedConstructionDropdown.val('').change().closest('.form-group').hide();
                     makeDropdown.val('').change().closest('.form-group').hide();
-                    modelDropdown.val('').change().closest('.form-group').hide();
                 } else {
                     bedConstructionDropdown.closest('.form-group').show();
                     makeDropdown.closest('.form-group').show();
+                }
+            }
+
+            function refreshMakeControlsVisibillity() {
+                if (makeDropdown.val() == '') {
+                    modelDropdown.val('').change().closest('.form-group').hide();
+                } else {
                     modelDropdown.closest('.form-group').show();
                 }
             }
