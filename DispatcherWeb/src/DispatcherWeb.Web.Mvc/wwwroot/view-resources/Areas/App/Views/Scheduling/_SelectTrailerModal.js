@@ -1,8 +1,7 @@
 ﻿(function ($) {
-    app.modals.SetTrailerForOrderLineTruckModal = function () {
+    app.modals.SelectTrailerModal = function () {
 
         var _modalManager;
-        var _trailerAssignmentService = abp.services.app.trailerAssignment;
         var _truckService = abp.services.app.truck;
         var _$form = null;
 
@@ -110,18 +109,10 @@
             }
 
             var formData = _$form.serializeFormToObject();
-
-            _modalManager.setBusy(true);
-            _trailerAssignmentService.setTrailerForOrderLineTruck({
-                trailerId: formData.TrailerId,
-                orderLineTruckId: formData.OrderLineTruckId
-            }).done(function () {
-                abp.notify.info('Saved successfully.');
-                _modalManager.close();
-                abp.event.trigger('app.defaultDriverForTruckModalSet');
-            }).always(function () {
-                _modalManager.setBusy(false);
+            _modalManager.setResult({
+                trailerId: formData.TrailerId
             });
+            _modalManager.close();
         };
     };
 })(jQuery);

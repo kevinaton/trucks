@@ -1,17 +1,16 @@
 ﻿@using System.Threading.Tasks
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
-@using DispatcherWeb.TrailerAssignments.Dto
-@model SetTrailerForTractorInput
-@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Change trailer"))
+@using DispatcherWeb.Web.Areas.App.Models.Scheduling
+@model SelectTrailerModalViewModel
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Select Trailer"))
 
 <div class="modal-body">
     <form role="form" novalidate class="form-validation">
-        <input type="hidden" asp-for="Date" />
-        <input type="hidden" asp-for="OfficeId" />
-        <input type="hidden" asp-for="Shift" />
-        <input type="hidden" asp-for="TractorId" />
         <div class="form-group">
             <p id="ModalSubtitle"></p>
+        </div>
+        <div class="form-group">
+            <h5 id="Message"></h5>
         </div>
         <div class="form-group">
             <label for="VehicleCategoryId">Category</label>

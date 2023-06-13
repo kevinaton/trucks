@@ -15,6 +15,9 @@
 		<NoWarn>NU1701</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Reports\_MasterReportLetterPortrait.rdlx-master" />
+	</ItemGroup>
+	<ItemGroup>
 		<EmbeddedResource Include="Properties\.gclicx">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
@@ -22,6 +25,9 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Reports\_MasterReportLetterPortrait.rdlx-master">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
@@ -88,20 +94,6 @@
 		<PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
 		<PackageReference Include="System.IO.Packaging" Version="6.0.0" />
 		<PackageReference Include="Z.Expressions.Eval" Version="5.0.3" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Update="Reports\DataSource.Dev.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\DataSource.QA.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\DataSource.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\_MasterReportLetterPortrait.rdlx-master">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 	</ItemGroup>
 	<Target Name="BeforeClientBuild" BeforeTargets="BeforeBuild">
 		<ReadLinesFromFile File="wwwroot\custom-locale.json">

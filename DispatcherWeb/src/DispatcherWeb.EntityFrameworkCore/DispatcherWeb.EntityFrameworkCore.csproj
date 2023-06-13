@@ -15,11 +15,6 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Migrations\20230602074117_AddedActiveReports.cs" />
-    <Compile Remove="Migrations\20230602074117_AddedActiveReports.Designer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Migrations\20230602074117_AddedActiveReports.sql" />
     <None Remove="Migrations\20230607154131_AddedActiveReports.sql" />
   </ItemGroup>
   <ItemGroup>
