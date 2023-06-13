@@ -436,7 +436,15 @@ namespace DispatcherWeb
                     Trailer = t.CurrentTrailer == null ? null : new ScheduleTruckTrailerDto
                     {
                         Id = t.CurrentTrailer.Id,
-                        TruckCode = t.CurrentTrailer.TruckCode
+                        TruckCode = t.CurrentTrailer.TruckCode,
+                        VehicleCategory = new VehicleCategoryDto
+                        {
+                            Id = t.CurrentTrailer.VehicleCategory.Id,
+                            Name = t.CurrentTrailer.VehicleCategory.Name,
+                        },
+                        Make = t.CurrentTrailer.Make,
+                        Model = t.CurrentTrailer.Model,
+                        BedConstruction = t.CurrentTrailer.BedConstruction
                     },
                     Tractor = t.CurrentTractors.Select(x => new ScheduleTruckTractorDto
                     {
