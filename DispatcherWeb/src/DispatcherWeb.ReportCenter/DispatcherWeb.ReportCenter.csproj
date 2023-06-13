@@ -15,8 +15,11 @@
 		<NoWarn>NU1701</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Content Remove="Reports\_TenantsDS.json" />
-	  <Content Remove="Reports\_TenantStatisticsReportDS.json" />
+	  <Content Remove="Reports\_VehicleMaintenanceWorkOrder.json" />
+	  <Content Remove="Reports\_VehicleMaintenanceWorkOrderLines.json" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Reports\_MasterReportLetterPortrait.rdlx-master" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Reports\VehicleMaintenanceWorkOrderReport.rdlx" />
@@ -26,24 +29,34 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Properties\.gclicx" />
 		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\VehicleMaintenanceWorkOrderReport.rdlx" />
+		<EmbeddedResource Include="Reports\VehicleMaintenanceWorkOrderReport.rdlx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master" />
 		<EmbeddedResource Include="Reports\_MasterReportLetterPortrait.rdlx-master" />
+		<EmbeddedResource Include="Reports\_VehicleMaintenanceWorkOrder.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Reports\_VehicleMaintenanceWorkOrderLines.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="ClientApp\package.json" />
 		<None Include="Properties\launchSettings.json" />
-		<None Include="Reports\_TenantsDS.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Include="Reports\_TenantStatisticsReportDS.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
+		<EmbeddedResource Include="Reports\_TenantsDS.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Reports\_TenantStatisticsReportDS.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 		<None Include="wwwroot\lib\grapecity\jsViewer.min.js" />
-		<Resource Include="Properties\licenses.licx" />
+		<Resource Include="Properties\licenses.licx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map" />
@@ -95,17 +108,6 @@
 		<PackageReference Include="System.IO.Packaging" Version="6.0.0" />
 		<PackageReference Include="Z.Expressions.Eval" Version="5.0.3" />
 	</ItemGroup>
-	<ItemGroup>
-		<None Update="Reports\DataSource.Dev.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\DataSource.QA.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Reports\DataSource.rdsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
 	<Target Name="BeforeClientBuild" BeforeTargets="BeforeBuild">
 		<ReadLinesFromFile File="wwwroot\custom-locale.json">
 			<Output TaskParameter="Lines" ItemName="CustomLocale" />
@@ -121,7 +123,7 @@
 		<Exec WorkingDirectory="ClientApp" Command="yarn run build" />
 	</Target>
 	<ItemGroup>
-		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="16.2.1" />
+		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="16.4.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="wwwroot\lib\gritter\" />

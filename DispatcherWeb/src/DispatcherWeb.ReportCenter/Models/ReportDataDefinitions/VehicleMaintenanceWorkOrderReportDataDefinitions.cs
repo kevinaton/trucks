@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
@@ -14,8 +15,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using HttpClient = System.Net.Http.HttpClient;
-using Settings = GrapeCity.ActiveReports.Export.Pdf.Page.Settings;
+using PdfSettings = GrapeCity.ActiveReports.Export.Pdf.Page.Settings;
 
 namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 {
@@ -26,11 +28,11 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
         public VehicleMaintenanceWorkOrderReportDataDefinitions(IConfiguration configuration,
                                         IHttpContextAccessor httpContextAccessor,
-                                        IServiceProvider serviceProvider,
                                         IHostEnvironment environment,
-                                        ReportAppService reportAppService)
+                                        ReportAppService reportAppService,
+                                        ILoggerFactory loggerFactory)
 
-                    : base(configuration, serviceProvider, httpContextAccessor)
+                    : base(configuration, httpContextAccessor, loggerFactory)
         {
             _reportAppService = reportAppService;
             _environment = environment;
@@ -65,7 +67,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             base.OpenReportAsPdf(entityId);
 
             // Provide settings for the rendering output.
-            var pdfSetting = new Settings();
+            var pdfSetting = new PdfSettings();
 
             //Set the rendering extension and render the report.
             var pdfRenderingExtension = new PdfRenderingExtension();
@@ -118,11 +120,12 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
+                Logger.Log(LogLevel.Error, $"Error: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
             }
             else
             {
                 var contentJson = await response.Content.ReadAsStringAsync();
-                //var resultJson = JObject.Parse(contentJson)["result"].ToString();
+                Logger.Log(LogLevel.Information, $"Success: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
                 return contentJson;
             }
 
@@ -130,15 +133,14 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
         }
 
         internal async Task<string> GetVehicleMaintenanceWorkOrderDataSource(LocateDataSourceArgs arg)
-        {
-            var accessToken = await base.HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-            var headers = $"headers={{\"Accept\":\"application/json\", \"Authorization\":\"Bearer {accessToken}\"}}";
+        {            
             var hostApiUrl = Configuration["IdentityServer:Authority"];
             var paramsDic = arg.Parameters.ToDictionary(p => p.Name, p => p.Value);
             var reportParamsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
+            var accessToken = await base.HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
 
             using var client = new HttpClient();
-            client.SetBearerToken(accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             var url = $"{hostApiUrl}/api/services/app/workorder/getworkorderforedit?id={reportParamsDic["EntityId"]}";
             var response = await client.GetAsync(url);
@@ -146,11 +148,12 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
+                Logger.Log(LogLevel.Error, $"Error: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
             }
             else
             {
                 var contentJson = await response.Content.ReadAsStringAsync();
-                //var resultJson = JObject.Parse(contentJson)["result"].ToString();
+                Logger.Log(LogLevel.Information, $"Success: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
                 return contentJson;
             }
 

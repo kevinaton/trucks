@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using GrapeCity.ActiveReports;
 using GrapeCity.ActiveReports.Web.Viewer;
+using Microsoft.Extensions.Logging;
 
 namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 {
@@ -16,5 +17,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
         Task Initialize();
 
         MemoryStream OpenReportAsPdf(int? entityId);
+
+        ILogger Logger { get; }
     }
 }

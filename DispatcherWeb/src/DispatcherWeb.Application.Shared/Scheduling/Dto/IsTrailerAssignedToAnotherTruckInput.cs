@@ -8,6 +8,6 @@ namespace DispatcherWeb.Scheduling.Dto
         public Shift? Shift { get; set; }
 
         public int TrailerId { get; set; }
-        public int ParentTruckId { get; set; }
+        public int TruckId { get; set; }
     }
 }

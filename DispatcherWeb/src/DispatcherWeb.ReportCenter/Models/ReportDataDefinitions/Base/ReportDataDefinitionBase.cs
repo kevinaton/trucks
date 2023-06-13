@@ -4,14 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
+using DispatcherWeb.ReportCenter.Services;
 using GrapeCity.ActiveReports;
 using GrapeCity.ActiveReports.PageReportModel;
 using GrapeCity.ActiveReports.Web.Viewer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using DataParameter = GrapeCity.Enterprise.Data.DataEngine.DataProcessing.DataParameter;
 using Query = GrapeCity.ActiveReports.PageReportModel.Query;
 
@@ -23,20 +27,21 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         public PageReport ThisPageReport { get; set; }
 
-        public IServiceProvider ServiceProvider { get; internal set; }
-
         public IHttpContextAccessor HttpContextAccessor { get; internal set; }
 
         public virtual bool HasTenantsParameter { get; private set; }
 
+        public ILogger Logger { get; private set; }
+
         public string ReportId =>
             GetType().UnderlyingSystemType.Name.Replace("DataDefinitions", string.Empty);
 
-        public ReportDataDefinitionBase(IConfiguration configuration, IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
+        public ReportDataDefinitionBase(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
             Configuration = configuration;
-            ServiceProvider = serviceProvider;
             HttpContextAccessor = httpContextAccessor;
+
+            Logger = loggerFactory.CreateLogger(ReportId);
         }
 
         public async Task<DataSource> TenantsListDataSource()
@@ -45,7 +50,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             ds.ConnectionProperties.DataProvider = "JSON";
 
             var tenantsJson = await GetTenantsJson();
-            ds.ConnectionProperties.ConnectString = $"jsondata={tenantsJson}";
+            if (!string.IsNullOrEmpty(tenantsJson))
+                ds.ConnectionProperties.ConnectString = $"jsondata={tenantsJson}";
 
             return ds;
         }
@@ -151,10 +157,12 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
+                Logger.Log(LogLevel.Error, $"Error: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
             }
             else
             {
                 var contentJson = await response.Content.ReadAsStringAsync();
+                Logger.Log(LogLevel.Information, $"Success: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
                 return contentJson;
             }
 

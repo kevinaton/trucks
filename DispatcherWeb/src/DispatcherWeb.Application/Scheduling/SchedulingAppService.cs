@@ -730,9 +730,6 @@ namespace DispatcherWeb.Scheduling
             return null;
         }
 
-        public async Task<int?> GetCurrentTrailerId(int truckId) =>
-            await _truckRepository.GetAll().Where(t => t.Id == truckId).Select(t => t.CurrentTrailerId).FirstOrDefaultAsync();
-
         public async Task<decimal> GetTruckUtilization(GetTruckUtilizationInput input)
         {
             return await _orderLineTruckRepository.GetAll()
@@ -746,8 +743,8 @@ namespace DispatcherWeb.Scheduling
         public async Task<bool> IsTrailerAssignedToAnotherTruck(IsTrailerAssignedToAnotherTruckInput input)
         {
             return await _orderLineTruckRepository.GetAll()
-                .Where(olt => olt.TruckId == input.TrailerId &&
-                              olt.ParentOrderLineTruck.TruckId != input.ParentTruckId &&
+                .Where(olt => olt.TrailerId == input.TrailerId &&
+                              olt.TruckId != input.TruckId &&
                               olt.OrderLine.Order.DeliveryDate == input.Date &&
                               olt.OrderLine.Order.Shift == input.Shift &&
                               !olt.IsDone)

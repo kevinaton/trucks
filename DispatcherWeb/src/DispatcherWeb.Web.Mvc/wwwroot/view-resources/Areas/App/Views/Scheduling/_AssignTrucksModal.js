@@ -266,26 +266,32 @@
                 //console.log('array: ' + _selectedRowIds.join());
             }
 
-            _$form.find("#AddToScheduleButton").click(function () {
-                var truckIds = getSelectedRowsIds();
-                if (!truckIds.length) {
-                    abp.message.warn('Please select the trucks first');
-                    return;
-                }
-                var model = {
-                    orderLineId: _orderLineId,
-                    truckIds: truckIds
-                };
-                _modalManager.setBusy(true);
-                _schedulingService.assignTrucks(model).done(function () {
+            var addToScheduleButton = _$form.find('#AddToScheduleButton');
+            addToScheduleButton.click(async function () {
+                try {
+                    _modalManager.setBusy(true);
+                    addToScheduleButton.buttonBusy(true);
+
+                    var truckIds = getSelectedRowsIds();
+                    if (!truckIds.length) {
+                        abp.message.warn('Please select the trucks first');
+                        return;
+                    }
+                    var model = {
+                        orderLineId: _orderLineId,
+                        truckIds: truckIds
+                    };
+
+                    await _schedulingService.assignTrucks(model);
+
                     abp.event.trigger('app.trucksAssignedModal');
                     abp.notify.info('Saved successfully.');
                     _modalManager.close();
-                }).fail(function () {
-                    //reloadGrid();
-                }).always(function () {
+                }
+                finally {
                     _modalManager.setBusy(false);
-                });
+                    addToScheduleButton.buttonBusy(false);
+                }
             });
 
         };
