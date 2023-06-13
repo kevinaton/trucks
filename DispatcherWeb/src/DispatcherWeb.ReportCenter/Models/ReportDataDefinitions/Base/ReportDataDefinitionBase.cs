@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
 using GrapeCity.ActiveReports;
@@ -21,6 +20,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 {
     public abstract class ReportDataDefinitionBase : IReportDataDefinition
     {
+        #region public properties
+
         public IConfiguration Configuration { get; internal set; }
 
         public PageReport ThisPageReport { get; set; }
@@ -35,6 +36,14 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         public string ReportId =>
             GetType().UnderlyingSystemType.Name.Replace("DataDefinitions", string.Empty);
+
+        #endregion
+
+        protected const string _emptyArrayInResult = "{result:[]}";
+        protected Dictionary<string, string> _masterDataSourcesRef = new()
+        {
+            { "TenantsDataSource", "TenantsDataSet" }
+        };
 
         public ReportDataDefinitionBase(IConfiguration configuration, IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
         {
@@ -61,7 +70,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
         {
             DataSet tenantsListDataSet = new()
             {
-                Name = "TenantsDataSet"
+                Name = _masterDataSourcesRef["TenantsDataSource"]
             };
 
             Query query = new()
@@ -117,8 +126,6 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             }
         }
 
-        public abstract Task<object> LocateDataSource(LocateDataSourceArgs arg);
-
         public virtual MemoryStream OpenReportAsPdf(int? entityId)
         {
             ThisPageReport.Document.LocateDataSource += (sender, args) =>
@@ -142,7 +149,23 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             return null;
         }
 
+        public virtual async Task<(bool IsMasterDataSource, object DataSourceJson)> LocateDataSource(LocateDataSourceArgs arg)
+        {
+            var isMasterDataSource = IsForTenantsDataSet(arg);
+            if (arg.DataSet.Name.Equals("TenantsDataSet"))
+            {
+                var contentJson = await GetTenantsJson();
+                return (isMasterDataSource, contentJson);
+            }
+            return (isMasterDataSource, _emptyArrayInResult);
+        }
+
         #region private methods
+
+        protected bool IsForTenantsDataSet(LocateDataSourceArgs arg)
+        {
+            return _masterDataSourcesRef.ContainsValue(arg.DataSet.Name);
+        }
 
         private async Task<string> GetTenantsJson()
         {
@@ -166,7 +189,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
                 return contentJson;
             }
 
-            return string.Empty;
+            return _emptyArrayInResult;
         }
 
         #endregion

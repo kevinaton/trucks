@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
@@ -58,8 +57,15 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             await base.Initialize();
         }
 
-        public override async Task<object> LocateDataSource(LocateDataSourceArgs arg)
+        public override async Task<(bool IsMasterDataSource, object DataSourceJson)> LocateDataSource(LocateDataSourceArgs arg)
         {
+            var contentJson = _emptyArrayInResult;
+            var (isMasterDataSource, dataSourceJson) = await base.LocateDataSource(arg);
+            if (isMasterDataSource)
+            {
+                return (isMasterDataSource, dataSourceJson);
+            }
+
             if (arg.DataSet.Name.Equals("TenantStatisticsDataSet"))
             {
                 var paramsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
@@ -80,12 +86,11 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 }
                 else
                 {
-                    var contentJson = await response.Content.ReadAsStringAsync();
+                    contentJson = await response.Content.ReadAsStringAsync();
                     Logger.Log(LogLevel.Information, $"Success: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
-                    return contentJson;
                 }
             }
-            return string.Empty;
+            return (isMasterDataSource, contentJson);
         }
     }
 }

@@ -135,7 +135,8 @@ namespace DispatcherWeb.ReportCenter
                     var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<ReportAppService>();
                     var reportId = args.Report.Description.Replace(".rdlx", string.Empty);
                     var reportDataDefinition = reportAppSrvc.GetReportDataDefinition(reportId).Result;
-                    return reportDataDefinition.LocateDataSource(args).Result;
+                    var locateDataSourceResult = reportDataDefinition.LocateDataSource(args).Result;
+                    return locateDataSourceResult.DataSourceJson;
                 });
             });
 

@@ -83,7 +83,7 @@
 	<ItemGroup>
 		<PackageReference Include="ClosedXML" Version="0.101.0" />
 		<PackageReference Include="ClosedXML.Extensions.Mvc" Version="0.4.0" />
-		<PackageReference Include="Gcef.Data.VBFunctionLib" Version="3.2.0" />
+		<PackageReference Include="Gcef.Data.VBFunctionLib" Version="3.3.0" />
 		<PackageReference Include="IdentityModel" Version="4.4.0" />
 		<PackageReference Include="MathParser.org-mXparser" Version="5.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
@@ -110,7 +110,7 @@
 		<Exec WorkingDirectory="ClientApp" Command="yarn run build" />
 	</Target>
 	<ItemGroup>
-		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="16.4.0" />
+		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="17.1.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="wwwroot\lib\gritter\" />
