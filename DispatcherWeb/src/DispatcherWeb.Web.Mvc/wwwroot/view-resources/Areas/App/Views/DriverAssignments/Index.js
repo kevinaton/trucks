@@ -169,7 +169,6 @@
                                 abp.ui.setBusy(cell);
                                 if (userResponse === 'no') {
                                     if (!newValue) {
-                                        debugger;
                                         if (driverAssignmentsGrid.data().toArray().filter(t => t.truckId === rowData.truckId && t !== rowData).length) {
                                             //if there are other rows for the same truck and one of them is set to null, the row will be deleted
                                             //no need to change the id to 0 in this case
