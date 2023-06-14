@@ -7,13 +7,18 @@
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
+            var modalArgs = modalManager.getArgs();
 
             _$form = _modalManager.getModal().find('form');
+
+            if (modalArgs.optional) {
+                _$form.find('#TrailerId').removeAttr('required').closest('.form-group').find('.required-label').removeClass('required-label');
+            }
+
             _$form.validate();
 
             abp.helper.ui.initControls();
 
-            var modalArgs = modalManager.getArgs();
             var vehicleCategoryDropdown = _$form.find('#VehicleCategoryId');
             var bedConstructionDropdown = _$form.find('#BedConstruction');
             var makeDropdown = _$form.find('#Make');
@@ -109,9 +114,13 @@
             }
 
             var formData = _$form.serializeFormToObject();
-            _modalManager.setResult({
-                trailerId: formData.TrailerId
-            });
+
+            let result = formData.TrailerId ? {
+                id: Number(formData.TrailerId),
+                truckCode: _$form.find('#TrailerId').getSelectedDropdownOption().text()
+            } : null;
+
+            _modalManager.setResult(result);
             _modalManager.close();
         };
     };
