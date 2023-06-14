@@ -97,7 +97,7 @@
                 saveCallback: async function (rowData, cell) {
                     try {
                         var result = await _driverAssignmentService.editDriverAssignment(rowData);
-                        if (rowData.id) {
+                        if (rowData.id && !result.reloadRequired) {
                             refreshButtons();
                         } else {
                             setTimeout(() => {
@@ -168,6 +168,13 @@
                                 );
                                 abp.ui.setBusy(cell);
                                 if (userResponse === 'no') {
+                                    if (!newValue) {
+                                        if (driverAssignmentsGrid.data().toArray().filter(t => t.truckId === rowData.truckId && t !== rowData).length) {
+                                            //if there are other rows for the same truck and one of them is set to null, the row will be deleted
+                                            //no need to change the id to 0 in this case
+                                            return true;
+                                        }
+                                    }
                                     rowData.id = 0;
                                     rowData.startTime = null;
                                 } else {
