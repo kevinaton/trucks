@@ -447,6 +447,7 @@
             }
             if (_settings.allowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders
                 && order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(truck.vehicleCategory.id)
+                && (!truck.trailer || !order.vehicleCategoryIds.includes(truck.trailer?.vehicleCategory.id))
             ) {
                 return false;
             }
