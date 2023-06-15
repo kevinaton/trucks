@@ -5,21 +5,17 @@ import {
     Box,
     Button,
     IconButton,
-    Link,
     Menu,
     MenuItem,
     MenuList,
-    Paper,
     Toolbar,
     Typography,
 } from '@mui/material';
-import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents';
-import { NotificationBell } from '../dropdowns';
+import { drawerWidth, AppBar, HeaderIconButton } from '../../DTComponents';
+import { NotificationBell, ProfileMenu } from '../dropdowns';
 import { getSupportLinkAddress } from '../../../store/actions';
 import { isEmpty } from 'lodash';
-import { ProfileList } from '../../../common/data/menus';
 import ChatPane from '../../Chatpane';
-import { theme } from '../../../Theme';
 
 export const Appbar = ({
     isAuthenticated,
@@ -35,8 +31,6 @@ export const Appbar = ({
     const { supportLinkAddress } = useSelector((state) => ({
         supportLinkAddress: state.LayoutReducer.supportLinkAddress,
     }));
-    const [anchorProfile, setAnchorProfile] = React.useState(null);
-    const isProfile = Boolean(anchorProfile);
     const [state, setState] = React.useState(false);
 
     useEffect(() => {
@@ -51,15 +45,6 @@ export const Appbar = ({
             }
         }
     }, [dispatch, supportLinkAddress, isAuthenticated]);
-
-    // Handle showing profile menu
-    const handleProfileClick = (event) => {
-        setAnchorProfile(event.currentTarget);
-    };
-
-    const handleProfileClose = (event) => {
-        setAnchorProfile(null);
-    };
 
     return (
         <div>
@@ -183,79 +168,13 @@ export const Appbar = ({
                                 style={{
                                     '--fa-primary-opacity': '0.3',
                                     '--fa-secondary-opacity': '1',
-                                }}></i>
+                                }}
+                            ></i>
                         </HeaderIconButton>
 
                         <NotificationBell isMobileView={false} />
 
-                        <HeaderButton
-                            id='profile'
-                            aria-haspopup='true'
-                            aria-expanded={isProfile ? 'true' : undefined}
-                            onClick={handleProfileClick}
-                            aria-label='profileSettings'
-                        />
-                        <Menu
-                            id='profile-list'
-                            disable
-                            anchorEl={anchorProfile}
-                            open={isProfile}
-                            onClose={handleProfileClose}
-                            MenuListProps={{ sx: { py: 0 } }}>
-                            <Paper sx={{ width: 1 }}>
-                                <Box
-                                    sx={{
-                                        background: theme.palette.gradient.main,
-                                        px: 2,
-                                        py: 2,
-                                        display: 'flex',
-                                        maxWidth: '300px',
-                                    }}>
-                                    <Avatar
-                                        alt='account'
-                                        src='/reactapp/assets/images/150.jpg'
-                                        sx={{ mr: 1, width: 24, height: 24 }}
-                                    />
-                                    <Typography
-                                        sx={{
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                        variant='body1'
-                                        fontWeight={700}
-                                        color='white'>
-                                        Admin
-                                    </Typography>
-                                </Box>
-                                {ProfileList.map((list, index) => {
-                                    return (
-                                        <MenuItem
-                                            component={Link}
-                                            key={index}
-                                            to={list.path}
-                                            sx={{
-                                                py: 2,
-                                            }}>
-                                            <i
-                                                className={`fa-regular ${list.icon} icon`}
-                                                style={{ marginRight: 6 }}></i>
-                                            <Typography>{list.name}</Typography>
-                                        </MenuItem>
-                                    );
-                                })}
-                                <MenuItem
-                                    sx={{
-                                        py: 2,
-                                        backgroundColor: theme.palette.primary.light,
-                                    }}>
-                                    <i
-                                        className={`fa-regular fa-right-from-line icon`}
-                                        style={{ marginRight: 6 }}></i>
-                                    <Typography>Logout</Typography>
-                                </MenuItem>
-                            </Paper>
-                        </Menu>
+                        <ProfileMenu />
 
                         <HeaderIconButton aria-label='open drawer' onClick={() => setState(true)}>
                             <i className='fa-regular fa-message-dots icon'></i>
