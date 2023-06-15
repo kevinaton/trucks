@@ -447,6 +447,7 @@
             }
             if (_settings.allowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders
                 && order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(truck.vehicleCategory.id)
+                && (!truck.trailer || !order.vehicleCategoryIds.includes(truck.trailer?.vehicleCategory.id))
             ) {
                 return false;
             }
@@ -1581,7 +1582,8 @@
                             }
                         });
 
-                        let askToAssignDriverAndAddTagAgain = async function (tag) {
+                        let askToAssignDriverAndAddTagAgain = async function (tag, eventOptions) {
+                            eventOptions = eventOptions || {};
                             var filterData = _dtHelper.getFilterData();
                             var assignDriverResult = await app.getModalResultAsync(
                                 _assignDriverForTruckModal.open({
@@ -1596,8 +1598,38 @@
                                     driverName: null
                                 })
                             );
+
                             tag.driverId = assignDriverResult.driverId;
-                            editor.tagsinput('add', tag, { preventPost: false, allowNoDriver: true });
+                            editor.tagsinput('add', tag, {
+                                ...eventOptions,
+                                preventPost: false,
+                                allowNoDriver: true
+                            });
+                        };
+
+                        let askToAssignTrailerAndAddTagAgain = async function (tag, eventOptions) {
+                            eventOptions = eventOptions || {};
+                            let trailer = await app.getModalResultAsync(
+                                _selectTrailerModal.open({
+                                    optional: true
+                                })
+                            );
+
+                            tag.trailer = trailer;
+                            if (trailer) {
+                                tag.truckCodeCombined = tag.truckCode + ' :: ' + trailer.truckCode;
+                            }
+                            editor.tagsinput('add', tag, {
+                                ...eventOptions,
+                                preventPost: false,
+                                allowNoTrailer: true
+                            });
+                            if (trailer) {
+                                setTrailerForTractorAsync({
+                                    tractorId: tag.truckId,
+                                    trailerId: trailer.id
+                                });
+                            }
                         };
 
                         editor.on('beforeItemAdd', function (event) {
@@ -1618,7 +1650,13 @@
                             if (!event.options || !event.options.preventPost) {
                                 if (!tag.driverId && tag.vehicleCategory.isPowered && (!event.options || !event.options.allowNoDriver)) {
                                     event.cancel = true;
-                                    askToAssignDriverAndAddTagAgain(tag);
+                                    askToAssignDriverAndAddTagAgain(tag, event.options);
+                                    return;
+                                }
+
+                                if (!tag.trailer && tag.canPullTrailer && (!event.options || !event.options.allowNoTrailer)) {
+                                    event.cancel = true;
+                                    askToAssignTrailerAndAddTagAgain(tag, event.options);
                                     return;
                                 }
 
@@ -1987,7 +2025,7 @@
 
             abp.notify.info('Saved successfully.');
 
-            reloadMainGrid(null, false);
+            //reloadMainGrid(null, false);
             reloadTruckTiles();
             //reloadDriverAssignments();
         }
@@ -2675,7 +2713,7 @@
 
                         await setTrailerForOrderLineTruckAsync({
                             orderLineTruckId: item.id,
-                            trailerId: trailer.trailerId
+                            trailerId: trailer.id
                         });
                     }
                 },
@@ -2854,7 +2892,7 @@
 
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
-                            trailerId: trailer.trailerId
+                            trailerId: trailer.id
                         });
                     }
                 },
@@ -2879,7 +2917,7 @@
 
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
-                            trailerId: trailer.trailerId
+                            trailerId: trailer.id
                         });
                     }
                 },

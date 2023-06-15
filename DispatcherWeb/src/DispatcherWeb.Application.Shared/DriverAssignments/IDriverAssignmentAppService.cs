@@ -9,7 +9,7 @@ namespace DispatcherWeb.DriverAssignments
     {
         Task<ListResultDto<DriverAssignmentDto>> GetDriverAssignments(GetDriverAssignmentsInput input);
         Task<SetNoDriverForTruckResult> SetNoDriverForTruck(SetNoDriverForTruckInput input);
-        Task EditDriverAssignment(DriverAssignmentEditDto input);
+        Task<EditDriverAssignmentResult> EditDriverAssignment(DriverAssignmentEditDto input);
         Task<bool> OrderLineTruckExists(OrderLineTruckExistsInput input);
         Task SetDefaultDriverForTruck(SetDefaultDriverForTruckInput input);
         Task<byte[]> GetDriverAssignmentReport(GetDriverAssignmentsInput input);

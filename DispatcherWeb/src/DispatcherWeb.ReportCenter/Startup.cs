@@ -52,10 +52,10 @@ namespace DispatcherWeb.ReportCenter
             services.AddScoped<VehicleMaintenanceWorkOrderReportDataDefinitions>();
 
             services.AddAuthentication(options =>
-                    {
-                        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                    })
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
                     .AddCookie(options => options.ExpireTimeSpan = TimeSpan.FromMinutes(60))
                     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                     {
@@ -125,19 +125,24 @@ namespace DispatcherWeb.ReportCenter
                         entry.SetSize(1000);
                         reportId = reportId.Replace(".rdlx", string.Empty);
 
-                        var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<ReportAppService>();
+                        using var scope = app.ApplicationServices.CreateScope();
+                        var reportAppSrvc = scope.ServiceProvider.GetRequiredService<ReportAppService>();
                         var reportDataDefinition = reportAppSrvc.GetReportDataDefinition(reportId, true).Result;
+
                         return reportDataDefinition.ThisPageReport.Document.PageReport.Report;
                     });
                 });
 
                 settings.SetLocateDataSource(args =>
                 {
-                    var reportAppSrvc = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<ReportAppService>();
                     var reportId = args.Report.Description.Replace(".rdlx", string.Empty);
+
+                    using var scope = app.ApplicationServices.CreateScope();
+                    var reportAppSrvc = scope.ServiceProvider.GetRequiredService<ReportAppService>();
                     var reportDataDefinition = reportAppSrvc.GetReportDataDefinition(reportId).Result;
-                    var locateDataSourceResult = reportDataDefinition.LocateDataSource(args).Result;
-                    return locateDataSourceResult.DataSourceJson;
+                    var (_, dataSourceJson) = reportDataDefinition.LocateDataSource(args).Result;
+
+                    return dataSourceJson;
                 });
             });
 
