@@ -8,6 +8,7 @@
         var _orderLineId = null;
         var _validateTrucksAndDrivers = abp.setting.getBoolean('App.General.ValidateDriverAndTruckOnTickets');
         var _allowCounterSales = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForUser') && abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForTenant');
+        var _allowCounterSalesForTenant = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForTenant');
 
         var _selectOrderLineModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Tickets/SelectOrderLineModal',
@@ -204,7 +205,7 @@
 
             var updateTruckAndDriverRequiredness = function () {
                 var carrierId = carrierDropdown.val();
-                _$form.find('label[for="TruckCode"],label[for="DriverId"]').toggleClass('required-label', !carrierId && !_allowCounterSales);
+                _$form.find('label[for="TruckCode"],label[for="DriverId"]').toggleClass('required-label', !carrierId && !_allowCounterSalesForTenant);
             };
             updateTruckAndDriverRequiredness();
 
