@@ -61,7 +61,7 @@ namespace DispatcherWeb.TrailerAssignments
             if (input.UpdateExistingOrderLineTrucks)
             {
                 var orderLineTrucks = await _orderLineTruckRepository.GetAll()
-                    .Where(x => input.Date == x.OrderLine.Order.DeliveryDate)
+                    .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && !x.IsDone)
                     .Where(x => x.TrailerId == oldTrailerId)
                     .Where(x => input.TractorId == x.TruckId)
                     .ToListAsync();
