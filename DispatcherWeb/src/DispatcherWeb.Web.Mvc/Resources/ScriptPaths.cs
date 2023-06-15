@@ -1,11 +1,15 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.Extensions;
+using Abp.Threading;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Runtime.Session;
+using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Hosting;
 
 namespace DispatcherWeb.Web.Resources
@@ -14,6 +18,7 @@ namespace DispatcherWeb.Web.Resources
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IOfficeSettingsManager _officeSettingsManager;
+        private readonly IClientStore _identityServerClientStore;
 
         private readonly ConcurrentDictionary<string, string> _scriptPaths;
 
@@ -21,10 +26,12 @@ namespace DispatcherWeb.Web.Resources
 
         public ScriptPaths(
             IWebHostEnvironment hostingEnvironment,
-            IOfficeSettingsManager officeSettingsManager)
+            IOfficeSettingsManager officeSettingsManager,
+            IClientStore identityServerClientStore)
         {
             _hostingEnvironment = hostingEnvironment;
             _officeSettingsManager = officeSettingsManager;
+            _identityServerClientStore = identityServerClientStore;
             _scriptPaths = new ConcurrentDictionary<string, string>();
         }
 
@@ -40,6 +47,21 @@ namespace DispatcherWeb.Web.Resources
             {
                 return _scriptPaths.GetOrAdd("GoogleMapsApiKey",
                     k => _hostingEnvironment.GetAppConfiguration()["GoogleMaps:ApiKey"]);
+            }
+        }
+
+        public string ReportCenter
+        {
+            get
+            {
+                return _scriptPaths.GetOrAdd("ReportCenter",
+                    k =>
+                    {
+                        var client = AsyncHelper.RunSync(() => _identityServerClientStore.FindClientByIdAsync("reportcenter"));
+                        var signInUrl = client.RedirectUris.First(u => u.EndsWith("signin-oidc"));
+                        var signinUri = new Uri(signInUrl);
+                        return $"{signinUri.Scheme}://{signinUri.Authority}".EnsureEndsWith('/');
+                    });
             }
         }
 
