@@ -128,8 +128,7 @@
                             },
                             action: function (data) {
                                 var workOrderId = data.record.id;
-                                var reportCenterHostUrl = $("#Report-Center-HostUrl").val();
-                                window.open(`${reportCenterHostUrl}/report/VehicleMaintenanceWorkOrderReport/${workOrderId}/pdf`);
+                                window.open(`${abp.reportCenterPath}/report/VehicleMaintenanceWorkOrderReport/${workOrderId}/pdf`);
                             }
                         },
                         {

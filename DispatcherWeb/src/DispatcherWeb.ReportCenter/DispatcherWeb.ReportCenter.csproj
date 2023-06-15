@@ -38,12 +38,6 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master" />
 		<EmbeddedResource Include="Reports\_MasterReportLetterPortrait.rdlx-master" />
-		<EmbeddedResource Include="Reports\_VehicleMaintenanceWorkOrder.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\_VehicleMaintenanceWorkOrderLines.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
