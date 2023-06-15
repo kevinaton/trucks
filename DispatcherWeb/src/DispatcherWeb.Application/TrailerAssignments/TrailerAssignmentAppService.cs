@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
 using Abp.Timing;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverApplication;
@@ -45,6 +46,7 @@ namespace DispatcherWeb.TrailerAssignments
                 .Where(x => x.Id == input.TractorId)
                 .FirstAsync();
 
+            var oldTrailerId = tractor.CurrentTrailerId;
             tractor.CurrentTrailerId = input.TrailerId;
 
             if (input.TrailerId.HasValue)
@@ -54,6 +56,29 @@ namespace DispatcherWeb.TrailerAssignments
                     .ToListAsync();
 
                 otherTractors.ForEach(x => x.CurrentTrailerId = null);
+            }
+
+            if (input.UpdateExistingOrderLineTrucks)
+            {
+                var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                    .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
+                    .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
+                    .Where(x => x.TrailerId == oldTrailerId)
+                    .Where(x => input.TractorId == x.TruckId)
+                    .ToListAsync();
+
+                foreach (var orderLineTruck in orderLineTrucks)
+                {
+                    orderLineTruck.TrailerId = input.TrailerId;
+                }
+
+                var orderLineTruckIds = orderLineTrucks.Select(x => x.Id).ToList();
+
+                var affectedDispatches = await _dispatchRepository.GetAll()
+                    .Where(x => x.OrderLineTruckId.HasValue && orderLineTruckIds.Contains(x.OrderLineTruckId.Value))
+                    .ToListAsync();
+
+                await SendSyncRequestForAffectedDispatches(affectedDispatches, "Updated Trailer for dispatch(es)");
             }
         }
 

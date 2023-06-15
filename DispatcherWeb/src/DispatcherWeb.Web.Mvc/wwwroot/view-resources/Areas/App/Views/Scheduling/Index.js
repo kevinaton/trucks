@@ -2024,7 +2024,12 @@
 
             abp.notify.info('Saved successfully.');
 
-            //reloadMainGrid(null, false);
+            if (options.updateExistingOrderLineTrucks) {
+                setTimeout(() => {
+                    reloadMainGrid(null, false);
+                }, 500);
+            }
+
             reloadTruckTiles();
             //reloadDriverAssignments();
         }
@@ -2039,6 +2044,53 @@
             reloadMainGrid(null, false);
             reloadTruckTiles();
             //reloadDriverAssignments();
+        }
+
+        async function checkExistingOrderLineTrucks(options) {
+            try {
+                abp.ui.setBusy();
+                let result = {};
+                var filterData = _dtHelper.getFilterData();
+                var isPastDate = moment(filterData.date, 'MM/DD/YYYY') < moment().startOf('day');
+
+                if (options.truckId) {
+                    var validationResult = await _driverAssignmentService.hasOrderLineTrucks({
+                        trailerId: options.trailerId,
+                        truckId: options.truckId,
+                        officeId: filterData.officeId,
+                        date: filterData.date,
+                        shift: filterData.shift
+                    });
+
+                    if (isPastDate) {
+                        //same as a "no" answer
+                    } else if (validationResult.hasOrderLineTrucks) {
+                        abp.ui.clearBusy();
+                        var userResponse = await swal(
+                            app.localize("TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace", options.truckCode),
+                            {
+                                buttons: {
+                                    no: "No",
+                                    yes: "Yes"
+                                }
+                            }
+                        );
+                        abp.ui.setBusy();
+                        if (userResponse === 'yes') {
+                            if (validationResult.hasOpenDispatches) {
+                                abp.message.error(app.localize("CannotChangeTrailerBecauseOfDispatchesError"));
+                                throw new Error(app.localize("CannotChangeTrailerBecauseOfDispatchesError"));
+                            }
+                            result.updateExistingOrderLineTrucks = true;
+                        }
+                    }
+                }
+
+                return result;
+            }
+            finally {
+                abp.ui.clearBusy();
+            }
         }
 
         function reloadMainGrid(callback, resetPaging) {
@@ -2914,9 +2966,16 @@
                             })
                         );
 
+                        var result = await checkExistingOrderLineTrucks({
+                            trailerId: truck.trailer.id,
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
+                        });
+
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
-                            trailerId: trailer.id
+                            trailerId: trailer.id,
+                            ...result
                         });
                     }
                 },
