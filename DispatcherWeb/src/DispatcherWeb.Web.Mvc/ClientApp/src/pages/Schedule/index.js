@@ -33,6 +33,8 @@ import { linearProgressClasses } from '@mui/material/LinearProgress';
 import moment from 'moment';
 import data from '../../common/data/data.json';
 import { Tablecell, VerticalLinearProgress } from '../../components/DTComponents';
+import AddEditJob from '../../components/common/modals/addEditJob';
+import { theme } from '../../Theme';
 
 const { offices, TruckCode, ScheduleData } = data;
 
@@ -47,6 +49,10 @@ const Schedule = (props) => {
     const [isOrderOpen, setIsOrderOpen] = React.useState(false);
     const [isPrintOrderOpen, setIsPrintOrderOpen] = React.useState(false);
     const [hoveredRow, setHoveredRow] = React.useState(null);
+    const [isAssignTruck, setIsAssignTruck] = React.useState(false);
+    const [isJob, setJob] = React.useState(false);
+    const [title, setTitle] = React.useState('Add Job');
+    const [editData, setEditData] = React.useState({});
 
     useEffect(() => {
         props.handleCurrentPageName(pageName);
@@ -84,6 +90,24 @@ const Schedule = (props) => {
         setHoveredRow(null);
     };
 
+    // Handle Add jobs
+    const handleAddJob = () => {
+        setSettingsAnchor(null);
+        setTitle('Add Job');
+        setJob(true);
+    };
+
+    // Handle edit jobs
+    const handleEditJob = (event, data) => {
+        setActionAnchor(null);
+        setIsOrderOpen(false);
+        setTitle('Edit Job');
+        setEditData(data);
+        setJob(true);
+        console.log(event);
+        console.log(data);
+    };
+
     return (
         <HelmetProvider>
             <div>
@@ -98,6 +122,9 @@ const Schedule = (props) => {
                         content='%PUBLIC_URL%/assets/dumptruckdispatcher-logo-mini.png'
                     />
                 </Helmet>
+
+                {/* Modals */}
+                <AddEditJob state={isJob} setJob={setJob} title={title} data={editData} />
 
                 <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
                     <Typography variant='h6' component='h2' sx={{ mb: 1 }}>
@@ -189,7 +216,7 @@ const Schedule = (props) => {
                                     <i className='fa-regular fa-check secondary-icon pr-2'></i> Mark
                                     all jobs complete
                                 </MenuItem>
-                                <MenuItem onClick={handleSettingsClose}>
+                                <MenuItem onClick={handleAddJob}>
                                     <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add
                                     job
                                 </MenuItem>
@@ -233,19 +260,20 @@ const Schedule = (props) => {
                     <TableContainer component={Box}>
                         <Table stickyHeader aria-label='schedule table' size='small'>
                             <TableHead>
-                                <TableRow sx={{ 
-                                    "& th": {
-                                        backgroundColor: grey[200],
-                                    }
-                                }}>
-                                    <Tablecell 
-                                        label='Priority' 
-                                        value={<i className="fa-regular fa-circle"></i>} 
+                                <TableRow
+                                    sx={{
+                                        '& th': {
+                                            backgroundColor: grey[200],
+                                        },
+                                    }}>
+                                    <Tablecell
+                                        label='Priority'
+                                        value={<i className='fa-regular fa-circle'></i>}
                                     />
-                                    <Tablecell 
-                                        label='Cash on delivery' 
+                                    <Tablecell
+                                        label='Cash on delivery'
                                         value='COD'
-                                        tableCellClasses 
+                                        tableCellClasses
                                     />
                                     <Tablecell label='Note' value='' />
                                     <Tablecell label='Customer' value='Customer' />
@@ -277,15 +305,14 @@ const Schedule = (props) => {
                                                 onMouseEnter={() => handleRowHover(index)}
                                                 onMouseLeave={() => handleRowLeave}
                                                 sx={{
-                                                    backgroundColor: hoveredRow === index
-                                                        ? (theme) => theme.palette.action.hover
-                                                        : '#ffffff',
+                                                    backgroundColor:
+                                                        hoveredRow === index
+                                                            ? theme.palette.action.hover
+                                                            : '#ffffff',
                                                     '&.MuiTableRow-root:hover': {
-                                                        backgroundColor: (theme) =>
-                                                        theme.palette.action.hover,
-                                                    }
-                                                }}
-                                            >
+                                                        backgroundColor: theme.palette.action.hover,
+                                                    },
+                                                }}>
                                                 <Tablecell
                                                     label='priority'
                                                     value={
@@ -306,7 +333,10 @@ const Schedule = (props) => {
                                                 <Tablecell label='Job number' value={data.job} />
                                                 <Tablecell label='Time on job' value={data.time} />
                                                 <Tablecell label='Load at' value={data.load} />
-                                                <Tablecell label='Deliver to' value={data.deliver} />
+                                                <Tablecell
+                                                    label='Deliver to'
+                                                    value={data.deliver}
+                                                />
                                                 <Tablecell label='Item' value={data.item} />
                                                 <Tablecell label='Quantity' value={data.quantity} />
                                                 <Tablecell
@@ -314,39 +344,40 @@ const Schedule = (props) => {
                                                     value={data.required}
                                                 />
                                                 <Tablecell
-                                                    label="Progress"
+                                                    label='Progress'
                                                     value={
                                                         <Box
                                                             sx={{
-                                                                display: "flex",
-                                                                justifyContent: "space-between",
-                                                            }}
-                                                        >
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between',
+                                                            }}>
                                                             <Box>
                                                                 <VerticalLinearProgress
-                                                                    variant="determinate"
-                                                                    color="secondary"
+                                                                    variant='determinate'
+                                                                    color='secondary'
                                                                     value={data.amountProgress}
                                                                     sx={{
-                                                                        [`& .${linearProgressClasses.bar}`]: {
-                                                                        transform: `translateY(${-data.amountProgress}%)!important`,
-                                                                        },
+                                                                        [`& .${linearProgressClasses.bar}`]:
+                                                                            {
+                                                                                transform: `translateY(${-data.amountProgress}%)!important`,
+                                                                            },
                                                                     }}
                                                                 />
-                                                                <Typography variant="caption">{`${data.amountProgress}%`}</Typography>
+                                                                <Typography variant='caption'>{`${data.amountProgress}%`}</Typography>
                                                             </Box>
                                                             <Box>
                                                                 <VerticalLinearProgress
-                                                                    variant="determinate"
-                                                                    color="secondary"
+                                                                    variant='determinate'
+                                                                    color='secondary'
                                                                     value={data.schedProgress}
                                                                     sx={{
-                                                                        [`& .${linearProgressClasses.bar}`]: {
-                                                                        transform: `translateY(${-data.schedProgress}%)!important`,
-                                                                        },
+                                                                        [`& .${linearProgressClasses.bar}`]:
+                                                                            {
+                                                                                transform: `translateY(${-data.schedProgress}%)!important`,
+                                                                            },
                                                                     }}
                                                                 />
-                                                                <Typography variant="caption">{`${data.schedProgress}%`}</Typography>
+                                                                <Typography variant='caption'>{`${data.schedProgress}%`}</Typography>
                                                             </Box>
                                                         </Box>
                                                     }
@@ -361,18 +392,22 @@ const Schedule = (props) => {
                                                         <div>
                                                             <IconButton
                                                                 sx={{ width: 25, height: 25 }}
-                                                                onClick={handleActionClick}
-                                                            >
+                                                                onClick={handleActionClick}>
                                                                 <i className='fa-regular fa-ellipsis-vertical'></i>
                                                             </IconButton>
                                                             <Menu
                                                                 anchorEl={actionAnchor}
                                                                 id='settings-menu'
                                                                 open={actionOpen}
-                                                                onClose={handleActionClose}
-                                                            >
+                                                                onClose={handleActionClose}>
                                                                 <ListItem disablePadding>
-                                                                    <ListItemButton onClick={handleActionClose}>
+                                                                    <ListItemButton
+                                                                        onClick={(event) =>
+                                                                            handleEditJob(
+                                                                                event,
+                                                                                data
+                                                                            )
+                                                                        }>
                                                                         <ListItemText
                                                                             primary={
                                                                                 <Typography align='left'>
@@ -386,9 +421,10 @@ const Schedule = (props) => {
                                                                 <ListItem disablePadding>
                                                                     <ListItemButton
                                                                         onClick={() => {
-                                                                            setIsOrderOpen(!isOrderOpen);
-                                                                        }}
-                                                                    >
+                                                                            setIsOrderOpen(
+                                                                                !isOrderOpen
+                                                                            );
+                                                                        }}>
                                                                         <ListItemText
                                                                             primary={
                                                                                 <Typography align='left'>
@@ -411,9 +447,12 @@ const Schedule = (props) => {
                                                                     }}
                                                                     timeout='auto'
                                                                     unmountOnExit
-                                                                    sx={{ backgroundColor: grey[100] }}
-                                                                >
-                                                                    <List component='div' disablePadding>
+                                                                    sx={{
+                                                                        backgroundColor: grey[100],
+                                                                    }}>
+                                                                    <List
+                                                                        component='div'
+                                                                        disablePadding>
                                                                         <ListItemButton>
                                                                             <ListItemText primary='View/Edit' />
                                                                         </ListItemButton>
@@ -441,9 +480,10 @@ const Schedule = (props) => {
                                                                 <ListItem disablePadding>
                                                                     <ListItemButton
                                                                         onClick={() => {
-                                                                            setIsPrintOrderOpen(!isPrintOrderOpen);
-                                                                        }}
-                                                                    >
+                                                                            setIsPrintOrderOpen(
+                                                                                !isPrintOrderOpen
+                                                                            );
+                                                                        }}>
                                                                         <ListItemText
                                                                             primary={
                                                                                 <Typography align='left'>
@@ -466,9 +506,12 @@ const Schedule = (props) => {
                                                                     }}
                                                                     timeout='auto'
                                                                     unmountOnExit
-                                                                    sx={{ backgroundColor: grey[100] }}
-                                                                >
-                                                                    <List component='div' disablePadding>
+                                                                    sx={{
+                                                                        backgroundColor: grey[100],
+                                                                    }}>
+                                                                    <List
+                                                                        component='div'
+                                                                        disablePadding>
                                                                         <ListItemButton>
                                                                             <ListItemText primary='No Prices' />
                                                                         </ListItemButton>
@@ -481,7 +524,8 @@ const Schedule = (props) => {
                                                                     </List>
                                                                 </Collapse>
                                                                 <ListItem disablePadding>
-                                                                    <ListItemButton onClick={handleActionClose}>
+                                                                    <ListItemButton
+                                                                        onClick={handleActionClose}>
                                                                         <ListItemText>
                                                                             <Typography align='left'>
                                                                                 Tickets
@@ -490,7 +534,8 @@ const Schedule = (props) => {
                                                                     </ListItemButton>
                                                                 </ListItem>
                                                                 <ListItem disablePadding>
-                                                                    <ListItemButton onClick={handleActionClose}>
+                                                                    <ListItemButton
+                                                                        onClick={handleActionClose}>
                                                                         <ListItemText>
                                                                             <Typography align='left'>
                                                                                 View Load History
@@ -511,14 +556,12 @@ const Schedule = (props) => {
                                                 sx={{
                                                     backgroundColor:
                                                         hoveredRow === index
-                                                        ? (theme) => theme.palette.action.hover
-                                                        : '#ffffff',
+                                                            ? theme.palette.action.hover
+                                                            : '#ffffff',
                                                     '&.MuiTableRow-root:hover': {
-                                                        backgroundColor: (theme) =>
-                                                        theme.palette.action.hover,
-                                                    }
-                                                }}
-                                            >
+                                                        backgroundColor: theme.palette.action.hover,
+                                                    },
+                                                }}>
                                                 <Tablecell
                                                     label='Trucks'
                                                     colSpan={14}
@@ -528,10 +571,11 @@ const Schedule = (props) => {
                                                                 sx={{
                                                                     display: 'flex',
                                                                     alignContent: 'center',
-                                                                    mb: 1
-                                                                }}
-                                                            >
-                                                                <Typography variant='subtitle2' sx={{ mr: 1 }}>
+                                                                    mb: 1,
+                                                                }}>
+                                                                <Typography
+                                                                    variant='subtitle2'
+                                                                    sx={{ mr: 1 }}>
                                                                     Trucks assigned
                                                                 </Typography>
                                                                 <Typography
@@ -540,28 +584,28 @@ const Schedule = (props) => {
                                                                         w: '10px',
                                                                         h: '10px',
                                                                         textAlign: 'center',
-                                                                        backgroundColor: (theme) =>
-                                                                        theme.palette.grey[200],
-                                                                        borderRadius: 80
+                                                                        backgroundColor:
+                                                                            theme.palette.grey[200],
+                                                                        borderRadius: 80,
                                                                     }}
-                                                                    variant='subtitle2'
-                                                                >
+                                                                    variant='subtitle2'>
                                                                     {data.trucks.length}
                                                                 </Typography>
                                                             </Box>
 
                                                             <Grid
                                                                 sx={{
-                                                                    backgroundColor: (theme) => theme.palette.background.paper,
+                                                                    backgroundColor:
+                                                                        theme.palette.background
+                                                                            .paper,
                                                                     borderRadius: 1,
                                                                     border: '1px solid #ebedf2',
                                                                     pb: 1,
-                                                                    m: 0
+                                                                    m: 0,
                                                                 }}
                                                                 container
                                                                 rowSpacing={1}
-                                                                columnSpacing={1}
-                                                            >
+                                                                columnSpacing={1}>
                                                                 {data.trucks.map((truck, index) => {
                                                                     return (
                                                                         <Grid item key={index}>
@@ -569,21 +613,23 @@ const Schedule = (props) => {
                                                                                 label={truck.name}
                                                                                 onClick={() => {}}
                                                                                 onDelete={() => {}}
-                                                                                variant={truck.variant}
+                                                                                variant={
+                                                                                    truck.variant
+                                                                                }
                                                                                 color={truck.color}
                                                                                 sx={{
                                                                                     borderRadius: 0,
                                                                                     fontSize: 10,
                                                                                     fontWeight: 500,
-                                                                                    p: 0
+                                                                                    p: 0,
                                                                                 }}
                                                                             />
                                                                         </Grid>
                                                                     );
                                                                 })}
                                                             </Grid>
-                                                    </Box>
-                                                }
+                                                        </Box>
+                                                    }
                                                 />
                                             </TableRow>
                                         </React.Fragment>

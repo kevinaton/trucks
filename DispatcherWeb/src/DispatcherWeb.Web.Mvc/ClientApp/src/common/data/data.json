@@ -152,7 +152,10 @@
             "color": "#D7EBF6",
             "truck": "K001",
             "erIcon": true,
-            "avatar": "dumptruck"
+            "avatar": "dumptruck",
+            "tractor": "206 Tractor, Ford, 22330S",
+            "trailer": "543 End Dump, Ford, Freigthliner S23, Steel",
+            "apportioned": true
         },
         {
             "id": 2,
@@ -160,7 +163,10 @@
             "truck": "M002",
             "color": "#D7EBF6",
             "erIcon": true,
-            "avatar": "flatbed"
+            "avatar": "flatbed",
+            "tractor": "177 Tractor, General Motors, GM S45",
+            "trailer": "543 End Dump, GM, Kenworth 128, Coal",
+            "apportioned": false
         },
         {
             "id": 3,
@@ -168,7 +174,10 @@
             "truck": "C003",
             "color": "#D7EBF6",
             "erIcon": "",
-            "avatar": "flatbed"
+            "avatar": "flatbed",
+            "tractor": "117 Triaxle Dump Truck, Ford, 2018",
+            "trailer": "543 End Dump, Chevrolette, Mack Granite, Steel",
+            "apportioned": true
         },
         {
             "id": 4,
@@ -176,7 +185,10 @@
             "truck": "F004",
             "color": "#D7EBF6",
             "erIcon": "",
-            "avatar": "tractortrailer"
+            "avatar": "tractortrailer",
+            "tractor": "208 Tractor, GM, GM001",
+            "trailer": "543 End Dump, Ford, Peterbilt 367, Steel",
+            "apportioned": true
         },
         {
             "id": 5,
@@ -184,7 +196,10 @@
             "truck": "V005",
             "color": "#D7EBF6",
             "erIcon": "",
-            "avatar": "dumptruck"
+            "avatar": "dumptruck",
+            "tractor": "180 Dump Truck, Chevrolete, S2020",
+            "trailer": "543 End Dump, Mercedes Benz, Western Star 4900, Steel",
+            "apportioned": false
         },
         {
             "id": 6,
@@ -192,7 +207,10 @@
             "truck": "M006",
             "color": "#D7EBF6",
             "erIcon": "",
-            "avatar": "tractortrailer"
+            "avatar": "tractortrailer",
+            "tractor": "99 Tractor, Chevrolette, 2008S",
+            "trailer": "543 End Dump, Chevrolette, Western Star 4900, Steel",
+            "apportioned": true
         },
         {
             "id": 7,
@@ -200,7 +218,10 @@
             "truck": "M007",
             "color": "#D7EBF6",
             "erIcon": true,
-            "avatar": "dumptruck"
+            "avatar": "dumptruck",
+            "tractor": "2000K Dump Truck, Chevrolete, S2020",
+            "trailer": "543 End Dump, Volvo, Volvo VHD 300, Steel",
+            "apportioned": false
         }
     ],
     "offices": ["Main", "Branch 1", "Branch 2"],
@@ -324,12 +345,14 @@
             "checkbox": true,
             "note": "Lorem ipsum dolor sit amet",
             "customer": "ABC Construction Company",
+            "designation": "Freight Only",
             "job": 122002,
             "time": "5:00 am",
             "load": "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
             "deliver": "Fort McKinley Street, Aria Hill, California",
             "item": "Freight service",
             "quantity": "20 load",
+            "freightUom": "Load",
             "required": 2,
             "trucks": [
                 { "name": "M001", "variant": "filled", "color": "info" },
@@ -344,12 +367,14 @@
             "checkbox": false,
             "note": "Lorem ipsum dolor sit amet",
             "customer": "XYZ Logistics Company",
+            "designation": "Freight Only",
             "job": 123003,
             "time": "8:00 pm",
             "load": "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
             "deliver": "Fort McKinley Street, Aria Hill, California",
             "item": "Freight service",
             "quantity": "2000 lbs",
+            "freightUom": "Pounds",
             "required": 3,
             "trucks": [
                 { "name": "M003", "variant": "filled", "color": "success" },
@@ -431,34 +456,35 @@
             "path": "/"
         }
     ],
+
     "Friends": [
         {
-            "avatar": "/reactapp/assets/avatars/img-14.jpg",
+            "avatar": "https://i.pravatar.cc/150?img=14",
             "name": "John Doe",
             "status": "success"
         },
         {
-            "avatar": "/reactapp/assets/avatars/img-150.jpg",
+            "avatar": "https://i.pravatar.cc/150?u=fake@pravatar.com",
             "name": "Micah Median",
             "status": "warning"
         },
         {
-            "avatar": "/reactapp/assets/avatars/img-24.jpg",
+            "avatar": "https://i.pravatar.cc/150?img=24",
             "name": "Jeamar Library",
             "status": "success"
         },
         {
-            "avatar": "/reactapp/assets/avatars/img-23.jpg",
+            "avatar": "https://i.pravatar.cc/150?img=23",
             "name": "Rose Lim",
             "status": "error"
         },
         {
-            "avatar": "/reactapp/assets/avatars/img-65.jpg",
+            "avatar": "https://i.pravatar.cc/150?img=65",
             "name": "Jonathon John",
             "status": "success"
         },
         {
-            "avatar": "/reactapp/assets/avatars/img-35.jpg",
+            "avatar": "https://i.pravatar.cc/150?img=35",
             "name": "Gabriel Mel",
             "status": "success"
         }
@@ -505,5 +531,40 @@
             "content": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             "time": "Just now"
         }
-    ]
+    ],
+
+    "TruckCategories": [
+        "All",
+        "Cement Truck",
+        "Concrete Mixer",
+        "Dump Truck",
+        "Quad Dump Truck",
+        "Quint Dump Truck",
+        "Super 10 Dump Truck"
+    ],
+
+    "Drivers": ["Bryan Shaul", "Chris Evans", "Felle Tram", "Magic Thompson"],
+
+    "Customers": [
+        "ABC Company",
+        "XYZ Distribution Inc.",
+        "LMN Manufacturing Co.",
+        "HIJ Distribution Company",
+        "ABC Construction Company"
+    ],
+
+    "Designation": ["Freight Only", "By Hour"],
+    "Addresses": [
+        "123 Main Street, Anytown, USA",
+        "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
+        "Fort McKinley Street, Aria Hill, California",
+        "456 Elm Avenue, Smallville, USA",
+        "789 Oak Drive, Pleasantville, USA",
+        "321 Maple Lane, Riverdale, USA",
+        "987 Pine Street, Springville, USA"
+    ],
+
+    "Items": ["Load Product", "Freight service"],
+
+    "FreightUom": ["Load", "Pounds"]
 }
