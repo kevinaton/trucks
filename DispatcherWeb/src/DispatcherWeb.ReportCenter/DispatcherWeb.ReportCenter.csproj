@@ -19,27 +19,30 @@
 	  <Content Remove="Reports\_TenantStatisticsReportDS.json" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="Reports\_MasterReportLegalPortrait.rdlx-master" />
+	  <None Remove="Reports\_MasterReportLetterPortrait.rdlx-master" />
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="Properties\.gclicx" />
-		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		<EmbeddedResource Include="Properties\.gclicx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master" />
+		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Reports\_MasterReportLetterPortrait.rdlx-master">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="ClientApp\package.json" />
 		<None Include="Properties\launchSettings.json" />
-		<None Include="Reports\_TenantsDS.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Include="Reports\_TenantStatisticsReportDS.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
 		<None Include="wwwroot\lib\grapecity\jsViewer.min.js" />
-		<Resource Include="Properties\licenses.licx" />
+		<Resource Include="Properties\licenses.licx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
 		<None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map" />
@@ -78,7 +81,7 @@
 	<ItemGroup>
 		<PackageReference Include="ClosedXML" Version="0.101.0" />
 		<PackageReference Include="ClosedXML.Extensions.Mvc" Version="0.4.0" />
-		<PackageReference Include="Gcef.Data.VBFunctionLib" Version="3.2.0" />
+		<PackageReference Include="Gcef.Data.VBFunctionLib" Version="3.3.0" />
 		<PackageReference Include="IdentityModel" Version="4.4.0" />
 		<PackageReference Include="MathParser.org-mXparser" Version="5.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
@@ -91,7 +94,7 @@
 		<PackageReference Include="Z.Expressions.Eval" Version="5.0.3" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="16.2.1" />
+		<PackageReference Include="GrapeCity.ActiveReports.Aspnetcore.Viewer" Version="17.1.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="wwwroot\lib\gritter\" />

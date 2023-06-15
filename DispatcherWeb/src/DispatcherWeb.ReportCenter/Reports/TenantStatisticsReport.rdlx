@@ -97,24 +97,12 @@
 								<FontSize>8pt</FontSize>
 								<BorderColor>
 									<Default>Black</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderColor>
 								<BorderStyle>
 									<Default>None</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderStyle>
 								<BorderWidth>
 									<Default>1pt</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderWidth>
 							</Style>
 							<ZIndex>1</ZIndex>
@@ -448,24 +436,12 @@
 								<FontSize>8pt</FontSize>
 								<BorderColor>
 									<Default>Black</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderColor>
 								<BorderStyle>
 									<Default>None</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderStyle>
 								<BorderWidth>
 									<Default>1pt</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderWidth>
 							</Style>
 							<ZIndex>1</ZIndex>
@@ -799,24 +775,12 @@
 								<FontSize>8pt</FontSize>
 								<BorderColor>
 									<Default>Black</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderColor>
 								<BorderStyle>
 									<Default>None</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderStyle>
 								<BorderWidth>
 									<Default>1pt</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderWidth>
 							</Style>
 							<ZIndex>1</ZIndex>
@@ -1150,24 +1114,12 @@
 								<FontSize>8pt</FontSize>
 								<BorderColor>
 									<Default>Black</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderColor>
 								<BorderStyle>
 									<Default>None</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderStyle>
 								<BorderWidth>
 									<Default>1pt</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderWidth>
 							</Style>
 							<ZIndex>1</ZIndex>
@@ -1501,24 +1453,12 @@
 								<FontSize>8pt</FontSize>
 								<BorderColor>
 									<Default>Black</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderColor>
 								<BorderStyle>
 									<Default>None</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderStyle>
 								<BorderWidth>
 									<Default>1pt</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderWidth>
 							</Style>
 							<ZIndex>1</ZIndex>
@@ -1852,24 +1792,12 @@
 								<FontSize>8pt</FontSize>
 								<BorderColor>
 									<Default>Black</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderColor>
 								<BorderStyle>
 									<Default>None</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderStyle>
 								<BorderWidth>
 									<Default>1pt</Default>
-									<Bottom>=""</Bottom>
-									<Left>=""</Left>
-									<Right>=""</Right>
-									<Top>=""</Top>
 								</BorderWidth>
 							</Style>
 							<ZIndex>1</ZIndex>
@@ -2198,8 +2126,8 @@
 			</CustomReportItem>
 		</ReportItems>
 	</Body>
+	<Width>21.6cm</Width>
 	<Description>TenantStatisticsReport</Description>
-	<Width>0in</Width>
 	<ReportParameters>
 		<ReportParameter Name="StartDate">
 			<DataType>DateTime</DataType>
