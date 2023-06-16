@@ -2057,6 +2057,7 @@
                 if (options.truckId) {
                     var validationResult = await _driverAssignmentService.hasOrderLineTrucks({
                         trailerId: options.trailerId,
+                        forceTrailerIdFilter: options.forceTrailerIdFilter,
                         truckId: options.truckId,
                         officeId: filterData.officeId,
                         date: filterData.date,
@@ -2942,9 +2943,15 @@
                             _selectTrailerModal.open()
                         );
 
+                        var result = await checkExistingOrderLineTrucks({
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
+                        });
+
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
-                            trailerId: trailer.id
+                            trailerId: trailer.id,
+                            ...result
                         });
                     }
                 },
@@ -2988,16 +2995,19 @@
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
-                        var filterData = _dtHelper.getFilterData();
-                        await abp.services.app.trailerAssignment.setTrailerForTractor({
-                            date: filterData.date,
-                            shift: filterData.shift,
-                            officeId: filterData.officeId,
-                            tractorId: truck.id,
-                            trailerId: null
+
+                        var result = await checkExistingOrderLineTrucks({
+                            trailerId: truck.trailer.id,
+                            forceTrailerIdFilter: true,
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
                         });
-                        abp.notify.info('Successfully removed.');
-                        reloadTruckTiles();
+                        
+                        await setTrailerForTractorAsync({
+                            tractorId: truck.id,
+                            trailerId: null,
+                            ...result
+                        });
                     }
                 },
                 addTractor: {
