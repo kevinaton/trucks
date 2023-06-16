@@ -37,7 +37,9 @@
             });
 
             vehicleCategoryDropdown.change(updateCategoryControls);
+            bedConstructionDropdown.change(clearTrailerInputIfNeeded);
             makeDropdown.change(refreshMakeControlsVisibillity);
+            modelDropdown.change(clearTrailerInputIfNeeded);
 
             refreshCategoryControlsVisibillity();
 
@@ -58,6 +60,7 @@
                 }
 
                 refreshCategoryControlsVisibillity();
+                clearTrailerInputIfNeeded();
             }
 
             function refreshCategoryControlsVisibillity() {
@@ -75,6 +78,25 @@
                     modelDropdown.val('').change().closest('.form-group').hide();
                 } else {
                     modelDropdown.closest('.form-group').show();
+                }
+                clearTrailerInputIfNeeded();
+            }
+
+            async function clearTrailerInputIfNeeded() {
+                var trailerId = _$form.find('#TrailerId').val();
+                if (!trailerId) {
+                    return;
+                }
+
+                var matchingTrailers = await abp.services.app.truck.getActiveTrailersSelectList({
+                    vehicleCategoryId: vehicleCategoryDropdown.val(),
+                    bedConstruction: bedConstructionDropdown.val(),
+                    make: makeDropdown.val(),
+                    model: modelDropdown.val(),
+                    id: trailerId
+                });
+                if (!matchingTrailers.items.length) {
+                    _$form.find('#TrailerId').val('').change();
                 }
             }
 
