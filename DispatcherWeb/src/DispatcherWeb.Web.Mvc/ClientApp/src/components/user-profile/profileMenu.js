@@ -9,12 +9,14 @@ import {
     MenuItem,
     Paper,
     Typography,
+    MenuList,
 } from '@mui/material';
 import { isEmpty } from 'lodash';
-import { theme } from '../../../Theme';
-import { ProfileList } from '../../../common/data/menus';
-import { getUserProfileMenu } from '../../../store/actions';
-import { baseUrl } from '../../../helpers/api_helper';
+import { theme } from '../../Theme';
+import { ProfileList } from '../../common/data/menus';
+import { getUserProfileMenu, getLinkedUsers } from '../../store/actions';
+import { baseUrl } from '../../helpers/api_helper';
+import { LinkedAccounts } from '../user-link'
 
 export const ProfileMenu = ({
     openModal
@@ -24,14 +26,20 @@ export const ProfileMenu = ({
     const [profileMenu, setProfileMenu] = useState(null);
     const [user, setUser] = useState(null);
     const [tenant, setTenant] = useState(null);
+    const [linkedAccounts, setLinkedAccounts] = useState([]);
 
     const dispatch = useDispatch();
-    const { userProfileMenu } = useSelector((state) => ({
-        userProfileMenu: state.UserReducer.userProfileMenu
+    const { 
+        userProfileMenu,
+        linkedUsers
+    } = useSelector((state) => ({
+        userProfileMenu: state.UserReducer.userProfileMenu,
+        linkedUsers: state.UserLinkReducer.linkedUsers
     }));
 
     useEffect(() => {
         dispatch(getUserProfileMenu());
+        dispatch(getLinkedUsers());
     }, [dispatch]);
 
     useEffect(() => {
@@ -46,6 +54,17 @@ export const ProfileMenu = ({
             }
         }
     }, [profileMenu, userProfileMenu]);
+
+    useEffect(() => {
+        if (isEmpty(linkedAccounts) && 
+            !isEmpty(linkedUsers) && 
+            !isEmpty(linkedUsers.result)) {
+                const { result } = linkedUsers;
+                if (!isEmpty(result) && !isEmpty(result.items)) {
+                    setLinkedAccounts(result.items);
+                }
+        }
+    }, [linkedAccounts, linkedUsers]);
 
     // Handle showing profile menu
     const handleProfileClick = (event) => {
@@ -78,13 +97,30 @@ export const ProfileMenu = ({
         }
     };
 
-    const showLinkedAccounts = () => {
-        const content = (
+    const testClick = () => {
+        const header = (
+            <Typography variant='h6' component='h2'>
+                Link New Account
+            </Typography>
+        );
+
+        const body = (
             <>
-                <h1>Testing here</h1>
+                <h1>Another test here</h1>
             </>
         );
-        openModal(content);
+        openModal(header, body);
+    }
+
+    const showLinkedAccounts = () => {
+        const header = (
+            <Typography variant='h6' component='h2'>
+                Linked Accounts
+            </Typography>
+        );
+
+        const body = (<LinkedAccounts />);
+        openModal(header, body);
     }
     
     const renderAvatar = () => {
@@ -168,10 +204,25 @@ export const ProfileMenu = ({
                                     </MenuItem>
                                 }
                                 
-                                <MenuItem component={Link} sx={{ py: 2 }} onClick={showLinkedAccounts}>
+                                <MenuItem 
+                                    component={Link} 
+                                    sx={{ py: 2 }} 
+                                    onClick={showLinkedAccounts}
+                                >
                                     <i className={`fa-regular fa-users-gear icon`} style={{ marginRight: 6 }}></i>
                                     <Typography>Manage linked accounts</Typography>
                                 </MenuItem>
+
+                                { !isEmpty(linkedAccounts) &&
+                                    <MenuList sx={{ p: 0 }}>
+                                        { linkedAccounts.map((account, index) => (
+                                            <MenuItem key={index} component={Link} sx={{ padding: '10px 16px 10px 25px' }}>
+                                                <i className={`fa-regular fa-user icon`} style={{ marginRight: 6 }}></i>
+                                                <Typography>{`${account.tenancyName}\\${account.username}`}</Typography>
+                                            </MenuItem>
+                                        ))}
+                                    </MenuList>  
+                                }
 
                                 <MenuItem 
                                     component={Link} 
@@ -196,23 +247,6 @@ export const ProfileMenu = ({
                                     <i className={`fa-regular fa-gear icon`} style={{ marginRight: 6 }}></i>
                                     <Typography>My settings</Typography>
                                 </MenuItem>
-
-                                { ProfileList.map((list, index) => {
-                                    return (
-                                        <MenuItem
-                                            component={Link}
-                                            key={index}
-                                            to={list.path}
-                                            sx={{
-                                                py: 2,
-                                            }}>
-                                            <i
-                                                className={`fa-regular ${list.icon} icon`}
-                                                style={{ marginRight: 6 }}></i>
-                                            <Typography>{list.name}</Typography>
-                                        </MenuItem>
-                                    );
-                                })}
 
                                 <MenuItem
                                     sx={{

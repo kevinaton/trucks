@@ -43,7 +43,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "set PUBLIC_URL=/reactapp&& react-scripts build && node addPrefixToIndex.js && node addPrefixToAssetManifest.js && node addPrefixToStaticFiles.js",
+    "build": "set PUBLIC_URL=/reactapp&& react-scripts build && node addPrefixToIndex.js",
+    "buildOnMac": "set PUBLIC_URL=/reactapp&& react-scripts build && node addPrefixToIndex.js && node addPrefixToAssetManifest.js && node addPrefixToStaticFiles.js",
     "postbuild": "node iisConfig/copyIISConfig.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

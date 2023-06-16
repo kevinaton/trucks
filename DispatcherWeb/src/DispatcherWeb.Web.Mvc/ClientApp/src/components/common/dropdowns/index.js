@@ -1,2 +1,2 @@
 export * from './notificationBell'
-export * from './profileMenu'
+export * from '../../user-profile/profileMenu'

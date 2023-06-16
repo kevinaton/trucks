@@ -12,7 +12,8 @@ import {
     Typography,
 } from '@mui/material';
 import { drawerWidth, AppBar, HeaderIconButton } from '../../DTComponents';
-import { NotificationBell, ProfileMenu } from '../dropdowns';
+import { NotificationBell } from '../dropdowns';
+import { ProfileMenu } from '../../user-profile';
 import { getSupportLinkAddress } from '../../../store/actions';
 import { isEmpty } from 'lodash';
 import ChatPane from '../../Chatpane';
