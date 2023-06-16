@@ -25,6 +25,7 @@ export const Appbar = ({
     handleOpenNavMenu,
     anchorElNav,
     handleCloseNavMenu,
+    openModal,
 }) => {
     const [linkAddress, setLinkAddress] = useState(null);
     const dispatch = useDispatch();
@@ -174,7 +175,7 @@ export const Appbar = ({
 
                         <NotificationBell isMobileView={false} />
 
-                        <ProfileMenu />
+                        <ProfileMenu openModal={openModal} />
 
                         <HeaderIconButton aria-label='open drawer' onClick={() => setState(true)}>
                             <i className='fa-regular fa-message-dots icon'></i>

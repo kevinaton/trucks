@@ -16,7 +16,9 @@ import { ProfileList } from '../../../common/data/menus';
 import { getUserProfileMenu } from '../../../store/actions';
 import { baseUrl } from '../../../helpers/api_helper';
 
-export const ProfileMenu = () => {
+export const ProfileMenu = ({
+    openModal
+}) => {
     const [anchorProfile, setAnchorProfile] = React.useState(null);
     const isProfile = Boolean(anchorProfile);
     const [profileMenu, setProfileMenu] = useState(null);
@@ -75,6 +77,15 @@ export const ProfileMenu = () => {
                 : (<>{`${tenant.tenancyName}\\${username}`}</>);
         }
     };
+
+    const showLinkedAccounts = () => {
+        const content = (
+            <>
+                <h1>Testing here</h1>
+            </>
+        );
+        openModal(content);
+    }
     
     const renderAvatar = () => {
         if (!isEmpty(tenant) && !isEmpty(tenant.logoId)) {
@@ -157,7 +168,7 @@ export const ProfileMenu = () => {
                                     </MenuItem>
                                 }
                                 
-                                <MenuItem component={Link} sx={{ py: 2 }}>
+                                <MenuItem component={Link} sx={{ py: 2 }} onClick={showLinkedAccounts}>
                                     <i className={`fa-regular fa-users-gear icon`} style={{ marginRight: 6 }}></i>
                                     <Typography>Manage linked accounts</Typography>
                                 </MenuItem>
@@ -174,6 +185,16 @@ export const ProfileMenu = () => {
                                 <MenuItem component={Link} sx={{ py: 2 }}>
                                     <i className={`fa-regular fa-square-user icon`} style={{ marginRight: 6 }}></i>
                                     <Typography>Change profile picture</Typography>
+                                </MenuItem>
+
+                                <MenuItem component={Link} sx={{ py: 2 }}>
+                                    <i className={`fa-regular fa-signature icon`} style={{ marginRight: 6 }}></i>
+                                    <Typography>Upload signature picture</Typography>
+                                </MenuItem>
+
+                                <MenuItem component={Link} sx={{ py: 2 }}>
+                                    <i className={`fa-regular fa-gear icon`} style={{ marginRight: 6 }}></i>
+                                    <Typography>My settings</Typography>
                                 </MenuItem>
 
                                 { ProfileList.map((list, index) => {

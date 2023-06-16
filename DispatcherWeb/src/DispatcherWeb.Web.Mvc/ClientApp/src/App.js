@@ -14,6 +14,7 @@ import { isEmpty } from 'lodash';
 import { baseUrl } from './helpers/api_helper';
 import * as signalR from '@microsoft/signalr';
 import SignalRContext from './components/common/signalr/signalrContext';
+import { CustomModal } from './components/common/modals/customModal';
 
 const App = (props) => {
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -31,6 +32,7 @@ const App = (props) => {
     const [currentPageName, setCurrentPageName] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [connection, setConnection] = useState(null);
+    const [modals, setModals] = useState([]);
 
     const userInfo = useSelector(state => state.UserReducer.userInfo);
     const dispatch = useDispatch();
@@ -123,6 +125,23 @@ const App = (props) => {
         setCollapseOpen(false);
     };
 
+    const openModal = (content) => {
+        const modal = {
+            content,
+            open: true,
+        };
+      
+        setModals((prevModals) => [...prevModals, modal]);
+    };
+
+    const closeModal = (index) => {
+        setModals((prevModals) => {
+            const updatedModals = [...prevModals];
+            updatedModals.splice(index, 1);
+            return updatedModals;
+        });
+    };
+
     return (
         <SnackbarProvider 
             maxSnack={5} 
@@ -143,7 +162,8 @@ const App = (props) => {
                         handleDrawerOpen={handleDrawerOpen}
                         handleOpenNavMenu={handleOpenNavMenu}
                         anchorElNav={anchorElNav}
-                        handleCloseNavMenu={handleCloseNavMenu}
+                        handleCloseNavMenu={handleCloseNavMenu} 
+                        openModal={(component) => openModal(component)}
                     />
 
                     <SideMenu 
@@ -180,6 +200,16 @@ const App = (props) => {
                         </Paper>
                     </Box>
                 </Box>
+                
+                {/* Render the modals */}
+                {modals.map((modal, index) => (
+                    <CustomModal
+                        key={index}
+                        open={modal.open}
+                        handleClose={() => closeModal(index)}
+                        content={modal.content}
+                    />
+                ))}
             </SignalRContext.Provider>
         </SnackbarProvider>
     );
