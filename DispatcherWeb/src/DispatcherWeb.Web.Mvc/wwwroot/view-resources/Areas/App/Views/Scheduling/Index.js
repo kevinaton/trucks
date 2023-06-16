@@ -2047,7 +2047,7 @@
             //reloadDriverAssignments();
         }
 
-        async function checkExistingOrderLineTrucks(options) {
+        async function promptWhetherToReplaceTrailerOnExistingOrderLineTrucks(options) {
             try {
                 abp.ui.setBusy();
                 let result = {};
@@ -2057,7 +2057,7 @@
                 if (options.truckId) {
                     var validationResult = await _driverAssignmentService.hasOrderLineTrucks({
                         trailerId: options.trailerId,
-                        forceTrailerIdFilter: options.forceTrailerIdFilter,
+                        forceTrailerIdFilter: true,
                         truckId: options.truckId,
                         officeId: filterData.officeId,
                         date: filterData.date,
@@ -2943,7 +2943,7 @@
                             _selectTrailerModal.open()
                         );
 
-                        var result = await checkExistingOrderLineTrucks({
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
                             truckId: truck.id,
                             truckCode: truck.truckCode
                         });
@@ -2974,7 +2974,7 @@
                             })
                         );
 
-                        var result = await checkExistingOrderLineTrucks({
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
                             trailerId: truck.trailer.id,
                             truckId: truck.id,
                             truckCode: truck.truckCode
@@ -2996,9 +2996,8 @@
                     callback: async function () {
                         var truck = $(this).data('truck');
 
-                        var result = await checkExistingOrderLineTrucks({
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
                             trailerId: truck.trailer.id,
-                            forceTrailerIdFilter: true,
                             truckId: truck.id,
                             truckCode: truck.truckCode
                         });
