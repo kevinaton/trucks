@@ -441,6 +441,9 @@ namespace DispatcherWeb
                         {
                             Id = t.CurrentTrailer.VehicleCategory.Id,
                             Name = t.CurrentTrailer.VehicleCategory.Name,
+                            AssetType = t.CurrentTrailer.VehicleCategory.AssetType,
+                            IsPowered = t.CurrentTrailer.VehicleCategory.IsPowered,
+                            SortOrder = t.CurrentTrailer.VehicleCategory.SortOrder,
                         },
                         Make = t.CurrentTrailer.Make,
                         Model = t.CurrentTrailer.Model,
@@ -641,7 +644,18 @@ namespace DispatcherWeb
                         Trailer = olt.Trailer == null ? null : new ScheduleTruckTrailerDto
                         {
                             Id = olt.Trailer.Id,
-                            TruckCode = olt.Trailer.TruckCode
+                            TruckCode = olt.Trailer.TruckCode,
+                            VehicleCategory = new VehicleCategoryDto
+                            {
+                                Id = olt.Trailer.VehicleCategory.Id,
+                                Name = olt.Trailer.VehicleCategory.Name,
+                                AssetType = olt.Trailer.VehicleCategory.AssetType,
+                                IsPowered = olt.Trailer.VehicleCategory.IsPowered,
+                                SortOrder = olt.Trailer.VehicleCategory.SortOrder,
+                            },
+                            Make = olt.Trailer.Make,
+                            Model = olt.Trailer.Model,
+                            BedConstruction = olt.Trailer.BedConstruction
                         },
                         DriverId = olt.DriverId,
                         OrderId = ol.OrderId,

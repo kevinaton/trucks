@@ -150,6 +150,19 @@
                 truckCode: _$form.find('#TrailerId').getSelectedDropdownOption().text()
             } : null;
 
+            if (result) {
+                var select2Data = _$form.find('#TrailerId').select2('data');
+                if (select2Data.length && select2Data[0].item) {
+                    result.vehicleCategory = {
+                        id: select2Data[0].item.vehicleCategoryId
+                    };
+                } else {
+                    result.vehicleCategory = {
+                        id: _modalManager.getArgs().trailerVehicleCategoryId
+                    };
+                }
+            }
+
             _modalManager.setResult(result);
             _modalManager.close();
         };

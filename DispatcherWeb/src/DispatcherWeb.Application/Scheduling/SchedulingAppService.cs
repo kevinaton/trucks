@@ -651,12 +651,28 @@ namespace DispatcherWeb.Scheduling
             }
             await SaveOrThrowConcurrencyErrorAsync();
 
-            var trailerTruckCode = truck.Trailer?.TruckCode;
+            var trailer = truck.Trailer;
             if (orderLineTruck.TrailerId.HasValue && orderLineTruck.TrailerId != truck.Trailer?.Id)
             {
-                trailerTruckCode = await _truckRepository.GetAll()
+                trailer = await _truckRepository.GetAll()
                     .Where(x => x.Id == orderLineTruck.Id)
-                    .Select(x => x.TruckCode)
+                    .Select(x => new ScheduleTruckTrailerDto
+                    {
+                        Id = x.Id,
+                        TruckCode = x.TruckCode,
+                        BedConstruction = x.BedConstruction,
+                        Make = x.Make,
+                        Model = x.Model,
+                        VehicleCategory = new VehicleCategoryDto()
+                        {
+                            Id = x.VehicleCategoryId,
+                            Name = x.VehicleCategory.Name,
+                            AssetType = x.VehicleCategory.AssetType,
+                            IsPowered = x.VehicleCategory.IsPowered,
+                            SortOrder = x.VehicleCategory.SortOrder,
+                            
+                        }
+                    })
                     .FirstOrDefaultAsync();
             }
 
@@ -668,11 +684,7 @@ namespace DispatcherWeb.Scheduling
                     OrderLineId = orderLineTruck.OrderLineId,
                     TruckId = orderLineTruck.TruckId,
                     DriverId = orderLineTruck.DriverId,
-                    Trailer = orderLineTruck.TrailerId.HasValue ? new ScheduleTruckTrailerDto
-                    {
-                        Id = orderLineTruck.TrailerId.Value,
-                        TruckCode = trailerTruckCode
-                    } : null,
+                    Trailer = orderLineTruck.TrailerId.HasValue ? trailer : null,
                     OfficeId = truck.OfficeId,
                     IsExternal = truck.IsExternal,
                     ParentId = orderLineTruck.ParentOrderLineTruckId,
