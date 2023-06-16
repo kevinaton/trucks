@@ -988,7 +988,7 @@ namespace DispatcherWeb.DriverAssignments
                 .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
                 .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
                 .WhereIf(input.DriverId.HasValue, x => input.DriverId == x.DriverId)
-                .WhereIf(input.TrailerId.HasValue, x => input.TrailerId == x.TrailerId)
+                .WhereIf(input.TrailerId.HasValue || input.ForceTrailerIdFilter, x => input.TrailerId == x.TrailerId)
                 .WhereIf(input.TruckId.HasValue, x => input.TruckId == x.TruckId)
                 .AnyAsync();
 

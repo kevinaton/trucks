@@ -2047,7 +2047,7 @@
             //reloadDriverAssignments();
         }
 
-        async function checkExistingOrderLineTrucks(options) {
+        async function promptWhetherToReplaceTrailerOnExistingOrderLineTrucks(options) {
             try {
                 abp.ui.setBusy();
                 let result = {};
@@ -2057,6 +2057,7 @@
                 if (options.truckId) {
                     var validationResult = await _driverAssignmentService.hasOrderLineTrucks({
                         trailerId: options.trailerId,
+                        forceTrailerIdFilter: true,
                         truckId: options.truckId,
                         officeId: filterData.officeId,
                         date: filterData.date,
@@ -2942,9 +2943,15 @@
                             _selectTrailerModal.open()
                         );
 
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
+                        });
+
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
-                            trailerId: trailer.id
+                            trailerId: trailer.id,
+                            ...result
                         });
                     }
                 },
@@ -2967,7 +2974,7 @@
                             })
                         );
 
-                        var result = await checkExistingOrderLineTrucks({
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
                             trailerId: truck.trailer.id,
                             truckId: truck.id,
                             truckCode: truck.truckCode
@@ -2988,16 +2995,18 @@
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
-                        var filterData = _dtHelper.getFilterData();
-                        await abp.services.app.trailerAssignment.setTrailerForTractor({
-                            date: filterData.date,
-                            shift: filterData.shift,
-                            officeId: filterData.officeId,
-                            tractorId: truck.id,
-                            trailerId: null
+
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                            trailerId: truck.trailer.id,
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
                         });
-                        abp.notify.info('Successfully removed.');
-                        reloadTruckTiles();
+                        
+                        await setTrailerForTractorAsync({
+                            tractorId: truck.id,
+                            trailerId: null,
+                            ...result
+                        });
                     }
                 },
                 addTractor: {
