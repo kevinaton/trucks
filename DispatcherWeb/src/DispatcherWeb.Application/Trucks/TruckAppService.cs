@@ -364,6 +364,7 @@ namespace DispatcherWeb.Trucks
             await _truckRepository.GetAll()
                 .Where(x => x.LocationId.HasValue)
                 .Where(t => t.VehicleCategory.AssetType == AssetType.Trailer && t.IsActive && !t.IsOutOfService)
+                .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
                 .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
                 .WhereIf(input.BedConstruction.HasValue, x => x.BedConstruction == input.BedConstruction)
                 .WhereIf(!string.IsNullOrEmpty(input.Make), x => x.Make == input.Make)
