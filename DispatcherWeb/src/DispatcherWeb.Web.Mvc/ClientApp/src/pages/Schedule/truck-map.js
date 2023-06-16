@@ -44,10 +44,49 @@ const TruckMap = ({
         }
     }, [validateUtilization, userSettings, scheduleTrucks, trucks]);
 
+    const truckHasNoDriver = truck => 
+        !truck.isExternal && 
+        (truck.hasNoDriver || (!truck.hasDefaultDriver && !truck.hasDriverAssignment));
 
+    // const truckCategoryNeedsDriver = truck => 
+    //     truck.vehicleCategory.isPowered && ()
+
+    const getTruckColor = (truck) => {
+        if (truck.isOutOfService) {
+            return 'error';
+        }
+
+        if (truck.isAvailable) {
+            return 'success';
+        }
+
+        if (truck.isOnBreak) {
+            return 'warning';
+        }
+
+        return 'primary';
+    }
 
     const renderTrucks = () => {
-        console.log(scheduleTrucks)
+        if (!isEmpty(trucks)) {
+            const mappedTrucks = trucks.map((truck) => {
+                return (
+                    <Grid item key={truck.truckCode}>
+                        <Chip
+                            label={truck.truckCode}
+                            color={getTruckColor(truck)}
+                            onClick={() => {}}
+                            sx={{
+                                borderRadius: 0,
+                                fontSize: 18,
+                                fontWeight: 600,
+                                py: 3,
+                            }}
+                        />
+                    </Grid>
+                );
+            });
+        }
     }
 
     return (
