@@ -369,10 +369,14 @@ namespace DispatcherWeb.Trucks
                 .WhereIf(input.BedConstruction.HasValue, x => x.BedConstruction == input.BedConstruction)
                 .WhereIf(!string.IsNullOrEmpty(input.Make), x => x.Make == input.Make)
                 .WhereIf(!string.IsNullOrEmpty(input.Model), x => x.Model == input.Model)
-                .Select(x => new SelectListDto
+                .Select(x => new SelectListDto<TruckSelectListInfoDto>
                 {
                     Id = x.Id.ToString(),
-                    Name = x.TruckCode
+                    Name = x.TruckCode,
+                    Item = new TruckSelectListInfoDto
+                    {
+                        VehicleCategoryId = x.VehicleCategoryId
+                    }
                 })
                 .GetSelectListResult(input);
 
