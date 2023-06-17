@@ -35,8 +35,6 @@ namespace DispatcherWeb.ReportCenter.Services
 
         public async Task Initialize()
         {
-            if (_initialized)
-                return;
 
             var accessToken = await _httpContextAccessor.HttpContext.GetTokenAsync("access_token");
             var hostApiUrl = _configuration["IdentityServer:Authority"];
