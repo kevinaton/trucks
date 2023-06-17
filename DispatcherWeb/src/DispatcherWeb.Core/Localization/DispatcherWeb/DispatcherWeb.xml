@@ -1850,5 +1850,8 @@
 		<text name="ActiveReports">Active Reports</text>
 		<text name="TenantStatisticsReport">Tenant Statistics Report</text>
 		<text name="YouHaveScheduledTrucksWithNoDrivers">You have scheduled trucks with no drivers. Please add a driver to each truck scheduled before trying to dispatch again.</text>
+		<text name="TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace">This trailer is already scheduled with truck {0} for a job on this date. Do you want to change the trailer for this job? Select yes to change the trailer assignment for this job.</text>
+		<text name="CannotChangeTrailerBecauseOfDispatchesError">There are dispatches for this truck. Remove the dispatches if you want to change the trailer.</text>
+		<text name="CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError">This trailer doesn't match any vehicle categories selected for this job</text>
 	</texts>
 </localizationDictionary>

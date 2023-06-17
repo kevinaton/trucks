@@ -2025,7 +2025,12 @@
 
             abp.notify.info('Saved successfully.');
 
-            //reloadMainGrid(null, false);
+            if (options.updateExistingOrderLineTrucks) {
+                setTimeout(() => {
+                    reloadMainGrid(null, false);
+                }, 500);
+            }
+
             reloadTruckTiles();
             //reloadDriverAssignments();
         }
@@ -2040,6 +2045,54 @@
             reloadMainGrid(null, false);
             reloadTruckTiles();
             //reloadDriverAssignments();
+        }
+
+        async function promptWhetherToReplaceTrailerOnExistingOrderLineTrucks(options) {
+            try {
+                abp.ui.setBusy();
+                let result = {};
+                var filterData = _dtHelper.getFilterData();
+                var isPastDate = moment(filterData.date, 'MM/DD/YYYY') < moment().startOf('day');
+
+                if (options.truckId) {
+                    var validationResult = await _driverAssignmentService.hasOrderLineTrucks({
+                        trailerId: options.trailerId,
+                        forceTrailerIdFilter: true,
+                        truckId: options.truckId,
+                        officeId: filterData.officeId,
+                        date: filterData.date,
+                        shift: filterData.shift
+                    });
+
+                    if (isPastDate) {
+                        //same as a "no" answer
+                    } else if (validationResult.hasOrderLineTrucks) {
+                        abp.ui.clearBusy();
+                        var userResponse = await swal(
+                            app.localize("TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace", options.truckCode),
+                            {
+                                buttons: {
+                                    no: "No",
+                                    yes: "Yes"
+                                }
+                            }
+                        );
+                        abp.ui.setBusy();
+                        if (userResponse === 'yes') {
+                            if (validationResult.hasOpenDispatches) {
+                                abp.message.error(app.localize("CannotChangeTrailerBecauseOfDispatchesError"));
+                                throw new Error(app.localize("CannotChangeTrailerBecauseOfDispatchesError"));
+                            }
+                            result.updateExistingOrderLineTrucks = true;
+                        }
+                    }
+                }
+
+                return result;
+            }
+            finally {
+                abp.ui.clearBusy();
+            }
         }
 
         function reloadMainGrid(callback, resetPaging) {
@@ -2703,13 +2756,20 @@
                     },
                     callback: async function () {
                         var item = $(this).data('item');
+                        var order = _dtHelper.getRowData(this);
                         let trailer = await app.getModalResultAsync(
                             _selectTrailerModal.open({
                                 message: 'Select trailer for truck ' + item.truckCode + ' for single job',
                                 trailerId: item.trailer && item.trailer.id || null,
                                 trailerTruckCode: item.trailer && item.trailer.truckCode || null,
+                                trailerVehicleCategoryId: item.trailer && item.trailer.vehicleCategory.id || null
                             })
                         );
+                        
+                        if (order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(trailer.vehicleCategory.id)) {
+                            abp.message.error(app.localize("CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError"));
+                            return;
+                        }
 
                         await setTrailerForOrderLineTruckAsync({
                             orderLineTruckId: item.id,
@@ -2890,9 +2950,15 @@
                             _selectTrailerModal.open()
                         );
 
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
+                        });
+
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
-                            trailerId: trailer.id
+                            trailerId: trailer.id,
+                            ...result
                         });
                     }
                 },
@@ -2909,15 +2975,23 @@
                             _selectTrailerModal.open({
                                 trailerId: truck.trailer.id,
                                 trailerTruckCode: truck.trailer.truckCode,
+                                trailerVehicleCategoryId: truck.trailer.vehicleCategory.id,
                                 modalSubtitle: truck.truckCode + ' is currently coupled to ' + truck.trailer.truckCode
                                     + ' - ' + truck.trailer.vehicleCategory.name + ' ' + truck.trailer.make + ' ' + truck.trailer.model + ' '
                                     + truck.trailer.bedConstructionFormatted + ' bed'
                             })
                         );
 
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                            trailerId: truck.trailer.id,
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
+                        });
+
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
-                            trailerId: trailer.id
+                            trailerId: trailer.id,
+                            ...result
                         });
                     }
                 },
@@ -2929,16 +3003,18 @@
                     },
                     callback: async function () {
                         var truck = $(this).data('truck');
-                        var filterData = _dtHelper.getFilterData();
-                        await abp.services.app.trailerAssignment.setTrailerForTractor({
-                            date: filterData.date,
-                            shift: filterData.shift,
-                            officeId: filterData.officeId,
-                            tractorId: truck.id,
-                            trailerId: null
+
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                            trailerId: truck.trailer.id,
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
                         });
-                        abp.notify.info('Successfully removed.');
-                        reloadTruckTiles();
+                        
+                        await setTrailerForTractorAsync({
+                            tractorId: truck.id,
+                            trailerId: null,
+                            ...result
+                        });
                     }
                 },
                 addTractor: {

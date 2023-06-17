@@ -1,14 +1,14 @@
-﻿using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
-using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions;
-using System;
-using GrapeCity.ActiveReports.PageReportModel;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using GrapeCity.BI.Data.DataProviders;
+﻿using System;
 using System.Collections.Generic;
-using GrapeCity.Enterprise.Data.Expressions;
-using System.Text;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions;
+using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
+using GrapeCity.ActiveReports.PageReportModel;
+using GrapeCity.BI.Data.DataProviders;
+using GrapeCity.Enterprise.Data.Expressions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DispatcherWeb.ReportCenter.Helpers
 {
