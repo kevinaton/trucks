@@ -1,1 +1,2 @@
-export * from './linkedAccounts'
+export * from './linkedAccounts';
+export * from './linkNewAccountForm';

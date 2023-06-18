@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Tablecell } from '../DTComponents';
+import LinkNewAccountForm from './linkNewAccountForm';
 
 export const LinkedAccounts = ({
     openModal,
@@ -58,13 +59,8 @@ export const LinkedAccounts = ({
         setHoveredRow(null);
     };
 
-    const testClick = () => {
-        const body = (
-            <>
-                <h1>Another test here</h1>
-            </>
-        );
-        openModal(body);
+    const handleLinkNewAccount = () => {
+        openModal(<LinkNewAccountForm closeModal={closeModal} />);
     };
 
     return (
@@ -80,7 +76,7 @@ export const LinkedAccounts = ({
                 <Typography variant='h6' component='h2'>
                     Linked Accounts
                 </Typography>
-                <Button onClick={testClick}>
+                <Button onClick={handleLinkNewAccount}>
                     <i className='fa-regular fa-plus' style={{ marginRight: '6px' }} />
                     <Typography>Link New Account</Typography>
                 </Button>
