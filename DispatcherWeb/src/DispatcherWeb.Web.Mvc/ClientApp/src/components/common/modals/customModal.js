@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 import { Modal, Backdrop, Fade } from '@material-ui/core';
 
 const StyledModal = styled(Modal)(({ theme }) => ({
@@ -18,8 +18,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 export const CustomModal = ({
     open,
     handleClose, 
-    headerContent,
-    bodyContent
+    content
 }) => {
 
     return (
@@ -36,17 +35,7 @@ export const CustomModal = ({
         >
             <Fade in={open}>
                 <StyledBox>
-                    {headerContent}
-
-                    {bodyContent}
-
-                    <Box 
-                        sx={{ display: 'flex', p: 2 }} 
-                        justifyContent='flex-end' 
-                        alignItems='center'
-                    >
-                        <Button variant='outlined' onClick={handleClose}>Close</Button>
-                    </Box>
+                    {content}
                 </StyledBox>
             </Fade>
         </StyledModal>

@@ -125,20 +125,19 @@ const App = (props) => {
         setCollapseOpen(false);
     };
 
-    const openModal = (headerContent, bodyContent) => {
+    const openModal = (content) => {
         const modal = {
-            headerContent,
-            bodyContent,
+            content,
             open: true,
         };
       
         setModals((prevModals) => [...prevModals, modal]);
     };
 
-    const closeModal = (index) => {
+    const closeModal = () => {
         setModals((prevModals) => {
             const updatedModals = [...prevModals];
-            updatedModals.splice(index, 1);
+            updatedModals.pop();
             return updatedModals;
         });
     };
@@ -164,7 +163,8 @@ const App = (props) => {
                         handleOpenNavMenu={handleOpenNavMenu}
                         anchorElNav={anchorElNav}
                         handleCloseNavMenu={handleCloseNavMenu} 
-                        openModal={(headerContent, bodyContent) => openModal(headerContent, bodyContent)}
+                        openModal={(headerContent, bodyContent) => openModal(headerContent, bodyContent)} 
+                        closeModal={closeModal}
                     />
 
                     <SideMenu 
@@ -207,9 +207,8 @@ const App = (props) => {
                     <CustomModal
                         key={index}
                         open={modal.open}
-                        handleClose={() => closeModal(index)}
-                        headerContent={modal.headerContent}
-                        bodyContent={modal.bodyContent}
+                        handleClose={closeModal}
+                        content={modal.content}
                     />
                 ))}
             </SignalRContext.Provider>

@@ -19,7 +19,8 @@ import { baseUrl } from '../../helpers/api_helper';
 import { LinkedAccounts } from '../user-link'
 
 export const ProfileMenu = ({
-    openModal
+    openModal,
+    closeModal
 }) => {
     const [anchorProfile, setAnchorProfile] = React.useState(null);
     const isProfile = Boolean(anchorProfile);
@@ -97,44 +98,14 @@ export const ProfileMenu = ({
         }
     };
 
-    const testClick = () => {
-        const header = (
-            <Typography variant='h6' component='h2'>
-                Link New Account
-            </Typography>
-        );
-
-        const body = (
-            <>
-                <h1>Another test here</h1>
-            </>
-        );
-        openModal(header, body);
-    }
-
     const showLinkedAccounts = () => {
-        const header = (
-            <Box 
-                sx={{ 
-                    display: 'flex', 
-                    p: 2 
-                }} 
-                justifyContent='space-between'
-                alignItems='center'
-            >
-                <Typography variant='h6' component='h2'>
-                    Linked Accounts
-                </Typography>
-                <Button>
-                    <i className='fa-regular fa-plus' style={{ marginRight: '6px' }} />
-                    <Typography>Link New Account</Typography>
-                </Button>
-            </Box>
+        openModal(
+            <LinkedAccounts 
+                openModal={openModal}
+                closeModal={closeModal} 
+            />
         );
-
-        const body = (<LinkedAccounts />);
-        openModal(header, body);
-    }
+    };
     
     const renderAvatar = () => {
         if (!isEmpty(tenant) && !isEmpty(tenant.logoId)) {
