@@ -4,16 +4,23 @@ import { isEmpty } from 'lodash';
 import { 
     Box, 
     IconButton,
+    Menu,
+    ListItem,
+    ListItemButton,
+    ListItemText,
     TableContainer, 
     Table, 
     TableHead, 
     TableRow,
-    TableBody
+    TableBody,
+    Typography
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Tablecell } from '../DTComponents';
 
 export const LinkedAccounts = () => {
+    const [actionAnchor, setActionAnchor] = useState(null);
+    const actionOpen = Boolean(actionAnchor);
     const [hoveredRow, setHoveredRow] = useState(null);
     const [linkedAccounts, setLinkedAccounts] = useState([]);
     const { linkedUsers } = useSelector((state) => ({
@@ -31,6 +38,14 @@ export const LinkedAccounts = () => {
         }
     }, [linkedAccounts, linkedUsers]);
 
+    // Handle action on table rows
+    const handleActionClick = (event) => {
+        setActionAnchor(event.currentTarget);
+    };
+    const handleActionClose = () => {
+        setActionAnchor(null);
+    };
+
     // Handle row hover on table
     const handleRowHover = (index) => {
         setHoveredRow(index);
@@ -40,7 +55,10 @@ export const LinkedAccounts = () => {
     };
 
     return (
-        <TableContainer component={Box}>
+        <TableContainer 
+            component={Box}
+            sx={{ p: 0 }}
+        >
             <Table stickyHeader aria-label='linked accounts table' size='small'>
                 <TableHead>
                     <TableRow sx={{
@@ -49,7 +67,7 @@ export const LinkedAccounts = () => {
                         }
                     }}>
                         <Tablecell label='Username' value='User name' />
-                        <Tablecell label='' value='' />
+                        <Tablecell label='' value='Actions' style={{ width: '70px' }} />
                     </TableRow>
                 </TableHead>
 
@@ -73,11 +91,42 @@ export const LinkedAccounts = () => {
                                         }}
                                     >
                                         <Tablecell label='Username' value={`${data.tenancyName}\\${data.username}`} />
-                                        <Tablecell label='Action' value={
+                                        <Tablecell label='Action' style={{ width: '70px' }} value={
                                             <div>
-                                                <IconButton sx={{ width: 25, height: 25}}>
+                                                <IconButton 
+                                                    sx={{ width: 25, height: 25}}
+                                                    onClick={handleActionClick}
+                                                >
                                                     <i className='fa-regular fa-ellipsis-vertical'></i>
                                                 </IconButton>
+                                                <Menu
+                                                    anchorEl={actionAnchor}
+                                                    id='actions-menu' 
+                                                    open={actionOpen} 
+                                                    onClose={handleActionClose}
+                                                >
+                                                    <ListItem disablePadding>
+                                                        <ListItemButton onClick={handleActionClose}>
+                                                            <ListItemText 
+                                                                primary={
+                                                                    <Typography align='left'>
+                                                                        Login
+                                                                    </Typography>
+                                                                } 
+                                                            />
+                                                        </ListItemButton>
+                                                    </ListItem>
+
+                                                    <ListItem disablePadding>
+                                                        <ListItemButton>
+                                                            <ListItemText 
+                                                                primary={
+                                                                    <Typography align='left'>Delete</Typography>
+                                                                }
+                                                            />
+                                                        </ListItemButton>
+                                                    </ListItem>
+                                                </Menu>
                                             </div>
                                         } />
                                     </TableRow>

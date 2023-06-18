@@ -114,9 +114,22 @@ export const ProfileMenu = ({
 
     const showLinkedAccounts = () => {
         const header = (
-            <Typography variant='h6' component='h2'>
-                Linked Accounts
-            </Typography>
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    p: 2 
+                }} 
+                justifyContent='space-between'
+                alignItems='center'
+            >
+                <Typography variant='h6' component='h2'>
+                    Linked Accounts
+                </Typography>
+                <Button>
+                    <i className='fa-regular fa-plus' style={{ marginRight: '6px' }} />
+                    <Typography>Link New Account</Typography>
+                </Button>
+            </Box>
         );
 
         const body = (<LinkedAccounts />);
