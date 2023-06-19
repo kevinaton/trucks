@@ -33,6 +33,7 @@ const App = (props) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [connection, setConnection] = useState(null);
     const [modals, setModals] = useState([]);
+    const [nextModalZIndex, setNextModalZIndex] = useState(1);
 
     const userInfo = useSelector(state => state.UserReducer.userInfo);
     const dispatch = useDispatch();
@@ -129,8 +130,10 @@ const App = (props) => {
         const modal = {
             content,
             open: true,
+            zIndex: nextModalZIndex, // Assign the next available z-index value
         };
-      
+
+        setNextModalZIndex((prevZIndex) => prevZIndex + 1); // Increment the next available z-index value
         setModals((prevModals) => [...prevModals, modal]);
     };
 
@@ -209,6 +212,7 @@ const App = (props) => {
                         open={modal.open}
                         handleClose={closeModal}
                         content={modal.content}
+                        zIndex={modal.zIndex}
                     />
                 ))}
             </SignalRContext.Provider>

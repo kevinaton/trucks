@@ -13,7 +13,6 @@ import {
 } from '@mui/material';
 import { isEmpty } from 'lodash';
 import { theme } from '../../Theme';
-import { ProfileList } from '../../common/data/menus';
 import { getUserProfileMenu, getLinkedUsers } from '../../store/actions';
 import { baseUrl } from '../../helpers/api_helper';
 import { LinkedAccounts } from '../user-link'
@@ -72,7 +71,7 @@ export const ProfileMenu = ({
         setAnchorProfile(event.currentTarget);
     };
 
-    const handleProfileClose = (event) => {
+    const handleProfileClose = () => {
         setAnchorProfile(null);
     };
 
@@ -99,6 +98,7 @@ export const ProfileMenu = ({
     };
 
     const showLinkedAccounts = () => {
+        handleProfileClose();
         openModal(
             <LinkedAccounts 
                 openModal={openModal}

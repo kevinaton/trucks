@@ -12,7 +12,8 @@ const StyledBox = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: 0,
-    width: 400
+    width: 400,
+    position: 'relative'
 }));
 
 export const CustomModal = ({

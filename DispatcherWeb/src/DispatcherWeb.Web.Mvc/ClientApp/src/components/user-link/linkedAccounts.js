@@ -24,6 +24,7 @@ export const LinkedAccounts = ({
     openModal,
     closeModal
 }) => {
+    const [isLoading, setIsLoading] = useState(true);
     const [actionAnchor, setActionAnchor] = useState(null);
     const actionOpen = Boolean(actionAnchor);
     const [hoveredRow, setHoveredRow] = useState(null);
@@ -40,6 +41,8 @@ export const LinkedAccounts = ({
                 if (!isEmpty(result) && !isEmpty(result.items)) {
                     setLinkedAccounts(result.items);
                 }
+
+                setIsLoading(false);
         }
     }, [linkedAccounts, linkedUsers]);
 
@@ -67,9 +70,9 @@ export const LinkedAccounts = ({
         <React.Fragment>
             <Box 
                 sx={{ 
-                    display: 'flex', 
                     p: 2 
                 }} 
+                display='flex'
                 justifyContent='space-between'
                 alignItems='center'
             >
@@ -81,92 +84,104 @@ export const LinkedAccounts = ({
                     <Typography>Link New Account</Typography>
                 </Button>
             </Box>
+            
+            { !isLoading && isEmpty(linkedAccounts) &&
+                <Box 
+                    sx={{ p: 2 }} 
+                    display='flex'
+                    justifyContent='center'
+                    alignItems='center'
+                >
+                    <Typography>
+                        No linked accounts found.
+                    </Typography>
+                </Box>
+            }
 
-            <TableContainer 
-                component={Box}
-                sx={{ p: 0 }}
-            >
-                <Table stickyHeader aria-label='linked accounts table' size='small'>
-                    <TableHead>
-                        <TableRow sx={{
-                            '& th': {
-                                backgroundColor: grey[200]
-                            }
-                        }}>
-                            <Tablecell label='Username' value='User name' />
-                            <Tablecell label='' value='Actions' style={{ width: '70px' }} />
-                        </TableRow>
-                    </TableHead>
+            { !isLoading && !isEmpty(linkedAccounts) && 
+                <TableContainer 
+                    component={Box}
+                    sx={{ p: 0 }}
+                >
+                    <Table stickyHeader aria-label='linked accounts table' size='small'>
+                        <TableHead>
+                            <TableRow sx={{
+                                '& th': {
+                                    backgroundColor: grey[200]
+                                }
+                            }}>
+                                <Tablecell label='Username' value='User name' />
+                                <Tablecell label='' value='Actions' style={{ width: '70px' }} />
+                            </TableRow>
+                        </TableHead>
 
-                    <TableBody>
-                        { !isEmpty(linkedAccounts) && 
-                            <React.Fragment>
-                                { linkedAccounts.map((data, index) => {
-                                    return (
-                                        <TableRow 
-                                            key={index} 
-                                            hover={true} 
-                                            onMouseEnter={() => handleRowHover(index)}
-                                            onMouseLeave={() => handleRowLeave}
-                                            sx={{
-                                                backgroundColor: hoveredRow === index 
-                                                    ? (theme) => theme.palette.action.hover 
-                                                    : '#ffffff',
-                                                '&.MuiTableRow-root:hover': {
-                                                    backgroundColor: (theme) => theme.palette.action.hover
-                                                }
-                                            }}
-                                        >
-                                            <Tablecell label='Username' value={`${data.tenancyName}\\${data.username}`} />
-                                            <Tablecell label='Action' style={{ width: '70px' }} value={
-                                                <div>
-                                                    <IconButton 
-                                                        sx={{ width: 25, height: 25}}
-                                                        onClick={handleActionClick}
-                                                    >
-                                                        <i className='fa-regular fa-ellipsis-vertical'></i>
-                                                    </IconButton>
-                                                    <Menu
-                                                        anchorEl={actionAnchor}
-                                                        id='actions-menu' 
-                                                        open={actionOpen} 
-                                                        onClose={handleActionClose}
-                                                    >
-                                                        <ListItem disablePadding>
-                                                            <ListItemButton onClick={handleActionClose}>
-                                                                <ListItemText 
-                                                                    primary={
-                                                                        <Typography align='left'>
-                                                                            Login
-                                                                        </Typography>
-                                                                    } 
-                                                                />
-                                                            </ListItemButton>
-                                                        </ListItem>
+                        <TableBody>
+                            { linkedAccounts.map((data, index) => {
+                                return (
+                                    <TableRow 
+                                        key={index} 
+                                        hover={true} 
+                                        onMouseEnter={() => handleRowHover(index)}
+                                        onMouseLeave={() => handleRowLeave}
+                                        sx={{
+                                            backgroundColor: hoveredRow === index 
+                                                ? (theme) => theme.palette.action.hover 
+                                                : '#ffffff',
+                                            '&.MuiTableRow-root:hover': {
+                                                backgroundColor: (theme) => theme.palette.action.hover
+                                            }
+                                        }}
+                                    >
+                                        <Tablecell label='Username' value={`${data.tenancyName}\\${data.username}`} />
+                                        <Tablecell label='Action' style={{ width: '70px' }} value={
+                                            <div>
+                                                <IconButton 
+                                                    sx={{ width: 25, height: 25}}
+                                                    onClick={handleActionClick}
+                                                >
+                                                    <i className='fa-regular fa-ellipsis-vertical'></i>
+                                                </IconButton>
+                                                <Menu
+                                                    anchorEl={actionAnchor}
+                                                    id='actions-menu' 
+                                                    open={actionOpen} 
+                                                    onClose={handleActionClose}
+                                                >
+                                                    <ListItem disablePadding>
+                                                        <ListItemButton onClick={handleActionClose}>
+                                                            <ListItemText 
+                                                                primary={
+                                                                    <Typography align='left'>
+                                                                        Login
+                                                                    </Typography>
+                                                                } 
+                                                            />
+                                                        </ListItemButton>
+                                                    </ListItem>
 
-                                                        <ListItem disablePadding>
-                                                            <ListItemButton>
-                                                                <ListItemText 
-                                                                    primary={
-                                                                        <Typography align='left'>Delete</Typography>
-                                                                    }
-                                                                />
-                                                            </ListItemButton>
-                                                        </ListItem>
-                                                    </Menu>
-                                                </div>
-                                            } />
-                                        </TableRow>
-                                    )
-                                })}
-                            </React.Fragment>
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                                                    <ListItem disablePadding>
+                                                        <ListItemButton>
+                                                            <ListItemText 
+                                                                primary={
+                                                                    <Typography align='left'>Delete</Typography>
+                                                                }
+                                                            />
+                                                        </ListItemButton>
+                                                    </ListItem>
+                                                </Menu>
+                                            </div>
+                                        } />
+                                    </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            }
 
             <Box 
-                sx={{ display: 'flex', p: 2 }} 
+                sx={{ p: 2 }} 
+                display='flex'
                 justifyContent='flex-end' 
                 alignItems='center'
             >

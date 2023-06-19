@@ -1,80 +1,125 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     Box,
-    Button,
-    Typography
+    Button, 
+    Typography, 
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { DynamicForm } from '../common/forms';
+import { isEmpty } from 'lodash';
 
 const LinkNewAccountForm = ({
     closeModal
 }) => {
-    const [tenancyName, setTenancyName] = useState('');
-    const [usernameOrEmailAddress, setUsernameOrEmailAddress] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [fields, setFields] = useState({
+        tenancyName: {
+            label: 'Tenancy Name',
+            type: 'text',
+            value: '',
+            required: false,
+            errorText: 'Please enter tenancy name'
+        }, 
+        usernameOrEmailAddress: {
+            label: 'Username',
+            type: 'email',
+            value: '',
+            required: true,
+            errorText: 'Please enter username'
+        }, 
+        password: {
+            label: 'Password',
+            type: 'password',
+            value: '',
+            required: true,
+            errorText: 'Please enter password'
+        }
+    });
+    const [invalidFields, setInvalidFields] = useState([]);
 
-    const handleTenancyNameChange = (newValue) => {
-        setTenancyName(newValue);
-    };
+    const { 
+        userProfileMenu
+    } = useSelector((state) => ({
+        userProfileMenu: state.UserReducer.userProfileMenu
+    }));
+    
+    useEffect(() => {
+        if (!isEmpty(userProfileMenu) && !isEmpty(userProfileMenu.result)) {
+            const { loginInformations } = userProfileMenu.result;
+            if (!isEmpty(loginInformations)) {
+                const { tenant } = loginInformations;
+                if (!isEmpty(tenant)) {
+                    const { tenancyName } = tenant;
+                    if (!isEmpty(tenancyName)) {
+                        setFields((prevFields) => ({
+                            ...prevFields,
+                            tenancyName: {
+                                ...prevFields.tenancyName,
+                                value: tenancyName,
+                            },
+                        }));
+                    }
+                }
+            }
+        }
 
-    const handleUsernameOrEmailAddressChange = (newValue) => {
-        setUsernameOrEmailAddress(newValue);
-    };
+    }, [userProfileMenu]);
 
-    const handlePasswordChange = (newValue) => {
-        setPassword(newValue);
+    const handleInputChange = (field, value) => {
+        setFields((prevFields) => ({
+            ...prevFields,
+            [field]: {
+                ...prevFields[field],
+                value: value
+            },
+        }));
+  
+        setInvalidFields((prevInvalidFields) => prevInvalidFields.filter((f) => f !== field));
     };
 
     const handleCancel = () => {
         // Reset the form
-        setTenancyName('');
-        setUsernameOrEmailAddress('');
-        setPassword('');
+        setFields((prevFields) => {
+            const resetFields = {};
+            Object.keys(prevFields).forEach((field) => {
+                resetFields[field] = {
+                    ...prevFields[field],
+                    value: '',
+                };
+            });
+            return resetFields;
+        });
+        setInvalidFields([]);
+        closeModal();
     };
 
     const handleSave = () => {
         // Perform form validation
-        if (!tenancyName) {
-            setError('Tenancy name is required');
-        }
+        const invalidFields = Object.keys(fields).filter(
+            (field) => fields[field].required && !fields[field].value
+        );
 
-        if (!usernameOrEmailAddress) {
-            setError('Username is required');
-        }
-
-        if (!password) {
-            setError('Password is required');
+        if (invalidFields.length > 0) {
+            setInvalidFields(invalidFields);
+            return;
         }
 
         // Perform custom actions based on the form data
-        console.log('Form data: ', {tenancyName, usernameOrEmailAddress, password});
+        console.log('Form data: ', fields);
 
-        // Reset the form
-        setTenancyName('');
-        setUsernameOrEmailAddress('');
-        setPassword('');
+        // Reset form and field values
+        setFields((prevFields) => {
+            const resetFields = {};
+            Object.keys(prevFields).forEach((field) => {
+                resetFields[field] = {
+                    ...prevFields[field],
+                    value: '',
+                };
+            });
+            return resetFields;
+        });
+        setInvalidFields([]);
     };
-
-    const fields = [
-        {
-            name: 'tenancyName',
-            label: 'Tenancy Name',
-            value: tenancyName,
-            onChange: handleTenancyNameChange
-        }, {
-            name: 'usernameOrEmailAddress',
-            label: 'Username',
-            value: usernameOrEmailAddress,
-            onChange: handleUsernameOrEmailAddressChange
-        }, {
-            name: 'password',
-            label: 'Password',
-            value: password,
-            onChange: handlePasswordChange
-        }
-    ];
     
     return (
         <React.Fragment>
@@ -89,19 +134,28 @@ const LinkNewAccountForm = ({
                 <Typography variant='h6' component='h2'>
                     Link new account
                 </Typography>
-                <Button onClick={closeModal}>
+                <Button 
+                    onClick={closeModal} 
+                    sx={{ minWidth: '32px' }}
+                >
                     <CloseIcon />
                 </Button>
             </Box>
 
-            <div>
+            <Box 
+                component='form' 
+                noValidate
+                autoComplete="off" 
+                sx={{ p: 2 }}
+            >
                 <DynamicForm
-                    fields={fields}
+                    fields={fields} 
+                    invalidFields={invalidFields} 
+                    onChange={(field, value) => handleInputChange(field, value)}
                     onSave={handleSave}
                     onCancel={handleCancel}
                 />
-                {error && <p>{error}</p>}
-            </div>
+            </Box>
         </React.Fragment>
     );
 };

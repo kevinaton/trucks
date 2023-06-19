@@ -177,7 +177,10 @@ export const Appbar = ({
 
                         <NotificationBell isMobileView={false} />
 
-                        <ProfileMenu openModal={openModal} closeModal={closeModal} />
+                        <ProfileMenu 
+                            openModal={openModal} 
+                            closeModal={closeModal} 
+                        />
 
                         <HeaderIconButton aria-label='open drawer' onClick={() => setState(true)}>
                             <i className='fa-regular fa-message-dots icon'></i>
