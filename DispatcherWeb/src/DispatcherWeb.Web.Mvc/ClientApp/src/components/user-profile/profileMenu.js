@@ -17,6 +17,7 @@ import { getUserProfileMenu, getLinkedUsers } from '../../store/actions';
 import { baseUrl } from '../../helpers/api_helper';
 import { LinkedAccounts } from '../user-link';
 import ChangeProfilePictureForm from '../user-profile/changeProfilePictureForm';
+import UploadSignaturePictureForm from '../user-profile/uploadSignaturePictureForm';
 
 export const ProfileMenu = ({
     openModal,
@@ -112,6 +113,16 @@ export const ProfileMenu = ({
         handleProfileClose();
         openModal(
             <ChangeProfilePictureForm 
+                openModal={openModal}
+                closeModal={closeModal} 
+            />
+        )
+    };
+
+    const handleUploadSignaturePicture = () => {
+        handleProfileClose();
+        openModal(
+            <UploadSignaturePictureForm 
                 openModal={openModal}
                 closeModal={closeModal} 
             />
@@ -237,7 +248,11 @@ export const ProfileMenu = ({
                                     <Typography>Change profile picture</Typography>
                                 </MenuItem>
 
-                                <MenuItem component={Link} sx={{ py: 2 }}>
+                                <MenuItem 
+                                    component={Link} 
+                                    sx={{ py: 2 }} 
+                                    onClick={handleUploadSignaturePicture}
+                                >
                                     <i className={`fa-regular fa-signature icon`} style={{ marginRight: 6 }}></i>
                                     <Typography>Upload signature picture</Typography>
                                 </MenuItem>
