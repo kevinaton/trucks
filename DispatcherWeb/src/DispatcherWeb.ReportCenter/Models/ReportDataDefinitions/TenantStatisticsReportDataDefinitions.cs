@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using HttpClient = System.Net.Http.HttpClient;
 
 namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
@@ -25,9 +26,10 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                                         IHttpContextAccessor httpContextAccessor,
                                         IServiceProvider serviceProvider,
                                         IHostEnvironment environment,
-                                        ReportAppService reportAppService)
+                                        ReportAppService reportAppService,
+                                        ILoggerFactory loggerFactory)
 
-                    : base(configuration, serviceProvider, httpContextAccessor)
+                    : base(configuration, serviceProvider, httpContextAccessor, loggerFactory)
         {
             _reportAppService = reportAppService;
             _environment = environment;
@@ -55,8 +57,15 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             await base.Initialize();
         }
 
-        public override async Task<object> LocateDataSource(LocateDataSourceArgs arg)
+        public override async Task<(bool IsMasterDataSource, object DataSourceJson)> LocateDataSource(LocateDataSourceArgs arg)
         {
+            var contentJson = _emptyArrayInResult;
+            var (isMasterDataSource, dataSourceJson) = await base.LocateDataSource(arg);
+            if (isMasterDataSource)
+            {
+                return (isMasterDataSource, dataSourceJson);
+            }
+
             if (arg.DataSet.Name.Equals("TenantStatisticsDataSet"))
             {
                 var paramsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
@@ -73,14 +82,15 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 if (!response.IsSuccessStatusCode)
                 {
                     Console.WriteLine(response.StatusCode);
+                    Logger.Log(LogLevel.Error, $"Error: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
                 }
                 else
                 {
-                    var contentJson = await response.Content.ReadAsStringAsync();
-                    return contentJson;
+                    contentJson = await response.Content.ReadAsStringAsync();
+                    Logger.Log(LogLevel.Information, $"Success: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
                 }
             }
-            return string.Empty;
+            return (isMasterDataSource, contentJson);
         }
     }
 }

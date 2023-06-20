@@ -97,7 +97,7 @@
                 saveCallback: async function (rowData, cell) {
                     try {
                         var result = await _driverAssignmentService.editDriverAssignment(rowData);
-                        if (rowData.id) {
+                        if (rowData.id && !result.reloadRequired) {
                             refreshButtons();
                         } else {
                             setTimeout(() => {
@@ -157,23 +157,28 @@
                             });
                             if (validationResult.hasOrderLineTrucks) {
                                 abp.ui.clearBusy(cell);
-                                var userResponse = await swal(
-                                    app.localize("DriverAlreadyScheduledForTruck{0}Prompt_YesToReplace_NoToCreateNew", rowData.truckCode),
-                                    {
-                                        buttons: {
-                                            no: "No",
-                                            yes: "Yes"
-                                        }
-                                    }
-                                );
-                                abp.ui.setBusy(cell);
-                                if (userResponse === 'no') {
-                                    rowData.id = 0;
-                                    rowData.startTime = null;
+                                if (!newValue) {
+                                    abp.message.warn(app.localize('CannotRemoveDriverBecauseOfOrderLineTrucksError'));
+                                    return false;
                                 } else {
-                                    if (validationResult.hasOpenDispatches) {
-                                        abp.message.error(app.localize("CannotChangeDriverBecauseOfDispatchesError"));
-                                        return false;
+                                    let userResponse = await swal(
+                                        app.localize("DriverAlreadyScheduledForTruck{0}Prompt_YesToReplace_NoToCreateNew", rowData.truckCode),
+                                        {
+                                            buttons: {
+                                                no: "No",
+                                                yes: "Yes"
+                                            }
+                                        }
+                                    );
+                                    abp.ui.setBusy(cell);
+                                    if (userResponse === 'no') {
+                                        rowData.id = 0;
+                                        rowData.startTime = null;
+                                    } else {
+                                        if (validationResult.hasOpenDispatches) {
+                                            abp.message.error(app.localize("CannotChangeDriverBecauseOfDispatchesError"));
+                                            return false;
+                                        }
                                     }
                                 }
                             }

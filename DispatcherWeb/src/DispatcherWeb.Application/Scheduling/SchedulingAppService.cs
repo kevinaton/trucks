@@ -651,12 +651,28 @@ namespace DispatcherWeb.Scheduling
             }
             await SaveOrThrowConcurrencyErrorAsync();
 
-            var trailerTruckCode = truck.Trailer?.TruckCode;
+            var trailer = truck.Trailer;
             if (orderLineTruck.TrailerId.HasValue && orderLineTruck.TrailerId != truck.Trailer?.Id)
             {
-                trailerTruckCode = await _truckRepository.GetAll()
+                trailer = await _truckRepository.GetAll()
                     .Where(x => x.Id == orderLineTruck.Id)
-                    .Select(x => x.TruckCode)
+                    .Select(x => new ScheduleTruckTrailerDto
+                    {
+                        Id = x.Id,
+                        TruckCode = x.TruckCode,
+                        BedConstruction = x.BedConstruction,
+                        Make = x.Make,
+                        Model = x.Model,
+                        VehicleCategory = new VehicleCategoryDto()
+                        {
+                            Id = x.VehicleCategoryId,
+                            Name = x.VehicleCategory.Name,
+                            AssetType = x.VehicleCategory.AssetType,
+                            IsPowered = x.VehicleCategory.IsPowered,
+                            SortOrder = x.VehicleCategory.SortOrder,
+                            
+                        }
+                    })
                     .FirstOrDefaultAsync();
             }
 
@@ -668,11 +684,7 @@ namespace DispatcherWeb.Scheduling
                     OrderLineId = orderLineTruck.OrderLineId,
                     TruckId = orderLineTruck.TruckId,
                     DriverId = orderLineTruck.DriverId,
-                    Trailer = orderLineTruck.TrailerId.HasValue ? new ScheduleTruckTrailerDto
-                    {
-                        Id = orderLineTruck.TrailerId.Value,
-                        TruckCode = trailerTruckCode
-                    } : null,
+                    Trailer = orderLineTruck.TrailerId.HasValue ? trailer : null,
                     OfficeId = truck.OfficeId,
                     IsExternal = truck.IsExternal,
                     ParentId = orderLineTruck.ParentOrderLineTruckId,
@@ -730,9 +742,6 @@ namespace DispatcherWeb.Scheduling
             return null;
         }
 
-        public async Task<int?> GetCurrentTrailerId(int truckId) =>
-            await _truckRepository.GetAll().Where(t => t.Id == truckId).Select(t => t.CurrentTrailerId).FirstOrDefaultAsync();
-
         public async Task<decimal> GetTruckUtilization(GetTruckUtilizationInput input)
         {
             return await _orderLineTruckRepository.GetAll()
@@ -746,8 +755,8 @@ namespace DispatcherWeb.Scheduling
         public async Task<bool> IsTrailerAssignedToAnotherTruck(IsTrailerAssignedToAnotherTruckInput input)
         {
             return await _orderLineTruckRepository.GetAll()
-                .Where(olt => olt.TruckId == input.TrailerId &&
-                              olt.ParentOrderLineTruck.TruckId != input.ParentTruckId &&
+                .Where(olt => olt.TrailerId == input.TrailerId &&
+                              olt.TruckId != input.TruckId &&
                               olt.OrderLine.Order.DeliveryDate == input.Date &&
                               olt.OrderLine.Order.Shift == input.Shift &&
                               !olt.IsDone)

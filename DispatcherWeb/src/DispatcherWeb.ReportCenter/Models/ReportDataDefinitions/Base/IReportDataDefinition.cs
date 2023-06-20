@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GrapeCity.ActiveReports;
 using GrapeCity.ActiveReports.Web.Viewer;
+using Microsoft.Extensions.Logging;
 
 namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 {
@@ -10,8 +11,10 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         bool HasTenantsParameter { get; }
 
-        Task<object> LocateDataSource(LocateDataSourceArgs arg);
+        Task<(bool IsMasterDataSource, object DataSourceJson)> LocateDataSource(LocateDataSourceArgs arg);
 
         Task Initialize();
+
+        ILogger Logger { get; }
     }
 }

@@ -1,20 +1,24 @@
 ﻿(function ($) {
-    app.modals.SetTrailerForOrderLineTruckModal = function () {
+    app.modals.SelectTrailerModal = function () {
 
         var _modalManager;
-        var _trailerAssignmentService = abp.services.app.trailerAssignment;
         var _truckService = abp.services.app.truck;
         var _$form = null;
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
+            var modalArgs = modalManager.getArgs();
 
             _$form = _modalManager.getModal().find('form');
+
+            if (modalArgs.optional) {
+                _$form.find('#TrailerId').removeAttr('required').closest('.form-group').find('.required-label').removeClass('required-label');
+            }
+
             _$form.validate();
 
             abp.helper.ui.initControls();
 
-            var modalArgs = modalManager.getArgs();
             var vehicleCategoryDropdown = _$form.find('#VehicleCategoryId');
             var bedConstructionDropdown = _$form.find('#BedConstruction');
             var makeDropdown = _$form.find('#Make');
@@ -31,9 +35,13 @@
                 showAll: true,
                 allowClear: true
             });
-            vehicleCategoryDropdown.change(updateCategoryControls);
 
-            refreshControlsVisibillity();
+            vehicleCategoryDropdown.change(updateCategoryControls);
+            bedConstructionDropdown.change(clearTrailerInputIfNeeded);
+            makeDropdown.change(refreshMakeControlsVisibillity);
+            modelDropdown.change(clearTrailerInputIfNeeded);
+
+            refreshCategoryControlsVisibillity();
 
             async function updateCategoryControls() {
                 try {
@@ -51,18 +59,44 @@
                     abp.ui.clearBusy(bedConstructionDropdown.closest('.form-group'));
                 }
 
-                refreshControlsVisibillity();
+                refreshCategoryControlsVisibillity();
+                clearTrailerInputIfNeeded();
             }
 
-            function refreshControlsVisibillity() {
+            function refreshCategoryControlsVisibillity() {
                 if (vehicleCategoryDropdown.val() == '') {
                     bedConstructionDropdown.val('').change().closest('.form-group').hide();
                     makeDropdown.val('').change().closest('.form-group').hide();
-                    modelDropdown.val('').change().closest('.form-group').hide();
                 } else {
                     bedConstructionDropdown.closest('.form-group').show();
                     makeDropdown.closest('.form-group').show();
+                }
+            }
+
+            function refreshMakeControlsVisibillity() {
+                if (makeDropdown.val() == '') {
+                    modelDropdown.val('').change().closest('.form-group').hide();
+                } else {
                     modelDropdown.closest('.form-group').show();
+                }
+                clearTrailerInputIfNeeded();
+            }
+
+            async function clearTrailerInputIfNeeded() {
+                var trailerId = _$form.find('#TrailerId').val();
+                if (!trailerId) {
+                    return;
+                }
+
+                var matchingTrailers = await abp.services.app.truck.getActiveTrailersSelectList({
+                    vehicleCategoryId: vehicleCategoryDropdown.val(),
+                    bedConstruction: bedConstructionDropdown.val(),
+                    make: makeDropdown.val(),
+                    model: modelDropdown.val(),
+                    id: trailerId
+                });
+                if (!matchingTrailers.items.length) {
+                    _$form.find('#TrailerId').val('').change();
                 }
             }
 
@@ -111,17 +145,26 @@
 
             var formData = _$form.serializeFormToObject();
 
-            _modalManager.setBusy(true);
-            _trailerAssignmentService.setTrailerForOrderLineTruck({
-                trailerId: formData.TrailerId,
-                orderLineTruckId: formData.OrderLineTruckId
-            }).done(function () {
-                abp.notify.info('Saved successfully.');
-                _modalManager.close();
-                abp.event.trigger('app.defaultDriverForTruckModalSet');
-            }).always(function () {
-                _modalManager.setBusy(false);
-            });
+            let result = formData.TrailerId ? {
+                id: Number(formData.TrailerId),
+                truckCode: _$form.find('#TrailerId').getSelectedDropdownOption().text()
+            } : null;
+
+            if (result) {
+                var select2Data = _$form.find('#TrailerId').select2('data');
+                if (select2Data.length && select2Data[0].item) {
+                    result.vehicleCategory = {
+                        id: select2Data[0].item.vehicleCategoryId
+                    };
+                } else {
+                    result.vehicleCategory = {
+                        id: _modalManager.getArgs().trailerVehicleCategoryId
+                    };
+                }
+            }
+
+            _modalManager.setResult(result);
+            _modalManager.close();
         };
     };
 })(jQuery);

@@ -1,6 +1,6 @@
 ﻿<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition">
 	<Author>DumpTruck Dispatcher LLC</Author>
-	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">_MasterReportLegalPortrait.rdlx-master</dd:Name>
+	<dd:Name xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">_MasterReportLetterPortrait.rdlx-master</dd:Name>
 	<PageHeader>
 		<Height>1.338642in</Height>
 		<PrintOnFirstPage>true</PrintOnFirstPage>
@@ -157,9 +157,9 @@
 		</ReportItems>
 	</PageFooter>
 	<BottomMargin>0.125in</BottomMargin>
+	<TopMargin>0.125in</TopMargin>
 	<PageHeight>27.9cm</PageHeight>
 	<PageWidth>21.6cm</PageWidth>
-	<TopMargin>0.125in</TopMargin>
 	<Width>21.6cm</Width>
 	<ReportParameters>
 		<ReportParameter Name="EntityId">

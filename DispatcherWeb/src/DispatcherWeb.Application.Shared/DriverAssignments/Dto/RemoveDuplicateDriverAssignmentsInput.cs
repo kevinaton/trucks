@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace DispatcherWeb.Scheduling.Dto
+namespace DispatcherWeb.DriverAssignments.Dto
 {
-    public class IsTrailerAssignedToAnotherTruckInput
+    public class RemoveDuplicateDriverAssignmentsInput
     {
         public DateTime Date { get; set; }
         public Shift? Shift { get; set; }
-
-        public int TrailerId { get; set; }
+        public int OfficeId { get; set; }
         public int TruckId { get; set; }
     }
 }
