@@ -652,6 +652,10 @@
             return '';
         }
 
+        function getCombinedTruckCodeFieldName() {
+            return _settings.showTrailersOnSchedule ? 'truckCodeCombined' : 'truckCode';
+        }
+
         function getCombinedTruckCode(truck) {
             if (_settings.showTrailersOnSchedule) {
                 if (truck.canPullTrailer && truck.trailer) {
@@ -1492,7 +1496,7 @@
                     data: null,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        return data.trucks.map(function (t) { return t.truckCodeCombined; }).join(', ');
+                        return data.trucks.map(function (t) { return t[getCombinedTruckCodeFieldName()]; }).join(', ');
                     },
                     title: "Trucks",
                     //responsivePriority: 0,
@@ -1508,7 +1512,7 @@
                         var editor = $('<input type="text" class="truck-cell-editor">').appendTo($(cell));
                         editor.tagsinput({
                             itemValue: 'truckId',
-                            itemText: 'truckCodeCombined',
+                            itemText: getCombinedTruckCodeFieldName(),
                             allowDuplicates: true,
                             tagClass: function (truck) {
                                 return 'truck-tag ' + getTruckTagClass(truck) + ' truck-office-' + truck.officeId +
