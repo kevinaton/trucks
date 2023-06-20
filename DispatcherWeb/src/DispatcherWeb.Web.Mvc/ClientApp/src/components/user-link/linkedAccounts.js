@@ -13,11 +13,11 @@ import {
     Table, 
     TableHead, 
     TableRow,
+    TableCell,
     TableBody,
     Typography
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { Tablecell } from '../DTComponents';
 import LinkNewAccountForm from './linkNewAccountForm';
 
 export const LinkedAccounts = ({
@@ -110,8 +110,8 @@ export const LinkedAccounts = ({
                                     backgroundColor: grey[200]
                                 }
                             }}>
-                                <Tablecell label='Username' value='User name' />
-                                <Tablecell label='' value='Actions' style={{ width: '70px' }} />
+                                <TableCell>Username</TableCell>
+                                <TableCell style={{ width: '75px' }}>Actions</TableCell>
                             </TableRow>
                         </TableHead>
 
@@ -132,8 +132,8 @@ export const LinkedAccounts = ({
                                             }
                                         }}
                                     >
-                                        <Tablecell label='Username' value={`${data.tenancyName}\\${data.username}`} />
-                                        <Tablecell label='Action' style={{ width: '70px' }} value={
+                                        <TableCell>{`${data.tenancyName}\\${data.username}`} </TableCell>
+                                        <TableCell>
                                             <div>
                                                 <IconButton 
                                                     sx={{ width: 25, height: 25}}
@@ -151,9 +151,7 @@ export const LinkedAccounts = ({
                                                         <ListItemButton onClick={handleActionClose}>
                                                             <ListItemText 
                                                                 primary={
-                                                                    <Typography align='left'>
-                                                                        Login
-                                                                    </Typography>
+                                                                    <Typography align='left'>Login</Typography>
                                                                 } 
                                                             />
                                                         </ListItemButton>
@@ -170,7 +168,7 @@ export const LinkedAccounts = ({
                                                     </ListItem>
                                                 </Menu>
                                             </div>
-                                        } />
+                                        </TableCell>
                                     </TableRow>
                                 )
                             })}

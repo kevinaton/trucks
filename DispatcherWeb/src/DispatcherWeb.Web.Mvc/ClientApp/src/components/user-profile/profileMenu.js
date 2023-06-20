@@ -15,7 +15,8 @@ import { isEmpty } from 'lodash';
 import { theme } from '../../Theme';
 import { getUserProfileMenu, getLinkedUsers } from '../../store/actions';
 import { baseUrl } from '../../helpers/api_helper';
-import { LinkedAccounts } from '../user-link'
+import { LinkedAccounts } from '../user-link';
+import ChangeProfilePictureForm from '../user-profile/changeProfilePictureForm';
 
 export const ProfileMenu = ({
     openModal,
@@ -97,7 +98,7 @@ export const ProfileMenu = ({
         }
     };
 
-    const showLinkedAccounts = () => {
+    const handleLinkedAccounts = () => {
         handleProfileClose();
         openModal(
             <LinkedAccounts 
@@ -105,6 +106,16 @@ export const ProfileMenu = ({
                 closeModal={closeModal} 
             />
         );
+    };
+
+    const handleChangeProfilePicture = () => {
+        handleProfileClose();
+        openModal(
+            <ChangeProfilePictureForm 
+                openModal={openModal}
+                closeModal={closeModal} 
+            />
+        )
     };
     
     const renderAvatar = () => {
@@ -191,7 +202,7 @@ export const ProfileMenu = ({
                                 <MenuItem 
                                     component={Link} 
                                     sx={{ py: 2 }} 
-                                    onClick={showLinkedAccounts}
+                                    onClick={handleLinkedAccounts}
                                 >
                                     <i className={`fa-regular fa-users-gear icon`} style={{ marginRight: 6 }}></i>
                                     <Typography>Manage linked accounts</Typography>
@@ -200,8 +211,8 @@ export const ProfileMenu = ({
                                 { !isEmpty(linkedAccounts) &&
                                     <MenuList sx={{ p: 0 }}>
                                         { linkedAccounts.map((account, index) => (
-                                            <MenuItem key={index} component={Link} sx={{ padding: '10px 16px 10px 25px' }}>
-                                                <i className={`fa-regular fa-user icon`} style={{ marginRight: 6 }}></i>
+                                            <MenuItem key={index} component={Link} sx={{ padding: '10px 16px 10px 35px' }}>
+                                                <i className={`fa-regular fa-period icon`} style={{ marginTop: '-7px' }}></i>
                                                 <Typography>{`${account.tenancyName}\\${account.username}`}</Typography>
                                             </MenuItem>
                                         ))}
@@ -217,7 +228,11 @@ export const ProfileMenu = ({
                                     <Typography>Login attempts</Typography>
                                 </MenuItem>
 
-                                <MenuItem component={Link} sx={{ py: 2 }}>
+                                <MenuItem 
+                                    component={Link} 
+                                    sx={{ py: 2 }} 
+                                    onClick={handleChangeProfilePicture}
+                                >
                                     <i className={`fa-regular fa-square-user icon`} style={{ marginRight: 6 }}></i>
                                     <Typography>Change profile picture</Typography>
                                 </MenuItem>

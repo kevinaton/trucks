@@ -124,12 +124,12 @@ const LinkNewAccountForm = ({
     return (
         <React.Fragment>
             <Box 
-                sx={{ 
-                    display: 'flex', 
-                    p: 2 
-                }} 
+                display='flex'
                 justifyContent='space-between'
                 alignItems='center'
+                sx={{ 
+                    p: 2 
+                }} 
             >
                 <Typography variant='h6' component='h2'>
                     Link new account
