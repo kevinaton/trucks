@@ -621,8 +621,10 @@
         }
 
         function getTruckTileWidthClass(truck) {
-            if (truck.trailer || truck.tractor) {
-                return 'double-width';
+            if (_settings.showTrailersOnSchedule) {
+                if (truck.trailer || truck.tractor) {
+                    return 'double-width';
+                }
             }
             return '';
         }
@@ -651,11 +653,13 @@
         }
 
         function getCombinedTruckCode(truck) {
-            if (truck.canPullTrailer && truck.trailer) {
-                return truck.truckCode + ' :: ' + truck.trailer.truckCode;
-            }
-            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
-                return truck.tractor.truckCode + ' :: ' + truck.truckCode;
+            if (_settings.showTrailersOnSchedule) {
+                if (truck.canPullTrailer && truck.trailer) {
+                    return truck.truckCode + ' :: ' + truck.trailer.truckCode;
+                }
+                if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
+                    return truck.tractor.truckCode + ' :: ' + truck.truckCode;
+                }
             }
             return truck.truckCode;
         }
@@ -1616,7 +1620,7 @@
                             );
 
                             tag.trailer = trailer;
-                            if (trailer) {
+                            if (trailer && _settings.showTrailersOnSchedule) {
                                 tag.truckCodeCombined = tag.truckCode + ' :: ' + trailer.truckCode;
                             }
                             editor.tagsinput('add', tag, {
@@ -1654,7 +1658,7 @@
                                     return;
                                 }
 
-                                if (!tag.trailer && tag.canPullTrailer && (!event.options || !event.options.allowNoTrailer)) {
+                                if (_settings.showTrailersOnSchedule && !tag.trailer && tag.canPullTrailer && (!event.options || !event.options.allowNoTrailer)) {
                                     event.cancel = true;
                                     askToAssignTrailerAndAddTagAgain(tag, event.options);
                                     return;
