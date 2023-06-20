@@ -126,11 +126,12 @@ const App = (props) => {
         setCollapseOpen(false);
     };
 
-    const openModal = (content) => {
+    const openModal = (content, size) => {
         const modal = {
             content,
             open: true,
             zIndex: nextModalZIndex, // Assign the next available z-index value
+            size
         };
 
         setNextModalZIndex((prevZIndex) => prevZIndex + 1); // Increment the next available z-index value
@@ -166,7 +167,7 @@ const App = (props) => {
                         handleOpenNavMenu={handleOpenNavMenu}
                         anchorElNav={anchorElNav}
                         handleCloseNavMenu={handleCloseNavMenu} 
-                        openModal={(headerContent, bodyContent) => openModal(headerContent, bodyContent)} 
+                        openModal={(content, size) => openModal(content, size)} 
                         closeModal={closeModal}
                     />
 
@@ -207,12 +208,13 @@ const App = (props) => {
                 
                 {/* Render the modals */}
                 {modals.map((modal, index) => (
-                    <CustomModal
-                        key={index}
-                        open={modal.open}
-                        handleClose={closeModal}
-                        content={modal.content}
-                        zIndex={modal.zIndex}
+                    <CustomModal 
+                        key={index} 
+                        open={modal.open} 
+                        handleClose={closeModal} 
+                        content={modal.content} 
+                        zIndex={modal.zIndex} 
+                        size={modal.size} 
                     />
                 ))}
             </SignalRContext.Provider>

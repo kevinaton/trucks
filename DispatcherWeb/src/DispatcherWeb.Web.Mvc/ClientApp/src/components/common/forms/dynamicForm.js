@@ -22,13 +22,16 @@ const FormField = ({
 
     return (
         <div>
-            <Typography>
-                {label} {required && <span style={{ color: 'red' }}>*</span>}
-            </Typography>
             <TextField 
-                id={name}
+                id={name} 
                 name={name} 
-                type={type}
+                type={type} 
+                label={
+                    <>
+                        {label}
+                        {required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
+                    </>
+                }
                 value={value} 
                 error={error}
                 helperText={error ? errorText : ''} 

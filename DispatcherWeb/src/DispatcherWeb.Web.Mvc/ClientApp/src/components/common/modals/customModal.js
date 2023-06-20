@@ -8,18 +8,19 @@ const StyledModal = styled(Modal)(({ theme }) => ({
     justifyContent: 'center',
 }));
   
-const StyledBox = styled(Box)(({ theme }) => ({
+const StyledBox = styled(Box)(({ theme, size }) => ({
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: 0,
-    width: 400,
+    width: size,
     position: 'relative'
 }));
 
 export const CustomModal = ({
     open,
     handleClose, 
-    content
+    content,
+    size
 }) => {
 
     return (
@@ -35,7 +36,7 @@ export const CustomModal = ({
             disableEnforceFocus
         >
             <Fade in={open}>
-                <StyledBox>
+                <StyledBox size={size}>
                     {content}
                 </StyledBox>
             </Fade>

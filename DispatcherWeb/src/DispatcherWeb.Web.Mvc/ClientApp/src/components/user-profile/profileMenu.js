@@ -18,6 +18,7 @@ import { baseUrl } from '../../helpers/api_helper';
 import { LinkedAccounts } from '../user-link';
 import ChangeProfilePictureForm from '../user-profile/changeProfilePictureForm';
 import UploadSignaturePictureForm from '../user-profile/uploadSignaturePictureForm';
+import { MyProfileSettings } from '../user-profile/myProfileSettings';
 
 export const ProfileMenu = ({
     openModal,
@@ -102,32 +103,54 @@ export const ProfileMenu = ({
     const handleLinkedAccounts = () => {
         handleProfileClose();
         openModal(
-            <LinkedAccounts 
-                openModal={openModal}
-                closeModal={closeModal} 
-            />
+            (
+                <LinkedAccounts 
+                    openModal={openModal}
+                    closeModal={closeModal} 
+                />
+            ),
+            400
         );
     };
 
     const handleChangeProfilePicture = () => {
         handleProfileClose();
         openModal(
-            <ChangeProfilePictureForm 
-                openModal={openModal}
-                closeModal={closeModal} 
-            />
+            (
+                <ChangeProfilePictureForm 
+                    openModal={openModal}
+                    closeModal={closeModal} 
+                />
+            ),
+            400
         )
     };
 
     const handleUploadSignaturePicture = () => {
         handleProfileClose();
         openModal(
-            <UploadSignaturePictureForm 
-                openModal={openModal}
-                closeModal={closeModal} 
-            />
+            (
+                <UploadSignaturePictureForm 
+                    openModal={openModal}
+                    closeModal={closeModal} 
+                />
+            ),
+            400
         )
     };
+
+    const handleMySettings = () => {
+        handleProfileClose();
+        openModal(
+            (
+                <MyProfileSettings
+                    openModal={openModal}
+                    closeModal={closeModal} 
+                />
+            ),
+            500
+        );
+    }
     
     const renderAvatar = () => {
         if (!isEmpty(tenant) && !isEmpty(tenant.logoId)) {
@@ -257,7 +280,11 @@ export const ProfileMenu = ({
                                     <Typography>Upload signature picture</Typography>
                                 </MenuItem>
 
-                                <MenuItem component={Link} sx={{ py: 2 }}>
+                                <MenuItem 
+                                    component={Link} 
+                                    sx={{ py: 2 }}
+                                    onClick={handleMySettings}
+                                >
                                     <i className={`fa-regular fa-gear icon`} style={{ marginRight: 6 }}></i>
                                     <Typography>My settings</Typography>
                                 </MenuItem>
