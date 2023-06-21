@@ -1,13 +1,13 @@
 body {
     margin: 0;
-    font-family: "poppins", "Roboto", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-family: 'poppins', 'Roboto', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow: "auto";
+    overflow: 'auto';
 }
 
 code {
-    font-family: "poppins", "Roboto", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-family: 'poppins', 'Roboto', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 /* Mobiscroll Custom CSS */
@@ -274,7 +274,11 @@ code {
 
 .tableHeader {
     background-color: #eeeeee;
-  }
+}
+
+.list-item-checkbox {
+    padding: 3px 14px !important;
+}
 /* MUI syle override */
 
 /* Padding configure */
