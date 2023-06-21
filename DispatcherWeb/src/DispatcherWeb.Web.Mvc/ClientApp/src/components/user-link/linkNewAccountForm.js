@@ -8,6 +8,15 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { DynamicForm } from '../common/forms';
 import { isEmpty } from 'lodash';
+import {
+    getLinkedUsers,
+    linkToUser as onLinkToUser 
+} from '../../store/actions';
+
+const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
 
 const LinkNewAccountForm = ({
     closeModal
@@ -37,10 +46,13 @@ const LinkNewAccountForm = ({
     });
     const [invalidFields, setInvalidFields] = useState([]);
 
+    const dispatch = useDispatch();
     const { 
-        userProfileMenu
+        userProfileMenu,
+        linkSuccess
     } = useSelector((state) => ({
-        userProfileMenu: state.UserReducer.userProfileMenu
+        userProfileMenu: state.UserReducer.userProfileMenu,
+        linkSuccess: state.UserLinkReducer.linkSuccess
     }));
     
     useEffect(() => {
@@ -64,6 +76,14 @@ const LinkNewAccountForm = ({
         }
 
     }, [userProfileMenu]);
+
+    useEffect(() => {
+        console.log('linkSuccess: ', linkSuccess)
+        if (linkSuccess) {
+            dispatch(getLinkedUsers());
+            closeModal();
+        }
+    }, [dispatch, linkSuccess, closeModal]);
 
     const handleInputChange = (field, value) => {
         setFields((prevFields) => ({
@@ -95,9 +115,18 @@ const LinkNewAccountForm = ({
 
     const handleSave = () => {
         // Perform form validation
-        const invalidFields = Object.keys(fields).filter(
-            (field) => fields[field].required && !fields[field].value
-        );
+        const invalidFields = Object.keys(fields).filter((field) => {
+            if (fields[field].required && !fields[field].value) {
+                return true; // Field is required but has no value
+            }
+        
+            if (fields[field].type === 'email' && !isValidEmail(fields[field].value)) {
+                fields[field].errorText = 'Please enter a valid username';
+                return true; // Field is of type "email" but has an invalid email format
+            }
+        
+            return false;
+        });
 
         if (invalidFields.length > 0) {
             setInvalidFields(invalidFields);
@@ -105,7 +134,12 @@ const LinkNewAccountForm = ({
         }
 
         // Perform custom actions based on the form data
-        console.log('Form data: ', fields);
+        const convertedData = {};
+        for (const key in fields) {
+            convertedData[key] = fields[key].value;
+        }
+        dispatch(onLinkToUser(convertedData));
+        console.log('Form data: ', convertedData);
 
         // Reset form and field values
         setFields((prevFields) => {

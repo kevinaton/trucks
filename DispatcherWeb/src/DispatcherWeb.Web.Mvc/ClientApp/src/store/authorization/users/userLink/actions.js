@@ -2,6 +2,10 @@ import {
     GET_LINKED_USERS,
     GET_LINKED_USERS_SUCCESS,
     GET_LINKED_USERS_FAILURE,
+    LINK_TO_USER,
+    LINK_TO_USER_SUCCESS,
+    LINK_TO_USER_FAILURE,
+    LINK_TO_USER_RESET,
     UNLINK_USER,
     UNLINK_USER_SUCCESS,
     UNLINK_USER_FAILURE,
@@ -20,6 +24,25 @@ export const getLinkedUsersSuccess = linkedUsers => ({
 export const getLinkedUsersFailure = error => ({
     type: GET_LINKED_USERS_FAILURE,
     payload: error
+});
+
+export const linkToUser = user => ({
+    type: LINK_TO_USER,
+    payload: user
+});
+
+export const linkToUserSuccess = response => ({
+    type: LINK_TO_USER_SUCCESS,
+    payload: response
+});
+
+export const linkToUserFailure = error => ({
+    type: LINK_TO_USER_FAILURE,
+    payload: error
+});
+
+export const linkToUserReset = () => ({
+    type: LINK_TO_USER_RESET
 });
 
 export const unlinkUser = linkedUser => ({

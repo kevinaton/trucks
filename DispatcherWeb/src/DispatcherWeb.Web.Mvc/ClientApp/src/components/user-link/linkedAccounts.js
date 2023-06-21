@@ -33,8 +33,6 @@ export const LinkedAccounts = ({
     closeDialog
 }) => {
     const [isLoading, setIsLoading] = useState(true);
-    const [actionAnchor, setActionAnchor] = useState(null);
-    const actionOpen = Boolean(actionAnchor);
     const [hoveredRow, setHoveredRow] = useState(null);
     const [linkedAccounts, setLinkedAccounts] = useState([]);
 
@@ -73,14 +71,6 @@ export const LinkedAccounts = ({
         }
     }, [dispatch, enqueueSnackbar, unlinkSuccess]);
 
-    // Handle action on table rows
-    const handleActionClick = (event) => {
-        setActionAnchor(event.currentTarget);
-    };
-    const handleActionClose = () => {
-        setActionAnchor(null);
-    };
-
     // Handle row hover on table
     const handleRowHover = (index) => {
         setHoveredRow(index);
@@ -90,7 +80,10 @@ export const LinkedAccounts = ({
     };
 
     const handleLinkNewAccount = () => {
-        openModal(<LinkNewAccountForm closeModal={closeModal} />);
+        openModal(
+            (<LinkNewAccountForm closeModal={closeModal} />),
+            400
+        );
     };
 
     const handleUnlinkAccount = (linkedUser) => {
@@ -105,7 +98,6 @@ export const LinkedAccounts = ({
     const handleUnlinkAccountClick = (e, linkedUser) => {
         e.preventDefault();
         
-        handleActionClose();
         openDialog({
             title: 'unlink-account-dialog',
             description: 'unlink-account',
@@ -217,7 +209,6 @@ export const LinkedAccounts = ({
                                                 <Button 
                                                     size='small'
                                                     startIcon={<LoginIcon />} 
-                                                    onClick={handleActionClose}
                                                 >
                                                     Login
                                                 </Button>
