@@ -14,7 +14,8 @@ const FormField = ({
     onChange, 
     required,
     error,
-    errorText
+    errorText,
+    helpText
 }) => {
     const handleInputChange = (e) => {
         onChange(e.target.value);
@@ -35,10 +36,11 @@ const FormField = ({
                 value={value} 
                 error={error}
                 helperText={error ? errorText : ''} 
-                sx={{ marginBottom: '15px' }} 
+                sx={{ marginBottom: helpText ? '7px' : '15px' }} 
                 fullWidth 
                 onChange={(e) => handleInputChange(e)} 
             />
+            { helpText && helpText }
         </div>
     );
 };
@@ -70,13 +72,14 @@ export const DynamicForm = ({ fields, invalidFields, onChange, onSave, onCancel 
                         required={fields[field].required} 
                         error={invalidFields.includes(field)} 
                         errorText={fields[field].errorText} 
-                        onChange={(value) => handleInputChange(field, value)}
+                        onChange={(value) => handleInputChange(field, value)} 
+                        helpText={fields[field].helpText}
                     />
                 ))}
             </div>
 
             <Stack 
-                spacing={2}
+                spacing={1}
                 direction='row' 
                 justifyContent='flex-end'
             >

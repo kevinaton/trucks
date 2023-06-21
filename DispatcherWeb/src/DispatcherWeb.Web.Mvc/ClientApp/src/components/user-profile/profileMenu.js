@@ -7,22 +7,25 @@ import {
     Link,
     Menu,
     MenuItem,
+    MenuList,
     Paper,
     Typography,
-    MenuList,
 } from '@mui/material';
 import { isEmpty } from 'lodash';
 import { theme } from '../../Theme';
 import { getUserProfileMenu, getLinkedUsers } from '../../store/actions';
 import { baseUrl } from '../../helpers/api_helper';
 import { LinkedAccounts } from '../user-link';
+import ChangePasswordForm from '../user-profile/changePasswordForm';
 import ChangeProfilePictureForm from '../user-profile/changeProfilePictureForm';
 import UploadSignaturePictureForm from '../user-profile/uploadSignaturePictureForm';
 import { MyProfileSettings } from '../user-profile/myProfileSettings';
 
 export const ProfileMenu = ({
     openModal,
-    closeModal
+    closeModal,
+    openDialog,
+    closeDialog
 }) => {
     const [anchorProfile, setAnchorProfile] = React.useState(null);
     const isProfile = Boolean(anchorProfile);
@@ -105,6 +108,21 @@ export const ProfileMenu = ({
         openModal(
             (
                 <LinkedAccounts 
+                    openModal={openModal}
+                    closeModal={closeModal} 
+                    openDialog={openDialog} 
+                    closeDialog={closeDialog}
+                />
+            ),
+            400
+        );
+    };
+
+    const handleChangePassword = () => {
+        handleProfileClose();
+        openModal(
+            (
+                <ChangePasswordForm 
                     openModal={openModal}
                     closeModal={closeModal} 
                 />
@@ -226,81 +244,100 @@ export const ProfileMenu = ({
                                     </Typography>
                                 </Box>
 
-                                { profileMenu.isImpersonatedLogin && 
-                                    <MenuItem component={Link} sx={{ py: 2 }}>
-                                        <i className={`fa-regular fa-angle-left icon`} style={{ marginRight: 6 }}></i>
-                                        <Typography>Back to my account</Typography>
+                                <MenuList dense>
+                                    { profileMenu.isImpersonatedLogin && 
+                                        <MenuItem component={Link} sx={{ py: 1 }}>
+                                            <i className={`fa-regular fa-angle-left icon`} style={{ marginRight: 6 }}></i>
+                                            <Typography>Back to my account</Typography>
+                                        </MenuItem>
+                                    }
+                                    
+                                    <MenuItem 
+                                        component={Link} 
+                                        sx={{ py: 1 }} 
+                                        onClick={handleLinkedAccounts}
+                                    >
+                                        <i className={`fa-regular fa-users-gear icon`} style={{ marginRight: 6 }}></i>
+                                        <Typography>Manage linked accounts</Typography>
                                     </MenuItem>
-                                }
-                                
-                                <MenuItem 
-                                    component={Link} 
-                                    sx={{ py: 2 }} 
-                                    onClick={handleLinkedAccounts}
-                                >
-                                    <i className={`fa-regular fa-users-gear icon`} style={{ marginRight: 6 }}></i>
-                                    <Typography>Manage linked accounts</Typography>
-                                </MenuItem>
 
-                                { !isEmpty(linkedAccounts) &&
-                                    <MenuList sx={{ p: 0 }}>
-                                        { linkedAccounts.map((account, index) => (
-                                            <MenuItem key={index} component={Link} sx={{ padding: '10px 16px 10px 35px' }}>
-                                                <i className={`fa-regular fa-period icon`} style={{ marginTop: '-7px' }}></i>
-                                                <Typography>{`${account.tenancyName}\\${account.username}`}</Typography>
-                                            </MenuItem>
-                                        ))}
-                                    </MenuList>  
-                                }
+                                    { !isEmpty(linkedAccounts) &&
+                                        <MenuList sx={{ p: 0 }}>
+                                            { linkedAccounts.map((account, index) => (
+                                                <MenuItem key={index} component={Link} sx={{ padding: '8px 16px 8px 35px' }}>
+                                                    <i className={`fa-regular fa-period icon`} style={{ marginTop: '-7px' }}></i>
+                                                    <Typography>{`${account.tenancyName}\\${account.username}`}</Typography>
+                                                </MenuItem>
+                                            ))}
+                                        </MenuList>  
+                                    }
 
-                                <MenuItem 
-                                    component={Link} 
-                                    sx={{ py: 2 }} 
-                                    href='/App/Users/LoginAttempts'
-                                >
-                                    <i className={`fa-regular fa-list-check icon`} style={{ marginRight: 6 }}></i>
-                                    <Typography>Login attempts</Typography>
-                                </MenuItem>
+                                    <MenuItem 
+                                        component={Link} 
+                                        sx={{ py: 1 }} 
+                                        onClick={handleChangePassword}
+                                    >
+                                        <i className={`fa-regular fa-ellipsis-stroke icon`} style={{ marginRight: 6 }}></i>
+                                        <Typography>Change password</Typography>
+                                    </MenuItem>
 
-                                <MenuItem 
-                                    component={Link} 
-                                    sx={{ py: 2 }} 
-                                    onClick={handleChangeProfilePicture}
-                                >
-                                    <i className={`fa-regular fa-square-user icon`} style={{ marginRight: 6 }}></i>
-                                    <Typography>Change profile picture</Typography>
-                                </MenuItem>
+                                    <MenuItem 
+                                        component={Link} 
+                                        sx={{ py: 1 }} 
+                                        href='/App/Users/LoginAttempts'
+                                    >
+                                        <i className={`fa-regular fa-list-check icon`} style={{ marginRight: 6 }}></i>
+                                        <Typography>Login attempts</Typography>
+                                    </MenuItem>
 
-                                <MenuItem 
-                                    component={Link} 
-                                    sx={{ py: 2 }} 
-                                    onClick={handleUploadSignaturePicture}
-                                >
-                                    <i className={`fa-regular fa-signature icon`} style={{ marginRight: 6 }}></i>
-                                    <Typography>Upload signature picture</Typography>
-                                </MenuItem>
+                                    <MenuItem 
+                                        component={Link} 
+                                        sx={{ py: 1 }} 
+                                        onClick={handleChangeProfilePicture}
+                                    >
+                                        <i className={`fa-regular fa-square-user icon`} style={{ marginRight: 6 }}></i>
+                                        <Typography>Change profile picture</Typography>
+                                    </MenuItem>
 
-                                <MenuItem 
-                                    component={Link} 
-                                    sx={{ py: 2 }}
-                                    onClick={handleMySettings}
-                                >
-                                    <i className={`fa-regular fa-gear icon`} style={{ marginRight: 6 }}></i>
-                                    <Typography>My settings</Typography>
-                                </MenuItem>
+                                    <MenuItem 
+                                        component={Link} 
+                                        sx={{ py: 1 }} 
+                                        onClick={handleUploadSignaturePicture}
+                                    >
+                                        <i className={`fa-regular fa-signature icon`} style={{ marginRight: 6 }}></i>
+                                        <Typography>Upload signature picture</Typography>
+                                    </MenuItem>
 
-                                <MenuItem
-                                    sx={{
-                                        py: 2,
-                                        backgroundColor: theme.palette.primary.light,
-                                    }}
-                                    onClick={(e) => handleLogout(e)}
-                                >
-                                    <i
-                                        className={`fa-regular fa-right-from-line icon`}
-                                        style={{ marginRight: 6 }}></i>
-                                    <Typography>Logout</Typography>
-                                </MenuItem>
+                                    <MenuItem 
+                                        component={Link} 
+                                        sx={{ py: 1 }}
+                                        onClick={handleMySettings}
+                                    >
+                                        <i className={`fa-regular fa-gear icon`} style={{ marginRight: 6 }}></i>
+                                        <Typography>My settings</Typography>
+                                    </MenuItem>
+
+                                    <MenuItem 
+                                        component={Link} 
+                                        sx={{ py: 1 }}
+                                    >
+                                        <i className={`fa-regular fa-arrow-down-to-bracket icon`} style={{ marginRight: 6 }}></i>
+                                        <Typography>Download collected data</Typography>
+                                    </MenuItem>
+
+                                    <MenuItem
+                                        sx={{
+                                            py: 1,
+                                            backgroundColor: theme.palette.primary.light,
+                                        }}
+                                        onClick={(e) => handleLogout(e)}
+                                    >
+                                        <i
+                                            className={`fa-regular fa-right-from-line icon`}
+                                            style={{ marginRight: 6 }}></i>
+                                        <Typography>Logout</Typography>
+                                    </MenuItem>
+                                </MenuList>
                             </Paper>
                         </Menu>
                     </React.Fragment> 

@@ -22,7 +22,6 @@ export const CustomModal = ({
     content,
     size
 }) => {
-
     return (
         <StyledModal
             open={open}

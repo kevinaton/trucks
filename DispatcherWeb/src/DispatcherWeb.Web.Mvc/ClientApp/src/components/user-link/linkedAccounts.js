@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { isEmpty } from 'lodash';
+import { useSelector, useDispatch } from 'react-redux';
+import { isEmpty, isEqual } from 'lodash';
 import { 
     Box, 
     Button,
     IconButton,
-    Menu,
-    ListItem,
-    ListItemButton,
-    ListItemText,
+    Stack,
     TableContainer, 
     Table, 
     TableHead, 
@@ -18,33 +15,63 @@ import {
     Typography
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import LoginIcon from '@mui/icons-material/Login';
+import DeleteIcon from '@mui/icons-material/Delete';
 import LinkNewAccountForm from './linkNewAccountForm';
+import { theme } from '../../Theme';
+import { useSnackbar } from 'notistack';
+import { 
+    unlinkUser as onUnlinnkUser,
+    unlinkUserReset as onResetUnlinkState 
+} from '../../store/actions';
 
 export const LinkedAccounts = ({
     openModal,
-    closeModal
+    closeModal,
+    openDialog,
+    closeDialog
 }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [actionAnchor, setActionAnchor] = useState(null);
     const actionOpen = Boolean(actionAnchor);
     const [hoveredRow, setHoveredRow] = useState(null);
     const [linkedAccounts, setLinkedAccounts] = useState([]);
-    const { linkedUsers } = useSelector((state) => ({
-        linkedUsers: state.UserLinkReducer.linkedUsers
+
+    const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
+    const { 
+        linkedUsers,
+        unlinkSuccess
+    } = useSelector((state) => ({
+        linkedUsers: state.UserLinkReducer.linkedUsers,
+        unlinkSuccess: state.UserLinkReducer.unlinkSuccess
     }));
 
     useEffect(() => {
-        if (isEmpty(linkedAccounts) && 
-            !isEmpty(linkedUsers) && 
-            !isEmpty(linkedUsers.result)) {
-                const { result } = linkedUsers;
-                if (!isEmpty(result) && !isEmpty(result.items)) {
-                    setLinkedAccounts(result.items);
-                }
-
-                setIsLoading(false);
+        if (!isEmpty(linkedUsers) && !isEmpty(linkedUsers.result)) {
+            const { result } = linkedUsers;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setLinkedAccounts(prevAccounts => {
+                    if (!isEqual(prevAccounts, result.items)) {
+                        return result.items;
+                    }
+                    return prevAccounts;
+                });
+            } else {
+                setLinkedAccounts([])
+            }
         }
+    
+        setIsLoading(false);
     }, [linkedAccounts, linkedUsers]);
+
+    useEffect(() => {
+        if (unlinkSuccess) {
+            enqueueSnackbar('Successfully unlinked', { variant: 'info' });
+            dispatch(onResetUnlinkState());
+        }
+    }, [dispatch, enqueueSnackbar, unlinkSuccess]);
 
     // Handle action on table rows
     const handleActionClick = (event) => {
@@ -64,6 +91,52 @@ export const LinkedAccounts = ({
 
     const handleLinkNewAccount = () => {
         openModal(<LinkNewAccountForm closeModal={closeModal} />);
+    };
+
+    const handleUnlinkAccount = (linkedUser) => {
+        closeDialog();
+        const data = {
+            userId: linkedUser.id,
+            tenantId: linkedUser.tenantId
+        };
+        dispatch(onUnlinnkUser(data));
+    };
+
+    const handleUnlinkAccountClick = (e, linkedUser) => {
+        e.preventDefault();
+        
+        handleActionClose();
+        openDialog({
+            title: 'unlink-account-dialog',
+            description: 'unlink-account',
+            contentTitle: 'Unlink account',
+            content: (
+                <Box
+                    display='flex'
+                    alignItems='center'
+                    flexDirection='column'
+                >
+                    <Box 
+                        display='flex' 
+                        alignItems='center' 
+                        justifyContent='center'
+                        sx={{
+                            marginBottom: '15px'
+                        }}
+                    >
+                        <ErrorOutlineIcon 
+                            sx={{ 
+                                color: theme.palette.warning.main,
+                                fontSize: '88px !important'
+                            }} 
+                        />
+                    </Box>
+                    <Typography variant='h4' sx={{ mb: 1 }}>Are you sure?</Typography>
+                    <Typography variant='h6'>Link to {linkedUser.username} will be deleted.</Typography>
+                </Box>
+            ),
+            action: () => handleUnlinkAccount(linkedUser)
+        });
     };
 
     return (
@@ -132,42 +205,31 @@ export const LinkedAccounts = ({
                                             }
                                         }}
                                     >
-                                        <TableCell>{`${data.tenancyName}\\${data.username}`} </TableCell>
                                         <TableCell>
-                                            <div>
-                                                <IconButton 
-                                                    sx={{ width: 25, height: 25}}
-                                                    onClick={handleActionClick}
-                                                >
-                                                    <i className='fa-regular fa-ellipsis-vertical'></i>
-                                                </IconButton>
-                                                <Menu
-                                                    anchorEl={actionAnchor}
-                                                    id='actions-menu' 
-                                                    open={actionOpen} 
-                                                    onClose={handleActionClose}
-                                                >
-                                                    <ListItem disablePadding>
-                                                        <ListItemButton onClick={handleActionClose}>
-                                                            <ListItemText 
-                                                                primary={
-                                                                    <Typography align='left'>Login</Typography>
-                                                                } 
-                                                            />
-                                                        </ListItemButton>
-                                                    </ListItem>
+                                            <Box display='flex' alignItems='center'>
+                                                <i className='fa-regular fa-user icon' style={{ marginRight: '6px' }} />
+                                                <Typography>{`${data.tenancyName}\\${data.username}`}</Typography>
+                                            </Box>
+                                        </TableCell>
 
-                                                    <ListItem disablePadding>
-                                                        <ListItemButton>
-                                                            <ListItemText 
-                                                                primary={
-                                                                    <Typography align='left'>Delete</Typography>
-                                                                }
-                                                            />
-                                                        </ListItemButton>
-                                                    </ListItem>
-                                                </Menu>
-                                            </div>
+                                        <TableCell>
+                                            <Stack spacing={1} direction='row'>
+                                                <Button 
+                                                    size='small'
+                                                    startIcon={<LoginIcon />} 
+                                                    onClick={handleActionClose}
+                                                >
+                                                    Login
+                                                </Button>
+                                                <IconButton 
+                                                    size='small' 
+                                                    onClick={(e) => handleUnlinkAccountClick(e, data)}
+                                                >
+                                                    <DeleteIcon sx={{
+                                                        color: theme.palette.error.main
+                                                    }} />
+                                                </IconButton>
+                                            </Stack>
                                         </TableCell>
                                     </TableRow>
                                 )

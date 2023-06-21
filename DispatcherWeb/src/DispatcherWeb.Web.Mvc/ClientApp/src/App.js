@@ -15,6 +15,7 @@ import { baseUrl } from './helpers/api_helper';
 import * as signalR from '@microsoft/signalr';
 import SignalRContext from './components/common/signalr/signalrContext';
 import { CustomModal } from './components/common/modals/customModal';
+import { CustomDialog } from './components/common/dialogs/customDialog';
 
 const App = (props) => {
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -34,6 +35,7 @@ const App = (props) => {
     const [connection, setConnection] = useState(null);
     const [modals, setModals] = useState([]);
     const [nextModalZIndex, setNextModalZIndex] = useState(1);
+    const [dialog, setDialog] = useState(null);
 
     const userInfo = useSelector(state => state.UserReducer.userInfo);
     const dispatch = useDispatch();
@@ -146,6 +148,30 @@ const App = (props) => {
         });
     };
 
+    const openDialog = (data) => {
+        const { title, description, contentTitle, content, action } = data;
+        setDialog({
+            open: true,
+            title,
+            description,
+            contentTitle,
+            content,
+            action
+        });
+    };
+
+    const closeDialog = () => {
+        setDialog({
+            ...dialog,
+            open: false,
+            title: '',
+            description: '',
+            contentTitle: '',
+            content: null,
+            action: null
+        })
+    };
+
     return (
         <SnackbarProvider 
             maxSnack={5} 
@@ -168,7 +194,9 @@ const App = (props) => {
                         anchorElNav={anchorElNav}
                         handleCloseNavMenu={handleCloseNavMenu} 
                         openModal={(content, size) => openModal(content, size)} 
-                        closeModal={closeModal}
+                        closeModal={closeModal} 
+                        openDialog={(data) => openDialog(data)}
+                        closeDialog={closeDialog}
                     />
 
                     <SideMenu 
@@ -217,6 +245,18 @@ const App = (props) => {
                         size={modal.size} 
                     />
                 ))}
+
+                {/* Render the dialog */}
+                { !isEmpty(dialog) && 
+                    <CustomDialog 
+                        open={dialog.open} 
+                        dialogTitle={dialog.title} 
+                        dialogDescription={dialog.description}
+                        content={dialog.content} 
+                        handleClose={closeDialog} 
+                        handleProceed={dialog.action}
+                    />
+                }
             </SignalRContext.Provider>
         </SnackbarProvider>
     );

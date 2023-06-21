@@ -27,7 +27,9 @@ export const Appbar = ({
     anchorElNav,
     handleCloseNavMenu,
     openModal,
-    closeModal,
+    closeModal, 
+    openDialog,
+    closeDialog
 }) => {
     const [linkAddress, setLinkAddress] = useState(null);
     const dispatch = useDispatch();
@@ -180,6 +182,8 @@ export const Appbar = ({
                         <ProfileMenu 
                             openModal={openModal} 
                             closeModal={closeModal} 
+                            openDialog={openDialog} 
+                            closeDialog={closeDialog}
                         />
 
                         <HeaderIconButton aria-label='open drawer' onClick={() => setState(true)}>

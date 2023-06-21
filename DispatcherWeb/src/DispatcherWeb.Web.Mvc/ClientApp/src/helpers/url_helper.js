@@ -16,6 +16,7 @@ export const GET_USER_PROFILE_SETTINGS = '/Profile/GetUserProfileSettings';
 //User Link
 export const GET_LINKED_USERS = '/UserLink/GetRecentlyUsedLinkedUsers';
 export const LINK_TO_USER = '/UserLink/LinkToUser';
+export const UNLINK_USER = '/UserLink/UnlinkUser';
 
 //Notifications
 export const GET_USER_NOTIFICATIONS = '/Notification/GetUserNotifications?maxResultCount=3';
