@@ -236,7 +236,7 @@ namespace DispatcherWeb.QuickbooksDesktop
                     HasCleared = HasCleared,
                     NameIsTaxable = Yes,
                     Terms = invoice.Terms.GetDisplayName()
-                }.SetAddress(invoice.BillingAddress)
+                }.SetAddress(customerName, invoice.BillingAddress)
                 .AppendRow(s);
 
                 foreach (var lineItem in invoice.InvoiceLines)
