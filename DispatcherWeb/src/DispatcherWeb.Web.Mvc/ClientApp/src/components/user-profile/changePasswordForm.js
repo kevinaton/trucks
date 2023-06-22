@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     Box,
     Button,
@@ -8,9 +9,17 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { DynamicForm } from '../common/forms';
 import { baseUrl } from '../../helpers/api_helper';
+import { isEmpty } from 'lodash';
+import { useSnackbar } from 'notistack';
+import { 
+    changePassword as onChangePassword, 
+    resetChangePasswordState as onResetChangePasswordState
+} from '../../store/actions';
+import { AlertDialog } from '../common/dialogs';
 
 const ChangePasswordForm = ({
-    closeModal
+    closeModal,
+    openDialog
 }) => {
     const [fields, setFields] = useState({
         currentPassword: {
@@ -42,6 +51,38 @@ const ChangePasswordForm = ({
     });
     const [invalidFields, setInvalidFields] = useState([]);
 
+    const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
+    const { 
+        updateSuccess,
+        error
+    } = useSelector((state) => ({
+        updateSuccess: state.UserProfileReducer.updateSuccess,
+        error: state.UserProfileReducer.error
+    }));
+
+    useEffect(() => {
+        if (updateSuccess) {
+            closeModal();
+            enqueueSnackbar('Your password has been successfully changed', { variant: 'success' });
+            dispatch(onResetChangePasswordState());
+        }
+    }, [dispatch, updateSuccess, enqueueSnackbar, closeModal]);
+
+    useEffect(() => {
+        if (!isEmpty(error) && !isEmpty(error.response)) {
+            const { data } = error.response;
+            const { message } = data.error;
+
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog message={message} />
+                )
+            });
+        }
+    }, [error, openDialog]);
+
     const handleInputChange = (field, value) => {
         setFields((prevFields) => ({
             ...prevFields,
@@ -72,9 +113,18 @@ const ChangePasswordForm = ({
 
     const handleSave = () => {
         // Perform form validation
-        const invalidFields = Object.keys(fields).filter(
-            (field) => fields[field].required && !fields[field].value
-        );
+        const invalidFields = Object.keys(fields).filter((field) => {
+            if (fields[field].required && !fields[field].value) {
+                return true; // Field is required but has no value
+            }
+
+            if (field === 'newPasswordRepeat' && fields.newPassword.value !== fields.newPasswordRepeat.value) {
+                fields.newPasswordRepeat.errorText = 'Passwords do not match';
+                return true; // newPassword does not match newPasswordRepeat
+            }
+
+            return false;
+        });
 
         if (invalidFields.length > 0) {
             setInvalidFields(invalidFields);
@@ -82,7 +132,11 @@ const ChangePasswordForm = ({
         }
 
         // Perform custom actions based on the form data
-        console.log('Form data: ', fields);
+        const convertedData = {};
+        for (const key in fields) {
+            convertedData[key] = fields[key].value;
+        }
+        dispatch(onChangePassword(convertedData));
 
         // Reset form and field values
         setFields((prevFields) => {

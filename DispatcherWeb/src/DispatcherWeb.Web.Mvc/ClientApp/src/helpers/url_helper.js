@@ -12,6 +12,7 @@ export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 
 //User Profile
 export const GET_USER_PROFILE_SETTINGS = '/Profile/GetUserProfileSettings';
+export const CHANGE_PASSWORD = '/Profile/ChangePassword';
 
 //User Link
 export const GET_LINKED_USERS = '/UserLink/GetRecentlyUsedLinkedUsers';

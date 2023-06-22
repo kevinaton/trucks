@@ -125,6 +125,7 @@ export const ProfileMenu = ({
                 <ChangePasswordForm 
                     openModal={openModal}
                     closeModal={closeModal} 
+                    openDialog={openDialog} 
                 />
             ),
             400
