@@ -298,6 +298,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     ol.Id,
                     //TicketLoads = ol.Tickets
+                    DispatchCount = ol.Dispatches.Count(d => Dispatch.OpenStatuses.Contains(d.Status) || d.Status == DispatchStatus.Completed),
                     Loads = ol.Dispatches.SelectMany(t => t.Loads).Select(l => new
                     {
                         l.DestinationDateTime,
@@ -335,6 +336,7 @@ namespace DispatcherWeb.Scheduling
                     orderLine.DeliveredLoadCount = deliveredLoads.Count;
                     orderLine.LoadedLoadCount = loadedLoads.Count;
                     orderLine.LoadCount = orderLineProgress.Loads.Count;
+                    orderLine.DispatchCount = orderLineProgress.DispatchCount;
                     orderLine.AmountLoaded = 0;
                     orderLine.AmountDelivered = 0;
 

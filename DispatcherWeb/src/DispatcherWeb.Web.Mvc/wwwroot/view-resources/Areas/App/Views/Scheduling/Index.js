@@ -1836,7 +1836,8 @@
 
                         let tooltipTags = 'data-toggle="tooltip" data-html="true" title="<div class=\'text-left\'>Amount loaded: ' + amountLoaded +
                             '</div><div class=\'text-left\'>Amount delivered: ' + amountDelivered +
-                            '</div><div class=\'text-left\'>Number of loads: ' + (full.loadCount || '0') + '</div>"';
+                            '</div><div class=\'text-left\'>Number of loads: ' + (full.loadCount || '0') +
+                            '</div><div class=\'text-left\'>Number of dispatches: ' + (full.dispatchCount || '0') + '</div>"';
 
                         if (!shouldShowAmountsTooltip) {
                             tooltipTags = '';
