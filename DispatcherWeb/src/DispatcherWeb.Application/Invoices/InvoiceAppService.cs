@@ -979,9 +979,8 @@ namespace DispatcherWeb.Invoices
             item.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
 
             item.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
-            item.ShowQuoteGeneralTermsAndConditionsOnInvoice = await SettingManager.GetSettingValueAsync<bool>(AppSettings.Invoice.ShowQuoteGeneralTermsAndConditionsOnInvoice);
-            item.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
-            item.QuoteGeneralTermsAndConditions = item.QuoteGeneralTermsAndConditions
+            item.TermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.TermsAndConditions);
+            item.TermsAndConditions = item.TermsAndConditions
                 .Replace("{CompanyName}", item.CompanyName)
                 .Replace("{CompanyNameUpperCase}", item.CompanyName.ToUpper());
 

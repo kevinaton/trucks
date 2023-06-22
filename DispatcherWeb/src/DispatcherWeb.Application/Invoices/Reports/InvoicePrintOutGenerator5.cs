@@ -356,7 +356,7 @@ namespace DispatcherWeb.Invoices.Reports
 
                 
                 // Second Page
-                if (model.ShowQuoteGeneralTermsAndConditionsOnInvoice && !string.IsNullOrEmpty(model.QuoteGeneralTermsAndConditions))
+                if (!string.IsNullOrEmpty(model.TermsAndConditions))
                 {
                     section.AddPageBreak();
                     paragraph = document.LastSection.AddParagraph();
@@ -365,7 +365,7 @@ namespace DispatcherWeb.Invoices.Reports
                     paragraph.AddLineBreak();
                     paragraph.AddLineBreak();
                     paragraph.AddLineBreak();
-                    paragraph.AddText(model.QuoteGeneralTermsAndConditions);
+                    paragraph.AddText(model.TermsAndConditions);
                     paragraph.AddLineBreak();
                     paragraph.AddLineBreak();
                 }
