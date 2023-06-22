@@ -5,7 +5,11 @@ import {
     CHANGE_PASSWORD,
     CHANGE_PASSWORD_SUCCESS,
     CHANGE_PASSWORD_FAILURE,
-    RESET_CHANGE_PASSWORD_STATE
+    RESET_CHANGE_PASSWORD_STATE,
+    UPLOAD_PROFILE_PICTURE_FILE,
+    UPLOAD_PROFILE_PICTURE_FILE_SUCCESS,
+    UPLOAD_PROFILE_PICTURE_FILE_FAILURE,
+    RESET_UPLOAD_PROFILE_PICTURE_FILE_STATE
 } from './actionTypes';
 
 export const getUserProfileSettings = () => ({
@@ -38,4 +42,23 @@ export const changePasswordFailure = error => ({
 
 export const resetChangePasswordState = () => ({
     type: RESET_CHANGE_PASSWORD_STATE
+});
+
+export const uploadProfilePictureFile = file => ({
+    type: UPLOAD_PROFILE_PICTURE_FILE,
+    payload: file
+});
+
+export const uploadProfilePictureFileSuccess = response => ({
+    type: UPLOAD_PROFILE_PICTURE_FILE_SUCCESS,
+    payload: response
+});
+
+export const uploadProfilePictureFileFailure = error => ({
+    type: UPLOAD_PROFILE_PICTURE_FILE_FAILURE,
+    payload: error
+});
+
+export const resetUploadProfilePictureFileState = () => ({
+    type: RESET_UPLOAD_PROFILE_PICTURE_FILE_STATE
 });

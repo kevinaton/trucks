@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
     Box,
     Button,
@@ -9,14 +10,59 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { PhotoCamera } from '@mui/icons-material';
+import { uploadProfilePictureFile as onUploadProfilePictureFile } from '../../store/actions';
+
+const generateGUID = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0,
+            v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+};
 
 const ChangeProfilePictureForm = ({
     closeModal
 }) => {
     const [selectedFile, setSelectedFile] = useState(null);
+    const fileInputRef = useRef(null);
+    const [uploadedFileToken, setUploadedFileToken] = useState(null);
 
-    const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
+    const dispatch = useDispatch();
+    const {
+        uploadResponse
+    } = useSelector(state => ({
+        uploadResponse: state.UserProfileReducer.uploadResponse
+    }));
+
+    useEffect(() => {
+        console.log('uploadResponse: ', uploadResponse);
+    }, [uploadResponse]);
+
+    const handleFileChange = async (event) => {
+        const selectedFile = event.target.files[0];
+    
+        if (!selectedFile) {
+            return;
+        }
+    
+        const fileType = '|' + selectedFile.type.slice(selectedFile.type.lastIndexOf('/') + 1) + '|';
+        if ('|jpg|jpeg|png|gif|'.indexOf(fileType) === -1) {
+            alert('Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.');
+            return;
+        }
+    
+        const maxSize = 5242880; // 5MB
+        if (selectedFile.size > maxSize) {
+            alert('File size exceeds the maximum limit of 5MB.');
+            return;
+        }
+    
+        const formData = new FormData();
+        formData.append('ProfilePicture', selectedFile);
+        formData.append('FileType', 'file');
+        formData.append('FileName', 'ProfilePicture');
+        formData.append('FileToken', generateGUID());
+        dispatch(onUploadProfilePictureFile(formData));
     };
 
     const handleCancel = () => {
@@ -55,30 +101,40 @@ const ChangeProfilePictureForm = ({
                 </Button>
             </Box>
 
-            <Box
-                component='form'
-                noValidate
-                autoComplete="off"
-                sx={{ p: 2 }}
-            >
-                <div style={{ marginBottom: '10px' }}>
-                    <Input type="file" onChange={handleFileChange} />
-                    <label htmlFor="upload-profile-picture">
-                        <IconButton
-                            color="primary"
-                            aria-label="upload picture"
-                            component="span"
-                        >
-                            <PhotoCamera />
-                        </IconButton>
-                    </label>
-                </div>
-                <Typography variant='caption'>You can select a JPG/JPEG/PNG/GIF file with a maximum 5MB size.</Typography>
+            <Box sx={{ p: 2 }}>
+                <form id="ChangeProfilePictureModalForm">
+                    <div>
+                        <Input 
+                            ref={fileInputRef}
+                            type="file" 
+                            name="ProfilePicture" 
+                            onChange={handleFileChange}
+                            sx={{
+                                '&::before, &::after': {
+                                    borderBottom: 'none'
+                                },
+                                '&:hover::before, &:hover::after': {
+                                    borderBottom: 'none'
+                                }
+                            }}
+                        />
+                        <label htmlFor="upload-profile-picture">
+                            <IconButton
+                                color="primary"
+                                aria-label="upload picture"
+                                component="span"
+                            >
+                                <PhotoCamera />
+                            </IconButton>
+                        </label>
+                    </div>
+                    <Typography variant='caption'>You can select a JPG/JPEG/PNG/GIF file with a maximum 5MB size.</Typography>
+                </form>
             </Box>
 
             <Box sx={{ p: 2 }}>
                 <Stack 
-                    spacing={2}
+                    spacing={1}
                     direction='row' 
                     justifyContent='flex-end'
                 >
