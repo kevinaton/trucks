@@ -742,6 +742,13 @@
                                 <div id="quickbooksTransactionProBlock" style="display: none">
                                 </div>
                             }
+                            <div class="form-group">
+                                <label for="ShowQuoteGeneralTermsAndConditionsOnInvoice" class="m-checkbox col-lg-12">
+                                    <input id="ShowQuoteGeneralTermsAndConditionsOnInvoice" type="checkbox" name="ShowQuoteGeneralTermsAndConditionsOnInvoice" value="true" checked=@(Model.Settings.Billing.ShowQuoteGeneralTermsAndConditionsOnInvoice ? "checked" : null)>
+                                    @L("ShowQuoteGeneralTermsAndConditionsOnInvoice")
+                                    <span></span>
+                                </label>
+                            </div>
                         </form>
                     </div>
                     <div class="tab-pane" id="SettingsFuelTab">

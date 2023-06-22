@@ -383,6 +383,7 @@ namespace DispatcherWeb.Configuration.Tenants
                 TaxVatNo = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingTaxVatNo),
                 TaxCalculationType = (TaxCalculationType)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.TaxCalculationType),
                 AutopopulateDefaultTaxRate = autopopulateDefaultTaxRate,
+                ShowQuoteGeneralTermsAndConditionsOnInvoice = await SettingManager.GetSettingValueAsync<bool>(AppSettings.Invoice.ShowQuoteGeneralTermsAndConditionsOnInvoice),
                 DefaultTaxRate = await SettingManager.GetSettingValueAsync<decimal>(AppSettings.Invoice.DefaultTaxRate),
                 InvoiceTemplate = (InvoiceTemplateEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.InvoiceTemplate),
                 QuickbooksIntegrationKind = (QuickbooksIntegrationKind)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.Quickbooks.IntegrationKind),
@@ -935,6 +936,7 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TenantManagement.BillingTaxVatNo, input.TaxVatNo);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.TaxCalculationType, ((int)input.TaxCalculationType).ToString("N0"));
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.AutopopulateDefaultTaxRate, (input.TaxCalculationType == TaxCalculationType.NoCalculation ? false : input.AutopopulateDefaultTaxRate).ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.ShowQuoteGeneralTermsAndConditionsOnInvoice, input.ShowQuoteGeneralTermsAndConditionsOnInvoice.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.DefaultTaxRate, (input.DefaultTaxRate ?? 0).ToString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.InvoiceTemplate, ((int)input.InvoiceTemplate).ToString("N0"));
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.Quickbooks.IntegrationKind, ((int)(input.QuickbooksIntegrationKind ?? 0)).ToString());
