@@ -1,1 +1,2 @@
-export * from './customDialog'
+export * from './customDialog';
+export * from './alertDialog';

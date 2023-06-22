@@ -78,7 +78,6 @@ const LinkNewAccountForm = ({
     }, [userProfileMenu]);
 
     useEffect(() => {
-        console.log('linkSuccess: ', linkSuccess)
         if (linkSuccess) {
             dispatch(getLinkedUsers());
             closeModal();
@@ -139,7 +138,6 @@ const LinkNewAccountForm = ({
             convertedData[key] = fields[key].value;
         }
         dispatch(onLinkToUser(convertedData));
-        console.log('Form data: ', convertedData);
 
         // Reset form and field values
         setFields((prevFields) => {

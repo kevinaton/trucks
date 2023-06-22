@@ -149,12 +149,11 @@ const App = (props) => {
     };
 
     const openDialog = (data) => {
-        const { title, description, contentTitle, content, action } = data;
+        const { type, title, content, action } = data;
         setDialog({
             open: true,
+            type,
             title,
-            description,
-            contentTitle,
             content,
             action
         });
@@ -164,9 +163,8 @@ const App = (props) => {
         setDialog({
             ...dialog,
             open: false,
+            type: '',
             title: '',
-            description: '',
-            contentTitle: '',
             content: null,
             action: null
         })
@@ -250,8 +248,8 @@ const App = (props) => {
                 { !isEmpty(dialog) && 
                     <CustomDialog 
                         open={dialog.open} 
-                        dialogTitle={dialog.title} 
-                        dialogDescription={dialog.description}
+                        type={dialog.type}
+                        title={dialog.title} 
                         content={dialog.content} 
                         handleClose={closeDialog} 
                         handleProceed={dialog.action}

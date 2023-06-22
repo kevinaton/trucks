@@ -25,6 +25,7 @@ import {
     unlinkUser as onUnlinnkUser,
     unlinkUserReset as onResetUnlinkState 
 } from '../../store/actions';
+import { AlertDialog } from '../common/dialogs';
 
 export const LinkedAccounts = ({
     openModal,
@@ -40,10 +41,12 @@ export const LinkedAccounts = ({
     const dispatch = useDispatch();
     const { 
         linkedUsers,
-        unlinkSuccess
+        unlinkSuccess,
+        error
     } = useSelector((state) => ({
         linkedUsers: state.UserLinkReducer.linkedUsers,
-        unlinkSuccess: state.UserLinkReducer.unlinkSuccess
+        unlinkSuccess: state.UserLinkReducer.unlinkSuccess,
+        error: state.UserLinkReducer.error
     }));
 
     useEffect(() => {
@@ -66,10 +69,27 @@ export const LinkedAccounts = ({
 
     useEffect(() => {
         if (unlinkSuccess) {
-            enqueueSnackbar('Successfully unlinked', { variant: 'info' });
+            enqueueSnackbar('Successfully unlinked', { variant: 'success' });
             dispatch(onResetUnlinkState());
         }
     }, [dispatch, enqueueSnackbar, unlinkSuccess]);
+
+    useEffect(() => {
+        if (!isEmpty(error) && !isEmpty(error.response)) {
+            const { data } = error.response;
+            const { message, details } = data.error;
+            
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog 
+                        title={message} 
+                        message={details} 
+                    />
+                )
+            });
+        }
+    }, [error, openDialog]);
 
     // Handle row hover on table
     const handleRowHover = (index) => {
@@ -99,9 +119,8 @@ export const LinkedAccounts = ({
         e.preventDefault();
         
         openDialog({
-            title: 'unlink-account-dialog',
-            description: 'unlink-account',
-            contentTitle: 'Unlink account',
+            type: 'confirm',
+            title: 'Unlink account',
             content: (
                 <Box
                     display='flex'

@@ -9,11 +9,10 @@ import {
 
 export const CustomDialog = ({
     open,
+    type,
     handleClose,
     handleProceed,
-    dialogTitle, 
-    dialogDescription,
-    contentTitle,
+    title,
     content
 }) => {
     const handleProceedClick = () => {
@@ -24,23 +23,31 @@ export const CustomDialog = ({
     return (
         <Dialog
             open={open}
-            onClose={handleClose}
-            aria-labelledby={dialogTitle} 
-            aria-describedby={dialogDescription} 
+            onClose={handleClose} 
             maxWidth='xs'
             fullWidth
         >
-            <DialogTitle id={dialogTitle}>{contentTitle}</DialogTitle>
+            { title && 
+                <DialogTitle>{title}</DialogTitle>
+            }
+
             <DialogContent>
-                <DialogContentText id={dialogDescription}>
+                <DialogContentText>
                     {content}
                 </DialogContentText>
             </DialogContent>
+            
             <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleProceedClick} autoFocus>
-                    Continue
-                </Button>
+                { type && type === 'confirm' 
+                    ? 
+                        <>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={handleProceedClick} autoFocus>
+                                Continue
+                            </Button>
+                        </>
+                    : <Button onClick={handleClose}>Ok</Button>
+                }
             </DialogActions>
         </Dialog>
     );
