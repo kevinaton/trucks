@@ -129,11 +129,11 @@ namespace DispatcherWeb.Invoices.Reports
                 }
 
                 //empty space
-                table.AddColumn(Unit.FromCentimeter(13.5));
+                table.AddColumn(Unit.FromCentimeter(13));
                 //date labels
                 table.AddColumn(Unit.FromCentimeter(2.2));
                 //Invoice #, dates
-                table.AddColumn(Unit.FromCentimeter(2.9));
+                table.AddColumn(Unit.FromCentimeter(3.4));
 
 
                 row = table.AddRow();
