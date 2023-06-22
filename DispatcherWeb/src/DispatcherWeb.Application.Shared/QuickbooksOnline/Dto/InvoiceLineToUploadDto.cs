@@ -47,12 +47,19 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
             {
                 truck = $"Truck: {TruckCode}";
             }
-            if (ticket == null && truck == null)
+            var ticketAndTruck = "";
+            if (ticket != null || truck != null)
             {
-                return Description;
+                ticketAndTruck = " " + string.Join(", ", new[] { ticket, truck }.Where(x => !string.IsNullOrEmpty(x)));
             }
-            var ticketAndTruck = string.Join(", ", new[] { ticket, truck }.Where(x => !string.IsNullOrEmpty(x)));
-            return Description + " " + ticketAndTruck;
+
+            var deliveryDate = "";
+            if (DeliveryDateTime != null)
+            {
+                deliveryDate = DeliveryDateTime?.ToString("d") + " ";
+            }
+
+            return deliveryDate + Description + ticketAndTruck;
         }
 
         public InvoiceLineToUploadDto Clone()

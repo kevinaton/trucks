@@ -111,8 +111,9 @@ namespace DispatcherWeb.QuickbooksDesktop.Models
         public virtual string ShipDate { get; set; }
 
 
-        public TransactionRow SetAddress(string address)
+        public TransactionRow SetAddress(params string[] addressParts)
         {
+            var address = string.Join("\n", addressParts);
             if (string.IsNullOrEmpty(address))
             {
                 return this;
