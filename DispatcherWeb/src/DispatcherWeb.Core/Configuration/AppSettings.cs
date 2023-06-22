@@ -151,6 +151,7 @@ namespace DispatcherWeb.Configuration
             public const string TaxCalculationType = "App.Invoice.TaxCalculationType";
             public const string DefaultTaxRate = "App.Invoice.DefaultTaxRate";
             public const string AutopopulateDefaultTaxRate = "App.Invoice.AutopopulateDefaultTaxRate";
+            public const string ShowQuoteGeneralTermsAndConditionsOnInvoice = "App.Invoice.ShowQuoteGeneralTermsAndConditionsOnInvoice";
             public const string EmailSubjectTemplate = "App.Invoice.EmailSubjectTemplate";
             public const string EmailBodyTemplate = "App.Invoice.EmailBodyTemplate";
             public const string DefaultMessageOnInvoice = "App.Invoice.DefaultInvoiceComments";

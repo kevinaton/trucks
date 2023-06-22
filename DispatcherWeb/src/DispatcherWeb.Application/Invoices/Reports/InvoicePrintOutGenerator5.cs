@@ -354,6 +354,22 @@ namespace DispatcherWeb.Invoices.Reports
                 paragraph = document.LastSection.AddParagraph(model.Message ?? "");
                 paragraph.Format.SpaceBefore = Unit.FromCentimeter(0.4);
 
+                
+                // Second Page
+                if (model.ShowQuoteGeneralTermsAndConditionsOnInvoice && !string.IsNullOrEmpty(model.QuoteGeneralTermsAndConditions))
+                {
+                    section.AddPageBreak();
+                    paragraph = document.LastSection.AddParagraph();
+                    paragraph.Format.Font.Size = Unit.FromPoint(7.5);
+
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                    paragraph.AddText(model.QuoteGeneralTermsAndConditions);
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                }
+
                 //if (!taxWarning.IsNullOrEmpty())
                 //{
                 //    paragraph = document.LastSection.AddParagraph(taxWarningAsterisks + taxWarning);

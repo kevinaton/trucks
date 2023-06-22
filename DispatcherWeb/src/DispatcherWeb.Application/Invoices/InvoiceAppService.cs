@@ -978,6 +978,13 @@ namespace DispatcherWeb.Invoices
             item.TimeZone = await GetTimezone();
             item.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
 
+            item.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
+            item.ShowQuoteGeneralTermsAndConditionsOnInvoice = await SettingManager.GetSettingValueAsync<bool>(AppSettings.Invoice.ShowQuoteGeneralTermsAndConditionsOnInvoice);
+            item.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
+            item.QuoteGeneralTermsAndConditions = item.QuoteGeneralTermsAndConditions
+                .Replace("{CompanyName}", item.CompanyName)
+                .Replace("{CompanyNameUpperCase}", item.CompanyName.ToUpper());
+
             item.DebugLayout = input.DebugLayout;
             item.DebugInput = input;
 
