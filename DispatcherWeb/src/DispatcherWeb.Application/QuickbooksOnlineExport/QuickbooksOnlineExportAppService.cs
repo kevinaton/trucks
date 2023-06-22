@@ -40,7 +40,7 @@ namespace DispatcherWeb.QuickbooksOnlineExport
         public async Task<FileDto> ExportInvoicesToCsv()
         {
             var invoicesToUpload = await _invoiceRepository.GetAll()
-                .Where(x => x.QuickbooksExportDateTime == null && x.InvoiceLines.Any())
+                .Where(x => x.QuickbooksExportDateTime == null && x.InvoiceLines.Any() && x.Status == InvoiceStatus.ReadyForQuickbooks)
                 .ToInvoiceToUploadList(await GetTimezone());
 
             var invoiceNumberPrefix = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.Quickbooks.InvoiceNumberPrefix);
