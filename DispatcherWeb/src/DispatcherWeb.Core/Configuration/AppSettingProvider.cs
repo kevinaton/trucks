@@ -125,7 +125,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.Email.UseHostDefaultEmailSettings, GetFromAppSettings(AppSettings.Email.UseHostDefaultEmailSettings, "true"), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Invoice.TaxCalculationType, GetFromAppSettings(AppSettings.Invoice.TaxCalculationType, ((int)TaxCalculationType.MaterialLineItemsTotal).ToString()), scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.Invoice.AutopopulateDefaultTaxRate, GetFromAppSettings(AppSettings.Invoice.AutopopulateDefaultTaxRate, "false"), scopes: SettingScopes.Tenant),
-                new SettingDefinition(AppSettings.Invoice.ShowQuoteGeneralTermsAndConditionsOnInvoice, GetFromAppSettings(AppSettings.Invoice.ShowQuoteGeneralTermsAndConditionsOnInvoice, "false"), scopes: SettingScopes.Tenant),
+                new SettingDefinition(AppSettings.Invoice.TermsAndConditions, GetFromAppSettings(AppSettings.Invoice.TermsAndConditions, ""), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Invoice.DefaultTaxRate, GetFromAppSettings(AppSettings.Invoice.DefaultTaxRate, "0"), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Invoice.InvoiceTemplate, GetFromAppSettings(AppSettings.Invoice.InvoiceTemplate, ((int)InvoiceTemplateEnum.Invoice1).ToString()), scopes: SettingScopes.Tenant),
 

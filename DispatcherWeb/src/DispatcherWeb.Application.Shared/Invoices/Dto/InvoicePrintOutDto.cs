@@ -31,8 +31,7 @@ namespace DispatcherWeb.Invoices.Dto
         public string LogoPath { get; set; }
         public string TimeZone { get; set; }
         public CultureInfo CurrencyCulture { get; set; }
-        public bool ShowQuoteGeneralTermsAndConditionsOnInvoice { get; set; }
-        public string QuoteGeneralTermsAndConditions { get; set; }
+        public string TermsAndConditions { get; set; }
         public string CompanyName { get; set; }
 
         public bool DebugLayout { get; set; }
