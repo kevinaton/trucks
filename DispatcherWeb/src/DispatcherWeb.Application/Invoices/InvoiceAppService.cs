@@ -825,7 +825,7 @@ namespace DispatcherWeb.Invoices
             }
         }
 
-        public DateTime? CalculateDueDate(CalculateDueDateInput input)
+        public DateTime CalculateDueDate(CalculateDueDateInput input)
         {
             switch (input.Terms)
             {
@@ -837,7 +837,7 @@ namespace DispatcherWeb.Invoices
                 case BillingTermsEnum.Net60: return input.IssueDate.AddDays(60);
                 case BillingTermsEnum.Net5: return input.IssueDate.AddDays(5);
                 case BillingTermsEnum.Net14: return input.IssueDate.AddDays(14);
-                default: return null;
+                default: return input.IssueDate;
             }
         }
 
