@@ -13,6 +13,8 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public decimal ExtendedAmount { get; set; }
         public decimal FreightExtendedAmount { get; set; }
         public decimal MaterialExtendedAmount { get; set; }
+        public decimal? FreightRate { get; set; }
+        public decimal? MaterialRate { get; set; }
         public decimal Tax { get; set; }
         public bool? IsTaxable { get; set; }
         bool IOrderLineTaxDetails.IsTaxable => IsTaxable ?? true;
@@ -72,6 +74,8 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
                 ExtendedAmount = ExtendedAmount,
                 FreightExtendedAmount = FreightExtendedAmount,
                 MaterialExtendedAmount = MaterialExtendedAmount,
+                FreightRate = FreightRate,
+                MaterialRate = MaterialRate,
                 Tax = Tax,
                 IsTaxable = IsTaxable,
                 LeaseHaulerName = LeaseHaulerName,
