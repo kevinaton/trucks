@@ -43,7 +43,25 @@
         });
 
         $("#IssueDate").datepickerInit();
+        $("#IssueDate").on('dp.change', function () {
+            calculateDueDate();
+        });
         $("#DueDate").datepickerInit();
+
+        async function calculateDueDate() {
+            var issueDate = $("#IssueDate").val();
+            if (!issueDate) {
+                return;
+            }
+            var terms = $("#Terms").val();
+            var dueDate = await abp.services.app.invoice.calculateDueDate({
+                issueDate: issueDate,
+                terms: terms
+            });
+            if (dueDate) {
+                $("#DueDate").val(moment(dueDate).utc().format('L'));
+            }
+        }
 
         var saveInvoiceAsync = function (callback) {
             if (!form.valid()) {
@@ -83,7 +101,7 @@
                     let i = dropdownData[0].item;
                     $("#EmailAddress").val(i.invoiceEmail);
                     $("#BillingAddress").val(i.fullAddress);
-                    $("#Terms").val(i.fullAddress);
+                    $("#Terms").val(i.terms).change();
                     _customerInvoicingMethod = i.invoicingMethod;
                     $("#CustomerInvoicingMethod").val(i.invoicingMethod);
                 }
@@ -129,6 +147,9 @@
         $("#Terms").select2Init({
             showAll: true,
             allowClear: true
+        });
+        $("#Terms").change(function () {
+            calculateDueDate();
         });
 
         function disableCustomerDropdownIfNeeded() {
