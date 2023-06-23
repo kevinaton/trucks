@@ -328,6 +328,11 @@ namespace DispatcherWeb.Scheduling
                 orderLine.AmountOrdered = designationHasMaterial ? orderLine.MaterialQuantity : orderLine.FreightQuantity;
 
                 var orderLineProgress = progressData.FirstOrDefault(x => x.Id == orderLine.Id);
+                
+                if (orderLineProgress != null)
+                {
+                    orderLine.DispatchCount = orderLineProgress.DispatchCount;
+                }
 
                 if (orderLineProgress?.Loads.Any() == true)
                 {
@@ -336,7 +341,6 @@ namespace DispatcherWeb.Scheduling
                     orderLine.DeliveredLoadCount = deliveredLoads.Count;
                     orderLine.LoadedLoadCount = loadedLoads.Count;
                     orderLine.LoadCount = orderLineProgress.Loads.Count;
-                    orderLine.DispatchCount = orderLineProgress.DispatchCount;
                     orderLine.AmountLoaded = 0;
                     orderLine.AmountDelivered = 0;
 
