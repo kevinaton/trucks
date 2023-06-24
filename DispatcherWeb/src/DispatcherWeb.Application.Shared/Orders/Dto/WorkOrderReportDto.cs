@@ -82,6 +82,7 @@ namespace DispatcherWeb.Orders.Dto
         public bool ShowSignatureColumn { get; set; }
         public bool ShowTruckCategories { get; set; }
         public CultureInfo CurrencyCulture { get; set; }
+        public bool DebugLayout { get; set; }
 
         public class TruckDriverDto
         {

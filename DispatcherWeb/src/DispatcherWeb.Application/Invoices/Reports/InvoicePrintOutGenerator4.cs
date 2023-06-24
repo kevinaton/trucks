@@ -108,8 +108,8 @@ namespace DispatcherWeb.Invoices.Reports
                 {
                     paragraph = cell.AddParagraph();
                     var logo = paragraph.AddImage(model.LogoPath);
-                    logo.Height = Unit.FromCentimeter(3.2);
-                    //logo.Width = Unit.FromCentimeter(9);
+                    //logo.Height = Unit.FromCentimeter(3.2);
+                    logo.Width = Unit.FromCentimeter(4.21);
                     logo.LockAspectRatio = true;
                     //cell.Format.Alignment = ParagraphAlignment.Left; //default
                     paragraph.Format.Alignment = ParagraphAlignment.Right;

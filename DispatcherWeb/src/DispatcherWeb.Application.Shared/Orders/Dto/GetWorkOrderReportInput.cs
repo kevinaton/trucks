@@ -30,5 +30,7 @@ namespace DispatcherWeb.Orders.Dto
         public bool ShowDeliveryInfo { get; set; }
 
         public bool IncludeTickets { get; set; }
+
+        public bool DebugLayout { get; set; }
     }
 }
