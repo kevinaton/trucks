@@ -1819,6 +1819,7 @@ namespace DispatcherWeb.Tickets
             item.BillingPhoneNumber = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingPhoneNumber);
             item.LogoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
             item.TicketDateTime = item.TicketDateTime?.ConvertTimeZoneTo(await GetTimezone());
+            item.DebugLayout = input.DebugLayout;
 
             return new List<TicketPrintOutDto> { item };
         }
