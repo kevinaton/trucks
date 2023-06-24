@@ -13,6 +13,8 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public decimal ExtendedAmount { get; set; }
         public decimal FreightExtendedAmount { get; set; }
         public decimal MaterialExtendedAmount { get; set; }
+        public decimal? FreightRate { get; set; }
+        public decimal? MaterialRate { get; set; }
         public decimal Tax { get; set; }
         public bool? IsTaxable { get; set; }
         bool IOrderLineTaxDetails.IsTaxable => IsTaxable ?? true;
@@ -47,12 +49,19 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
             {
                 truck = $"Truck: {TruckCode}";
             }
-            if (ticket == null && truck == null)
+            var ticketAndTruck = "";
+            if (ticket != null || truck != null)
             {
-                return Description;
+                ticketAndTruck = " " + string.Join(", ", new[] { ticket, truck }.Where(x => !string.IsNullOrEmpty(x)));
             }
-            var ticketAndTruck = string.Join(", ", new[] { ticket, truck }.Where(x => !string.IsNullOrEmpty(x)));
-            return Description + " " + ticketAndTruck;
+
+            var deliveryDate = "";
+            if (DeliveryDateTime != null)
+            {
+                deliveryDate = DeliveryDateTime?.ToString("d") + " ";
+            }
+
+            return deliveryDate + Description + ticketAndTruck;
         }
 
         public InvoiceLineToUploadDto Clone()
@@ -65,6 +74,8 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
                 ExtendedAmount = ExtendedAmount,
                 FreightExtendedAmount = FreightExtendedAmount,
                 MaterialExtendedAmount = MaterialExtendedAmount,
+                FreightRate = FreightRate,
+                MaterialRate = MaterialRate,
                 Tax = Tax,
                 IsTaxable = IsTaxable,
                 LeaseHaulerName = LeaseHaulerName,

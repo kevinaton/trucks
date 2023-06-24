@@ -55,7 +55,7 @@ namespace DispatcherWeb.QuickbooksDesktop
         public async Task<ExportInvoicesToIIFResult> ExportInvoicesToIIF()
         {
             var invoicesToUpload = await _invoiceRepository.GetAll()
-                .Where(x => x.QuickbooksExportDateTime == null)
+                .Where(x => x.QuickbooksExportDateTime == null && x.Status == InvoiceStatus.ReadyForQuickbooks)
                 .ToInvoiceToUploadList(await GetTimezone());
 
             var invoiceNumberPrefix = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.Quickbooks.InvoiceNumberPrefix);
@@ -236,7 +236,7 @@ namespace DispatcherWeb.QuickbooksDesktop
                     HasCleared = HasCleared,
                     NameIsTaxable = Yes,
                     Terms = invoice.Terms.GetDisplayName()
-                }.SetAddress(invoice.BillingAddress)
+                }.SetAddress(customerName, invoice.BillingAddress)
                 .AppendRow(s);
 
                 foreach (var lineItem in invoice.InvoiceLines)

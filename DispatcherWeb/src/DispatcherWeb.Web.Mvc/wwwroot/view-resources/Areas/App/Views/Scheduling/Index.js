@@ -621,8 +621,10 @@
         }
 
         function getTruckTileWidthClass(truck) {
-            if (truck.trailer || truck.tractor) {
-                return 'double-width';
+            if (_settings.showTrailersOnSchedule) {
+                if (truck.trailer || truck.tractor) {
+                    return 'double-width';
+                }
             }
             return '';
         }
@@ -650,12 +652,18 @@
             return '';
         }
 
+        function getCombinedTruckCodeFieldName() {
+            return _settings.showTrailersOnSchedule ? 'truckCodeCombined' : 'truckCode';
+        }
+
         function getCombinedTruckCode(truck) {
-            if (truck.canPullTrailer && truck.trailer) {
-                return truck.truckCode + ' :: ' + truck.trailer.truckCode;
-            }
-            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
-                return truck.tractor.truckCode + ' :: ' + truck.truckCode;
+            if (_settings.showTrailersOnSchedule) {
+                if (truck.canPullTrailer && truck.trailer) {
+                    return truck.truckCode + ' :: ' + truck.trailer.truckCode;
+                }
+                if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
+                    return truck.tractor.truckCode + ' :: ' + truck.truckCode;
+                }
             }
             return truck.truckCode;
         }
@@ -1488,7 +1496,7 @@
                     data: null,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        return data.trucks.map(function (t) { return t.truckCodeCombined; }).join(', ');
+                        return data.trucks.map(function (t) { return t[getCombinedTruckCodeFieldName()]; }).join(', ');
                     },
                     title: "Trucks",
                     //responsivePriority: 0,
@@ -1504,7 +1512,7 @@
                         var editor = $('<input type="text" class="truck-cell-editor">').appendTo($(cell));
                         editor.tagsinput({
                             itemValue: 'truckId',
-                            itemText: 'truckCodeCombined',
+                            itemText: getCombinedTruckCodeFieldName(),
                             allowDuplicates: true,
                             tagClass: function (truck) {
                                 return 'truck-tag ' + getTruckTagClass(truck) + ' truck-office-' + truck.officeId +
@@ -1616,7 +1624,7 @@
                             );
 
                             tag.trailer = trailer;
-                            if (trailer) {
+                            if (trailer && _settings.showTrailersOnSchedule) {
                                 tag.truckCodeCombined = tag.truckCode + ' :: ' + trailer.truckCode;
                             }
                             editor.tagsinput('add', tag, {
@@ -1654,7 +1662,7 @@
                                     return;
                                 }
 
-                                if (!tag.trailer && tag.canPullTrailer && (!event.options || !event.options.allowNoTrailer)) {
+                                if (_settings.showTrailersOnSchedule && !tag.trailer && tag.canPullTrailer && (!event.options || !event.options.allowNoTrailer)) {
                                     event.cancel = true;
                                     askToAssignTrailerAndAddTagAgain(tag, event.options);
                                     return;
@@ -1828,7 +1836,8 @@
 
                         let tooltipTags = 'data-toggle="tooltip" data-html="true" title="<div class=\'text-left\'>Amount loaded: ' + amountLoaded +
                             '</div><div class=\'text-left\'>Amount delivered: ' + amountDelivered +
-                            '</div><div class=\'text-left\'>Number of loads: ' + (full.loadCount || '0') + '</div>"';
+                            '</div><div class=\'text-left\'>Number of loads: ' + (full.loadCount || '0') +
+                            '</div><div class=\'text-left\'>Number of dispatches: ' + (full.dispatchCount || '0') + '</div>"';
 
                         if (!shouldShowAmountsTooltip) {
                             tooltipTags = '';
