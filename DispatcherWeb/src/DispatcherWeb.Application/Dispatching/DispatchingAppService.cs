@@ -850,10 +850,13 @@ namespace DispatcherWeb.Dispatching
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            //await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchEntity.DriverId)
-            //{
-            //    LogMessage = $"Canceled dispatch {dispatchEntity.Id}"
-            //});
+            if (input.Info == null)
+            {
+                await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchEntity.DriverId)
+                {
+                    LogMessage = $"Marked dispatch {dispatchEntity.Id} complete"
+                });
+            }
             await _syncRequestSender.SendSyncRequest(new SyncRequest()
                 .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), ChangeType.Removed)
                 .SetIgnoreForDeviceId(input.Info?.DeviceId)
@@ -959,7 +962,8 @@ namespace DispatcherWeb.Dispatching
                     Loaded = d.Loads.OrderByDescending(l => l.Id).Select(l => l.SourceDateTime).FirstOrDefault(),
                     Complete = d.Loads.OrderByDescending(l => l.Id).Select(l => l.DestinationDateTime).FirstOrDefault(),
                     d.IsMultipleLoads,
-                    d.WasMultipleLoads
+                    d.WasMultipleLoads,
+                    HasTickets = d.Loads.Any(l => l.Tickets.Any()),
                 })
                 .ToListAsync();
 
@@ -1006,7 +1010,8 @@ namespace DispatcherWeb.Dispatching
                             Loaded = d.Loaded?.ConvertTimeZoneTo(timeZone),
                             Complete = d.Complete?.ConvertTimeZoneTo(timeZone),
                             IsMultipleLoads = d.IsMultipleLoads,
-                            WasMultipleLoads = d.WasMultipleLoads
+                            WasMultipleLoads = d.WasMultipleLoads,
+                            HasTickets = d.HasTickets,
                         }).ToList()
                 })
                 .ToList();
@@ -2121,7 +2126,7 @@ namespace DispatcherWeb.Dispatching
                     });
                 }
                 await _syncRequestSender.SendSyncRequest(new SyncRequest()
-                    .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), ChangeType.Removed)
+                    .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), completeDispatch.ContinueMultiload == true ? ChangeType.Modified : ChangeType.Removed)
                     .SetIgnoreForDeviceId(completeDispatch.Info?.DeviceId)
                     .AddLogMessage("Completed dispatch"));
                 return result;
