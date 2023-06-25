@@ -131,6 +131,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                         LoadId = t.LoadId,
                         DispatchId = di.Id,
                         Quantity = t.Quantity,
+                        UnitOfMeasureId = t.UnitOfMeasureId,
                         TicketDateTime = t.TicketDateTime,
                         TicketNumber = t.TicketNumber,
                         TicketPhotoId = t.TicketPhotoId,
