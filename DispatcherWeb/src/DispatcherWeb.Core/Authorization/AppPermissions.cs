@@ -182,6 +182,9 @@
 
         public const string Pages_Administration_Tenant_SubscriptionManagement = "Pages.Administration.Tenant.SubscriptionManagement";
 
+        public const string Pages_CustomerPortal = "Pages.CustomerPortal";
+        public const string Pages_CustomerPortal_TicketsList = "Pages.CustomerPortal.TicketsList";
+
         //HOST-SPECIFIC PERMISSIONS
 
         public const string Pages_Editions = "Pages.Editions";

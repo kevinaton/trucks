@@ -376,7 +376,7 @@ namespace DispatcherWeb.Customers
 
             if (input.Id.HasValue)
             {
-                var customerContact = await _customerContactRepository.GetAsync(input.Id.Value);
+                CustomerContact customerContact = await _customerContactRepository.GetAsync(input.Id.Value);
                 customerContactEditDto = new CustomerContactEditDto
                 {
                     Id = customerContact.Id,
@@ -386,7 +386,8 @@ namespace DispatcherWeb.Customers
                     Fax = customerContact.Fax,
                     Email = customerContact.Email,
                     Title = customerContact.Title,
-                    IsActive = customerContact.IsActive
+                    IsActive = customerContact.IsActive,
+                    HasCustomerPortalAccess = customerContact.HasCustomerPortalAccess
                 };
             }
             else
@@ -415,7 +416,8 @@ namespace DispatcherWeb.Customers
                 Email = model.Email,
                 Title = model.Title,
                 TenantId = Session.TenantId ?? 0,
-                IsActive = model.IsActive
+                IsActive = model.IsActive,
+                HasCustomerPortalAccess = model.HasCustomerPortalAccess
             });
         }
 

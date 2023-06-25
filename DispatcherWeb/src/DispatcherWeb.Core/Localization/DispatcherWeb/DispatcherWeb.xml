@@ -1854,5 +1854,9 @@
 		<text name="CannotChangeTrailerBecauseOfDispatchesError">There are dispatches for this truck. Remove the dispatches if you want to change the trailer.</text>
 		<text name="CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError">This trailer doesn't match any vehicle categories selected for this job</text>
 		<text name="InvoiceTermsAndConditions">Terms and Conditions</text>
+		<text name="CustomerPortal">Customer Portal</text>
+		<text name="HasCustomerPortalAccess">Portal Access</text>
+		<text name="CustomerPortalTicketsList">Tickets List</text>
+		<text name="RequiredToAllowPortalAccess)">(Required to allow portal access)</text>
 	</texts>
 </localizationDictionary>

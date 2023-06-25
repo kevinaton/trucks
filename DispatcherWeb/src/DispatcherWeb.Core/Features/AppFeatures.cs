@@ -32,5 +32,7 @@
 
         public const string FreeFunctionality = "App.FreeFunctionalityFeature";
         public const string PaidFunctionality = "App.PaidFunctionalityFeature";
+        
+        public const string CustomerPortal = "App.CustomerPortalFeature";
     }
 }

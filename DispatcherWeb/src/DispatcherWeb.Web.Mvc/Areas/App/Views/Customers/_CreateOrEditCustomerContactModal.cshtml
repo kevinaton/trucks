@@ -26,6 +26,7 @@
         <div class="form-group m-form__group">
             <label>@L("Email")</label>
             <input class="form-control" type="text" asp-for="Email">
+            <small style="color: cornflowerblue;">@L("RequiredToAllowPortalAccess")</small>
         </div>
         <div class="m-form__group form-group">
             <label class="m-checkbox">
@@ -34,6 +35,14 @@
                 <span></span>
             </label>
         </div>
+        <div class="m-form__group form-group" id="HasCustomerPortalAccessContainer" style="visibility:@((string.IsNullOrEmpty(Model.Email) ? "hidden" : "visible"))">
+            <label class="m-checkbox">
+                <input id="HasCustomerPortalAccess" type="checkbox" name="HasCustomerPortalAccess" value="true" checked="@(Model.HasCustomerPortalAccess ? "checked" : null)">
+                @L("HasCustomerPortalAccess")
+                <span></span>
+            </label>
+        </div>
+
     </form>
 </div>
 

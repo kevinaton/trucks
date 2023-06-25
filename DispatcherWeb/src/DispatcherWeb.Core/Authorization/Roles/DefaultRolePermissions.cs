@@ -779,6 +779,15 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Administrative,
                     }
                 },
+
+                // CustomerPortal
+                {
+                    AppPermissions.Pages_CustomerPortal, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                    }
+                },
             };
 
         public static string[] DefaultPermissions => _defaultRolePermissions.Keys.ToArray();

@@ -26,5 +26,7 @@ namespace DispatcherWeb.Customers.Dto
         public string Title { get; set; }
 
         public bool IsActive { get; set; }
+
+        public bool HasCustomerPortalAccess { get; set; }
     }
 }

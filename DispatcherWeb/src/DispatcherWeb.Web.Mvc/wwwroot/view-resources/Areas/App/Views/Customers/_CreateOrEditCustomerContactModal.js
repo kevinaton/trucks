@@ -19,6 +19,11 @@
                 "Please check your input."
             );
             _$form.find('#Email').rules('add', { regex: app.regex.email });
+            _$form.find('#Email').change(e => {
+                var email = $(e.target).val();
+                var visibility = _$form.valid() && email.length > 0 ? "visible" : "hidden";
+                _$form.find('#HasCustomerPortalAccessContainer').css("visibility", visibility);
+            });
 
             abp.helper.ui.initControls();
 

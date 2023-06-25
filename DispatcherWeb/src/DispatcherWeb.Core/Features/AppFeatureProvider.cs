@@ -202,6 +202,13 @@ namespace DispatcherWeb.Features
                 displayName: L("PaidFunctionality"),
                 inputType: new CheckboxInputType()
             );
+            
+            context.Create(
+                AppFeatures.CustomerPortal,
+                defaultValue: "false",
+                displayName: L("Customer Portal"),
+                inputType: new CheckboxInputType()
+            );
         }
 
         private static ILocalizableString L(string name)
