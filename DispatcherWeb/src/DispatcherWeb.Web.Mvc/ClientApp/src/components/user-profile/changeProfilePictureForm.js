@@ -10,15 +10,11 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { PhotoCamera } from '@mui/icons-material';
+import { newId } from '../../utils';
+import { isEmpty } from 'lodash';
+import { baseUrl } from '../../helpers/api_helper';
+import { ImageCropComponent } from '../common/images/imageCrop';
 import { uploadProfilePictureFile as onUploadProfilePictureFile } from '../../store/actions';
-
-const generateGUID = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = Math.random() * 16 | 0,
-            v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-};
 
 const ChangeProfilePictureForm = ({
     closeModal
@@ -26,6 +22,8 @@ const ChangeProfilePictureForm = ({
     const [selectedFile, setSelectedFile] = useState(null);
     const fileInputRef = useRef(null);
     const [uploadedFileToken, setUploadedFileToken] = useState(null);
+    const [imagePath, setImagePath] = useState('');
+    const [src, setSrc] = useState('');
 
     const dispatch = useDispatch();
     const {
@@ -36,7 +34,36 @@ const ChangeProfilePictureForm = ({
 
     useEffect(() => {
         console.log('uploadResponse: ', uploadResponse);
+        if (!isEmpty(uploadResponse)) {
+            const { result } = uploadResponse;
+            if (!isEmpty(result)) {
+                const { fileName, fileToken, fileType, height, width } = result;
+                const filePath = `${baseUrl}/File/DownloadTempFile?fileToken=${fileToken}&fileName=${fileName}&fileType=${fileType}&v=${new Date().valueOf()}`;
+                setSrc(filePath)
+                downloadImage(filePath);
+
+                setUploadedFileToken(fileToken);
+                //setImagePath(filePath);
+            }
+        }
     }, [uploadResponse]);
+
+    const downloadImage = async (filePath) => {
+        try {
+            const response = await fetch(filePath);
+            if (response.ok) {
+                console.log('response: ', response)
+                const blob = await response.blob();
+                console.log('blob: ', blob)
+                const imgUrl = URL.createObjectURL(blob);
+                setImagePath(imgUrl);
+            } else {
+                console.error('Error downloading image:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error downloading image:', error);
+        }
+    };
 
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
@@ -56,13 +83,53 @@ const ChangeProfilePictureForm = ({
             alert('File size exceeds the maximum limit of 5MB.');
             return;
         }
+
     
         const formData = new FormData();
         formData.append('ProfilePicture', selectedFile);
-        formData.append('FileType', 'file');
+
+        const mimeType = await getFileMimeType(selectedFile);
+        formData.append('FileType', mimeType);
         formData.append('FileName', 'ProfilePicture');
-        formData.append('FileToken', generateGUID());
+        formData.append('FileToken', newId());
         dispatch(onUploadProfilePictureFile(formData));
+    };
+
+    const getFileMimeType = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const arr = new Uint8Array(reader.result).subarray(0, 4);
+                let header = '';
+                
+                for (let i = 0; i < arr.length; i++) {
+                    header += arr[i].toString(16);
+                }
+
+                let mimeType;
+                switch (header) {
+                    case '89504e47':
+                        mimeType = 'image/png';
+                        break;
+                    case '47494638':
+                        mimeType = 'image/gif';
+                        break;
+                    case 'ffd8ffe0':
+                    case 'ffd8ffe1':
+                    case 'ffd8ffe2':
+                    case 'ffd8ffe3':
+                    case 'ffd8ffe8':
+                        mimeType = 'image/jpeg';
+                        break;
+                    default:
+                        mimeType = 'unknown';
+                        break;
+                }
+                resolve(mimeType);
+            };
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+        });
     };
 
     const handleCancel = () => {
@@ -130,6 +197,9 @@ const ChangeProfilePictureForm = ({
                     </div>
                     <Typography variant='caption'>You can select a JPG/JPEG/PNG/GIF file with a maximum 5MB size.</Typography>
                 </form>
+                <Box display='block'>
+                    <ImageCropComponent imageUrl={src} />
+                </Box>
             </Box>
 
             <Box sx={{ p: 2 }}>
