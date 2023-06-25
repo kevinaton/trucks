@@ -61,6 +61,7 @@ namespace DispatcherWeb.Scheduling.Dto
         public int? DeliveredLoadCount { get; set; }
         public int? LoadedLoadCount { get; set; }
         public int? LoadCount { get; set; }
+        public int? DispatchCount { get; set; }
         public decimal? AmountOrdered { get; set; }
         public decimal? AmountLoaded { get; set; }
         public decimal? AmountDelivered { get; set; }

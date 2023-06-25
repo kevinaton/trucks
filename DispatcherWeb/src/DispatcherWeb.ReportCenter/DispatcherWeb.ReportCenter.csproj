@@ -21,28 +21,30 @@
 	  <Content Remove="Reports\_VehicleMaintenanceWorkOrderLines.json" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="Reports\_MasterReportLetterPortrait.rdlx-master" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="Reports\VehicleMaintenanceWorkOrderReport.rdlx" />
-	  <None Remove="Reports\_MasterReportLegalPortrait.rdlx-master" />
-	  <None Remove="Reports\_MasterReportLetterPortrait.rdlx-master" />
+		<None Update="Reports\TenantStatisticsReport.rdlx">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\VehicleMaintenanceWorkOrderReport.rdlx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\_MasterReportLegalPortrait.rdlx-master">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\_MasterReportLetterPortrait.rdlx-master">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Properties\.gclicx" />
-		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\VehicleMaintenanceWorkOrderReport.rdlx">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master" />
-		<EmbeddedResource Include="Reports\_MasterReportLetterPortrait.rdlx-master" />
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="ClientApp\package.json" />
 		<None Include="Properties\launchSettings.json" />
+		<None Include="Reports\_TenantsDS.json" />
+		<None Include="Reports\_TenantStatisticsReportDS.json" />
+		<None Include="Reports\_VehicleMaintenanceWorkOrder.json" />
+		<None Include="Reports\_VehicleMaintenanceWorkOrderLines.json" />
 		<None Include="wwwroot\lib\grapecity\jsViewer.min.js" />
 		<Resource Include="Properties\licenses.licx">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

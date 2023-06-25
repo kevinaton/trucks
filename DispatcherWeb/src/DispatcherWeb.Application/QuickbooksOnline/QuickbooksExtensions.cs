@@ -24,6 +24,7 @@ namespace DispatcherWeb.QuickbooksOnline
                     {
                         Id = x.CustomerId,
                         Name = x.Customer.Name,
+                        AccountNumber = x.Customer.AccountNumber,
                         IsInQuickBooks = x.Customer.IsInQuickBooks,
                         InvoiceEmail = x.Customer.InvoiceEmail,
                         InvoicingMethod = x.Customer.InvoicingMethod,
@@ -61,6 +62,8 @@ namespace DispatcherWeb.QuickbooksOnline
                         ExtendedAmount = l.ExtendedAmount,
                         FreightExtendedAmount = l.FreightExtendedAmount,
                         MaterialExtendedAmount = l.MaterialExtendedAmount,
+                        FreightRate = l.FreightRate,
+                        MaterialRate = l.MaterialRate,
                         Tax = l.Tax,
                         IsTaxable = l.Item.IsTaxable,
                         JobNumber = l.JobNumber,

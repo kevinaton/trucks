@@ -37,7 +37,9 @@
             });
 
             vehicleCategoryDropdown.change(updateCategoryControls);
+            bedConstructionDropdown.change(clearTrailerInputIfNeeded);
             makeDropdown.change(refreshMakeControlsVisibillity);
+            modelDropdown.change(clearTrailerInputIfNeeded);
 
             refreshCategoryControlsVisibillity();
 
@@ -58,6 +60,7 @@
                 }
 
                 refreshCategoryControlsVisibillity();
+                clearTrailerInputIfNeeded();
             }
 
             function refreshCategoryControlsVisibillity() {
@@ -75,6 +78,25 @@
                     modelDropdown.val('').change().closest('.form-group').hide();
                 } else {
                     modelDropdown.closest('.form-group').show();
+                }
+                clearTrailerInputIfNeeded();
+            }
+
+            async function clearTrailerInputIfNeeded() {
+                var trailerId = _$form.find('#TrailerId').val();
+                if (!trailerId) {
+                    return;
+                }
+
+                var matchingTrailers = await abp.services.app.truck.getActiveTrailersSelectList({
+                    vehicleCategoryId: vehicleCategoryDropdown.val(),
+                    bedConstruction: bedConstructionDropdown.val(),
+                    make: makeDropdown.val(),
+                    model: modelDropdown.val(),
+                    id: trailerId
+                });
+                if (!matchingTrailers.items.length) {
+                    _$form.find('#TrailerId').val('').change();
                 }
             }
 
@@ -127,6 +149,19 @@
                 id: Number(formData.TrailerId),
                 truckCode: _$form.find('#TrailerId').getSelectedDropdownOption().text()
             } : null;
+
+            if (result) {
+                var select2Data = _$form.find('#TrailerId').select2('data');
+                if (select2Data.length && select2Data[0].item) {
+                    result.vehicleCategory = {
+                        id: select2Data[0].item.vehicleCategoryId
+                    };
+                } else {
+                    result.vehicleCategory = {
+                        id: _modalManager.getArgs().trailerVehicleCategoryId
+                    };
+                }
+            }
 
             _modalManager.setResult(result);
             _modalManager.close();

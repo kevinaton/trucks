@@ -31,20 +31,23 @@ namespace DispatcherWeb.Drivers
 
         public async Task InactivateDriverAsync(Driver driver, int? leaseHaulerId)
         {
-            if (driver.Id == 0 || leaseHaulerId != null)
+            if (driver.Id == 0)
             {
                 return;
             }
-
-            await EnsureCanInactivateDriver(driver);
+            
             driver.IsInactive = true;
             if (leaseHaulerId.HasValue)
             {
                 driver.TerminationDate = await GetToday();
             }
+            else
+            {
+                await EnsureCanInactivateDriver(driver);
+                await RemoveDriverAsDefaultDriver(driver.Id);
+                await SetInactiveDriverToNullInDriverAssignments(driver);
+            }
 
-            await RemoveDriverAsDefaultDriver(driver.Id);
-            await SetInactiveDriverToNullInDriverAssignments(driver);
         }
 
         private async Task EnsureCanInactivateDriver(Driver driver)

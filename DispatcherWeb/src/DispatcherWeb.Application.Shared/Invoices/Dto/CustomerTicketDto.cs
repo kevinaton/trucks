@@ -78,17 +78,12 @@ namespace DispatcherWeb.Invoices.Dto
 
                 if (!designationHasMaterial && FreightUomName?.ToLower().StartsWith("hour") == true)
                 {
-                    return $"{Quantity} hours {ServiceName}{jobNumber}{poNumber}";
+                    return $"hours {ServiceName}{jobNumber}{poNumber}";
                 }
-
-                //if (designationHasMaterial)
-                //{
-                //    return $"{Quantity} {MaterialUomName} {ServiceName} from {LoadAt} to {DeliverTo}";
-                //}
 
                 var useFreight = this.GetAmountTypeToUse().useFreight;
 
-                return $"{Quantity} {(useFreight ? FreightUomName : MaterialUomName)} {ServiceName} from {LoadAtName} to {DeliverToName}{jobNumber}{poNumber}";
+                return $"{(useFreight ? FreightUomName : MaterialUomName)} {ServiceName} from {LoadAtName} to {DeliverToName}{jobNumber}{poNumber}";
             }
         }
 

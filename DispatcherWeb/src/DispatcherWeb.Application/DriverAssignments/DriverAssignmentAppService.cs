@@ -585,7 +585,17 @@ namespace DispatcherWeb.DriverAssignments
                     if (driverAssignment != null)
                     {
                         oldDriverId = driverAssignment.DriverId;
-                        driverAssignment.DriverId = input.DriverId;
+                        //driverAssignment.DriverId = input.DriverId;
+                        await EditDriverAssignment(new DriverAssignmentEditDto()
+                        {
+                            Id = driverAssignment.Id,
+                            TruckId = driverAssignment.TruckId,
+                            DriverId = input.DriverId,
+                            StartTime = driverAssignment.StartTime,
+                            OfficeId = driverAssignment.OfficeId,
+                            Date = driverAssignment.Date,
+                            Shift = driverAssignment.Shift,
+                        });
                     }
                     else
                     {
@@ -605,52 +615,54 @@ namespace DispatcherWeb.DriverAssignments
                     .AnyAsync(x => x.TruckId == orderLineTruck.TruckId && x.DriverId == input.DriverId))
                 {
                     var sharedTruckResult = await _truckRepository.EnsureCanEditTruckOrSharedTruckAsync(orderLineTruck.TruckId, OfficeId, orderDetails.DeliveryDate.Value);
-                    driverAssignment = new DriverAssignment
+
+                    await EditDriverAssignment(new DriverAssignmentEditDto()
                     {
+                        Id = 0,
                         Date = orderDetails.DeliveryDate.Value,
                         Shift = orderDetails.Shift,
                         OfficeId = sharedTruckResult.GetLocationForDate(orderDetails.DeliveryDate.Value, orderDetails.Shift),
                         TruckId = orderLineTruck.TruckId,
                         DriverId = input.DriverId,
-                    };
-                    _driverAssignmentRepository.Insert(driverAssignment);
+                    });
                 }
             }
 
             orderLineTruck.DriverId = input.DriverId;
 
 
-            await CurrentUnitOfWork.SaveChangesAsync();
-            if (driverAssignment != null)
-            {
-                var logMessage = $"Changed or created driver assignment for truck {driverAssignment.TruckId} from driver {oldDriverId?.ToString() ?? "null"} to {input.DriverId}";
-                if (oldDriverId.HasValue && oldDriverId != driverAssignment.DriverId)
-                {
-                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(oldDriverId.Value)
-                    {
-                        LogMessage = logMessage
-                    });
-                }
-                if (input.DriverId != oldDriverId)
-                {
-                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(input.DriverId)
-                    {
-                        LogMessage = logMessage
-                    });
-                }
-                await _syncRequestSender.SendSyncRequest(new SyncRequest()
-                    .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId))
-                    .AddLogMessage(logMessage));
-            }
-
-            await RemoveDuplicateDriverAssignments(new RemoveDuplicateDriverAssignmentsInput
-            {
-                Date = orderDetails.DeliveryDate.Value,
-                Shift = orderDetails.Shift,
-                OfficeId = orderDetails.OfficeId,
-                TruckId = orderLineTruck.TruckId,
-            });
+            //await CurrentUnitOfWork.SaveChangesAsync();
+            //if (driverAssignment != null)
+            //{
+            //    var logMessage = $"Changed or created driver assignment for truck {driverAssignment.TruckId} from driver {oldDriverId?.ToString() ?? "null"} to {input.DriverId}";
+            //    if (oldDriverId.HasValue && oldDriverId != driverAssignment.DriverId)
+            //    {
+            //        await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(oldDriverId.Value)
+            //        {
+            //            LogMessage = logMessage
+            //        });
+            //    }
+            //    if (input.DriverId != oldDriverId)
+            //    {
+            //        await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(input.DriverId)
+            //        {
+            //            LogMessage = logMessage
+            //        });
+            //    }
+            //    await _syncRequestSender.SendSyncRequest(new SyncRequest()
+            //        .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId))
+            //        .AddLogMessage(logMessage));
+            //}
+            //
+            //await RemoveDuplicateDriverAssignments(new RemoveDuplicateDriverAssignmentsInput
+            //{
+            //    Date = orderDetails.DeliveryDate.Value,
+            //    Shift = orderDetails.Shift,
+            //    OfficeId = orderDetails.OfficeId,
+            //    TruckId = orderLineTruck.TruckId,
+            //});
         }
+
         private async Task RemoveDuplicateDriverAssignments(RemoveDuplicateDriverAssignmentsInput input)
         {
             await CurrentUnitOfWork.SaveChangesAsync();
@@ -976,7 +988,7 @@ namespace DispatcherWeb.DriverAssignments
                 .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
                 .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
                 .WhereIf(input.DriverId.HasValue, x => input.DriverId == x.DriverId)
-                .WhereIf(input.TrailerId.HasValue, x => input.TrailerId == x.TrailerId)
+                .WhereIf(input.TrailerId.HasValue || input.ForceTrailerIdFilter, x => input.TrailerId == x.TrailerId)
                 .WhereIf(input.TruckId.HasValue, x => input.TruckId == x.TruckId)
                 .AnyAsync();
 
