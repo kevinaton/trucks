@@ -19,21 +19,18 @@
 	  <Content Remove="Reports\_TenantStatisticsReportDS.json" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Remove="Reports\_MasterReportLetterPortrait.rdlx-master" />
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="Properties\.gclicx">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\TenantStatisticsReport.rdlx">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\_MasterReportLegalPortrait.rdlx-master">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
-		<EmbeddedResource Include="Reports\_MasterReportLetterPortrait.rdlx-master">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
+		<None Update="Reports\TenantStatisticsReport.rdlx">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\_MasterReportLegalPortrait.rdlx-master">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\_MasterReportLetterPortrait.rdlx-master">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
