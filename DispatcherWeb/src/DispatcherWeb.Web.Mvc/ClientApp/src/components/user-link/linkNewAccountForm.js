@@ -12,11 +12,7 @@ import {
     getLinkedUsers,
     linkToUser as onLinkToUser 
 } from '../../store/actions';
-
-const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-};
+import { isValidEmail } from '../../utils';
 
 const LinkNewAccountForm = ({
     closeModal

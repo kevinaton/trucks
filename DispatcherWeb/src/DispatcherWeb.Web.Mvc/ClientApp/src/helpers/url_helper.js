@@ -12,7 +12,12 @@ export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 
 //User Profile
 export const GET_USER_PROFILE_SETTINGS = '/Profile/GetUserProfileSettings';
+export const UPDATE_USER_PROFILE = '/Profile/UpdateCurrentUserProfile';
 export const CHANGE_PASSWORD = '/Profile/ChangePassword';
+
+//Google Authenticator
+export const ENABLE_GOOGLE_AUTHENTICATOR = '/Profile/UpdateGoogleAuthenticatorKey';
+export const DISABLE_GOOGLE_AUTHENTICATOR = '/Profile/DisableGoogleAuthenticator';
 
 //User Link
 export const GET_LINKED_USERS = '/UserLink/GetRecentlyUsedLinkedUsers';

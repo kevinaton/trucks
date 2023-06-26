@@ -1,21 +1,33 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import {
     GET_USER_PROFILE_SETTINGS,
+    UPDATE_USER_PROFILE,
     CHANGE_PASSWORD,
-    UPLOAD_PROFILE_PICTURE_FILE
+    UPLOAD_PROFILE_PICTURE_FILE,
+    ENABLE_GOOGLE_AUTHENTICATOR,
+    DISABLE_GOOGLE_AUTHENTICATOR
 } from './actionTypes';
 import {
     getUserProfileSettingsSuccess,
     getUserProfileSettingsFailure,
+    updateUserProfileSuccess,
+    updateUserProfileFailure,
     changePasswordSuccess,
     changePasswordFailure,
     uploadProfilePictureFileSuccess,
-    uploadProfilePictureFileFailure
+    uploadProfilePictureFileFailure,
+    enableGoogleAuthenticatorSuccess,
+    enableGoogleAuthenticatorFailure,
+    disableGoogleAuthenticatorSuccess,
+    disableGoogleAuthenticatorFailure
 } from './actions';
 import {
     getUserProfileSettings,
+    updateUserProfile,
     changePassword,
-    uploadProfilePictureFile
+    uploadProfilePictureFile,
+    enableGoogleAuthenticator,
+    disableGoogleAuthenticator
 } from './service';
 
 function* fetchUserProfileSettings() {
@@ -24,6 +36,15 @@ function* fetchUserProfileSettings() {
         yield put(getUserProfileSettingsSuccess(response));
     } catch (error) {
         yield put(getUserProfileSettingsFailure(error));
+    }
+}
+
+function* onUpdateUserProfile({ payload: userProfile }) {
+    try {
+        yield call(updateUserProfile, userProfile);
+        yield put(updateUserProfileSuccess(userProfile));
+    } catch (error) {
+        yield put(updateUserProfileFailure(error));
     }
 }
 
@@ -45,10 +66,31 @@ function* onUploadProfilePictureFile({ payload: file }) {
     }
 }
 
+function* onEnableGoogleAuthenticator() {
+    try {
+        const response = yield call(enableGoogleAuthenticator);
+        yield put(enableGoogleAuthenticatorSuccess(response));
+    } catch (error) {
+        yield put(enableGoogleAuthenticatorFailure(error));
+    }
+}
+
+function* onDisableGoogleAuthenticator() {
+    try {
+        const response = yield call(disableGoogleAuthenticator);
+        yield put(disableGoogleAuthenticatorSuccess(response));
+    } catch (error) {
+        yield put(disableGoogleAuthenticatorFailure(error));
+    }
+}
+
 function* userProfileSaga() {
     yield takeEvery(GET_USER_PROFILE_SETTINGS, fetchUserProfileSettings);
+    yield takeEvery(UPDATE_USER_PROFILE, onUpdateUserProfile);
     yield takeEvery(CHANGE_PASSWORD, onChangePassword);
     yield takeEvery(UPLOAD_PROFILE_PICTURE_FILE, onUploadProfilePictureFile);
+    yield takeEvery(ENABLE_GOOGLE_AUTHENTICATOR, onEnableGoogleAuthenticator);
+    yield takeEvery(DISABLE_GOOGLE_AUTHENTICATOR, onDisableGoogleAuthenticator);
 }
 
 export default userProfileSaga;

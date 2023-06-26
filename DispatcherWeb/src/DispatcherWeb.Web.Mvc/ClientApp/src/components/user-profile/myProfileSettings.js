@@ -15,9 +15,16 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
-import { getUserProfileSettings } from '../../store/actions';
+import { 
+    getUserProfileSettings, 
+    updateUserProfile as onUpdateUserProfile,
+    resetUpdateUserProfile as onResetUpdateUserProfile,
+    enableGoogleAuthenticator as onEnableGoogleAuthenticator,
+} from '../../store/actions';
 import { isEmpty } from 'lodash';
+import { useSnackbar } from 'notistack';
 import { hostEmailPreference } from '../../common/enums/hostEmailPreference';
+import { isValidEmail } from '../../utils';
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -57,15 +64,40 @@ export const MyProfileSettings = ({
 }) => {
     const [value, setValue] = useState(0);
     const [profileSettings, setProfileSettings] = useState(null);
-    const [name, setName] = useState('');
-    const [surname, setSurname] = useState('');
-    const [emailAddress, setEmailAddress] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [name, setName] = useState({
+        value: '',
+        required: true,
+        error: false,
+        errorText: ''
+    });
+    const [surname, setSurname] = useState({
+        value: '',
+        required: true,
+        error: false,
+        errorText: ''
+    });
+    const [emailAddress, setEmailAddress] = useState({
+        value: '',
+        required: true,
+        error: false,
+        errorText: ''
+    });
+    const [phoneNumber, setPhoneNumber] = useState({
+        value: '',
+        error: false,
+        errorText: ''
+    });
     const [timezone, setTimezone] = useState('');
+    const [options, setOptions] = useState(null);
 
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
-    const { userProfileSettings } = useSelector((state) => ({
+    const { 
+        userProfileSettings,
+        profileUpdateSuccess
+    } = useSelector((state) => ({
         userProfileSettings: state.UserProfileReducer.userProfileSettings,
+        profileUpdateSuccess: state.UserProfileReducer.profileUpdateSuccess
     }));
 
     useEffect(() => {
@@ -73,18 +105,103 @@ export const MyProfileSettings = ({
     }, [dispatch]);
 
     useEffect(() => {
-        if (!isEmpty(userProfileSettings) && isEmpty(profileSettings)) {
-            const { result } = userProfileSettings;
-            if (!isEmpty(result)) {
+        if (!isEmpty(userProfileSettings) && !isEmpty(userProfileSettings.result)) {
+            if (isEmpty(profileSettings)) {
+                const { result } = userProfileSettings;
                 setProfileSettings(result);
-                setName(result.name);
-                setSurname(result.surname);
-                setEmailAddress(result.emailAddress);
-                setPhoneNumber(result.phoneNumber);
-                setTimezone(result.timezone);
+
+                const { name, surname, emailAddress, phoneNumber, timezone, options } = result;
+
+                setName({
+                    ...name,
+                    value: name
+                });
+
+                setSurname({
+                    ...surname,
+                    value: surname
+                });
+
+                setEmailAddress({
+                    ...emailAddress,
+                    value: emailAddress
+                });
+
+                setPhoneNumber({
+                    ...phoneNumber,
+                    value: phoneNumber
+                });
+
+                setTimezone(timezone);
+                setOptions(options);
+            } else {
+                const { result } = userProfileSettings;
+                const { 
+                    name,
+                    surname,
+                    emailAddress,
+                    phoneNumber,
+                    timezone,
+                    options,
+                    isGoogleAuthenticatorEnabled, 
+                    qrCodeSetupImageUrl 
+                } = result;
+
+                setProfileSettings((prevSettings) => {
+                    let updatedSettings = { ...prevSettings };
+                
+                    // Check and update each value individually
+                    if (name !== prevSettings.name) {
+                        updatedSettings.name = name;
+                    }
+
+                    if (surname !== prevSettings.surname) {
+                        updatedSettings.surname = surname;
+                    }
+
+                    if (emailAddress !== prevSettings.emailAddress) {
+                        updatedSettings.emailAddress = emailAddress;
+                    }
+
+                    if (phoneNumber !== prevSettings.phoneNumber) {
+                        updatedSettings.phoneNumber = phoneNumber;
+                    }
+
+                    if (timezone !== prevSettings.timezone) {
+                        updatedSettings.timezone = timezone;
+                    }
+
+                    if (options !== prevSettings.options) {
+                        updatedSettings.options = options;
+                    }
+
+                    if (isGoogleAuthenticatorEnabled !== prevSettings.isGoogleAuthenticatorEnabled) {
+                        updatedSettings.isGoogleAuthenticatorEnabled = isGoogleAuthenticatorEnabled;
+                    }
+
+                    if (qrCodeSetupImageUrl !== prevSettings.qrCodeSetupImageUrl) {
+                        updatedSettings.qrCodeSetupImageUrl = qrCodeSetupImageUrl;
+                    }
+                
+                    // Update the state if there are any changes
+                    if (Object.keys(updatedSettings).length > 0) {
+                        return updatedSettings;
+                    }
+                
+                    // If there are no changes, return the previous state
+                    return prevSettings;
+                });
             }
         }
-    }, [userProfileSettings, profileSettings]);
+    }, [userProfileSettings, profileSettings, name, surname, emailAddress, phoneNumber]);
+
+    useEffect(() => {
+        if (profileUpdateSuccess) {
+            closeModal();
+            enqueueSnackbar('Saved successfully', { variant: 'success' });
+            dispatch(onResetUpdateUserProfile());
+        }
+    }, [dispatch, profileUpdateSuccess, enqueueSnackbar, closeModal]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -93,28 +210,46 @@ export const MyProfileSettings = ({
     const handleNameInputChange = (e) => {
         const inputValue = e.target.value;
         if (inputValue.length <= 64) {
-            setName(inputValue);
+            setName({
+                ...name,
+                value: inputValue,
+                error: false,
+                errorText: ''
+            });
         }
     };
 
     const handleSurnameInputChange = (e) => {
         const inputValue = e.target.value;
         if (inputValue.length <= 64) {
-            setSurname(inputValue);
+            setSurname({
+                ...surname,
+                value: inputValue,
+                error: false,
+                errorText: ''
+            });
         }
     };
 
     const handleEmailInputChange = (e) => {
         const inputValue = e.target.value;
         if (inputValue.length <= 256) {
-            setEmailAddress(inputValue);
+            setEmailAddress({
+                ...emailAddress,
+                value: inputValue,
+                error: false,
+                errorText: ''
+            });
         }
     };
 
     const handlePhoneNumberInputChange = (e) => {
         const inputValue = e.target.value;
         if (inputValue.length <= 24) {
-            setPhoneNumber(inputValue);
+            setPhoneNumber({
+                ...phoneNumber,
+                value: inputValue
+            });
         }
     };
 
@@ -126,38 +261,99 @@ export const MyProfileSettings = ({
     };
 
     const handleDontShowZeroQuantityWarningChange = (e) => {
-        let { options } = profileSettings;
-        setProfileSettings({
-            ...profileSettings,
-            options: {
-                ...options,
-                dontShowZeroQuantityWarning: e.target.checked,
-            }
-        })
+        setOptions({
+            ...options,
+            dontShowZeroQuantityWarning: e.target.checked,
+        });
+    };
+
+    const handlePlaySoundForNotificationsChange = (e) => {
+        setOptions({
+            ...options,
+            playSoundForNotifications: e.target.checked,
+        });
+    };
+
+    const handleCcMeOnInvoicesChange = (e) => {
+        setOptions({
+            ...options,
+            ccMeOnInvoices: e.target.checked,
+        });
     };
 
     const handleCheckboxChange = (e) => {
         const { value, checked } = e.target;
-        const { options } = profileSettings;
         const hostEmailPreference = options.hostEmailPreference;
-        setProfileSettings({
-            ...profileSettings,
-            options: {
-                ...options,
-                hostEmailPreference: !checked 
-                    ? hostEmailPreference - parseInt(value) 
-                    : hostEmailPreference + parseInt(value)
-            }
+        setOptions({
+            ...options,
+            hostEmailPreference: !checked 
+                ? hostEmailPreference - parseInt(value) 
+                : hostEmailPreference + parseInt(value)
         });
     };
+
+    const handleEnableGoogleAuthenticator = () => {
+        dispatch(onEnableGoogleAuthenticator());
+    };
+
+    // const handleDisableGoogleAuthenticator = () => {
+    //     dispatch(onDisableGoogleAuthenticator());
+    // };
 
     const handleCancel = () => {
         // Reset the form
         closeModal();
     };
     
-    const handleSave = () => {
+    const handleSave = (e) => {
+        e.preventDefault();
 
+        // check if name is valid
+        if (!name.value) {
+            setName({
+                ...name,
+                error: true,
+                errorText: 'Name is required'
+            });
+        }
+
+        // check if surname is valid
+        if (!surname.value) {
+            setSurname({
+                ...surname,
+                error: true,
+                errorText: 'Surname is required'
+            });
+        }
+
+        // check if email address is valid
+        if (!emailAddress.value) {
+            setEmailAddress({
+                ...emailAddress,
+                error: true,
+                errorText: 'Email address is required'
+            });
+        }
+
+        if (!isValidEmail(emailAddress.value)) {
+            setEmailAddress({
+                ...emailAddress,
+                error: true,
+                errorText: 'Email address is invalid'
+            });
+        }
+
+        const { ...profileSettingsData } = profileSettings;
+        const newProfileSettings = {
+            ...profileSettingsData,
+            name: name.value,
+            surname: surname.value,
+            emailAddress: emailAddress.value, 
+            phoneNumber: phoneNumber.value,
+            timezone: timezone,
+            options: options
+        };
+        dispatch(onUpdateUserProfile(newProfileSettings));
     };
 
     const renderProfileSettings = () => (
@@ -166,11 +362,13 @@ export const MyProfileSettings = ({
                 id='name' 
                 name='name'
                 type='text' 
-                value={name} 
+                value={name.value} 
+                error={name.error} 
+                helperText={name.error ? name.errorText : ''}
                 defaultValue={profileSettings.name}
                 label={
                     <>
-                        Name <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                        Name {name.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
                     </>
                 } 
                 sx={{ marginBottom: '15px' }} 
@@ -182,11 +380,13 @@ export const MyProfileSettings = ({
                 id='surname'
                 name='surname'
                 type='text'
-                value={surname} 
+                value={surname.value} 
+                error={surname.error}
+                helperText={surname.error ? surname.errorText : ''} 
                 defaultValue={profileSettings.surname}
                 label={
                     <>
-                        Last name <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                        Last name {surname.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
                     </>
                 } 
                 sx={{ marginBottom: '15px' }} 
@@ -198,11 +398,13 @@ export const MyProfileSettings = ({
                 id='emailAddress'
                 name='emailAddress'
                 type='email'
-                value={emailAddress} 
+                value={emailAddress.value}
+                error={emailAddress.error} 
+                helperText={emailAddress.error ? emailAddress.errorText : ''} 
                 defaultValue={profileSettings.emailAddress}
                 label={
                     <>
-                        Email address <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                        Email address {emailAddress.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
                     </>
                 } 
                 sx={{ marginBottom: '15px' }} 
@@ -215,7 +417,10 @@ export const MyProfileSettings = ({
                     id='phoneNumber'
                     name='phoneNumber'
                     type='text'
-                    value={phoneNumber}
+                    value={phoneNumber.value} 
+                    error={phoneNumber.error} 
+                    helperText={phoneNumber.error ? phoneNumber.errorText : ''}
+                    defaultValue={profileSettings.phoneNumber}
                     label='Phone number'
                     sx={{ marginBottom: '15px' }} 
                     fullWidth 
@@ -265,22 +470,32 @@ export const MyProfileSettings = ({
             { profileSettings.isGoogleAuthenticatorEnabled && 
                 <>
                     <Typography>Scan this QR code with your mobile app</Typography>
-                    <Box>
+                    <Box display='flex' alignItems='center' justifyContent='center'>
                         <img src={profileSettings.qrCodeSetupImageUrl} alt='QR code' />
                     </Box>
                     <Typography>Not sure what this screen means? You may need to check this: <a href="https://support.google.com/accounts/answer/1066447" target="_blank" rel="noopener noreferrer">Google Authenticator</a></Typography>
                 </>
             }
 
-            <Box sx={{ mt: 1 }}>
-                <Button variant='contained'>Enable</Button>
-            </Box>
+            { !profileSettings.isGoogleAuthenticatorEnabled &&
+                <Box sx={{ mt: 1 }}>
+                    <Button variant='contained' onClick={handleEnableGoogleAuthenticator}>Enable</Button>
+                </Box>
+            }
+
+            {/* { profileSettings.isGoogleAuthenticatorEnabled &&
+                <Box sx={{ mt: 1 }}>
+                    <Button variant='contained' onClick={handleDisableGoogleAuthenticator}>Disable</Button>
+                </Box>
+            } */}
         </>
     );
 
     const renderOptionsSettings = () => {
-        const { options } = profileSettings;
-
+        if (isEmpty(options)){
+            return (<></>);
+        }
+        
         const hostEmailPreferenceCheckboxes = [
             { value: hostEmailPreference.RELEASE_NOTES, label: 'Release Notes' },
             { value: hostEmailPreference.TRANSACTIONAL, label: 'Transactional Emails' },
@@ -312,6 +527,7 @@ export const MyProfileSettings = ({
                         control={
                             <Checkbox 
                                 checked={options.playSoundForNotifications} 
+                                onChange={handlePlaySoundForNotificationsChange}
                             />
                         } 
                         label="Play sound for notifications" 
@@ -321,6 +537,7 @@ export const MyProfileSettings = ({
                         control={
                             <Checkbox 
                                 checked={options.ccMeOnInvoices} 
+                                onChange={handleCcMeOnInvoicesChange}
                             />
                         } 
                         label="CC me on invoices" 
@@ -401,7 +618,7 @@ export const MyProfileSettings = ({
                             justifyContent='flex-end'
                         >
                             <Button variant='outlined' onClick={handleCancel}>Cancel</Button>
-                            <Button variant='contained' color='primary' onClick={handleSave}>
+                            <Button variant='contained' color='primary' onClick={(e) => handleSave(e)}>
                                 <i className='fa-regular fa-save' style={{ marginRight: '6px' }}></i>
                                 <Typography>Save</Typography>
                             </Button>
