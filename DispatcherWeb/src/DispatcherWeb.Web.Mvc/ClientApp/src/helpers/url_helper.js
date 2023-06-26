@@ -34,3 +34,4 @@ export const UPDATE_USER_NOTIFICATION_SETTINGS = '/Notification/UpdateNotificati
 
 //File Upload
 export const UPLOAD_PROFILE_PICTURE_FILE = '/Profile/UploadProfilePicture';
+export const UPLOAD_SIGNATURE_PICTURE_FILE = '/Profile/UploadSignaturePicture';

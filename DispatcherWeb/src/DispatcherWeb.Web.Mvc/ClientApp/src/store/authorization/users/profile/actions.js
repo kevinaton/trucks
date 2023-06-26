@@ -14,6 +14,10 @@ import {
     UPLOAD_PROFILE_PICTURE_FILE_SUCCESS,
     UPLOAD_PROFILE_PICTURE_FILE_FAILURE,
     RESET_UPLOAD_PROFILE_PICTURE_FILE_STATE,
+    UPLOAD_SIGNATURE_PICTURE_FILE,
+    UPLOAD_SIGNATURE_PICTURE_FILE_SUCCESS,
+    UPLOAD_SIGNATURE_PICTURE_FILE_FAILURE,
+    RESET_UPLOAD_SIGNATURE_PICTURE_FILE_STATE,
     ENABLE_GOOGLE_AUTHENTICATOR,
     ENABLE_GOOGLE_AUTHENTICATOR_SUCCESS,
     ENABLE_GOOGLE_AUTHENTICATOR_FAILURE,
@@ -90,6 +94,25 @@ export const uploadProfilePictureFileFailure = error => ({
 
 export const resetUploadProfilePictureFileState = () => ({
     type: RESET_UPLOAD_PROFILE_PICTURE_FILE_STATE
+});
+
+export const uploadSignaturePictureFile = file => ({
+    type: UPLOAD_SIGNATURE_PICTURE_FILE,
+    payload: file
+});
+
+export const uploadSignaturePictureFileSuccess = response => ({
+    type: UPLOAD_SIGNATURE_PICTURE_FILE_SUCCESS,
+    payload: response
+});
+
+export const uploadSignaturePictureFileFailure = error => ({
+    type: UPLOAD_SIGNATURE_PICTURE_FILE_FAILURE,
+    payload: error
+});
+
+export const resetUploadSignaturePictureFileState = () => ({
+    type: RESET_UPLOAD_SIGNATURE_PICTURE_FILE_STATE
 });
 
 export const enableGoogleAuthenticator = () => ({

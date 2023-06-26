@@ -13,6 +13,7 @@ export const changePassword = password => post(url.CHANGE_PASSWORD, password);
 
 // upload profile picture file
 export const uploadProfilePictureFile = file => rootPost(url.UPLOAD_PROFILE_PICTURE_FILE, file);
+export const uploadSignaturePictureFile = file => rootPost(url.UPLOAD_SIGNATURE_PICTURE_FILE, file);
 
 // enable google authenticator
 export const enableGoogleAuthenticator = () => put(url.ENABLE_GOOGLE_AUTHENTICATOR);
