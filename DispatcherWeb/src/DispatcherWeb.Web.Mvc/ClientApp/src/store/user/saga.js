@@ -1,11 +1,16 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { GET_USER_INFO, GET_USER_SETTING } from './actionTypes';
+import { 
+    GET_USER_INFO, 
+    GET_USER_PROFILE_MENU,
+    GET_USER_SETTING } from './actionTypes';
 import { 
     getUserInfoSuccess, 
     getUserInfoFailure,
+    getUserProfileMenuSuccess,
+    getUserProfileMenuFailure,
     getUserSettingByNameSuccess,
     getUserSettingByNameFailure } from './actions';
-import { getUserInfo, getUserSetting } from './service';
+import { getUserInfo, getUserProfileMenu, getUserSetting } from './service';
 
 function* fetchUserInfo() {
     try {
@@ -13,6 +18,15 @@ function* fetchUserInfo() {
         yield put(getUserInfoSuccess(response));
     } catch (error) {
         yield put(getUserInfoFailure(error));
+    }
+}
+
+function* fetchUserProfileMenu() {
+    try {
+        const response = yield call(getUserProfileMenu);
+        yield put(getUserProfileMenuSuccess(response));
+    } catch (error) {
+        yield put(getUserProfileMenuFailure(error));
     }
 }
 
@@ -27,6 +41,7 @@ function* fetchUserSetting({ payload: settingName }) {
 
 function* userSaga() {
     yield takeEvery(GET_USER_INFO, fetchUserInfo);
+    yield takeEvery(GET_USER_PROFILE_MENU, fetchUserProfileMenu);
     yield takeEvery(GET_USER_SETTING, fetchUserSetting);
 }
 

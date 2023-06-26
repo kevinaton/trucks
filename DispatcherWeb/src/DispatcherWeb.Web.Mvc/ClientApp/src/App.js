@@ -14,6 +14,8 @@ import { isEmpty } from 'lodash';
 import { baseUrl } from './helpers/api_helper';
 import * as signalR from '@microsoft/signalr';
 import SignalRContext from './components/common/signalr/signalrContext';
+import { CustomModal } from './components/common/modals/customModal';
+import { CustomDialog } from './components/common/dialogs/customDialog';
 
 const App = (props) => {
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -31,6 +33,9 @@ const App = (props) => {
     const [currentPageName, setCurrentPageName] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [connection, setConnection] = useState(null);
+    const [modals, setModals] = useState([]);
+    const [nextModalZIndex, setNextModalZIndex] = useState(1);
+    const [dialog, setDialog] = useState(null);
 
     const userInfo = useSelector(state => state.UserReducer.userInfo);
     const dispatch = useDispatch();
@@ -123,6 +128,48 @@ const App = (props) => {
         setCollapseOpen(false);
     };
 
+    const openModal = (content, size) => {
+        const modal = {
+            content,
+            open: true,
+            zIndex: nextModalZIndex, // Assign the next available z-index value
+            size
+        };
+
+        setNextModalZIndex((prevZIndex) => prevZIndex + 1); // Increment the next available z-index value
+        setModals((prevModals) => [...prevModals, modal]);
+    };
+
+    const closeModal = () => {
+        setModals((prevModals) => {
+            const updatedModals = [...prevModals];
+            updatedModals.pop();
+            return updatedModals;
+        });
+    };
+
+    const openDialog = (data) => {
+        const { type, title, content, action } = data;
+        setDialog({
+            open: true,
+            type,
+            title,
+            content,
+            action
+        });
+    };
+
+    const closeDialog = () => {
+        setDialog({
+            ...dialog,
+            open: false,
+            type: '',
+            title: '',
+            content: null,
+            action: null
+        })
+    };
+
     return (
         <SnackbarProvider 
             maxSnack={5} 
@@ -143,7 +190,11 @@ const App = (props) => {
                         handleDrawerOpen={handleDrawerOpen}
                         handleOpenNavMenu={handleOpenNavMenu}
                         anchorElNav={anchorElNav}
-                        handleCloseNavMenu={handleCloseNavMenu}
+                        handleCloseNavMenu={handleCloseNavMenu} 
+                        openModal={(content, size) => openModal(content, size)} 
+                        closeModal={closeModal} 
+                        openDialog={(data) => openDialog(data)}
+                        closeDialog={closeDialog}
                     />
 
                     <SideMenu 
@@ -180,6 +231,30 @@ const App = (props) => {
                         </Paper>
                     </Box>
                 </Box>
+                
+                {/* Render the modals */}
+                {modals.map((modal, index) => (
+                    <CustomModal 
+                        key={index} 
+                        open={modal.open} 
+                        handleClose={closeModal} 
+                        content={modal.content} 
+                        zIndex={modal.zIndex} 
+                        size={modal.size} 
+                    />
+                ))}
+
+                {/* Render the dialog */}
+                { !isEmpty(dialog) && 
+                    <CustomDialog 
+                        open={dialog.open} 
+                        type={dialog.type}
+                        title={dialog.title} 
+                        content={dialog.content} 
+                        handleClose={closeDialog} 
+                        handleProceed={dialog.action}
+                    />
+                }
             </SignalRContext.Provider>
         </SnackbarProvider>
     );
