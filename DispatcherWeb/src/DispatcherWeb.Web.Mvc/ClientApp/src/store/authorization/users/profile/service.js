@@ -8,6 +8,9 @@ export const getUserProfileSettings = () => get(url.GET_USER_PROFILE_SETTINGS);
 // update user profile
 export const updateUserProfile = userProfile => put(url.UPDATE_USER_PROFILE, userProfile);
 
+// update signature picture
+export const updateSignaturePicture = signaturePicture => put(url.UPDATE_SIGNATURE_PICTURE, signaturePicture);
+
 // change password
 export const changePassword = password => post(url.CHANGE_PASSWORD, password);
 

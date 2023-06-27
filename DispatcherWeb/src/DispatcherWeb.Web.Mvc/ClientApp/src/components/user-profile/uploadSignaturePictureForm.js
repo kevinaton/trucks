@@ -13,56 +13,88 @@ import { PhotoCamera } from '@mui/icons-material';
 import { isEmpty } from 'lodash';
 import { baseUrl } from '../../helpers/api_helper';
 import {
-     uploadSignaturePictureFile as onUploadSignaturePictureFile 
+    uploadSignaturePictureFile as onUploadSignaturePictureFile,
+    updateSignaturePicture as onUpdateSignaturePicture,
+    resetUpdateSignaturePicture as onResetUpdateSignaturePicture
 } from '../../store/actions';
-import ImageUploader from '../common/images/imageUploader';
-import ImageUploaderWithCrop from '../common/images/imageUploaderWithCrop';
+import { getText } from '../../helpers/localization_helper';
+import { AlertDialog } from '../common/dialogs';
 
 const UploadSignaturePictureForm = ({
-    closeModal
+    closeModal,
+    openDialog
 }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [src, setSrc] = useState(null);
+    const [uploadedFileName, setUploadedFileName] = useState(null);
 
     const dispatch = useDispatch();
     const {
-        signatureUploadResponse
+        signatureUploadResponse,
+        signatureUpdateSuccess
     } = useSelector(state => ({
-        signatureUploadResponse: state.UserProfileReducer.signatureUploadResponse
+        signatureUploadResponse: state.UserProfileReducer.signatureUploadResponse,
+        signatureUpdateSuccess: state.UserProfileReducer.signatureUpdateSuccess
     }));
 
     useEffect(() => {
         if (!isEmpty(signatureUploadResponse)) {
             const { result } = signatureUploadResponse;
             if (!isEmpty(result)) {
-                const { fileName, fileToken } = result;
+                const { fileName } = result;
                 const filePath = `${baseUrl}/Temp/Downloads/${fileName}?v=${new Date().valueOf()}`;
+                setUploadedFileName(fileName);
                 setSrc(filePath);
             }
         }
     }, [signatureUploadResponse]);
 
-    const handleFileChange = async (event) => {
-        const selectedFile = event.target.files[0];
+    useEffect(() => {
+        if (signatureUpdateSuccess) {
+            dispatch(onResetUpdateSignaturePicture());
+            closeModal();
+        }
+    }, [dispatch, signatureUpdateSuccess, closeModal]);
 
-        if (!selectedFile) {
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+
+        if (!file) {
             return;
         }
+
+        setSelectedFile(file);
         
-        var fileType = '|' + selectedFile.type.slice(selectedFile.type.lastIndexOf('/') + 1) + '|';
+        var fileType = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
         if ('|jpg|jpeg|png|gif|'.indexOf(fileType) === -1) {
-            alert('You can only upload JPG/JPEG/PNG/GIF file!');
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog 
+                        variant='warning'
+                        message={getText('ProfilePicture_Warn_FileType')}
+                    />
+                )
+            });
             return false;
         }
 
         const maxSize = 1048576; // 1MB
-        if (selectedFile.size > maxSize) {
-            alert('You can only upload a file with a maximum size of 1MB!');
+        if (file.size > maxSize) {
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog 
+                        variant='warning'
+                        message={getText('ProfilePicture_Warn_SizeLimit', 1)}
+                    />
+                )
+            });
             return;
         }
     
         const formData = new FormData();
-        formData.append('SignaturePicture', selectedFile);
+        formData.append('SignaturePicture', file);
         dispatch(onUploadSignaturePictureFile(formData));
     };
 
@@ -83,13 +115,23 @@ const UploadSignaturePictureForm = ({
     };
 
     const handleUpload = () => {
-        // Implement your upload logic here
-        if (selectedFile) {
-            console.log('Uploading file:', selectedFile);
-        // Perform the necessary actions such as sending the file to a server
-        } else {
-            console.log('No file selected');
+        if (!selectedFile) {
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog 
+                        variant='error' 
+                        message={getText('File_Empty_Error')}
+                    />
+                )
+            });
         }
+        
+        if (!uploadedFileName) {
+            return;
+        }
+        
+        dispatch(onUpdateSignaturePicture({ fileName: uploadedFileName }));
     };
 
     return (

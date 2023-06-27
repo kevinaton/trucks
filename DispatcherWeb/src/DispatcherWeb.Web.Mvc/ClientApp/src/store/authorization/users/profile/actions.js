@@ -6,6 +6,10 @@ import {
     UPDATE_USER_PROFILE_SUCCESS,
     UPDATE_USER_PROFILE_FAILURE,
     RESET_UPDATE_USER_PROFILE_STATE,
+    UPDATE_SIGNATURE_PICTURE,
+    UPDATE_SIGNATURE_PICTURE_SUCCESS,
+    UPDATE_SIGNATURE_PICTURE_FAILURE, 
+    RESET_UPDATE_SIGNATURE_PICTURE_STATE,
     CHANGE_PASSWORD,
     CHANGE_PASSWORD_SUCCESS,
     CHANGE_PASSWORD_FAILURE,
@@ -61,6 +65,24 @@ export const updateUserProfileFailure = error => ({
 
 export const resetUpdateUserProfile = () => ({
     type: RESET_UPDATE_USER_PROFILE_STATE
+});
+
+export const updateSignaturePicture = signaturePicture => ({
+    type: UPDATE_SIGNATURE_PICTURE,
+    payload: signaturePicture
+});
+
+export const updateSignaturePictureSuccess = () => ({
+    type: UPDATE_SIGNATURE_PICTURE_SUCCESS
+});
+
+export const updateSignaturePictureFailure = error => ({
+    type: UPDATE_SIGNATURE_PICTURE_FAILURE,
+    payload: error
+});
+
+export const resetUpdateSignaturePicture = () => ({
+    type: RESET_UPDATE_SIGNATURE_PICTURE_STATE
 });
 
 export const changePassword = password => ({

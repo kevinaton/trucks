@@ -3,7 +3,10 @@ import {
     GET_USER_PROFILE_SETTINGS_FAILURE,
     UPDATE_USER_PROFILE_SUCCESS,
     UPDATE_USER_PROFILE_FAILURE,
-    RESET_UPDATE_USER_PROFILE_STATE,
+    RESET_UPDATE_USER_PROFILE_STATE, 
+    UPDATE_SIGNATURE_PICTURE_SUCCESS,
+    UPDATE_SIGNATURE_PICTURE_FAILURE,
+    RESET_UPDATE_SIGNATURE_PICTURE_STATE,
     CHANGE_PASSWORD_SUCCESS,
     CHANGE_PASSWORD_FAILURE,
     RESET_CHANGE_PASSWORD_STATE,
@@ -24,8 +27,9 @@ import {
 
 const INIT_STATE = {
     userProfileSettings: null,
-    profileUpdateSuccess: null,
-    updateSuccess: null,
+    profileUpdateSuccess: null, 
+    signatureUpdateSuccess: null,
+    updateSuccess: null, 
     uploadResponse: null,
     downloadSuccess: null
 };
@@ -59,6 +63,21 @@ const UserProfileReducer = (state = INIT_STATE, action) => {
                 profileUpdateSuccess: null
             };
         }
+        case UPDATE_SIGNATURE_PICTURE_SUCCESS:
+            return {
+                ...state,
+                signatureUpdateSuccess: true
+            };
+        case UPDATE_SIGNATURE_PICTURE_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            };
+        case RESET_UPDATE_SIGNATURE_PICTURE_STATE:
+            return {
+                ...state,
+                signatureUpdateSuccess: null
+            };
         case CHANGE_PASSWORD_SUCCESS:
             return {
                 ...state,
