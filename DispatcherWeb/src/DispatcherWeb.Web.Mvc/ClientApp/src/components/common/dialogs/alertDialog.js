@@ -2,10 +2,12 @@ import {
     Box,
     Typography
 } from '@mui/material';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { theme } from '../../../Theme';
 
 export const AlertDialog = ({
+    variant,
     title,
     message
 }) => {
@@ -23,12 +25,22 @@ export const AlertDialog = ({
                     marginBottom: '15px'
                 }}
             >
-                <HighlightOffIcon 
-                    sx={{ 
-                        color: theme.palette.error.main,
-                        fontSize: '88px !important'
-                    }} 
-                />
+                { variant && variant === 'success' 
+                    ?
+                        <CheckCircleOutlineIcon 
+                            sx={{ 
+                                color: theme.palette.success.main,
+                                fontSize: '88px !important'
+                            }} 
+                        /> 
+                    : 
+                        <HighlightOffIcon 
+                            sx={{ 
+                                color: theme.palette.error.main,
+                                fontSize: '88px !important'
+                            }} 
+                        />
+                }
             </Box>
 
             { title && 

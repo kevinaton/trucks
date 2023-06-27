@@ -83,6 +83,7 @@ export const LinkedAccounts = ({
                 type: 'alert',
                 content: (
                     <AlertDialog 
+                        variant='error'
                         title={message} 
                         message={details} 
                     />
