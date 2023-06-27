@@ -15,6 +15,12 @@
             modalClass: 'EmailInvoicePrintOutModal'
         });
 
+        var _selectInvoiceStatuses = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Invoices/SelectInvoiceStatusesModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Invoices/_SelectInvoiceStatusesModal.js',
+            modalClass: 'SelectInvoiceStatusesModal'
+        });
+
         $('[data-toggle="tooltip"]').tooltip();
 
         app.localStorage.getItem('InvoicesFilter', function (cachedFilter) {
@@ -350,15 +356,19 @@
             });
         });
 
-        $("#QbExportButton").click(function (e) {
+        $("#QbExportButton").click(async function (e) {
             e.preventDefault();
+            let selectedInvoiceStatuses = await app.getModalResultAsync(
+                _selectInvoiceStatuses.open()
+            );
             let button = $(this);
             let quickbooksIntegrationKind = abp.setting.getInt('App.Invoice.Quickbooks.IntegrationKind');
 
             switch (quickbooksIntegrationKind) {
                 case abp.enums.quickbooksIntegrationKind.desktop:
                     abp.ui.setBusy(button);
-                    let fileWindow = window.open(abp.appPath + 'app/QuickBooks/ExportInvoicesToIIF');
+                    let statusesString = selectedInvoiceStatuses.map(x => 'invoiceStatuses=' + x).join('&');
+                    let fileWindow = window.open(abp.appPath + 'app/QuickBooks/ExportInvoicesToIIF?' + statusesString);
                     var awaitFileWindowInterval = setInterval(function () {
                         if (fileWindow.closed) {
                             clearInterval(awaitFileWindowInterval);
@@ -369,7 +379,9 @@
                     break;
                 case abp.enums.quickbooksIntegrationKind.qboExport:
                     abp.ui.setBusy(button);
-                    abp.services.app.quickbooksOnlineExport.exportInvoicesToCsv().done(function (result) {
+                    abp.services.app.quickbooksOnlineExport.exportInvoicesToCsv({
+                        invoiceStatuses: selectedInvoiceStatuses
+                    }).done(function (result) {
                         app.downloadTempFile(result);
                     }).always(() => {
                         abp.ui.clearBusy(button);
@@ -377,7 +389,9 @@
                     break;
                 case abp.enums.quickbooksIntegrationKind.transactionProExport:
                     abp.ui.setBusy(button);
-                    abp.services.app.quickbooksTransactionProExport.exportInvoicesToCsv().done(function (result) {
+                    abp.services.app.quickbooksTransactionProExport.exportInvoicesToCsv({
+                        invoiceStatuses: selectedInvoiceStatuses
+                    }).done(function (result) {
                         app.downloadTempFile(result);
                     }).always(() => {
                         abp.ui.clearBusy(button);

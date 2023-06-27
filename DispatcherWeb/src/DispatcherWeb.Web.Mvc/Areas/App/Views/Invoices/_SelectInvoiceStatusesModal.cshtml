@@ -1,0 +1,17 @@
+﻿@using DispatcherWeb.Invoices.Dto
+@using DispatcherWeb.Web.Areas.App.Models.Common.Modals
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(L("SelectStatusesOfInvoicesToExport")))
+
+<div class="modal-body box-wrap">
+    <form role="form" novalidate class="form-validation">
+        <div class="form-group">
+            <label for="InvoiceStatuses">Status of invoices to export (leave blank for all)</label>
+            <select class="form-control" id="InvoiceStatuses" name="InvoiceStatuses" asp-items="Html.GetEnumSelectList<InvoiceStatus>()" multiple="multiple"></select>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary close-button" data-dismiss="modal">@L("Cancel")</button>
+    <button type="button" class="btn btn-primary save-button"><span>@L("Export")</span></button>
+</div>
