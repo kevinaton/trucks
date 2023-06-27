@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     Badge,
     Box,
@@ -53,6 +53,7 @@ export const NotificationBell = ({
     const [initializedPrioNotif, setInitializedPrioNotif] = useState(false);
     const [soundEnabled, setSoundEnabled] = useState(null);
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { 
         userSettings,
@@ -98,7 +99,8 @@ export const NotificationBell = ({
                         data: notification.data,
                         url,
                         isUnread: newNotification.state === notificationState.UNREAD,
-                        timeAgo: moment(notification.creationTime).fromNow()
+                        timeAgo: moment(notification.creationTime).fromNow(),
+                        target: newNotification.notification.notificationName.startsWith('/File') ? '_blank' : '_self'
                     };
                     
                     setNotificationItemsList(prevState => [data, ...prevState]);
@@ -154,7 +156,8 @@ export const NotificationBell = ({
                                 data: notification.data,
                                 url,
                                 isUnread: item.state === notificationState.UNREAD,
-                                timeAgo: moment(notification.creationTime).fromNow()
+                                timeAgo: moment(notification.creationTime).fromNow(),
+                                target: item.notification.notificationName.startsWith('/File') ? '_blank' : '_self'
                             });
                         }
                     });
@@ -225,6 +228,26 @@ export const NotificationBell = ({
 
     // Handles the closing of the notification dropdown
     const handleNotifClose = () => setAnchorNotif(null);
+
+    const handleNotifItemClick = (e, notif) => {
+        e.preventDefault();
+
+        if (notif.isUnread) {
+            dispatch(onSetNotificationAsRead({
+                id: notif.userNotificationId
+            }));
+        }
+
+        if (notif.url.startsWith('/File')) {
+            window.location.href = notif.url;
+        } else {
+            if (notif.url) {
+                navigate(notif.url);
+            }
+        }
+
+        handleNotifClose();
+    };
 
     // Handles the setting of notification to read
     const handleNotifRead = (notif) => {
@@ -332,9 +355,8 @@ export const NotificationBell = ({
 
                                                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                                                     <Typography
-                                                        component={Link}
-                                                        to={notification.url}
-                                                        onClick={handleNotifClose}
+                                                        component={Link} 
+                                                        onClick={(e) => handleNotifItemClick(e, notification)}
                                                         sx={{
                                                             pl: 1,
                                                             overflow: 'hidden',
@@ -345,7 +367,7 @@ export const NotificationBell = ({
                                                             textDecoration: 'none',
                                                             color: theme.palette.text.primary,
                                                             fontWeight: notification.isUnread ? 500 : 400
-                                                        }}
+                                                        }} 
                                                     >
                                                         {notification.text}
                                                     </Typography>
