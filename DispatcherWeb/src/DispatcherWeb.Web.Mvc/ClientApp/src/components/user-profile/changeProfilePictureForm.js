@@ -13,7 +13,7 @@ import { PhotoCamera } from '@mui/icons-material';
 import { newId } from '../../utils';
 import { isEmpty } from 'lodash';
 import { baseUrl } from '../../helpers/api_helper';
-import { ImageCropComponent } from '../common/images/imageCrop';
+import ImageCropper from '../common/images/imageCropper';
 import { uploadProfilePictureFile as onUploadProfilePictureFile } from '../../store/actions';
 
 const ChangeProfilePictureForm = ({
@@ -83,7 +83,6 @@ const ChangeProfilePictureForm = ({
             alert('File size exceeds the maximum limit of 5MB.');
             return;
         }
-
     
         const formData = new FormData();
         formData.append('ProfilePicture', selectedFile);
@@ -169,7 +168,7 @@ const ChangeProfilePictureForm = ({
             </Box>
 
             <Box sx={{ p: 2 }}>
-                <form id="ChangeProfilePictureModalForm">
+                {/* <form id="ChangeProfilePictureModalForm">
                     <div>
                         <Input 
                             ref={fileInputRef}
@@ -196,10 +195,8 @@ const ChangeProfilePictureForm = ({
                         </label>
                     </div>
                     <Typography variant='caption'>You can select a JPG/JPEG/PNG/GIF file with a maximum 5MB size.</Typography>
-                </form>
-                <Box display='block'>
-                    <ImageCropComponent imageUrl={src} />
-                </Box>
+                </form> */}
+                <ImageCropper />
             </Box>
 
             <Box sx={{ p: 2 }}>
