@@ -1,9 +1,11 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import {
     GET_USER_PROFILE_SETTINGS,
-    UPDATE_USER_PROFILE,
+    UPDATE_USER_PROFILE, 
+    UPDATE_SIGNATURE_PICTURE,
     CHANGE_PASSWORD,
     UPLOAD_PROFILE_PICTURE_FILE,
+    UPLOAD_SIGNATURE_PICTURE_FILE,
     ENABLE_GOOGLE_AUTHENTICATOR,
     DISABLE_GOOGLE_AUTHENTICATOR,
     DOWNLOAD_COLLECTED_DATA
@@ -12,11 +14,15 @@ import {
     getUserProfileSettingsSuccess,
     getUserProfileSettingsFailure,
     updateUserProfileSuccess,
-    updateUserProfileFailure,
+    updateUserProfileFailure, 
+    updateSignaturePictureSuccess,
+    updateSignaturePictureFailure,
     changePasswordSuccess,
     changePasswordFailure,
     uploadProfilePictureFileSuccess,
     uploadProfilePictureFileFailure,
+    uploadSignaturePictureFileSuccess,
+    uploadSignaturePictureFileFailure,
     enableGoogleAuthenticatorSuccess,
     enableGoogleAuthenticatorFailure,
     disableGoogleAuthenticatorSuccess,
@@ -26,9 +32,11 @@ import {
 } from './actions';
 import {
     getUserProfileSettings,
-    updateUserProfile,
+    updateUserProfile, 
+    updateSignaturePicture,
     changePassword,
     uploadProfilePictureFile,
+    uploadSignaturePictureFile,
     enableGoogleAuthenticator,
     disableGoogleAuthenticator,
     downloadCollectedData
@@ -52,6 +60,15 @@ function* onUpdateUserProfile({ payload: userProfile }) {
     }
 }
 
+function* onUpdateSignaturePicture({ payload: signaturePicture }) {
+    try {
+        yield call(updateSignaturePicture, signaturePicture);
+        yield put(updateSignaturePictureSuccess());
+    } catch (error) {
+        yield put(updateSignaturePictureFailure(error));
+    }
+}
+
 function* onChangePassword({ payload: password }) {
     try {
         yield call(changePassword, password);
@@ -67,6 +84,15 @@ function* onUploadProfilePictureFile({ payload: file }) {
         yield put(uploadProfilePictureFileSuccess(response));
     } catch (error) {
         yield put(uploadProfilePictureFileFailure(error));
+    }
+}
+
+function* onUploadSignaturePictureFile({ payload: file }) {
+    try {
+        const response = yield call(uploadSignaturePictureFile, file);
+        yield put(uploadSignaturePictureFileSuccess(response));
+    } catch (error) {
+        yield put(uploadSignaturePictureFileFailure(error));
     }
 }
 
@@ -100,8 +126,10 @@ function* onDownloadCollectedData() {
 function* userProfileSaga() {
     yield takeEvery(GET_USER_PROFILE_SETTINGS, fetchUserProfileSettings);
     yield takeEvery(UPDATE_USER_PROFILE, onUpdateUserProfile);
+    yield takeEvery(UPDATE_SIGNATURE_PICTURE, onUpdateSignaturePicture);
     yield takeEvery(CHANGE_PASSWORD, onChangePassword);
     yield takeEvery(UPLOAD_PROFILE_PICTURE_FILE, onUploadProfilePictureFile);
+    yield takeEvery(UPLOAD_SIGNATURE_PICTURE_FILE, onUploadSignaturePictureFile);
     yield takeEvery(ENABLE_GOOGLE_AUTHENTICATOR, onEnableGoogleAuthenticator);
     yield takeEvery(DISABLE_GOOGLE_AUTHENTICATOR, onDisableGoogleAuthenticator);
     yield takeEvery(DOWNLOAD_COLLECTED_DATA, onDownloadCollectedData);
