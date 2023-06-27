@@ -17,3 +17,6 @@ export const uploadProfilePictureFile = file => rootPost(url.UPLOAD_PROFILE_PICT
 // enable google authenticator
 export const enableGoogleAuthenticator = () => put(url.ENABLE_GOOGLE_AUTHENTICATOR);
 export const disableGoogleAuthenticator = () => post(url.DISABLE_GOOGLE_AUTHENTICATOR);
+
+// download collected data
+export const downloadCollectedData = () => post(url.DOWNLOAD_COLLECTED_DATA);

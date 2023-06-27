@@ -38,7 +38,7 @@ const UserReducer = (state = INIT_STATE, action) => {
         case GET_USER_SETTING_SUCCESS:
             return {
                 ...state,
-                userSetting: action.payload
+                userSettings: action.payload
             }
         case GET_USER_SETTING_FAILURE:
             return {
