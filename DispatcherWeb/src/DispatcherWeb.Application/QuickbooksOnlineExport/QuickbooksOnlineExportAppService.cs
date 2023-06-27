@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
 using Abp.Runtime.Session;
 using Abp.Timing;
 using Abp.UI;
@@ -10,6 +11,7 @@ using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Invoices;
 using DispatcherWeb.QuickbooksOnline;
+using DispatcherWeb.QuickbooksOnlineExport.Dto;
 using DispatcherWeb.Storage;
 
 namespace DispatcherWeb.QuickbooksOnlineExport
@@ -37,10 +39,11 @@ namespace DispatcherWeb.QuickbooksOnlineExport
             _invoiceListCsvExporter = invoiceListCsvExporter;
         }
 
-        public async Task<FileDto> ExportInvoicesToCsv()
+        public async Task<FileDto> ExportInvoicesToCsv(ExportInvoicesToCsvInput input)
         {
             var invoicesToUpload = await _invoiceRepository.GetAll()
-                .Where(x => x.QuickbooksExportDateTime == null && x.InvoiceLines.Any() && x.Status == InvoiceStatus.ReadyForQuickbooks)
+                .Where(x => x.QuickbooksExportDateTime == null && x.InvoiceLines.Any())
+                .WhereIf(input.InvoiceStatuses.Any(), x => input.InvoiceStatuses.Contains(x.Status))
                 .ToInvoiceToUploadList(await GetTimezone());
 
             var invoiceNumberPrefix = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.Quickbooks.InvoiceNumberPrefix);
