@@ -117,12 +117,12 @@ namespace DispatcherWeb.DriverApp.Tickets
                 await _ticketRepository.InsertAndGetIdAsync(ticket);
 
                 model.Id = ticket.Id;
+            }
 
-                if (ticket.TicketNumber.IsNullOrEmpty())
-                {
-                    ticket.TicketNumber = "G-" + ticket.Id;
-                    model.TicketNumber = ticket.TicketNumber;
-                }
+            if (ticket.TicketNumber.IsNullOrEmpty())
+            {
+                ticket.TicketNumber = "G-" + ticket.Id;
+                model.TicketNumber = ticket.TicketNumber;
             }
 
             await CurrentUnitOfWork.SaveChangesAsync();
