@@ -8,6 +8,7 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Trucks;
 using DispatcherWeb.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,14 +21,17 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
     {
         private readonly UserManager _userManager;
         private readonly IRepository<Driver> _driverRepository;
+        private readonly IRepository<Truck> _truckRepository;
 
         public HomeController(
             UserManager userManager,
-            IRepository<Driver> driverRepository
+            IRepository<Driver> driverRepository,
+            IRepository<Truck> truckRepository
         )
         {
             _userManager = userManager;
             _driverRepository = driverRepository;
+            _truckRepository = truckRepository;
         }
 
         public async Task<ActionResult> Index()
@@ -61,6 +65,14 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
                 {
                     if (hasDashboardPermission)
                     {
+                        if (await IsGrantedAsync(AppPermissions.Pages_Schedule))
+                        {
+                            if (!await _truckRepository.GetAll().AnyAsync())
+                            {
+                                return RedirectToAction("Index", "Scheduling");
+                            }
+                        }
+                    
                         return RedirectToAction("Index", "Dashboard");
                     }
 

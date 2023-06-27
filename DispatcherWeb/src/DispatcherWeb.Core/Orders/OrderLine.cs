@@ -26,6 +26,7 @@ namespace DispatcherWeb.Orders
             Tickets = new HashSet<Ticket>();
             Dispatches = new HashSet<Dispatch>();
             ReceiptLines = new HashSet<ReceiptLine>();
+            OrderLineVehicleCategories = new HashSet<OrderLineVehicleCategory>();
         }
 
         public int TenantId { get; set; }
@@ -104,17 +105,11 @@ namespace DispatcherWeb.Orders
 
         public decimal? EstimatedAmount { get; set; }
 
-        [Obsolete]
-        public DateTime? TimeOnJobObsolete { get; set; }
-
         public DateTime? TimeOnJob { get; set; }
 
         public StaggeredTimeKind StaggeredTimeKind { get; set; }
 
         public int? StaggeredTimeInterval { get; set; } //in minutes
-
-        [Obsolete]
-        public DateTime? FirstStaggeredTimeOnJobObsolete { get; set; }
 
         public DateTime? FirstStaggeredTimeOnJob { get; set; }
 
@@ -173,5 +168,7 @@ namespace DispatcherWeb.Orders
         public virtual ICollection<Dispatch> Dispatches { get; set; }
 
         public virtual ICollection<ReceiptLine> ReceiptLines { get; set; }
+
+        public virtual ICollection<OrderLineVehicleCategory> OrderLineVehicleCategories { get; set; }
     }
 }

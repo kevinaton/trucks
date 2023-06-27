@@ -5,7 +5,6 @@
         var _fuelSurchargeCalculationService = abp.services.app.fuelSurchargeCalculation;
         var _initialTimeZone = $('#GeneralSettingsForm [name=Timezone]').val();
         var _usingDefaultTimeZone = $('#GeneralSettingsForm [name=TimezoneForComparison]').val() === abp.setting.values["Abp.Timing.TimeZone"];
-        var _addServiceTarget = null;
 
         var _testSmsNumberModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Settings/TestSmsNumberModal',
@@ -51,14 +50,33 @@
             allowClear: true
         });
 
+        $('#DriverIsPaidForLoadBasedOn').select2Init({
+            showAll: true,
+            allowClear: false
+        });
+
+        $('#AllowProductionPay').change(refreshAllowProductionPayControls);
+        refreshAllowProductionPayControls();
+        function refreshAllowProductionPayControls() {
+            if ($('#AllowProductionPay').is(':checked')) {
+                $('#DriverIsPaidForLoadBasedOn').closest('.form-group').show();
+            } else {
+                $('#DriverIsPaidForLoadBasedOn').closest('.form-group').hide();
+            }
+        }
+
         $("#ItemIdToUseForFuelSurchargeOnInvoice").select2Init({
             abpServiceMethod: abp.services.app.service.getServicesWithTaxInfoSelectList,
-
             allowClear: true,
             showAll: true,
-            addItemCallback: abp.auth.isGranted('Pages.Services') ? async function (newServiceOrProductName) {
-                _addServiceTarget = "ItemIdToUseForFuelSurchargeOnInvoice";
-                createOrEditServiceModal.open({ name: newServiceOrProductName });
+            addItemCallback: abp.auth.isGranted('Pages.Services') ? async function (newItemName) {
+                var result = await app.getModalResultAsync(
+                    createOrEditServiceModal.open({ name: newItemName })
+                );
+                return {
+                    id: result.id,
+                    name: result.service1
+                };
             } : null
         });
 
@@ -77,15 +95,6 @@
 
         $("#ShowFuelSurcharge").change(function () {
             toggleShowFuelSurcharge();
-        });
-
-        abp.event.on('app.createOrEditServiceModalSaved', function (e) {
-            if (!_addServiceTarget) {
-                return;
-            }
-            var targetDropdown = $("#" + _addServiceTarget);
-            abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.Id, e.item.Service1);
-            targetDropdown.change();
         });
 
         var fuelSurchargeDataList = $("#FuelSurchargeCalculationList").dataListInit({
@@ -857,20 +866,6 @@
                 $('#RequireDriversToEnterTickets').closest('.form-group').show();
                 $('#RequireSignature').closest('.form-group').show();
                 $('#RequireTicketPhoto').closest('.form-group').show();
-            }
-        }
-
-        $('#AllowCounterSales').change(refreshCounterSalesControls);
-        refreshCounterSalesControls();
-        function refreshCounterSalesControls() {
-            if ($('#AllowCounterSales').is(':checked')) {
-                $('#DefaultDesignationToMaterialOnlyForTenant').closest('.form-group').show();
-                $('#DefaultLoadAtLocationIdForTenant').closest('.form-group').show();
-                $('#DefaultAutoGenerateTicketNumberForTenant').closest('.form-group').show();
-            } else {
-                $('#DefaultDesignationToMaterialOnlyForTenant').prop('checked', false).closest('.form-group').hide();
-                $('#DefaultLoadAtLocationIdForTenant').val('').change().closest('.form-group').hide();
-                $('#DefaultAutoGenerateTicketNumberForTenant').prop('checked', false).closest('.form-group').hide();
             }
         }
 

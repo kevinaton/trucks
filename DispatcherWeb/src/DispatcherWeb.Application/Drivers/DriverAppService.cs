@@ -142,7 +142,9 @@ namespace DispatcherWeb.Drivers
                 NextPhysicalDueDate = x.NextPhysicalDueDate,
                 LastMvrDate = x.LastMvrDate,
                 NextMvrDueDate = x.NextMvrDueDate,
-                DateOfHire = x.DateOfHire
+                DateOfHire = x.DateOfHire,
+                TerminationDate = x.TerminationDate,
+                EmployeeId = x.EmployeeId,
             });
 
         [AbpAuthorize(AppPermissions.Pages_Drivers)]
@@ -262,8 +264,13 @@ namespace DispatcherWeb.Drivers
                 }).ToListAsync();
         }
 
+        public async Task<List<DriverCompanyDto>> GetCompanyListForUserDrivers(GetCompanyListForUserDriversInput input)
+        {
+            return await _driverUserLinkService.GetCompanyListForUserDrivers(input);
+        }
+
         [AbpAuthorize(AppPermissions.Pages_Drivers)]
-        public async Task<DriverEditDto> GetDriverForEdit(NullableIdDto input)
+        public async Task<DriverEditDto> GetDriverForEdit(NullableIdNameDto input)
         {
             DriverEditDto driverEditDto;
 
@@ -294,13 +301,20 @@ namespace DispatcherWeb.Drivers
                         NextPhysicalDueDate = x.NextPhysicalDueDate,
                         LastMvrDate = x.LastMvrDate,
                         NextMvrDueDate = x.NextMvrDueDate,
-                        DateOfHire = x.DateOfHire
+                        DateOfHire = x.DateOfHire,
+                        TerminationDate = x.TerminationDate,
+                        EmployeeId = x.EmployeeId
                     })
                     .FirstAsync();
             }
             else
             {
-                driverEditDto = new DriverEditDto();
+                var (firstName, lastName) = Utilities.SplitFullName(input.Name);
+                driverEditDto = new DriverEditDto
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                };
             }
 
             await _singleOfficeService.FillSingleOffice(driverEditDto);
@@ -467,6 +481,8 @@ namespace DispatcherWeb.Drivers
             driver.LastMvrDate = model.LastMvrDate;
             driver.NextMvrDueDate = model.NextMvrDueDate;
             driver.DateOfHire = model.DateOfHire;
+            driver.TerminationDate = model.TerminationDate;
+            driver.EmployeeId = model.EmployeeId;
 
             driver.EmailAddress = model.EmailAddress;
 
@@ -500,6 +516,9 @@ namespace DispatcherWeb.Drivers
             await UpdateEmployeeTimeClassifications(driver, model.EmployeeTimeClassifications);
 
             await _crossTenantOrderSender.SyncMaterialCompanyDriversIfNeeded(driver.Id);
+
+            result.FirstName = driver.FirstName;
+            result.LastName = driver.LastName;
 
             return result;
         }

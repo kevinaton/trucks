@@ -6,5 +6,6 @@ namespace DispatcherWeb.Trucks.Dto
     {
         public bool? IsPowered { get; set; }
         public bool? IsInUse { get; set; }
+        public AssetType? AssetType { get; set; }
     }
 }

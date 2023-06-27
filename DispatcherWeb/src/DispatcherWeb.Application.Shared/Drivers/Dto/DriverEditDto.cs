@@ -13,11 +13,11 @@ namespace DispatcherWeb.Drivers.Dto
         public long? UserId { get; set; }
 
         [Required(ErrorMessage = "First Name is a required field")]
-        [StringLength(50)]
+        [StringLength(EntityStringFieldLengths.Driver.FirstName)]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Last Name is a required field")]
-        [StringLength(50)]
+        [StringLength(EntityStringFieldLengths.Driver.LastName)]
         public string LastName { get; set; }
 
         public string FullName => FirstName + " " + LastName;
@@ -29,7 +29,7 @@ namespace DispatcherWeb.Drivers.Dto
 
         public string OfficeName { get; set; }
 
-        [StringLength(256)]
+        [StringLength(EntityStringFieldLengths.Driver.EmailAddress)]
         public string EmailAddress { get; set; }
 
         [StringLength(EntityStringFieldLengths.General.PhoneNumber)]
@@ -51,10 +51,10 @@ namespace DispatcherWeb.Drivers.Dto
 
         public List<EmployeeTimeClassificationEditDto> EmployeeTimeClassifications { get; set; }
 
-        [StringLength(20)]
+        [StringLength(EntityStringFieldLengths.Driver.LicenseNumber)]
         public string LicenseNumber { get; set; }
 
-        [StringLength(50)]
+        [StringLength(EntityStringFieldLengths.Driver.TypeOfLicense)]
         public string TypeOfLicense { get; set; }
 
         public DateTime? LicenseExpirationDate { get; set; }
@@ -68,6 +68,11 @@ namespace DispatcherWeb.Drivers.Dto
         public DateTime? NextMvrDueDate { get; set; }
 
         public DateTime? DateOfHire { get; set; }
+
+        public DateTime? TerminationDate { get; set; }
+
+        [StringLength(EntityStringFieldLengths.Driver.EmployeeId)]
+        public string EmployeeId { get; set; }
 
         public bool IsSingleOffice { get; set; }
         int IOfficeIdNameDto.OfficeId { get => OfficeId ?? 0; set => OfficeId = value; }

@@ -22,6 +22,7 @@ namespace DispatcherWeb.Configuration
             public const string ShiftName1 = "App.General.ShiftName1";
             public const string ShiftName2 = "App.General.ShiftName2";
             public const string ShiftName3 = "App.General.ShiftName3";
+            public const string AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = "App.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders";
         }
 
         public static class Trux
@@ -45,6 +46,7 @@ namespace DispatcherWeb.Configuration
             public const string BillingAddress = "App.HostManagement.BillingAddress";
             public const string NotificationsEmail = "App.HostManagement.NotificationsEmail";
             public const string SupportLinkAddress = "App.HostManagement.SupportLinkAddress";
+            public const string DriverAppImageResolution = "App.HostManagement.DriverAppImageResolution";
         }
 
         public static class DashboardCustomization
@@ -132,6 +134,7 @@ namespace DispatcherWeb.Configuration
             public const string DefaultToProductionPay = "App.TimeAndPay.DefaultToProductionPay";
             public const string PreventProductionPayOnHourlyJobs = "App.TimeAndPay.PreventProductionPayOnHourlyJobs";
             public const string AllowDriverPayRateDifferentFromFreightRate = "App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate";
+            public const string DriverIsPaidForLoadBasedOn = "App.TimeAndPay.DriverIsPaidForLoadBasedOn";
         }
 
         public static class Fuel
@@ -148,6 +151,7 @@ namespace DispatcherWeb.Configuration
             public const string TaxCalculationType = "App.Invoice.TaxCalculationType";
             public const string DefaultTaxRate = "App.Invoice.DefaultTaxRate";
             public const string AutopopulateDefaultTaxRate = "App.Invoice.AutopopulateDefaultTaxRate";
+            public const string TermsAndConditions = "App.Invoice.TermsAndConditions";
             public const string EmailSubjectTemplate = "App.Invoice.EmailSubjectTemplate";
             public const string EmailBodyTemplate = "App.Invoice.EmailBodyTemplate";
             public const string DefaultMessageOnInvoice = "App.Invoice.DefaultInvoiceComments";
@@ -327,7 +331,9 @@ namespace DispatcherWeb.Configuration
             public const string TextForSignatureView = "App.DispatchingAndMessaging.TextForSignatureView";
             public const string ShowTrailersOnSchedule = "App.DispatchingAndMessaging.ShowTrailersOnSchedule";
             public const string ValidateUtilization = "App.DispatchingAndMessaging.ValidateUtilization";
-            public const string AllowCounterSales = "App.DispatchingAndMessaging.AllowCounterSales";
+            public const string AllowSchedulingTrucksWithoutDrivers = "App.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers";
+            public const string AllowCounterSalesForTenant = "App.DispatchingAndMessaging.AllowCounterSalesForTenant";
+            public const string AllowCounterSalesForUser = "App.DispatchingAndMessaging.AllowCounterSalesForUser";
             public const string DefaultLoadAtLocationId = "App.DispatchingAndMessaging.DefaultLoadAtLocationId";
             public const string DefaultDesignationToMaterialOnly = "App.DispatchingAndMessaging.DefaultDesignationToMaterialOnly";
             public const string DefaultServiceId = "App.DispatchingAndMessaging.DefaultServiceId";

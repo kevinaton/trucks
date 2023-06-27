@@ -886,6 +886,7 @@
 		<text name="Note">Note</text>
 		<text name="ProjectsAndQuotes"><![CDATA[Projects & Quotes]]></text>
 		<text name="AddProject">Add Project</text>
+		<text name="AllowProjects">Allow Projects</text>
 		<text name="Projects">Projects</text>
 		<text name="Quotes">Quotes</text>
 		<text name="ProjectHistory">Project History</text>
@@ -977,6 +978,7 @@
 		<text name="DriverProductionPay">Driver Production Pay</text>
 		<text name="NumberOfTrucksFeature">Number of Trucks</text>
 		<text name="AddOrders">Add Orders</text>
+		<text name="AddOrder">Add Order</text>
 		<text name="ViewOrders">View Orders</text>
 		<text name="CompleteExistingDispatchesBeforeFutureDispatchesWithUrl">You must complete your existing dispatches before you can acknowledge a future dispatch. {URL} to get back to your current dispatch.</text>
 		<text name="CapitalClickHere">Click here</text>
@@ -1147,6 +1149,8 @@
 		<text name="CopyQuote">Copy Quote</text>
 		<text name="PrintQuote">Print Quote</text>
 		<text name="EmailQuote">Email Quote</text>
+		<text name="AddTruck">Add Truck</text>
+		<text name="AddDriver">Add Driver</text>
 		<text name="ProposalDate">Proposal Date</text>
 		<text name="ProposalExpiryDate">Proposal Expiry Date</text>
 		<text name="InactivationDate">Inactivation Date</text>
@@ -1188,7 +1192,7 @@
 		<text name="FreightRateToPayDriversShort">Driver Pay Freight Rate</text>
 		<text name="TruckCode">Truck Code</text>
 		<text name="DefaultDriver">Default Driver</text>
-		<text name="DefaultTrailer">Default Trailer</text>
+		<text name="CurrentTrailer">Current Trailer</text>
 		<text name="OutOfService">Out of Service</text>
 		<text name="CurrentMileage">Current Mileage</text>
 		<text name="CurrentHours">Current Hours</text>
@@ -1274,8 +1278,9 @@
 		<text name="ExportToCsv">Export to csv</text>
 		<text name="OutOfServiceTrucksReportHeader">Out of Service Trucks</text>
 		<text name="OutOfServiceTrucksReportDescription">Generate the "Out of Service Trucks" report</text>
+		<text name="TicketsAndLoads">Tickets &amp; Loads</text>
 		<text name="Dispatches">Dispatches</text>
-		<text name="LoadHistory">Load History</text>
+		<text name="LoadHistory">Loads</text>
 		<text name="TruckDispatchList">Truck Dispatch List</text>
 		<text name="DispatchesHeader">Load History</text>
 		<text name="DispatchesHeaderInfo">View the load history</text>
@@ -1461,6 +1466,9 @@
 		<text name="LastMvrDate">Last MVR Date</text>
 		<text name="NextMvrDueDate">Next MVR Due Date</text>
 		<text name="DateOfHire">Date of Hire</text>
+		<text name="TerminationDate">Termination Date</text>
+		<text name="DriverCompany">Driver Company</text>
+		<text name="SelectDriverCompanyForSelectedUserPrompt">This user worked for multiple companies and we can't tell which company this entry is associated with. Please select the correct company in the dropdown below.</text>
 		<text name="UpgradeToAccessThisFunctionality">Please upgrade to access this functionality</text>
 		<text name="SendSyncRequest">Send sync request</text>
 		<text name="CleanupSubscriptions">Cleanup Subscriptions</text>
@@ -1625,6 +1633,8 @@
 		<text name="Trux">Trux</text>
 		<text name="ImportTruxEarnings">Import Trux Earnings</text>
 		<text name="AllowImportingLuckStoneEarnings">Allow importing Luck Stone Earnings</text>
+		<text name="EditInvoicedOrdersAndTickets">Edit invoiced orders and tickets</text>
+		<text name="OverrideReadOnlyStateOfOrderLineBlockPrompt">You are about to edit an order or ticket that has already been used in an invoice or pay statement. Changing this value will result in a different value being used in the pay statement or invoice than what was used when it was initially generated. If you are sure you want to do this, click the OK button?</text>
 		<text name="SelectLuckStoneCustomer">Select the Luck Stone customer</text>
 		<text name="LuckStone">Luck Stone</text>
 		<text name="ImportLuckStoneEarnings">Import Luck Stone Earnings</text>
@@ -1659,11 +1669,12 @@
 		<text name="ShowLeaseHaulerRateOnQuote">Show lease hauler rate on quote</text>
 		<text name="ShowLeaseHaulerRateOnOrder">Show lease hauler rate on order</text>
 		<text name="BrokerageFee">Brokerage fee</text>
-		<text name="LeaseHaulerStatements">Lease Hauler Statements</text>
+		<text name="LeaseHaulerStatements">Lease Hauler Pay</text>
 		<text name="StatementId">Statement Id</text>
 		<text name="AddLeaseHaulerStatement">Add LH Statement</text>
 		<text name="CreateTicketsFile">Create Tickets File</text>
 		<text name="ShowTrailersOnSchedule">Show trailers on schedule</text>
+		<text name="AllowSchedulingTrucksWithoutDrivers">Allow scheduling trucks without drivers</text>
 		<text name="ValidateUtilization">Validate Utilization</text>
 		<text name="Verified">Verified</text>
 		<text name="Unverified">Unverified</text>
@@ -1816,5 +1827,36 @@
 		<text name="RequiresNotification">Requires Notification</text>
 		<text name="ContactName">Contact Name</text>
 		<text name="IncorrectPhoneNumberFormatError">Phone Number should be in the format of +1##########</text>
+		<text name="ADD">ADD NEW</text>
+		<text name="GlobalAddOrder">Order</text>
+		<text name="GlobalAddJob">Job</text>
+		<text name="GlobalAddQuote">Quote</text>
+		<text name="GlobalAddMessage">Message</text>
+		<text name="GlobalAddLeaseHauler">Lease Hauler</text>
+		<text name="GlobalAddTruck">Truck</text>
+		<text name="GlobalAddCustomer">Customer</text>
+		<text name="GlobalAddProductOrService">Product/Service</text>
+		<text name="GlobalAddDriver">Driver</text>
+		<text name="GlobalAddLocation">Location</text>
+		<text name="GlobalAddUser">User</text>
+		<text name="ImportTrucks">Import Trucks</text>
+		<text name="ImportVehicle">Import Mileage/Engine Hours</text>
+		<text name="ImportFuel">Import Fuel</text>
+		<text name="DriverIsPaidForLoadBasedOn">Driver is paid for load based on</text>
+		<text name="DriverAppImageResolution">Driver App Image Resolution</text>
+		<text name="PayStatement">Pay Statement</text>
+		<text name="LeaseHaulerStatement">Lease Hauler Statement</text>
+		<text name="EmployeeId">Employee Id</text>
+		<text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
+		<text name="TruckTrailerCategory">Truck/Trailer category</text>
+		<text name="Trailer">Trailer</text>
+		<text name="ThereWasTractorAssociatedWithThisTrailer">There was a tractor associated with this trailer. This tractor has been removed from the trailer.</text>
+		<text name="ActiveReports">Active Reports</text>
+		<text name="TenantStatisticsReport">Tenant Statistics Report</text>
+		<text name="YouHaveScheduledTrucksWithNoDrivers">You have scheduled trucks with no drivers. Please add a driver to each truck scheduled before trying to dispatch again.</text>
+		<text name="TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace">This trailer is already scheduled with truck {0} for a job on this date. Do you want to change the trailer for this job? Select yes to change the trailer assignment for this job.</text>
+		<text name="CannotChangeTrailerBecauseOfDispatchesError">There are dispatches for this truck. Remove the dispatches if you want to change the trailer.</text>
+		<text name="CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError">This trailer doesn't match any vehicle categories selected for this job</text>
+		<text name="InvoiceTermsAndConditions">Terms and Conditions</text>
 	</texts>
 </localizationDictionary>

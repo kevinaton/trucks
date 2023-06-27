@@ -54,7 +54,6 @@ namespace DispatcherWeb.Tickets
         private readonly IRepository<DailyFuelCost> _dailyFuelCostRepository;
         private readonly IRepository<UnitOfMeasure> _uomRepository;
         private readonly OrderTaxCalculator _orderTaxCalculator;
-        private readonly IOrderLineUpdaterFactory _orderLineUpdaterFactory;
         private readonly IBinaryObjectManager _binaryObjectManager;
         private readonly ITicketListCsvExporter _ticketListCsvExporter;
         private readonly IServiceAppService _serviceAppService;
@@ -75,7 +74,6 @@ namespace DispatcherWeb.Tickets
             IRepository<DailyFuelCost> dailyFuelCostRepository,
             IRepository<UnitOfMeasure> uomRepository,
             OrderTaxCalculator orderTaxCalculator,
-            IOrderLineUpdaterFactory orderLineUpdaterFactory,
             IBinaryObjectManager binaryObjectManager,
             ITicketListCsvExporter ticketListCsvExporter,
             IServiceAppService serviceAppService,
@@ -96,7 +94,6 @@ namespace DispatcherWeb.Tickets
             _dailyFuelCostRepository = dailyFuelCostRepository;
             _uomRepository = uomRepository;
             _orderTaxCalculator = orderTaxCalculator;
-            _orderLineUpdaterFactory = orderLineUpdaterFactory;
             _binaryObjectManager = binaryObjectManager;
             _ticketListCsvExporter = ticketListCsvExporter;
             _serviceAppService = serviceAppService;
@@ -128,6 +125,7 @@ namespace DispatcherWeb.Tickets
 
             var truckWasChanged = model.TruckId != ticket.TruckId;
             var driverWasChanged = ticket.DriverId != model.DriverId;
+            var trailerWasChanged = ticket.TrailerId != model.TrailerId;
             var originalDriverId = ticket.DriverId;
             var quantityWasChanged = ticket.Quantity != model.Quantity;
 
@@ -137,6 +135,7 @@ namespace DispatcherWeb.Tickets
             ticket.Quantity = model.Quantity;
             ticket.TruckId = model.TruckId;
             ticket.TruckCode = model.TruckCode;
+            ticket.TrailerId = model.TrailerId;
             ticket.DriverId = model.DriverId;
 
             var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
@@ -163,7 +162,7 @@ namespace DispatcherWeb.Tickets
             var validateDriverAndTruckOnTickets = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ValidateDriverAndTruckOnTickets);
             if (truckWasChanged && ticket.TruckId.HasValue)
             {
-                var ticketDriver = await GetDriverForTicketTruck(new GetDriverForTicketTruckInput
+                var ticketDriverAndTrailer = await GetDriverAndTrailerForTicketTruck(new GetDriverAndTrailerForTicketTruckInput
                 {
                     OrderLineId = model.OrderLineId,
                     TruckId = ticket.TruckId
@@ -171,35 +170,73 @@ namespace DispatcherWeb.Tickets
 
                 if (validateDriverAndTruckOnTickets)
                 {
-                    if (ticketDriver.DriverId.HasValue)
+                    if (ticketDriverAndTrailer.DriverId.HasValue)
                     {
-                        ticket.DriverId = ticketDriver.DriverId;
-                        model.DriverId = ticketDriver.DriverId;
-                        model.DriverName = ticketDriver.DriverName;
+                        ticket.DriverId = ticketDriverAndTrailer.DriverId;
+                        model.DriverId = ticketDriverAndTrailer.DriverId;
+                        model.DriverName = ticketDriverAndTrailer.DriverName;
+                    }
+                    if (ticketDriverAndTrailer.TrailerId.HasValue)
+                    {
+                        ticket.TrailerId = ticketDriverAndTrailer.TrailerId;
+                        model.TrailerId = ticketDriverAndTrailer.TrailerId;
+                        model.TrailerTruckCode = ticketDriverAndTrailer.TrailerTruckCode;
                     }
 
                     driverWasChanged = originalDriverId != ticket.DriverId;
                 }
 
-                ticket.CarrierId = ticketDriver?.CarrierId;
+                ticket.CarrierId = ticketDriverAndTrailer.CarrierId;
             }
             else if (driverWasChanged && ticket.DriverId.HasValue)
             {
-                var ticketTruck = await GetTruckForTicketDriver(new GetTruckForTicketDriverInput
+                var ticketTruckAndTrailer = await GetTruckAndTrailerForTicketDriver(new GetTruckAndTrailerForTicketDriverInput
                 {
                     OrderLineId = model.OrderLineId,
                     DriverId = ticket.DriverId.Value
                 });
 
-                if (ticketTruck.TruckId.HasValue)
+                if (validateDriverAndTruckOnTickets)
                 {
-                    if (validateDriverAndTruckOnTickets)
+                    if (ticketTruckAndTrailer.TruckId.HasValue)
                     {
-                        ticket.TruckId = ticketTruck.TruckId;
-                        model.TruckId = ticketTruck.TruckId;
-                        model.TruckCode = ticketTruck.TruckCode;
+                        ticket.TruckId = ticketTruckAndTrailer.TruckId;
+                        model.TruckId = ticketTruckAndTrailer.TruckId;
+                        model.TruckCode = ticketTruckAndTrailer.TruckCode;
+                        ticket.CarrierId = ticketTruckAndTrailer.CarrierId;
                     }
-                    ticket.CarrierId = ticketTruck.CarrierId;
+                    if (ticketTruckAndTrailer.TrailerId.HasValue)
+                    {
+                        ticket.TrailerId = ticketTruckAndTrailer.TrailerId;
+                        model.TrailerId = ticketTruckAndTrailer.TrailerId;
+                        model.TrailerTruckCode = ticketTruckAndTrailer.TrailerTruckCode;
+                    }
+                }
+            }
+            else if (trailerWasChanged && ticket.TrailerId.HasValue)
+            {
+                var ticketTruckAndDriver = await GetTruckAndDriverForTicketTrailer(new GetTruckAndDriverForTicketTrailerInput
+                {
+                    OrderLineId = model.OrderLineId,
+                    TrailerId = ticket.TrailerId.Value
+                });
+
+                if (validateDriverAndTruckOnTickets)
+                {
+                    if (ticketTruckAndDriver.TruckId.HasValue)
+                    {
+                        ticket.TruckId = ticketTruckAndDriver.TruckId;
+                        model.TruckId = ticketTruckAndDriver.TruckId;
+                        model.TruckCode = ticketTruckAndDriver.TruckCode;
+                        ticket.CarrierId = ticketTruckAndDriver.CarrierId;
+                    }
+
+                    if (ticketTruckAndDriver.DriverId.HasValue)
+                    {
+                        ticket.DriverId = ticketTruckAndDriver.DriverId;
+                        model.DriverId = ticketTruckAndDriver.DriverId;
+                        model.DriverName = ticketTruckAndDriver.DriverName;
+                    }
                 }
             }
 
@@ -284,11 +321,11 @@ namespace DispatcherWeb.Tickets
             };
         }
 
-        public async Task<GetDriverForTicketTruckResult> GetDriverForTicketTruck(GetDriverForTicketTruckInput input)
+        public async Task<GetDriverAndTrailerForTicketTruckResult> GetDriverAndTrailerForTicketTruck(GetDriverAndTrailerForTicketTruckInput input)
         {
             if (!input.ValidateInput())
             {
-                return new GetDriverForTicketTruckResult();
+                return new GetDriverAndTrailerForTicketTruckResult();
             }
 
             var order = input.OrderLineId.HasValue ? _orderLineRepository.GetAll()
@@ -313,12 +350,20 @@ namespace DispatcherWeb.Tickets
                 {
                     x.DriverId,
                     DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
+                    x.TrailerId,
+                    TrailerTruckCode = x.Trailer.TruckCode,
                     LeaseHaulerId = (int?)x.Truck.LeaseHaulerTruck.LeaseHaulerId,
                     LeaseHaulerName = x.Truck.LeaseHaulerTruck.LeaseHauler.Name
                 })
                 .ToListAsync();
 
-            var result = new GetDriverForTicketTruckResult();
+            var result = new GetDriverAndTrailerForTicketTruckResult();
+
+            if (orderLineTrucks.Select(x => x.TrailerId).Distinct().Count() == 1)
+            {
+                result.TrailerId = orderLineTrucks[0].TrailerId;
+                result.TrailerTruckCode = orderLineTrucks[0].TrailerTruckCode;
+            }
 
             if (orderLineTrucks.Select(x => x.DriverId).Distinct().Count() == 1)
             {
@@ -349,7 +394,7 @@ namespace DispatcherWeb.Tickets
             return result;
         }
 
-        public async Task<GetTruckForTicketDriverResult> GetTruckForTicketDriver(GetTruckForTicketDriverInput input)
+        public async Task<GetTruckAndTrailerForTicketDriverResult> GetTruckAndTrailerForTicketDriver(GetTruckAndTrailerForTicketDriverInput input)
         {
             var order = input.OrderLineId.HasValue ? _orderLineRepository.GetAll()
                 .Where(x => x.Id == input.OrderLineId)
@@ -368,19 +413,72 @@ namespace DispatcherWeb.Tickets
                 {
                     x.TruckId,
                     TruckCode = x.Truck.TruckCode,
+                    x.TrailerId,
+                    TrailerTruckCode = x.Trailer.TruckCode,
                     LeaseHaulerId = (int?)x.Truck.LeaseHaulerTruck.LeaseHaulerId,
                     LeaseHaulerName = x.Truck.LeaseHaulerTruck.LeaseHauler.Name
                 })
                 .ToListAsync();
 
-            var result = new GetTruckForTicketDriverResult();
+            var result = new GetTruckAndTrailerForTicketDriverResult();
 
             if (orderLineTrucks.Select(x => x.TruckId).Distinct().Count() == 1)
             {
                 result.TruckId = orderLineTrucks[0].TruckId;
                 result.TruckCode = orderLineTrucks[0].TruckCode;
-                result.CarrierId = orderLineTrucks[0]?.LeaseHaulerId;
-                result.CarrierName = orderLineTrucks[0]?.LeaseHaulerName;
+                result.CarrierId = orderLineTrucks[0].LeaseHaulerId;
+                result.CarrierName = orderLineTrucks[0].LeaseHaulerName;
+            }
+
+            if (orderLineTrucks.Select(x => x.TrailerId).Distinct().Count() == 1)
+            {
+                result.TrailerId = orderLineTrucks[0].TrailerId;
+                result.TrailerTruckCode = orderLineTrucks[0].TrailerTruckCode;
+            }
+
+            return result;
+        }
+
+        public async Task<GetTruckAndDriverForTicketTrailerResult> GetTruckAndDriverForTicketTrailer(GetTruckAndDriverForTicketTrailerInput input)
+        {
+            var order = input.OrderLineId.HasValue ? _orderLineRepository.GetAll()
+                .Where(x => x.Id == input.OrderLineId)
+                .Select(x => new
+                {
+                    x.Order.DeliveryDate,
+                    x.Order.Shift,
+                    x.Order.LocationId
+                }).FirstOrDefault() : null;
+
+            var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                .WhereIf(input.OrderLineId.HasValue, x => x.OrderLineId == input.OrderLineId)
+                .WhereIf(input.OrderDate.HasValue, x => x.OrderLine.Order.DeliveryDate == input.OrderDate)
+                .Where(x => x.TrailerId == input.TrailerId)
+                .Select(x => new
+                {
+                    x.TruckId,
+                    TruckCode = x.Truck.TruckCode,
+                    x.DriverId,
+                    DriverName = x.Driver.FirstName + " " + x.Driver.LastName,
+                    LeaseHaulerId = (int?)x.Truck.LeaseHaulerTruck.LeaseHaulerId,
+                    LeaseHaulerName = x.Truck.LeaseHaulerTruck.LeaseHauler.Name
+                })
+                .ToListAsync();
+
+            var result = new GetTruckAndDriverForTicketTrailerResult();
+
+            if (orderLineTrucks.Select(x => x.TruckId).Distinct().Count() == 1)
+            {
+                result.TruckId = orderLineTrucks[0].TruckId;
+                result.TruckCode = orderLineTrucks[0].TruckCode;
+                result.CarrierId = orderLineTrucks[0].LeaseHaulerId;
+                result.CarrierName = orderLineTrucks[0].LeaseHaulerName;
+            }
+
+            if (orderLineTrucks.Select(x => x.DriverId).Distinct().Count() == 1)
+            {
+                result.DriverId = orderLineTrucks[0].DriverId;
+                result.DriverName = orderLineTrucks[0].DriverName;
             }
 
             return result;
@@ -412,6 +510,9 @@ namespace DispatcherWeb.Tickets
                         ServiceId = t.ServiceId,
                         ServiceName = t.Service != null ? t.Service.Service1 : "",
                         TruckCode = t.Truck.TruckCode ?? t.TruckCode,
+                        TruckId = t.TruckId,
+                        TrailerId = t.TrailerId,
+                        TrailerTruckCode = t.Trailer.TruckCode,
                         DriverId = t.DriverId,
                         DriverName = t.Driver.FirstName + " " + t.Driver.LastName,
                         UomId = t.UnitOfMeasureId,
@@ -439,7 +540,9 @@ namespace DispatcherWeb.Tickets
                         IsReadOnly = t.InvoiceLine != null //already invoiced
                                 || t.PayStatementTickets.Any() //already added to pay statements
                                 || t.ReceiptLineId != null //already added to receipts
-                                || t.LeaseHaulerStatementTicket != null //added to lease hauler statements
+                                || t.LeaseHaulerStatementTicket != null, //added to lease hauler statements
+                        HasPayStatements = t.PayStatementTickets.Any(),
+                        HasLeaseHaulerStatements = t.LeaseHaulerStatementTicket != null
                     })
                     .FirstAsync(t => t.Id == input.Id.Value);
 
@@ -486,6 +589,7 @@ namespace DispatcherWeb.Tickets
             ticket.ServiceId = model.ServiceId;
             ticket.TruckCode = model.TruckCode;
             ticket.TruckId = await GetTruckId(model.TruckCode);
+            ticket.TrailerId = model.TrailerId;
             ticket.DriverId = model.DriverId;
             if (!model.OrderLineId.HasValue)
             {
@@ -496,11 +600,11 @@ namespace DispatcherWeb.Tickets
             ticket.IsVerified = model.IsVerified;
             ticket.IsBilled = model.IsBilled;
 
-            if (ticket.TruckId == null && !(model.CarrierId > 0))
+            if (ticket.TruckId == null && !(model.CarrierId > 0) && !await SettingManager.AllowCounterSalesForTenant())
             {
                 throw new UserFriendlyException($"Invalid truck number");
             }
-            if (ticket.DriverId == null && !(model.CarrierId > 0))
+            if (ticket.DriverId == null && !(model.CarrierId > 0) && !await SettingManager.AllowCounterSalesForTenant())
             {
                 throw new UserFriendlyException("Driver is required");
             }
@@ -706,7 +810,10 @@ namespace DispatcherWeb.Tickets
                     Quantity = t.Quantity,
                     UomName = t.UnitOfMeasure.Name,
                     TruckId = t.TruckId,
-                    Truck = t.Truck.TruckCode != null ? t.Truck.TruckCode : t.TruckCode, //:: Change code for get TruckCode id truck not found
+                    TruckCode = t.Truck.TruckCode != null ? t.Truck.TruckCode : t.TruckCode,
+                    TruckCanPullTrailer = t.Truck.CanPullTrailer,
+                    TrailerId = t.TrailerId,
+                    TrailerTruckCode = t.Trailer.TruckCode,
                     DriverId = t.DriverId,
                     DriverName = t.Driver.FirstName + " " + t.Driver.LastName,
                     TicketPhotoId = t.TicketPhotoId,
@@ -896,11 +1003,11 @@ namespace DispatcherWeb.Tickets
             if (input.TicketStatus == TicketListStatusFilterEnum.PotentialDuplicateTickets)
             {
                 query = (from ticket in query
-                        join otherTicket in _ticketRepository.GetAll()
-                        on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
-                        equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
-                        where otherTicket != null && otherTicket.Id != ticket.Id
-                        select ticket)
+                         join otherTicket in _ticketRepository.GetAll()
+                         on new { ticket.TicketNumber, ticket.LoadAtId, ticket.DeliverToId }
+                         equals new { otherTicket.TicketNumber, otherTicket.LoadAtId, otherTicket.DeliverToId }
+                         where otherTicket != null && otherTicket.Id != ticket.Id
+                         select ticket)
                         .Distinct();
             }
 
@@ -938,6 +1045,7 @@ namespace DispatcherWeb.Tickets
                     Date = t.TicketDateTime,
                     OrderDate = t.OrderLine.Order.DeliveryDate,
                     ShiftRaw = t.OrderLineId.HasValue ? t.OrderLine.Order.Shift : t.Shift,
+                    Office = t.Office.Name,
                     CustomerName = t.Customer != null ? t.Customer.Name : "",
                     QuoteName = t.OrderLine.Order.Quote.Name,
                     JobNumber = t.OrderLine.JobNumber,
@@ -947,10 +1055,13 @@ namespace DispatcherWeb.Tickets
                     Uom = t.UnitOfMeasure != null ? t.UnitOfMeasure.Name : "",
                     Carrier = t.Carrier != null ? t.Carrier.Name : "",
                     Truck = t.Truck.TruckCode ?? t.TruckCode,
+                    Trailer = t.Trailer.TruckCode,
                     DriverName = t.Driver == null ? null : t.Driver.LastName + ", " + t.Driver.FirstName,
                     IsBilled = t.IsBilled,
                     TicketPhotoId = t.TicketPhotoId,
                     InvoiceLineId = (int?)t.InvoiceLine.Id,
+                    HasPayStatements = t.PayStatementTickets.Any(),
+                    HasLeaseHaulerStatements = t.LeaseHaulerStatementTicket != null,
                     ReceiptLineId = t.ReceiptLineId,
                     LoadAtNamePlain = t.LoadAt.Name + ", " + t.LoadAt.StreetAddress + ", " + t.LoadAt.City + ", " + t.LoadAt.State, //for sorting
                     LoadAt = t.LoadAt == null ? null : new LocationNameDto
@@ -974,6 +1085,7 @@ namespace DispatcherWeb.Tickets
                     TicketUomId = t.UnitOfMeasureId,
                     MaterialRate = t.OrderLine.MaterialPricePerUnit,
                     FreightRate = t.OrderLine.FreightPricePerUnit,
+                    FreightRateToPayDrivers = t.OrderLine.FreightRateToPayDrivers,
                     FuelSurcharge = t.FuelSurcharge,
                     Revenue = t.Quantity * ((t.OrderLine.MaterialPricePerUnit ?? 0) + (t.OrderLine.FreightPricePerUnit ?? 0)),
                     IsFreightPriceOverridden = t.OrderLine.IsFreightPriceOverridden,
@@ -1037,10 +1149,12 @@ namespace DispatcherWeb.Tickets
                     FreightTotal = x.FreightPrice,
                     IsMaterialTotalOverridden = x.IsMaterialPriceOverridden,
                     IsFreightTotalOverridden = x.IsFreightPriceOverridden,
+                    Note = x.Note,
                     OrderLineTrucks = x.OrderLineTrucks.Select(t => new TicketsByDriverResult.OrderLineTruckDto
                     {
                         Id = t.Id,
                         TruckId = t.TruckId,
+                        TrailerId = t.TrailerId,
                         DriverId = t.DriverId,
                         DriverNote = t.DriverNote,
                     }).ToList(),
@@ -1076,8 +1190,14 @@ namespace DispatcherWeb.Tickets
                     Id = x.Id,
                     TruckCode = x.TruckCode,
                     IsActive = x.IsActive,
+                    CanPullTrailer = x.CanPullTrailer,
+                    VehicleCategory = new TicketsByDriverResult.VehicleCategoryDto
+                    {
+                        AssetType = x.VehicleCategory.AssetType,
+                    },
                     LeaseHaulerId = (int?)x.LeaseHaulerTruck.LeaseHaulerId,
-                    DefaultDriverId = x.DefaultDriverId
+                    DefaultDriverId = x.DefaultDriverId,
+                    CurrentTrailerId = x.CurrentTrailerId,
                 }).ToListAsync();
 
             result.DriverAssignments = await _driverAssignmentRepository.GetAll()
@@ -1089,39 +1209,6 @@ namespace DispatcherWeb.Tickets
                     TruckId = x.TruckId,
                     DriverId = x.DriverId
                 }).ToListAsync();
-
-            //we're now taking the DriverId directly from OrderLineTrucks
-            //foreach (var orderLine in result.OrderLines)
-            //{
-            //    foreach (var orderLineTruck in orderLine.OrderLineTrucks)
-            //    {
-            //        orderLineTruck.DriverId = result.DriverAssignments.FirstOrDefault(da => da.Shift == orderLine.Shift && da.TruckId == orderLineTruck.TruckId)?.DriverId;
-            //    }
-            //}
-            //
-            //if (result.OrderLines.Any(o => o.OrderLineTrucks.Any(olt => result.Trucks.FirstOrDefault(t => t.Id == olt.TruckId)?.LeaseHaulerId != null)))
-            //{
-            //    var availableLeaseHaulers = await _availableLeaseHaulerTrucksRepository.GetAll()
-            //        .Where(a => a.Date == input.Date)
-            //        .Select(x => new
-            //        {
-            //            x.TruckId,
-            //            x.DriverId,
-            //            x.Shift,
-            //        })
-            //        .ToListAsync();
-            //
-            //    foreach (var orderLine in result.OrderLines)
-            //    {
-            //        foreach (var orderLineTruck in orderLine.OrderLineTrucks)
-            //        {
-            //            if (orderLineTruck.DriverId == null)
-            //            {
-            //                orderLineTruck.DriverId = availableLeaseHaulers.FirstOrDefault(x => x.TruckId == orderLineTruck.TruckId && x.Shift == orderLine.Shift)?.DriverId;
-            //            }
-            //        }
-            //    }
-            //}
 
             result.Tickets = await _ticketRepository.GetAll()
                 .Where(x => x.OrderLineId.HasValue && x.OrderLine.Order.DeliveryDate == input.Date)
@@ -1137,6 +1224,8 @@ namespace DispatcherWeb.Tickets
                     UomName = t.UnitOfMeasure.Name,
                     TruckId = t.TruckId,
                     TruckCode = t.TruckCode,
+                    TrailerId = t.TrailerId,
+                    TrailerTruckCode = t.Trailer.TruckCode,
                     DriverId = t.DriverId,
                     TicketPhotoId = t.TicketPhotoId,
                     ReceiptLineId = t.ReceiptLineId,
@@ -1289,7 +1378,10 @@ namespace DispatcherWeb.Tickets
                     {
                         await EnsureCanAddTickets(ticketModel.OrderLineId.Value, OfficeId);
                     }
-                    await _ticketRepository.EnsureCanEditTicket(ticketModel.Id);
+                    if (!await IsGrantedAsync(AppPermissions.EditInvoicedOrdersAndTickets))
+                    {
+                        await _ticketRepository.EnsureCanEditTicket(ticketModel.Id);
+                    }
 
                     //var driverOrTruckHasChanged = false;
                     if (ticket.DriverId != ticketModel.DriverId)
@@ -1314,6 +1406,7 @@ namespace DispatcherWeb.Tickets
                             ticket.CarrierId = truck?.LeaseHaulerId;
                         }
                     }
+                    ticket.TrailerId = ticketModel.TrailerId;
                     if (ticketModel.TicketDateTime.HasValue)
                     {
                         ticket.TicketDateTime = ticketModel.TicketDateTime.Value.ConvertTimeZoneFrom(timezone);
@@ -1403,74 +1496,77 @@ namespace DispatcherWeb.Tickets
             {
                 foreach (var orderLineModel in model.OrderLines)
                 {
-                    var orderLineUpdater = _orderLineUpdaterFactory.Create(orderLineModel.Id);
-                    var orderLine = await orderLineUpdater.GetEntityAsync();
+                    var orderLine = await _orderLineRepository.GetAll()
+                        .Include(x => x.Tickets)
+                        .FirstOrDefaultAsync(x => x.Id == orderLineModel.Id);
 
-                    var orderLineTickets = await _ticketRepository.GetAll()
-                        .Where(x => x.OrderLineId == orderLineModel.Id)
-                        .ToListAsync();
-                    
+                    if (orderLine == null)
+                    {
+                        throw new ApplicationException($"OrderLine with id {orderLineModel.Id} wasn't found");
+                    }
+
+                    var orderLineTickets = orderLine.Tickets.ToList();
                     //if (orderLine.Order.CustomerId != orderLineModel.CustomerId)
                     // we disallowed to change CustomerId from tickets by driver view per #10977
                     //}
                     if (orderLine.LoadAtId != orderLineModel.LoadAtId)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.LoadAtId, orderLineModel.LoadAtId);
+                        orderLine.LoadAtId = orderLineModel.LoadAtId;
                         orderLineTickets.ForEach(t => t.LoadAtId = orderLineModel.LoadAtId);
                     }
                     if (orderLine.DeliverToId != orderLineModel.DeliverToId)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.DeliverToId, orderLineModel.DeliverToId);
+                        orderLine.DeliverToId = orderLineModel.DeliverToId;
                         orderLineTickets.ForEach(t => t.DeliverToId = orderLineModel.DeliverToId);
                     }
                     if (orderLine.ServiceId != orderLineModel.ServiceId)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.ServiceId, orderLineModel.ServiceId);
+                        orderLine.ServiceId = orderLineModel.ServiceId;
                         orderLineTickets.ForEach(t => t.ServiceId = orderLineModel.ServiceId);
                     }
 
-                    await orderLineUpdater.UpdateFieldAsync(x => x.JobNumber, orderLineModel.JobNumber);
+                    orderLine.JobNumber = orderLineModel.JobNumber;
 
                     var rateWasChanged = false;
                     if (orderLine.Designation != orderLineModel.Designation)
                     {
                         var oldDesignation = orderLine.Designation;
-                        await orderLineUpdater.UpdateFieldAsync(x => x.Designation, orderLineModel.Designation);
+                        orderLine.Designation = orderLineModel.Designation;
                         if (orderLine.Designation.MaterialOnly())
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, null);
+                            orderLine.FreightUomId = null;
                             if (orderLine.FreightPrice != 0 || orderLine.FreightPricePerUnit != 0 || orderLine.FreightQuantity != 0)
                             {
                                 rateWasChanged = true;
                             }
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightPrice, 0);
-                            //await orderLineUpdater.UpdateFieldAsync(x => x.FreightPricePerUnit, 0); //Rate change will be handled below
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightQuantity, 0);
+                            orderLine.FreightPrice = 0;
+                            //orderLine.FreightPricePerUnit = 0; //Rate change will be handled below
+                            orderLine.FreightQuantity = 0;
                         }
                         else if (orderLine.Designation.FreightOnly())
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, null);
+                            orderLine.MaterialUomId = null;
                             if (orderLine.MaterialPrice != 0 || orderLine.MaterialPricePerUnit != 0 || orderLine.MaterialQuantity != 0)
                             {
                                 rateWasChanged = true;
                             }
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPrice, 0);
-                            //await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPricePerUnit, 0); //Rate change will be handled below
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialQuantity, 0);
+                            orderLine.MaterialPrice = 0;
+                            //orderLine.MaterialPricePerUnit = 0; //Rate change will be handled below
+                            orderLine.MaterialQuantity = 0;
                         }
                         else
                         {
                             if (oldDesignation.MaterialOnly())
                             {
                                 rateWasChanged = true;
-                                await orderLineUpdater.UpdateFieldAsync(x => x.FreightQuantity, orderLine.MaterialQuantity);
-                                //await orderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, orderLine.MaterialUomId); //UOM change will be handled below
+                                orderLine.FreightQuantity = orderLine.MaterialQuantity;
+                                //orderLine.FreightUomId = orderLine.MaterialUomId; //UOM change will be handled below
                             }
                             else if (oldDesignation.FreightOnly())
                             {
                                 rateWasChanged = true;
-                                await orderLineUpdater.UpdateFieldAsync(x => x.MaterialQuantity, orderLine.FreightQuantity);
-                                //await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, orderLine.FreightUomId); //UOM change will be handled below
+                                orderLine.MaterialQuantity = orderLine.FreightQuantity;
+                                //orderLine.MaterialUomId = orderLine.FreightUomId; //UOM change will be handled below
                             }
                         }
                     }
@@ -1479,9 +1575,9 @@ namespace DispatcherWeb.Tickets
                     {
                         if (orderLine.MaterialUomId != orderLineModel.UomId || orderLine.FreightUomId != orderLineModel.UomId)
                         {
-                            await UncheckProductionPayOnFreightUomChangeIfNeeded(orderLine, orderLineUpdater, orderLineModel.UomId);
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, orderLineModel.UomId);
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, orderLineModel.UomId);
+                            await UncheckProductionPayOnFreightUomChangeIfNeeded(orderLine, orderLineModel.UomId);
+                            orderLine.MaterialUomId = orderLineModel.UomId;
+                            orderLine.FreightUomId = orderLineModel.UomId;
                             orderLineTickets.ForEach(t => t.UnitOfMeasureId = orderLineModel.UomId);
                         }
                     }
@@ -1489,7 +1585,7 @@ namespace DispatcherWeb.Tickets
                     {
                         if (orderLine.MaterialUomId != orderLineModel.UomId)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, orderLineModel.UomId);
+                            orderLine.MaterialUomId = orderLineModel.UomId;
                             orderLineTickets.ForEach(t => t.UnitOfMeasureId = orderLineModel.UomId);
                         }
                     }
@@ -1497,8 +1593,8 @@ namespace DispatcherWeb.Tickets
                     {
                         if (orderLine.FreightUomId != orderLineModel.UomId)
                         {
-                            await UncheckProductionPayOnFreightUomChangeIfNeeded(orderLine, orderLineUpdater, orderLineModel.UomId);
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightUomId, orderLineModel.UomId);
+                            await UncheckProductionPayOnFreightUomChangeIfNeeded(orderLine, orderLineModel.UomId);
+                            orderLine.FreightUomId = orderLineModel.UomId;
                             orderLineTickets.ForEach(t => t.UnitOfMeasureId = orderLineModel.UomId);
                         }
                     }
@@ -1517,48 +1613,45 @@ namespace DispatcherWeb.Tickets
                         if (!(orderLine.MaterialPricePerUnit > 0) && orderLineModel.MaterialRate > 0
                             && orderLine.Designation.FreightOnly())
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.Designation, DesignationEnum.FreightAndMaterial);
-                            orderLineModel.Designation = DesignationEnum.FreightAndMaterial;
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialUomId, orderLine.FreightUomId);
-                            orderLineModel.MaterialUomId = orderLine.FreightUomId;
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialQuantity, orderLine.FreightQuantity);
+                            orderLine.Designation = orderLineModel.Designation = DesignationEnum.FreightAndMaterial;
+                            orderLine.MaterialUomId = orderLineModel.MaterialUomId = orderLine.FreightUomId;
+                            orderLine.MaterialQuantity = orderLine.FreightQuantity;
                         }
                     }
                     if (orderLine.FreightPricePerUnit != orderLineModel.FreightRate)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.FreightPricePerUnit, orderLineModel.FreightRate);
+                        orderLine.FreightPricePerUnit = orderLineModel.FreightRate;
                         if (pricing?.QuoteBasedPricing?.FreightRate != null)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.IsFreightPricePerUnitOverridden, pricing.QuoteBasedPricing.FreightRate != orderLine.FreightPricePerUnit);
+                            orderLine.IsFreightPricePerUnitOverridden = pricing.QuoteBasedPricing.FreightRate != orderLine.FreightPricePerUnit;
                         }
                         else if (pricing?.FreightRate != null && pricing.HasPricing)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.IsFreightPricePerUnitOverridden, pricing.FreightRate != orderLine.FreightPricePerUnit);
+                            orderLine.IsFreightPricePerUnitOverridden = pricing.FreightRate != orderLine.FreightPricePerUnit;
                         }
                         if (!orderLine.IsFreightPriceOverridden)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.FreightPrice, Math.Round((orderLine.FreightPricePerUnit ?? 0) * (orderLine.FreightQuantity ?? 0), 2));
+                            orderLine.FreightPrice = Math.Round((orderLine.FreightPricePerUnit ?? 0) * (orderLine.FreightQuantity ?? 0), 2);
                         }
                     }
                     if (orderLine.MaterialPricePerUnit != orderLineModel.MaterialRate)
                     {
-                        await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPricePerUnit, orderLineModel.MaterialRate);
+                        orderLine.MaterialPricePerUnit = orderLineModel.MaterialRate;
                         if (pricing?.QuoteBasedPricing?.PricePerUnit != null)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.IsMaterialPricePerUnitOverridden, pricing.QuoteBasedPricing.PricePerUnit != orderLine.MaterialPricePerUnit);
+                            orderLine.IsMaterialPricePerUnitOverridden = pricing.QuoteBasedPricing.PricePerUnit != orderLine.MaterialPricePerUnit;
                         }
                         else if (pricing?.PricePerUnit != null && pricing.HasPricing)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.IsMaterialPricePerUnitOverridden, pricing.PricePerUnit != orderLine.MaterialPricePerUnit);
+                            orderLine.IsMaterialPricePerUnitOverridden = pricing.PricePerUnit != orderLine.MaterialPricePerUnit;
                         }
                         if (!orderLine.IsMaterialPriceOverridden)
                         {
-                            await orderLineUpdater.UpdateFieldAsync(x => x.MaterialPrice, Math.Round((orderLine.MaterialPricePerUnit ?? 0) * (orderLine.MaterialQuantity ?? 0), 2));
+                            orderLine.MaterialPrice = Math.Round((orderLine.MaterialPricePerUnit ?? 0) * (orderLine.MaterialQuantity ?? 0), 2);
                         }
                     }
-                    await orderLineUpdater.UpdateFieldAsync(x => x.FreightRateToPayDrivers, orderLineModel.FreightRateToPayDrivers);
+                    orderLine.FreightRateToPayDrivers = orderLineModel.FreightRateToPayDrivers;
 
-                    await orderLineUpdater.SaveChangesAsync();
                     if (rateWasChanged)
                     {
                         await CurrentUnitOfWork.SaveChangesAsync();
@@ -1622,7 +1715,7 @@ namespace DispatcherWeb.Tickets
             return model;
         }
 
-        private async Task UncheckProductionPayOnFreightUomChangeIfNeeded(OrderLine orderLine, IOrderLineUpdater orderLineUpdater, int? newUomId)
+        private async Task UncheckProductionPayOnFreightUomChangeIfNeeded(OrderLine orderLine, int? newUomId)
         {
             if (orderLine.FreightUomId == newUomId
                 || !orderLine.ProductionPay
@@ -1641,7 +1734,7 @@ namespace DispatcherWeb.Tickets
 
             if (uom.Name.ToLower().TrimEnd('s') == "hour")
             {
-                await orderLineUpdater.UpdateFieldAsync(x => x.ProductionPay, false);
+                orderLine.ProductionPay = false;
             }
         }
 

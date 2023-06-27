@@ -87,11 +87,11 @@ namespace DispatcherWeb.Invoices.Reports
                 //logo
                 table.AddColumn(Unit.FromCentimeter(3.5)); //image will be 2.5 cm wide
                 //Legal Name and Legal Address
-                table.AddColumn(Unit.FromCentimeter(10));
+                table.AddColumn(Unit.FromCentimeter(9.5));
                 //date labels
                 table.AddColumn(Unit.FromCentimeter(2.2));
                 //Invoice #, dates
-                table.AddColumn(Unit.FromCentimeter(2.9));
+                table.AddColumn(Unit.FromCentimeter(3.4));
 
                 row = table.AddRow();
                 row.Format.Alignment = ParagraphAlignment.Left;
@@ -342,6 +342,21 @@ namespace DispatcherWeb.Invoices.Reports
                 paragraph = document.LastSection.AddParagraph(model.Message ?? "");
                 paragraph.Format.SpaceBefore = Unit.FromCentimeter(0.4);
 
+                // Second Page
+                if (!string.IsNullOrEmpty(model.TermsAndConditions))
+                {
+                    section.AddPageBreak();
+                    paragraph = document.LastSection.AddParagraph();
+                    paragraph.Format.Font.Size = Unit.FromPoint(7.5);
+
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                    paragraph.AddText(model.TermsAndConditions);
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                }
+                
                 //if (!taxWarning.IsNullOrEmpty())
                 //{
                 //    paragraph = document.LastSection.AddParagraph(taxWarningAsterisks + taxWarning);

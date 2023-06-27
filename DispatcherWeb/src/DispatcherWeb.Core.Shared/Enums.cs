@@ -108,10 +108,12 @@ namespace DispatcherWeb
     public enum BedConstructionEnum
     {
         Steel = 0,
-        Aluminum = 1
+        Aluminum = 1,
+        [Display(Name = "Rock Box")]
+        RockBox = 2
     }
 
-    public enum ProjectStatus
+    public enum QuoteStatus
     {
         Pending = 0,
         Active = 1,
@@ -791,5 +793,21 @@ namespace DispatcherWeb
         ServiceStatus = 0x4,
         [Display(Name = "Marketing")]
         Marketing = 0x8,
+    }
+
+    public enum DriverIsPaidForLoadBasedOnEnum
+    {
+        [Display(Name = "Ticket Date")]
+        TicketDate = 1,
+        [Display(Name = "Order Date")]
+        OrderDate = 2,
+    }
+
+    public enum DriverAppImageResolutionEnum
+    {
+        Small = 1,
+        Medium = 2,
+        Large = 3,
+        Original = 4,
     }
 }

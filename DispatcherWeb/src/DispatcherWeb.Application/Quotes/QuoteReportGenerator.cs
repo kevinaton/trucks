@@ -87,8 +87,12 @@ namespace DispatcherWeb.Quotes
             paragraph.AddText(model.QuoteProposalExpiryDate?.ToShortDateString() ?? "");
 
             paragraph = document.LastSection.AddParagraph();
-            paragraph = document.LastSection.AddParagraph("Project: ");
-            paragraph.AddText(model.ProjectName ?? "");
+            paragraph = document.LastSection.AddParagraph();
+            if (model.ShowProject)
+            {
+                paragraph.AddText("Project: ");
+                paragraph.AddText(model.ProjectName ?? "");
+            }
             paragraph.Format.AddTabStop(Unit.FromCentimeter(10));
             paragraph.AddTab();
             paragraph.AddText("Salesperson:");
@@ -115,20 +119,25 @@ namespace DispatcherWeb.Quotes
             //Code
             table.AddColumn(Unit.FromCentimeter(1.5));
             //Description
-            table.AddColumn(Unit.FromCentimeter(2.5));
+            table.AddColumn(Unit.FromCentimeter(2.2));
+            if (model.ShowTruckCategories)
+            {
+                //Truck Categories
+                table.AddColumn(Unit.FromCentimeter(2.2));
+            }
             //Designation
-            table.AddColumn(Unit.FromCentimeter(2.5));
+            table.AddColumn(Unit.FromCentimeter(2.2));
             if (!model.HideLoadAt)
             {
                 //Load At
-                table.AddColumn(Unit.FromCentimeter(2.8));
+                table.AddColumn(Unit.FromCentimeter(2.6));
             }
             //Deliver To
-            table.AddColumn(Unit.FromCentimeter(2.8));
+            table.AddColumn(Unit.FromCentimeter(2.6));
             //Qty
-            table.AddColumn(Unit.FromCentimeter(4));
+            table.AddColumn(Unit.FromCentimeter(3));
             //Rate
-            table.AddColumn(Unit.FromCentimeter(2.7));
+            table.AddColumn(Unit.FromCentimeter(2.5));
 
             Row row = table.AddRow();
             row.Shading.Color = Colors.LightGray;
@@ -143,6 +152,11 @@ namespace DispatcherWeb.Quotes
             cell.AddParagraph("Code");
             cell = row.Cells[i++];
             cell.AddParagraph("Description");
+            if (model.ShowTruckCategories)
+            {
+                cell = row.Cells[i++];
+                cell.AddParagraph("Truck Categories");
+            }
             cell = row.Cells[i++];
             cell.AddParagraph("Designation");
             if (!model.HideLoadAt)
@@ -168,6 +182,11 @@ namespace DispatcherWeb.Quotes
                     paragraph.Format.Alignment = ParagraphAlignment.Center;
                     cell = row.Cells[i++];
                     paragraph = cell.AddParagraph(item.Description, tm);
+                    if (model.ShowTruckCategories)
+                    {
+                        cell = row.Cells[i++];
+                        paragraph = cell.AddParagraph(string.Join(", ", item.QuoteServiceVehicleCategories), tm);
+                    }
                     cell = row.Cells[i++];
                     paragraph = cell.AddParagraph(item.DesignationName, tm);
                     if (!model.HideLoadAt)
@@ -190,7 +209,7 @@ namespace DispatcherWeb.Quotes
                         i = 0;
                         row = table.AddRow();
                         cell = row.Cells[i++];
-                        cell.MergeRight = 5 + (model.HideLoadAt ? 0 : 1);
+                        cell.MergeRight = 5 + (model.HideLoadAt ? 0 : 1) + (model.ShowTruckCategories ? 1 : 0);
                         paragraph = cell.AddParagraph(item.Note, tm);
                     }
                 }
@@ -282,16 +301,19 @@ namespace DispatcherWeb.Quotes
 
             // Second Page
 
-            section.AddPageBreak();
-            paragraph = document.LastSection.AddParagraph();
-            paragraph.Format.Font.Size = Unit.FromPoint(7.5);
+            if (!string.IsNullOrEmpty(model.QuoteGeneralTermsAndConditions))
+            {
+                section.AddPageBreak();
+                paragraph = document.LastSection.AddParagraph();
+                paragraph.Format.Font.Size = Unit.FromPoint(7.5);
 
-            paragraph.AddLineBreak();
-            paragraph.AddLineBreak();
-            paragraph.AddLineBreak();
-            paragraph.AddText(model.QuoteGeneralTermsAndConditions);
-            paragraph.AddLineBreak();
-            paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+                paragraph.AddText(model.QuoteGeneralTermsAndConditions);
+                paragraph.AddLineBreak();
+                paragraph.AddLineBreak();
+            }
 
             return document.SaveToBytesArray();
         }

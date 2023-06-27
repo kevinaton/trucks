@@ -11,5 +11,6 @@
         public bool IsUserAdmin { get; set; }
         public bool IsUserDriver { get; set; }
         public bool IsUserLeaseHaulerDriver { get; set; }
+        public DriverAppImageResolutionEnum DriverAppImageResolution { get; set; }
     }
 }

@@ -25,10 +25,7 @@ namespace DispatcherWeb.Configuration
                 case AppSettings.DispatchingAndMessaging.RequireSignature:
                 case AppSettings.DispatchingAndMessaging.RequireTicketPhoto:
                 case AppSettings.DispatchingAndMessaging.DispatchesLockedToTruck:
-                case AppSettings.DispatchingAndMessaging.AllowCounterSales:
-                case AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly:
-                case AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId:
-                case AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber:
+                case AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant:
                 case AppSettings.DispatchingAndMessaging.TextForSignatureView:
                     return await FeatureChecker.IsEnabledAsync(AppFeatures.DispatchingFeature);
 
@@ -44,6 +41,7 @@ namespace DispatcherWeb.Configuration
                 case AppSettings.DispatchingAndMessaging.ValidateUtilization:
                 case AppSettings.DispatchingAndMessaging.DriverStartTimeTemplate:
                 case AppSettings.DispatchingAndMessaging.DefaultStartTime:
+                case AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers:
                     return true;
 
                 default:

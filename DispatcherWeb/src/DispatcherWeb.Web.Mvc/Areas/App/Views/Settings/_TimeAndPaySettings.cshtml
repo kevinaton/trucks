@@ -47,6 +47,10 @@
                             <span></span>
                         </label>
                     </div>
+                    <div class="form-group">
+                        <label for="DriverIsPaidForLoadBasedOn">@L("DriverIsPaidForLoadBasedOn")</label>
+                        <select class="form-control" id="DriverIsPaidForLoadBasedOn" name="DriverIsPaidForLoadBasedOn" asp-items="@Html.GetEnumSelectList(Model.DriverIsPaidForLoadBasedOn)"></select>
+                    </div>
                 }
             </form>
         </div>

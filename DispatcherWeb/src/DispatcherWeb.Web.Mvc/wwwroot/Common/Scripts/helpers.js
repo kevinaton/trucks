@@ -247,7 +247,7 @@
     };
 
     abp.enums = abp.enums || {};
-    abp.enums.projectStatus = {
+    abp.enums.quoteStatus = {
         pending: 0,
         active: 1,
         inactive: 2
@@ -781,7 +781,6 @@
         return abp.message.confirmWithOptions({
             text: 'Truck' + s + ' ' + trucksString + ' ' + is + ' ' + message,
             title: ' ',
-            //cancelButtonText: 'No'
             buttons: ['No', 'Yes']
         },
             confirmCallback
@@ -1856,6 +1855,9 @@
     abp.helper.ui.initCannedTextLists = function initCannedTextLists() {
         $('.insert-canned-text-list').each(function () {
             var list = $(this);
+            if (list.hasClass('initialized')) {
+                return;
+            }
             list.find('li[data-id="loading"]').show();
             abp.services.app.cannedText.getCannedTextsSelectList({}).done(function (data) {
                 if (data.items.length > 0) {
@@ -1868,6 +1870,7 @@
                     list.find('li[data-id="no-items"]').show();
                 }
                 list.find('li[data-id="loading"]').hide();
+                list.addClass('initialized');
             });
             var target = $('#' + list.attr('data-target-id'));
             list.on('click', 'li', function (e) {
@@ -1887,6 +1890,14 @@
     };
     abp.helper.ui.initCannedTextLists();
 
+    abp.helper.ui.addAndSetDropdownValues = function addAndSetDropdownValues(dropdown, array) {
+        let values = [];
+        array.forEach(i => {
+            $('<option></option>').text(i.name).attr('value', i.id).appendTo(dropdown);
+            values.push(i.id);
+        });
+        dropdown.val(values).change();
+    };
 
     jQuery.fn.replaceSelectedText = function (newText) {
         var start = $(this).prop('selectionStart');

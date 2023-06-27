@@ -5,7 +5,6 @@
         var _quoteAppService = abp.services.app.quote;
         var _$form = null;
         var _designationDropdown = null;
-        var _addLocationTarget = null;
         var _ratesLastValue = {};
 
         this.init = function (modalManager) {
@@ -33,6 +32,7 @@
             var loadAtDropdown = _$form.find("#LoadAtId");
             var deliverToDropdown = _$form.find("#DeliverToId");
             var serviceDropdown = _$form.find("#ServiceId");
+            var vehicleCategoriesDropdown = _$form.find("#VehicleCategories");
             var materialUomDropdown = _$form.find("#MaterialUomId");
             var freightUomDropdown = _$form.find("#FreightUomId");
             var designationDropdown = _designationDropdown = _$form.find("#Designation");
@@ -53,27 +53,42 @@
                 leaseHaulerRateInput.closest('.form-group').hide();
             }
 
+            async function addNewLocation(newItemName) {
+                var result = await app.getModalResultAsync(
+                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName })
+                );
+                return {
+                    id: result.id,
+                    name: result.displayName
+                };
+            }
+
             loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
-                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "LoadAtId";
-                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
-                } : undefined
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? addNewLocation : undefined
             });
             deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
-                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "DeliverToId";
-                    createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName });
-                } : undefined
+                addItemCallback: abp.auth.hasPermission('Pages.Locations') ? addNewLocation : undefined
             });
             serviceDropdown.select2Init({
                 abpServiceMethod: abp.services.app.service.getServicesSelectList,
                 showAll: false,
                 allowClear: false,
                 addItemCallback: abp.auth.hasPermission('Pages.Services') ? async function (newItemName) {
-                    createOrEditServiceModal.open({ name: newItemName });
+                    var result = await app.getModalResultAsync(
+                        createOrEditServiceModal.open({ name: newItemName })
+                    );
+                    return {
+                        id: result.id,
+                        name: result.service1
+                    };
                 } : undefined
+            });
+            vehicleCategoriesDropdown.select2Init({
+                abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
+                showAll: true,
+                allowClear: true
             });
             materialUomDropdown.select2Uom();
             freightUomDropdown.select2Uom();
@@ -133,11 +148,13 @@
             }
             function enableFreightFields() {
                 freightRateInput.removeAttr('disabled');
-                freightRateToPayDriversInput.removeAttr('disabled');
                 freightUomDropdown.removeAttr('disabled');
                 freightQuantityInput.removeAttr('disabled');
                 freightRateInput.closest('.form-group').show();
-                freightRateToPayDriversInput.closest('.form-group').show();
+                if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')) {
+                    freightRateToPayDriversInput.removeAttr('disabled');
+                    freightRateToPayDriversInput.closest('.form-group').show();
+                }
                 freightUomDropdown.closest('.form-group').show();
                 freightQuantityInput.closest('.form-group').show();
             }
@@ -162,20 +179,6 @@
                 recalculate($(this));
             });
 
-            _modalManager.on('app.createOrEditServiceModalSaved', function (e) {
-                abp.helper.ui.addAndSetDropdownValue(serviceDropdown, e.item.Id, e.item.Service1);
-                serviceDropdown.change();
-            });
-
-            _modalManager.on('app.createOrEditLocationModalSaved', function (e) {
-                if (!_addLocationTarget) {
-                    return;
-                }
-                var targetDropdown = _$form.find("#" + _addLocationTarget);
-                abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.id, e.item.displayName);
-                targetDropdown.change();
-            });
-
         };
 
         function designationHasMaterial() {
@@ -193,6 +196,7 @@
             }
 
             var quoteService = _$form.serializeFormToObject();
+            quoteService.VehicleCategories = _$form.find("#VehicleCategories").select2('data').map(x => ({ id: x.id, name: x.name }));
 
             _modalManager.setBusy(true);
             _quoteAppService.editQuoteService(quoteService).done(function () {

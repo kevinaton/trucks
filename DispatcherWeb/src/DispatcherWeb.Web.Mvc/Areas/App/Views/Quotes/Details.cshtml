@@ -62,24 +62,24 @@
 
 
                 <div class="m-portlet__body">
-                    <div class="form-group m-form__group row">
-                        <label for="ProjectName" class="col-sm-12 col-md-2 col-form-label mb-2">@L("ProjectName"):</label>
-                        <div class="col-sm-12 col-md-5 col-lg-6 mb-2">
-                            <input type="text" readonly class="form-control m-input" asp-for="ProjectName">
-                        </div>
-                        <div class="col-sm-12 col-md-5 col-lg-4 mb-2">
-                            <div id="projectRelatedButtons" @Html.StyleDisplayNone(!Model.ProjectId.HasValue)>
-                                @if (IsGranted(AppPermissions.Pages_Projects))
-                                {
-                                    <button type="button" class="btn btn-default" id="GoToProjectButton"><i class="fa fa-reply"></i> @L("GoToProject")</button>
-                                    <button type="button" class="btn btn-default" id="RemoveProjectButton"><i class="fa fa-minus-circle"></i> @L("RemoveProject")</button>
-                                }
+                    @if (IsGranted(AppPermissions.Pages_Projects))
+                    {
+                        <div class="form-group m-form__group row">
+                            <label for="ProjectName" class="col-sm-12 col-md-2 col-form-label mb-2">@L("ProjectName"):</label>
+                            <div class="col-sm-12 col-md-5 col-lg-6 mb-2">
+                                <input type="text" readonly class="form-control m-input" asp-for="ProjectName">
                             </div>
-                            <div id="noProjectButtons" @Html.StyleDisplayNone(Model.ProjectId.HasValue)>
-                                <button type="button" class="btn btn-default" id="AddToProjectButton"><i class="fa fa-plus-circle"></i> @L("AddToProject")</button>
+                            <div class="col-sm-12 col-md-5 col-lg-4 mb-2">
+                                <div id="projectRelatedButtons" @Html.StyleDisplayNone(!Model.ProjectId.HasValue)>
+                                        <button type="button" class="btn btn-default" id="GoToProjectButton"><i class="fa fa-reply"></i> @L("GoToProject")</button>
+                                        <button type="button" class="btn btn-default" id="RemoveProjectButton"><i class="fa fa-minus-circle"></i> @L("RemoveProject")</button>
+                                </div>
+                                <div id="noProjectButtons" @Html.StyleDisplayNone(Model.ProjectId.HasValue)>
+                                    <button type="button" class="btn btn-default" id="AddToProjectButton"><i class="fa fa-plus-circle"></i> @L("AddToProject")</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                     <div class="form-group m-form__group row">
                         <label for="Name" class="col-sm-12 col-md-2 col-form-label">@L("QuoteId"):</label>
                         <div class="col-sm-12 col-md-10">
@@ -144,7 +144,7 @@
                     <div class="form-group m-form__group row">
                         <label class="col-sm-12 col-md-2 col-form-label pg-add">@L("Status"):</label>
                         <div class="col-lg-2 col-sm-12 col-md-10">
-                            <select class="form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<ProjectStatus>()">
+                            <select class="form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<QuoteStatus>()">
                                 <option value="">Select an option</option>
                             </select>
                         </div>

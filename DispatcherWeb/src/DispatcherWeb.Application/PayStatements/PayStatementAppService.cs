@@ -135,14 +135,19 @@ namespace DispatcherWeb.PayStatements
             var timezone = await GetTimezone();
             var startDateInUtc = input.StartDate?.ConvertTimeZoneFrom(timezone);
             var endDateInUtc = input.EndDate.AddDays(1).ConvertTimeZoneFrom(timezone);
+            var driverIsPaidForLoadBasedOn = (DriverIsPaidForLoadBasedOnEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn);
+            var useTicketDate = driverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.TicketDate;
+            var useOrderDate = driverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.OrderDate;
 
             var tickets = await _ticketRepository.GetAll()
                 .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
                 .WhereIf(input.LocalEmployeesOnly, x => x.Driver.OfficeId != null)
-                .WhereIf(startDateInUtc.HasValue, x => x.TicketDateTime >= startDateInUtc)
+                .WhereIf(startDateInUtc.HasValue && useTicketDate, x => x.TicketDateTime >= startDateInUtc)
+                .WhereIf(startDateInUtc.HasValue && useOrderDate, x => x.OrderLine.Order.DeliveryDate >= input.StartDate)
+                .WhereIf(useTicketDate, x => x.TicketDateTime < endDateInUtc)
+                .WhereIf(useOrderDate, x => x.OrderLine.Order.DeliveryDate < input.EndDate.AddDays(1))
                 .Where(x =>
-                    x.TicketDateTime < endDateInUtc
-                    && x.IsVerified
+                    x.IsVerified
                     && x.DriverId != null
                     && x.OrderLine.ProductionPay
                     && !x.PayStatementTickets.Any()
@@ -151,6 +156,7 @@ namespace DispatcherWeb.PayStatements
                 {
                     TicketId = x.Id,
                     TicketDateTime = x.TicketDateTime,
+                    DeliveryDate = x.OrderLine.Order.DeliveryDate,
                     TicketCreationTime = x.CreationTime,
                     DriverId = x.DriverId.Value,
                     UserId = x.Driver.UserId,
@@ -175,6 +181,9 @@ namespace DispatcherWeb.PayStatements
         {
             var result = new List<PayStatementCreationTicketDto>();
             var timezone = await GetTimezone();
+            var driverIsPaidForLoadBasedOn = (DriverIsPaidForLoadBasedOnEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn);
+            var useTicketDate = driverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.TicketDate;
+            var useOrderDate = driverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.OrderDate;
 
             var pastTickets = await GetProductionPayTickets(new GetProductionPayTicketsInput
             {
@@ -189,10 +198,21 @@ namespace DispatcherWeb.PayStatements
                 return result;
             }
 
-            var minTicketDate = pastTickets.Where(x => x.TicketDateTime.HasValue)
-                .Min(x => x.TicketDateTime.Value).ConvertTimeZoneTo(timezone).Date;
-            var maxTicketDate = pastTickets.Where(x => x.TicketDateTime.HasValue)
-                .Max(x => x.TicketDateTime.Value).ConvertTimeZoneTo(timezone).Date;
+            var minTicketDate = useTicketDate
+                ? pastTickets.Where(x => x.TicketDateTime.HasValue)
+                    .Min(x => x.TicketDateTime.Value).ConvertTimeZoneTo(timezone).Date
+                : useOrderDate
+                    ? pastTickets.Where(x => x.DeliveryDate.HasValue)
+                        .Min(x => x.DeliveryDate.Value)
+                    : throw new ApplicationException("Unexpected DriverIsPaidForLoadBasedOn setting value " + (int)driverIsPaidForLoadBasedOn);
+
+            var maxTicketDate = useTicketDate
+                ? pastTickets.Where(x => x.TicketDateTime.HasValue)
+                    .Max(x => x.TicketDateTime.Value).ConvertTimeZoneTo(timezone).Date
+                : useOrderDate
+                    ? pastTickets.Where(x => x.DeliveryDate.HasValue)
+                        .Max(x => x.DeliveryDate.Value)
+                    : throw new ApplicationException("Unexpected DriverIsPaidForLoadBasedOn setting value " + (int)driverIsPaidForLoadBasedOn);
 
             var payStatements = await _payStatementRepository.GetAll()
                 .Where(x => x.IncludeProductionPay && x.EndDate >= minTicketDate && x.StartDate <= maxTicketDate)
@@ -205,11 +225,15 @@ namespace DispatcherWeb.PayStatements
 
             foreach (var ticket in pastTickets)
             {
-                if (!ticket.TicketDateTime.HasValue)
+                var ticketDate = useTicketDate
+                    ? ticket.TicketDateTime?.ConvertTimeZoneTo(timezone).Date
+                    : useOrderDate
+                        ? ticket.DeliveryDate
+                        : throw new ApplicationException("Unexpected DriverIsPaidForLoadBasedOn setting value " + (int)driverIsPaidForLoadBasedOn);
+                if (!ticketDate.HasValue)
                 {
                     continue;
                 }
-                var ticketDate = ticket.TicketDateTime.Value.ConvertTimeZoneTo(timezone).Date;
                 var matchingPayStatements = payStatements
                     .Where(x => x.StartDate <= ticketDate && x.EndDate >= ticketDate)
                     .ToList();
@@ -247,6 +271,9 @@ namespace DispatcherWeb.PayStatements
             var timezone = await GetTimezone();
             var startDateInUtc = input.StartDate.ConvertTimeZoneFrom(timezone);
             var endDateInUtc = input.EndDate.AddDays(1).ConvertTimeZoneFrom(timezone);
+            var driverIsPaidForLoadBasedOn = (DriverIsPaidForLoadBasedOnEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn);
+            var useTicketDate = driverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.TicketDate;
+            var useOrderDate = driverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.OrderDate;
 
             var drivers = await _driverRepository.GetAll()
                     .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
@@ -329,6 +356,7 @@ namespace DispatcherWeb.PayStatements
                             PayStatementDetail = payStatementDetail,
                             TimeClassificationId = productionPay.TimeClassificationId,
                             TicketId = ticket.TicketId,
+                            DriverIsPaidForLoadBasedOn = driverIsPaidForLoadBasedOn,
                             Quantity = ticket.Quantity,
                             FreightRate = ticket.FreightRateToPayDrivers ?? 0,
                             DriverPayRate = productionPay.PayRate,
@@ -375,7 +403,7 @@ namespace DispatcherWeb.PayStatements
                     {
                         return;
                     }
-                    var driver = drivers.FirstOrDefault(x => x.UserId == e.UserId);
+                    var driver = drivers.FirstOrDefault(x => x.DriverId == e.DriverId);
                     if (driver == null)
                     {
                         return;
@@ -462,9 +490,11 @@ namespace DispatcherWeb.PayStatements
             var ticketsForDates = await _ticketRepository.GetAll()
                     .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
                     .WhereIf(input.LocalEmployeesOnly, x => x.Driver.OfficeId != null)
-                    .Where(x => x.TicketDateTime >= startDateInUtc
-                        && x.TicketDateTime < endDateInUtc
-                        && x.IsVerified
+                    .WhereIf(useTicketDate, x => x.TicketDateTime >= startDateInUtc)
+                    .WhereIf(useOrderDate, x => x.OrderLine.Order.DeliveryDate >= input.StartDate)
+                    .WhereIf(useTicketDate, x => x.TicketDateTime < endDateInUtc)
+                    .WhereIf(useOrderDate, x => x.OrderLine.Order.DeliveryDate < input.EndDate.AddDays(1))
+                    .Where(x => x.IsVerified
                         && x.DriverId.HasValue
                         //&& driverIdsIncludedInReport.Contains(x.DriverId.Value)
                         && x.OrderLineId != null
@@ -472,6 +502,7 @@ namespace DispatcherWeb.PayStatements
                     .Select(x => new
                     {
                         x.TicketDateTime,
+                        DeliveryDate = x.OrderLine.Order.DeliveryDate,
                         DriverId = x.DriverId.Value,
                         x.Driver.UserId,
                         DriverName = x.Driver.LastName + ", " + x.Driver.FirstName,
@@ -490,9 +521,13 @@ namespace DispatcherWeb.PayStatements
             {
                 var dateBeginUtc = e.DeliveryDate.ConvertTimeZoneFrom(timezone);
                 var dateEndUtc = dateBeginUtc.AddDays(1);
-                var matches = ticketsForDates.Where(t => t.UserId == e.UserId && t.TicketDateTime >= dateBeginUtc && t.TicketDateTime < dateEndUtc);
+                var matches = useTicketDate
+                    ? ticketsForDates.Where(t => t.DriverId == e.DriverId && t.TicketDateTime >= dateBeginUtc && t.TicketDateTime < dateEndUtc)
+                    : useOrderDate
+                        ? ticketsForDates.Where(t => t.DriverId == e.DriverId && t.DeliveryDate == e.DeliveryDate)
+                        : throw new ApplicationException("Unexpected DriverIsPaidForLoadBasedOn setting value " + (int)driverIsPaidForLoadBasedOn);
 
-                var driver = drivers.Where(x => x.UserId == e.UserId).FirstOrDefault();
+                var driver = drivers.Where(x => x.DriverId == e.DriverId).FirstOrDefault();
                 if (driver == null /*|| !driverIdsIncludedInReport.Contains(driver.DriverId)*/) //ignore the time of not included in the report drivers
                 {
                     return;
@@ -576,7 +611,12 @@ namespace DispatcherWeb.PayStatements
                 {
                     ItemKind = PayStatementItemKind.Ticket,
                     Id = t.Id,
-                    Date = t.Ticket.TicketDateTime,
+                    DriverIsPaidForLoadBasedOn = t.DriverIsPaidForLoadBasedOn,
+                    Date = t.DriverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.TicketDate
+                        ? t.Ticket.TicketDateTime
+                        : t.DriverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.OrderDate
+                            ? t.Ticket.OrderLine.Order.DeliveryDate
+                            : null,
                     DriverId = t.PayStatementDetail.DriverId,
                     DriverName = t.PayStatementDetail.Driver.LastName + ", " + t.PayStatementDetail.Driver.FirstName,
                     TimeClassificationId = t.TimeClassificationId,
@@ -608,7 +648,14 @@ namespace DispatcherWeb.PayStatements
                 }).ToListAsync();
 
             var timezone = await GetTimezone();
-            tickets.ForEach(t => t.Date = t.Date?.ConvertTimeZoneTo(timezone));
+            foreach (var ticket in tickets)
+            {
+                if (ticket.DriverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.TicketDate)
+                {
+                    ticket.Date = ticket.Date?.ConvertTimeZoneTo(timezone);
+                }
+            }
+
             items.AddRange(tickets);
 
             var time = await _payStatementTimeRepository.GetAll()
@@ -758,6 +805,8 @@ namespace DispatcherWeb.PayStatements
                             JobNumber = t.Ticket.OrderLine.JobNumber,
                             Quantity = t.Quantity,
                             TicketDateTime = t.Ticket.TicketDateTime,
+                            DriverIsPaidForLoadBasedOn = t.DriverIsPaidForLoadBasedOn,
+                            OrderDeliveryDate = t.Ticket.OrderLine.Order.DeliveryDate,
                             Total = t.Total,
                         }).ToList(),
                         TimeRecords = d.PayStatementTimeRecords.Select(t => new PayStatementReportTimeDto
@@ -780,14 +829,14 @@ namespace DispatcherWeb.PayStatements
             return item;
         }
 
-        public async Task<DriverPayStatementReport> GetDriverPayStatementReport(GetDriverPayStatementReportInput input)
+        public async Task<FileBytesDto> GetDriverPayStatementReport(GetDriverPayStatementReportInput input)
         {
             var data = await GetPayStatementReportDto(new EntityDto(input.Id));
             var report = _driverPayStatementReportGenerator.GenerateReportAndZip(data, input);
             return report;
         }
 
-        public async Task<DriverPayStatementReport> GetDriverPayStatementWarningsReport(EntityDto input)
+        public async Task<FileBytesDto> GetDriverPayStatementWarningsReport(EntityDto input)
         {
             var data = await _payStatementRepository.GetAll()
                 .Where(x => x.Id == input.Id)

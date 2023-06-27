@@ -2,6 +2,7 @@
 using DispatcherWeb.Infrastructure;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DispatcherWeb.Orders.Dto
@@ -40,7 +41,21 @@ namespace DispatcherWeb.Orders.Dto
 
         public Shift? Shift { get; set; }
 
-        public int OfficeId { get; set; }
+        [Required(ErrorMessage = "Office is a required field")]
+        public int LocationId { get; set; }
+        public int OfficeId
+        {
+            get
+            {
+                return LocationId;
+            }
+            set
+            {
+                LocationId = value;
+            }
+        }
+        public string OfficeName { get; set; }
+        public bool IsSingleOffice { get; set; }
 
         public int? ProjectId { get; set; }
 
@@ -182,5 +197,7 @@ namespace DispatcherWeb.Orders.Dto
 
         [StringLength(EntityStringFieldLengths.OrderLine.CustomerNotificationPhoneNumber)]
         public string CustomerNotificationPhoneNumber { get; set; }
+
+        public List<OrderLineVehicleCategoryDto> VehicleCategories { get; set; }
     }
 }

@@ -8,5 +8,6 @@
         public bool DefaultToProductionPay { get; set; }
         public bool PreventProductionPayOnHourlyJobs { get; set; }
         public bool AllowDriverPayRateDifferentFromFreightRate { get; set; }
+        public DriverIsPaidForLoadBasedOnEnum DriverIsPaidForLoadBasedOn { get; set; }
     }
 }

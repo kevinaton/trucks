@@ -6,6 +6,7 @@ using Abp.Application.Features;
 using Abp.Configuration;
 using Abp.Dependency;
 using DispatcherWeb.Configuration;
+using DispatcherWeb.Dto;
 using DispatcherWeb.Features;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.PayStatements.Dto;
@@ -28,38 +29,18 @@ namespace DispatcherWeb.Orders.Reports
             FeatureChecker = featureChecker;
         }
 
-        public DriverPayStatementReport GenerateReportAndZip(PayStatementReportDto model, GetDriverPayStatementReportInput input)
+        public FileBytesDto GenerateReportAndZip(PayStatementReportDto model, GetDriverPayStatementReportInput input)
         {
             var reportList = GenerateReport(model, input);
             if (reportList.Count == 1)
             {
-                var report = reportList.First();
-                report.FileName += ".pdf";
-                report.MimeType = "application/pdf";
-                return report;
+                return reportList.First();
             }
 
-            using (var zipStream = new MemoryStream())
-            {
-                using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Update, true))
-                {
-                    foreach (var report in reportList)
-                    {
-                        var entry = archive.CreateEntry(report.FileName + ".pdf", CompressionLevel.NoCompression);
-                        using (var entryStream = entry.Open())
-                        {
-                            entryStream.Write(report.FileBytes);
-                        }
-                    }
-                }
+            var zipFileName = GetFilename(model) + ".zip";
+            var zipFile = reportList.ToZipFile(zipFileName, CompressionLevel.NoCompression);
 
-                return new DriverPayStatementReport
-                {
-                    FileBytes = zipStream.ToArray(),
-                    FileName = GetFilename(model) + ".zip",
-                    MimeType = "application/zip"
-                };
-            }
+            return zipFile;
         }
 
         private string GetFilename(PayStatementReportDto model)
@@ -67,9 +48,9 @@ namespace DispatcherWeb.Orders.Reports
             return $"Pay Statement through {model.EndDate:yyyy-MM-dd}".SanitizeFilename();
         }
 
-        public List<DriverPayStatementReport> GenerateReport(PayStatementReportDto model, GetDriverPayStatementReportInput input)
+        public List<FileBytesDto> GenerateReport(PayStatementReportDto model, GetDriverPayStatementReportInput input)
         {
-            var result = new List<DriverPayStatementReport>();
+            var result = new List<FileBytesDto>();
             Document document;
             Section section;
             Paragraph paragraph;
@@ -155,7 +136,11 @@ namespace DispatcherWeb.Orders.Reports
                 items.AddRange(driverModel.Tickets.Select(t => new PayStatementItemEditDto
                 {
                     ItemKind = PayStatementItemKind.Ticket,
-                    Date = t.TicketDateTime,
+                    Date = t.DriverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.TicketDate
+                        ? t.TicketDateTime
+                        : t.DriverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.OrderDate
+                            ? t.OrderDeliveryDate
+                            : null,
                     Quantity = t.Quantity,
                     Total = t.Total,
                     DriverPayRate = t.DriverPayRate,
@@ -345,20 +330,22 @@ namespace DispatcherWeb.Orders.Reports
                         filenameByDriver = newFileName;
                     }
 
-                    result.Add(new DriverPayStatementReport
+                    result.Add(new FileBytesDto
                     {
                         FileBytes = document.SaveToBytesArray(),
-                        FileName = filenameByDriver
+                        FileName = filenameByDriver + ".pdf",
+                        MimeType = "application/pdf"
                     });
                 }
             }
 
             if (!input.SplitByDriver)
             {
-                result.Add(new DriverPayStatementReport
+                result.Add(new FileBytesDto
                 {
                     FileBytes = document.SaveToBytesArray(),
-                    FileName = filename
+                    FileName = filename + ".pdf",
+                    MimeType = "application/pdf"
                 });
             }
 

@@ -16,6 +16,13 @@
             modalSize: 'lg'
         });
 
+        var _createOrEditQuoteModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
+            modalClass: 'CreateOrEditQuoteModal',
+            modalSize: 'xl'
+        });
+
         app.localStorage.getItem('QuotesFilter', function (cachedFilter) {
             if (!cachedFilter) {
                 cachedFilter = {
@@ -115,7 +122,8 @@
                 {
                     responsivePriority: 2,
                     data: "projectName",
-                    title: "Project Name"
+                    title: "Project Name",
+                    visible: abp.auth.hasPermission('Pages.Projects')
                 },
                 {
                     data: "customerName",
@@ -139,6 +147,10 @@
                     title: "Contact Name"
                 },
                 {
+                    data: "poNumber",
+                    title: "PO Number"
+                },
+                {
                     responsivePriority: 2,
                     data: null,
                     orderable: false,
@@ -150,7 +162,7 @@
                             + '<ul class="dropdown-menu dropdown-menu-right">'
                             + '<li><a class="btnEditRow" title="Edit"><i class="fa fa-edit"></i> Edit</a></li>'
 
-                            + (_permissions.edit ? (full.status !== abp.enums.projectStatus.inactive ?
+                            + (_permissions.edit ? (full.status !== abp.enums.quoteStatus.inactive ?
                                 '<li><a class="btnInactiveRow" title="Inactive"><i class="fa fa-minus-circle"></i> Inactivate</a></li>' :
                                 '<li><a class="btnreactiveRow" title="Re-active"><i class="fa fa-plus-circle"></i> Re-activate</a></li>') : '')
 
@@ -167,13 +179,14 @@
             quotesGrid.ajax.reload();
         };
 
-        //abp.event.on('app.createOrEditQuoteModalSaved', function () {
-        //    reloadMainGrid();
-        //});
+        abp.event.on('app.createOrEditQuoteModalSaved', function () {
+            reloadMainGrid();
+        });
 
         quotesTable.on('click', '.btnEditRow', function () {
             var quoteId = _dtHelper.getRowData(this).id;
-            window.location = abp.appPath + 'app/Quotes/Details/' + quoteId;
+            _createOrEditQuoteModal.open({ id: quoteId });
+            //window.location = abp.appPath + 'app/Quotes/Details/' + quoteId;
         });
 
         quotesTable.on('click', '.btnDeleteRow', async function () {
@@ -230,7 +243,8 @@
 
         $("#CreateNewQuoteButton").click(function (e) {
             e.preventDefault();
-            window.location = abp.appPath + 'app/Quotes/Details/';
+            _createOrEditQuoteModal.open();
+            //window.location = abp.appPath + 'app/Quotes/Details/';
         });
 
     });

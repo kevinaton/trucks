@@ -23,11 +23,11 @@ namespace DispatcherWeb.Drivers
         public User User { get; set; }
 
         [Required(ErrorMessage = "First Name is a required field")]
-        [StringLength(50)]
+        [StringLength(EntityStringFieldLengths.Driver.FirstName)]
         public string FirstName { get; set; }
 
         [Required(ErrorMessage = "Last Name is a required field")]
-        [StringLength(50)]
+        [StringLength(EntityStringFieldLengths.Driver.LastName)]
         public string LastName { get; set; }
 
         public int? OfficeId { get; set; }
@@ -38,7 +38,7 @@ namespace DispatcherWeb.Drivers
 
         public virtual Office Office { get; set; }
 
-        [StringLength(256)]
+        [StringLength(EntityStringFieldLengths.Driver.EmailAddress)]
         public string EmailAddress { get; set; }
 
         [StringLength(EntityStringFieldLengths.General.PhoneNumber)]
@@ -78,7 +78,7 @@ namespace DispatcherWeb.Drivers
         [Column(TypeName = "date")]
         public DateTime? EmploymentStartDate { get; set; }
 
-        [StringLength(20)]
+        [StringLength(EntityStringFieldLengths.Driver.LicenseNumber)]
         public string LicenseNumber { get; set; }
 
         [Column(TypeName = "date")]
@@ -86,7 +86,7 @@ namespace DispatcherWeb.Drivers
 
         public Guid? Guid { get; set; }
 
-        [StringLength(50)]
+        [StringLength(EntityStringFieldLengths.Driver.TypeOfLicense)]
         public string TypeOfLicense { get; set; }
 
         public DateTime? LicenseExpirationDate { get; set; }
@@ -98,6 +98,12 @@ namespace DispatcherWeb.Drivers
         public DateTime? NextMvrDueDate { get; set; }
 
         public DateTime? DateOfHire { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? TerminationDate { get; set; }
+
+        [StringLength(EntityStringFieldLengths.Driver.EmployeeId)]
+        public string EmployeeId { get; set; }
 
         //we can add this later if it is needed
         //public bool HasMaterialCompanyDrivers { get; set; }

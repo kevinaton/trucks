@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Orders.TaxDetails;
 using Newtonsoft.Json;
@@ -35,6 +36,7 @@ namespace DispatcherWeb.Orders.Dto
         public double NumberOfTrucks { get; set; }
         public DateTime? TimeOnJob { get; set; }
         public bool IsTimeStaggered { get; set; }
+        public List<string> OrderLineVehicleCategories { get; set; }
 
 
         public string ActualQuantityFormatted => GetQuantityFormatted(ActualQuantity, ActualQuantity);

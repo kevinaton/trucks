@@ -12,5 +12,6 @@ namespace DispatcherWeb.DriverApp.Tickets.Dto
         public string TicketPhotoFilename { get; set; }
         public int? LoadId { get; set; }
         public int? DispatchId { get; set; }
+        public int? UnitOfMeasureId { get; set; }
     }
 }

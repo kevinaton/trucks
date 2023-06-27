@@ -1,4 +1,5 @@
 ﻿using Abp.Authorization;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Runtime.Session;
 using DispatcherWeb.Authorization.Roles;
@@ -41,6 +42,7 @@ namespace DispatcherWeb.DriverApp.Settings
                 RequireSignature = await SettingManager.RequireSignature(),
                 RequireTicketPhoto = await SettingManager.RequireTicketPhoto(),
                 TextForSignatureView = await SettingManager.GetSettingValueAsync(AppSettings.DispatchingAndMessaging.TextForSignatureView),
+                DriverAppImageResolution = (DriverAppImageResolutionEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.HostManagement.DriverAppImageResolution),
                 //DispatchesLockedToTruck = await SettingManager.DispatchesLockedToTruck(),
                 IsUserAdmin = await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Admin)
                     || await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Administrative),

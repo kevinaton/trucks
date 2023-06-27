@@ -9,6 +9,7 @@ namespace DispatcherWeb.Orders
     {
         Task<Order> GetOrderAsync();
         Task MarkAffectedDispatchesWhereAsync(Func<Dispatch, bool> wherePredicate);
+        void SuppressReadOnlyChecker(bool suppressReadOnlyChecker = true);
         void UpdateStaggeredTimeOnTrucksOnSave();
     }
 }

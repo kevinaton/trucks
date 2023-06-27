@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.IO;
 using Abp.Linq.Extensions;
@@ -41,6 +42,7 @@ namespace DispatcherWeb.Quotes
         private readonly IRepository<QuoteHistoryRecord> _quoteHistoryRepository;
         private readonly IRepository<QuoteFieldDiff> _quoteFieldDiffRepository;
         private readonly IRepository<QuoteEmail> _quoteEmailRepository;
+        private readonly IRepository<QuoteServiceVehicleCategory> _quoteServiceVehicleCategoryRepository;
         private readonly IRepository<Project> _projectRepository;
         private readonly IRepository<ProjectService> _projectServiceRepository;
         private readonly IRepository<Order> _orderRepository;
@@ -59,6 +61,7 @@ namespace DispatcherWeb.Quotes
             IRepository<QuoteHistoryRecord> quoteHistoryRepository,
             IRepository<QuoteFieldDiff> quoteFieldDiffRepository,
             IRepository<QuoteEmail> quoteEmailRepository,
+            IRepository<QuoteServiceVehicleCategory> quoteServiceVehicleCategoryRepository,
             IRepository<Project> projectRepository,
             IRepository<ProjectService> projectServiceRepository,
             IRepository<Order> orderRepository,
@@ -77,6 +80,7 @@ namespace DispatcherWeb.Quotes
             _quoteHistoryRepository = quoteHistoryRepository;
             _quoteFieldDiffRepository = quoteFieldDiffRepository;
             _quoteEmailRepository = quoteEmailRepository;
+            _quoteServiceVehicleCategoryRepository = quoteServiceVehicleCategoryRepository;
             _projectRepository = projectRepository;
             _projectServiceRepository = projectServiceRepository;
             _orderRepository = orderRepository;
@@ -124,6 +128,7 @@ namespace DispatcherWeb.Quotes
                     QuoteDate = x.ProposalDate,
                     ContactName = x.Contact.Name,
                     SalesPersonName = x.SalesPerson.Name + " " + x.SalesPerson.Surname,
+                    PONumber = x.PONumber,
                     EmailDeliveryStatuses = x.QuoteEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList(),
                     Status = x.Status
                 })
@@ -165,7 +170,7 @@ namespace DispatcherWeb.Quotes
             }
             var quotes = await _quoteRepository.GetAll()
                 .Where(x => x.CustomerId == input.Id)
-                .WhereIf(input.HideInactive, x => x.Status != ProjectStatus.Inactive)
+                .WhereIf(input.HideInactive, x => x.Status != QuoteStatus.Inactive)
                 .OrderBy(x => x.Name)
                 .Select(x => new SelectListDto<QuoteSelectListInfoDto>
                 {
@@ -479,36 +484,36 @@ namespace DispatcherWeb.Quotes
             {
                 if (model.ProjectId.HasValue)
                 {
-                    //get project services to add to the new quote
-                    var projectServices = await _projectServiceRepository.GetAll()
-                        .Where(x => x.ProjectId == model.ProjectId)
-                        .ToListAsync();
-                    projectServices.Select(x => new QuoteService
-                    {
-                        LoadAtId = x.LoadAtId,
-                        DeliverToId = x.DeliverToId,
-                        ServiceId = x.ServiceId,
-                        MaterialUomId = x.MaterialUomId,
-                        FreightUomId = x.FreightUomId,
-                        Designation = x.Designation,
-                        PricePerUnit = x.PricePerUnit,
-                        FreightRate = x.FreightRate,
-                        LeaseHaulerRate = x.LeaseHaulerRate,
-                        MaterialQuantity = x.MaterialQuantity,
-                        FreightQuantity = x.FreightQuantity,
-                        Note = x.Note
-                    })
-                    .ToList().ForEach(x =>
-                    {
-                        quote.QuoteServices.Add(x);
-                        _quoteServiceRepository.Insert(x);
-                    });
+                    ////get project services to add to the new quote
+                    //var projectServices = await _projectServiceRepository.GetAll()
+                    //    .Where(x => x.ProjectId == model.ProjectId)
+                    //    .ToListAsync();
+                    //projectServices.Select(x => new QuoteService
+                    //{
+                    //    LoadAtId = x.LoadAtId,
+                    //    DeliverToId = x.DeliverToId,
+                    //    ServiceId = x.ServiceId,
+                    //    MaterialUomId = x.MaterialUomId,
+                    //    FreightUomId = x.FreightUomId,
+                    //    Designation = x.Designation,
+                    //    PricePerUnit = x.PricePerUnit,
+                    //    FreightRate = x.FreightRate,
+                    //    FreightRateToPayDrivers = x.FreightRate,
+                    //    LeaseHaulerRate = x.LeaseHaulerRate,
+                    //    MaterialQuantity = x.MaterialQuantity,
+                    //    FreightQuantity = x.FreightQuantity,
+                    //    Note = x.Note
+                    //})
+                    //.ToList().ForEach(x =>
+                    //{
+                    //    quote.QuoteServices.Add(x);
+                    //    _quoteServiceRepository.Insert(x);
+                    //});
 
                     var project = await _projectRepository.GetAsync(model.ProjectId.Value);
-                    if (project.Status == ProjectStatus.Pending)
+                    if (project.Status == QuoteStatus.Pending)
                     {
-                        project.Status = ProjectStatus.Active;
-                        await _projectRepository.UpdateAsync(project);
+                        project.Status = QuoteStatus.Active;
                     }
                 }
 
@@ -710,6 +715,7 @@ namespace DispatcherWeb.Quotes
             var quote = await _quoteRepository.GetAll()
                 .AsNoTracking()
                 .Include(x => x.QuoteServices)
+                    .ThenInclude(x => x.QuoteServiceVehicleCategories)
                 .FirstAsync(x => x.Id == input.Id);
 
             var today = await GetToday();
@@ -739,23 +745,35 @@ namespace DispatcherWeb.Quotes
                 newQuote.ChargeTo = quote.ChargeTo;
             }
 
-            quote.QuoteServices.Select(s => new QuoteService
+            quote.QuoteServices.Select(s =>
             {
-                LoadAtId = s.LoadAtId,
-                DeliverToId = s.DeliverToId,
-                ServiceId = s.ServiceId,
-                MaterialUomId = s.MaterialUomId,
-                FreightUomId = s.FreightUomId,
-                Designation = s.Designation,
-                PricePerUnit = s.PricePerUnit,
-                FreightRate = s.FreightRate,
-                LeaseHaulerRate = s.LeaseHaulerRate,
-                FreightRateToPayDrivers = s.FreightRateToPayDrivers,
-                MaterialQuantity = s.MaterialQuantity,
-                FreightQuantity = s.FreightQuantity,
-                JobNumber = s.JobNumber,
-                Note = s.Note,
-                Quote = newQuote
+                var newQuoteService = new QuoteService
+                {
+                    LoadAtId = s.LoadAtId,
+                    DeliverToId = s.DeliverToId,
+                    ServiceId = s.ServiceId,
+                    MaterialUomId = s.MaterialUomId,
+                    FreightUomId = s.FreightUomId,
+                    Designation = s.Designation,
+                    PricePerUnit = s.PricePerUnit,
+                    FreightRate = s.FreightRate,
+                    LeaseHaulerRate = s.LeaseHaulerRate,
+                    FreightRateToPayDrivers = s.FreightRateToPayDrivers,
+                    MaterialQuantity = s.MaterialQuantity,
+                    FreightQuantity = s.FreightQuantity,
+                    JobNumber = s.JobNumber,
+                    Note = s.Note,
+                    Quote = newQuote
+                };
+                foreach (var vehicleCategory in s.QuoteServiceVehicleCategories)
+                {
+                    newQuoteService.QuoteServiceVehicleCategories.Add(new QuoteServiceVehicleCategory
+                    {
+                        QuoteService = newQuoteService,
+                        VehicleCategoryId = vehicleCategory.VehicleCategoryId
+                    });
+                }
+                return newQuoteService;
             }).ToList().ForEach(x =>
             {
                 _quoteServiceRepository.Insert(x);
@@ -766,8 +784,7 @@ namespace DispatcherWeb.Quotes
 
         [AbpAuthorize(
             AppPermissions.Pages_Quotes_Edit,
-            AppPermissions.Pages_Orders_Edit,
-            AppPermissions.Pages_Projects,
+            AppPermissions.Pages_Orders_View,
             RequireAllPermissions = true
         )]
         public async Task<int> CreateQuoteFromOrder(CreateQuoteFromOrderInput input)
@@ -813,7 +830,11 @@ namespace DispatcherWeb.Quotes
                     x.LoadAtId,
                     x.DeliverToId,
                     x.MaterialUomId,
-                    x.FreightUomId
+                    x.FreightUomId,
+                    VehicleCategories = x.OrderLineVehicleCategories.Select(vc => new
+                    {
+                        vc.VehicleCategoryId
+                    }).ToList()
                 })
                 .OrderBy(x => x.LineNumber)
                 .ToListAsync();
@@ -827,7 +848,7 @@ namespace DispatcherWeb.Quotes
                 Directions = order.Directions,
                 Name = input.QuoteName,
                 PONumber = order.PONumber,
-                Status = ProjectStatus.Active,
+                Status = QuoteStatus.Active,
                 SalesPersonId = AbpSession.UserId,
                 Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes),
                 ProposalDate = today,
@@ -841,23 +862,34 @@ namespace DispatcherWeb.Quotes
 
             quote.Id = await _quoteRepository.InsertAndGetIdAsync(quote);
 
-            var quoteServices = orderLines.Select(x => new QuoteService
-            {
-                QuoteId = quote.Id,
-                Designation = x.Designation,
-                JobNumber = x.JobNumber,
-                Note = x.Note,
-                FreightRate = x.FreightPricePerUnit,
-                PricePerUnit = x.MaterialPricePerUnit,
-                LeaseHaulerRate = x.LeaseHaulerRate,
-                FreightRateToPayDrivers = x.FreightRateToPayDrivers,
-                MaterialQuantity = x.MaterialQuantity,
-                FreightQuantity = x.FreightQuantity,
-                ServiceId = x.ServiceId,
-                LoadAtId = x.LoadAtId,
-                DeliverToId = x.DeliverToId,
-                MaterialUomId = x.MaterialUomId,
-                FreightUomId = x.FreightUomId
+            var quoteServices = orderLines.Select(x => {
+                var newQuoteService = new QuoteService
+                {
+                    QuoteId = quote.Id,
+                    Designation = x.Designation,
+                    JobNumber = x.JobNumber,
+                    Note = x.Note,
+                    FreightRate = x.FreightPricePerUnit,
+                    PricePerUnit = x.MaterialPricePerUnit,
+                    LeaseHaulerRate = x.LeaseHaulerRate,
+                    FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                    MaterialQuantity = x.MaterialQuantity,
+                    FreightQuantity = x.FreightQuantity,
+                    ServiceId = x.ServiceId,
+                    LoadAtId = x.LoadAtId,
+                    DeliverToId = x.DeliverToId,
+                    MaterialUomId = x.MaterialUomId,
+                    FreightUomId = x.FreightUomId
+                };
+                foreach (var vehicleCategory in x.VehicleCategories)
+                {
+                    newQuoteService.QuoteServiceVehicleCategories.Add(new QuoteServiceVehicleCategory
+                    {
+                        QuoteService = newQuoteService,
+                        VehicleCategoryId = vehicleCategory.VehicleCategoryId
+                    });
+                }
+                return newQuoteService;
             }).ToList();
 
             foreach (var quoteService in quoteServices)
@@ -875,7 +907,7 @@ namespace DispatcherWeb.Quotes
         {
             var quote = await _quoteRepository.GetAsync(model.Id);
             quote.Status = model.Status;
-            if (quote.Status == ProjectStatus.Active && quote.ProjectId.HasValue)
+            if (quote.Status == QuoteStatus.Active && quote.ProjectId.HasValue)
             {
                 var project = await _projectRepository.GetAsync(quote.ProjectId.Value);
                 project.Status = quote.Status;
@@ -919,12 +951,12 @@ namespace DispatcherWeb.Quotes
             await _quoteRepository.DeleteAsync(input.Id);
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Projects)]
+        [AbpAuthorize(AppPermissions.Pages_Quotes_Edit)]
         public async Task InactivateQuote(EntityDto input)
         {
             var quote = await _quoteRepository.GetAsync(input.Id);
             quote.InactivationDate = await GetToday();
-            quote.Status = ProjectStatus.Inactive;
+            quote.Status = QuoteStatus.Inactive;
         }
 
         //*********************//
@@ -1065,7 +1097,12 @@ namespace DispatcherWeb.Quotes
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
                         JobNumber = x.JobNumber,
-                        Note = x.Note
+                        Note = x.Note,
+                        VehicleCategories = x.QuoteServiceVehicleCategories.Select(vc => new QuoteServiceVehicleCategoryDto
+                        {
+                            Id = vc.VehicleCategory.Id,
+                            Name = vc.VehicleCategory.Name
+                        }).ToList()
                     })
                     .SingleAsync(x => x.Id == input.Id.Value);
             }
@@ -1103,6 +1140,24 @@ namespace DispatcherWeb.Quotes
             var fieldDiffs = await UpdateValuesAndGetDiff(quoteService, model);
 
             await UpdateDiffDisplayValues(quoteService.Id, false, fieldDiffs);
+
+            var existingVehicleCategories = model.Id.HasValue ? await _quoteServiceVehicleCategoryRepository.GetAll()
+                .Where(vc => vc.QuoteServiceId == model.Id)
+                .ToListAsync() : new List<QuoteServiceVehicleCategory>();
+
+            existingVehicleCategories
+                .Where(e => !model.VehicleCategories.Any(m => m.Id == e.VehicleCategoryId))
+                .ToList()
+                .ForEach(x => _quoteServiceVehicleCategoryRepository.Delete(x));
+
+            model.VehicleCategories
+                .Where(m => !existingVehicleCategories.Any(e => e.VehicleCategoryId == m.Id))
+                .ToList()
+                .ForEach(x => _quoteServiceVehicleCategoryRepository.Insert(new QuoteServiceVehicleCategory
+                {
+                    QuoteService = quoteService,
+                    VehicleCategoryId = x.Id
+                }));
 
             if (isNew)
             {
@@ -1329,7 +1384,10 @@ namespace DispatcherWeb.Quotes
                             State = s.DeliverTo.State
                         },
                         JobNumber = s.JobNumber,
-                        Note = s.Note
+                        Note = s.Note,
+                        QuoteServiceVehicleCategories = s.QuoteServiceVehicleCategories
+                            .Select(vc => vc.VehicleCategory.Name)
+                            .ToList()
                     }).ToList()
                 })
                 .FirstAsync();
@@ -1355,6 +1413,8 @@ namespace DispatcherWeb.Quotes
             data.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
             data.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
             data.HideLoadAt = input.HideLoadAt;
+            data.ShowProject = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Projects);
+            data.ShowTruckCategories = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders);
             data.QuoteGeneralTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Quote.GeneralTermsAndConditions);
 
             data.QuoteGeneralTermsAndConditions = data.QuoteGeneralTermsAndConditions
@@ -1528,7 +1588,7 @@ namespace DispatcherWeb.Quotes
         {
             var quote = await _quoteRepository.GetAsync(input.Id);
             quote.InactivationDate = null;
-            quote.Status = ProjectStatus.Active;
+            quote.Status = QuoteStatus.Active;
         }
     }
 }

@@ -696,12 +696,17 @@ namespace DispatcherWeb.Invoices
 
             void AddInvoiceFromCustomerTickets(IEnumerable<CustomerTicketDto> customerTickets, CustomerSelectListInfoDto customer, decimal taxRate)
             {
+                var dueDate = CalculateDueDate(new CalculateDueDateInput
+                {
+                    IssueDate = today,
+                    Terms = customer.Terms
+                });
                 var invoice = new Invoice
                 {
                     TenantId = AbpSession.TenantId ?? 0,
                     BatchId = invoiceBatch.Id,
                     EmailAddress = customer.InvoiceEmail,
-                    DueDate = null,
+                    DueDate = dueDate,
                     IssueDate = today,
                     BillingAddress = customer.FullAddress,
                     CustomerId = customer.CustomerId,
@@ -817,6 +822,22 @@ namespace DispatcherWeb.Invoices
                     invoice.TotalAmount += fuelLine.ExtendedAmount;
                     invoice.Tax += fuelLine.Tax;
                 }
+            }
+        }
+
+        public DateTime CalculateDueDate(CalculateDueDateInput input)
+        {
+            switch (input.Terms)
+            {
+                case BillingTermsEnum.DueOnReceipt: return input.IssueDate;
+                case BillingTermsEnum.DueByTheFirstOfTheMonth: return input.IssueDate.AddMonths(1).AddDays(-(input.IssueDate.Day - 1));
+                case BillingTermsEnum.Net10: return input.IssueDate.AddDays(10);
+                case BillingTermsEnum.Net15: return input.IssueDate.AddDays(15);
+                case BillingTermsEnum.Net30: return input.IssueDate.AddDays(30);
+                case BillingTermsEnum.Net60: return input.IssueDate.AddDays(60);
+                case BillingTermsEnum.Net5: return input.IssueDate.AddDays(5);
+                case BillingTermsEnum.Net14: return input.IssueDate.AddDays(14);
+                default: return input.IssueDate;
             }
         }
 
@@ -977,6 +998,12 @@ namespace DispatcherWeb.Invoices
             item.LogoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
             item.TimeZone = await GetTimezone();
             item.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
+
+            item.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
+            item.TermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.TermsAndConditions);
+            item.TermsAndConditions = item.TermsAndConditions
+                .Replace("{CompanyName}", item.CompanyName)
+                .Replace("{CompanyNameUpperCase}", item.CompanyName.ToUpper());
 
             item.DebugLayout = input.DebugLayout;
             item.DebugInput = input;

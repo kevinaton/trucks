@@ -93,7 +93,9 @@ namespace DispatcherWeb.Authorization
             pages.CreateChildPermission(AppPermissions.Pages_Drivers, L("Drivers"), multiTenancySides: MultiTenancySides.Tenant);
             var locations = pages.CreateChildPermission(AppPermissions.Pages_Locations, L("Locations"), multiTenancySides: MultiTenancySides.Tenant);
             locations.CreateChildPermission(AppPermissions.Pages_Locations_Merge, L("MergingLocations"), multiTenancySides: MultiTenancySides.Tenant);
-            pages.CreateChildPermission(AppPermissions.Pages_Projects, L("Projects"), multiTenancySides: MultiTenancySides.Tenant);
+            pages.CreateChildPermission(AppPermissions.Pages_Projects, L("Projects"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowProjects));
+            pages.CreateChildPermission(AppPermissions.EditInvoicedOrdersAndTickets, L("EditInvoicedOrdersAndTickets"), multiTenancySides: MultiTenancySides.Tenant);
             var quotes = pages.CreateChildPermission(AppPermissions.Pages_Quotes_View, L("Quotes"), multiTenancySides: MultiTenancySides.Tenant);
             quotes.CreateChildPermission(AppPermissions.Pages_Quotes_Edit, L("EditingQuotes"), multiTenancySides: MultiTenancySides.Tenant);
             quotes.CreateChildPermission(AppPermissions.Pages_Quotes_Items_Create, L("AddingLineItemsToExistingQuotes"), multiTenancySides: MultiTenancySides.Tenant);
@@ -155,6 +157,9 @@ namespace DispatcherWeb.Authorization
             reports.CreateChildPermission(AppPermissions.Pages_Reports_DriverActivityDetail, L("DriverActivityReport"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_RevenueAnalysis, L("RevenueAnalysis"), multiTenancySides: MultiTenancySides.Tenant);
 
+            var activeReports = pages.CreateChildPermission(AppPermissions.Pages_ActiveReports, L("ActiveReports"), multiTenancySides: MultiTenancySides.Host | MultiTenancySides.Tenant);
+            activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_TenantStatisticsReport, L("TenantStatisticsReport"), multiTenancySides: MultiTenancySides.Host);
+            
             var imports = pages.CreateChildPermission(AppPermissions.Pages_Imports, L("Imports"), multiTenancySides: MultiTenancySides.Tenant);
             imports.CreateChildPermission(AppPermissions.Pages_Imports_FuelUsage, L("ImportFuelUsagePermission"), multiTenancySides: MultiTenancySides.Tenant);
             imports.CreateChildPermission(AppPermissions.Pages_Imports_VehicleUsage, L("ImportVehicleUsagePermission"), multiTenancySides: MultiTenancySides.Tenant);

@@ -6,6 +6,7 @@
         var _truckService = abp.services.app.truck;
         var _dispatchingService = abp.services.app.dispatching;
         var _driverAssignmentService = abp.services.app.driverAssignment;
+        var _trailerAssignmentService = abp.services.app.trailerAssignment;
         var _dtHelper = abp.helper.dataTables;
         var _permissions = {
             edit: abp.auth.hasPermission('Pages.Orders.Edit'),
@@ -18,7 +19,13 @@
         var _features = {
             allowSharedOrders: abp.features.isEnabled('App.AllowSharedOrdersFeature'),
             allowMultiOffice: abp.features.isEnabled('App.AllowMultiOfficeFeature'),
-            allowSendingOrdersToDifferentTenant: abp.features.isEnabled('App.AllowSendingOrdersToDifferentTenant')
+            allowSendingOrdersToDifferentTenant: abp.features.isEnabled('App.AllowSendingOrdersToDifferentTenant'),
+            leaseHaulers: abp.features.isEnabled('App.AllowLeaseHaulersFeature'),
+        };
+        var _settings = {
+            validateUtilization: abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization'),
+            allowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders: abp.setting.getBoolean('App.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders'),
+            showTrailersOnSchedule: abp.setting.getBoolean('App.DispatchingAndMessaging.ShowTrailersOnSchedule'),
         };
         var _vehicleCategories = null;
         var _loadingState = false;
@@ -26,11 +33,7 @@
         var _scheduleTrucks = [];
         var _driverAssignments = [];
 
-        var isGeotabEnabled = abp.features.isEnabled('App.GeotabFeature');
-        var isLeaseHaulerEnabled = abp.features.isEnabled('App.AllowLeaseHaulersFeature');
-        var isSmsIntegrationEnabled = abp.features.isEnabled('App.SmsIntegrationFeature');
         var isDispatchViaGeotabEnabled = false;
-
         var dispatchVia = abp.setting.getInt('App.DispatchingAndMessaging.DispatchVia');
         var allowSmsMessages = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowSmsMessages');
         var hasDispatchPermissions = abp.auth.hasPermission('Pages.Dispatches.Edit');
@@ -38,12 +41,6 @@
         var showDispatchViaSmsItems = dispatchVia !== abp.enums.dispatchVia.none && hasDispatchPermissions;
         var showDispatchViaGeotabItems = isDispatchViaGeotabEnabled && hasDispatchPermissions;
         var showProgressColumn = dispatchVia === abp.enums.dispatchVia.driverApplication;
-
-        var _addOrderTruckModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Scheduling/AddOrderTruckModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_AddOrderTruckModal.js',
-            modalClass: 'AddOrderTruckModal'
-        });
 
         var _setTruckUtilizationModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Scheduling/SetTruckUtilizationModal',
@@ -77,12 +74,6 @@
             viewUrl: abp.appPath + 'app/Orders/CopyOrderModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CopyOrderModal.js',
             modalClass: 'CopyOrderModal'
-        });
-
-        var _createQuoteFromOrderModal = new app.ModalManager({
-            viewUrl: abp.appPath + 'app/Orders/CreateQuoteFromOrderModal',
-            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateQuoteFromOrderModal.js',
-            modalClass: 'CreateQuoteFromOrderModal'
         });
 
         var _shareOrderLineModal = new app.ModalManager({
@@ -221,6 +212,24 @@
             modalSize: 'sm'
         });
 
+        var _createOrEditTruckModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Trucks/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Trucks/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditTruckModal'
+        });
+
+        var _selectTrailerModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Scheduling/SelectTrailerModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SelectTrailerModal.js',
+            modalClass: 'SelectTrailerModal'
+        });
+
+        var _setTractorForTrailer = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Scheduling/SetTractorForTrailerModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_SetTractorForTrailerModal.js',
+            modalClass: 'SetTractorForTrailerModal'
+        });
+
         var _reassignTrucksModal = abp.helper.createModal('ReassignTrucks', 'Scheduling');
 
         var _createOrEditLeaseHaulerRequestModal = abp.helper.createModal('CreateOrEditLeaseHaulerRequest', 'LeaseHaulerRequests');
@@ -240,9 +249,9 @@
         refreshDateRelatedButtonsVisibility();
 
         $("#TruckTileChooseGroupingButton > .btn").click(function () {
-            refreshView($(this));
+            updateTruckTileContainerVisibility($(this));
         });
-        function refreshView($button) {
+        function updateTruckTileContainerVisibility($button) {
             $button.addClass("active").siblings().removeClass("active");
             var truckTileGroupingCategory = $button.data('category');
             app.localStorage.setItem('truckTileGroupingCategory', truckTileGroupingCategory);
@@ -262,7 +271,7 @@
             app.localStorage.getItem('truckTileGroupingCategory', function (result) {
                 var truckTileGroupingCategory = result || false;
                 var button = $('#TruckTileChooseGroupingButton > .btn[data-category="' + truckTileGroupingCategory + '"]');
-                refreshView(button);
+                updateTruckTileContainerVisibility(button);
             });
         }
         updateTruckTileGroupingContainerVisibilityFromCache();
@@ -276,7 +285,7 @@
 
             var options = {};
             $.extend(options, _dtHelper.getFilterData());
-            _schedulingService.getScheduleTrucks(options).done(function (result) {
+            return _schedulingService.getScheduleTrucks(options).done(function (result) {
                 var trucks = result.items;
                 _scheduleTrucks = trucks;
                 truckTiles.empty();
@@ -287,9 +296,10 @@
                     $('<div class="truck-tile"></div>')
                         .data('truck', truck)
                         .addClass(getTruckTileClass(truck))
+                        .addClass(getTruckTileWidthClass(truck))
                         .addClass(getTruckTileOfficeClass(truck))
                         .addClass(getTruckTilePointerClass(truck))
-                        .text(truck.truckCode)
+                        .text(getCombinedTruckCode(truck))
                         .attr('title', getTruckTileTitle(truck))
                         .appendTo(tileWrapper);
                     tileWrapper
@@ -297,17 +307,27 @@
                     var truckTilesContainer = truckTilesByCategory.closest(`[data-truck-category-id="${truck.vehicleCategory.id}"`);
                     tileWrapper.clone(true, true).appendTo(truckTilesContainer);
                 });
-                var tiles = $('#TruckTilesByCategory div.schedule-truck-tiles');
-                $.each(tiles, function (ind, tile) {
-                    let $truckGroup = $(tile).parents('div.m-accordion__item');
-                    var $collapsableHeader = $truckGroup.children('div.m-accordion__item-head');
-                    if ($(tile).has('div.truck-tile-wrap').length === 0) {
+
+                if (trucks.length) {
+                    truckTiles.append(getAddTruckTileButton());
+                    $("#TruckTilesNoTrucksMessage").hide();
+                } else {
+                    $("#TruckTilesNoTrucksMessage").show();
+                }
+
+                var groupedTruckTilesContainers = $('#TruckTilesByCategory div.schedule-truck-tiles');
+                $.each(groupedTruckTilesContainers, function (ind, truckTilesContainer) {
+                    let $truckTilesContainer = $(truckTilesContainer);
+                    let $categoryContainer = $truckTilesContainer.parents('div.m-accordion__item');
+                    var $collapsableHeader = $categoryContainer.children('div.m-accordion__item-head');
+                    if ($truckTilesContainer.has('div.truck-tile-wrap').length === 0) {
                         //$collapsableHeader.parent().remove();
-                        $truckGroup.hide();
+                        $categoryContainer.hide();
                         //$collapsableHeader.removeAttr('data-toggle');
                         //$collapsableHeader.find('span:nth-child(3)').remove();
                     } else {
-                        $truckGroup.show();
+                        $categoryContainer.show();
+                        $truckTilesContainer.append(getAddTruckTileButton($truckTilesContainer.data('truck-category-id')));
                         var $dataToggleAttr = $collapsableHeader.attr('data-toggle');
                         if (typeof $dataToggleAttr !== typeof undefined && $dataToggleAttr !== false) {
                             return;
@@ -318,6 +338,14 @@
                 });
                 _trucksWereLoadedOnce = true;
                 updateTruckTileGroupingContainerVisibilityFromCache();
+            });
+        }
+
+        function getAddTruckTileButton(category) {
+            return $('<button type="button" class="btn btn-default add-truck-tile-button" title="Add Truck"><i class="fa fa-plus"></i></button>').click(function () {
+                _createOrEditTruckModal.open({
+                    vehicleCategoryId: category || null
+                });
             });
         }
 
@@ -398,16 +426,29 @@
             return order.trucks.some(orderTruck => orderTruck.truckId === truck.id);
         }
 
+        function getTractorForTrailer(trailer) {
+            if (trailer.vehicleCategory.assetType !== abp.enums.assetType.trailer || !trailer.tractor) {
+                return null;
+            }
+            return _scheduleTrucks.find(x => x.id === trailer.tractor.id);
+        }
+
         function canAddTruckWithDriverToOrder(truck, driverId, order) {
-            var validateUtilization = abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization');
             if (isTodayOrFutureDate(order)
-                && (truck.utilization >= 1 && validateUtilization
-                    || truckHasNoDriver(truck) && truckCategoryNeedDriver(truck)
+                && (truck.utilization >= 1 && _settings.validateUtilization
+                    || truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck) && _settings.validateUtilization
                     || truck.isOutOfService
-                    || truck.vehicleCategory.assetType === abp.enums.assetType.trailer)) {
+                    || truck.vehicleCategory.assetType === abp.enums.assetType.trailer && !getTractorForTrailer(truck))
+            ) {
                 return false;
             }
-            if (validateUtilization && order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id || olt.driverId === driverId))) {
+            if (order.trucks.some(olt => !olt.isDone && (olt.truckId === truck.id && olt.driverId === driverId))) {
+                return false;
+            }
+            if (_settings.allowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders
+                && order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(truck.vehicleCategory.id)
+                && (!truck.trailer || !order.vehicleCategoryIds.includes(truck.trailer?.vehicleCategory.id))
+            ) {
                 return false;
             }
 
@@ -423,17 +464,42 @@
                 }
 
                 var truckCode = (truck.truckCode || '').toLowerCase();
-                if (!truckCode.startsWith(query)) {
+                var trailerCode = (truck.trailer && truck.trailer.truckCode || '').toLowerCase();
+                if (!(truckCode.startsWith(query)
+                    || !_settings.showTrailersOnSchedule && trailerCode.startsWith(query))
+                ) {
                     return;
                 }
+
+                var trailer = truck.trailer;
+                if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer) {
+                    var tractor = getTractorForTrailer(truck);
+                    if (!tractor) {
+                        return;
+                    }
+                    trailer = {
+                        id: truck.id,
+                        truckCode: truck.truckCode,
+                    };
+                    truck = tractor;
+                    if (!canAddTruckWithDriverToOrder(truck, truck.driverId, order)) {
+                        return;
+                    }
+                    if (result.some(r => r.truckId === truck.id && r.trailer && r.trailer.id === trailer.id)) {
+                        return;
+                    }
+                }
+
                 result.push({
                     id: 0,
                     parentId: null,
                     orderId: order.orderId,
                     truckId: truck.id,
                     truckCode: truck.truckCode,
+                    truckCodeCombined: getCombinedTruckCode(truck),
+                    trailer: trailer,
                     driverId: truck.driverId,
-                    textForLookup: truck.truckCode,
+                    textForLookup: getCombinedTruckCode(truck),
                     officeId: truck.officeId,
                     isExternal: truck.isExternal,
                     leaseHaulerId: truck.leaseHaulerId,
@@ -464,7 +530,7 @@
                         }
 
                         var driverName = ((driverAssignment.driverLastName || '') + ", " + (driverAssignment.driverFirstName || ''));
-                        var driverNameWithTruck = driverName + " - " + (truck.truckCode || '');
+                        var driverNameWithTruck = driverName + " - " + (getCombinedTruckCode(truck) || '');
                         //if (!driverName.toLowerCase().startsWith(query)) { //only matching by driverName causes issues when the text is autocompleted with Tab first and only then they hit Enter, as opposed to just hitting Enter. We need to match against a complete string to avoid issues
                         if (!driverNameWithTruck.toLowerCase().startsWith(query)) {
                             return;
@@ -476,6 +542,8 @@
                             orderId: order.orderId,
                             truckId: truck.id,
                             truckCode: truck.truckCode,
+                            truckCodeCombined: getCombinedTruckCode(truck),
+                            trailer: truck.trailer,
                             driverId: driverAssignment.driverId,
                             textForLookup: driverNameWithTruck,
                             officeId: truck.officeId,
@@ -518,20 +586,52 @@
         }
 
         function getTruckTileClass(truck) {
-            if (truck.isOutOfService)
+            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
+                let tractor = _scheduleTrucks.find(x => x.id === truck.tractor.id);
+                if (tractor) {
+                    return getTruckTileClass(tractor);
+                }
+            }
+            if (truck.isOutOfService) {
                 return "gray";
-            if (truckHasNoDriver(truck) && truckCategoryNeedDriver(truck))
+            }
+            if (truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck)) {
                 return "blue";
-            if (truck.utilization >= 1)
-                return "red";
-            if (truck.utilization > 0)
-                return "yellow";
-            return "green";
+            }
+            if (_settings.validateUtilization) {
+                if (truck.utilization >= 1) {
+                    return "red";
+                }
+                if (truck.utilization > 0) {
+                    return "yellow";
+                }
+                return "green";
+            } else {
+                if (truck.utilization > 1) {
+                    return "red";
+                }
+                if (truck.utilization === 1) {
+                    return "yellow";
+                }
+                if (truck.utilization > 0) {
+                    return "green";
+                }
+                return "white";
+            }
         }
 
-        function truckCategoryNeedDriver(truck) {
+        function getTruckTileWidthClass(truck) {
+            if (_settings.showTrailersOnSchedule) {
+                if (truck.trailer || truck.tractor) {
+                    return 'double-width';
+                }
+            }
+            return '';
+        }
+
+        function truckCategoryNeedsDriver(truck) {
             return truck.vehicleCategory.isPowered &&
-                (isLeaseHaulerEnabled || (!truck.alwaysShowOnSchedule && !truck.isExternal)); //&& truck.officeId !== null
+                (_features.leaseHaulers || (!truck.alwaysShowOnSchedule && !truck.isExternal)); //&& truck.officeId !== null
         }
 
         function getTruckTileOfficeClass(truck) {
@@ -552,9 +652,33 @@
             return '';
         }
 
+        function getCombinedTruckCodeFieldName() {
+            return _settings.showTrailersOnSchedule ? 'truckCodeCombined' : 'truckCode';
+        }
+
+        function getCombinedTruckCode(truck) {
+            if (_settings.showTrailersOnSchedule) {
+                if (truck.canPullTrailer && truck.trailer) {
+                    return truck.truckCode + ' :: ' + truck.trailer.truckCode;
+                }
+                if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor) {
+                    return truck.tractor.truckCode + ' :: ' + truck.truckCode;
+                }
+            }
+            return truck.truckCode;
+        }
+
         function getTruckTileTitle(truck) {
-            var title = truck.truckCode;
-            if (truckCategoryNeedDriver(truck)) {
+            var title = getCombinedTruckCode(truck);
+            if (truck.vehicleCategory.assetType === abp.enums.assetType.trailer) {
+                title += '\n' + truck.vehicleCategory.name;
+                title += ' ' + truck.bedConstructionFormatted;
+                title += '\n';
+                title += truck.year ? truck.year + ' ' : '';
+                title += truck.make ? truck.make + ' ' : '';
+                title += truck.model ? truck.model + ' ' : '';
+            }
+            if (truckCategoryNeedsDriver(truck)) {
                 title += ' - ' + truck.driverName;
             }
             return title;
@@ -634,69 +758,6 @@
         }
         function hasTrucksPermissions() {
             return _permissions.trucks;
-        }
-
-        function handleQuantityCellCreation(fieldName, saveMethod, shouldRenderFunc) {
-            return function (cell, cellData, rowData, rowIndex, colIndex) {
-                $(cell).empty();
-                if (shouldRenderFunc && !shouldRenderFunc(rowData)) {
-                    $(cell).text('-');
-                    $(cell).removeClass('cell-editable');
-                    return;
-                }
-                if (!hasOrderEditPermissions() || !isAllowedToEditOrder(rowData)) {
-                    $(cell).text(rowData[fieldName]);
-                    $(cell).removeClass('cell-editable');
-                    return;
-                }
-                var editor = $('<input type="text">').appendTo($(cell));
-                editor.val(rowData[fieldName]);
-                editor.focusout(async function () {
-                    var newValue = $(this).val();
-                    if (newValue === (rowData[fieldName] || "").toString()) {
-                        return;
-                    }
-                    if (isNaN(newValue) || parseFloat(newValue) > 1000000 || parseFloat(newValue) < 0) {
-                        abp.message.error('Please enter a valid number!');
-                        $(this).val(rowData[fieldName]);
-                        return;
-                    }
-                    newValue = newValue === "" ? null : abp.utils.round(parseFloat(newValue));
-
-                    var tempRowData = {
-                        materialQuantity: rowData.materialQuantity,
-                        freightQuantity: rowData.freightQuantity
-                    };
-                    tempRowData[fieldName] = newValue;
-
-                    if (!await abp.scheduling.checkExistingDispatchesBeforeSettingQuantityAndNumberOfTrucksZero(
-                        rowData.id, tempRowData.materialQuantity, tempRowData.freightQuantity, rowData.numberOfTrucks
-                    )) {
-                        reloadMainGrid(null, false);
-                        return;
-                    }
-
-                    abp.ui.setBusy(cell);
-                    var saveData = {
-                        orderLineId: rowData.id
-                    };
-                    saveData[fieldName] = newValue;
-                    saveMethod(saveData).done(function (result) {
-                        rowData[fieldName] = result[fieldName];
-                        abp.notify.info('Saved successfully.');
-                        if (newValue === 0 || newValue === null) {
-                            if (!rowData.materialQuantity && !rowData.freightQuantity) {
-                                reloadMainGrid(null, false);
-                                reloadTruckTiles();
-                            }
-                        }
-                    }).fail(function () {
-                        reloadMainGrid(null, false);
-                    }).always(function () {
-                        abp.ui.clearBusy(cell);
-                    });
-                });
-            };
         }
 
         var staggeredIcon = ' <span class="far fa-clock staggered-icon pull-right" title="Staggered"></span>';
@@ -1107,7 +1168,7 @@
         };
         menuFunctions.fn.activateClosedTrucks = function (element) {
             var rowData = _dtHelper.getRowData(element);
-            if (rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0) {
+            if (_settings.validateUtilization && (rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0)) {
                 abp.notify.error("Increase # of Trucks");
                 return;
             }
@@ -1150,7 +1211,6 @@
         }
 
         var scheduleTable = $('#ScheduleTable');
-        //scheduleTable.append('<tfoot><tr>' + '<th></th>'.repeat(16) + '</tr></tfoot>');
         var scheduleGrid = scheduleTable.DataTableInit({
             stateSave: true,
             stateDuration: 0,
@@ -1347,32 +1407,6 @@
                         return abp.utils.replaceAll(span.html(), '\n', '<br>');
                     }
                 },
-                //{
-                //    data: "materialUom",
-                //    title: "Mat. UOM"
-                //},
-                //{
-                //    data: "materialQuantity",
-                //    responsivePriority: 1,
-                //    title: '<span title="Material Quantity">Mat. Qty</span>', //was 'Quantity of material or service'
-                //    width: "65px",
-                //    className: "cell-editable",
-                //    createdCell: handleQuantityCellCreation("materialQuantity", _schedulingService.setOrderLineMaterialQuantity,
-                //        rowData => abp.enums.designations.hasMaterial(rowData.designation))
-                //},
-                //{
-                //    data: "freightUom",
-                //    title: "Freight UOM"
-                //},
-                //{
-                //    data: "freightQuantity",
-                //    responsivePriority: 1,
-                //    title: '<span title="Freight Quantity">Freight Qty</span>', //was 'Quantity of material or service'
-                //    width: "65px",
-                //    className: "cell-editable",
-                //    createdCell: handleQuantityCellCreation("freightQuantity", _schedulingService.setOrderLineFreightQuantity,
-                //        rowData => !abp.enums.designations.materialOnly.includes(rowData.designation))
-                //},
                 {
                     data: "numberOfTrucks",
                     name: "numberOfTrucks",
@@ -1397,6 +1431,7 @@
                     orderable: false,
                     title: 'Sched. Trucks',
                     width: "65px",
+                    visible: _settings.validateUtilization,
                     //responsivePriority: 1,
                     className: "cell-editable cell-scheduled-trucks all",
                     createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
@@ -1461,14 +1496,14 @@
                     data: null,
                     orderable: false,
                     render: function (data, type, full, meta) {
-                        return data.trucks.map(function (t) { return t.truckCode; }).join(', ');
+                        return data.trucks.map(function (t) { return t[getCombinedTruckCodeFieldName()]; }).join(', ');
                     },
                     title: "Trucks",
                     //responsivePriority: 0,
                     className: "trucks all",
                     createdCell: function (cell, cellData, rowData, rowIndex, colIndex) {
                         $(cell).empty();
-                        var cancelRemoveTag = false;
+                        var cancellingTagRemoval = false;
                         $(cell).css('min-width', '195px');
                         //$(cell).css('white-space', 'normal !important');
                         if (!hasOrderEditPermissions() || !isAllowedToEditOrderTrucks(rowData)) {
@@ -1477,7 +1512,7 @@
                         var editor = $('<input type="text" class="truck-cell-editor">').appendTo($(cell));
                         editor.tagsinput({
                             itemValue: 'truckId',
-                            itemText: 'truckCode',
+                            itemText: getCombinedTruckCodeFieldName(),
                             allowDuplicates: true,
                             tagClass: function (truck) {
                                 return 'truck-tag ' + getTruckTagClass(truck) + ' truck-office-' + truck.officeId +
@@ -1497,7 +1532,7 @@
                         });
 
                         var orderLineIsFullyUtilized = function () {
-                            if (!abp.setting.getBoolean('App.DispatchingAndMessaging.ValidateUtilization')) {
+                            if (!_settings.validateUtilization) {
                                 return false;
                             }
                             return rowData.maxUtilization === 0 || rowData.maxUtilization - rowData.utilization <= 0;
@@ -1555,9 +1590,59 @@
                             }
                         });
 
+                        let askToAssignDriverAndAddTagAgain = async function (tag, eventOptions) {
+                            eventOptions = eventOptions || {};
+                            var filterData = _dtHelper.getFilterData();
+                            var assignDriverResult = await app.getModalResultAsync(
+                                _assignDriverForTruckModal.open({
+                                    message: 'There was no driver assigned to this truck. Please select a driver.',
+                                    truckId: tag.truckId,
+                                    truckCode: tag.truckCode,
+                                    leaseHaulerId: tag.leaseHaulerId,
+                                    date: filterData.date,
+                                    shift: filterData.shift,
+                                    officeId: filterData.officeId,
+                                    driverId: null,
+                                    driverName: null
+                                })
+                            );
+
+                            tag.driverId = assignDriverResult.driverId;
+                            editor.tagsinput('add', tag, {
+                                ...eventOptions,
+                                preventPost: false,
+                                allowNoDriver: true
+                            });
+                        };
+
+                        let askToAssignTrailerAndAddTagAgain = async function (tag, eventOptions) {
+                            eventOptions = eventOptions || {};
+                            let trailer = await app.getModalResultAsync(
+                                _selectTrailerModal.open({
+                                    optional: true
+                                })
+                            );
+
+                            tag.trailer = trailer;
+                            if (trailer && _settings.showTrailersOnSchedule) {
+                                tag.truckCodeCombined = tag.truckCode + ' :: ' + trailer.truckCode;
+                            }
+                            editor.tagsinput('add', tag, {
+                                ...eventOptions,
+                                preventPost: false,
+                                allowNoTrailer: true
+                            });
+                            if (trailer) {
+                                setTrailerForTractorAsync({
+                                    tractorId: tag.truckId,
+                                    trailerId: trailer.id
+                                });
+                            }
+                        };
+
                         editor.on('beforeItemAdd', function (event) {
-                            if (cancelRemoveTag) {
-                                cancelRemoveTag = false;
+                            if (cancellingTagRemoval) {
+                                cancellingTagRemoval = false;
                                 return;
                             }
                             var tag = event.item;
@@ -1571,6 +1656,18 @@
                                 return;
                             }
                             if (!event.options || !event.options.preventPost) {
+                                if (!tag.driverId && tag.vehicleCategory.isPowered && (!event.options || !event.options.allowNoDriver)) {
+                                    event.cancel = true;
+                                    askToAssignDriverAndAddTagAgain(tag, event.options);
+                                    return;
+                                }
+
+                                if (_settings.showTrailersOnSchedule && !tag.trailer && tag.canPullTrailer && (!event.options || !event.options.allowNoTrailer)) {
+                                    event.cancel = true;
+                                    askToAssignTrailerAndAddTagAgain(tag, event.options);
+                                    return;
+                                }
+
                                 var onFail = function (errorMessage) {
                                     editor.tagsinput('remove', tag, { preventPost: true });
                                     abp.notify.error(errorMessage || 'Unknown error occurred on saving the OrderTruck');
@@ -1581,7 +1678,8 @@
                                 _schedulingService.addOrderLineTruck({
                                     orderLineId: rowData.id,
                                     truckId: tag.truckId,
-                                    driverId: tag.driverId
+                                    driverId: tag.driverId,
+                                    trailerId: tag.trailer?.id,
                                 }).done(function (result) {
                                     if (result.isFailed) {
                                         onFail(result.errorMessage);
@@ -1598,18 +1696,6 @@
 
                                         reloadTruckTiles();
                                         reloadDriverAssignments();
-                                        if (tag.canPullTrailer && abp.setting.getBoolean('App.DispatchingAndMessaging.ShowTrailersOnSchedule')) {
-                                            var popupOptions = {
-                                                title: "Select Trailer",
-                                                orderLineId: rowData.id,
-                                                parentId: result.item.id,
-                                                onlyTrailers: true,
-                                                //isPowered: false,
-                                                parentTruckId: result.item.truckId
-                                            };
-                                            $.extend(popupOptions, _dtHelper.getFilterData());
-                                            _addOrderTruckModal.open(popupOptions);
-                                        }
                                     }
                                 }).fail(function () { onFail(); });
                             }
@@ -1659,11 +1745,11 @@
                                         deleteOrderLineTruck(false);
                                     },
                                     function () {
-                                        cancelRemoveTag = true;
+                                        cancellingTagRemoval = true;
                                         editor.tagsinput('add', tag, { preventPost: true });
                                     },
                                     function () {
-                                        cancelRemoveTag = true;
+                                        cancellingTagRemoval = true;
                                         tag.isDone = true;
                                         editor.tagsinput('add', tag, { preventPost: true });
                                         deleteOrderLineTruck(true);
@@ -1750,7 +1836,8 @@
 
                         let tooltipTags = 'data-toggle="tooltip" data-html="true" title="<div class=\'text-left\'>Amount loaded: ' + amountLoaded +
                             '</div><div class=\'text-left\'>Amount delivered: ' + amountDelivered +
-                            '</div><div class=\'text-left\'>Number of loads: ' + (full.loadCount || '0') + '</div>"';
+                            '</div><div class=\'text-left\'>Number of loads: ' + (full.loadCount || '0') +
+                            '</div><div class=\'text-left\'>Number of dispatches: ' + (full.dispatchCount || '0') + '</div>"';
 
                         if (!shouldShowAmountsTooltip) {
                             tooltipTags = '';
@@ -1798,18 +1885,15 @@
                     }
                 }
             ],
-            createdRow: function (row, data, index) {
-                if (data.isClosed) {
-                    $(row).addClass('order-closed');
-                }
-                if (isOrderLineShared(data)) {
-                    $(row).addClass('order-shared');
-                }
-                if (!data.isClosed && data.utilization < data.maxUtilization) {
-                    $(row).addClass('order-not-fully-utilized');
-                }
-                if (!data.isClosed && data.scheduledTrucks < data.numberOfTrucks) {
-                    $(row).addClass('reqtruck-red');
+            createdRow: function (row, rowData, index) {
+                updateRowAppearance(row, rowData);
+            },
+            preDrawCallback: function (settings) {
+                // check if filter includes current day or futures dates
+                if (!isPastDate()) {
+                    //scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "<span>There are no jobs for this date.</span><br /><button type='button' id='howToAddaJob' class='btn btn-primary btn-sm mt-2'>Click here to see how to add a job</button>";
+                } else {
+                    scheduleGrid.settings().context[0].oLanguage.sEmptyTable = "No data available in table";
                 }
             },
             drawCallback: function (settings) {
@@ -1818,7 +1902,7 @@
         });
 
         function isOrderLineShared(orderLine) {
-            return orderLine.isShared || orderLine.haulingCompanyOrderLineId || orderLine.materialCompanyOrderLineId;
+            return !!(orderLine.isShared || orderLine.haulingCompanyOrderLineId || orderLine.materialCompanyOrderLineId);
         }
 
         function recalculateFooterTotals() {
@@ -1840,16 +1924,18 @@
 
         function updateRowAppearance(element, rowData) {
             var row = $(element).closest('tr');
-            if (!rowData.isClosed && rowData.utilization < rowData.maxUtilization) {
-                row.addClass('order-not-fully-utilized');
-            } else {
-                row.removeClass('order-not-fully-utilized');
-            }
-            if (rowData.scheduledTrucks < rowData.numberOfTrucks) {
-                row.addClass('reqtruck-red');
-            } else {
-                row.removeClass('reqtruck-red');
-            }
+            row.toggleClass('order-closed',
+                rowData.isClosed
+            );
+            row.toggleClass('order-shared',
+                isOrderLineShared(rowData)
+            );
+            row.toggleClass('order-not-fully-utilized',
+                !rowData.isClosed && rowData.utilization < rowData.maxUtilization && _settings.validateUtilization
+            );
+            row.toggleClass('reqtruck-red',
+                !rowData.isClosed && rowData.scheduledTrucks < rowData.numberOfTrucks && _settings.validateUtilization
+            );
         }
 
         function truckHasNoDriver(truck) {
@@ -1937,19 +2023,94 @@
             }
         }
 
+        async function setTrailerForTractorAsync(options) {
+            var filterData = _dtHelper.getFilterData();
+            await _trailerAssignmentService.setTrailerForTractor({
+                date: filterData.date,
+                shift: filterData.shift,
+                officeId: filterData.officeId,
+                ...options
+            });
+
+            abp.notify.info('Saved successfully.');
+
+            if (options.updateExistingOrderLineTrucks) {
+                setTimeout(() => {
+                    reloadMainGrid(null, false);
+                }, 500);
+            }
+
+            reloadTruckTiles();
+            //reloadDriverAssignments();
+        }
+
+        async function setTrailerForOrderLineTruckAsync(options) {
+            await _trailerAssignmentService.setTrailerForOrderLineTruck({
+                ...options
+            });
+
+            abp.notify.info('Saved successfully.');
+
+            reloadMainGrid(null, false);
+            reloadTruckTiles();
+            //reloadDriverAssignments();
+        }
+
+        async function promptWhetherToReplaceTrailerOnExistingOrderLineTrucks(options) {
+            try {
+                abp.ui.setBusy();
+                let result = {};
+                var filterData = _dtHelper.getFilterData();
+                var isPastDate = moment(filterData.date, 'MM/DD/YYYY') < moment().startOf('day');
+
+                if (options.truckId) {
+                    var validationResult = await _driverAssignmentService.hasOrderLineTrucks({
+                        trailerId: options.trailerId,
+                        forceTrailerIdFilter: true,
+                        truckId: options.truckId,
+                        officeId: filterData.officeId,
+                        date: filterData.date,
+                        shift: filterData.shift
+                    });
+
+                    if (isPastDate) {
+                        //same as a "no" answer
+                    } else if (validationResult.hasOrderLineTrucks) {
+                        abp.ui.clearBusy();
+                        var userResponse = await swal(
+                            app.localize("TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace", options.truckCode),
+                            {
+                                buttons: {
+                                    no: "No",
+                                    yes: "Yes"
+                                }
+                            }
+                        );
+                        abp.ui.setBusy();
+                        if (userResponse === 'yes') {
+                            if (validationResult.hasOpenDispatches) {
+                                abp.message.error(app.localize("CannotChangeTrailerBecauseOfDispatchesError"));
+                                throw new Error(app.localize("CannotChangeTrailerBecauseOfDispatchesError"));
+                            }
+                            result.updateExistingOrderLineTrucks = true;
+                        }
+                    }
+                }
+
+                return result;
+            }
+            finally {
+                abp.ui.clearBusy();
+            }
+        }
+
         function reloadMainGrid(callback, resetPaging) {
             resetPaging = resetPaging === undefined ? true : resetPaging;
             scheduleGrid.ajax.reload(callback, resetPaging);
         }
 
-        abp.event.on('app.addOrderTruckModalSaved', function () {
-            reloadMainGrid(null, false);
-            reloadTruckTiles();
-            reloadDriverAssignments();
-        });
-
         abp.event.on('app.assignDriverForTruckModalSaved', function () {
-            reloadMainGrid(null, false);
+            //reloadMainGrid(null, false);
             reloadTruckTiles();
             reloadDriverAssignments();
         });
@@ -2053,6 +2214,14 @@
             //reloadDriverAssignments();
         });
 
+        abp.event.on('app.createOrEditTruckModalSaved', function () {
+            reloadTruckTiles();
+        });
+
+        abp.event.on('app.createOrEditOrderModalSaved', function () {
+            reloadMainGrid(null, false);
+        });
+
         function actionMenuHasItems() {
             return _permissions.edit ||
                 _permissions.editTickets ||
@@ -2068,6 +2237,16 @@
             position.y += $(window).scrollTop();
             button.contextMenu({ x: position.x, y: position.y });
         });
+
+        scheduleTable.on('click', '#howToAddaJob', function (e) {
+            e.preventDefault();
+            userGuiding.previewGuide(86432);
+        });
+
+        $("#TruckTilesNoTrucksMessage").click(function (e) {
+            e.preventDefault();
+            _createOrEditTruckModal.open();
+        })
 
         $('#AddLeaseHaulerRequestButton').click(function (e) {
             e.preventDefault();
@@ -2571,14 +2750,42 @@
                     visible: function () {
                         var truck = $(this).data('item');
                         return hasTrucksPermissions()
-                            && truck.vehicleCategory.isPowered
-                            && !isPastDate();
+                            && truck.vehicleCategory.isPowered;
                     },
                     callback: function () {
                         var orderLineTruckId = $(this).data('item').id;
                         _changeDriverForOrderLineTruckModal.open({ orderLineTruckId: orderLineTruckId });
                     }
-                }
+                },
+                changeTrailer: {
+                    name: 'Change trailer',
+                    visible: function () {
+                        var truck = $(this).data('item');
+                        return truck.canPullTrailer;
+                    },
+                    callback: async function () {
+                        var item = $(this).data('item');
+                        var order = _dtHelper.getRowData(this);
+                        let trailer = await app.getModalResultAsync(
+                            _selectTrailerModal.open({
+                                message: 'Select trailer for truck ' + item.truckCode + ' for single job',
+                                trailerId: item.trailer && item.trailer.id || null,
+                                trailerTruckCode: item.trailer && item.trailer.truckCode || null,
+                                trailerVehicleCategoryId: item.trailer && item.trailer.vehicleCategory.id || null
+                            })
+                        );
+                        
+                        if (order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(trailer.vehicleCategory.id)) {
+                            abp.message.error(app.localize("CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError"));
+                            return;
+                        }
+
+                        await setTrailerForOrderLineTruckAsync({
+                            orderLineTruckId: item.id,
+                            trailerId: trailer.id
+                        });
+                    }
+                },
             }
         });
 
@@ -2737,6 +2944,142 @@
                         abp.notify.info('Successfully removed.');
                         reloadTruckTiles();
                         reloadDriverAssignments();
+                    }
+                },
+                addTrailer: {
+                    name: 'Add trailer',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return truck.canPullTrailer && !truck.trailer;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+
+                        let trailer = await app.getModalResultAsync(
+                            _selectTrailerModal.open()
+                        );
+
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
+                        });
+
+                        await setTrailerForTractorAsync({
+                            tractorId: truck.id,
+                            trailerId: trailer.id,
+                            ...result
+                        });
+                    }
+                },
+                changeTrailer: {
+                    name: 'Change trailer',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return truck.canPullTrailer && truck.trailer;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+
+                        let trailer = await app.getModalResultAsync(
+                            _selectTrailerModal.open({
+                                trailerId: truck.trailer.id,
+                                trailerTruckCode: truck.trailer.truckCode,
+                                trailerVehicleCategoryId: truck.trailer.vehicleCategory.id,
+                                modalSubtitle: truck.truckCode + ' is currently coupled to ' + truck.trailer.truckCode
+                                    + ' - ' + truck.trailer.vehicleCategory.name + ' ' + truck.trailer.make + ' ' + truck.trailer.model + ' '
+                                    + truck.trailer.bedConstructionFormatted + ' bed'
+                            })
+                        );
+
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                            trailerId: truck.trailer.id,
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
+                        });
+
+                        await setTrailerForTractorAsync({
+                            tractorId: truck.id,
+                            trailerId: trailer.id,
+                            ...result
+                        });
+                    }
+                },
+                removeTrailer: {
+                    name: 'Remove trailer',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return truck.canPullTrailer && truck.trailer;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+
+                        var result = await promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                            trailerId: truck.trailer.id,
+                            truckId: truck.id,
+                            truckCode: truck.truckCode
+                        });
+                        
+                        await setTrailerForTractorAsync({
+                            tractorId: truck.id,
+                            trailerId: null,
+                            ...result
+                        });
+                    }
+                },
+                addTractor: {
+                    name: 'Add tractor',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && !truck.tractor;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+                        var filterData = _dtHelper.getFilterData();
+                        _setTractorForTrailer.open({
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                            trailerId: truck.id
+                        });
+                    }
+                },
+                changeTractor: {
+                    name: 'Change tractor',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+                        var filterData = _dtHelper.getFilterData();
+                        _setTractorForTrailer.open({
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                            trailerId: truck.id,
+                            tractorId: truck.tractor.id,
+                            tractorTruckCode: truck.tractor.truckCode
+                        });
+                    }
+                },
+                removeTractor: {
+                    name: 'Remove tractor',
+                    visible: function () {
+                        var truck = $(this).data('truck');
+                        return truck.vehicleCategory.assetType === abp.enums.assetType.trailer && truck.tractor;
+                    },
+                    callback: async function () {
+                        var truck = $(this).data('truck');
+                        var filterData = _dtHelper.getFilterData();
+                        await abp.services.app.trailerAssignment.setTractorForTrailer({
+                            date: filterData.date,
+                            shift: filterData.shift,
+                            officeId: filterData.officeId,
+                            trailerId: truck.id,
+                            tractorId: null
+                        });
+                        abp.notify.info('Successfully removed.');
+                        reloadTruckTiles();
                     }
                 },
                 separator1: {

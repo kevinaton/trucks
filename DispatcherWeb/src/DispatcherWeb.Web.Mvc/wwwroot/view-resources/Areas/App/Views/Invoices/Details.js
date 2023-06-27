@@ -43,7 +43,25 @@
         });
 
         $("#IssueDate").datepickerInit();
+        $("#IssueDate").on('dp.change', function () {
+            calculateDueDate();
+        });
         $("#DueDate").datepickerInit();
+
+        async function calculateDueDate() {
+            var issueDate = $("#IssueDate").val();
+            if (!issueDate) {
+                return;
+            }
+            var terms = $("#Terms").val();
+            var dueDate = await abp.services.app.invoice.calculateDueDate({
+                issueDate: issueDate,
+                terms: terms
+            });
+            if (dueDate) {
+                $("#DueDate").val(moment(dueDate).utc().format('L'));
+            }
+        }
 
         var saveInvoiceAsync = function (callback) {
             if (!form.valid()) {
@@ -83,7 +101,7 @@
                     let i = dropdownData[0].item;
                     $("#EmailAddress").val(i.invoiceEmail);
                     $("#BillingAddress").val(i.fullAddress);
-                    $("#Terms").val(i.fullAddress);
+                    $("#Terms").val(i.terms).change();
                     _customerInvoicingMethod = i.invoicingMethod;
                     $("#CustomerInvoicingMethod").val(i.invoicingMethod);
                 }
@@ -129,6 +147,9 @@
         $("#Terms").select2Init({
             showAll: true,
             allowClear: true
+        });
+        $("#Terms").change(function () {
+            calculateDueDate();
         });
 
         function disableCustomerDropdownIfNeeded() {
@@ -191,6 +212,7 @@
                     if (!invoiceLine.ticketId) {
                         $(sender).closest('tr').find('.freight-total-cell').text(invoiceLine.freightExtendedAmount);
                         $(sender).closest('tr').find('.material-total-cell').text(invoiceLine.materialExtendedAmount);
+                        $(sender).closest('tr').find('.description-cell textarea').val(invoiceLine.description);
                     }
                     $(sender).closest('tr').find('.total-cell').text(_dtHelper.renderMoney(invoiceLine.subtotal));
                     $(sender).closest('tr').find('.tax-cell input').prop('checked', invoiceLine.tax > 0);
@@ -327,7 +349,8 @@
                         editStartingCallback: function editStartingCallback(rowData, cell, selectedOption) {
                             console.log(selectedOption);
                             if (selectedOption && selectedOption.item) {
-                                rowData.isTaxable = selectedOption.item.isTaxable
+                                rowData.isTaxable = selectedOption.item.isTaxable;
+                                rowData.description = selectedOption.name;
                             }
                         },
                         isReadOnly: function (rowData, isRowReadOnly) {
@@ -339,7 +362,7 @@
                     data: "description",
                     title: "Description",
                     width: '240px',
-                    className: "all",
+                    className: "all description-cell",
                     editable: {
                         editor: _dtHelper.editors.textarea,
                         maxLength: 1000,

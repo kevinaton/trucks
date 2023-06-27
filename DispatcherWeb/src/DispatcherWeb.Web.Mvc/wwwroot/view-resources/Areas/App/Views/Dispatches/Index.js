@@ -117,16 +117,6 @@
                     data: "item",
                     title: "Item",
                     responsivePriority: 0
-                },
-                {
-                    data: "quantity",
-                    title: "Quantity", //Material<br>Quantity
-                    responsivePriority: 2
-                },
-                {
-                    data: "uom",
-                    title: "UOM",
-                    responsivePriority: 3
                 }
 
             ]

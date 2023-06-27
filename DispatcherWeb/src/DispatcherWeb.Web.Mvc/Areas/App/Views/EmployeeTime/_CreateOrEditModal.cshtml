@@ -11,6 +11,7 @@
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="TimeClassificationAllowsManualTime" />
         <input type="hidden" asp-for="TimeOffId" />
+        <input type="hidden" asp-for="HasSingleDriverCompany" />
         <div class="form-group">
             <label><span class="required-label">@L("Employee")</span></label>
             <select class="form-control" asp-for="EmployeeId" required disabled="@(Model.LockToCurrentUser ? "disabled" : null)">
@@ -18,6 +19,20 @@
                 @if (Model.EmployeeId > 0)
                 {
                     <option value="@Model.EmployeeId" selected>@Model.EmployeeName</option>
+                }
+            </select>
+        </div>
+        <div class="form-group" @Html.StyleDisplayNone(Model.HasSingleDriverCompany || Model.DriverCompanies?.Any() != true)>
+            <div class="alert alert-warning">@L("SelectDriverCompanyForSelectedUserPrompt")</div>
+            <label><span class="required-label">@L("DriverCompany")</span></label>
+            <select class="form-control" asp-for="DriverId">
+                <option value="">Select a company</option>
+                @if (Model.DriverCompanies != null)
+                {
+                    @foreach (var driverCompany in Model.DriverCompanies)
+                    {
+                        <option value="@driverCompany.DriverId">@driverCompany.CompanyName</option>
+                    }
                 }
             </select>
         </div>

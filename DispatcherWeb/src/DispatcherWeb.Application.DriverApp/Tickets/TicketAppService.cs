@@ -60,6 +60,7 @@ namespace DispatcherWeb.DriverApp.Tickets
                     x.OrderLine.DeliverToId,
                     x.TruckId,
                     x.Truck.TruckCode,
+                    x.OrderLineTruck.TrailerId,
                     LeaseHaulerId = (int?)x.Truck.LeaseHaulerTruck.LeaseHaulerId,
                     x.OrderLine.Order.CustomerId,
                     x.OrderLine.ServiceId,
@@ -82,6 +83,10 @@ namespace DispatcherWeb.DriverApp.Tickets
             ticket.TicketNumber = model.TicketNumber;
             ticket.TicketPhotoId = model.TicketPhotoId;
             ticket.TicketPhotoFilename = model.TicketPhotoFilename;
+            ticket.UnitOfMeasureId = model.UnitOfMeasureId
+                ?? (dispatchData.Designation.MaterialOnly() || dispatchData.Designation == DesignationEnum.FreightAndMaterial
+                                   ? dispatchData.MaterialUomId
+                                   : dispatchData.FreightUomId);
 
             if (ticket.Id == 0)
             {
@@ -91,13 +96,11 @@ namespace DispatcherWeb.DriverApp.Tickets
                 ticket.DeliverToId = dispatchData.DeliverToId;
                 ticket.TruckId = dispatchData.TruckId;
                 ticket.TruckCode = dispatchData.TruckCode;
+                ticket.TrailerId = dispatchData.TrailerId;
                 ticket.CarrierId = dispatchData.LeaseHaulerId;
                 ticket.CustomerId = dispatchData.CustomerId;
                 ticket.ServiceId = dispatchData.ServiceId;
                 ticket.DriverId = dispatchData.DriverId;
-                ticket.UnitOfMeasureId = dispatchData.Designation.MaterialOnly() || dispatchData.Designation == DesignationEnum.FreightAndMaterial
-                                   ? dispatchData.MaterialUomId
-                                   : dispatchData.FreightUomId;
                 ticket.TenantId = dispatchData.TenantId;
                 ticket.LoadId = model.LoadId;
 

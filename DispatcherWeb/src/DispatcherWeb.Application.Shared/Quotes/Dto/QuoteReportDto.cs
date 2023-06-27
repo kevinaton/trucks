@@ -37,5 +37,7 @@ namespace DispatcherWeb.Quotes.Dto
         public DateTime Today { get; set; }
         public List<QuoteReportItemDto> Items { get; set; }
         public bool HideLoadAt { get; set; }
+        public bool ShowProject { get; set; }
+        public bool ShowTruckCategories { get; set; }
     }
 }

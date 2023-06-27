@@ -131,6 +131,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                         LoadId = t.LoadId,
                         DispatchId = di.Id,
                         Quantity = t.Quantity,
+                        UnitOfMeasureId = t.UnitOfMeasureId,
                         TicketDateTime = t.TicketDateTime,
                         TicketNumber = t.TicketNumber,
                         TicketPhotoId = t.TicketPhotoId,
@@ -138,6 +139,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                     }).ToList(),
                     TruckId = di.TruckId,
                     TruckCode = di.Truck.TruckCode,
+                    TrailerTruckCode = di.OrderLineTruck.Trailer.TruckCode,
                     OrderLineTruckId = di.OrderLineTruckId,
                     //WasMultipleLoads = di.WasMultipleLoads,
                     //SignatureId = di.Loads.OrderByDescending(l => l.Id).Select(l => l.SignatureId).FirstOrDefault(), //.DefaultIfEmpty((Guid?)null)
@@ -145,7 +147,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                     AcknowledgedDateTime = di.Acknowledged,
                     //HasTickets = di.Loads.Any(l => l.TicketId != null),
                     //Guid = di.Guid,
-                    //SortOrder = di.SortOrder,
+                    SortOrder = di.SortOrder,
                     //NumberOfAddedLoads = di.NumberOfAddedLoads,
                     //NumberOfLoadsToFinish = di.NumberOfLoadsToFinish,
                 });
@@ -185,7 +187,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                 if (dispatch.Status == DispatchStatus.Completed)
                 {
                     await CurrentUnitOfWork.SaveChangesAsync();
-                    await _dispatchingAppService.SendCompletedDispatchNotificationIfNeeded(model.Id);
+                    await _dispatchingAppService.RunPostDispatchCompletionLogic(model.Id);
                 }
             }
 

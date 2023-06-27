@@ -87,47 +87,12 @@
                             </label>
                         </div>
                     }
-                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSales))
+                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowCounterSalesForTenant))
                     {
                         <div class="form-group margin-top-20">
-                            <label for="AllowCounterSales" class="m-checkbox col-lg-12">
-                                <input id="AllowCounterSales" type="checkbox" name="AllowCounterSales" value="true" @(Model.AllowCounterSales ? "checked=\"checked\"" : "")>
+                            <label for="AllowCounterSalesForTenant" class="m-checkbox col-lg-12">
+                                <input id="AllowCounterSalesForTenant" type="checkbox" name="AllowCounterSalesForTenant" value="true" @(Model.AllowCounterSalesForTenant ? "checked=\"checked\"" : "")>
                                 @L("AllowCounterSales")
-                                <span></span>
-                            </label>
-                        </div>
-                    }
-                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultDesignationToMaterialOnly))
-                    {
-                        <div class="form-group">
-                            <label for="DefaultDesignationToMaterialOnlyForTenant" class="m-checkbox">
-                                <input id="DefaultDesignationToMaterialOnlyForTenant" type="checkbox" name="DefaultDesignationToMaterialOnly" value="true" checked=@(Model.DefaultDesignationToMaterialOnly == true ? "checked" : null)>
-                                @L("DefaultDesignationToMaterialOnly")
-                                <span></span>
-                            </label>
-                        </div>
-                    }
-                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultLoadAtLocationId))
-                    {
-                        <div class="row">
-                            <div class="form-group col-8">
-                                <label for="DefaultLoadAtLocationIdForTenant">@L("DefaultLoadAtLocation")</label>
-                                <select class="form-control" id="DefaultLoadAtLocationIdForTenant" name="DefaultLoadAtLocationId">
-                                    <option value="">@L("SelectALocation")</option>
-                                    @if (Model.DefaultLoadAtLocationId > 0)
-                                    {
-                                        <option value="@Model.DefaultLoadAtLocationId" selected>@Model.DefaultLoadAtLocationName</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                    }
-                    @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.DefaultAutoGenerateTicketNumber))
-                    {
-                        <div class="form-group">
-                            <label for="DefaultAutoGenerateTicketNumberForTenant" class="m-checkbox">
-                                <input id="DefaultAutoGenerateTicketNumberForTenant" type="checkbox" name="DefaultAutoGenerateTicketNumber" value="true" checked=@(Model.DefaultAutoGenerateTicketNumber == true ? "checked" : null)>
-                                @L("AutoGenerateTicketNumberOnCounterSales")
                                 <span></span>
                             </label>
                         </div>
@@ -179,6 +144,16 @@
                         <label for="ValidateUtilization" class="m-checkbox col-lg-12">
                             <input id="ValidateUtilization" type="checkbox" name="ValidateUtilization" value="true" checked="@(Model.ValidateUtilization ? "checked" : null)">
                             @L("ValidateUtilization")
+                            <span></span>
+                        </label>
+                    </div>
+                }
+                @if (await SettingAvailabilityProvider.IsSettingAvailableAsync(AppSettings.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers))
+                {
+                    <div class="form-group margin-top-20">
+                        <label for="AllowSchedulingTrucksWithoutDrivers" class="m-checkbox col-lg-12">
+                            <input id="AllowSchedulingTrucksWithoutDrivers" type="checkbox" name="AllowSchedulingTrucksWithoutDrivers" value="true" checked="@(Model.AllowSchedulingTrucksWithoutDrivers ? "checked" : null)">
+                            @L("AllowSchedulingTrucksWithoutDrivers")
                             <span></span>
                         </label>
                     </div>

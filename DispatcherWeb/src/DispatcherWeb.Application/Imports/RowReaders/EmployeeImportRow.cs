@@ -15,7 +15,7 @@ namespace DispatcherWeb.Imports.RowReaders
         public string Name => GetString(EmployeeColumn.Name, User.MaxNameLength);
         public string Phone => GetString(EmployeeColumn.Phone, EntityStringFieldLengths.General.PhoneNumber);
         public string Email => GetString(EmployeeColumn.Email, EntityStringFieldLengths.General.Email);
-        public bool SendEmail => GetString(EmployeeColumn.SendEmail, 10) == "true";
+        public bool SendEmail => GetBoolean(EmployeeColumn.SendEmail);
         public OrderNotifyPreferredFormat? NotifyPreferredFormat
         {
             get

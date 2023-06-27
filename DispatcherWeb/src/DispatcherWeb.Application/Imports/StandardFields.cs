@@ -57,12 +57,14 @@ namespace DispatcherWeb.Imports
             new StandardField(null, CustomerColumn.IsActive, isRequired: false),
             new StandardField(null, CustomerColumn.Name, isRequired: true),
             new StandardField(null, CustomerColumn.AccountNumber),
-            new StandardField(null, CustomerColumn.Email),
+            new StandardField(null, CustomerColumn.IsCod),
+            new StandardField(null, CustomerColumn.InvoiceEmail),
             new StandardField(null, CustomerColumn.Terms),
             new StandardField(null, CustomerColumn.Address1),
             new StandardField(null, CustomerColumn.Address2),
             new StandardField(null, CustomerColumn.City),
             new StandardField(null, CustomerColumn.State),
+            new StandardField(null, CustomerColumn.ZipCode),
             new StandardField(null, CustomerColumn.CountryCode),
             new StandardField(null, CustomerColumn.BillingAddress1),
             new StandardField(null, CustomerColumn.BillingAddress2),
@@ -74,8 +76,11 @@ namespace DispatcherWeb.Imports
             new StandardField(null, CustomerColumn.ContactName),
             new StandardField(null, CustomerColumn.ContactPhone),
             new StandardField(null, CustomerColumn.ContactFax),
+            new StandardField(null, CustomerColumn.ContactEmail),
+            new StandardField(null, CustomerColumn.Contact2Title),
             new StandardField(null, CustomerColumn.Contact2Name),
-            new StandardField(null, CustomerColumn.Contact2Phone)
+            new StandardField(null, CustomerColumn.Contact2Phone),
+            new StandardField(null, CustomerColumn.Contact2Email)
         };
 
         private static StandardField[] EmployeeFields { get; } =

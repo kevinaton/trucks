@@ -18,6 +18,7 @@ namespace DispatcherWeb.Tickets.Exporting
         public FileDto ExportToFile(List<TicketListViewDto> ticketDtos, string fileName)
         {
             var showFuelSurcharge = SettingManager.GetSettingValue<bool>(AppSettings.Fuel.ShowFuelSurcharge);
+            var showFreightRateToPayDriverColumn = SettingManager.GetSettingValue<bool>(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate);
 
             return CreateCsvFile(
                 fileName,
@@ -28,6 +29,7 @@ namespace DispatcherWeb.Tickets.Exporting
                         ("Ticket Date", x => x.Date?.ToString("g")),
                         ("Order Date", x => x.OrderDate?.ToString("d")),
                         ("Shift", x => x.Shift),
+                        ("Office", x => x.Office),
                         ("Customer", x => x.CustomerName),
                         ("Quote Name", x => x.QuoteName),
                         ("Job Nbr", x => x.JobNumber),
@@ -35,6 +37,7 @@ namespace DispatcherWeb.Tickets.Exporting
                         ("Ticket #", x => x.TicketNumber),
                         ("Carrier", x => x.Carrier),
                         ("Truck", x => x.Truck),
+                        ("Trailer", x => x.Trailer),
                         ("Driver", x => x.DriverName),
                         ("Load At", x => x.LoadAtName),
                         ("Deliver To", x => x.DeliverToName),
@@ -42,6 +45,7 @@ namespace DispatcherWeb.Tickets.Exporting
                         ("Qty", x => x.Quantity.ToString("N")),
                         ("Revenue", x => x.Revenue.ToString("N")),
                         ("Freight Rate", x => x.FreightRate?.ToString("N")),
+                        (showFreightRateToPayDriverColumn ? "Freight Rate to Pay Driver" : null, x => x.FreightRateToPayDrivers?.ToString("N")),
                         ("Material Rate", x => x.MaterialRate?.ToString("N")),
                         ("Freight Amount", x => x.FreightAmount?.ToString("N")),
                         ("Material Amount", x => x.MaterialAmount?.ToString("N")),

@@ -121,7 +121,9 @@ namespace DispatcherWeb.Imports.Services
                 if (vehicleCategory == null)
                 {
                     row.AddParseErrorIfNotExist(Columns.TruckColumn.Category, "No vehicle categories were found in DB to fallback on", typeof(string));
+                    return null;
                 }
+                return vehicleCategory.Id;
             }
 
             vehicleCategory = _vehicleCategories.FirstOrDefault(x => name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));

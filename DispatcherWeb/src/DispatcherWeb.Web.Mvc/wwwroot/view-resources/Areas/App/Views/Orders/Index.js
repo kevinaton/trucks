@@ -39,6 +39,13 @@
             modalClass: 'PrintOrderWithDeliveryInfoModal'
         });
 
+        var _createOrEditOrderModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderModal.js',
+            modalClass: 'CreateOrEditOrderModal',
+            modalSize: 'xl'
+        });
+
         abp.helper.ui.initControls();
 
         //init the filter controls
@@ -276,7 +283,7 @@
 
         ordersTable.on('click', '.btnEditRow', function () {
             var orderId = _dtHelper.getRowData(this).id;
-            window.location = abp.appPath + 'app/Orders/Details/' + orderId;
+            _createOrEditOrderModal.open({ id: orderId });
         });
 
         ordersTable.on('click', '.btnCopyRow', function () {
@@ -329,13 +336,21 @@
             reloadMainGrid(null, false);
         });
 
+        abp.event.on('app.createOrEditOrderModalSaved', function () {
+            reloadMainGrid(null, false);
+        });
+
+        abp.event.on('app.createOrEditJobModalSaved', function () {
+            reloadMainGrid(null, false);
+        });
+
         //$(".filter").change(function () {
         //    reloadMainGrid();
         //});
 
         $("#CreateNewOrderButton").click(function (e) {
             e.preventDefault();
-            window.location = abp.appPath + 'app/Orders/Details/';
+            _createOrEditOrderModal.open();
         });
 
         ordersTable.on('click', '.email-delivery-status', function () {
@@ -409,7 +424,7 @@
                     },
                     callback: function () {
                         var orderId = _dtHelper.getRowData(this).id;
-                        window.location = abp.appPath + 'app/Orders/Details/' + orderId;
+                        _createOrEditOrderModal.open({ id: orderId });
                     }
                 },
                 separator1: _permissions.edit ? "-----" : { visible: false },

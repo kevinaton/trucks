@@ -25,7 +25,6 @@ namespace DispatcherWeb.Orders.Dto
         public bool OrderIsPending { get; set; }
         public string OfficeName { get; set; }
         public string CustomerName { get; set; }
-        public string ProjectName { get; set; }
         public string ContactFullDetails => string.Join("     ", (new[] { ContactName, ContactPhoneNumber, ContactEmail }).Where(x => !string.IsNullOrWhiteSpace(x)));
         public string ContactName { get; set; }
         public string ContactPhoneNumber { get; set; }
@@ -81,6 +80,7 @@ namespace DispatcherWeb.Orders.Dto
         public string OrderShiftName { get; set; }
         public bool ShowDriverNamesOnPrintedOrder { get; set; }
         public bool ShowSignatureColumn { get; set; }
+        public bool ShowTruckCategories { get; set; }
         public CultureInfo CurrencyCulture { get; set; }
 
         public class TruckDriverDto

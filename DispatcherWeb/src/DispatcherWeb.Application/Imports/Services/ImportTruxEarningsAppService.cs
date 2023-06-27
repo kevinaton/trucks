@@ -417,6 +417,7 @@ namespace DispatcherWeb.Imports.Services
                             ServiceId = _serviceId,
                             MaterialPricePerUnit = isFreight ? (decimal?)null : row.Rate,
                             FreightPricePerUnit = isFreight ? row.Rate : (decimal?)null,
+                            FreightRateToPayDrivers = isFreight ? row.Rate : (decimal?)null,
                             MaterialPrice = isFreight ? 0 : row.Total,
                             FreightPrice = isFreight ? row.Total : 0,
                             MaterialUomId = isFreight ? (int?)null : GetUomId(row),
@@ -444,8 +445,11 @@ namespace DispatcherWeb.Imports.Services
                             .Select(x => new
                             {
                                 x.Id,
-                                x.UserId
-                            }).FirstOrDefault();
+                                x.UserId,
+                                x.IsInactive
+                            })
+                            .OrderByDescending(x => !x.IsInactive)
+                            .FirstOrDefault();
 
                         if (driver == null)
                         {

@@ -260,6 +260,174 @@
             printPaymentReconciliationReportModal.open();
         });
 
+        //Common 'Add Job' button
+
+        var _createOrEditJobModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditJobModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditJobModal.js',
+            modalClass: 'CreateOrEditJobModal',
+            modalSize: 'lg'
+        });
+
+        $('#CommonAddJobButton').click(function (e) {
+            e.preventDefault();
+            date = moment().format('L');
+            _createOrEditJobModal.open({
+                deliveryDate: date,
+                shift: ''
+            });
+        });
+
+        //Common 'Add Order' button
+
+        var _createOrEditOrderModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Orders/CreateOrEditOrderModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Orders/_CreateOrEditOrderModal.js',
+            modalClass: 'CreateOrEditOrderModal',
+            modalSize: 'xl'
+        });
+
+        $("#CommonAddOrderButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditOrderModal.open();
+        });
+
+        //Common 'Add Quote' button
+
+        var _createOrEditQuoteModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Quotes/CreateOrEditQuoteModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Quotes/_CreateOrEditQuoteModal.js',
+            modalClass: 'CreateOrEditQuoteModal',
+            modalSize: 'xl'
+        });
+
+        $("#CommonAddQuoteButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditQuoteModal.open();
+            //window.location = abp.appPath + 'app/Quotes/Details/';
+        });
+
+        //Common 'Add Driver Message' button
+
+        var _sendDriverMessageModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/DriverMessages/SendMessageModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/DriverMessages/_SendMessageModal.js',
+            modalClass: 'SendMessageModal'
+        });
+
+        $('#CommonAddDriverMessageButton').click(function (e) {
+            e.preventDefault();
+            _sendDriverMessageModal.open();
+        });
+
+        //Common 'Add Lease Hauler' button
+
+        var _createOrEditLeaseHaulerModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/LeaseHaulers/CreateOrEditLeaseHaulerModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/LeaseHaulers/_CreateOrEditLeaseHaulerModal.js',
+            modalClass: 'CreateOrEditLeaseHaulerModal',
+            modalSize: 'lg'
+        });
+
+        $('#CommonAddLeaseHaulerButton').click(function (e) {
+            e.preventDefault();
+            _createOrEditLeaseHaulerModal.open();
+        });
+
+        //Common 'Add Truck' button
+
+        var _createOrEditTruckModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Trucks/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Trucks/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditTruckModal'
+        });
+
+        $("#CommonAddTruckButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditTruckModal.open();
+        });
+
+        //Common 'Add Customer' button
+
+        var _createOrEditCustomerModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Customers/CreateOrEditCustomerModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Customers/_CreateOrEditCustomerModal.js',
+            modalClass: 'CreateOrEditCustomerModal',
+            modalSize: 'lg'
+        });
+
+        $("#CommonAddCustomerButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditCustomerModal.open();
+        });
+
+        //Common 'Add Product or Service' button
+
+        var _createOrEditProductOrServiceModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Services/CreateOrEditServiceModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Services/_CreateOrEditServiceModal.js',
+            modalClass: 'CreateOrEditServiceModal',
+            modalSize: 'lg'
+        });
+
+        $('#CommonAddServiceButton').click(function (e) {
+            e.preventDefault();
+            _createOrEditProductOrServiceModal.open();
+        });
+
+        //Common 'Add Driver' button
+
+        var _createOrEditDriverModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Drivers/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Drivers/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditDriverModal',
+        });
+
+        $("#CommonAddDriverButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditDriverModal.open();
+        });
+
+        //Common 'Add Location' button
+
+        var _createOrEditLocationModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Locations/CreateOrEditLocationModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Locations/_CreateOrEditLocationModal.js',
+            modalClass: 'CreateOrEditLocationModal',
+            modalSize: 'lg'
+        });
+
+        $("#CommonAddLocationButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditLocationModal.open();
+        });
+
+        //Common 'Add User' button
+
+        var _createOrEditUserModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'App/Users/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/App/Views/Users/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditUserModal'
+        });
+
+        $("#CommonAddUserButton").click(function (e) {
+            e.preventDefault();
+            _createOrEditUserModal.open();
+        });
+
+        //Common 'Add Project' button
+
+        var _createOrEditProjectModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'App/Projects/CreateOrEditProjectModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/App/Views/Projects/_CreateOrEditProjectModal.js',
+            modalClass: 'CreateOrEditProjectModal'
+        });
+
+        $("#AddProjectNavbarItem").click(function (e) {
+            e.preventDefault();
+            _createOrEditProjectModal.open();
+        });
+
         function init() {
             loadNotifications();
             getRecentlyLinkedUsers();

@@ -145,15 +145,16 @@ namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
             var timezone = await GetTimezone();
             var tomorrow = today.AddDays(1);
             var tomorrowInUtc = tomorrow.ConvertTimeZoneFrom(timezone);
-            var query =
-                from truck in _truckRepository.GetAll().Where(x => x.LocationId != null && x.IsActive)
-                group truck by truck.LocationId into g
-                select new
+            var query = _truckRepository.GetAll()
+                .Where(x => x.LocationId != null && x.IsActive)
+                .GroupBy(x => x.LocationId)
+                .Select(g => new
                 {
                     OfficeId = g.Key,
                     OfficeName = g.FirstOrDefault().Office.Name,
-                    OutOfService = g.Where(t =>
-                        t.OutOfServiceHistories.Any(oosh => oosh.OutOfServiceDate < tomorrowInUtc && oosh.InServiceDate == null))
+                    OutOfService = g
+                        .Where(t =>
+                            t.OutOfServiceHistories.Any(oosh => oosh.OutOfServiceDate < tomorrowInUtc && oosh.InServiceDate == null))
                         .Select(t => new
                         {
                             TruckCode = t.TruckCode,
@@ -168,8 +169,7 @@ namespace DispatcherWeb.Trucks.OutOfServiceTrucksReport
                                 })
                                 .FirstOrDefault(),
                         }),
-                }
-                ;
+                });
             var utcDateTime = Clock.Now;
             var result = (await query.ToListAsync())
                 .Select(x => new OfficeDto

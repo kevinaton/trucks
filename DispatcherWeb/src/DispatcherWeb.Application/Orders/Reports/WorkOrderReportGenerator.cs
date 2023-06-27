@@ -188,9 +188,6 @@ namespace DispatcherWeb.Orders.Reports
                 paragraph = document.LastSection.AddParagraph("Customer: ");
                 paragraph.AddText(model.CustomerName ?? "");
 
-                paragraph = document.LastSection.AddParagraph("Project: ");
-                paragraph.AddText(model.ProjectName ?? "");
-
                 paragraph = document.LastSection.AddParagraph("Contact: ");
                 paragraph.AddText(model.ContactFullDetails ?? "");
 
@@ -258,27 +255,32 @@ namespace DispatcherWeb.Orders.Reports
                 table.AddColumn(Unit.FromCentimeter(0.8));
                 //Item
                 table.AddColumn(Unit.FromCentimeter(!model.HidePrices && model.SplitRateColumn ? 2.2 : 3.3));
+                if (model.ShowTruckCategories)
+                {
+                    //Truck Categories
+                    table.AddColumn(Unit.FromCentimeter(1.8));
+                }
                 //Designation
-                table.AddColumn(Unit.FromCentimeter(1.9));
+                table.AddColumn(Unit.FromCentimeter(1.8));
                 //Quarry/Load At
-                table.AddColumn(Unit.FromCentimeter(2.4));
+                table.AddColumn(Unit.FromCentimeter(2.2));
                 //Deliver To
-                table.AddColumn(Unit.FromCentimeter(2.4));
+                table.AddColumn(Unit.FromCentimeter(2.2));
                 //Quantity
-                table.AddColumn(Unit.FromCentimeter(3.1));
+                table.AddColumn(Unit.FromCentimeter(2.5));
                 if (!model.HidePrices)
                 {
                     if (model.SplitRateColumn)
                     {
                         //Material Rate
-                        table.AddColumn(Unit.FromCentimeter(1.5));
+                        table.AddColumn(Unit.FromCentimeter(1.4));
                         //Freight Rate
-                        table.AddColumn(Unit.FromCentimeter(1.5));
+                        table.AddColumn(Unit.FromCentimeter(1.4));
                     }
                     else
                     {
                         //Rate
-                        table.AddColumn(Unit.FromCentimeter(1.5));
+                        table.AddColumn(Unit.FromCentimeter(1.4));
                     }
                     //Total
                     table.AddColumn(Unit.FromCentimeter(2.2));
@@ -299,6 +301,11 @@ namespace DispatcherWeb.Orders.Reports
                 cell.AddParagraph("Line #");
                 cell = row.Cells[i++];
                 cell.AddParagraph("Item");
+                if (model.ShowTruckCategories)
+                {
+                    cell = row.Cells[i++];
+                    cell.AddParagraph("Truck Categories");
+                }
                 cell = row.Cells[i++];
                 cell.AddParagraph("Designation");
                 cell = row.Cells[i++];
@@ -338,6 +345,11 @@ namespace DispatcherWeb.Orders.Reports
                         paragraph.Format.Alignment = ParagraphAlignment.Center;
                         cell = row.Cells[i++];
                         paragraph = cell.AddParagraph(item.ServiceName, tm);
+                        if (model.ShowTruckCategories)
+                        {
+                            cell = row.Cells[i++];
+                            paragraph = cell.AddParagraph(string.Join(", ", item.OrderLineVehicleCategories), tm);
+                        }
                         cell = row.Cells[i++];
                         paragraph = cell.AddParagraph(item.DesignationName, tm);
                         cell = row.Cells[i++];
@@ -401,7 +413,8 @@ namespace DispatcherWeb.Orders.Reports
                             i = 0;
                             row = table.AddRow();
                             cell = row.Cells[i++];
-                            cell.MergeRight = 3 + (model.HidePrices ? 0 : 2 + (model.SplitRateColumn ? 1 : 0) + (model.UseActualAmount ? 1 : 0));
+                            cell.MergeRight = 3 + (model.HidePrices ? 0 : 2 + (model.SplitRateColumn ? 1 : 0) + (model.UseActualAmount ? 1 : 0))
+                                + (model.ShowTruckCategories ? 1 : 0);
                             paragraph = cell.AddParagraph(item.Note, tm);
                         }
                     }
@@ -417,13 +430,13 @@ namespace DispatcherWeb.Orders.Reports
                 {
                     row = table.AddRow();
                     cell = row.Cells[0];
-                    cell.MergeRight = 6 + (model.SplitRateColumn ? 1 : 0);
+                    cell.MergeRight = 6 + (model.SplitRateColumn ? 1 : 0) + (model.ShowTruckCategories ? 1 : 0);
                     cell.Borders.Visible = false;
                     cell.Borders.Left.Visible = true;
                     cell.Borders.Bottom.Visible = true;
                     paragraph = cell.AddParagraph("Total:", tm);
                     paragraph.Format.Alignment = ParagraphAlignment.Right;
-                    cell = row.Cells[7 + (model.SplitRateColumn ? 1 : 0)];
+                    cell = row.Cells[7 + (model.SplitRateColumn ? 1 : 0) + (model.ShowTruckCategories ? 1 : 0)];
                     cell.Borders.Visible = false;
                     cell.Borders.Right.Visible = true;
                     cell.Borders.Bottom.Visible = true;

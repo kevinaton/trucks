@@ -13,7 +13,10 @@
         <input type="hidden" asp-for="Shift" />
         <input type="hidden" asp-for="OfficeId" />
         <div class="form-group">
-            <label class="required-label">Driver</label>
+            <h5 id="Message"></h5>
+        </div>
+        <div class="form-group">
+            <label class="required-label" for="DriverId">Driver</label>
             <select class="form-control" asp-for="DriverId" required>
                 <option value="">Select a driver</option>
                 @if (Model.DriverId.HasValue)

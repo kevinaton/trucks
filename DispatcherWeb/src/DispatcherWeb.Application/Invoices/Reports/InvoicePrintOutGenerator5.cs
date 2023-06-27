@@ -24,9 +24,9 @@ namespace DispatcherWeb.Invoices.Reports
             section.PageSetup.PageFormat = PageFormat.Letter;
             section.PageSetup.PageHeight = Unit.FromInch(11); //27.94cm
             section.PageSetup.PageWidth = Unit.FromInch(8.5); //21.59cm -3cm margin = 18.6cm total
-            section.PageSetup.TopMargin = Unit.FromCentimeter(1.5);
+            section.PageSetup.TopMargin = Unit.FromCentimeter(1);
             section.PageSetup.LeftMargin = Unit.FromCentimeter(1.5);
-            section.PageSetup.BottomMargin = Unit.FromCentimeter(1.5);
+            section.PageSetup.BottomMargin = Unit.FromCentimeter(1);
             section.PageSetup.RightMargin = Unit.FromCentimeter(1.5);
             section.PageSetup.HeaderDistance = Unit.FromCentimeter(0.6);
 
@@ -129,11 +129,11 @@ namespace DispatcherWeb.Invoices.Reports
                 }
 
                 //empty space
-                table.AddColumn(Unit.FromCentimeter(13.5));
+                table.AddColumn(Unit.FromCentimeter(13));
                 //date labels
                 table.AddColumn(Unit.FromCentimeter(2.2));
                 //Invoice #, dates
-                table.AddColumn(Unit.FromCentimeter(2.9));
+                table.AddColumn(Unit.FromCentimeter(3.4));
 
 
                 row = table.AddRow();
@@ -237,12 +237,12 @@ namespace DispatcherWeb.Invoices.Reports
                 var tm = new TextMeasurement(document.Styles["Table"].Font.Clone());
 
                 //18.6cm total width
-                //Ticket #
-                table.AddColumn(Unit.FromCentimeter(1.6));
-                //Truck
-                table.AddColumn(Unit.FromCentimeter(1.6));
                 //Date
                 table.AddColumn(Unit.FromCentimeter(2));
+                //Truck
+                table.AddColumn(Unit.FromCentimeter(1.6));
+                //Ticket #
+                table.AddColumn(Unit.FromCentimeter(1.6));
                 //Job Number
                 table.AddColumn(Unit.FromCentimeter(2.4));
                 //Description
@@ -265,11 +265,11 @@ namespace DispatcherWeb.Invoices.Reports
 
                 i = 0;
                 cell = row.Cells[i++];
-                cell.AddParagraph("Ticket #");
+                cell.AddParagraph("Date");
                 cell = row.Cells[i++];
                 cell.AddParagraph("Truck");
                 cell = row.Cells[i++];
-                cell.AddParagraph("Date");
+                cell.AddParagraph("Ticket #");
                 cell = row.Cells[i++];
                 cell.AddParagraph("Job #");
                 cell = row.Cells[i++];
@@ -289,11 +289,11 @@ namespace DispatcherWeb.Invoices.Reports
                         i = 0;
                         row = table.AddRow();
                         cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(invoiceLine.TicketNumber, tm);
+                        paragraph = cell.AddParagraph(invoiceLine.DeliveryDateTime?.ToShortDateString(), tm);
                         cell = row.Cells[i++];
                         paragraph = cell.AddParagraph(invoiceLine.TruckCode, tm);
                         cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(invoiceLine.DeliveryDateTime?.ToShortDateString(), tm);
+                        paragraph = cell.AddParagraph(invoiceLine.TicketNumber, tm);
                         cell = row.Cells[i++];
                         paragraph = cell.AddParagraph(invoiceLine.JobNumber, tm);
                         cell = row.Cells[i++];
@@ -353,6 +353,22 @@ namespace DispatcherWeb.Invoices.Reports
 
                 paragraph = document.LastSection.AddParagraph(model.Message ?? "");
                 paragraph.Format.SpaceBefore = Unit.FromCentimeter(0.4);
+
+                
+                // Second Page
+                if (!string.IsNullOrEmpty(model.TermsAndConditions))
+                {
+                    section.AddPageBreak();
+                    paragraph = document.LastSection.AddParagraph();
+                    paragraph.Format.Font.Size = Unit.FromPoint(7.5);
+
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                    paragraph.AddText(model.TermsAndConditions);
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                }
 
                 //if (!taxWarning.IsNullOrEmpty())
                 //{

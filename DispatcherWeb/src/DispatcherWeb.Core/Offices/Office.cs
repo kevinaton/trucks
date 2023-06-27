@@ -43,9 +43,6 @@ namespace DispatcherWeb.Offices
         [StringLength(MaxFuelIdsLength)]
         public string FuelIds { get; set; }
 
-        [Obsolete]
-        public DateTime? DefaultStartTimeObsolete { get; set; }
-
         public DateTime? DefaultStartTime { get; set; }
 
         public virtual ICollection<Truck> Trucks { get; set; }

@@ -30,6 +30,10 @@ namespace DispatcherWeb.Drivers.Dto
 
         public DateTime? DateOfHire { get; set; }
 
+        public DateTime? TerminationDate { get; set; }
+
         public string FullName => $"{FirstName} {LastName}".Trim();
+
+        public string EmployeeId { get; set; }
     }
 }

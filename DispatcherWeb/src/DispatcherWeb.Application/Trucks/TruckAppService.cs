@@ -189,7 +189,7 @@ namespace DispatcherWeb.Trucks
                 VehicleCategoryId = x.VehicleCategoryId,
                 VehicleCategoryName = x.VehicleCategory.Name,
                 DefaultDriverName = x.DefaultDriver != null ? x.DefaultDriver.LastName + ", " + x.DefaultDriver.FirstName : "",
-                DefaultTrailerCode = x.DefaultTrailer.TruckCode,
+                CurrentTrailerCode = x.CurrentTrailer.TruckCode,
                 IsActive = x.IsActive,
                 InactivationDate = x.InactivationDate,
                 IsOutOfService = x.IsOutOfService,
@@ -215,7 +215,7 @@ namespace DispatcherWeb.Trucks
                 CurrentHours = x.CurrentHours,
                 CurrentMileage = x.CurrentMileage,
                 DefaultDriverId = x.DefaultDriverId,
-                DefaultTrailerId = x.DefaultTrailerId,
+                CurrentTrailerId = x.CurrentTrailerId,
                 DtdTrackerDeviceTypeId = x.DtdTrackerDeviceTypeId,
                 DtdTrackerDeviceTypeName = x.DtdTrackerDeviceTypeName,
                 DtdTrackerPassword = x.DtdTrackerPassword,
@@ -246,6 +246,11 @@ namespace DispatcherWeb.Trucks
                 query = _orderLineTruckRepository.GetAll()
                     .Where(x => x.OrderLineId == input.OrderLineId)
                     .Select(x => x.Truck)
+                    .Union(
+                        _orderLineTruckRepository.GetAll()
+                        .Where(x => x.OrderLineId == input.OrderLineId)
+                        .Select(x => x.Trailer)
+                    )
                     .Distinct();
             }
             query = query
@@ -259,6 +264,8 @@ namespace DispatcherWeb.Trucks
                 .WhereIf(!input.IncludeLeaseHaulerTrucks, x => x.LocationId.HasValue)
                 .WhereIf(input.InServiceOnly, x => !x.IsOutOfService)
                 .WhereIf(input.ActiveOnly, x => x.IsActive)
+                .WhereIf(input.AssetType.HasValue, x => x.VehicleCategory.AssetType == input.AssetType)
+                .WhereIf(input.CanPullTrailer.HasValue, x => x.CanPullTrailer == input.CanPullTrailer)
                 .WhereIf(input.ExcludeTrailers, x => x.VehicleCategory.IsPowered);
 
             return await query
@@ -270,6 +277,53 @@ namespace DispatcherWeb.Trucks
                 .GetSelectListResult(input);
         }
 
+        public async Task<List<SelectListDto>> GetBedConstructions(GetBedConstructionsInput input)
+        {
+            var bedConstructions = await _truckRepository.GetAll()
+                .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
+                .Select(x => new
+                {
+                    x.BedConstruction
+                })
+                .Distinct()
+                .ToListAsync();
+
+            return bedConstructions
+                .Select(x => new SelectListDto
+                {
+                    Id = x.BedConstruction.ToIntString(),
+                    Name = x.BedConstruction.GetDisplayName()
+                })
+                .ToList();
+        }
+
+        public async Task<PagedResultDto<SelectListDto>> GetMakesSelectList(GetMakesSelectListInput input)
+        {
+            return await _truckRepository.GetAll()
+                .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
+                .Select(x => new SelectListDto
+                {
+                    Id = x.Make,
+                    Name = x.Make
+                })
+                .Distinct()
+                .GetSelectListResult(input);
+        }
+
+        public async Task<PagedResultDto<SelectListDto>> GetModelsSelectList(GetModelsSelectListInput input)
+        {
+            return await _truckRepository.GetAll()
+                .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
+                .WhereIf(!string.IsNullOrEmpty(input.Make), x => x.Make == input.Make)
+                .Select(x => new SelectListDto
+                {
+                    Id = x.Model,
+                    Name = x.Model
+                })
+                .Distinct()
+                .GetSelectListResult(input);
+        }
+
         public async Task<PagedResultDto<SelectListDto>> GetVehicleCategoriesSelectList(GetVehicleCategoriesSelectListInput input)
         {
             var categoriesInUse = input.IsInUse == true ? await _truckRepository.GetAll().Select(x => x.VehicleCategoryId).Distinct().ToListAsync() : new List<int>();
@@ -277,6 +331,7 @@ namespace DispatcherWeb.Trucks
             return await _vehicleCategoryRepository.GetAll()
                 .WhereIf(input.IsPowered.HasValue, x => x.IsPowered == input.IsPowered)
                 .WhereIf(input.IsInUse == true, x => categoriesInUse.Contains(x.Id))
+                .WhereIf(input.AssetType.HasValue, x => x.AssetType == input.AssetType)
                 .Select(x => new SelectListDto<VehicleCategorySelectListInfoDto>
                 {
                     Id = x.Id.ToString(),
@@ -305,10 +360,30 @@ namespace DispatcherWeb.Trucks
                 .ToListAsync();
         }
 
-        public async Task<PagedResultDto<SelectListDto>> GetActiveTrailersSelectList(GetSelectListInput input) =>
+        public async Task<PagedResultDto<SelectListDto>> GetActiveTrailersSelectList(GetActiveTrailersSelectListInput input) =>
             await _truckRepository.GetAll()
                 .Where(x => x.LocationId.HasValue)
-                .Where(t => t.VehicleCategory.AssetType == AssetType.Trailer && t.IsActive)
+                .Where(t => t.VehicleCategory.AssetType == AssetType.Trailer && t.IsActive && !t.IsOutOfService)
+                .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
+                .WhereIf(input.VehicleCategoryId.HasValue, x => x.VehicleCategoryId == input.VehicleCategoryId)
+                .WhereIf(input.BedConstruction.HasValue, x => x.BedConstruction == input.BedConstruction)
+                .WhereIf(!string.IsNullOrEmpty(input.Make), x => x.Make == input.Make)
+                .WhereIf(!string.IsNullOrEmpty(input.Model), x => x.Model == input.Model)
+                .Select(x => new SelectListDto<TruckSelectListInfoDto>
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.TruckCode,
+                    Item = new TruckSelectListInfoDto
+                    {
+                        VehicleCategoryId = x.VehicleCategoryId
+                    }
+                })
+                .GetSelectListResult(input);
+
+        public async Task<PagedResultDto<SelectListDto>> GetActiveTractorsSelectList(GetSelectListInput input) =>
+            await _truckRepository.GetAll()
+                .Where(x => x.LocationId.HasValue)
+                .Where(t => t.CanPullTrailer && t.IsActive && !t.IsOutOfService)
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),
@@ -317,7 +392,7 @@ namespace DispatcherWeb.Trucks
                 .GetSelectListResult(input);
 
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
-        public async Task<TruckEditDto> GetTruckForEdit(NullableIdDto input)
+        public async Task<TruckEditDto> GetTruckForEdit(GetTruckForEditInput input)
         {
             TruckEditDto truckEditDto;
 
@@ -339,8 +414,8 @@ namespace DispatcherWeb.Trucks
                         IsApportioned = t.IsApportioned,
                         DefaultDriverId = t.DefaultDriverId,
                         DefaultDriverName = t.DefaultDriver != null ? t.DefaultDriver.FirstName + " " + t.DefaultDriver.LastName : "",
-                        DefaultTrailerId = t.DefaultTrailerId,
-                        DefaultTrailerCode = t.DefaultTrailer.TruckCode,
+                        CurrentTrailerId = t.CurrentTrailerId,
+                        CurrentTrailerCode = t.CurrentTrailer.TruckCode,
                         IsActive = t.IsActive,
                         InactivationDate = t.InactivationDate,
                         IsOutOfService = t.IsOutOfService,
@@ -402,10 +477,32 @@ namespace DispatcherWeb.Trucks
             {
                 truckEditDto = new TruckEditDto
                 {
+                    TruckCode = input.Name,
                     IsActive = true,
                     Files = new List<TruckFileEditDto>(),
                     InServiceDate = await GetToday()
                 };
+
+                if (input.VehicleCategoryId.HasValue)
+                {
+                    var vehicleCategory = await _vehicleCategoryRepository.GetAll()
+                        .Where(x => x.Id == input.VehicleCategoryId)
+                        .Select(x => new
+                        {
+                            x.Id,
+                            x.Name,
+                            x.AssetType,
+                            x.IsPowered
+                        }).FirstOrDefaultAsync();
+
+                    if (vehicleCategory != null)
+                    {
+                        truckEditDto.VehicleCategoryId = vehicleCategory.Id;
+                        truckEditDto.VehicleCategoryName = vehicleCategory.Name;
+                        truckEditDto.VehicleCategoryAssetType = vehicleCategory.AssetType;
+                        truckEditDto.VehicleCategoryIsPowered = vehicleCategory.IsPowered;
+                    }
+                }
             }
 
             await _singleOfficeService.FillSingleOffice(truckEditDto);
@@ -457,20 +554,39 @@ namespace DispatcherWeb.Trucks
             }
 
             await CreateOrUpdateOutOfServiceHistory(entity, model.IsOutOfService, model.Reason);
-            result.ThereWereAssociatedOrders = await RemoveTruckFromScheduleIfTruckIsOutOfService(entity.Id, model.IsOutOfService);
-            await RemoveTruckFromScheduleAndDriverAssignmentIfTruckIsNotIsActive(entity.Id, model.IsActive, model.InactivationDate);
-            result.ThereWereCanceledDispatches = await CancelUnacknowledgedDispatchesIfTruckIsOutOfServiceOrIsNotIsActive(entity.Id, model.IsOutOfService, model.IsActive);
-            result.ThereWereNotCanceledDispatches = await ThereAreActiveOrLoadedDispatchesAndTruckIsOutOfServiceOrIsNotIsActive(entity.Id, model.IsOutOfService, model.IsActive);
+
+            if (entity.Id > 0)
+            {
+                if (model.IsOutOfService)
+                {
+                    result.ThereWereAssociatedOrders = await RemoveTruckFromScheduleStartingOnDate(entity.Id);
+                    result.ThereWereAssociatedTractors = await RemoveAssociatedTractors(entity.Id);
+                }
+                if (!model.IsActive)
+                {
+                    await RemoveTruckFromScheduleStartingOnDate(entity.Id, model.InactivationDate);
+                    await RemoveTruckFromDriverAssignmentStartingOnDate(entity.Id, model.InactivationDate);
+                }
+
+                if (model.IsOutOfService || !model.IsActive)
+                {
+                    result.ThereWereCanceledDispatches = await CancelUnacknowledgedDispatches(entity.Id);
+                    result.ThereWereNotCanceledDispatches = await ThereAreAcknowledgedOrLoadedDispatches(entity.Id);
+                }
+            }
+
             if (await UpdateDefaultDriver())
             {
                 result.ThereAreOrdersInTheFuture = await ThereAreOrdersInTheFuture();
             }
             result.ThereWereAssociatedOrders |= await UpdateOffice();
+
             await ThrowUserFriendlyExceptionIfTruckCodeExists(model.TruckCode, entity.Id, model.OfficeId);
+
             if (model.Id.HasValue && newVehicleCategory.AssetType == AssetType.Trailer && model.IsActive != true)
             {
-                var tractors = await _truckRepository.GetAll().Where(x => x.DefaultTrailerId == model.Id).ToListAsync();
-                tractors.ForEach(x => x.DefaultTrailerId = null);
+                var tractors = await _truckRepository.GetAll().Where(x => x.CurrentTrailerId == model.Id).ToListAsync();
+                tractors.ForEach(x => x.CurrentTrailerId = null);
             }
             await ThrowUserFriendlyExceptionIfTruckWasTrailerAndCategoryChanged();
 
@@ -533,7 +649,7 @@ namespace DispatcherWeb.Trucks
                 entity.DtdTrackerServerAddress = model.DtdTrackerServerAddress;
             }
 
-            await UpdateDefaultTrailer();
+            await UpdateCurrentTrailer();
 
             if (model.Id.HasValue)
             {
@@ -586,7 +702,7 @@ namespace DispatcherWeb.Trucks
 
             async Task<bool> UpdateOffice()
             {
-                if (!OfficeIsChanged())
+                if (entity.LocationId == model.OfficeId)
                 {
                     return false;
                 }
@@ -597,55 +713,44 @@ namespace DispatcherWeb.Trucks
                     return await RemoveTruckFromScheduleStartingOnDate(model.Id.Value);
                 }
                 return false;
-
-                // Local functions
-                bool OfficeIsChanged() => entity.LocationId != model.OfficeId;
             }
 
-            async Task UpdateDefaultTrailer()
+            async Task UpdateCurrentTrailer()
             {
-                if (!entity.CanPullTrailer && model.DefaultTrailerId != null)
+                if (!entity.CanPullTrailer && model.CurrentTrailerId != null)
                 {
-                    throw new ArgumentException("The truck must be able to pull a trailer to set a DefaultTrailerId");
+                    throw new ArgumentException("The truck must be able to pull a trailer to set a CurrentTrailerId");
                 }
-                if (entity.CanPullTrailer && model.DefaultTrailerId != null)
+                if (entity.CanPullTrailer && model.CurrentTrailerId != null)
                 {
-                    var trailer = await _truckRepository.GetAll().Where(t => t.Id == model.DefaultTrailerId).Select(t => new { t.VehicleCategory.AssetType, t.IsActive }).FirstOrDefaultAsync();
+                    var trailer = await _truckRepository.GetAll()
+                        .Where(t => t.Id == model.CurrentTrailerId)
+                        .Select(t => new 
+                        { 
+                            t.VehicleCategory.AssetType, 
+                            t.IsActive,
+                            t.IsOutOfService
+                        })
+                        .FirstOrDefaultAsync();
                     if (trailer.AssetType != AssetType.Trailer)
                     {
-                        throw new UserFriendlyException("The default trailer must be a trailer!");
+                        throw new UserFriendlyException("The current trailer must be a trailer!");
                     }
-                    if (!trailer.IsActive)
+                    if (!trailer.IsActive || trailer.IsOutOfService)
                     {
-                        throw new UserFriendlyException("The default trailer must be active!");
+                        throw new UserFriendlyException("The current trailer must be active!");
                     }
-                    var tractorWithDefaultTrailer = await _truckRepository.GetAll()
+                    var tractorWithCurrentTrailer = await _truckRepository.GetAll()
                         .WhereIf(model.Id != null, t => t.Id != model.Id)
-                        .Where(t => t.DefaultTrailerId == model.DefaultTrailerId)
+                        .Where(t => t.CurrentTrailerId == model.CurrentTrailerId)
                         .FirstOrDefaultAsync();
-                    if (tractorWithDefaultTrailer != null)
+                    if (tractorWithCurrentTrailer != null)
                     {
-                        tractorWithDefaultTrailer.DefaultTrailerId = null;
+                        tractorWithCurrentTrailer.CurrentTrailerId = null;
                     }
                 }
 
-                entity.DefaultTrailerId = model.DefaultTrailerId;
-            }
-            async Task<bool> CancelUnacknowledgedDispatchesIfTruckIsOutOfServiceOrIsNotIsActive(int truckId, bool isOutOfService, bool isActive)
-            {
-                if (truckId == 0 || !isOutOfService && isActive)
-                {
-                    return false;
-                }
-                return await CancelUnacknowledgedDispatches(truckId);
-            }
-            async Task<bool> ThereAreActiveOrLoadedDispatchesAndTruckIsOutOfServiceOrIsNotIsActive(int truckId, bool isOutOfService, bool isActive)
-            {
-                if (truckId == 0 || !isOutOfService && isActive)
-                {
-                    return false;
-                }
-                return await ThereAreAcknowledgedOrLoadedDispatches(truckId);
+                entity.CurrentTrailerId = model.CurrentTrailerId;
             }
 
             async Task ThrowUserFriendlyExceptionIfTruckCodeExists(string truckCode, int currentTruckId, int officeId)
@@ -666,10 +771,10 @@ namespace DispatcherWeb.Trucks
                 {
                     if (model.IsActive)
                     {
-                        var tractorCode = await GetTractorWithDefaultTrailer(new TrailerIsSetAsDefaultTrailerForAnotherTractorInput { TrailerId = model.Id.Value });
+                        var tractorCode = await GetTractorWithCurrentTrailer(new TrailerIsSetAsCurrentTrailerForAnotherTractorInput { TrailerId = model.Id.Value });
                         if (!string.IsNullOrEmpty(tractorCode))
                         {
-                            throw new UserFriendlyException($"This trailer is currently the default trailer on {tractorCode} and can't be changed while assigned to a truck.");
+                            throw new UserFriendlyException($"This trailer is the current trailer on {tractorCode} and its category can't be changed while it's assigned to a truck.");
                         }
                     }
                     if (await TruckHasHistory(model.Id.Value))
@@ -768,10 +873,10 @@ namespace DispatcherWeb.Trucks
         }
 
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
-        public async Task<string> GetTractorWithDefaultTrailer(TrailerIsSetAsDefaultTrailerForAnotherTractorInput input) =>
+        public async Task<string> GetTractorWithCurrentTrailer(TrailerIsSetAsCurrentTrailerForAnotherTractorInput input) =>
             await _truckRepository.GetAll()
                 .WhereIf(input.TractorId != null, t => t.Id != input.TractorId)
-                .Where(t => t.DefaultTrailerId == input.TrailerId)
+                .Where(t => t.CurrentTrailerId == input.TrailerId)
                 .Select(t => t.TruckCode)
                 .FirstOrDefaultAsync();
 
@@ -891,26 +996,6 @@ namespace DispatcherWeb.Trucks
                 .FirstAsync();
             outOfServiceHistory.Reason = reason.Truncate(500);
         }
-        private async Task<bool> RemoveTruckFromScheduleIfTruckIsOutOfService(int truckId, bool isOutOfService)
-        {
-            if (truckId == 0 || !isOutOfService)
-            {
-                return false;
-            }
-
-            return await RemoveTruckFromScheduleStartingOnDate(truckId);
-        }
-
-        private async Task RemoveTruckFromScheduleAndDriverAssignmentIfTruckIsNotIsActive(int truckId, bool isActive, DateTime? inactivationDate)
-        {
-            if (truckId == 0 || isActive)
-            {
-                return;
-            }
-
-            await RemoveTruckFromScheduleStartingOnDate(truckId, inactivationDate);
-            await RemoveTruckFromDriverAssignmentStartingOnDate(truckId, inactivationDate);
-        }
 
         private async Task UpdateTruckFiles(int truckId, List<TruckFileEditDto> truckFiles)
         {
@@ -934,6 +1019,7 @@ namespace DispatcherWeb.Trucks
                 result.ThereWereAssociatedOrders = await RemoveTruckFromScheduleStartingOnDate(truck.Id);
                 result.ThereWereCanceledDispatches = await CancelUnacknowledgedDispatches(truck.Id);
                 result.ThereWereNotCanceledDispatches = await ThereAreAcknowledgedOrLoadedDispatches(truck.Id);
+                result.ThereWereAssociatedTractors = await RemoveAssociatedTractors(truck.Id);
             }
             truck.IsOutOfService = input.IsOutOfService;
             return result;
@@ -1038,6 +1124,17 @@ namespace DispatcherWeb.Trucks
 
         private async Task<bool> ThereAreAcknowledgedOrLoadedDispatches(int truckId) =>
             await _dispatchRepository.GetAll().AnyAsync(d => d.TruckId == truckId && (d.Status == DispatchStatus.Acknowledged || d.Status == DispatchStatus.Loaded));
+        
+        private async Task<bool> RemoveAssociatedTractors(int trailerId)
+        {
+            var tractors = await _truckRepository.GetAll()
+                .Where(x => x.CurrentTrailerId == trailerId)
+                .ToListAsync();
+
+            tractors.ForEach(x => x.CurrentTrailerId = null);
+
+            return tractors.Count > 0;
+        }
 
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
         public async Task<bool> CanDeleteTruck(EntityDto input)
@@ -1045,10 +1142,13 @@ namespace DispatcherWeb.Trucks
             bool hasDependencies = await _truckRepository.GetAll()
                 .Where(t => t.Id == input.Id)
                 .Where(t =>
-                    t.OrderLineTrucks.Any() ||
-                    t.Tickets.Any(ticket => ticket.CarrierId == null) ||
+                    t.OrderLineTrucksOfTruck.Any() ||
+                    t.OrderLineTrucksOfTrailer.Any() ||
+                    t.TicketsOfTruck.Any(ticket => ticket.CarrierId == null) ||
+                    t.TicketsOfTrailer.Any(ticket => ticket.CarrierId == null) ||
                     t.PreventiveMaintenances.Any() ||
                     t.DriverAssignments.Any() ||
+                    t.CurrentTractors.Any() ||
                     t.SharedTrucks.Any() ||
                     t.WorkOrders.Any()
                 )

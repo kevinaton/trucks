@@ -6,8 +6,9 @@
         var _$form = null;
         var _lastTruckCode = null;
         var _orderLineId = null;
-        var _addLocationTarget = null;
         var _validateTrucksAndDrivers = abp.setting.getBoolean('App.General.ValidateDriverAndTruckOnTickets');
+        var _allowCounterSales = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForUser') && abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForTenant');
+        var _allowCounterSalesForTenant = abp.setting.getBoolean('App.DispatchingAndMessaging.AllowCounterSalesForTenant');
 
         var _selectOrderLineModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Tickets/SelectOrderLineModal',
@@ -44,24 +45,28 @@
             });
             _$form.find('#TicketDateTime').datetimepickerInit();
 
+            async function addNewLocation(newItemName) {
+                var result = await app.getModalResultAsync(
+                    _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true, name: newItemName })
+                );
+                return {
+                    id: result.id,
+                    name: result.displayName
+                };
+            }
+
             loadAtDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownLoadSite,
                 showAll: false,
                 allowClear: true,
-                addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "LoadAtId";
-                    _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
-                } : null
+                addItemCallback: abp.auth.isGranted('Pages.Locations') ? addNewLocation : null
             });
 
             deliverToDropdown.select2Location({
                 predefinedLocationCategoryKind: abp.enums.predefinedLocationCategoryKind.unknownDeliverySite,
                 showAll: false,
                 allowClear: true,
-                addItemCallback: abp.auth.isGranted('Pages.Locations') ? async function (newItemName) {
-                    _addLocationTarget = "DeliverToId";
-                    _createOrEditLocationModal.open({ mergeWithDuplicateSilently: true });
-                } : null
+                addItemCallback: abp.auth.isGranted('Pages.Locations') ? addNewLocation : null
             });
 
             _$form.find("select#OfficeId").select2Init({
@@ -90,9 +95,18 @@
                 showAll: false,
                 allowClear: true
             }).change(function () {
-                var newCarrierId = $(this).val();
-                _$form.find('label[for="TruckCode"],label[for="DriverId"]').toggleClass('required-label', !newCarrierId);
-            }).change();
+                updateTruckAndDriverRequiredness();
+            });
+
+            let trailerDropdown = _$form.find('#TrailerId');
+            trailerDropdown.select2Init({
+                abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
+                abpServiceParams: {
+                    assetType: abp.enums.assetType.trailer,
+                },
+                showAll: false,
+                allowClear: true,
+            });
 
             let driverDropdown = _$form.find('#DriverId');
             let truckCodeInput = _$form.find('#TruckCode');
@@ -117,33 +131,83 @@
                     return;
                 }
                 let lockedControls = driverDropdown.closest('.form-group')
-                    .add(truckCodeInput.closest('.form-group'));
+                    .add(truckCodeInput.closest('.form-group'))
+                    .add(trailerDropdown.closest('.form-group'));
                 try {
                     truckOrDriverIsChanging = true;
                     abp.ui.setBusy(lockedControls);
-                    let ticketDriver = await _ticketService.getDriverForTicketTruck({
+                    let ticketDriverAndTrailer = await _ticketService.getDriverAndTrailerForTicketTruck({
                         orderLineId: _orderLineId,
                         orderDate: _orderLineId ? null : moment(ticketDateTime, 'L').format('L'),
                         truckCode: truckCode
                     });
 
-                    if (!ticketDriver.truckCodeIsCorrect) {
+                    if (!ticketDriverAndTrailer.truckCodeIsCorrect) {
                         if (!carrierDropdown.val()) {
                             abp.message.error("Truck Code is invalid");
                         }
                         return;
                     }
 
-                    if (ticketDriver.driverId) {
-                        abp.helper.ui.addAndSetDropdownValue(driverDropdown, ticketDriver.driverId, ticketDriver.driverName);
+                    if (ticketDriverAndTrailer.driverId) {
+                        abp.helper.ui.addAndSetDropdownValue(driverDropdown, ticketDriverAndTrailer.driverId, ticketDriverAndTrailer.driverName);
                     }
-                    abp.helper.ui.addAndSetDropdownValue(carrierDropdown, ticketDriver.carrierId, ticketDriver.carrierName);
+                    abp.helper.ui.addAndSetDropdownValue(carrierDropdown, ticketDriverAndTrailer.carrierId, ticketDriverAndTrailer.carrierName);
+                    if (ticketDriverAndTrailer.trailerId) {
+                        abp.helper.ui.addAndSetDropdownValue(trailerDropdown, ticketDriverAndTrailer.trailerId, ticketDriverAndTrailer.trailerTruckCode);
+                    }
                 }
                 finally {
                     abp.ui.clearBusy(lockedControls);
                     truckOrDriverIsChanging = false;
                 }
             });
+
+            trailerDropdown.change(async function () {
+                let trailerId = $(this).val();
+                if (!_validateTrucksAndDrivers) {
+                    return;
+                }
+                let ticketDateTime = _$form.find("#TicketDateTime").val();
+                if (!ticketDateTime && !_orderLineId || !trailerId) {
+                    return;
+                }
+
+                if (truckOrDriverIsChanging) {
+                    return;
+                }
+                let lockedControls = driverDropdown.closest('.form-group')
+                    .add(truckCodeInput.closest('.form-group'))
+                    .add(trailerDropdown.closest('.form-group'));
+                try {
+                    truckOrDriverIsChanging = true;
+                    abp.ui.setBusy(lockedControls);
+                    let ticketTruckAndDriver = await _ticketService.getTruckAndDriverForTicketTrailer({
+                        orderLineId: _orderLineId,
+                        orderDate: _orderLineId ? null : moment(ticketDateTime, 'L').format('L'),
+                        trailerId: trailerId
+                    });
+
+                    if (ticketTruckAndDriver.truckId) {
+                        truckCodeInput.val(ticketTruckAndDriver.truckCode);
+                        abp.helper.ui.addAndSetDropdownValue(carrierDropdown, ticketTruckAndDriver.carrierId, ticketTruckAndDriver.carrierName);
+                    }
+                    if (ticketTruckAndDriver.driverId) {
+                        abp.helper.ui.addAndSetDropdownValue(driverDropdown, ticketTruckAndDriver.driverId, ticketTruckAndDriver.driverName);
+                    }
+                }
+                finally {
+                    abp.ui.clearBusy(lockedControls);
+                    truckOrDriverIsChanging = false;
+                }
+            });
+
+
+            var updateTruckAndDriverRequiredness = function () {
+                var carrierId = carrierDropdown.val();
+                _$form.find('label[for="TruckCode"],label[for="DriverId"]').toggleClass('required-label', !carrierId && !_allowCounterSalesForTenant);
+            };
+            updateTruckAndDriverRequiredness();
 
             driverDropdown.select2Init({
                 abpServiceMethod: abp.services.app.driver.getDriversSelectList,
@@ -168,34 +232,29 @@
                     return;
                 }
                 let lockedControls = driverDropdown.closest('.form-group')
-                    .add(truckCodeInput.closest('.form-group'));
+                    .add(truckCodeInput.closest('.form-group'))
+                    .add(trailerDropdown.closest('.form-group'));
                 try {
                     truckOrDriverIsChanging = true;
                     abp.ui.setBusy(lockedControls);
-                    let ticketTruck = await _ticketService.getTruckForTicketDriver({
+                    let ticketTruckAndTrailer = await _ticketService.getTruckAndTrailerForTicketDriver({
                         orderLineId: _orderLineId,
                         orderDate: _orderLineId ? null : moment(ticketDateTime, 'L').format('L'),
                         driverId: driverId
                     });
 
-                    if (ticketTruck.truckId) {
-                        truckCodeInput.val(ticketTruck.truckCode);
-                        abp.helper.ui.addAndSetDropdownValue(carrierDropdown, ticketTruck.carrierId, ticketTruck.carrierName);
+                    if (ticketTruckAndTrailer.truckId) {
+                        truckCodeInput.val(ticketTruckAndTrailer.truckCode);
+                        abp.helper.ui.addAndSetDropdownValue(carrierDropdown, ticketTruckAndTrailer.carrierId, ticketTruckAndTrailer.carrierName);
+                    }
+                    if (ticketTruckAndTrailer.trailerId) {
+                        abp.helper.ui.addAndSetDropdownValue(trailerDropdown, ticketTruckAndTrailer.trailerId, ticketTruckAndTrailer.trailerTruckCode);
                     }
                 }
                 finally {
                     abp.ui.clearBusy(lockedControls);
                     truckOrDriverIsChanging = false;
                 }
-            });
-
-            _modalManager.on('app.createOrEditLocationModalSaved', function (e) {
-                if (!_addLocationTarget) {
-                    return;
-                }
-                var targetDropdown = _$form.find("#" + _addLocationTarget);
-                abp.helper.ui.addAndSetDropdownValue(targetDropdown, e.item.id, e.item.displayName);
-                targetDropdown.change();
             });
 
             if (modal.find("#ReadOnly").val() === "true") {

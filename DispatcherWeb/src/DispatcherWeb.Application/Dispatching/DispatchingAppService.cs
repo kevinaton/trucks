@@ -60,6 +60,7 @@ namespace DispatcherWeb.Dispatching
         public const int MaxNumberOfDispatches = 99;
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
+        private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<Dispatch> _dispatchRepository;
         private readonly IRepository<Load> _loadRepository;
         private readonly IRepository<Driver> _driverRepository;
@@ -90,6 +91,7 @@ namespace DispatcherWeb.Dispatching
         public DispatchingAppService(
             IRepository<Truck> truckRepository,
             IRepository<OrderLine> orderLineRepository,
+            IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<Dispatch> dispatchRepository,
             IRepository<Load> loadRepository,
             IRepository<Driver> driverRepository,
@@ -120,6 +122,7 @@ namespace DispatcherWeb.Dispatching
         {
             _truckRepository = truckRepository;
             _orderLineRepository = orderLineRepository;
+            _orderLineTruckRepository = orderLineTruckRepository;
             _dispatchRepository = dispatchRepository;
             _loadRepository = loadRepository;
             _driverRepository = driverRepository;
@@ -197,7 +200,7 @@ namespace DispatcherWeb.Dispatching
             var query = filteredQuery.ToRawDispatchDto();
 
             return query
-                .WhereIf(input.MissingTickets, d => d.Status == DispatchStatus.Completed && (d.Quantity == null || d.Quantity == 0));
+                .WhereIf(input.MissingTickets, d => d.Status == DispatchStatus.Completed && (d.FilledTicketCount == null || d.FilledTicketCount == 0));
 
         }
 
@@ -207,7 +210,6 @@ namespace DispatcherWeb.Dispatching
             return
                 from d in query
                 from l in d.Loads.DefaultIfEmpty()
-                from t in l.Tickets.DefaultIfEmpty()
                 select new RawDispatchDto
                 {
                     Id = d.Id,
@@ -239,10 +241,9 @@ namespace DispatcherWeb.Dispatching
                         State = d.OrderLine.DeliverTo.State
                     },
                     Item = d.OrderLine.Service.Service1,
-                    Quantity = t != null ? t.Quantity : (decimal?)null,
-                    Uom = t != null ? t.UnitOfMeasure.Name : null,
                     Guid = d.Guid,
                     IsMultipleLoads = d.IsMultipleLoads,
+                    FilledTicketCount = l.Tickets.Count(t => t.Quantity > 0),
                 };
         }
 
@@ -267,8 +268,6 @@ namespace DispatcherWeb.Dispatching
                 DeliverTo = d.DeliverTo,
                 DeliverToNamePlain = d.DeliverToNamePlain,
                 Item = d.Item,
-                Quantity = d.Quantity,
-                Uom = d.Uom,
                 Cancelable = d.Status != DispatchStatus.Completed && d.Status != DispatchStatus.Canceled,
                 Guid = d.Guid,
                 ShortGuid = d.Guid.ToShortGuid(),
@@ -851,10 +850,13 @@ namespace DispatcherWeb.Dispatching
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            //await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchEntity.DriverId)
-            //{
-            //    LogMessage = $"Canceled dispatch {dispatchEntity.Id}"
-            //});
+            if (input.Info == null)
+            {
+                await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchEntity.DriverId)
+                {
+                    LogMessage = $"Marked dispatch {dispatchEntity.Id} complete"
+                });
+            }
             await _syncRequestSender.SendSyncRequest(new SyncRequest()
                 .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), ChangeType.Removed)
                 .SetIgnoreForDeviceId(input.Info?.DeviceId)
@@ -922,6 +924,7 @@ namespace DispatcherWeb.Dispatching
                     OfficeName = d.OrderLine.Order.Office.Name,
                     TruckId = d.TruckId,
                     TruckCode = d.Truck.TruckCode,
+                    TrailerTruckCode = d.OrderLineTruck.Trailer.TruckCode,
                     DriverId = d.DriverId,
                     LastName = d.Driver.LastName,
                     FirstName = d.Driver.FirstName,
@@ -959,7 +962,8 @@ namespace DispatcherWeb.Dispatching
                     Loaded = d.Loads.OrderByDescending(l => l.Id).Select(l => l.SourceDateTime).FirstOrDefault(),
                     Complete = d.Loads.OrderByDescending(l => l.Id).Select(l => l.DestinationDateTime).FirstOrDefault(),
                     d.IsMultipleLoads,
-                    d.WasMultipleLoads
+                    d.WasMultipleLoads,
+                    HasTickets = d.Loads.Any(l => l.Tickets.Any()),
                 })
                 .ToListAsync();
 
@@ -993,6 +997,7 @@ namespace DispatcherWeb.Dispatching
                             DeliveryDate = d.DeliveryDate,
                             Shift = d.Shift,
                             TimeOnJob = d.TimeOnJobUtc?.ConvertTimeZoneTo(timeZone),
+                            TrailerTruckCode = d.TrailerTruckCode,
                             CustomerName = d.CustomerName,
                             LoadAt = d.LoadAt,
                             DeliverTo = d.DeliverTo,
@@ -1005,7 +1010,8 @@ namespace DispatcherWeb.Dispatching
                             Loaded = d.Loaded?.ConvertTimeZoneTo(timeZone),
                             Complete = d.Complete?.ConvertTimeZoneTo(timeZone),
                             IsMultipleLoads = d.IsMultipleLoads,
-                            WasMultipleLoads = d.WasMultipleLoads
+                            WasMultipleLoads = d.WasMultipleLoads,
+                            HasTickets = d.HasTickets,
                         }).ToList()
                 })
                 .ToList();
@@ -1353,6 +1359,7 @@ namespace DispatcherWeb.Dispatching
                 Designation = di.OrderLine.Designation,
                 TimeOnJob = di.TimeOnJob,
                 TruckCode = di.Truck.TruckCode,
+                TrailerTruckCode = di.OrderLineTruck.Trailer.TruckCode,
                 LoadAtName = di.OrderLine.LoadAt.Name,
                 LoadAt = di.OrderLine.LoadAt == null ? null : new LocationAddressDto
                 {
@@ -1658,6 +1665,7 @@ namespace DispatcherWeb.Dispatching
         {
             var dispatchEntity = await _dispatchRepository.GetAll()
                 .Include(d => d.Truck)
+                .Include(d => d.OrderLineTruck)
                 .Include(d => d.OrderLine)
                     .ThenInclude(ol => ol.Order)
                 .FirstOrDefaultAsync(d => d.Guid == input.DispatchTicket.Guid);
@@ -1754,6 +1762,7 @@ namespace DispatcherWeb.Dispatching
         {
             var dispatchEntity = await _dispatchRepository.GetAll()
                 .Include(d => d.Truck)
+                .Include(d => d.OrderLineTruck)
                 .Include(d => d.OrderLine)
                     .ThenInclude(ol => ol.Order)
                 .FirstOrDefaultAsync(d => d.Guid == input.DispatchTicket.Guid);
@@ -1818,6 +1827,7 @@ namespace DispatcherWeb.Dispatching
                         DeliverToId = dispatchEntity.OrderLine.DeliverToId,
                         TruckId = dispatchEntity.TruckId,
                         TruckCode = dispatchEntity.Truck.TruckCode,
+                        TrailerId = dispatchEntity.OrderLineTruck?.TrailerId,
                         CustomerId = dispatchEntity.OrderLine.Order.CustomerId,
                         ServiceId = dispatchEntity.OrderLine.ServiceId,
                         DriverId = dispatchEntity.DriverId,
@@ -2116,7 +2126,7 @@ namespace DispatcherWeb.Dispatching
                     });
                 }
                 await _syncRequestSender.SendSyncRequest(new SyncRequest()
-                    .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), ChangeType.Removed)
+                    .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), completeDispatch.ContinueMultiload == true ? ChangeType.Modified : ChangeType.Removed)
                     .SetIgnoreForDeviceId(completeDispatch.Info?.DeviceId)
                     .AddLogMessage("Completed dispatch"));
                 return result;
@@ -2215,7 +2225,7 @@ namespace DispatcherWeb.Dispatching
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            await SendCompletedDispatchNotificationIfNeeded(dispatch);
+            await RunPostDispatchCompletionLogic(dispatch);
 
             var newActiveDispatch = await GetFirstOpenDispatch(dispatch.DriverId);
 
@@ -2230,6 +2240,21 @@ namespace DispatcherWeb.Dispatching
                 AfterCompleted = true,
                 ActiveDispatchWasChanged = oldActiveDispatch?.Id != newActiveDispatch?.Id
             });
+        }
+
+        [RemoteService(false)]
+        public async Task RunPostDispatchCompletionLogic(int dispatchId)
+        {
+            await CurrentUnitOfWork.SaveChangesAsync();
+            var dispatch = await _dispatchRepository.GetAsync(dispatchId);
+            await RunPostDispatchCompletionLogic(dispatch);
+        }
+
+        private async Task RunPostDispatchCompletionLogic(Dispatch dispatch)
+        {
+            await CurrentUnitOfWork.SaveChangesAsync();
+            await CompleteOrderLineTrucksOfHourlyDispatchIfNeeded(dispatch);
+            await SendCompletedDispatchNotificationIfNeeded(dispatch);
         }
 
         [RemoteService(false)]
@@ -2277,6 +2302,40 @@ namespace DispatcherWeb.Dispatching
                             RoleFilter = new[] { StaticRoleNames.Tenants.Dispatching }
                         });
                 }
+            }
+        }
+
+        private async Task CompleteOrderLineTrucksOfHourlyDispatchIfNeeded(Dispatch dispatch)
+        {
+            var dispatchData = await _dispatchRepository.GetAll()
+                .Where(x => x.Id == dispatch.Id)
+                .Select(x => new
+                {
+                    x.OrderLine.Designation,
+                    FreightUomName = x.OrderLine.FreightUom.Name,
+                    OrderLineTrucks = x.OrderLine.OrderLineTrucks.Select(t => new
+                    {
+                        t.Id,
+                        t.IsDone,
+                    }).ToList()
+                }).FirstAsync();
+
+            if (dispatchData.Designation.MaterialOnly()
+                || !dispatchData.FreightUomName.ToLower().StartsWith("hour")
+                || dispatch.Status != DispatchStatus.Completed
+                || dispatch.OrderLineTruckId == null)
+            {
+                return;
+            }
+
+            var orderLineTruck = await _orderLineTruckRepository.GetAsync(dispatch.OrderLineTruckId.Value);
+            orderLineTruck.IsDone = true;
+            orderLineTruck.Utilization = 0;
+
+            if (dispatchData.OrderLineTrucks.Where(x => x.Id != orderLineTruck.Id).All(x => x.IsDone))
+            {
+                var orderLine = await _orderLineRepository.GetAsync(dispatch.OrderLineId);
+                orderLine.IsComplete = true;
             }
         }
 

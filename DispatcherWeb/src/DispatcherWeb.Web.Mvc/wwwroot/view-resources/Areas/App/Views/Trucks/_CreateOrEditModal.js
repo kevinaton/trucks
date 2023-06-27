@@ -12,7 +12,12 @@
             viewUrl: abp.appPath + 'app/PreventiveMaintenanceSchedule/CreateOrEditPreventiveMaintenanceModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/PreventiveMaintenanceSchedule/_CreateOrEditPreventiveMaintenanceModal.js',
             modalClass: 'CreateOrEditPreventiveMaintenanceModal'
+        });
 
+        var _createOrEditDriverModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Drivers/CreateOrEditModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Drivers/_CreateOrEditModal.js',
+            modalClass: 'CreateOrEditDriverModal',
         });
 
         this.init = function (modalManager) {
@@ -67,12 +72,12 @@
             });
 
             var $defaultDriverId = _$form.find("#DefaultDriverId");
-            var $defaultTrailerId = _$form.find("#DefaultTrailerId");
+            var $currentTrailerId = _$form.find("#CurrentTrailerId");
             var vehicleCategoryDropdown = _$form.find("#VehicleCategoryId");
             var canPullTrailerCheckbox = _$form.find('#CanPullTrailer');
 
             var defaultDriverIdLastValue = $defaultDriverId.val();
-            var defaultTrailerIdLastValue = $defaultTrailerId.val();
+            var currentTrailerIdLastValue = $currentTrailerId.val();
 
             vehicleCategoryDropdown.change(function () {
                 var dropdownData = vehicleCategoryDropdown.select2('data');
@@ -102,16 +107,14 @@
 
             canPullTrailerCheckbox.change(function () {
                 let canPullTrailer = canPullTrailerCheckbox.is(':checked');
-                var shouldHideDefaultTrailer = !canPullTrailer; //assetType !== abp.enums.assetType.tractor;
-                if (shouldHideDefaultTrailer) {
-                    defaultTrailerIdLastValue = $defaultTrailerId.val();
-                    $defaultTrailerId.val(null).change();
-                    //$defaultTrailerId.closest('div').hide();
-                    $defaultTrailerId.closest('div').slideUp();
+                var shouldHideCurrentTrailer = !canPullTrailer; //assetType !== abp.enums.assetType.tractor;
+                if (shouldHideCurrentTrailer) {
+                    currentTrailerIdLastValue = $currentTrailerId.val();
+                    $currentTrailerId.val(null).change();
+                    $currentTrailerId.closest('div').slideUp();
                 } else {
-                    $defaultTrailerId.val(defaultTrailerIdLastValue).change();
-                    //$defaultTrailerId.closest('div').show();
-                    $defaultTrailerId.closest('div').slideDown();
+                    $currentTrailerId.val(currentTrailerIdLastValue).change();
+                    $currentTrailerId.closest('div').slideDown();
                 }
             });
 
@@ -121,10 +124,19 @@
                     includeLeaseHaulerDrivers: abp.setting.getBoolean('App.LeaseHaulers.AllowSubcontractorsToDriveCompanyOwnedTrucks')
                 },
                 showAll: false,
-                allowClear: true
+                allowClear: true,
+                addItemCallback: async function (newItemName) {
+                    var result = await app.getModalResultAsync(
+                        _createOrEditDriverModal.open({ name: newItemName })
+                    );
+                    return {
+                        id: result.id,
+                        name: result.firstName + ' ' + result.lastName
+                    };
+                },
             });
 
-            $defaultTrailerId.select2Init({
+            $currentTrailerId.select2Init({
                 abpServiceMethod: abp.services.app.truck.getActiveTrailersSelectList,
                 showAll: true,
                 allowClear: true
@@ -337,16 +349,16 @@
             truck.files = getFiles();
 
             try {
-                if (truck.DefaultTrailerId !== '' && truck.CanPullTrailer) { //truck.VehicleCategoryAssetType === abp.enums.assetType.tractor.toString()
+                if (truck.CurrentTrailerId !== '' && truck.CanPullTrailer) { //truck.VehicleCategoryAssetType === abp.enums.assetType.tractor.toString()
                     _modalManager.setBusy(true);
-                    let tractorWithDefaultTrailer = await _truckService.getTractorWithDefaultTrailer({
-                        trailerId: truck.DefaultTrailerId,
+                    let tractorWithCurrentTrailer = await _truckService.getTractorWithCurrentTrailer({
+                        trailerId: truck.CurrentTrailerId,
                         tractorId: truck.Id
                     });
-                    if (tractorWithDefaultTrailer) {
+                    if (tractorWithCurrentTrailer) {
                         _modalManager.setBusy(false);
-                        let isConfirmed = await abp.message.confirm('Trailer ' + _$form.find("#DefaultTrailerId option:selected").text()
-                            + ' is already defaulted to truck ' + tractorWithDefaultTrailer
+                        let isConfirmed = await abp.message.confirm('Trailer ' + _$form.find("#CurrentTrailerId option:selected").text()
+                            + ' is currently assigned to truck ' + tractorWithCurrentTrailer
                             + '. If you continue with this operation, the trailer will be moved to this new truck. Is this what you want to do?');
                         if (!isConfirmed) {
                             return;
@@ -356,13 +368,13 @@
 
                 if (truck.VehicleCategoryAssetType === abp.enums.assetType.trailer.toString() && _wasActive && !truck.IsActive) {
                     _modalManager.setBusy(true);
-                    let tractorWithDefaultTrailer = await _truckService.getTractorWithDefaultTrailer({
+                    let tractorWithCurrentTrailer = await _truckService.getTractorWithCurrentTrailer({
                         trailerId: truck.Id
                     });
-                    if (tractorWithDefaultTrailer) {
+                    if (tractorWithCurrentTrailer) {
                         _modalManager.setBusy(false);
-                        let isConfirmed = await abp.message.confirm("This trailer is currently set as the default trailer on truck "
-                            + tractorWithDefaultTrailer
+                        let isConfirmed = await abp.message.confirm("This trailer is the current trailer on truck "
+                            + tractorWithCurrentTrailer
                             + ". Are you sure you want to make this trailer inactive?");
                         if (!isConfirmed) {
                             return;
@@ -409,12 +421,9 @@
                 var message = '';
                 message += editResult.thereAreOrdersInTheFuture ? app.localize('ThereAreOrdersInTheFuture') + '\n' : '';
                 message += editResult.thereWereAssociatedOrders ? app.localize('ThereWereOrdersAssociatedWithThisTruck') + '\n' : '';
-                message += editResult.thereWereCanceledDispatches
-                    ? app.localize('ThereWereCanceledDispatches') + '\n'
-                    : '';
-                message += editResult.thereWereNotCanceledDispatches
-                    ? app.localize('ThereWereNotCanceledDispatches') + '\n'
-                    : '';
+                message += editResult.thereWereCanceledDispatches ? app.localize('ThereWereCanceledDispatches') + '\n' : '';
+                message += editResult.thereWereNotCanceledDispatches ? app.localize('ThereWereNotCanceledDispatches') + '\n' : '';
+                message += editResult.thereWereAssociatedTractors ? app.localize('ThereWasTractorAssociatedWithThisTrailer') + '\n' : '';
                 if (message) {
                     abp.message.info(message, 'Message');
                 }

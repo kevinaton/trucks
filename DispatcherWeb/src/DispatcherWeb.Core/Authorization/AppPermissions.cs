@@ -123,6 +123,7 @@
         public const string DriverProductionPay = "DriverProductionPay";
         public const string AllowImportingTruxEarnings = "AllowImportingTruxEarnings";
         public const string AllowImportingLuckStoneEarnings = "AllowImportingLuckStoneEarnings";
+        public const string EditInvoicedOrdersAndTickets = "EditInvoicedOrdersAndTickets";
 
         public const string Pages_VehicleService_View = "Pages.VehicleService.View";
         public const string Pages_VehicleService_Edit = "Pages.VehicleService.Edit";
@@ -145,6 +146,9 @@
         public const string Pages_Reports_PaymentReconciliation = "Pages.Reports.PaymentReconciliation";
         public const string Pages_Reports_DriverActivityDetail = "Pages.Reports.DriverActivityDetail";
         public const string Pages_Reports_RevenueAnalysis = "Pages.Reports.RevenueAnalysis";
+
+        public const string Pages_ActiveReports = "Pages.ActiveReports";
+        public const string Pages_ActiveReports_TenantStatisticsReport = "Pages.ActiveReports.TenantStatisticsReport";
 
         public const string Pages_Imports = "Pages.Imports";
         public const string Pages_Imports_FuelUsage = "Pages.Imports.FuelUsage";

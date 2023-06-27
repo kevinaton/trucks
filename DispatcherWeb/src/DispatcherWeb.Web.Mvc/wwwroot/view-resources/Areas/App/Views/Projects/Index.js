@@ -4,6 +4,12 @@
         var _projectService = abp.services.app.project;
         var _dtHelper = abp.helper.dataTables;
 
+        const _createOrEditProjectModal = new app.ModalManager({
+            viewUrl: abp.appPath + 'app/Projects/CreateOrEditProjectModal',
+            scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Projects/_CreateOrEditProjectModal.js',
+            modalClass: 'CreateOrEditProjectModal'
+        });
+
         $("#StatusFilter").select2Init({
             showAll: true,
             allowClear: true
@@ -121,7 +127,7 @@
                     responsivePriority: 2,
                     width: '10px',
                     render: function (data, type, full, meta) {
-                        if (full.status !== abp.enums.projectStatus.inactive) {
+                        if (full.status !== abp.enums.quoteStatus.inactive) {
                             return '<div class="dropdown">'
                                 + '<button class="btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></button>'
                                 + '<ul class="dropdown-menu dropdown-menu-right">'
@@ -155,12 +161,12 @@
 
         $("#CreateNewProjectButton").click(function (e) {
             e.preventDefault();
-            window.location = abp.appPath + 'app/Projects/Details/';
+            _createOrEditProjectModal.open();
         });
 
         projectsTable.on('click', '.btnEditRow', function () {
             var projectId = _dtHelper.getRowData(this).id;
-            window.location = abp.appPath + 'app/Projects/Details/' + projectId;
+            _createOrEditProjectModal.open({ id: projectId });
         });
 
         projectsTable.on('click', '.btnDeleteRow', async function (e) {

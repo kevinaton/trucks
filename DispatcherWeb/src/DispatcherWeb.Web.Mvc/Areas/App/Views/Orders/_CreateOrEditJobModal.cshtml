@@ -25,8 +25,6 @@
         <input type="hidden" asp-for="IsFreightPriceOverridden" />
         <input type="hidden" asp-for="IsTaxable" />
         <input type="hidden" asp-for="StaggeredTimeKind" value="@((int)Model.StaggeredTimeKind)" />
-        <input type="hidden" asp-for="OfficeId" />
-        <input type="hidden" asp-for="Shift" value="@((int?)Model.Shift)" />
         <input type="hidden" asp-for="QuoteServiceId" />
         <input type="hidden" asp-for="FocusFieldId" />
         <input type="hidden" asp-for="DefaultLoadAtLocationId" />
@@ -51,7 +49,7 @@
             </div>
             <div class="col-6 form-group">
                 <label class="required-label">@L("Customer")</label>
-                <select class="form-control order-field" asp-for="CustomerId" required>
+                <select class="form-control order-field" asp-for="CustomerId" id="JobCustomerId" required>
                     <option value="">Select a customer</option>
                     @if (Model.CustomerId != 0)
                     {
@@ -75,13 +73,31 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-6 form-group" @Html.StyleDisplayNone(!await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.UseShifts))>
+                <label class="required-label">@L("Shift"):</label>
+                <select class="form-control" asp-for="Shift" id="JobShift" asp-items="@(await SettingManager.GetShiftSelectList()).Select(x => new SelectListItem(x.Name, x.Id))" required>
+                    <option value="">Select a shift</option>
+                </select>
+            </div>
+            <div class="col-6 form-group" @Html.StyleDisplayNone(!await FeatureChecker.AllowMultiOfficeFeature())>
+                <label>@L("Office"):</label>
+                <select class="form-control" asp-for="LocationId" id="JobLocationId" disabled="@(Model.IsSingleOffice ? "disabled" : null)">
+                    <option value="">Select an office</option>
+                    @if (Model.LocationId != 0)
+                    {
+                        <option selected value="@Model.LocationId">@Model.OfficeName</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-6 form-group">
                 <label>@L("JobNumber")</label>
                 <input class="form-control order-line-field" type="text" asp-for="JobNumber" maxlength="@EntityStringFieldLengths.OrderLine.JobNumber">
             </div>
             <div class="col-6 form-group">
                 <label class="required-label">@L("Designation")</label>
-                <select class="form-control order-line-field" required asp-for="Designation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation).ToSelectListItemsAsync()">
+                <select class="form-control order-line-field" required asp-for="Designation" id="JobDesignation" asp-items="await DesignationAppService.GetDesignationSelectListItemsAsync(Model.Designation).ToSelectListItemsAsync()">
                     <option value="">Select a designation</option>
                 </select>
             </div>
@@ -117,11 +133,23 @@
             <div class="row">
                 <div class="col-6 form-group">
                     <label class="required-label">@L("Item")</label>
-                    <select class="form-control order-line-field" asp-for="ServiceId" required>
+                    <select class="form-control order-line-field" asp-for="ServiceId" id="JobServiceId" required>
                         <option value="">Select an item</option>
                         @if (Model.ServiceId != 0)
                         {
                             <option selected value="@Model.ServiceId">@Model.ServiceName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-6 form-group" @Html.StyleDisplayNone(!await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders))>
+                    <label>@L("TruckTrailerCategory")</label>
+                    <select class="form-control" name="VehicleCategories" id="VehicleCategories" multiple="multiple">
+                        @if (Model.VehicleCategories != null)
+                        {
+                            foreach (var category in Model.VehicleCategories)
+                            {
+                                <option value="@category.Id" selected>@category.Name</option>
+                            }
                         }
                     </select>
                 </div>
@@ -257,7 +285,7 @@
             <div class="row">
                 <div class="col-6 form-group">
                     <label>@L("Priority")</label>
-                    <select class="form-control order-field" asp-for="Priority" asp-items="Html.GetEnumSelectList<OrderPriority>()"></select>
+                    <select class="form-control order-field" asp-for="Priority" id="JobPriority" asp-items="Html.GetEnumSelectList<OrderPriority>()"></select>
                 </div>
                 @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay) && await FeatureChecker.IsEnabledAsync(AppFeatures.DriverProductionPayFeature))
                 {
@@ -301,7 +329,7 @@
                 <div class="col-6 form-group">
                     <label for="FuelSurchargeCalculation">@L("FuelSurchargeCalculation"):</label>
                     <input type="hidden" id="DefaultFuelSurchargeCalculationName" value="@Model.DefaultFuelSurchargeCalculationName" />
-                    <select class="form-control" asp-for="FuelSurchargeCalculationId" disabled="@(Model.QuoteId.HasValue ? "disabled" : null)">
+                    <select class="form-control" asp-for="FuelSurchargeCalculationId" id="JobFuelSurchargeCalculationId" disabled="@(Model.QuoteId.HasValue ? "disabled" : null)">
                         <option value="">@AppConsts.FuelSurchargeCalculationBlankName</option>
                         @if (Model.FuelSurchargeCalculationId > 0)
                         {
