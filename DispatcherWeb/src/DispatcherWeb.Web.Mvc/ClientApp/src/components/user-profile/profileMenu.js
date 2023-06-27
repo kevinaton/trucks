@@ -13,13 +13,19 @@ import {
 } from '@mui/material';
 import { isEmpty } from 'lodash';
 import { theme } from '../../Theme';
-import { getUserProfileMenu, getLinkedUsers } from '../../store/actions';
+import { 
+    getUserProfileMenu, 
+    getLinkedUsers, 
+    downloadCollectedData as onDownloadCollectedData,
+    resetDownloadCollectedDataState as onResetDownloadCollectedDataState
+} from '../../store/actions';
 import { baseUrl } from '../../helpers/api_helper';
 import { LinkedAccounts } from '../user-link';
 import ChangePasswordForm from '../user-profile/changePasswordForm';
 import ChangeProfilePictureForm from '../user-profile/changeProfilePictureForm';
 import UploadSignaturePictureForm from '../user-profile/uploadSignaturePictureForm';
 import { MyProfileSettings } from '../user-profile/myProfileSettings';
+import { AlertDialog } from '../common/dialogs';
 
 export const ProfileMenu = ({
     openModal,
@@ -37,10 +43,12 @@ export const ProfileMenu = ({
     const dispatch = useDispatch();
     const { 
         userProfileMenu,
-        linkedUsers
+        linkedUsers,
+        downloadSuccess
     } = useSelector((state) => ({
         userProfileMenu: state.UserReducer.userProfileMenu,
-        linkedUsers: state.UserLinkReducer.linkedUsers
+        linkedUsers: state.UserLinkReducer.linkedUsers,
+        downloadSuccess: state.UserProfileReducer.downloadSuccess
     }));
 
     useEffect(() => {
@@ -71,6 +79,21 @@ export const ProfileMenu = ({
                 }
         }
     }, [linkedAccounts, linkedUsers]);
+
+    useEffect(() => {
+        if (downloadSuccess) {
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog 
+                        variant='success'
+                        message='We are preparing your data. You will be notified when your data is prepared.'
+                    />
+                )
+            });
+            dispatch(onResetDownloadCollectedDataState());
+        }
+    }, [dispatch, downloadSuccess, openDialog]);
 
     // Handle showing profile menu
     const handleProfileClick = (event) => {
@@ -170,6 +193,11 @@ export const ProfileMenu = ({
             500
         );
     }
+
+    const handleDownloadCollectedData = () => {
+        handleProfileClose();
+        dispatch(onDownloadCollectedData());
+    };
     
     const renderAvatar = () => {
         if (!isEmpty(tenant) && !isEmpty(tenant.logoId)) {
@@ -320,7 +348,8 @@ export const ProfileMenu = ({
 
                                     <MenuItem 
                                         component={Link} 
-                                        sx={{ py: 1 }}
+                                        sx={{ py: 1 }} 
+                                        onClick={handleDownloadCollectedData}
                                     >
                                         <i className={`fa-regular fa-arrow-down-to-bracket icon`} style={{ marginRight: 6 }}></i>
                                         <Typography>Download collected data</Typography>

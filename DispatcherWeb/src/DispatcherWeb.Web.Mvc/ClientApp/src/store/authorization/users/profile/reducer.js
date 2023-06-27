@@ -16,11 +16,18 @@ import {
     ENABLE_GOOGLE_AUTHENTICATOR_SUCCESS,
     ENABLE_GOOGLE_AUTHENTICATOR_FAILURE,
     DISABLE_GOOGLE_AUTHENTICATOR_SUCCESS,
-    DISABLE_GOOGLE_AUTHENTICATOR_FAILURE
+    DISABLE_GOOGLE_AUTHENTICATOR_FAILURE,
+    DOWNLOAD_COLLECTED_DATA_SUCCESS,
+    DOWNLOAD_COLLECTED_DATA_FAILURE,
+    RESET_DOWNLOAD_COLLECTED_DATA_STATE
 } from './actionTypes';
 
 const INIT_STATE = {
-    userProfileSettings: null
+    userProfileSettings: null,
+    profileUpdateSuccess: null,
+    updateSuccess: null,
+    uploadResponse: null,
+    downloadSuccess: null
 };
 
 const UserProfileReducer = (state = INIT_STATE, action) => {
@@ -127,7 +134,22 @@ const UserProfileReducer = (state = INIT_STATE, action) => {
             return {
                 ...state,
                 error: action.payload
-            };
+            }
+        case DOWNLOAD_COLLECTED_DATA_SUCCESS:
+            return {
+                ...state,
+                downloadSuccess: true
+            }
+        case DOWNLOAD_COLLECTED_DATA_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            }
+        case RESET_DOWNLOAD_COLLECTED_DATA_STATE: 
+            return {
+                ...state,
+                downloadSuccess: null
+            }
         default:
             return state;
     }

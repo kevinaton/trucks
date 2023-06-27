@@ -18,3 +18,6 @@ export const uploadSignaturePictureFile = file => rootPost(url.UPLOAD_SIGNATURE_
 // enable google authenticator
 export const enableGoogleAuthenticator = () => put(url.ENABLE_GOOGLE_AUTHENTICATOR);
 export const disableGoogleAuthenticator = () => post(url.DISABLE_GOOGLE_AUTHENTICATOR);
+
+// download collected data
+export const downloadCollectedData = () => post(url.DOWNLOAD_COLLECTED_DATA);

@@ -23,7 +23,11 @@ import {
     ENABLE_GOOGLE_AUTHENTICATOR_FAILURE,
     DISABLE_GOOGLE_AUTHENTICATOR,
     DISABLE_GOOGLE_AUTHENTICATOR_SUCCESS,
-    DISABLE_GOOGLE_AUTHENTICATOR_FAILURE
+    DISABLE_GOOGLE_AUTHENTICATOR_FAILURE,
+    DOWNLOAD_COLLECTED_DATA,
+    DOWNLOAD_COLLECTED_DATA_SUCCESS,
+    DOWNLOAD_COLLECTED_DATA_FAILURE,
+    RESET_DOWNLOAD_COLLECTED_DATA_STATE
 } from './actionTypes';
 
 export const getUserProfileSettings = () => ({
@@ -140,4 +144,21 @@ export const disableGoogleAuthenticatorSuccess = () => ({
 export const disableGoogleAuthenticatorFailure = error => ({
     type: DISABLE_GOOGLE_AUTHENTICATOR_FAILURE,
     payload: error
+});
+
+export const downloadCollectedData = () => ({
+    type: DOWNLOAD_COLLECTED_DATA
+});
+
+export const downloadCollectedDataSuccess = () => ({
+    type: DOWNLOAD_COLLECTED_DATA_SUCCESS
+});
+
+export const downloadCollectedDataFailure = error => ({
+    type: DOWNLOAD_COLLECTED_DATA_FAILURE,
+    payload: error
+});
+
+export const resetDownloadCollectedDataState = () => ({
+    type: RESET_DOWNLOAD_COLLECTED_DATA_STATE
 });

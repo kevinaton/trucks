@@ -77,7 +77,7 @@ const ChangePasswordForm = ({
             openDialog({
                 type: 'alert',
                 content: (
-                    <AlertDialog message={message} />
+                    <AlertDialog variant='error' message={message} />
                 )
             });
         }
