@@ -28,6 +28,8 @@
         public const string QuickbooksFeature = "App.Quickbooks";
         public const string QuickbooksImportFeature = "App.QuickbooksImportFeature";
 
+        public const string ReactNativeDriverApp = "DriverApp.ReactNativeDriverApp";
+
         public const string AllowCopyingZeroQuantityOrderLineItemsFeature = "App.AllowCopyingZeroQuantityOrderLineItems";
 
         public const string FreeFunctionality = "App.FreeFunctionalityFeature";
