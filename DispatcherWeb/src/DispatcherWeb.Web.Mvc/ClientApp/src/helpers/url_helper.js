@@ -14,6 +14,7 @@ export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 export const GET_USER_PROFILE_SETTINGS = '/Profile/GetUserProfileSettings';
 export const UPDATE_USER_PROFILE = '/Profile/UpdateCurrentUserProfile';
 export const CHANGE_PASSWORD = '/Profile/ChangePassword';
+export const DOWNLOAD_COLLECTED_DATA = '/Profile/PrepareCollectedData';
 
 //Google Authenticator
 export const ENABLE_GOOGLE_AUTHENTICATOR = '/Profile/UpdateGoogleAuthenticatorKey';

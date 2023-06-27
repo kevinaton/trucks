@@ -5,7 +5,8 @@ import {
     CHANGE_PASSWORD,
     UPLOAD_PROFILE_PICTURE_FILE,
     ENABLE_GOOGLE_AUTHENTICATOR,
-    DISABLE_GOOGLE_AUTHENTICATOR
+    DISABLE_GOOGLE_AUTHENTICATOR,
+    DOWNLOAD_COLLECTED_DATA
 } from './actionTypes';
 import {
     getUserProfileSettingsSuccess,
@@ -19,7 +20,9 @@ import {
     enableGoogleAuthenticatorSuccess,
     enableGoogleAuthenticatorFailure,
     disableGoogleAuthenticatorSuccess,
-    disableGoogleAuthenticatorFailure
+    disableGoogleAuthenticatorFailure,
+    downloadCollectedDataSuccess,
+    downloadCollectedDataFailure
 } from './actions';
 import {
     getUserProfileSettings,
@@ -27,7 +30,8 @@ import {
     changePassword,
     uploadProfilePictureFile,
     enableGoogleAuthenticator,
-    disableGoogleAuthenticator
+    disableGoogleAuthenticator,
+    downloadCollectedData
 } from './service';
 
 function* fetchUserProfileSettings() {
@@ -84,6 +88,15 @@ function* onDisableGoogleAuthenticator() {
     }
 }
 
+function* onDownloadCollectedData() {
+    try {
+        yield call(downloadCollectedData);
+        yield put(downloadCollectedDataSuccess());
+    } catch (error) {
+        yield put(downloadCollectedDataFailure(error));
+    }
+}
+
 function* userProfileSaga() {
     yield takeEvery(GET_USER_PROFILE_SETTINGS, fetchUserProfileSettings);
     yield takeEvery(UPDATE_USER_PROFILE, onUpdateUserProfile);
@@ -91,6 +104,7 @@ function* userProfileSaga() {
     yield takeEvery(UPLOAD_PROFILE_PICTURE_FILE, onUploadProfilePictureFile);
     yield takeEvery(ENABLE_GOOGLE_AUTHENTICATOR, onEnableGoogleAuthenticator);
     yield takeEvery(DISABLE_GOOGLE_AUTHENTICATOR, onDisableGoogleAuthenticator);
+    yield takeEvery(DOWNLOAD_COLLECTED_DATA, onDownloadCollectedData);
 }
 
 export default userProfileSaga;
