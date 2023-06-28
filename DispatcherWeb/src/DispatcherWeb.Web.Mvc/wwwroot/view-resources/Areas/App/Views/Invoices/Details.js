@@ -638,9 +638,9 @@
             });
         });
 
-        $("#MarkReadyForQuickbooksButton").click(function (e) {
+        $("#MarkReadyForExportButton").click(function (e) {
             e.preventDefault();
-            $("#Status").val(abp.enums.invoiceStatus.readyForQuickbooks);
+            $("#Status").val(abp.enums.invoiceStatus.readyForExport);
             saveInvoiceAsync(function () {
                 //reloadInvoiceLinesGrid();
                 setTimeout(() => abp.ui.setBusy(form), 100);

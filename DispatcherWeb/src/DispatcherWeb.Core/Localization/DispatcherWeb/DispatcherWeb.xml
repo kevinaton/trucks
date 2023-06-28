@@ -1469,8 +1469,7 @@
 		<text name="SendSyncRequest">Send sync request</text>
 		<text name="CleanupSubscriptions">Cleanup Subscriptions</text>
 		<text name="Miscellaneous">Miscellaneous</text>
-		<text name="ReadyForQuickbooks">Ready for QuickBooks</text>
-		<text name="SendToQuickbooks">Send to QuickBooks</text>
+		<text name="ReadyForExport">Ready for export</text>
 		<text name="ThisDriverAlreadyUsesDriverApplication">This driver already uses driver application</text>
 		<text name="DriverActivityReport">Driver Activity Report</text>
 		<text name="ConnectToUserAccount">Connect to user account</text>
