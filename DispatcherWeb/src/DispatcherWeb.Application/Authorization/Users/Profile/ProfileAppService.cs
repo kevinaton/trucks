@@ -32,6 +32,7 @@ using DispatcherWeb.Security;
 using DispatcherWeb.Services;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Timing;
+using DispatcherWeb.Timing.Dto;
 using DispatcherWeb.UnitsOfMeasure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
         private readonly IAppFolders _appFolders;
         private readonly IBinaryObjectManager _binaryObjectManager;
         private readonly ITimeZoneService _timeZoneService;
+        private readonly ITimingAppService _timingAppService;
         private readonly IFriendshipManager _friendshipManager;
         private readonly GoogleTwoFactorAuthenticateService _googleTwoFactorAuthenticateService;
         private readonly ISmsSender _smsSender;
@@ -61,6 +63,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
             IAppFolders appFolders,
             IBinaryObjectManager binaryObjectManager,
             ITimeZoneService timezoneService,
+            ITimingAppService timingAppService,
             IFriendshipManager friendshipManager,
             GoogleTwoFactorAuthenticateService googleTwoFactorAuthenticateService,
             ISmsSender smsSender,
@@ -76,6 +79,7 @@ namespace DispatcherWeb.Authorization.Users.Profile
             _appFolders = appFolders;
             _binaryObjectManager = binaryObjectManager;
             _timeZoneService = timezoneService;
+            _timingAppService = timingAppService;
             _friendshipManager = friendshipManager;
             _googleTwoFactorAuthenticateService = googleTwoFactorAuthenticateService;
             _smsSender = smsSender;
@@ -87,6 +91,24 @@ namespace DispatcherWeb.Authorization.Users.Profile
             _locationRepository = locationRepository;
             _serviceRepository = serviceRepository;
             _unitOfMeasureRepository = unitOfMeasureRepository;
+        }
+
+        public async Task<MySettingsDto> GetUserProfileSettings()
+        {
+            var output = await GetCurrentUserProfileForEdit();
+            var timezoneItems = await _timingAppService.GetTimezoneComboboxItems(new GetTimezoneComboboxItemsInput
+            {
+                DefaultTimezoneScope = SettingScopes.User,
+                SelectedTimezoneId = output.Timezone
+            });
+
+            var profileSettings = new MySettingsDto(output)
+            {
+                TimezoneItems = timezoneItems,
+                SmsVerificationEnabled = await SettingManager.GetSettingValueAsync<bool>(AppSettings.UserManagement.SmsVerificationEnabled)
+            };
+
+            return profileSettings;
         }
 
         [DisableAuditing]
@@ -427,7 +449,6 @@ namespace DispatcherWeb.Authorization.Users.Profile
 
             FileHelper.DeleteIfExists(tempSignaturePicturePath);
         }
-
 
         [AbpAllowAnonymous]
         public async Task<GetPasswordComplexitySettingOutput> GetPasswordComplexitySetting()
