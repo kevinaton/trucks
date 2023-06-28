@@ -13,7 +13,13 @@ export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 //User Profile
 export const GET_USER_PROFILE_SETTINGS = '/Profile/GetUserProfileSettings';
 export const UPDATE_USER_PROFILE = '/Profile/UpdateCurrentUserProfile';
+export const UPDATE_SIGNATURE_PICTURE = '/Profile/UpdateSignaturePicture';
 export const CHANGE_PASSWORD = '/Profile/ChangePassword';
+export const DOWNLOAD_COLLECTED_DATA = '/Profile/PrepareCollectedData';
+
+//Google Authenticator
+export const ENABLE_GOOGLE_AUTHENTICATOR = '/Profile/UpdateGoogleAuthenticatorKey';
+export const DISABLE_GOOGLE_AUTHENTICATOR = '/Profile/DisableGoogleAuthenticator';
 
 //User Link
 export const GET_LINKED_USERS = '/UserLink/GetRecentlyUsedLinkedUsers';
@@ -27,6 +33,3 @@ export const GET_USER_NOTIFICATION_SETTINGS = '/Notification/GetNotificationSett
 export const SET_ALL_NOTIFICATIONS_AS_READ = '/Notification/SetAllNotificationsAsRead';
 export const SET_NOTIFICATION_AS_READ = '/Notification/SetNotificationAsRead';
 export const UPDATE_USER_NOTIFICATION_SETTINGS = '/Notification/UpdateNotificationSettings';
-
-//File Upload
-export const UPLOAD_PROFILE_PICTURE_FILE = '/Profile/UploadProfilePicture';

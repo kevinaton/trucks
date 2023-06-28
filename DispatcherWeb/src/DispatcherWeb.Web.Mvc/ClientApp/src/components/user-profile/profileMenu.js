@@ -17,7 +17,9 @@ import {
     getUserProfileMenu, 
     getLinkedUsers, 
     downloadCollectedData as onDownloadCollectedData,
-    resetDownloadCollectedDataState as onResetDownloadCollectedDataState
+    resetDownloadCollectedDataState as onResetDownloadCollectedDataState, 
+    backToImpersonator as onBackToImpersonator,
+    switchToUser as onSwitchToUser,
 } from '../../store/actions';
 import { baseUrl } from '../../helpers/api_helper';
 import { LinkedAccounts } from '../user-link';
@@ -44,11 +46,15 @@ export const ProfileMenu = ({
     const { 
         userProfileMenu,
         linkedUsers,
-        downloadSuccess
+        downloadSuccess, 
+        backToImpersonatorResponse,
+        switchAccountResponse
     } = useSelector((state) => ({
         userProfileMenu: state.UserReducer.userProfileMenu,
         linkedUsers: state.UserLinkReducer.linkedUsers,
-        downloadSuccess: state.UserProfileReducer.downloadSuccess
+        downloadSuccess: state.UserProfileReducer.downloadSuccess, 
+        backToImpersonatorResponse: state.AccountReducer.backToImpersonatorResponse,
+        switchAccountResponse: state.AccountReducer.switchAccountResponse
     }));
 
     useEffect(() => {
@@ -95,6 +101,24 @@ export const ProfileMenu = ({
         }
     }, [dispatch, downloadSuccess, openDialog]);
 
+    useEffect(() => {
+        if (backToImpersonatorResponse) {
+            const { targetUrl } = backToImpersonatorResponse;
+            if (targetUrl) {
+                window.location.href = targetUrl;
+            }
+        }
+    }, [backToImpersonatorResponse]);
+
+    useEffect(() => {
+        if (switchAccountResponse) {
+            const { targetUrl } = switchAccountResponse;
+            if (targetUrl) {
+                window.location.href = targetUrl;
+            }
+        }
+    }, [switchAccountResponse]);
+
     // Handle showing profile menu
     const handleProfileClick = (event) => {
         setAnchorProfile(event.currentTarget);
@@ -103,11 +127,6 @@ export const ProfileMenu = ({
     const handleProfileClose = () => {
         setAnchorProfile(null);
     };
-
-    const handleLogout = (e) => {
-        e.preventDefault();
-        window.location.href = `${baseUrl}/Account/Logout`;
-    }
 
     const showLoginName = () => {
         if (!isEmpty(profileMenu)) {
@@ -126,6 +145,10 @@ export const ProfileMenu = ({
         }
     };
 
+    const handleBackToMyAccount = () => {
+        dispatch(onBackToImpersonator());
+    };
+
     const handleLinkedAccounts = () => {
         handleProfileClose();
         openModal(
@@ -139,6 +162,16 @@ export const ProfileMenu = ({
             ),
             400
         );
+    };
+
+    const handleSwitchToUser = (account) => {
+        const { id, tenantId } = account;
+        if (id) {
+            dispatch(onSwitchToUser({
+                targetUserId: id,
+                targetTenantId: tenantId
+            }));
+        }
     };
 
     const handleChangePassword = () => {
@@ -198,6 +231,11 @@ export const ProfileMenu = ({
     const handleDownloadCollectedData = () => {
         handleProfileClose();
         dispatch(onDownloadCollectedData());
+    };
+
+    const handleLogout = (e) => {
+        e.preventDefault();
+        window.location.href = `${baseUrl}/Account/Logout`;
     };
     
     const renderAvatar = () => {
@@ -276,7 +314,11 @@ export const ProfileMenu = ({
 
                                 <MenuList dense>
                                     { profileMenu.isImpersonatedLogin && 
-                                        <MenuItem component={Link} sx={{ py: 1 }}>
+                                        <MenuItem 
+                                            component={Link} 
+                                            sx={{ py: 1 }} 
+                                            onClick={handleBackToMyAccount}
+                                        >
                                             <i className={`fa-regular fa-angle-left icon`} style={{ marginRight: 6 }}></i>
                                             <Typography>Back to my account</Typography>
                                         </MenuItem>
@@ -294,7 +336,12 @@ export const ProfileMenu = ({
                                     { !isEmpty(linkedAccounts) &&
                                         <MenuList sx={{ p: 0 }}>
                                             { linkedAccounts.map((account, index) => (
-                                                <MenuItem key={index} component={Link} sx={{ padding: '8px 16px 8px 35px' }}>
+                                                <MenuItem 
+                                                    key={index} 
+                                                    component={Link} 
+                                                    sx={{ padding: '8px 16px 8px 35px' }} 
+                                                    onClick={() => handleSwitchToUser(account)}
+                                                >
                                                     <i className={`fa-regular fa-period icon`} style={{ marginTop: '-7px' }}></i>
                                                     <Typography>{`${account.tenancyName}\\${account.username}`}</Typography>
                                                 </MenuItem>
