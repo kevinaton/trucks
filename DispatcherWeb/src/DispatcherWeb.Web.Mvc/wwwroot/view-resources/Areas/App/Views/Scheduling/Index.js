@@ -939,7 +939,7 @@
             var orderLine = _dtHelper.getRowData(element);
             try {
                 abp.ui.setBusy();
-                let hasMultipleItems = await _orderService.doesOrderHaveMultipleLines(orderLine.orderId);
+                let hasMultipleItems = await _orderService.doesOrderHaveOtherOrderLines(orderLine.orderId, orderLine.id);
                 abp.ui.clearBusy();
                 if (!hasMultipleItems) {
                     _copyOrderModal.open({
@@ -1022,7 +1022,7 @@
             }
             try {
                 abp.ui.setBusy();
-                let hasMultipleLines = await _orderService.doesOrderHaveMultipleLines(orderLine.orderId);
+                let hasMultipleLines = await _orderService.doesOrderHaveOtherOrderLines(orderLine.orderId, orderLine.id);
                 if (!hasMultipleLines) {
                     await deleteOrder(orderLine.orderId);
                     return;
