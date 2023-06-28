@@ -9,7 +9,7 @@ fs.readFile(indexFilePath, 'utf8', (err, data) => {
         return;
     }
 
-    const modifiedData = data.replace(/(href|src)=("|')(\/(manifest|static|assets)\/)/g, `$1=$2/reactapp$3`);
+    const modifiedData = data.replace(/(href|src|content)=("|')(\/(manifest|static|assets|sounds)\/)/g, `$1=$2/reactapp$3`);
 
     fs.writeFile(indexFilePath, modifiedData, 'utf8', (err) => {
         if (err) {
@@ -17,6 +17,5 @@ fs.readFile(indexFilePath, 'utf8', (err, data) => {
             return;
         }
         console.log('Modified index.html successfully.');
-  
     });
 });

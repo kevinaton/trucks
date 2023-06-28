@@ -3,6 +3,8 @@ import layoutSaga from './layout/saga';
 import featuresSaga from './features/saga';
 import dashboardSaga from './dashboard/saga';
 import userSaga from './user/saga';
+import userProfileSaga from './authorization/users/profile/saga';
+import userLinkSaga from './authorization/users/userLink/saga';
 import notificationSaga from './notifications/saga';
 import officeSaga from './offices/saga';
 import schedulingSaga from './scheduling/saga';
@@ -16,5 +18,7 @@ export default function* rootSaga() {
         fork(notificationSaga),
         fork(officeSaga),
         fork(schedulingSaga),
+        fork(userProfileSaga),
+        fork(userLinkSaga)
     ]);
 };

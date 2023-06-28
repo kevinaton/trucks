@@ -11,12 +11,11 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import { drawerWidth, AppBar, HeaderIconButton, HeaderButton } from '../../DTComponents';
+import { drawerWidth, AppBar, HeaderIconButton } from '../../DTComponents';
 import { NotificationBell } from '../dropdowns';
+import { ProfileMenu } from '../../user-profile';
 import { getSupportLinkAddress } from '../../../store/actions';
 import { isEmpty } from 'lodash';
-
-import { ProfileList } from '../../../common/data/menus';
 import ChatPane from '../../Chatpane';
 
 export const Appbar = ({
@@ -27,14 +26,16 @@ export const Appbar = ({
     handleOpenNavMenu,
     anchorElNav,
     handleCloseNavMenu,
+    openModal,
+    closeModal, 
+    openDialog,
+    closeDialog
 }) => {
     const [linkAddress, setLinkAddress] = useState(null);
     const dispatch = useDispatch();
     const { supportLinkAddress } = useSelector((state) => ({
         supportLinkAddress: state.LayoutReducer.supportLinkAddress,
     }));
-    const [anchorProfile, setAnchorProfile] = React.useState(null);
-    const isProfile = Boolean(anchorProfile);
     const [state, setState] = React.useState(false);
 
     useEffect(() => {
@@ -49,15 +50,6 @@ export const Appbar = ({
             }
         }
     }, [dispatch, supportLinkAddress, isAuthenticated]);
-
-    // Handle showing profile menu
-    const handleProfileClick = (event) => {
-        setAnchorProfile(event.currentTarget);
-    };
-
-    const handleProfileClose = (event) => {
-        setAnchorProfile(null);
-    };
 
     return (
         <div>
@@ -181,12 +173,18 @@ export const Appbar = ({
                                 style={{
                                     '--fa-primary-opacity': '0.3',
                                     '--fa-secondary-opacity': '1',
-                                }}></i>
+                                }}
+                            ></i>
                         </HeaderIconButton>
 
                         <NotificationBell isMobileView={false} />
 
-                        <HeaderButton onClick={handleCloseNavMenu} />
+                        <ProfileMenu 
+                            openModal={openModal} 
+                            closeModal={closeModal} 
+                            openDialog={openDialog} 
+                            closeDialog={closeDialog}
+                        />
 
                         <HeaderIconButton aria-label='open drawer' onClick={() => setState(true)}>
                             <i className='fa-regular fa-message-dots icon'></i>

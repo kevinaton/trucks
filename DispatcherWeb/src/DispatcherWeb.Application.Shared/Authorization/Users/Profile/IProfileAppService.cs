@@ -7,6 +7,8 @@ namespace DispatcherWeb.Authorization.Users.Profile
 {
     public interface IProfileAppService : IApplicationService
     {
+        Task<MySettingsDto> GetUserProfileSettings();
+
         Task<CurrentUserProfileEditDto> GetCurrentUserProfileForEdit();
 
         Task UpdateCurrentUserProfile(CurrentUserProfileEditDto input);
