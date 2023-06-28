@@ -162,6 +162,7 @@ export const ProfileMenu = ({
                 <ChangeProfilePictureForm 
                     openModal={openModal}
                     closeModal={closeModal} 
+                    openDialog={openDialog}
                 />
             ),
             400
@@ -205,7 +206,8 @@ export const ProfileMenu = ({
             return (
                 <Avatar
                     alt='account'
-                    src={`${baseUrl}/TenantCustomization/GetLogo?id=${tenant.logoId}`}
+                    src={`${baseUrl}/TenantCustomization/GetLogo?id=${tenant.logoId}`} 
+                    className='header-profile-picture'
                     sx={{ mr: 1, width: 24, height: 24 }}
                 />
             );
@@ -214,7 +216,10 @@ export const ProfileMenu = ({
         return (
             <Avatar
                 alt='account'
-                src='/reactapp/assets/images/app-logo-dump-truck-130x35.gif'
+                src={!isEmpty(user) && !isEmpty(user.profilePictureId) 
+                    ? `${baseUrl}/Profile/GetProfilePictureById?id=${user.profilePictureId}` 
+                    : '/reactapp/assets/images/app-logo-dump-truck-130x35.gif' }
+                className='header-profile-picture'
                 sx={{ mr: 1, width: 24, height: 24 }}
             />
         );
