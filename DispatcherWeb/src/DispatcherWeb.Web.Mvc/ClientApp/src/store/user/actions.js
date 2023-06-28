@@ -4,7 +4,10 @@ import {
     GET_USER_INFO_FAILURE,
     GET_USER_SETTING,
     GET_USER_SETTING_SUCCESS,
-    GET_USER_SETTING_FAILURE
+    GET_USER_SETTING_FAILURE,
+    GET_USER_PROFILE_MENU,
+    GET_USER_PROFILE_MENU_SUCCESS,
+    GET_USER_PROFILE_MENU_FAILURE
 } from './actionTypes';
 
 export const getUserInfo = () => ({
@@ -18,6 +21,20 @@ export const getUserInfoSuccess = userInfo => ({
 
 export const getUserInfoFailure = error => ({
     type: GET_USER_INFO_FAILURE,
+    payload: error
+});
+
+export const getUserProfileMenu = () => ({
+    type: GET_USER_PROFILE_MENU
+});
+
+export const getUserProfileMenuSuccess = userProfileMenu => ({
+    type: GET_USER_PROFILE_MENU_SUCCESS,
+    payload: userProfileMenu
+});
+
+export const getUserProfileMenuFailure = error => ({
+    type: GET_USER_PROFILE_MENU_FAILURE,
     payload: error
 });
 

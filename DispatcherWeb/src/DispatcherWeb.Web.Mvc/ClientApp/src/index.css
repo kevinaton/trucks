@@ -206,6 +206,8 @@ code {
 .icon {
     fill: #58a3dc;
     color: #58a3dc;
+    min-width: 16px;
+    text-align: center;
 }
 
 .secondary-icon {

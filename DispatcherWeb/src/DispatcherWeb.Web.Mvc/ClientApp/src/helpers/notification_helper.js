@@ -1,4 +1,5 @@
 import { notificationState } from '../common/enums/notificationState';
+import { getText } from './localization_helper';
 
 const messageFormatters = {
     'DispatcherWeb.Infrastructure.Notifications.ImportCompletedNotificationData': (importCompletedNotification) => {
@@ -6,6 +7,10 @@ const messageFormatters = {
     },
     'Abp.Notifications.MessageNotificationData': (userNotification) => {
         return userNotification.data.message || userNotification.data.properties.Message;
+    },
+    'Abp.Notifications.LocalizableMessageNotificationData': (userNotification) => {
+        let message = userNotification.data.message || userNotification.data.properties.Message;
+        return getText(message.name);
     }
 }
 
