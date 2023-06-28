@@ -4,6 +4,9 @@ import {
     UPDATE_USER_PROFILE_SUCCESS,
     UPDATE_USER_PROFILE_FAILURE,
     RESET_UPDATE_USER_PROFILE_STATE, 
+    UPDATE_PROFILE_PICTURE_SUCCESS,
+    UPDATE_PROFILE_PICTURE_FAILURE,
+    RESET_UPDATE_PROFILE_PICTURE_STATE,
     UPDATE_SIGNATURE_PICTURE_SUCCESS,
     UPDATE_SIGNATURE_PICTURE_FAILURE,
     RESET_UPDATE_SIGNATURE_PICTURE_STATE,
@@ -28,6 +31,7 @@ import {
 const INIT_STATE = {
     userProfileSettings: null,
     profileUpdateSuccess: null, 
+    profilePictureUpdateSuccess: null,
     signatureUpdateSuccess: null,
     updateSuccess: null, 
     uploadResponse: null,
@@ -63,6 +67,21 @@ const UserProfileReducer = (state = INIT_STATE, action) => {
                 profileUpdateSuccess: null
             };
         }
+        case UPDATE_PROFILE_PICTURE_SUCCESS:
+            return {
+                ...state,
+                profilePictureUpdateSuccess: true
+            };
+        case UPDATE_PROFILE_PICTURE_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            };
+        case RESET_UPDATE_PROFILE_PICTURE_STATE:
+            return {
+                ...state,
+                profilePictureUpdateSuccess: null
+            };
         case UPDATE_SIGNATURE_PICTURE_SUCCESS:
             return {
                 ...state,

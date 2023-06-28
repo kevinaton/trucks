@@ -12,86 +12,124 @@ import CloseIcon from '@mui/icons-material/Close';
 import { PhotoCamera } from '@mui/icons-material';
 import { newId } from '../../utils';
 import { isEmpty } from 'lodash';
+import { getUserProfilePicturePath } from '../../helpers';
 import { baseUrl } from '../../helpers/api_helper';
-import ImageCropper from '../common/images/imageCropper';
-import { uploadProfilePictureFile as onUploadProfilePictureFile } from '../../store/actions';
+import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+import { 
+    updateProfilePicture as onUpdateProfilePicture,
+    uploadProfilePictureFile as onUploadProfilePictureFile,
+    resetUpdateProfilePicture as onResetUpdateProfilePicture
+} from '../../store/actions';
+import { getText } from '../../helpers/localization_helper';
+import { AlertDialog } from '../common/dialogs';
+
+const centerAspectCrop = (mediaWidth, mediaHeight, aspect) => {
+    return centerCrop(
+        makeAspectCrop(
+            {
+                unit: '%',
+                width: 90
+            },
+            aspect,
+            mediaWidth,
+            mediaHeight
+        ),
+        mediaWidth,
+        mediaHeight
+    );
+};
 
 const ChangeProfilePictureForm = ({
-    closeModal
+    closeModal,
+    openDialog
 }) => {
-    const [selectedFile, setSelectedFile] = useState(null);
+    const containerRef = useRef(null);
     const fileInputRef = useRef(null);
+    const imgRef = useRef(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [imgSrc, setImgSrc] = useState('');
+    const [imgWidth, setImgWidth] = useState(0);
+    const [imgHeight, setImgHeight] = useState(0);
+    const [crop, setCrop] = useState();
+    const [completedCrop, setCompletedCrop] = useState();
     const [uploadedFileToken, setUploadedFileToken] = useState(null);
-    const [imagePath, setImagePath] = useState('');
-    const [src, setSrc] = useState('');
 
     const dispatch = useDispatch();
     const {
-        uploadResponse
+        uploadResponse,
+        profilePictureUpdateSuccess
     } = useSelector(state => ({
-        uploadResponse: state.UserProfileReducer.uploadResponse
+        uploadResponse: state.UserProfileReducer.uploadResponse,
+        profilePictureUpdateSuccess: state.UserProfileReducer.profilePictureUpdateSuccess
     }));
 
     useEffect(() => {
-        console.log('uploadResponse: ', uploadResponse);
         if (!isEmpty(uploadResponse)) {
             const { result } = uploadResponse;
             if (!isEmpty(result)) {
                 const { fileName, fileToken, fileType, height, width } = result;
                 const filePath = `${baseUrl}/File/DownloadTempFile?fileToken=${fileToken}&fileName=${fileName}&fileType=${fileType}&v=${new Date().valueOf()}`;
-                setSrc(filePath)
-                downloadImage(filePath);
-
                 setUploadedFileToken(fileToken);
-                //setImagePath(filePath);
+                setImgSrc(filePath);
+                setImgWidth(width);
+                setImgHeight(height);
             }
         }
     }, [uploadResponse]);
 
-    const downloadImage = async (filePath) => {
-        try {
-            const response = await fetch(filePath);
-            if (response.ok) {
-                console.log('response: ', response)
-                const blob = await response.blob();
-                console.log('blob: ', blob)
-                const imgUrl = URL.createObjectURL(blob);
-                setImagePath(imgUrl);
-            } else {
-                console.error('Error downloading image:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error downloading image:', error);
+    useEffect(() => {
+        if (profilePictureUpdateSuccess) {
+            dispatch(onResetUpdateProfilePicture());
+            document.querySelector('.header-profile-picture img').setAttribute('src', getUserProfilePicturePath());
+            closeModal();
         }
-    };
+    }, [dispatch, profilePictureUpdateSuccess, closeModal]);
 
     const handleFileChange = async (event) => {
-        const selectedFile = event.target.files[0];
-    
-        if (!selectedFile) {
+        const file = event.target.files[0];
+        if (!file) {
             return;
         }
+
+        setSelectedFile(file);
     
-        const fileType = '|' + selectedFile.type.slice(selectedFile.type.lastIndexOf('/') + 1) + '|';
+        const fileType = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
         if ('|jpg|jpeg|png|gif|'.indexOf(fileType) === -1) {
-            alert('Invalid file type. Only JPG, JPEG, PNG, and GIF files are allowed.');
-            return;
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog 
+                        variant='warning'
+                        message={getText('ProfilePicture_Warn_FileType')}
+                    />
+                )
+            });
         }
     
         const maxSize = 5242880; // 5MB
-        if (selectedFile.size > maxSize) {
-            alert('File size exceeds the maximum limit of 5MB.');
+        if (file.size > maxSize) {
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog 
+                        variant='warning'
+                        message={getText('ProfilePicture_Warn_SizeLimit', 5)}
+                    />
+                )
+            });
             return;
         }
     
+        const mimeType = await getFileMimeType(file);
         const formData = new FormData();
-        formData.append('ProfilePicture', selectedFile);
-
-        const mimeType = await getFileMimeType(selectedFile);
+        formData.append('ProfilePicture', file);
         formData.append('FileType', mimeType);
         formData.append('FileName', 'ProfilePicture');
         formData.append('FileToken', newId());
         dispatch(onUploadProfilePictureFile(formData));
+
+        setCrop(undefined);
     };
 
     const getFileMimeType = (file) => {
@@ -130,6 +168,11 @@ const ChangeProfilePictureForm = ({
             reader.readAsArrayBuffer(file);
         });
     };
+    
+    const onImageLoad = (e) => {
+        const { width, height } = e.currentTarget;
+        setCrop(centerAspectCrop(width, height, 1));
+    };
 
     const handleCancel = () => {
         // Reset the form
@@ -137,13 +180,40 @@ const ChangeProfilePictureForm = ({
     };
 
     const handleUpload = () => {
-        // Implement your upload logic here
-        if (selectedFile) {
-            console.log('Uploading file:', selectedFile);
-        // Perform the necessary actions such as sending the file to a server
-        } else {
-            console.log('No file selected');
+        if (!selectedFile) {
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog 
+                        variant='error' 
+                        message={getText('File_Empty_Error')}
+                    />
+                )
+            });
         }
+        
+        if (!uploadedFileToken) {
+            return;
+        }
+
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+
+        const widthRatio = imgWidth / containerWidth;
+        const heightRatio = imgHeight / containerHeight;
+
+        const cropX = completedCrop.x * widthRatio;
+        const cropY = completedCrop.y * heightRatio;
+        const cropWidth = completedCrop.width * widthRatio;
+        const cropHeight = completedCrop.height * heightRatio;
+
+        dispatch(onUpdateProfilePicture({
+            fileToken: uploadedFileToken,
+            x: parseInt(cropX),
+            y: parseInt(cropY),
+            width: parseInt(cropWidth),
+            height: parseInt(cropHeight),
+        }));
     };
 
     return (
@@ -167,36 +237,54 @@ const ChangeProfilePictureForm = ({
                 </Button>
             </Box>
 
-            <Box sx={{ p: 2 }}>
-                {/* <form id="ChangeProfilePictureModalForm">
-                    <div>
-                        <Input 
-                            ref={fileInputRef}
-                            type="file" 
-                            name="ProfilePicture" 
-                            onChange={handleFileChange}
-                            sx={{
-                                '&::before, &::after': {
-                                    borderBottom: 'none'
-                                },
-                                '&:hover::before, &:hover::after': {
-                                    borderBottom: 'none'
-                                }
-                            }}
-                        />
-                        <label htmlFor="upload-profile-picture">
-                            <IconButton
-                                color="primary"
-                                aria-label="upload picture"
-                                component="span"
-                            >
-                                <PhotoCamera />
-                            </IconButton>
-                        </label>
-                    </div>
-                    <Typography variant='caption'>You can select a JPG/JPEG/PNG/GIF file with a maximum 5MB size.</Typography>
-                </form> */}
-                <ImageCropper />
+            <Box sx={{ p: 2 }} className='ImageCropper'>
+                <div className='Crop-Controls'>
+                    <Input 
+                        ref={fileInputRef}
+                        type="file" 
+                        name="ProfilePicture" 
+                        onChange={handleFileChange}
+                        sx={{
+                            '&::before, &::after': {
+                                borderBottom: 'none'
+                            },
+                            '&:hover::before, &:hover::after': {
+                                borderBottom: 'none'
+                            }
+                        }}
+                    />
+                    <label htmlFor="upload-profile-picture">
+                        <IconButton
+                            color="primary"
+                            aria-label="upload picture"
+                            component="span"
+                        >
+                            <PhotoCamera />
+                        </IconButton>
+                    </label>
+                </div>
+                <Typography variant='caption'>You can select a JPG/JPEG/PNG/GIF file with a maximum 5MB size.</Typography>
+
+                {!!imgSrc && (
+                    <Box sx={{ mt: 1 }} ref={containerRef}>
+                        <ReactCrop
+                            crop={crop} 
+                            onChange={(_, percentCrop) => setCrop(percentCrop)} 
+                            onComplete={(c) => setCompletedCrop(c)} 
+                            aspect={1}
+                        >
+                            <img 
+                                ref={imgRef}
+                                alt='Crop me'
+                                src={imgSrc} 
+                                style={{ 
+                                    transform: `scale(1) rotate(0deg)` 
+                                }} 
+                                onLoad={onImageLoad}
+                            />
+                        </ReactCrop>
+                    </Box>
+                )}
             </Box>
 
             <Box sx={{ p: 2 }}>
