@@ -57,7 +57,7 @@ namespace DispatcherWeb.QuickbooksDesktop
         {
             var invoicesToUpload = await _invoiceRepository.GetAll()
                 .Where(x => x.QuickbooksExportDateTime == null)
-                .WhereIf(input.InvoiceStatuses.Any(), x => input.InvoiceStatuses.Contains(x.Status))
+                .WhereIf(input.InvoiceStatuses?.Any() == true, x => input.InvoiceStatuses.Contains(x.Status))
                 .ToInvoiceToUploadList(await GetTimezone());
 
             var invoiceNumberPrefix = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.Quickbooks.InvoiceNumberPrefix);
