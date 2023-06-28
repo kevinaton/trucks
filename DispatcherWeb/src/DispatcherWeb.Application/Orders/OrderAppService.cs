@@ -1366,8 +1366,8 @@ namespace DispatcherWeb.Orders
 
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<bool> DoesOrderHaveMultipleLines(int orderId) =>
-            await _orderLineRepository.GetAll().CountAsync(ol => ol.OrderId == orderId) > 1;
+        public async Task<bool> DoesOrderHaveOtherOrderLines(int orderId, int orderLineId) =>
+            await _orderLineRepository.GetAll().AnyAsync(ol => ol.OrderId == orderId && ol.Id != orderLineId);
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<int[]> CopyOrder(CopyOrderInput input)
