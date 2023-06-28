@@ -175,6 +175,7 @@ export const ProfileMenu = ({
                 <UploadSignaturePictureForm 
                     openModal={openModal}
                     closeModal={closeModal} 
+                    openDialog={openDialog}
                 />
             ),
             400
