@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Repositories;
+﻿using Abp.Authorization;
+using Abp.Domain.Repositories;
 using Abp.UI;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverApp.BinaryObjects.Dto;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.DriverApp.BinaryObjects
 {
+    [AbpAuthorize]
     public class BinaryObjectAppService : DispatcherWebDriverAppAppServiceBase, IBinaryObjectAppService
     {
         private readonly IBinaryObjectManager _binaryObjectManager;
