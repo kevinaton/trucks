@@ -431,7 +431,7 @@
         draft: 0,
         sent: 1,
         viewed: 2,
-        readyForQuickbooks: 3
+        readyForExport: 3
     };
 
     abp.enums.quickbooksIntegrationKind = {

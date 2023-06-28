@@ -449,8 +449,8 @@ namespace DispatcherWeb
         Draft = 0,
         Sent = 1,
         Viewed = 2,
-        [Display(Name = "Ready for QuickBooks")]
-        ReadyForQuickbooks = 3,
+        [Display(Name = "Ready for export")]
+        ReadyForExport = 3,
         Printed = 4
     }
 

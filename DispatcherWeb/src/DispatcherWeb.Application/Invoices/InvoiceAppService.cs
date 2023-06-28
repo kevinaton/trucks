@@ -391,12 +391,12 @@ namespace DispatcherWeb.Invoices
                 {
                     case InvoiceStatus.Draft:
                     case InvoiceStatus.Printed:
-                        if (model.Status.IsIn(InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Sent))
+                        if (model.Status.IsIn(InvoiceStatus.ReadyForExport, InvoiceStatus.Sent))
                         {
                             invoice.Status = model.Status;
                         }
                         break;
-                    case InvoiceStatus.ReadyForQuickbooks:
+                    case InvoiceStatus.ReadyForExport:
                         if (model.Status.IsIn(InvoiceStatus.Sent))
                         {
                             invoice.Status = model.Status;
@@ -896,7 +896,7 @@ namespace DispatcherWeb.Invoices
             invoice.UploadBatchId = null;
             invoice.QuickbooksExportDateTime = null;
             invoice.QuickbooksInvoiceId = null;
-            invoice.Status = InvoiceStatus.ReadyForQuickbooks;
+            invoice.Status = InvoiceStatus.ReadyForExport;
         }
 
 
@@ -1104,7 +1104,7 @@ namespace DispatcherWeb.Invoices
                 });
 
                 var invoice = await _invoiceRepository.GetAsync(input.InvoiceId);
-                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Printed))
+                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForExport, InvoiceStatus.Printed))
                 {
                     invoice.Status = InvoiceStatus.Sent;
                 }
