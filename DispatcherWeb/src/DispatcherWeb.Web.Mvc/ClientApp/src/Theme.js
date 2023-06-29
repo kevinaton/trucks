@@ -1,11 +1,16 @@
 import { createTheme } from '@mui/material';
 
 export const theme = createTheme({
+    // These are the colors used throughout the app. Please use the palette as much as possible when using colors
     palette: {
         primary: {
             main: '#67A2D7',
             light: '#ecf6fd',
             contrastText: '#ffffff',
+        },
+        secondary: {
+            main: '#F4F5F8',
+            contrastText: '#303030',
         },
         success: {
             main: '#00A65A',
@@ -15,6 +20,7 @@ export const theme = createTheme({
         },
         text: {
             primary: '#303030',
+            disabled: '#616161',
         },
         grey: {
             A100: '#f8f9fa',
@@ -23,6 +29,7 @@ export const theme = createTheme({
         action: {
             hover: '#F8F9FA',
             selected: '#ecf6fd',
+            disabled: '#ebedf3',
         },
         gradient: {
             main: 'linear-gradient(-60deg, #4991f8 0%, #4bc1ff 100%)',
@@ -63,7 +70,7 @@ export const theme = createTheme({
                 root: {
                     '&:hover': {
                         color: '#698092',
-                        backgroundColor: '#f8f9fa', // background color of ListItemButton when hovered
+                        backgroundColor: (theme) => theme.palette.action.hover, // background color of ListItemButton when hovered
                     },
                     '& .MuiTouchRipple-root': {
                         color: '#58a3dc', // Set the desired ripple color
@@ -116,10 +123,18 @@ export const theme = createTheme({
                 },
             },
         },
+
+        MuiFormLabel: {
+            styleOverrides: {
+                asterisk: { color: '#DD4B39' },
+            },
+        },
     },
 
     shadows: Array(25)
         .fill('none')
         .map((_, i) => `0px ${i + 1}px ${i + 1}px rgba(69, 65, 78, 0.08)`),
-    // shadows: { 6: '0 1px 15px 1px rgba(69,65,78,0.1)' },
+    // shadows: { 6: "0 1px 15px 1px rgba(69,65,78,0.1)" },
 });
+
+export default theme;
