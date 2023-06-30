@@ -449,9 +449,11 @@ namespace DispatcherWeb.Invoices
                     .Where(x => ticketIds.Contains(x.Id) && x.InvoiceLine != null)
                     .Select(x => x.Id).ToListAsync();
 
+                var timezone = await GetTimezone();
+
                 model.InvoiceLines = model.InvoiceLines
                         .OrderByDescending(x => x.ChildInvoiceLineKind != ChildInvoiceLineKind.BottomFuelSurchargeLine)
-                        .ThenBy(x => x.DeliveryDateTime)
+                        .ThenBy(x => x.DeliveryDateTime?.ConvertTimeZoneTo(timezone).Date)
                         .ThenBy(x => x.TruckCode)
                         .ThenBy(x => x.TicketNumber)
                         .ToList();
