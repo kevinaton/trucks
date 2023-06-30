@@ -105,6 +105,8 @@ export const ProfileMenu = ({
         if (backToImpersonatorResponse) {
             const { targetUrl } = backToImpersonatorResponse;
             if (targetUrl) {
+                localStorage.clear();
+                clearAllCookies();
                 window.location.href = targetUrl;
             }
         }
@@ -118,6 +120,21 @@ export const ProfileMenu = ({
             }
         }
     }, [switchAccountResponse]);
+
+    // Clear a specific cookie by setting its expiration date in the past
+    const clearCookie = (name) => {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    };
+
+    // Clear all cookies by iterating through existing cookies and setting their expiration date in the past
+    const clearAllCookies = () => {
+        const cookies = document.cookie.split(";");
+    
+        cookies.forEach((cookie) => {
+            const cookieName = cookie.split("=")[0].trim();
+            clearCookie(cookieName);
+        });
+    };
 
     // Handle showing profile menu
     const handleProfileClick = (event) => {

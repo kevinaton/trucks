@@ -10,7 +10,7 @@ export const getUserProfileSettings = () => get(apiUrl.GET_USER_PROFILE_SETTINGS
 export const updateUserProfile = userProfile => put(apiUrl.UPDATE_USER_PROFILE, userProfile);
 
 // update profile picture
-export const updateProfilePicture = profilePicture => put(url.UPDATE_PROFILE_PICTURE, profilePicture);
+export const updateProfilePicture = profilePicture => put(apiUrl.UPDATE_PROFILE_PICTURE, profilePicture);
 
 // update signature picture
 export const updateSignaturePicture = signaturePicture => put(apiUrl.UPDATE_SIGNATURE_PICTURE, signaturePicture);
