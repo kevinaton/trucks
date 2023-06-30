@@ -2,6 +2,7 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import {
     GET_USER_PROFILE_SETTINGS,
     UPDATE_USER_PROFILE, 
+    UPDATE_PROFILE_PICTURE,
     UPDATE_SIGNATURE_PICTURE,
     CHANGE_PASSWORD,
     UPLOAD_PROFILE_PICTURE_FILE,
@@ -15,6 +16,8 @@ import {
     getUserProfileSettingsFailure,
     updateUserProfileSuccess,
     updateUserProfileFailure, 
+    updateProfilePictureSuccess,
+    updateProfilePictureFailure,
     updateSignaturePictureSuccess,
     updateSignaturePictureFailure,
     changePasswordSuccess,
@@ -33,6 +36,7 @@ import {
 import {
     getUserProfileSettings,
     updateUserProfile, 
+    updateProfilePicture,
     updateSignaturePicture,
     changePassword,
     uploadProfilePictureFile,
@@ -57,6 +61,15 @@ function* onUpdateUserProfile({ payload: userProfile }) {
         yield put(updateUserProfileSuccess(userProfile));
     } catch (error) {
         yield put(updateUserProfileFailure(error));
+    }
+}
+
+function* onUpdateProfilePicture({ payload: profilePicture }) {
+    try {
+        yield call(updateProfilePicture, profilePicture);
+        yield put(updateProfilePictureSuccess());
+    } catch (error) {
+        yield put(updateProfilePictureFailure(error));
     }
 }
 
@@ -126,6 +139,7 @@ function* onDownloadCollectedData() {
 function* userProfileSaga() {
     yield takeEvery(GET_USER_PROFILE_SETTINGS, fetchUserProfileSettings);
     yield takeEvery(UPDATE_USER_PROFILE, onUpdateUserProfile);
+    yield takeEvery(UPDATE_PROFILE_PICTURE, onUpdateProfilePicture);
     yield takeEvery(UPDATE_SIGNATURE_PICTURE, onUpdateSignaturePicture);
     yield takeEvery(CHANGE_PASSWORD, onChangePassword);
     yield takeEvery(UPLOAD_PROFILE_PICTURE_FILE, onUploadProfilePictureFile);

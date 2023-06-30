@@ -9,6 +9,9 @@ export const getUserProfileSettings = () => get(apiUrl.GET_USER_PROFILE_SETTINGS
 // update user profile
 export const updateUserProfile = userProfile => put(apiUrl.UPDATE_USER_PROFILE, userProfile);
 
+// update profile picture
+export const updateProfilePicture = profilePicture => put(url.UPDATE_PROFILE_PICTURE, profilePicture);
+
 // update signature picture
 export const updateSignaturePicture = signaturePicture => put(apiUrl.UPDATE_SIGNATURE_PICTURE, signaturePicture);
 
