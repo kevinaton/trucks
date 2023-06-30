@@ -320,36 +320,61 @@
 
     "ScheduleData": [
         {
+            "id": 1,
+            "line": 1,
             "priority": "low",
             "checkbox": true,
             "note": "Lorem ipsum dolor sit amet",
             "customer": "ABC Construction Company",
+            "designation": "Freight Only",
             "job": 122002,
             "time": "5:00 am",
-            "load": "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
+            "load": "Vulcan Lakeside Quarry, 4 Brown Rd, Monticello, GA, 30270",
             "deliver": "Fort McKinley Street, Aria Hill, California",
             "item": "Freight service",
             "quantity": "20 load",
+            "freightQty": 20,
+            "freightUom": "Load",
+            "freightRate": 23,
+            "lhRate": 9,
+            "freight": 19,
             "required": 2,
             "trucks": [
-                { "name": "M001", "variant": "filled", "color": "info" },
-                { "name": "M002", "variant": "outlined", "color": "warning" }
+                { "name": "M001", "variant": "filled", "color": "info", "trailer": "TRL22001" },
+                { "name": "M002", "variant": "outlined", "color": "warning", "trailer": "TRL22002" }
             ],
             "amountProgress": 20,
             "schedProgress": 90,
-            "closed": false
+            "closed": false,
+            "runUntilStopped": true,
+            "requiresNotification": true,
+            "cash": true,
+            "material": "Alloy",
+            "materialUom": "Pounds/*",
+            "materialRate": 20,
+            "materialQty": 0,
+            "salesTaxRate": 0,
+            "salesTax": 0
         },
         {
+            "id": 2,
+            "line": 2,
             "priority": "high",
             "checkbox": false,
             "note": "Lorem ipsum dolor sit amet",
             "customer": "XYZ Logistics Company",
+            "designation": "Freight Only",
             "job": 123003,
             "time": "8:00 pm",
             "load": "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
-            "deliver": "Fort McKinley Street, Aria Hill, California",
+            "deliver": "ABC Quarry Site, County Rd #C, Monticello, GA, 30270",
             "item": "Freight service",
             "quantity": "2000 lbs",
+            "freightQty": 20000,
+            "freightUom": "Pounds",
+            "freightRate": 16,
+            "lhRate": 11,
+            "freight": 20,
             "required": 3,
             "trucks": [
                 { "name": "M003", "variant": "filled", "color": "success" },
@@ -358,7 +383,14 @@
             ],
             "amountProgress": 30,
             "schedProgress": 60,
-            "closed": true
+            "closed": true,
+            "runUntilStopped": true,
+            "requiresNotification": true,
+            "cash": false,
+            "material": "",
+            "materialUom": "",
+            "materialRate": "",
+            "materialQty": 0
         }
     ],
 
