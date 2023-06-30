@@ -57,7 +57,6 @@ namespace DispatcherWeb.Invoices.Dto
         decimal IOrderLineTaxDetails.MaterialPrice => MaterialTotal;
 
         decimal IOrderLineTaxDetails.FreightPrice => FreightTotal;
-        //public InvoiceLineEditDto InvoiceLine { get; set; }
         public decimal Subtotal { get; set; }
 
         public decimal Total { get; set; } //=> MaterialTotal + FreightTotal + Tax;
