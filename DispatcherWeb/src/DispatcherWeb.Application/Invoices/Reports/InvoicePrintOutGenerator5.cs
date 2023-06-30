@@ -382,7 +382,7 @@ namespace DispatcherWeb.Invoices.Reports
         public List<InvoicePrintOutLineItemDto> ReorderLineItems(List<InvoicePrintOutLineItemDto> invoiceLines)
         {
             invoiceLines = invoiceLines
-                .OrderBy(x => x.DeliveryDateTime)
+                .OrderBy(x => x.DeliveryDateTime?.Date)
                 .ThenBy(x => x.TruckCode)
                 .ThenBy(x => x.TicketNumber)
                 .ToList();
