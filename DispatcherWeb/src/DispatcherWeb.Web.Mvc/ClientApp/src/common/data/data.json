@@ -341,6 +341,7 @@
 
     "ScheduleData": [
         {
+            "line": 1,
             "priority": "low",
             "checkbox": true,
             "note": "Lorem ipsum dolor sit amet",
@@ -352,7 +353,11 @@
             "deliver": "Fort McKinley Street, Aria Hill, California",
             "item": "Freight service",
             "quantity": "20 load",
+            "freightQty": 20,
             "freightUom": "Load",
+            "freightRate": 23,
+            "lhRate": 9,
+            "freight": 19,
             "required": 2,
             "trucks": [
                 { "name": "M001", "variant": "filled", "color": "info" },
@@ -360,9 +365,19 @@
             ],
             "amountProgress": 20,
             "schedProgress": 90,
-            "closed": false
+            "closed": false,
+            "runUntilStopped": true,
+            "requiresNotification": true,
+            "cash": true,
+            "material": "Alloy",
+            "materialUom": "Pounds/*",
+            "materialRate": 20,
+            "materialQty": 0,
+            "salesTaxRate": 0,
+            "salesTax": 0
         },
         {
+            "line": 2,
             "priority": "high",
             "checkbox": false,
             "note": "Lorem ipsum dolor sit amet",
@@ -374,7 +389,11 @@
             "deliver": "Fort McKinley Street, Aria Hill, California",
             "item": "Freight service",
             "quantity": "2000 lbs",
+            "freightQty": 20000,
             "freightUom": "Pounds",
+            "freightRate": 16,
+            "lhRate": 11,
+            "freight": 20,
             "required": 3,
             "trucks": [
                 { "name": "M003", "variant": "filled", "color": "success" },
@@ -383,7 +402,14 @@
             ],
             "amountProgress": 30,
             "schedProgress": 60,
-            "closed": true
+            "closed": true,
+            "runUntilStopped": true,
+            "requiresNotification": true,
+            "cash": false,
+            "material": "",
+            "materialUom": "",
+            "materialRate": "",
+            "materialQty": 0
         }
     ],
 
@@ -566,5 +592,17 @@
 
     "Items": ["Load Product", "Freight service"],
 
-    "FreightUom": ["Load", "Pounds"]
+    "FreightUom": ["Load", "Pounds"],
+
+    "Quotes": ["Quote 1", "Quote 2", "Quote 3"],
+
+    "Contact": [
+        { "name": "Michael Fox", "number": 1022993484 },
+        { "name": "Nicole Dee", "number": 1522002321 },
+        { "name": "Francis Delton", "number": 1005220199 }
+    ],
+
+    "CannedText": ["None"],
+
+    "Priority": ["High", "Medium", "Low"]
 }

@@ -13,12 +13,10 @@ export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 //User Profile
 export const GET_USER_PROFILE_SETTINGS = '/Profile/GetUserProfileSettings';
 export const UPDATE_USER_PROFILE = '/Profile/UpdateCurrentUserProfile';
+export const UPDATE_PROFILE_PICTURE = '/Profile/UpdateProfilePicture';
 export const UPDATE_SIGNATURE_PICTURE = '/Profile/UpdateSignaturePicture';
 export const CHANGE_PASSWORD = '/Profile/ChangePassword';
 export const DOWNLOAD_COLLECTED_DATA = '/Profile/PrepareCollectedData';
-
-//Features
-export const IS_FEATURE_ENABLED = '/Features/IsFeatureEnabled';
 
 //Google Authenticator
 export const ENABLE_GOOGLE_AUTHENTICATOR = '/Profile/UpdateGoogleAuthenticatorKey';
@@ -36,14 +34,3 @@ export const GET_USER_NOTIFICATION_SETTINGS = '/Notification/GetNotificationSett
 export const SET_ALL_NOTIFICATIONS_AS_READ = '/Notification/SetAllNotificationsAsRead';
 export const SET_NOTIFICATION_AS_READ = '/Notification/SetNotificationAsRead';
 export const UPDATE_USER_NOTIFICATION_SETTINGS = '/Notification/UpdateNotificationSettings';
-
-//Offices
-export const GET_OFFICES = '/Office/GetOfficesSelectList';
-
-//Scheduling
-export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';
-export const GET_SCHEDULE_ORDERS = '/Scheduling/GetScheduleOrders';
-
-//File Upload
-export const UPLOAD_PROFILE_PICTURE_FILE = '/Profile/UploadProfilePicture';
-export const UPLOAD_SIGNATURE_PICTURE_FILE = '/Profile/UploadSignaturePicture';

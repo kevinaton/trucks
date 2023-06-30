@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import LayoutReducer from './layout/reducer';
 import FeatureReducer from './features/reducer';
 import DashboardReducer from './dashboard/reducer';
+import AccountReducer from './account/reducer';
 import UserReducer from './user/reducer';
 import UserProfileReducer from './authorization/users/profile/reducer';
 import UserLinkReducer from './authorization/users/userLink/reducer';
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     LayoutReducer,
     FeatureReducer,
     DashboardReducer,
+    AccountReducer,
     UserReducer,
     NotificationReducer,
     OfficeReducer,
