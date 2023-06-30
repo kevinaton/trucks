@@ -354,11 +354,7 @@
             "deliver": "Fort McKinley Street, Aria Hill, California",
             "item": "Freight service",
             "quantity": "20 load",
-            "freightQty": 20,
             "freightUom": "Load",
-            "freightRate": 23,
-            "lhRate": 9,
-            "freight": 19,
             "required": 2,
             "trucks": [
                 { "name": "M001", "variant": "filled", "color": "info" },
@@ -391,11 +387,7 @@
             "deliver": "ABC Quarry Site, County Rd #C, Monticello, GA, 30270",
             "item": "Freight service",
             "quantity": "2000 lbs",
-            "freightQty": 20000,
             "freightUom": "Pounds",
-            "freightRate": 16,
-            "lhRate": 11,
-            "freight": 20,
             "required": 3,
             "trucks": [
                 { "name": "M003", "variant": "filled", "color": "success" },
@@ -562,7 +554,6 @@
     ],
 
     "TruckCategories": [
-        "",
         "All",
         "Cement Truck",
         "Concrete Mixer",
@@ -582,16 +573,7 @@
         "ABC Construction Company"
     ],
 
-    "Designation": [
-        "Freight Only",
-        "Material Only",
-        "Freight and Material",
-        "Backhaul Freight Only",
-        "Backhaul Freight and Material",
-        "Disposal",
-        "Backhaul Freight &* Disposal",
-        "Straight Haul Freight & Disposal"
-    ],
+    "Designation": ["Freight Only", "By Hour"],
     "Addresses": [
         "123 Main Street, Anytown, USA",
         "Rue du Progrès 123, 123 Rue du Progrès, Schaerbeek, Bruxelles",
