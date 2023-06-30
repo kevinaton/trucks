@@ -12,7 +12,7 @@ import {
     Stack,
     TextField,
 } from '@mui/material';
-import data from '../../../common/data/data.json';
+import data from '../../common/data/data.json';
 
 const { Designation, Addresses, Items, FreightUom } = data;
 

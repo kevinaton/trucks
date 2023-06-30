@@ -1,6 +1,6 @@
 import * as React from 'react';
-import data from '../../../common/data/data.json';
-import theme from '../../../Theme';
+import data from '../../common/data/data.json';
+import theme from '../../Theme';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';

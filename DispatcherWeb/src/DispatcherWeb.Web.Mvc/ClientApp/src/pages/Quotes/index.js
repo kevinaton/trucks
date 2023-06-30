@@ -3,11 +3,11 @@ import { Box, Button, Divider, Paper, Stack, Typography } from '@mui/material';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import NoContent from '../../components/NoContent';
 import data from '../../common/data/data.json';
-import AddQuote from '../../components/common/modals/addQuote';
-import AddQuoteItem from '../../components/common/modals/addQuoteItem';
-import moment from 'moment'
+import AddQuote from '../../components/quotes/addQuote';
+import AddQuoteItem from '../../components/quotes/addQuoteItem';
+import moment from 'moment';
 
-const { ScheduleData, Quote } = data
+const { ScheduleData, Quote } = data;
 const defaultQuoteValues = {
     id: 0,
     name: '',
@@ -23,14 +23,14 @@ const defaultQuoteValues = {
     comments: '',
     insertCannedText: '',
     notes: '',
-}
+};
 
 function Quotes() {
-    const pageName = 'Quotes'
-    const [isQuote, setIsQuote] = React.useState(false)
-    const [isAddItem, setIsAddItem] = React.useState(false)
-    const [quote, setQuote] = React.useState(defaultQuoteValues)
-    const [quoteItems, setQuoteItems] = React.useState([])
+    const pageName = 'Quotes';
+    const [isQuote, setIsQuote] = React.useState(false);
+    const [isAddItem, setIsAddItem] = React.useState(false);
+    const [quote, setQuote] = React.useState(defaultQuoteValues);
+    const [quoteItems, setQuoteItems] = React.useState([]);
     const [newQuoteItem, setNewQuoteItem] = React.useState({
         designation: null,
         load: null,
@@ -42,30 +42,30 @@ function Quotes() {
         freightQty: 0,
         jobNumber: 0,
         note: '',
-    })
+    });
 
     const handleAddEditQuote = (state, edit) => {
         if (edit.name === '') {
-            setQuote(edit)
-            setIsQuote(state)
+            setQuote(edit);
+            setIsQuote(state);
         } else {
             if (!edit.proposalDate) {
                 setQuote({
                     ...edit,
                     proposalDate: moment(),
                     proposalExpiryDate: moment().add(1, 'months'),
-                })
-                setIsQuote(state)
+                });
+                setIsQuote(state);
             } else {
-                setQuote(edit)
-                setIsQuote(state)
+                setQuote(edit);
+                setIsQuote(state);
             }
         }
-    }
+    };
 
     React.useEffect(() => {
-        setQuoteItems(ScheduleData)
-    }, [])
+        setQuoteItems(ScheduleData);
+    }, []);
 
     return (
         <HelmetProvider>
@@ -126,7 +126,7 @@ function Quotes() {
                 </Paper>
             </div>
         </HelmetProvider>
-    )
+    );
 }
 
-export default Quotes
+export default Quotes;
