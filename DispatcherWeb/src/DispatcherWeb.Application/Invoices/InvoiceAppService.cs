@@ -963,6 +963,7 @@ namespace DispatcherWeb.Invoices
                     TotalAmount = x.TotalAmount,
                     InvoiceLines = x.InvoiceLines.Select(l => new InvoicePrintOutLineItemDto
                     {
+                        Id = l.Id,
                         DeliveryDateTime = l.DeliveryDateTime,
                         Description = l.Description,
                         Quantity = l.Quantity,
@@ -979,6 +980,7 @@ namespace DispatcherWeb.Invoices
                         LineNumber = l.LineNumber,
                         TicketNumber = l.Ticket.TicketNumber,
                         TruckCode = l.TruckCode,
+                        ParentInvoiceLineId = l.ParentInvoiceLineId,
                         ChildInvoiceLineKind = l.ChildInvoiceLineKind
                     }).ToList()
                 }).FirstOrDefaultAsync();
