@@ -13,6 +13,7 @@ export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 //User Profile
 export const GET_USER_PROFILE_SETTINGS = '/Profile/GetUserProfileSettings';
 export const UPDATE_USER_PROFILE = '/Profile/UpdateCurrentUserProfile';
+export const UPDATE_PROFILE_PICTURE = '/Profile/UpdateProfilePicture';
 export const UPDATE_SIGNATURE_PICTURE = '/Profile/UpdateSignaturePicture';
 export const CHANGE_PASSWORD = '/Profile/ChangePassword';
 export const DOWNLOAD_COLLECTED_DATA = '/Profile/PrepareCollectedData';
