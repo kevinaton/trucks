@@ -57,5 +57,11 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             var model = await _invoiceAppService.GetEmailInvoicePrintOutModel(new EntityDto(id));
             return PartialView("_EmailInvoicePrintOutModal", model);
         }
+
+        [Modal]
+        public PartialViewResult SelectInvoiceStatusesModal()
+        {
+            return PartialView("_SelectInvoiceStatusesModal");
+        }
     }
 }

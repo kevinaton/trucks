@@ -2,6 +2,7 @@
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.UI;
 using DispatcherWeb.QuickbooksDesktop;
+using DispatcherWeb.QuickbooksDesktop.Dto;
 using DispatcherWeb.QuickbooksOnline;
 using DispatcherWeb.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -37,9 +38,9 @@ namespace DispatcherWeb.Web.Mvc.Areas.App.Controllers
             return RedirectToAction("QuickbooksOnline", "Settings", new { area = "App" });
         }
 
-        public async Task<IActionResult> ExportInvoicesToIIF()
+        public async Task<IActionResult> ExportInvoicesToIIF(ExportInvoicesToIIFInput input)
         {
-            var result = await _quickbooksDesktopAppService.ExportInvoicesToIIF();
+            var result = await _quickbooksDesktopAppService.ExportInvoicesToIIF(input);
             if (!string.IsNullOrEmpty(result.ErrorMessage))
             {
                 return View("Error", result.ErrorMessage);

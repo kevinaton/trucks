@@ -1469,8 +1469,7 @@
 		<text name="SendSyncRequest">Send sync request</text>
 		<text name="CleanupSubscriptions">Cleanup Subscriptions</text>
 		<text name="Miscellaneous">Miscellaneous</text>
-		<text name="ReadyForQuickbooks">Ready for QuickBooks</text>
-		<text name="SendToQuickbooks">Send to QuickBooks</text>
+		<text name="ReadyForExport">Ready for export</text>
 		<text name="ThisDriverAlreadyUsesDriverApplication">This driver already uses driver application</text>
 		<text name="DriverActivityReport">Driver Activity Report</text>
 		<text name="ConnectToUserAccount">Connect to user account</text>
@@ -1854,6 +1853,7 @@
 		<text name="CannotChangeTrailerBecauseOfDispatchesError">There are dispatches for this truck. Remove the dispatches if you want to change the trailer.</text>
 		<text name="CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError">This trailer doesn't match any vehicle categories selected for this job</text>
 		<text name="InvoiceTermsAndConditions">Terms and Conditions</text>
+		<text name="SelectStatusesOfInvoicesToExport">Select statuses of invoices to export</text>
 		<text name="CustomerPortal">Customer Portal</text>
 		<text name="HasCustomerPortalAccess">Portal Access</text>
 		<text name="CustomerPortalTicketsList">Tickets List</text>

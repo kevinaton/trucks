@@ -284,6 +284,7 @@ namespace DispatcherWeb.Invoices.Reports
 
                 if (model.InvoiceLines.Any())
                 {
+                    model.InvoiceLines = ReorderLineItems(model.InvoiceLines);
                     foreach (var invoiceLine in model.InvoiceLines)
                     {
                         i = 0;
@@ -355,10 +356,8 @@ namespace DispatcherWeb.Invoices.Reports
                 paragraph.Format.SpaceBefore = Unit.FromCentimeter(0.4);
 
                 
-                // Second Page
                 if (!string.IsNullOrEmpty(model.TermsAndConditions))
                 {
-                    section.AddPageBreak();
                     paragraph = document.LastSection.AddParagraph();
                     paragraph.Format.Font.Size = Unit.FromPoint(7.5);
 
@@ -379,5 +378,43 @@ namespace DispatcherWeb.Invoices.Reports
 
             return Task.FromResult(document);
         }
+
+        public List<InvoicePrintOutLineItemDto> ReorderLineItems(List<InvoicePrintOutLineItemDto> invoiceLines)
+        {
+            invoiceLines = invoiceLines
+                .OrderBy(x => x.DeliveryDateTime?.Date)
+                .ThenBy(x => x.TruckCode)
+                .ThenBy(x => x.TicketNumber)
+                .ToList();
+
+            var regularInvoiceLines = invoiceLines.Where(x => x.ChildInvoiceLineKind == null).ToList();
+            var bottomLines = invoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.BottomFuelSurchargeLine).ToList();
+            var perTicketLines = invoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.FuelSurchargeLinePerTicket).ToList();
+
+            var reorderedLines = regularInvoiceLines.ToList();
+            foreach (var perTicketLine in perTicketLines)
+            {
+                if (perTicketLine.ParentInvoiceLineId != null)
+                {
+                    var parentLine = reorderedLines.FirstOrDefault(x => x.Id == perTicketLine.ParentInvoiceLineId);
+                    if (parentLine != null)
+                    {
+                        var parentLineIndex = reorderedLines.IndexOf(parentLine);
+                        if (parentLineIndex != -1)
+                        {
+                            reorderedLines.Insert(parentLineIndex + 1, perTicketLine);
+                            continue;
+                        }
+                    }
+                }
+                reorderedLines.Add(perTicketLine);
+            }
+            foreach (var bottomLine in bottomLines)
+            {
+                reorderedLines.Add(bottomLine);
+            }
+
+            return reorderedLines;
+        } 
     }
 }

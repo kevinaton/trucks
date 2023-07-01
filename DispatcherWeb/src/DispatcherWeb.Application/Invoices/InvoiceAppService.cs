@@ -391,12 +391,12 @@ namespace DispatcherWeb.Invoices
                 {
                     case InvoiceStatus.Draft:
                     case InvoiceStatus.Printed:
-                        if (model.Status.IsIn(InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Sent))
+                        if (model.Status.IsIn(InvoiceStatus.ReadyForExport, InvoiceStatus.Sent))
                         {
                             invoice.Status = model.Status;
                         }
                         break;
-                    case InvoiceStatus.ReadyForQuickbooks:
+                    case InvoiceStatus.ReadyForExport:
                         if (model.Status.IsIn(InvoiceStatus.Sent))
                         {
                             invoice.Status = model.Status;
@@ -449,9 +449,11 @@ namespace DispatcherWeb.Invoices
                     .Where(x => ticketIds.Contains(x.Id) && x.InvoiceLine != null)
                     .Select(x => x.Id).ToListAsync();
 
+                var timezone = await GetTimezone();
+
                 model.InvoiceLines = model.InvoiceLines
                         .OrderByDescending(x => x.ChildInvoiceLineKind != ChildInvoiceLineKind.BottomFuelSurchargeLine)
-                        .ThenBy(x => x.DeliveryDateTime)
+                        .ThenBy(x => x.DeliveryDateTime?.ConvertTimeZoneTo(timezone).Date)
                         .ThenBy(x => x.TruckCode)
                         .ThenBy(x => x.TicketNumber)
                         .ToList();
@@ -896,7 +898,7 @@ namespace DispatcherWeb.Invoices
             invoice.UploadBatchId = null;
             invoice.QuickbooksExportDateTime = null;
             invoice.QuickbooksInvoiceId = null;
-            invoice.Status = InvoiceStatus.ReadyForQuickbooks;
+            invoice.Status = InvoiceStatus.ReadyForExport;
         }
 
 
@@ -963,6 +965,7 @@ namespace DispatcherWeb.Invoices
                     TotalAmount = x.TotalAmount,
                     InvoiceLines = x.InvoiceLines.Select(l => new InvoicePrintOutLineItemDto
                     {
+                        Id = l.Id,
                         DeliveryDateTime = l.DeliveryDateTime,
                         Description = l.Description,
                         Quantity = l.Quantity,
@@ -979,6 +982,7 @@ namespace DispatcherWeb.Invoices
                         LineNumber = l.LineNumber,
                         TicketNumber = l.Ticket.TicketNumber,
                         TruckCode = l.TruckCode,
+                        ParentInvoiceLineId = l.ParentInvoiceLineId,
                         ChildInvoiceLineKind = l.ChildInvoiceLineKind
                     }).ToList()
                 }).FirstOrDefaultAsync();
@@ -1104,7 +1108,7 @@ namespace DispatcherWeb.Invoices
                 });
 
                 var invoice = await _invoiceRepository.GetAsync(input.InvoiceId);
-                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Printed))
+                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForExport, InvoiceStatus.Printed))
                 {
                     invoice.Status = InvoiceStatus.Sent;
                 }
