@@ -397,6 +397,16 @@
                         abp.ui.clearBusy(button);
                     });
                     break;
+                case abp.enums.quickbooksIntegrationKind.sbtCsvExport:
+                    abp.ui.setBusy(button);
+                    abp.services.app.sbtCsvExport.exportInvoicesToCsv({
+                        invoiceStatuses: selectedInvoiceStatuses
+                    }).done(function (result) {
+                        app.downloadTempFile(result);
+                    }).always(() => {
+                        abp.ui.clearBusy(button);
+                    });
+                    break;
                 case abp.enums.quickbooksIntegrationKind.online:
                 case abp.enums.quickbooksIntegrationKind.none:
                 default:

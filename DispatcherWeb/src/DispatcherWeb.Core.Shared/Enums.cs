@@ -589,7 +589,9 @@ namespace DispatcherWeb
         [Display(Name = "QuickBooks Online Export")]
         QboExport = 3,
         [Display(Name = "Transaction Pro Export for QuickBooks Online")]
-        TransactionProExport = 4
+        TransactionProExport = 4,
+        [Display(Name = "SBT csv Export")]
+        SbtCsvExport = 5
     }
 
     public enum QuickbooksDeprecatedIntegrationKind

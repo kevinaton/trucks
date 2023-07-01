@@ -85,6 +85,7 @@ namespace DispatcherWeb.QuickbooksOnline
                             MaterialUomId = l.Ticket.OrderLine.MaterialUomId,
                             FreightUomId = l.Ticket.OrderLine.FreightUomId,
                             TicketUomId = l.Ticket.UnitOfMeasureId,
+                            TicketUomName = l.Ticket.UnitOfMeasure.Name,
                             IsOrderLineMaterialTotalOverridden = l.Ticket.OrderLine.IsMaterialPriceOverridden,
                             IsOrderLineFreightTotalOverridden = l.Ticket.OrderLine.IsFreightPriceOverridden,
                             OrderLineMaterialTotal = l.Ticket.OrderLine.MaterialPrice,

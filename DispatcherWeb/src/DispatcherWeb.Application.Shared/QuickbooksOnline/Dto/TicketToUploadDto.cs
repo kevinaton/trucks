@@ -9,6 +9,7 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public int? MaterialUomId { get; set; }
         public int? FreightUomId { get; set; }
         public int? TicketUomId { get; set; }
+        public string TicketUomName { get; set; }
         public bool? IsOrderLineMaterialTotalOverridden { get; set; }
         public bool? IsOrderLineFreightTotalOverridden { get; set; }
         public decimal? OrderLineMaterialTotal { get; set; }
@@ -27,6 +28,7 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
                 FreightUomId = FreightUomId,
                 MaterialUomId = MaterialUomId,
                 TicketUomId = TicketUomId,
+                TicketUomName = TicketUomName,
                 IsOrderLineMaterialTotalOverridden = IsOrderLineMaterialTotalOverridden,
                 IsOrderLineFreightTotalOverridden = IsOrderLineFreightTotalOverridden,
                 OrderLineMaterialTotal = OrderLineMaterialTotal,
