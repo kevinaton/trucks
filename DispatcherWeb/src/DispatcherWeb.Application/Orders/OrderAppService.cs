@@ -1392,6 +1392,15 @@ namespace DispatcherWeb.Orders
                 .Include(x => x.SharedOrders)
                 .FirstAsync(x => x.Id == input.OrderId);
 
+            var serviceIds = order.OrderLines.Select(x => x.ServiceId).ToList();
+            var serviceDetails = await _serviceRepository.GetAll()
+                .Where(x => serviceIds.Contains(x.Id))
+                .Select(x => new
+                {
+                    x.Id,
+                    x.IsTaxable
+                }).ToListAsync();
+
             bool allowCopyZeroQuantity = await FeatureChecker.IsEnabledAsync(AppFeatures.AllowCopyingZeroQuantityOrderLineItemsFeature);
             var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
             var timezone = await GetTimezone();
@@ -1470,9 +1479,17 @@ namespace DispatcherWeb.Orders
                         _orderLineRepository.Insert(newOrderLine);
                     }
 
+                    var newOrderLinesTaxDetails = newOrderLines.Select(x => new OrderLineTaxDetailsDto
+                    {
+                        MaterialPrice = x.MaterialPrice,
+                        FreightPrice = x.FreightPrice,
+                        IsTaxable = serviceDetails.FirstOrDefault(s => s.Id == x.ServiceId)?.IsTaxable ?? false,
+                    });
+                    await _orderTaxCalculator.CalculateTotalsAsync(newOrder, newOrderLinesTaxDetails);
+
                     var newId = await _orderRepository.InsertAndGetIdAsync(newOrder);
                     newOrder.Id = newId;
-                    await _orderTaxCalculator.CalculateTotalsAsync(newOrder.Id);
+                    
                     await _fuelSurchargeCalculator.RecalculateOrderLinesWithTicketsForOrder(newOrder.Id);
                     createdOrderIds.Add(newId);
                 }

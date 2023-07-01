@@ -86,10 +86,6 @@ namespace DispatcherWeb.Orders
                 .Where(x => x.Id == orderId)
                 .FirstOrDefaultAsync();
 
-            var orderLinesRaw = await _orderLineRepository.GetAll()
-                .Where(x => x.OrderId == orderId)
-                .ToListAsync();
-
             var orderLineDtos = await _orderLineRepository.GetAll()
                 .Where(x => x.OrderId == orderId)
                 .Select(x => new OrderLineTaxDetailsDto
