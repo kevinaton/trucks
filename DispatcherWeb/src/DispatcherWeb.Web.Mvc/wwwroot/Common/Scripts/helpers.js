@@ -439,7 +439,8 @@
         desktop: 1,
         online: 2,
         qboExport: 3,
-        transactionProExport: 4
+        transactionProExport: 4,
+        sbtCsvExport: 5
     };
     abp.enums.staggeredTimeKind = {
         none: 0,
