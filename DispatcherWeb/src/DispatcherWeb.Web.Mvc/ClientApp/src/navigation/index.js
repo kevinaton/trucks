@@ -5,7 +5,7 @@ import Drivers from '../pages/Drivers';
 import Locations from '../pages/Locations';
 import Schedule from '../pages/Schedule';
 import TruckDispatchList from '../pages/TruckDispatchList';
-import Quotes from '../pages/Quotes';
+import OrderDetails from '../pages/Orders/orderdetails';
 
 const authProtectedRoutes = [
     { path: '/dashboard', component: Dashboard },
@@ -15,7 +15,7 @@ const authProtectedRoutes = [
     { path: '/locations', component: Locations },
     { path: '/dispatching/schedule', component: Schedule },
     { path: '/dispatching/dispatches/truck-list', component: TruckDispatchList },
-    { path: '/quote', component: Quotes },
+    { path: '/order/details', component: OrderDetails },
 ];
 
 export { authProtectedRoutes };
