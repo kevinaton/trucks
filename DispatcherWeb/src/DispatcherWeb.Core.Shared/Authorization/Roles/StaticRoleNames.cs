@@ -21,6 +21,7 @@
             public const string User = "User";
             public const string Driver = "Driver";
             public const string LeaseHaulerDriver = "LeaseHaulerDriver";
+            public const string Customer = "Customer";
         }
     }
 

@@ -299,7 +299,9 @@ namespace DispatcherWeb.Customers
         public async Task<PagedResultDto<CustomerContactDto>> GetCustomerContacts(GetCustomerContactsInput input)
         {
             var query = _customerContactRepository.GetAll()
-                .Where(x => x.CustomerId == input.CustomerId);
+                            .Include(p => p.Customer)
+                            .WhereIf(input.CustomerId.HasValue, x => x.CustomerId == input.CustomerId)
+                            .WhereIf(input.Email != null, x => x.Email == input.Email);
 
             var totalCount = await query.CountAsync();
 
@@ -308,12 +310,14 @@ namespace DispatcherWeb.Customers
                 {
                     Id = x.Id,
                     CustomerId = x.CustomerId,
+                    CustomerName = x.Customer.Name,
                     Name = x.Name,
                     PhoneNumber = x.PhoneNumber,
                     Fax = x.Fax,
                     Email = x.Email,
                     Title = x.Title,
-                    IsActive = x.IsActive
+                    IsActive = x.IsActive,
+                    HasCustomerPortalAccess = x.HasCustomerPortalAccess
                 })
                 .OrderBy(input.Sorting)
                 .ToListAsync();

@@ -38,6 +38,13 @@
             };
         }
 
+        if ($("#restrict-to-customer")) {
+            cachedFilter.customerId = $("#restrict-to-customer").val();
+            cachedFilter.customerName = $("#restrict-to-customer").attr("text");
+            $("#CustomerFilter").prop("disabled", true);
+            ticketGrid.column(16).visible(false);
+        }
+
         var ticketDateFilterIsEmpty = false;
         if (!cachedFilter.ticketDateRangeBegin || cachedFilter.ticketDateRangeBegin === 'Invalid date') {
             ticketDateFilterIsEmpty = true;

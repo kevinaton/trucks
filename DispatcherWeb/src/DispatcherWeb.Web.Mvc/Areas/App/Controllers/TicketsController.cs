@@ -1,7 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
+using DispatcherWeb.Authorization.Roles;
+using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.Customers;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Tickets;
 using DispatcherWeb.Tickets.Dto;
@@ -18,17 +22,31 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
     public class TicketsController : DispatcherWebControllerBase
     {
         private readonly ITicketAppService _ticketService;
+        private readonly ICustomerAppService _customerAppService;
+        private readonly IUserAppService _userAppService;
+        private readonly IRoleAppService _roleAppService;
 
         public TicketsController(
-            ITicketAppService ticketService
+            ITicketAppService ticketService,
+            ICustomerAppService customerAppService,
+            IUserAppService userAppService,
+            IRoleAppService roleAppService
         )
         {
             _ticketService = ticketService;
+            _customerAppService = customerAppService;
+            _userAppService = userAppService;
+            _roleAppService = roleAppService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await _userAppService.GetUserForEdit(new NullableIdDto<long>() { Id = AbpSession.UserId.Value });
+            var input = new Customers.Dto.GetCustomerContactsInput() { CustomerId = null, Email = user.User.EmailAddress, Sorting = "Name" };
+            var customerContacts = await _customerAppService.GetCustomerContacts(input);
+            var customerContactWithPortalAccess = customerContacts.Items.FirstOrDefault(p => p.HasCustomerPortalAccess);
+
+            return View(customerContactWithPortalAccess);
         }
 
         public IActionResult TicketsByDriver()
