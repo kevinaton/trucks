@@ -97,7 +97,7 @@ namespace DispatcherWeb.Orders.Dto
 
                 if (!string.IsNullOrEmpty(DriverName))
                 {
-                    result += $" - ({DriverName})";
+                    result += $" - {DriverName}";
                 }
 
                 return result;
