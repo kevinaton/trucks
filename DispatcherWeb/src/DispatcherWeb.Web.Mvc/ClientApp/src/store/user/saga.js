@@ -33,7 +33,11 @@ function* fetchUserProfileMenu() {
 function* fetchUserSetting({ payload: settingName }) {
     try {
         const response = yield call(getUserSetting, settingName);
-        yield put(getUserSettingByNameSuccess(response));
+        const result = {
+            name: settingName,
+            value: response.result
+        };
+        yield put(getUserSettingByNameSuccess(result));
     } catch (error) {
         yield put(getUserSettingByNameFailure(error));
     }

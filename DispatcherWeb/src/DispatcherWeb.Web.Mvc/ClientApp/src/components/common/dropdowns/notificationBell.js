@@ -51,7 +51,10 @@ export const NotificationBell = ({
     const [notificationItemsList, setNotificationItemsList] = useState([]);
     const [unReadCount, setUnReadCount] = useState(0);
     const [initializedPrioNotif, setInitializedPrioNotif] = useState(false);
-    const [soundEnabled, setSoundEnabled] = useState(null);
+    const [notificationSound, setNotificationSound] = useState({
+        settingsKey: 'App.UserOptions.PlaySoundForNotifications',
+        isEnabled: null
+    });
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -69,19 +72,27 @@ export const NotificationBell = ({
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        dispatch(getUserSettingByName('App.UserOptions.PlaySoundForNotifications'));
-    }, [dispatch]);
+        if (notificationSound.isEnabled === null) { 
+            dispatch(getUserSettingByName(notificationSound.settingsKey));
+        }
+    }, [dispatch, notificationSound]);
 
     useEffect(() => {
-        if (!isEmpty(userSettings) && !isEmpty(userSettings.result) && isEmpty(soundEnabled)) {
-            setSoundEnabled(Boolean(userSettings.result));
+        if (!isEmpty(userSettings) && !isEmpty(userSettings.result) && notificationSound.isEnabled === null) {
+            const { name, value } = userSettings.result;
+            if (name === notificationSound.settingsKey) {
+                setNotificationSound({
+                    ...notificationSound,
+                    isEnabled: Boolean(value)
+                });
+            }
         }
-    }, [userSettings, soundEnabled]);
+    }, [userSettings, notificationSound]);
     
     useEffect(() => {
-        if (soundEnabled !== null && connection) {
+        if (notificationSound.isEnabled !== null && connection) {
             connection.on('getNotification', (newNotification) => {
-                if (soundEnabled) {
+                if (notificationSound.isEnabled) {
                     const audioNotification = new Audio('/reactapp/sounds/notification.mp3');
                     audioNotification.play();
                 }
@@ -129,7 +140,7 @@ export const NotificationBell = ({
                 }
             }); 
         }
-    }, [connection, soundEnabled, enqueueSnackbar]);
+    }, [connection, notificationSound, enqueueSnackbar]);
 
     useEffect(() => {
         if (isEmpty(notifications)) {
