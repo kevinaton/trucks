@@ -6,7 +6,11 @@ import { checkIfEnabled } from './service';
 function* checkIfEnabledSaga({ payload: featureName }) {
     try {
         const response = yield call(checkIfEnabled, featureName);
-        yield put(checkIfEnabledSuccess(response));
+        const result = {
+            name: featureName,
+            value: response.result
+        };
+        yield put(checkIfEnabledSuccess(result));
     } catch (error) {
         yield put(checkIfEnabledFailure(error));
     }

@@ -9,9 +9,9 @@ export const checkIfEnabled = featureName => ({
     payload: featureName
 });
 
-export const checkIfEnabledSuccess = isEnabled => ({
+export const checkIfEnabledSuccess = feature => ({
     type: CHECK_IF_ENABLED_SUCCESS,
-    payload: isEnabled
+    payload: feature
 });
 
 export const checkIfEnabledFailure = error => ({

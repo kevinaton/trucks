@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Box,
@@ -6,98 +6,240 @@ import {
     Chip,
     Grid
 } from '@mui/material';
-import moment from 'moment';
 import { isEmpty } from 'lodash';
-import { getUserSettingByName, getScheduleTrucks } from '../../store/actions';
-import data from '../../common/data/data.json';
-const { TruckCode } = data;
+import { 
+    checkIfEnabled,
+    getUserSettingByName, 
+    getScheduleTrucks 
+} from '../../store/actions';
 
 const TruckMap = ({
-    officeId
+    dataFilter
 }) => {
-    const [validateUtilization, setValidateUtilization] = useState(null);
-    const [trucks, setTrucks] = useState([]);
-    const [filter, setFilter] = useState({
-        officeId: '2778',
-        date: moment().format('MM/DD/YYYY')
+    const prevDataFilterRef = useRef(dataFilter);
+    const [isLoading, setLoading] = useState(false);
+    const [validateUtilization, setValidateUtilization] = useState({
+        settingsKey: 'App.DispatchingAndMessaging.ValidateUtilization',
+        isEnabled: null
     });
-    const dispatch = useDispatch();
+    const [leaseHaulers, setLeaseHaulers] = useState({
+        feature: 'App.AllowLeaseHaulersFeature',
+        isEnabled: null
+    });
+    const [trucks, setTrucks] = useState([]);
 
-    const { userSettings, scheduleTrucks } = useSelector((state) => ({
+    const dispatch = useDispatch();
+    const { 
+        feature,
+        userSettings, 
+        scheduleTrucks 
+    } = useSelector((state) => ({
+        feature: state.FeatureReducer.feature,
         userSettings: state.UserReducer.userSettings,
         scheduleTrucks: state.SchedulingReducer.scheduleTrucks,
     }));
 
     useEffect(() => {
-        dispatch(getUserSettingByName('App.DispatchingAndMessaging.ValidateUtilization'));
-        dispatch(getScheduleTrucks(filter));
-    }, [dispatch, filter]);
+        if (validateUtilization.isEnabled === null) {
+            dispatch(getUserSettingByName(validateUtilization.settingsKey));
+        }
+    }, [dispatch, validateUtilization]);
+
+    useEffect(() => {
+        if (leaseHaulers.isEnabled === null) {
+            dispatch(checkIfEnabled(leaseHaulers.feature));
+        }
+    }, [dispatch, leaseHaulers]);
     
     useEffect(() => {
-        if (!isEmpty(userSettings) && !isEmpty(userSettings.result) && isEmpty(validateUtilization)) {
-            setValidateUtilization(Boolean(userSettings.result));
+        if (!isEmpty(userSettings) && !isEmpty(userSettings.result)) {
+            const { name, value } = userSettings.result;
+            if (validateUtilization.isEnabled === null && name === validateUtilization.settingsKey) {
+                setValidateUtilization({
+                    ...validateUtilization,
+                    isEnabled: Boolean(value)
+                });
+            }
         }
-        
-        if (!isEmpty(scheduleTrucks) && !isEmpty(scheduleTrucks.result) && isEmpty(trucks)) {
+    }, [userSettings, validateUtilization]);
+
+    useEffect(() => {
+        if (!isEmpty(feature) && !isEmpty(feature.result)) {
+            const { name, value } = feature.result;
+            if (leaseHaulers.isEnabled === null && name === leaseHaulers.feature) {
+                setLeaseHaulers({
+                    ...leaseHaulers,
+                    isEnabled: value
+                });
+            }
+        }
+    }, [feature, leaseHaulers]);
+
+    // useEffect(() => {
+    //     if (!isEmpty(dataFilter) && isEmpty(trucks) && !isLoading) {
+    //         const { officeId, date } = dataFilter;
+    //         if (officeId !== null && date !== null) {
+    //             setLoading(true);
+    //             dispatch(getScheduleTrucks({
+    //                 officeId,
+    //                 date: date
+    //             }));
+    //         }
+    //     }
+    // }, [dispatch, isLoading, dataFilter, trucks]);
+    
+    useEffect(() => {
+        if (isLoading && !isEmpty(scheduleTrucks) && !isEmpty(scheduleTrucks.result) && isEmpty(trucks)) {
+            setLoading(false);
             const { items } = scheduleTrucks.result;
             setTrucks(items);
         }
-    }, [validateUtilization, userSettings, scheduleTrucks, trucks]);
+    }, [isLoading, scheduleTrucks, trucks]);
 
-    const truckHasNoDriver = truck => 
-        !truck.isExternal && 
+    useEffect(() => {
+        // check if dataFilter has changed from its previous state
+        if (
+            prevDataFilterRef.current.officeId !== dataFilter.officeId ||
+            prevDataFilterRef.current.date !== dataFilter.date
+            // prevDataFilterRef.current.hideCompletedOrders !== dataFilter.hideCompletedOrders ||
+            // prevDataFilterRef.current.hideProgressBar !== dataFilter.hideProgressBar ||
+            // prevDataFilterRef.current.sorting !== dataFilter.sorting
+        ) {
+            const fetchData = async () => {
+                const { officeId, date } = dataFilter;
+                if (officeId !== null && date !== null) {
+                    setLoading(true);
+                    dispatch(getScheduleTrucks({
+                        officeId,
+                        date: date
+                    }));
+                }
+            };
+
+            fetchData();
+
+            // update the previous dataFilter value
+            prevDataFilterRef.current = dataFilter;
+        }
+    }, [dataFilter]);
+
+    useEffect(() => {
+        // cleanup logic
+        return () => {
+            // reset the previous dataFilter value
+            prevDataFilterRef.current = null;
+        };
+    }, []);
+
+    const truckHasNoDriver = truck => !truck.isExternal && 
         (truck.hasNoDriver || (!truck.hasDefaultDriver && !truck.hasDriverAssignment));
 
-    // const truckCategoryNeedsDriver = truck => 
-    //     truck.vehicleCategory.isPowered && ()
+    const truckCategoryNeedsDriver = truck => 
+        truck.vehicleCategory.isPowered && 
+        ((!truck.alwaysShowOnSchedule && !truck.isExternal));
 
     const getTruckColor = (truck) => {
+        const defaultColor = {
+            backgroundColor: '#f8f9fa', // grey
+            color: '#fff',
+            border: '1px solid transparent'
+        };
+
         if (truck.isOutOfService) {
-            return 'error';
+            return {
+                ...defaultColor,
+                color: '#303030'
+            };
         }
 
-        if (truck.isAvailable) {
-            return 'success';
+        if (truckHasNoDriver(truck) && 
+            (leaseHaulers.isEnabled || truckCategoryNeedsDriver(truck))) {
+            return {
+                ...defaultColor,
+                backgroundColor: '#0288d1' // blue
+            };
         }
 
-        if (truck.isOnBreak) {
-            return 'warning';
+        if (validateUtilization.isEnabled) {
+            if (truck.utilization >= 1) {
+                return {
+                    ...defaultColor,
+                    backgroundColor: '#dd4b39' // red
+                };
+            }
+            if (truck.utilization > 0) {
+                return {
+                    ...defaultColor,
+                    backgroundColor: '#ed6c02' // orange
+                }
+            }
+            return {
+                ...defaultColor,
+                backgroundColor: '#00a65a' // green
+            };
+        } else {
+            if (truck.utilization > 1) {
+                return {
+                    ...defaultColor,
+                    backgroundColor: '#dd4b39' // red
+                };
+            }
+            if (truck.utilization === 1) {
+                return {
+                    ...defaultColor,
+                    backgroundColor: '#ed6c02' // orange
+                }
+            }
+            if (truck.utilization > 0) {
+                return {
+                    ...defaultColor,
+                    backgroundColor: '#00a65a' // green
+                };
+            }
+
+            // empty
+            return {
+                backgroundColor: '#fff',
+                color: '#999',
+                border: '1px solid #ebedf3'
+            };
         }
+    };
 
-        return 'primary';
-    }
-
-    const renderTrucks = () => {
-        if (!isEmpty(trucks)) {
-            const mappedTrucks = trucks.map((truck) => {
+    const renderTrucks = () => (
+        <>
+            { trucks.map((truck) => {
+                const truckColors = getTruckColor(truck);
                 return (
                     <Grid item key={truck.truckCode}>
                         <Chip
                             label={truck.truckCode}
-                            color={getTruckColor(truck)}
                             onClick={() => {}}
                             sx={{
                                 borderRadius: 0,
                                 fontSize: 18,
                                 fontWeight: 600,
                                 py: 3,
+                                backgroundColor: `${truckColors.backgroundColor}`,
+                                color: `${truckColors.textColor}`,
+                                border: `${truckColors.border}`
                             }}
                         />
                     </Grid>
                 );
-            });
-        }
-    }
+            })}
+        </>
+    );
 
     return (
         <React.Fragment>
-            {renderTrucks()}
-
             {/* Truck Map */}
             <Box sx={{ p: 3 }}>
                 <Paper variant='outlined' sx={{ p: 1 }}>
                     <Grid container rowSpacing={1} columnSpacing={1}>
-                        {TruckCode.map((truck) => {
+                        {!isEmpty(trucks) && renderTrucks()}
+
+                        {/* {TruckCode.map((truck) => {
                             return (
                                 <Grid item key={truck.label}>
                                     <Chip
@@ -113,7 +255,7 @@ const TruckMap = ({
                                     />
                                 </Grid>
                             );
-                        })}
+                        })} */}
                     </Grid>
                 </Paper>
             </Box>

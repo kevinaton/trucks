@@ -4,7 +4,7 @@ import {
 } from './actionTypes';
 
 const INIT_STATE = {
-    isEnabled: null
+    feature: null
 };
 
 const FeatureReducer = (state = INIT_STATE, action) => {
@@ -12,7 +12,7 @@ const FeatureReducer = (state = INIT_STATE, action) => {
         case CHECK_IF_ENABLED_SUCCESS:
             return {
                 ...state,
-                isEnabled: action.payload
+                feature: action.payload
             };
         case CHECK_IF_ENABLED_FAILURE:
             return {
