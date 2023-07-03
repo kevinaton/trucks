@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Orders.TaxDetails;
 using Newtonsoft.Json;
@@ -21,8 +22,8 @@ namespace DispatcherWeb.Orders.Dto
         public ItemOrderLine Item { get; set; }
         public decimal SalesTaxRate { get; set; }
         public double? NumberOfTrucks { get; set; }
-        public string TrucksString => string.Join(", ", Trucks);
-        public List<string> Trucks { get; set; }
+        public string TrucksString => string.Join("\n", Trucks.Select(x => x.ToString()).OrderBy(x => x).Distinct().ToList());
+        public List<ItemOrderLineTruck> Trucks { get; set; }
         public Shift? OrderShift { get; set; }
         public string OrderShiftName { get; set; }
 
@@ -74,6 +75,29 @@ namespace DispatcherWeb.Orders.Dto
                 if (hasFreight)
                 {
                     result += $"{FreightQuantity:f2} {FreightUom}";
+                }
+
+                return result;
+            }
+        }
+
+        public class ItemOrderLineTruck
+        {
+            public string TruckCode { get; set; }
+            public string TrailerTruckCode { get; set; }
+            public string DriverName { get; set; }
+
+            public override string ToString()
+            {
+                var result = TruckCode;
+                if (!string.IsNullOrEmpty(TrailerTruckCode))
+                {
+                    result += " :: " + TrailerTruckCode;
+                }
+
+                if (!string.IsNullOrEmpty(DriverName))
+                {
+                    result += $" - ({DriverName})";
                 }
 
                 return result;
