@@ -14,9 +14,9 @@ using DispatcherWeb.QuickbooksOnline;
 using DispatcherWeb.QuickbooksTransactionProExport.Dto;
 using DispatcherWeb.Storage;
 
-namespace DispatcherWeb.QuickbooksTransactionProExport
+namespace DispatcherWeb.SbtCsvExport
 {
-    public class QuickbooksTransactionProExportAppService : DispatcherWebAppServiceBase, IQuickbooksTransactionProExportAppService
+    public class SbtCsvExportAppService : DispatcherWebAppServiceBase, ISbtCsvExportAppService
     {
         private readonly IRepository<Invoice> _invoiceRepository;
         private readonly IRepository<InvoiceUploadBatch> _invoiceUploadBatchRepository;
@@ -24,7 +24,7 @@ namespace DispatcherWeb.QuickbooksTransactionProExport
         private readonly ITempFileCacheManager _tempFileCacheManager;
         private readonly IInvoiceListCsvExporter _invoiceListCsvExporter;
 
-        public QuickbooksTransactionProExportAppService(
+        public SbtCsvExportAppService(
             IRepository<Invoice> invoiceRepository,
             IRepository<InvoiceUploadBatch> invoiceUploadBatchRepository,
             IBinaryObjectManager binaryObjectManager,

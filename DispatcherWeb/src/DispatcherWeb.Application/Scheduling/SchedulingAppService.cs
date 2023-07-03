@@ -298,6 +298,7 @@ namespace DispatcherWeb.Scheduling
                 {
                     ol.Id,
                     //TicketLoads = ol.Tickets
+                    DispatchCount = ol.Dispatches.Count(d => Dispatch.OpenStatuses.Contains(d.Status) || d.Status == DispatchStatus.Completed),
                     Loads = ol.Dispatches.SelectMany(t => t.Loads).Select(l => new
                     {
                         l.DestinationDateTime,
@@ -327,6 +328,11 @@ namespace DispatcherWeb.Scheduling
                 orderLine.AmountOrdered = designationHasMaterial ? orderLine.MaterialQuantity : orderLine.FreightQuantity;
 
                 var orderLineProgress = progressData.FirstOrDefault(x => x.Id == orderLine.Id);
+                
+                if (orderLineProgress != null)
+                {
+                    orderLine.DispatchCount = orderLineProgress.DispatchCount;
+                }
 
                 if (orderLineProgress?.Loads.Any() == true)
                 {

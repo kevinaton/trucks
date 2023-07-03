@@ -129,11 +129,11 @@ namespace DispatcherWeb.Invoices.Reports
                 }
 
                 //empty space
-                table.AddColumn(Unit.FromCentimeter(13.5));
+                table.AddColumn(Unit.FromCentimeter(13));
                 //date labels
                 table.AddColumn(Unit.FromCentimeter(2.2));
                 //Invoice #, dates
-                table.AddColumn(Unit.FromCentimeter(2.9));
+                table.AddColumn(Unit.FromCentimeter(3.4));
 
 
                 row = table.AddRow();
@@ -284,6 +284,7 @@ namespace DispatcherWeb.Invoices.Reports
 
                 if (model.InvoiceLines.Any())
                 {
+                    model.InvoiceLines = ReorderLineItems(model.InvoiceLines);
                     foreach (var invoiceLine in model.InvoiceLines)
                     {
                         i = 0;
@@ -354,6 +355,20 @@ namespace DispatcherWeb.Invoices.Reports
                 paragraph = document.LastSection.AddParagraph(model.Message ?? "");
                 paragraph.Format.SpaceBefore = Unit.FromCentimeter(0.4);
 
+                
+                if (!string.IsNullOrEmpty(model.TermsAndConditions))
+                {
+                    paragraph = document.LastSection.AddParagraph();
+                    paragraph.Format.Font.Size = Unit.FromPoint(7.5);
+
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                    paragraph.AddText(model.TermsAndConditions);
+                    paragraph.AddLineBreak();
+                    paragraph.AddLineBreak();
+                }
+
                 //if (!taxWarning.IsNullOrEmpty())
                 //{
                 //    paragraph = document.LastSection.AddParagraph(taxWarningAsterisks + taxWarning);
@@ -363,5 +378,43 @@ namespace DispatcherWeb.Invoices.Reports
 
             return Task.FromResult(document);
         }
+
+        public List<InvoicePrintOutLineItemDto> ReorderLineItems(List<InvoicePrintOutLineItemDto> invoiceLines)
+        {
+            invoiceLines = invoiceLines
+                .OrderBy(x => x.DeliveryDateTime?.Date)
+                .ThenBy(x => x.TruckCode)
+                .ThenBy(x => x.TicketNumber)
+                .ToList();
+
+            var regularInvoiceLines = invoiceLines.Where(x => x.ChildInvoiceLineKind == null).ToList();
+            var bottomLines = invoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.BottomFuelSurchargeLine).ToList();
+            var perTicketLines = invoiceLines.Where(x => x.ChildInvoiceLineKind == ChildInvoiceLineKind.FuelSurchargeLinePerTicket).ToList();
+
+            var reorderedLines = regularInvoiceLines.ToList();
+            foreach (var perTicketLine in perTicketLines)
+            {
+                if (perTicketLine.ParentInvoiceLineId != null)
+                {
+                    var parentLine = reorderedLines.FirstOrDefault(x => x.Id == perTicketLine.ParentInvoiceLineId);
+                    if (parentLine != null)
+                    {
+                        var parentLineIndex = reorderedLines.IndexOf(parentLine);
+                        if (parentLineIndex != -1)
+                        {
+                            reorderedLines.Insert(parentLineIndex + 1, perTicketLine);
+                            continue;
+                        }
+                    }
+                }
+                reorderedLines.Add(perTicketLine);
+            }
+            foreach (var bottomLine in bottomLines)
+            {
+                reorderedLines.Add(bottomLine);
+            }
+
+            return reorderedLines;
+        } 
     }
 }

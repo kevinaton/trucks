@@ -58,6 +58,7 @@ namespace DispatcherWeb.Dispatching.Dto
             public DateTime? Complete { get; set; }
             public bool IsMultipleLoads { get; set; }
             public bool WasMultipleLoads { get; set; }
+            public bool HasTickets { get; set; }
 
             public bool IsDraggable => Status.IsIn(DispatchStatus.Created, DispatchStatus.Sent);
 

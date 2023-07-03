@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string AccountNumber { get; set; }
         public bool IsInQuickBooks { get; set; }
         public string InvoiceEmail { get; set; }
         public InvoicingMethodEnum InvoicingMethod { get; set; }

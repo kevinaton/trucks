@@ -1,14 +1,15 @@
-﻿using Abp.Configuration;
-using DispatcherWeb.Configuration;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Abp.Configuration;
+using DispatcherWeb.Configuration;
 using DispatcherWeb.DataExporting.Csv;
 using DispatcherWeb.Dto;
 using DispatcherWeb.QuickbooksOnline.Dto;
 using DispatcherWeb.Storage;
-using System.Linq;
+using DispatcherWeb.Tickets;
 
-namespace DispatcherWeb.QuickbooksTransactionProExport
+namespace DispatcherWeb.SbtCsvExport
 {
     public class InvoiceListCsvExporter : CsvExporterBase, IInvoiceListCsvExporter
     {
@@ -91,7 +92,11 @@ namespace DispatcherWeb.QuickbooksTransactionProExport
                         ("LineItem", x => "Ticket Nbr: " + x.InvoiceLine.TicketNumber + " for " + x.InvoiceLine.ItemName),
                         ("TicketNumber", x => x.InvoiceLine.TicketNumber),
                         ("JobNumber", x => x.InvoiceLine.JobNumber),
-                        ("LineDesc", x => x.InvoiceLine.Description),
+                        ("FreightUOM", x => x.InvoiceLine.Ticket?.GetAmountTypeToUse().useFreight == true ? x.InvoiceLine.Ticket.TicketUomName : ""),
+                        ("MaterialUOM", x => x.InvoiceLine.Ticket?.GetAmountTypeToUse().useMaterial == true ? x.InvoiceLine.Ticket.TicketUomName : ""),
+                        ("LineDesc", x => x.InvoiceLine.Ticket?.Designation?.FreightAndMaterial() == true && x.InvoiceLine.Ticket.GetAmountTypeToUse().useFreight
+                            ? "Freight"
+                            : x.InvoiceLine.ItemName),
                         ("LineQty", x => x.InvoiceLine.Quantity.ToString()),
                         ("FreightUnitPrice", x => x.InvoiceLine.FreightRate.ToString()),
                         ("MaterialUnitPrice", x => x.InvoiceLine.MaterialRate.ToString()),

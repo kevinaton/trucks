@@ -6,6 +6,6 @@ namespace DispatcherWeb.QuickbooksDesktop
 {
     public interface IQuickbooksDesktopAppService : IApplicationService
     {
-        Task<ExportInvoicesToIIFResult> ExportInvoicesToIIF();
+        Task<ExportInvoicesToIIFResult> ExportInvoicesToIIF(ExportInvoicesToIIFInput input);
     }
 }

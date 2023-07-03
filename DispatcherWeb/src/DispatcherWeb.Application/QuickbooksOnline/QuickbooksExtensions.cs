@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Extensions;
-using DispatcherWeb.Orders;
 using DispatcherWeb.QuickbooksOnline.Dto;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +23,7 @@ namespace DispatcherWeb.QuickbooksOnline
                     {
                         Id = x.CustomerId,
                         Name = x.Customer.Name,
+                        AccountNumber = x.Customer.AccountNumber,
                         IsInQuickBooks = x.Customer.IsInQuickBooks,
                         InvoiceEmail = x.Customer.InvoiceEmail,
                         InvoicingMethod = x.Customer.InvoicingMethod,
@@ -61,6 +61,8 @@ namespace DispatcherWeb.QuickbooksOnline
                         ExtendedAmount = l.ExtendedAmount,
                         FreightExtendedAmount = l.FreightExtendedAmount,
                         MaterialExtendedAmount = l.MaterialExtendedAmount,
+                        FreightRate = l.FreightRate,
+                        MaterialRate = l.MaterialRate,
                         Tax = l.Tax,
                         IsTaxable = l.Item.IsTaxable,
                         JobNumber = l.JobNumber,
@@ -80,6 +82,17 @@ namespace DispatcherWeb.QuickbooksOnline
                         Ticket = l.Ticket != null ? new TicketToUploadDto
                         {
                             TicketDateTimeUtc = l.Ticket.TicketDateTime,
+                            MaterialUomId = l.Ticket.OrderLine.MaterialUomId,
+                            FreightUomId = l.Ticket.OrderLine.FreightUomId,
+                            TicketUomId = l.Ticket.UnitOfMeasureId,
+                            TicketUomName = l.Ticket.UnitOfMeasure.Name,
+                            IsOrderLineMaterialTotalOverridden = l.Ticket.OrderLine.IsMaterialPriceOverridden,
+                            IsOrderLineFreightTotalOverridden = l.Ticket.OrderLine.IsFreightPriceOverridden,
+                            OrderLineMaterialTotal = l.Ticket.OrderLine.MaterialPrice,
+                            OrderLineFreightTotal = l.Ticket.OrderLine.FreightPrice,
+                            Designation = l.Ticket.OrderLine.Designation,
+                            Quantity = l.Ticket.Quantity,
+                            HasOrderLine = l.Ticket.OrderLine != null,
                             //OrderMaterialPrice = l.Ticket.OrderLine.MaterialPricePerUnit,
                             //OrderFreightPrice = l.Ticket.OrderLine.FreightPricePerUnit
                         } : null,
@@ -119,12 +132,26 @@ namespace DispatcherWeb.QuickbooksOnline
                     }
 
                     var materialLine = invoiceLine.Clone();
+                    materialLine.FreightRate = 0;
+                    if (materialLine.Ticket != null)
+                    {
+                        materialLine.Ticket.FreightUomId = null;
+                        materialLine.Ticket.OrderLineFreightTotal = null;
+                        materialLine.Ticket.IsOrderLineFreightTotalOverridden = false;
+                    }
                     materialLine.Subtotal -= materialLine.FreightExtendedAmount;
                     materialLine.ExtendedAmount -= materialLine.FreightExtendedAmount;
                     materialLine.FreightExtendedAmount = 0;
                     newLinesList.Add(materialLine);
 
                     var freightLine = invoiceLine.Clone();
+                    materialLine.MaterialRate = 0;
+                    if (materialLine.Ticket != null)
+                    {
+                        materialLine.Ticket.MaterialUomId = null;
+                        materialLine.Ticket.OrderLineMaterialTotal = null;
+                        materialLine.Ticket.IsOrderLineMaterialTotalOverridden = false;
+                    }
                     freightLine.Subtotal -= freightLine.MaterialExtendedAmount;
                     freightLine.ExtendedAmount -= freightLine.MaterialExtendedAmount + freightLine.Tax;
                     freightLine.MaterialExtendedAmount = 0;
@@ -141,16 +168,6 @@ namespace DispatcherWeb.QuickbooksOnline
 
                 invoice.InvoiceLines = newLinesList;
             }
-        }
-
-        public static void RecalculateTotals(this InvoiceToUploadDto<Invoices.Invoice> invoiceToUpload, TaxCalculationType taxCalculationType)
-        {
-            foreach (var line in invoiceToUpload.InvoiceLines)
-            {
-                OrderTaxCalculator.CalculateSingleOrderLineTotals(taxCalculationType, line, invoiceToUpload.TaxRate);
-            }
-            invoiceToUpload.Tax = invoiceToUpload.InvoiceLines.Sum(x => x.Tax);
-            invoiceToUpload.TotalAmount = invoiceToUpload.InvoiceLines.Sum(x => x.ExtendedAmount);
         }
     }
 }

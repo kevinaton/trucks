@@ -185,7 +185,7 @@ namespace DispatcherWeb.QuickbooksOnline
         public async Task<UploadInvoicesResult> UploadInvoices()
         {
             var invoicesToUpload = await _invoiceRepository.GetAll()
-                .Where(x => x.QuickbooksExportDateTime == null)
+                .Where(x => x.QuickbooksExportDateTime == null && x.Status == InvoiceStatus.ReadyForExport)
                 .ToInvoiceToUploadList(await GetTimezone());
 
             var invoiceNumberPrefix = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.Quickbooks.InvoiceNumberPrefix);
