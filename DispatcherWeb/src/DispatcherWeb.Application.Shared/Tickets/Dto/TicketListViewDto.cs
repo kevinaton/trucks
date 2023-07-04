@@ -1,10 +1,11 @@
 ﻿using System;
 using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Orders.TaxDetails;
 using Newtonsoft.Json;
 
 namespace DispatcherWeb.Tickets.Dto
 {
-    public class TicketListViewDto : EditTicketFromListInput, ITicketQuantity
+    public class TicketListViewDto : EditTicketFromListInput, IOrderLineTaxTotalDetails, ITicketQuantity
     {
         public DateTime? Date { get; set; }
         public DateTime? OrderDate { get; set; }
@@ -48,6 +49,7 @@ namespace DispatcherWeb.Tickets.Dto
 
         public int? TicketUomId { get; set; }
         public bool IsImported { get; set; }
+        public decimal Rate => Math.Round(Subtotal / Quantity, 2);
         public decimal Revenue { get; set; }
         public bool? ProductionPay { get; set; }
         public int? PayStatementId { get; set; }
@@ -62,6 +64,8 @@ namespace DispatcherWeb.Tickets.Dto
         public decimal? OrderLineMaterialPrice { get; set; }
         public decimal? FuelSurcharge { get; set; }
         public decimal? FreightRateToPayDrivers { get; set; }
+        public decimal FreightTotal => IsFreightPriceOverridden == true ? (OrderLineFreightPrice ?? 0) : Math.Round(this.GetFreightQuantity() * FreightRate ?? 0, 2);
+        public decimal MaterialTotal => IsMaterialPriceOverridden == true ? (OrderLineMaterialPrice ?? 0) : Math.Round(this.GetMaterialQuantity() * MaterialRate ?? 0, 2);
         public decimal? PriceOverride
         {
             get
@@ -85,5 +89,16 @@ namespace DispatcherWeb.Tickets.Dto
                 return result;
             }
         }
+
+        public decimal Tax { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal Total { get; set; } //=> MaterialTotal + FreightTotal + Tax;
+        decimal IOrderLineTaxTotalDetails.TotalAmount { get => Total; set => Total = value; }
+        public decimal? SalesTaxRate { get; set; }
+
+        public bool? IsTaxable { get; set; }
+        bool IOrderLineTaxDetails.IsTaxable => IsTaxable ?? false;
+        decimal IOrderLineTaxDetails.MaterialPrice => MaterialTotal;
+        decimal IOrderLineTaxDetails.FreightPrice => FreightTotal;
     }
 }
