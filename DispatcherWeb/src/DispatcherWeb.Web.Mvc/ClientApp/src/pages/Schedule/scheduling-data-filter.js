@@ -25,7 +25,6 @@ const SchedulingDataFilter = ({
     const [officeId, setOfficeId] = useState(null);
     const [defaultSelection, setDefaultSelection] = useState(-1);
 
-
     const [isJob, setJob] = useState(false);
     const [title, setTitle] = useState('Add Job');
 
@@ -44,8 +43,11 @@ const SchedulingDataFilter = ({
     // set default filter
     useEffect(() => {
         if (!isEmpty(officeOptions) && !isEmpty(dataFilter)) {
-            if (dataFilter.officeId !== null && dataFilter.date !== null && 
-                dataFilter.officeId !== officeId && dataFilter.date !== date) {
+            if (officeId === null && 
+                date === null && 
+                dataFilter.officeId !== null && dataFilter.date !== null && 
+                dataFilter.officeId !== officeId && dataFilter.date !== date
+            ) {
                 setOfficeId(dataFilter.officeId);
                 setDate(moment(dataFilter.date));
             }
@@ -70,17 +72,13 @@ const SchedulingDataFilter = ({
         }
     }, [officeId, officeOptions]);
 
-    const handleOfficeFilterChange = (e) => {
-        console.log(e)
-        console.log('val: ', e.target.value)
-        // const office = {
-        //     id,
-        //     name
-        // }
-        // handleFilterChange({
-        //     ...dataFilter,
-        //     office
-        // });
+    const handleOfficeFilterChange = (e, newValue) => {
+        e.preventDefault();
+
+        handleFilterChange({
+            ...dataFilter,
+            officeId: newValue
+        });
     }
 
     const handleDateFilterChange = (newDate) => {
@@ -91,6 +89,8 @@ const SchedulingDataFilter = ({
     };
 
     const handleHideOrShowCompletedOrders = (e) => {
+        e.preventDefault();
+
         handleFilterChange({
             ...dataFilter,
             hideCompletedOrders: e.target.checked
@@ -98,116 +98,121 @@ const SchedulingDataFilter = ({
     }
 
     // Handle click of settings located at the top right
-    const handleSettingsClick = (event) => {
-        setSettingsAnchor(event.currentTarget);
+    const handleSettingsClick = (e) => {
+        setSettingsAnchor(e.currentTarget);
     };
     const handleSettingsClose = () => {
         setSettingsAnchor(null);
     };
 
     // Handle Add jobs
-    const handleAddJob = () => {
+    const handleAddJob = (e) => {
+        e.preventDefault();
         setSettingsAnchor(null);
         setTitle('Add Job');
         setJob(true);
     };
 
     return (
-        <Box
-            component='form'
-            sx={{
-                p: 3,
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 2,
-                justifyContent: 'flex-start',
-            }}>
-            <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='de'>
-                <DatePicker
-                    label='date'
-                    value={date}
-                    onChange={handleDateFilterChange}
-                    sx={{ flexShrink: 0 }}
-                />
-
-                {!isEmpty(officeOptions) && defaultSelection !== -1 && 
-                    <Autocomplete
-                        id='office'
-                        options={officeOptions} 
-                        getOptionLabel={(option) => option.name} 
-                        defaultValue={officeOptions[defaultSelection]}
-                        sx={{ flex: 1, flexShrink: 0 }}
-                        renderInput={(params) => <TextField {...params} label='Office' />} 
-                        onChange={(e, value) => handleOfficeFilterChange(e, value.name)}
-                    />
-                }
-
-                <FormControlLabel
-                    control={
-                        <Checkbox 
-                            checked={dataFilter.hideCompletedOrders}
-                            onChange={handleHideOrShowCompletedOrders}
-                        />
-                    }
-                    label='Hide Completed Orders'
-                    sx={{ flexShrink: 0, m: 0 }}
-                />
-
-                <FormControlLabel
-                    control={<Checkbox />}
-                    label='Hide Progress Bar'
-                    sx={{ flexShrink: 1, m: 0 }}
-                />
-
-                <FormControlLabel
-                    control={<Checkbox />}
-                    label='Hide Schedule Progress'
-                    sx={{ flexShrink: 1, m: 0 }}
-                />
-
-                <FormControlLabel
-                    control={
-                        <IconButton
-                            sx={{ width: 25, height: 25 }}
-                            onClick={handleSettingsClick}>
-                            <i className='fa-regular fa-ellipsis-vertical'></i>
-                        </IconButton>
-                    }
+        <React.Fragment>
+            { !isEmpty(dataFilter) && 
+                <Box
+                    component='form'
                     sx={{
-                        flex: 1,
-                        m: 0,
-                        justifyContent: 'flex-end',
-                    }}></FormControlLabel>
+                        p: 3,
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 2,
+                        justifyContent: 'flex-start',
+                    }}>
+                    <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='de'>
+                        <DatePicker
+                            label='date'
+                            value={date}
+                            onChange={handleDateFilterChange}
+                            sx={{ flexShrink: 0 }}
+                        />
 
-                <Menu
-                    anchorEl={settingsAnchor}
-                    id='settings-menu'
-                    open={settingsOpen}
-                    onClose={handleSettingsClose}
-                    onClick={handleSettingsClose}>
-                    <MenuItem onClick={handleSettingsClose}>
-                        <i className='fa-regular fa-truck secondary-icon pr-2'></i> Add
-                        a lease hauler
-                    </MenuItem>
-                    <MenuItem onClick={handleSettingsClose}>
-                        <i className='fa-regular fa-check secondary-icon pr-2'></i> Mark
-                        all jobs complete
-                    </MenuItem>
-                    <MenuItem onClick={handleAddJob}>
-                        <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add
-                        job
-                    </MenuItem>
-                    <MenuItem onClick={handleSettingsClose}>
-                        <i className='fa-regular fa-print secondary-icon pr-2'></i>
-                        Print schedule
-                    </MenuItem>
-                    <MenuItem onClick={handleSettingsClose}>
-                        <i className='fa-regular fa-print secondary-icon pr-2'></i>
-                        Print all orders
-                    </MenuItem>
-                </Menu>
-            </LocalizationProvider>
-        </Box>
+                        {!isEmpty(officeOptions) && defaultSelection !== -1 && 
+                            <Autocomplete
+                                id='office'
+                                options={officeOptions} 
+                                getOptionLabel={(option) => option.name} 
+                                defaultValue={officeOptions[defaultSelection]}
+                                sx={{ flex: 1, flexShrink: 0 }}
+                                renderInput={(params) => <TextField {...params} label='Office' />} 
+                                onChange={(e, value) => handleOfficeFilterChange(e, value.id)}
+                            />
+                        }
+
+                        <FormControlLabel
+                            control={
+                                <Checkbox 
+                                    checked={dataFilter.hideCompletedOrders}
+                                    onChange={handleHideOrShowCompletedOrders}
+                                />
+                            }
+                            label='Hide Completed Orders'
+                            sx={{ flexShrink: 0, m: 0 }}
+                        />
+
+                        <FormControlLabel
+                            control={<Checkbox />}
+                            label='Hide Progress Bar'
+                            sx={{ flexShrink: 1, m: 0 }}
+                        />
+
+                        <FormControlLabel
+                            control={<Checkbox />}
+                            label='Hide Schedule Progress'
+                            sx={{ flexShrink: 1, m: 0 }}
+                        />
+
+                        <FormControlLabel
+                            control={
+                                <IconButton
+                                    sx={{ width: 25, height: 25 }}
+                                    onClick={handleSettingsClick}>
+                                    <i className='fa-regular fa-ellipsis-vertical'></i>
+                                </IconButton>
+                            }
+                            sx={{
+                                flex: 1,
+                                m: 0,
+                                justifyContent: 'flex-end',
+                            }}></FormControlLabel>
+
+                        <Menu
+                            anchorEl={settingsAnchor}
+                            id='settings-menu'
+                            open={settingsOpen}
+                            onClose={handleSettingsClose}
+                            onClick={handleSettingsClose}>
+                            <MenuItem onClick={handleSettingsClose}>
+                                <i className='fa-regular fa-truck secondary-icon pr-2'></i> Add
+                                a lease hauler
+                            </MenuItem>
+                            <MenuItem onClick={handleSettingsClose}>
+                                <i className='fa-regular fa-check secondary-icon pr-2'></i> Mark
+                                all jobs complete
+                            </MenuItem>
+                            <MenuItem onClick={handleAddJob}>
+                                <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add
+                                job
+                            </MenuItem>
+                            <MenuItem onClick={handleSettingsClose}>
+                                <i className='fa-regular fa-print secondary-icon pr-2'></i>
+                                Print schedule
+                            </MenuItem>
+                            <MenuItem onClick={handleSettingsClose}>
+                                <i className='fa-regular fa-print secondary-icon pr-2'></i>
+                                Print all orders
+                            </MenuItem>
+                        </Menu>
+                    </LocalizationProvider>
+                </Box>
+            }
+        </React.Fragment>
     )
 }
 

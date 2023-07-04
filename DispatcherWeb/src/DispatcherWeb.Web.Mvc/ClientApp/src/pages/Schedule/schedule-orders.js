@@ -23,18 +23,19 @@ import { grey } from '@mui/material/colors';
 import { linearProgressClasses } from '@mui/material/LinearProgress';
 import { Tablecell, VerticalLinearProgress } from '../../components/DTComponents';
 import { theme } from '../../Theme';
-import { isEmpty } from 'lodash';
+import _, { isEmpty } from 'lodash';
 import {
     getScheduleOrders
 } from '../../store/actions';
 
 // to remove later
-import data from '../../common/data/data.json';
-const { ScheduleData } = data;
+// import data from '../../common/data/data.json';
+// const { ScheduleData } = data;
 
 const ScheduleOrders = ({
     dataFilter
 }) => {
+    console.log('ScheduleOrders')
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
     const [scheduleData, setScheduleData] = useState(null);
@@ -66,10 +67,17 @@ const ScheduleOrders = ({
     // }, [dispatch, isLoading, dataFilter, scheduleData]);
 
     useEffect(() => {
-        if (isLoading && !isEmpty(scheduleOrders) && !isEmpty(scheduleOrders.result) && isEmpty(scheduleData)) {
-            setLoading(false);
+        if (isLoading && 
+            !isEmpty(scheduleOrders) && 
+            !isEmpty(scheduleOrders.result)
+        ) {
             const { items } = scheduleOrders.result;
-            setScheduleData(items);
+            if (!isEmpty(items) && (
+                isEmpty(scheduleData) || (!isEmpty(scheduleData) && !_.isEqual(scheduleData, items))
+            )) {
+                setScheduleData(items);
+                setLoading(false);
+            }
         }
     }, [isLoading, scheduleOrders, scheduleData]);
 
@@ -95,7 +103,7 @@ const ScheduleOrders = ({
             // update the previous dataFilter value
             prevDataFilterRef.current = dataFilter;
         }
-    }, [dataFilter]);
+    }, [dispatch, dataFilter]);
 
     useEffect(() => {
         // cleanup logic
@@ -106,8 +114,8 @@ const ScheduleOrders = ({
     }, []);
 
     // Handle action on table rows
-    const handleActionClick = (event) => {
-        setActionAnchor(event.currentTarget);
+    const handleActionClick = (e) => {
+        setActionAnchor(e.currentTarget);
     };
     const handleActionClose = () => {
         setActionAnchor(null);
@@ -123,13 +131,14 @@ const ScheduleOrders = ({
     };
 
     // Handle edit jobs
-    const handleEditJob = (event, data) => {
+    const handleEditJob = (e, data) => {
+        e.preventDefault();
         setActionAnchor(null);
         setIsOrderOpen(false);
         setTitle('Edit Job');
         setEditData(data);
         setJob(true);
-        console.log(event);
+        console.log(e);
         console.log(data);
     };
 
@@ -172,13 +181,23 @@ const ScheduleOrders = ({
         </TableHead>
     );
 
+    const getPriorityLevel = (data) => {
+        const { priority } = data;
+        if (priority === 1) {
+            return <i className='fa-solid fa-circle-arrow-up error-icon'></i>;
+        } else if (priority === 2) {
+            return <i className='fa-regular fa-circle success-icon'></i>;
+        }
+        return <i className='fa-solid fa-circle-arrow-down secondary-icon'></i>;
+    }
+
     return (
         <TableContainer component={Box}>
             <Table stickyHeader aria-label='schedule table' size='small'>
                 {renderHeader()}
 
                 <TableBody>
-                    {ScheduleData.map((data, index) => {
+                    {!isEmpty(scheduleData) && scheduleData.map((data, index) => {
                         return (
                             <React.Fragment key={index}>
                                 <TableRow
@@ -193,36 +212,35 @@ const ScheduleOrders = ({
                                         '&.MuiTableRow-root:hover': {
                                             backgroundColor: theme.palette.action.hover,
                                         },
-                                    }}>
+                                    }}
+                                >
                                     <Tablecell
                                         label='priority'
-                                        value={
-                                            <i className='fa-solid fa-circle-arrow-up error-icon'></i>
-                                        }
+                                        value={getPriorityLevel(data)}
                                     />
                                     <Tablecell
                                         label='Cash on delivery'
-                                        value={<Checkbox checked={data.checkbox} />}
+                                        value={<Checkbox checked={data.customerIsCod} />}
                                     />
                                     <Tablecell
                                         label='Notes'
                                         value={
-                                            <i className='fa-solid fa-notebook icon'></i>
+                                            <i className='fa-regular fa-notebook icon'></i>
                                         }
                                     />
-                                    <Tablecell label='Customer' value={data.customer} />
-                                    <Tablecell label='Job number' value={data.job} />
+                                    <Tablecell label='Customer' value={data.customerName} />
+                                    <Tablecell label='Job number' value={data.jobNumber} />
                                     <Tablecell label='Time on job' value={data.time} />
-                                    <Tablecell label='Load at' value={data.load} />
+                                    <Tablecell label='Load at' value={data.loadAtNamePlain} />
                                     <Tablecell
                                         label='Deliver to'
-                                        value={data.deliver}
+                                        value={data.deliverToNamePlain}
                                     />
                                     <Tablecell label='Item' value={data.item} />
-                                    <Tablecell label='Quantity' value={data.quantity} />
+                                    <Tablecell label='Quantity' value={data.quantityFormatted} />
                                     <Tablecell
                                         label='Required trucks'
-                                        value={data.required}
+                                        value={data.numberOfTrucks}
                                     />
                                     <Tablecell
                                         label='Progress'
@@ -265,7 +283,7 @@ const ScheduleOrders = ({
                                     />
                                     <Tablecell
                                         label='Closed'
-                                        value={<Checkbox checked={data.closed} />}
+                                        value={<Checkbox checked={data.isClosed} />}
                                     />
                                     <Tablecell
                                         label='Action'
@@ -430,94 +448,107 @@ const ScheduleOrders = ({
                                     />
                                 </TableRow>
 
-                                <TableRow
-                                    hover={true}
-                                    onMouseEnter={() => handleRowHover(index)}
-                                    onMouseLeave={() => handleRowLeave}
-                                    sx={{
-                                        backgroundColor:
-                                            hoveredRow === index
-                                                ? theme.palette.action.hover
-                                                : '#ffffff',
-                                        '&.MuiTableRow-root:hover': {
-                                            backgroundColor: theme.palette.action.hover,
-                                        },
-                                    }}>
-                                    <Tablecell
-                                        label='Trucks'
-                                        colSpan={14}
-                                        value={
-                                            <Box>
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        alignContent: 'center',
-                                                        mb: 1,
-                                                    }}>
-                                                    <Typography
-                                                        variant='subtitle2'
-                                                        sx={{ mr: 1 }}>
-                                                        Trucks assigned
-                                                    </Typography>
-                                                    <Typography
+                                { data.trucks.length > 0 && 
+                                    <TableRow
+                                        hover={true}
+                                        onMouseEnter={() => handleRowHover(index)}
+                                        onMouseLeave={() => handleRowLeave}
+                                        sx={{
+                                            backgroundColor:
+                                                hoveredRow === index
+                                                    ? theme.palette.action.hover
+                                                    : '#ffffff',
+                                            '&.MuiTableRow-root:hover': {
+                                                backgroundColor: theme.palette.action.hover,
+                                            },
+                                        }}
+                                    >
+                                        <Tablecell
+                                            label='Trucks'
+                                            colSpan={14}
+                                            value={
+                                                <Box>
+                                                    <Box
                                                         sx={{
-                                                            px: 1,
-                                                            w: '10px',
-                                                            h: '10px',
-                                                            textAlign: 'center',
-                                                            backgroundColor:
-                                                                theme.palette.grey[200],
-                                                            borderRadius: 80,
+                                                            display: 'flex',
+                                                            alignContent: 'center',
+                                                            mb: 1,
                                                         }}
-                                                        variant='subtitle2'>
-                                                        {data.trucks.length}
-                                                    </Typography>
-                                                </Box>
+                                                    >
+                                                        <Typography
+                                                            variant='subtitle2'
+                                                            sx={{ mr: 1 }}
+                                                        >
+                                                            Trucks assigned
+                                                        </Typography>
+                                                        <Typography
+                                                            sx={{
+                                                                px: 1,
+                                                                w: '10px',
+                                                                h: '10px',
+                                                                textAlign: 'center',
+                                                                backgroundColor:
+                                                                    theme.palette.grey[200],
+                                                                borderRadius: 80,
+                                                            }}
+                                                            variant='subtitle2'
+                                                        >
+                                                            {data.trucks.length}
+                                                        </Typography>
+                                                    </Box>
 
-                                                <Grid
-                                                    sx={{
-                                                        backgroundColor:
-                                                            theme.palette.background
-                                                                .paper,
-                                                        borderRadius: 1,
-                                                        border: '1px solid #ebedf2',
-                                                        pb: 1,
-                                                        m: 0,
-                                                    }}
-                                                    container
-                                                    rowSpacing={1}
-                                                    columnSpacing={1}>
-                                                    {data.trucks.map((truck, index) => {
-                                                        return (
-                                                            <Grid item key={index}>
-                                                                <Chip
-                                                                    label={truck.name}
-                                                                    onClick={() => {}}
-                                                                    onDelete={() => {}}
-                                                                    variant={
-                                                                        truck.variant
-                                                                    }
-                                                                    color={truck.color}
-                                                                    sx={{
-                                                                        borderRadius: 0,
-                                                                        fontSize: 10,
-                                                                        fontWeight: 500,
-                                                                        p: 0,
-                                                                    }}
-                                                                />
-                                                            </Grid>
-                                                        );
-                                                    })}
-                                                </Grid>
-                                            </Box>
-                                        }
-                                    />
-                                </TableRow>
+                                                    <Grid
+                                                        sx={{
+                                                            backgroundColor:
+                                                                theme.palette.background
+                                                                    .paper,
+                                                            borderRadius: 1,
+                                                            border: '1px solid #ebedf2',
+                                                            pb: 1,
+                                                            m: 0,
+                                                        }}
+                                                        container
+                                                        rowSpacing={1}
+                                                        columnSpacing={1}
+                                                    >
+                                                        {data.trucks.map((truck, index) => {
+                                                            return (
+                                                                <Grid item key={index}>
+                                                                    <Chip
+                                                                        label={truck.name}
+                                                                        onClick={() => {}}
+                                                                        onDelete={() => {}}
+                                                                        variant={
+                                                                            truck.variant
+                                                                        }
+                                                                        color={truck.color}
+                                                                        sx={{
+                                                                            borderRadius: 0,
+                                                                            fontSize: 10,
+                                                                            fontWeight: 500,
+                                                                            p: 0,
+                                                                        }}
+                                                                    />
+                                                                </Grid>
+                                                            );
+                                                        })}
+                                                    </Grid>
+                                                </Box>
+                                            }
+                                        />
+                                    </TableRow>
+                                }
                             </React.Fragment>
                         );
                     })}
                 </TableBody>
             </Table>
+
+            {isEmpty(scheduleData) && 
+                <Typography align='center' variant='subtitle2' sx={{ p: 2 }}>
+                    No data available in table
+                </Typography>
+            }
         </TableContainer>
     );
 };

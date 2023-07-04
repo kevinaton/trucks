@@ -6,7 +6,8 @@ import {
     Chip,
     Grid
 } from '@mui/material';
-import { isEmpty } from 'lodash';
+import AddIcon from '@mui/icons-material/Add';
+import _, { isEmpty } from 'lodash';
 import { 
     checkIfEnabled,
     getUserSettingByName, 
@@ -89,10 +90,17 @@ const TruckMap = ({
     // }, [dispatch, isLoading, dataFilter, trucks]);
     
     useEffect(() => {
-        if (isLoading && !isEmpty(scheduleTrucks) && !isEmpty(scheduleTrucks.result) && isEmpty(trucks)) {
-            setLoading(false);
+        if (isLoading && 
+            !isEmpty(scheduleTrucks) && 
+            !isEmpty(scheduleTrucks.result)
+        ) {
             const { items } = scheduleTrucks.result;
-            setTrucks(items);
+            if (!isEmpty(items) && (
+                isEmpty(trucks) || (!isEmpty(trucks) && !_.isEqual(trucks, items))
+            )) {
+                setTrucks(items);
+                setLoading(false);
+            }
         }
     }, [isLoading, scheduleTrucks, trucks]);
 
@@ -121,7 +129,7 @@ const TruckMap = ({
             // update the previous dataFilter value
             prevDataFilterRef.current = dataFilter;
         }
-    }, [dataFilter]);
+    }, [dispatch, dataFilter]);
 
     useEffect(() => {
         // cleanup logic
@@ -148,7 +156,7 @@ const TruckMap = ({
         if (truck.isOutOfService) {
             return {
                 ...defaultColor,
-                color: '#303030'
+                color: '#999'
             };
         }
 
@@ -201,7 +209,7 @@ const TruckMap = ({
             return {
                 backgroundColor: '#fff',
                 color: '#999',
-                border: '1px solid #ebedf3'
+                border: '1px solid #999'
             };
         }
     };
@@ -221,7 +229,7 @@ const TruckMap = ({
                                 fontWeight: 600,
                                 py: 3,
                                 backgroundColor: `${truckColors.backgroundColor}`,
-                                color: `${truckColors.textColor}`,
+                                color: `${truckColors.color}`,
                                 border: `${truckColors.border}`
                             }}
                         />
@@ -238,6 +246,27 @@ const TruckMap = ({
                 <Paper variant='outlined' sx={{ p: 1 }}>
                     <Grid container rowSpacing={1} columnSpacing={1}>
                         {!isEmpty(trucks) && renderTrucks()}
+
+                        <Grid item>
+                            <Chip
+                                label={
+                                    <>
+                                        <AddIcon sx={{ mt: '5px' }} />
+                                    </>
+                                }
+                                onClick={() => {}}
+                                sx={{
+                                    backgroundColor: '#fff',
+                                    border: '1px solid #ebedf2',
+                                    color: '#6f727d',
+                                    borderRadius: 0,
+                                    fontSize: 18,
+                                    fontWeight: 600,
+                                    py: 3,
+                                    px: 1
+                                }}
+                            />
+                        </Grid>
 
                         {/* {TruckCode.map((truck) => {
                             return (

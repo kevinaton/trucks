@@ -39,7 +39,8 @@ const Schedule = props => {
     }, [props]);
 
     useEffect(() => {
-        if (!isEmpty(userProfileMenu) && !isEmpty(userProfileMenu.result)) {
+        if (dataFilter.officeId === null && 
+            !isEmpty(userProfileMenu) && !isEmpty(userProfileMenu.result)) {
             const { sessionOfficeId } = userProfileMenu.result;
             setDataFilter({
                 ...dataFilter,
