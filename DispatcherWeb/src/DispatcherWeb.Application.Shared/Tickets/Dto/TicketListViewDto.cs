@@ -49,7 +49,7 @@ namespace DispatcherWeb.Tickets.Dto
 
         public int? TicketUomId { get; set; }
         public bool IsImported { get; set; }
-        public decimal Rate => Math.Round(Subtotal / Quantity, 2);
+        public decimal Rate => Quantity != 0 ? Math.Round(Subtotal / Quantity, 2) : 0;
         public decimal Revenue { get; set; }
         public bool? ProductionPay { get; set; }
         public int? PayStatementId { get; set; }
