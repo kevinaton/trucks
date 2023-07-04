@@ -94,7 +94,9 @@ namespace DispatcherWeb.SbtCsvExport
                         ("JobNumber", x => x.InvoiceLine.JobNumber),
                         ("FreightUOM", x => x.InvoiceLine.Ticket?.GetAmountTypeToUse().useFreight == true ? x.InvoiceLine.Ticket.TicketUomName : ""),
                         ("MaterialUOM", x => x.InvoiceLine.Ticket?.GetAmountTypeToUse().useMaterial == true ? x.InvoiceLine.Ticket.TicketUomName : ""),
-                        ("LineDesc", x => x.InvoiceLine.Ticket?.Designation?.FreightAndMaterial() == true && x.InvoiceLine.Ticket.GetAmountTypeToUse().useFreight
+                        ("LineDesc", x => x.InvoiceLine.Ticket?.Designation?.FreightAndMaterial() == true 
+                                && x.InvoiceLine.Ticket.GetAmountTypeToUse().useFreight
+                                && !x.InvoiceLine.Ticket.GetAmountTypeToUse().useMaterial
                             ? "Freight"
                             : x.InvoiceLine.ItemName),
                         ("LineQty", x => x.InvoiceLine.Quantity.ToString()),
