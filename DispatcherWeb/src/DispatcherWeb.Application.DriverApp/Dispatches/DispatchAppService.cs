@@ -13,6 +13,7 @@ using DispatcherWeb.DriverApp.Dispatches.Dto;
 using DispatcherWeb.DriverApp.Loads.Dto;
 using DispatcherWeb.DriverApp.Locations.Dto;
 using DispatcherWeb.DriverApp.Tickets.Dto;
+using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.SyncRequests;
 using Microsoft.EntityFrameworkCore;
 
@@ -60,7 +61,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                     CustomerName = di.OrderLine.Order.Customer.Name,
                     CustomerContact = di.OrderLine.Order.CustomerContact == null ? null : new CustomerContactDto
                     {
-                        Name = di.OrderLine.Order.CustomerContact.Name,
+                        Name = di.OrderLine.Order.CustomerContact.FullName(),
                         PhoneNumber = di.OrderLine.Order.CustomerContact.PhoneNumber
                     },
                     OrderDate = di.OrderLine.Order.DeliveryDate.Value,

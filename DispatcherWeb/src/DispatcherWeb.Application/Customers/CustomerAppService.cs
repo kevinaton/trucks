@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
@@ -11,6 +12,8 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.Customers.Dto;
 using DispatcherWeb.Customers.Exporting;
 using DispatcherWeb.Dto;
+using DispatcherWeb.Features;
+using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Orders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,18 +27,21 @@ namespace DispatcherWeb.Customers
         private readonly IRepository<CustomerContact> _customerContactRepository;
         private readonly IRepository<Order> _orderRepository;
         private readonly ICustomerListCsvExporter _customerListCsvExporter;
+        private readonly ICustomerContactUserLinkService _customerContactUserLinkService;
 
         public CustomerAppService(
             ICustomerRepository customerRepository,
             IRepository<CustomerContact> customerContactRepository,
             IRepository<Order> orderRepository,
-            ICustomerListCsvExporter customerListCsvExporter
+            ICustomerListCsvExporter customerListCsvExporter,
+            ICustomerContactUserLinkService customerContactUserLinkService
             )
         {
             _customerRepository = customerRepository;
             _customerContactRepository = customerContactRepository;
             _orderRepository = orderRepository;
             _customerListCsvExporter = customerListCsvExporter;
+            _customerContactUserLinkService = customerContactUserLinkService;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Customers)]
@@ -302,13 +308,14 @@ namespace DispatcherWeb.Customers
                 .Where(x => x.CustomerId == input.CustomerId);
 
             var totalCount = await query.CountAsync();
-
-            var items = await query
+            
+            List<CustomerContactDto> items = await query
                 .Select(x => new CustomerContactDto
                 {
                     Id = x.Id,
                     CustomerId = x.CustomerId,
-                    Name = x.Name,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
                     PhoneNumber = x.PhoneNumber,
                     Fax = x.Fax,
                     Email = x.Email,
@@ -326,9 +333,13 @@ namespace DispatcherWeb.Customers
         [AbpAuthorize(AppPermissions.Pages_Customers)]
         public async Task<int> GetCustomerContactDuplicateCount(GetCustomerContactDuplicateCountInput input)
         {
-            return await _customerContactRepository.GetAll()
-                .Where(x => x.CustomerId == input.CustomerId && x.Id != input.ExceptId && x.Name == input.Name)
+            var count = await _customerContactRepository.GetAll()
+                .Where(x => x.CustomerId == input.CustomerId && x.Id != input.ExceptId)
+                .WhereIf(!input.FirstName.IsNullOrEmpty(), x => x.FirstName == input.FirstName)
+                .WhereIf(!input.LastName.IsNullOrEmpty(), x => x.LastName == input.LastName)
                 .CountAsync();
+
+            return count;
         }
 
         [HttpPost]
@@ -339,7 +350,7 @@ namespace DispatcherWeb.Customers
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),
-                    Name = x.Name
+                    Name = x.FullName()
                 })
                 .OrderBy(x => x.Name)
                 .ToListAsync();
@@ -353,13 +364,14 @@ namespace DispatcherWeb.Customers
             {
                 return new ListResultDto<SelectListDto>();
             }
+
             var contacts = await _customerContactRepository.GetAll()
                 .Where(x => x.CustomerId == input.Id && x.IsActive)
-                .OrderBy(x => x.Name)
+                .OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
                 .Select(x => new SelectListDto<CustomerContactSelectListInfoDto>
                 {
                     Id = x.Id.ToString(),
-                    Name = x.Name,
+                    Name = x.FullName(),
                     Item = new CustomerContactSelectListInfoDto
                     {
                         PhoneNumber = x.PhoneNumber
@@ -381,7 +393,8 @@ namespace DispatcherWeb.Customers
                 {
                     Id = customerContact.Id,
                     CustomerId = customerContact.CustomerId,
-                    Name = customerContact.Name,
+                    LastName = customerContact.LastName,
+                    FirstName = customerContact.FirstName,
                     PhoneNumber = customerContact.PhoneNumber,
                     Fax = customerContact.Fax,
                     Email = customerContact.Email,
@@ -394,7 +407,8 @@ namespace DispatcherWeb.Customers
             {
                 customerContactEditDto = new CustomerContactEditDto
                 {
-                    Name = input.Name,
+                    FirstName = input.FirstName,
+                    LastName = input.LastName,
                     CustomerId = input.CustomerId ?? throw new UserFriendlyException("Please select a customer first"),
                     IsActive = true,
                 };
@@ -406,11 +420,12 @@ namespace DispatcherWeb.Customers
         [AbpAuthorize(AppPermissions.Pages_Customers)]
         public async Task<int> EditCustomerContact(CustomerContactEditDto model)
         {
-            return await _customerContactRepository.InsertOrUpdateAndGetIdAsync(new CustomerContact
+            var customerContact = new CustomerContact
             {
                 Id = model.Id ?? 0,
                 CustomerId = model.CustomerId,
-                Name = model.Name,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 PhoneNumber = model.PhoneNumber,
                 Fax = model.Fax,
                 Email = model.Email,
@@ -418,7 +433,17 @@ namespace DispatcherWeb.Customers
                 TenantId = Session.TenantId ?? 0,
                 IsActive = model.IsActive,
                 HasCustomerPortalAccess = model.HasCustomerPortalAccess
-            });
+            };
+
+            var customerContactId = await _customerContactRepository.InsertOrUpdateAndGetIdAsync(customerContact);
+            var customerPortalFeatureEnabled = await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal);
+
+            if (customerContactId != 0 && customerContact.HasCustomerPortalAccess && customerPortalFeatureEnabled)
+            {
+                await _customerContactUserLinkService.UpdateUser(customerContact);
+            }
+
+            return customerContactId;
         }
 
         public async Task<bool> CanDeleteCustomerContact(EntityDto input)

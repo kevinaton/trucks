@@ -16,8 +16,12 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Migrations\20230607154131_AddedActiveReports.sql" />
+    <None Remove="Migrations\20230704122608_AddedCustomerPortalLinkToUser.sql" />
+    <None Remove="Migrations\20230705132518_AddCustomerRoleToAllTenants.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\20230705132518_AddCustomerRoleToAllTenants.sql" />
+    <EmbeddedResource Include="Migrations\20230704122608_AddedCustomerPortalLinkToUser.sql" />
     <EmbeddedResource Include="Migrations\20230607154131_AddedActiveReports.sql" />
   </ItemGroup>
   <ItemGroup>

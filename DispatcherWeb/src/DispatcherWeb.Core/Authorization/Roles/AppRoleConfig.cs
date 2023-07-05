@@ -89,6 +89,12 @@ namespace DispatcherWeb.Authorization.Roles
                     StaticRoleNames.Tenants.LeaseHaulerDriver,
                     MultiTenancySides.Tenant)
                 );
+
+            roleManagementConfig.StaticRoles.Add(
+                new StaticRoleDefinition(
+                    StaticRoleNames.Tenants.Customer,
+                    MultiTenancySides.Tenant)
+                );
         }
     }
 }

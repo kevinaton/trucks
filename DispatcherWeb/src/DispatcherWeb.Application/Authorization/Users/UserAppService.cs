@@ -24,6 +24,7 @@ using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.Authorization.Users.Exporting;
 using DispatcherWeb.Chat;
+using DispatcherWeb.Customers;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
@@ -68,6 +69,7 @@ namespace DispatcherWeb.Authorization.Users
         private readonly IRepository<Friendship, long> _friendshipRepository;
         private readonly IRepository<ChatMessage, long> _chatMessageRepository;
         private readonly IDriverUserLinkService _driverUserLinkService;
+        private readonly ICustomerContactUserLinkService _customerContactUserLinkService;
         private readonly IUserListCsvExporter _userListCsvExporter;
         private readonly ISingleOfficeAppService _singleOfficeService;
         private readonly IUserCreatorService _userCreatorService;
@@ -96,6 +98,7 @@ namespace DispatcherWeb.Authorization.Users
             IRepository<Friendship, long> friendshipRepository,
             IRepository<ChatMessage, long> chatMessageRepository,
             IDriverUserLinkService driverUserLinkService,
+            ICustomerContactUserLinkService customerContactUserLinkService,
             IUserListCsvExporter userListCsvExporter,
             ISingleOfficeAppService singleOfficeService,
             IUserCreatorService userCreatorService
@@ -125,6 +128,7 @@ namespace DispatcherWeb.Authorization.Users
             _friendshipRepository = friendshipRepository;
             _chatMessageRepository = chatMessageRepository;
             _driverUserLinkService = driverUserLinkService;
+            _customerContactUserLinkService = customerContactUserLinkService;
             _userListCsvExporter = userListCsvExporter;
             _singleOfficeService = singleOfficeService;
             _userCreatorService = userCreatorService;
@@ -420,6 +424,7 @@ namespace DispatcherWeb.Authorization.Users
             CheckErrors(await UserManager.SetRolesAsync(user, input.AssignedRoleNames));
 
             await _driverUserLinkService.UpdateDriver(user);
+            await _customerContactUserLinkService.UpdateCustomerContact(user);
 
             //update organization units
             await UserManager.SetOrganizationUnitsAsync(user, input.OrganizationUnits.ToArray());

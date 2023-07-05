@@ -1,15 +1,21 @@
-﻿@using DispatcherWeb.Customers.Dto
+﻿@using Abp.Application.Features
+@using DispatcherWeb.Customers.Dto
+@using DispatcherWeb.Features
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @model CustomerContactEditDto
-@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Contact: " + Model.Name : "Create new contact"))
+@await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Contact: " + Model.FullName : "Create new contact"))
 
 <div class="modal-body">
     <form role="form" class="m-form form-validation" name="CustomerContactInformationsForm" id="CustomerContactInformationsForm" novalidate="novalidate">
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="CustomerId" />
         <div class="form-group m-form__group">
-            <label class="required-label">@L("Name")</label>
-            <input class="form-control" type="text" asp-for="Name" required>
+            <label class="required-label">@L("FirstName")</label>
+            <input class="form-control" type="text" asp-for="FirstName" required>
+        </div>
+        <div class="form-group m-form__group">
+            <label class="required-label">@L("LastName")</label>
+            <input class="form-control" type="text" asp-for="LastName" required>
         </div>
         <div class="form-group m-form__group">
             <label>@L("Title")</label>
@@ -26,7 +32,10 @@
         <div class="form-group m-form__group">
             <label>@L("Email")</label>
             <input class="form-control" type="text" asp-for="Email">
-            <small style="color: cornflowerblue;">@L("RequiredToAllowPortalAccess")</small>
+            @if (await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal))
+            {
+                <small style="color: cornflowerblue;">@L("RequiredToAllowPortalAccess")</small>
+            }
         </div>
         <div class="m-form__group form-group">
             <label class="m-checkbox">
@@ -35,14 +44,16 @@
                 <span></span>
             </label>
         </div>
-        <div class="m-form__group form-group" id="HasCustomerPortalAccessContainer" style="visibility:@((string.IsNullOrEmpty(Model.Email) ? "hidden" : "visible"))">
-            <label class="m-checkbox">
-                <input id="HasCustomerPortalAccess" type="checkbox" name="HasCustomerPortalAccess" value="true" checked="@(Model.HasCustomerPortalAccess ? "checked" : null)">
-                @L("HasCustomerPortalAccess")
-                <span></span>
-            </label>
-        </div>
-
+        @if (await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal))
+        {
+            <div class="m-form__group form-group" id="HasCustomerPortalAccessContainer" style="visibility:@((string.IsNullOrEmpty(Model.Email) ? "hidden" : "visible"))">
+                <label class="m-checkbox">
+                    <input id="HasCustomerPortalAccess" type="checkbox" name="HasCustomerPortalAccess" value="true" checked="@(Model.HasCustomerPortalAccess ? "checked" : null)">
+                    @L("HasCustomerPortalAccess")
+                    <span></span>
+                </label>
+            </div>
+        }
     </form>
 </div>
 
