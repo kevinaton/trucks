@@ -181,7 +181,8 @@ namespace DispatcherWeb.Authorization
             administration.CreateChildPermission(AppPermissions.Pages_Administration_Tenant_SubscriptionManagement, L("Subscription"), multiTenancySides: MultiTenancySides.Tenant);
 
             var customerPortal = pages.CreateChildPermission(AppPermissions.Pages_CustomerPortal, L("CustomerPortal"), multiTenancySides: MultiTenancySides.Tenant);
-            customerPortal.CreateChildPermission(AppPermissions.Pages_CustomerPortal_TicketsList, L("CustomerPortalTicketsList"), multiTenancySides: MultiTenancySides.Tenant);
+            customerPortal.CreateChildPermission(AppPermissions.Pages_CustomerPortal_TicketsList, L("CustomerPortalTicketsList"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.CustomerPortal));
 
             //HOST-SPECIFIC PERMISSIONS
 

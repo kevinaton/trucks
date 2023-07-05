@@ -171,7 +171,7 @@
                         return;
                     }
                     var abpData = _dtHelper.toAbpData(data);
-                    $.extend(abpData, { customerId: _customerId });
+                    $.extend(abpData, { customerId: _customerId, sorting: "FirstName, LastName" });
                     _customerService.getCustomerContacts(abpData).done(function (abpResult) {
                         callback(_dtHelper.fromAbpResult(abpResult));
                         //abp.helper.ui.initControls();
@@ -194,8 +194,12 @@
                         }
                     },
                     {
-                        data: "name",
-                        title: "Name"
+                        data: "firstName",
+                        title: "FirstName"
+                    },
+                    {
+                        data: "lastName",
+                        title: "LastName"
                     },
                     {
                         data: "title",

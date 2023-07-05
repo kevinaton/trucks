@@ -210,7 +210,7 @@ namespace DispatcherWeb.Orders
                     CustomerName = x.Customer.Name,
                     QuoteName = x.Quote.Name,
                     PONumber = x.PONumber,
-                    ContactName = x.CustomerContact.Name,
+                    ContactName = x.CustomerContact.FullName(),
                     ChargeTo = x.ChargeTo,
                     CODTotal = x.CODTotal,
                     NumberOfTrucks = x.OrderLines.Sum(ol => ol.NumberOfTrucks),
@@ -258,7 +258,7 @@ namespace DispatcherWeb.Orders
                         MaterialCompanyOrderId = order.MaterialCompanyOrderId,
                         CODTotal = order.CODTotal,
                         ContactId = order.ContactId,
-                        ContactName = order.CustomerContact.Name,
+                        ContactName = order.CustomerContact.FullName(),
                         ContactPhone = order.CustomerContact.PhoneNumber,
                         ChargeTo = order.ChargeTo,
                         CustomerId = order.CustomerId,
@@ -1489,7 +1489,7 @@ namespace DispatcherWeb.Orders
 
                     var newId = await _orderRepository.InsertAndGetIdAsync(newOrder);
                     newOrder.Id = newId;
-                    
+
                     await _fuelSurchargeCalculator.RecalculateOrderLinesWithTicketsForOrder(newOrder.Id);
                     createdOrderIds.Add(newId);
                 }

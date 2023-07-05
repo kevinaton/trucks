@@ -784,8 +784,7 @@ namespace DispatcherWeb.Authorization.Roles
                 {
                     AppPermissions.Pages_CustomerPortal, new[]
                     {
-                        StaticRoleNames.Tenants.Admin,
-                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Customer
                     }
                 },
             };

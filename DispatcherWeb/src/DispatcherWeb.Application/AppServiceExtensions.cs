@@ -15,6 +15,7 @@ using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
+using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Locations;
 using DispatcherWeb.Locations.Dto;
 using DispatcherWeb.Orders;
@@ -110,7 +111,7 @@ namespace DispatcherWeb
                     Id = o.Order.Id,
                     ContactEmail = o.Order.CustomerContact.Email,
                     ContactPhoneNumber = o.Order.CustomerContact.PhoneNumber,
-                    ContactName = o.Order.CustomerContact.Name,
+                    ContactName = o.Order.CustomerContact.FullName(),
                     CustomerName = o.Order.Customer.Name,
                     CustomerAccountNumber = o.Order.Customer.AccountNumber,
                     ChargeTo = o.Order.ChargeTo,
@@ -217,7 +218,7 @@ namespace DispatcherWeb
                     Id = o.Order.Id,
                     ContactEmail = o.Order.CustomerContact.Email,
                     ContactPhoneNumber = o.Order.CustomerContact.PhoneNumber,
-                    ContactName = o.Order.CustomerContact.Name,
+                    ContactName = o.Order.CustomerContact.FullName(),
                     CustomerName = o.Order.Customer.Name,
                     CustomerAccountNumber = o.Order.Customer.AccountNumber,
                     ChargeTo = o.Order.ChargeTo,

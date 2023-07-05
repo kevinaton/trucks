@@ -393,6 +393,10 @@
                 title: "Qty"
             },
             {
+                data: "rate",
+                title: "Rate"
+            },
+            {
                 data: "revenue",
                 title: "Revenue"
             },

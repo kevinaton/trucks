@@ -17,9 +17,13 @@ namespace DispatcherWeb.Customers
 
         public int CustomerId { get; set; }
 
-        [Required(ErrorMessage = "Name is a required field")]
-        [StringLength(EntityStringFieldLengths.CustomerContact.Name)]
-        public string Name { get; set; }
+        [Required(ErrorMessage = "Firstname is a required field")]
+        [StringLength(EntityStringFieldLengths.CustomerContact.FirstName)]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Lastname is a required field")]
+        [StringLength(EntityStringFieldLengths.CustomerContact.LastName)]
+        public string LastName { get; set; }
 
         [StringLength(EntityStringFieldLengths.General.PhoneNumber)]
         public string PhoneNumber { get; set; }

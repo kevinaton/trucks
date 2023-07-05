@@ -946,6 +946,12 @@ namespace DispatcherWeb.Tickets
             var shiftDictionary = await SettingManager.GetShiftDictionary();
             items.ForEach(x => x.Shift = x.ShiftRaw.HasValue && shiftDictionary.ContainsKey(x.ShiftRaw.Value) ? shiftDictionary[x.ShiftRaw.Value] : "");
 
+            var taxCalculationType = await _orderTaxCalculator.GetTaxCalculationTypeAsync();
+            items.ForEach(x =>
+            {
+                OrderTaxCalculator.CalculateSingleOrderLineTotals(taxCalculationType, x, x.SalesTaxRate ?? 0);
+            });
+
             return new PagedResultDto<TicketListViewDto>(
                 totalCount,
                 items);
@@ -1087,6 +1093,8 @@ namespace DispatcherWeb.Tickets
                     FreightRate = t.OrderLine.FreightPricePerUnit,
                     FreightRateToPayDrivers = t.OrderLine.FreightRateToPayDrivers,
                     FuelSurcharge = t.FuelSurcharge,
+                    IsTaxable = t.Service.IsTaxable,
+                    SalesTaxRate = t.OrderLine.Order.SalesTaxRate,
                     Revenue = t.Quantity * ((t.OrderLine.MaterialPricePerUnit ?? 0) + (t.OrderLine.FreightPricePerUnit ?? 0)),
                     IsFreightPriceOverridden = t.OrderLine.IsFreightPriceOverridden,
                     IsMaterialPriceOverridden = t.OrderLine.IsMaterialPriceOverridden,
