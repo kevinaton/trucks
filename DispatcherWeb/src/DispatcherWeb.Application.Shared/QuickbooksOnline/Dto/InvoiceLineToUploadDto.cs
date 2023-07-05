@@ -30,6 +30,8 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public TicketToUploadDto Ticket { get; set; }
 
         public string JobNumber { get; set; }
+        public bool IsSplitMaterialLine { get; set; }
+        public bool IsSplitFreightLine { get; set; }
         public ChildInvoiceLineKind? ChildInvoiceLineKind { get; set; }
 
         public decimal? Rate

@@ -1154,10 +1154,20 @@ namespace DispatcherWeb.Scheduling
             var originalOrderLines = await _orderLineRepository.GetAll()
                 .Where(ol => ol.OrderId == input.OriginalOrderId)
                 .WhereIf(input.OrderLineId.HasValue, ol => ol.Id == input.OrderLineId.Value)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.LineNumber
+                })
                 .ToListAsync();
 
             var newOrderLines = await _orderLineRepository.GetAll()
                 .Where(ol => ol.OrderId == input.NewOrderId)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.LineNumber
+                })
                 .ToListAsync();
 
             var originalOrderLineTrucks = await _orderLineTruckRepository.GetAll()
