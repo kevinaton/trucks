@@ -142,21 +142,23 @@ namespace DispatcherWeb.QuickbooksOnline
                     materialLine.Subtotal -= materialLine.FreightExtendedAmount;
                     materialLine.ExtendedAmount -= materialLine.FreightExtendedAmount;
                     materialLine.FreightExtendedAmount = 0;
+                    materialLine.IsSplitMaterialLine = true;
                     newLinesList.Add(materialLine);
 
                     var freightLine = invoiceLine.Clone();
-                    materialLine.MaterialRate = 0;
-                    if (materialLine.Ticket != null)
+                    freightLine.MaterialRate = 0;
+                    if (freightLine.Ticket != null)
                     {
-                        materialLine.Ticket.MaterialUomId = null;
-                        materialLine.Ticket.OrderLineMaterialTotal = null;
-                        materialLine.Ticket.IsOrderLineMaterialTotalOverridden = false;
+                        freightLine.Ticket.MaterialUomId = null;
+                        freightLine.Ticket.OrderLineMaterialTotal = null;
+                        freightLine.Ticket.IsOrderLineMaterialTotalOverridden = false;
                     }
                     freightLine.Subtotal -= freightLine.MaterialExtendedAmount;
                     freightLine.ExtendedAmount -= freightLine.MaterialExtendedAmount + freightLine.Tax;
                     freightLine.MaterialExtendedAmount = 0;
                     freightLine.Tax = 0;
                     //freightLine.IsTaxable = false;
+                    freightLine.IsSplitFreightLine = true;
                     newLinesList.Add(freightLine);
                 }
 
