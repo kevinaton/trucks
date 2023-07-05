@@ -604,5 +604,222 @@
 
     "CannedText": ["None"],
 
-    "Priority": ["High", "Medium", "Low"]
+    "Priority": ["High", "Medium", "Low"],
+
+    "Status": ["Pending", "Active", "Inactive"],
+
+    "HistoryItems": [
+        {
+            "id": 1,
+            "whenChanged": "06/12/2023",
+            "changedBy": "Kevin Admin",
+            "typeOfChange": "Updated quote items."
+        },
+        {
+            "id": 2,
+            "whenChanged": "05/27/2023",
+            "changedBy": "Kevin Admin",
+            "typeOfChange": "Updated quote details."
+        }
+    ],
+    "Jobsummarymaincolumns": [
+        {
+            "field": "truck",
+            "headerName": "Truck",
+            "flex": 1,
+            "headerClassName": "tableHeader"
+        },
+        {
+            "field": "load",
+            "headerName": "Loads",
+            "flex": 1,
+            "headerClassName": "tableHeader"
+        },
+        {
+            "field": "tons",
+            "headerName": "Tons",
+            "flex": 1,
+            "headerClassName": "tableHeader"
+        },
+        { "field": "am6", "headerName": "6:00 AM", "flex": 0.5, "headerClassName": "tableHeader" },
+        { "field": "am8", "headerName": "8:00 AM", "flex": 0.5, "headerClassName": "tableHeader" },
+        {
+            "field": "am10",
+            "headerName": "10:00 AM",
+            "flex": 0.5,
+            "headerClassName": "tableHeader"
+        },
+        {
+            "field": "nn12",
+            "headerName": "12:00 NN",
+            "flex": 0.5,
+            "headerClassName": "tableHeader"
+        },
+        { "field": "pm2", "headerName": "2:00 PM", "flex": 0.5, "headerClassName": "tableHeader" },
+        { "field": "pm4", "headerName": "4:00 PM", "flex": 0.5, "headerClassName": "tableHeader" },
+        { "field": "pm6", "headerName": "6:00 PM", "flex": 0.5, "headerClassName": "tableHeader" },
+        { "field": "pm8", "headerName": "8:00 PM", "flex": 0.5, "headerClassName": "tableHeader" },
+        { "field": "pm10", "headerName": "10:00 PM", "flex": 0.5, "headerClassName": "tableHeader" }
+    ],
+
+    "Jobsummary": [
+        {
+            "id": 1,
+            "truck": 22,
+            "load": 3,
+            "tons": 60.8,
+            "am6": "pending",
+            "am8": "load",
+            "am10": "deliver",
+            "nn12": "load",
+            "pm2": "load",
+            "pm4": "deliver",
+            "pm6": "pending",
+            "pm8": "deliver",
+            "pm10": "deliver"
+        },
+        {
+            "id": 2,
+            "truck": 23,
+            "load": 4,
+            "tons": 60.3,
+            "am6": "load",
+            "am8": "deliver",
+            "am10": "load",
+            "nn12": "pending",
+            "pm2": "load",
+            "pm4": "pending",
+            "pm6": "deliver",
+            "pm8": "load",
+            "pm10": "deliver"
+        },
+        {
+            "id": 3,
+            "truck": 56,
+            "load": 2,
+            "tons": 60.1,
+            "am6": "pending",
+            "am8": "load",
+            "am10": "load",
+            "nn12": "deliver",
+            "pm2": "pending",
+            "pm4": "load",
+            "pm6": "deliver",
+            "pm8": "pending",
+            "pm10": "deliver"
+        },
+        {
+            "id": 4,
+            "truck": 77,
+            "load": 3,
+            "tons": 60.3,
+            "am6": "load",
+            "am8": "deliver",
+            "am10": "load",
+            "nn12": "deliver",
+            "pm2": "load",
+            "pm4": "pending",
+            "pm6": "deliver",
+            "pm8": "load",
+            "pm10": "deliver"
+        },
+        {
+            "id": 5,
+            "truck": 81,
+            "load": 2,
+            "tons": 60.2,
+            "am6": "pending",
+            "am8": "load",
+            "am10": "deliver",
+            "nn12": "pending",
+            "pm2": "load",
+            "pm4": "deliver",
+            "pm6": "load",
+            "pm8": "deliver",
+            "pm10": "pending"
+        }
+    ],
+    "JobTotal": {
+        "loads": 16,
+        "tons": 320.7
+    },
+    "Jobsummarydetails": [
+        {
+            "id": 1,
+            "loadTime": "6:00 AM",
+            "truck": "111",
+            "loadTicket": "10012",
+            "deliveryTime": "7:30 AM",
+            "deliveryTicket": "100340",
+            "cycleTime": "1:45",
+            "quantity": "20.1"
+        },
+        {
+            "id": 2,
+            "loadTime": "8:00 AM",
+            "truck": "116",
+            "loadTicket": "10022",
+            "deliveryTime": "8:23 AM",
+            "deliveryTicket": "100223",
+            "cycleTime": "1:50",
+            "quantity": "20.2"
+        },
+        {
+            "id": 3,
+            "loadTime": "7:10 AM",
+            "truck": "142",
+            "loadTicket": "10029",
+            "deliveryTime": "7:34 AM",
+            "deliveryTicket": "100101",
+            "cycleTime": "1:43",
+            "quantity": "20.6"
+        },
+        {
+            "id": 4,
+            "loadTime": "6:04 AM",
+            "truck": "115",
+            "loadTicket": "10018",
+            "deliveryTime": "7:28 AM",
+            "deliveryTicket": "100152",
+            "cycleTime": "1:51",
+            "quantity": "20.8"
+        }
+    ],
+    "Detailcolumns": [
+        {
+            "field": "loadTime",
+            "headerName": "Load Time",
+            "flex": 1
+        },
+        {
+            "field": "truck",
+            "headerName": "Truck",
+            "flex": 1
+        },
+        {
+            "field": "loadTicket",
+            "headerName": "Load Ticket",
+            "flex": 1
+        },
+        {
+            "field": "deliveryTime",
+            "headerName": "Delivery Time",
+            "flex": 1
+        },
+        {
+            "field": "deliveryTicket",
+            "headerName": "Delivery Ticket",
+            "flex": 1
+        },
+        {
+            "field": "cycleTime",
+            "headerName": "Cycle Time",
+            "flex": 1
+        },
+        {
+            "field": "quantity",
+            "headerName": "Quantity",
+            "flex": 1
+        }
+    ]
 }
