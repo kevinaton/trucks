@@ -2971,7 +2971,7 @@ namespace DispatcherWeb.Orders
         {
             input.Date = input.Date.Date;
 
-            var items = await GetOrderSummaryReportQuery(input).GetOrderSummaryReportItems(await SettingManager.GetShiftDictionary(), _orderTaxCalculator);
+            var items = await GetOrderSummaryReportQuery(input).GetOrderSummaryReportItems(await SettingManager.GetShiftDictionary(), _orderTaxCalculator, SettingManager);
 
             var data = new OrderSummaryReportDto
             {
