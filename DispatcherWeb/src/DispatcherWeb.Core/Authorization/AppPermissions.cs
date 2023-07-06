@@ -14,7 +14,8 @@
             AppPermissions.Pages_Imports_Trucks,
             AppPermissions.Pages_Imports_Vendors,
             AppPermissions.Pages_Imports_Services,
-            AppPermissions.Pages_Imports_Employees
+            AppPermissions.Pages_Imports_Employees,
+            AppPermissions.Pages_DriverApplication_ReactNativeDriverApp
         };
 
         //COMMON PERMISSIONS (FOR BOTH OF TENANTS AND HOST)
@@ -163,6 +164,8 @@
 
         public const string Pages_DriverMessages = "Pages.DriverMessages";
         public const string Pages_DriverApplication = "Pages.DriverApplication";
+        public const string Pages_DriverApplication_WebBasedDriverApp = "Pages.DriverApplication.WebBasedDriverApp";
+        public const string Pages_DriverApplication_ReactNativeDriverApp = "Pages.DriverApplication.ReactNativeDriverApp";
         public const string Pages_DriverApplication_Settings = "Pages.DriverApplication.Settings";
         public const string Pages_Dispatches = "Pages.Dispatches";
         public const string Pages_Dispatches_Edit = "Pages.Dispatches.Edit";

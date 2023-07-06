@@ -41,6 +41,16 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             _configuration = env.GetAppConfiguration();
         }
 
+        public IActionResult ReactNative()
+        {
+            return Redirect(_configuration["App:DriverApplication3Uri"]);
+        }
+
+        public IActionResult PWA()
+        {
+            return Redirect(_configuration["App:DriverApplicationUri"]);
+        }
+
         public ActionResult Index()
         {
             //todo: use per-tenant setting instead, with a fallback to an application wide setting.
