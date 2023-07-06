@@ -1,12 +1,31 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
-import { GET_SCHEDULE_TRUCKS, GET_SCHEDULE_ORDERS } from './actionTypes';
 import { 
+    GET_PAGE_CONFIG,
+    GET_SCHEDULE_TRUCKS, 
+    GET_SCHEDULE_ORDERS 
+} from './actionTypes';
+import { 
+    getSchedulePageConfigSuccess,
+    getSchedulePageConfigFailure,
     getScheduleTrucksSuccess, 
     getScheduleTrucksFailure, 
     getScheduleOrdersSuccess, 
     getScheduleOrdersFailure 
 } from './actions';
-import { getScheduleTrucks, getScheduleOrders } from './service';
+import { 
+    getPageConfig,
+    getScheduleTrucks, 
+    getScheduleOrders 
+} from './service';
+
+function* fetchPageConfig() {
+    try {
+        const response = yield call(getPageConfig);
+        yield put(getSchedulePageConfigSuccess(response));
+    } catch (error) {
+        yield put(getSchedulePageConfigFailure(error));
+    }
+}
 
 function* fetchScheduleTrucks({ payload: filter }) {
     try {
@@ -27,6 +46,7 @@ function* fetchScheduleOrders({ payload: filter }) {
 }
 
 function* schedulingSaga() {
+    yield takeEvery(GET_PAGE_CONFIG, fetchPageConfig);
     yield takeEvery(GET_SCHEDULE_TRUCKS, fetchScheduleTrucks);
     yield takeEvery(GET_SCHEDULE_ORDERS, fetchScheduleOrders);
 }

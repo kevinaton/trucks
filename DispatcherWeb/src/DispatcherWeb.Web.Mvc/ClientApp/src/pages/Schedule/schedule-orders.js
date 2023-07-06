@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
+import { 
     Box,
     Checkbox,
     Chip,
@@ -24,18 +24,21 @@ import { linearProgressClasses } from '@mui/material/LinearProgress';
 import { Tablecell, VerticalLinearProgress } from '../../components/DTComponents';
 import { theme } from '../../Theme';
 import _, { isEmpty } from 'lodash';
-import {
-    getScheduleOrders
-} from '../../store/actions';
+import { renderTime, isToday, round } from '../../helpers/misc_helper';
+import { getScheduleOrders } from '../../store/actions';
+import TruckAssignment from './truck-assignment';
+
+import App from '../../config/appConfig';
 
 // to remove later
 // import data from '../../common/data/data.json';
 // const { ScheduleData } = data;
 
 const ScheduleOrders = ({
-    dataFilter
+    pageConfig,
+    dataFilter,
+    trucks
 }) => {
-    console.log('ScheduleOrders')
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
     const [scheduleData, setScheduleData] = useState(null);
@@ -45,6 +48,7 @@ const ScheduleOrders = ({
     const [isOrderOpen, setIsOrderOpen] = useState(false);
     const [isPrintOrderOpen, setIsPrintOrderOpen] = useState(false);
     const [hoveredRow, setHoveredRow] = useState(null);
+
     const [isJob, setJob] = useState(false);
     const [title, setTitle] = useState('Add Job');
     const [editData, setEditData] = useState({});
@@ -55,16 +59,6 @@ const ScheduleOrders = ({
     } = useSelector((state) => ({
         scheduleOrders: state.SchedulingReducer.scheduleOrders
     }));
-
-    // useEffect(() => {
-    //     if (!isEmpty(dataFilter) && scheduleData === null && !isLoading) {
-    //         const { officeId, date } = dataFilter;
-    //         if (officeId !== null && date !== null) {
-    //             setLoading(true);
-    //             dispatch(getScheduleOrders(dataFilter));
-    //         }
-    //     }
-    // }, [dispatch, isLoading, dataFilter, scheduleData]);
 
     useEffect(() => {
         if (isLoading && 
@@ -142,6 +136,126 @@ const ScheduleOrders = ({
         console.log(data);
     };
 
+    const getPriorityLevel = (data) => {
+        const { priority } = data;
+        if (priority === 1) {
+            return <i className='fa-solid fa-circle-arrow-up error-icon'></i>;
+        } else if (priority === 2) {
+            return <i className='fa-regular fa-circle success-icon'></i>;
+        }
+        return <i className='fa-solid fa-circle-arrow-down secondary-icon'></i>;
+    }
+
+    const renderProgress = (data) => {
+        if (data.isCancelled) {
+            return 'Cancel';
+        }
+
+        if (dataFilter.hideProgressBar || !isToday(dataFilter.date)) {
+            return '';
+        }
+
+        let shouldRenderProgressBar = true;
+        let shouldShowNumberOfLoads = false;
+
+        let designationIsFreightOnly = App.Enums.Designations.freightOnly.includes(data.designation);
+        let designationHasMaterial = App.Enums.Designations.hasMaterial.includes(data.designation);
+        let amountPercent = 0;
+        let amountOrdered = data.amountOrdered || 0;
+        let amountLoaded = data.amountLoaded || 0;
+        let amountDelivered = data.amountDelivered || 0;
+
+        if (!designationHasMaterial && !designationIsFreightOnly) {
+            // if the designation is anything else, do not show the progress bar. 
+            // only show the number of loads in the cell. Display the quantities based on the UOM on hover.
+            shouldRenderProgressBar = false;
+            shouldShowNumberOfLoads = true;
+        }
+
+        if (!amountOrdered) {
+            // order quantity is not specified, then the % complete can’t be calculated. 
+            // show the number of loads in the column, but don’t show the progress bar.
+            shouldRenderProgressBar = false;
+            shouldShowNumberOfLoads = true;
+        }
+
+        if (designationIsFreightOnly) {
+            switch ((data.freightUom || '').toLowerCase()) {
+                case 'hour':
+                case 'hours':
+                    shouldRenderProgressBar = false;
+                    shouldShowNumberOfLoads = true;
+                    //amountLoaded = round(full.hoursOnDispatchesLoaded);
+                    //amountDelivered = round(full.hoursOnDispatches);
+                    break;
+                default: break;
+            }
+        }
+
+        if (shouldRenderProgressBar) {
+            amountPercent = round(amountDelivered / amountOrdered * 100);
+        }
+
+        if (isNaN(amountPercent) || amountPercent === null) {
+            amountPercent = 0;
+        }
+
+        if (isNaN(amountLoaded) || amountLoaded === null) {
+            amountLoaded = 0;
+        }
+
+        if (isNaN(amountDelivered) || amountDelivered === null) {
+            amountDelivered = 0;
+        }
+
+        if (data.cargoCapacityRequiredError) {
+            shouldRenderProgressBar = false;
+            shouldShowNumberOfLoads = true;
+            //return getCargoCapacityErrorIcon(full.cargoCapacityRequiredError);
+        }
+
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                }}
+            >
+                {shouldRenderProgressBar && 
+                    <Box>
+                        <VerticalLinearProgress
+                            variant='determinate'
+                            color='secondary'
+                            value={amountPercent}
+                            sx={{
+                                [`& .${linearProgressClasses.bar}`]:
+                                    {
+                                        transform: `translateY(${-amountPercent}%)!important`,
+                                    },
+                            }}
+                        />
+                        <Typography variant='caption'>{`${amountPercent}%`}</Typography>
+                    </Box>
+                }
+
+                {/* <Box>
+                    <VerticalLinearProgress
+                        variant='determinate'
+                        color='secondary'
+                        value={data.schedProgress}
+                        sx={{
+                            [`& .${linearProgressClasses.bar}`]:
+                                {
+                                    transform: `translateY(${-data.schedProgress}%)!important`,
+                                },
+                        }}
+                    />
+                    <Typography variant='caption'>{`${data.schedProgress}%`}</Typography>
+                </Box> */}
+            </Box>
+        );
+    };
+
     const renderHeader = () => (
         <TableHead>
             <TableRow
@@ -164,7 +278,8 @@ const ScheduleOrders = ({
                 <Tablecell label='Job Number' value='Job #' />
                 <Tablecell
                     label='Time on job'
-                    value={<i className='fa-regular fa-clock'></i>}
+                    value='Time on job'
+                    // value={<i className='fa-regular fa-clock'></i>}
                 />
                 <Tablecell label='Load at' value='Load At' />
                 <Tablecell label='Deliver to' value='Deliver To' />
@@ -181,16 +296,6 @@ const ScheduleOrders = ({
         </TableHead>
     );
 
-    const getPriorityLevel = (data) => {
-        const { priority } = data;
-        if (priority === 1) {
-            return <i className='fa-solid fa-circle-arrow-up error-icon'></i>;
-        } else if (priority === 2) {
-            return <i className='fa-regular fa-circle success-icon'></i>;
-        }
-        return <i className='fa-solid fa-circle-arrow-down secondary-icon'></i>;
-    }
-
     return (
         <TableContainer component={Box}>
             <Table stickyHeader aria-label='schedule table' size='small'>
@@ -200,8 +305,8 @@ const ScheduleOrders = ({
                     {!isEmpty(scheduleData) && scheduleData.map((data, index) => {
                         return (
                             <React.Fragment key={index}>
-                                <TableRow
-                                    hover={true}
+                                <TableRow 
+                                    hover={true} 
                                     onMouseEnter={() => handleRowHover(index)}
                                     onMouseLeave={() => handleRowLeave}
                                     sx={{
@@ -220,17 +325,24 @@ const ScheduleOrders = ({
                                     />
                                     <Tablecell
                                         label='Cash on delivery'
-                                        value={<Checkbox checked={data.customerIsCod} />}
+                                        value={<Checkbox disabled checked={data.customerIsCod} />}
                                     />
                                     <Tablecell
                                         label='Notes'
                                         value={
-                                            <i className='fa-regular fa-notebook icon'></i>
+                                            <i className={`${data.note !== null && data.note !== '' ? 'fa-solid' : 'fa-regular'} fa-notebook icon`}></i>
                                         }
                                     />
                                     <Tablecell label='Customer' value={data.customerName} />
                                     <Tablecell label='Job number' value={data.jobNumber} />
-                                    <Tablecell label='Time on job' value={data.time} />
+                                    <Tablecell 
+                                        label='Time on job' 
+                                        value={
+                                            <>
+                                                {renderTime(data.time, '')} {data.isTimeStaggered ? <span class="far fa-clock staggered-icon pull-right" title="Staggered"></span> : null}
+                                            </>
+                                        } 
+                                    />
                                     <Tablecell label='Load at' value={data.loadAtNamePlain} />
                                     <Tablecell
                                         label='Deliver to'
@@ -244,46 +356,11 @@ const ScheduleOrders = ({
                                     />
                                     <Tablecell
                                         label='Progress'
-                                        value={
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                }}>
-                                                <Box>
-                                                    <VerticalLinearProgress
-                                                        variant='determinate'
-                                                        color='secondary'
-                                                        value={data.amountProgress}
-                                                        sx={{
-                                                            [`& .${linearProgressClasses.bar}`]:
-                                                                {
-                                                                    transform: `translateY(${-data.amountProgress}%)!important`,
-                                                                },
-                                                        }}
-                                                    />
-                                                    <Typography variant='caption'>{`${data.amountProgress}%`}</Typography>
-                                                </Box>
-                                                <Box>
-                                                    <VerticalLinearProgress
-                                                        variant='determinate'
-                                                        color='secondary'
-                                                        value={data.schedProgress}
-                                                        sx={{
-                                                            [`& .${linearProgressClasses.bar}`]:
-                                                                {
-                                                                    transform: `translateY(${-data.schedProgress}%)!important`,
-                                                                },
-                                                        }}
-                                                    />
-                                                    <Typography variant='caption'>{`${data.schedProgress}%`}</Typography>
-                                                </Box>
-                                            </Box>
-                                        }
+                                        value={renderProgress(data)}
                                     />
                                     <Tablecell
                                         label='Closed'
-                                        value={<Checkbox checked={data.isClosed} />}
+                                        value={<Checkbox disabled checked={data.isClosed} />}
                                     />
                                     <Tablecell
                                         label='Action'
@@ -448,96 +525,116 @@ const ScheduleOrders = ({
                                     />
                                 </TableRow>
 
-                                { data.trucks.length > 0 && 
-                                    <TableRow
-                                        hover={true}
-                                        onMouseEnter={() => handleRowHover(index)}
-                                        onMouseLeave={() => handleRowLeave}
-                                        sx={{
-                                            backgroundColor:
-                                                hoveredRow === index
-                                                    ? theme.palette.action.hover
-                                                    : '#ffffff',
-                                            '&.MuiTableRow-root:hover': {
-                                                backgroundColor: theme.palette.action.hover,
-                                            },
-                                        }}
-                                    >
-                                        <Tablecell
-                                            label='Trucks'
-                                            colSpan={14}
-                                            value={
-                                                <Box>
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            alignContent: 'center',
-                                                            mb: 1,
-                                                        }}
+                                <TableRow
+                                    hover={true}
+                                    onMouseEnter={() => handleRowHover(index)}
+                                    onMouseLeave={() => handleRowLeave}
+                                    sx={{
+                                        backgroundColor:
+                                            hoveredRow === index
+                                                ? theme.palette.action.hover
+                                                : '#ffffff',
+                                        '&.MuiTableRow-root:hover': {
+                                            backgroundColor: theme.palette.action.hover,
+                                        },
+                                    }}
+                                >
+                                    <Tablecell
+                                        label='Trucks'
+                                        colSpan={14}
+                                        value={
+                                            <Box>
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignContent: 'center',
+                                                        mb: 1,
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant='subtitle2'
+                                                        sx={{ mr: 1 }}
                                                     >
-                                                        <Typography
-                                                            variant='subtitle2'
-                                                            sx={{ mr: 1 }}
-                                                        >
-                                                            Trucks assigned
-                                                        </Typography>
-                                                        <Typography
-                                                            sx={{
-                                                                px: 1,
-                                                                w: '10px',
-                                                                h: '10px',
-                                                                textAlign: 'center',
-                                                                backgroundColor:
-                                                                    theme.palette.grey[200],
-                                                                borderRadius: 80,
-                                                            }}
-                                                            variant='subtitle2'
-                                                        >
-                                                            {data.trucks.length}
-                                                        </Typography>
-                                                    </Box>
-
-                                                    <Grid
+                                                        Trucks assigned
+                                                    </Typography>
+                                                    <Typography
                                                         sx={{
+                                                            px: 1,
+                                                            w: '10px',
+                                                            h: '10px',
+                                                            textAlign: 'center',
                                                             backgroundColor:
-                                                                theme.palette.background
-                                                                    .paper,
-                                                            borderRadius: 1,
-                                                            border: '1px solid #ebedf2',
-                                                            pb: 1,
-                                                            m: 0,
+                                                                theme.palette.grey[200],
+                                                            borderRadius: 80,
                                                         }}
-                                                        container
-                                                        rowSpacing={1}
-                                                        columnSpacing={1}
+                                                        variant='subtitle2'
                                                     >
-                                                        {data.trucks.map((truck, index) => {
-                                                            return (
-                                                                <Grid item key={index}>
-                                                                    <Chip
-                                                                        label={truck.name}
-                                                                        onClick={() => {}}
-                                                                        onDelete={() => {}}
-                                                                        variant={
-                                                                            truck.variant
-                                                                        }
-                                                                        color={truck.color}
-                                                                        sx={{
-                                                                            borderRadius: 0,
-                                                                            fontSize: 10,
-                                                                            fontWeight: 500,
-                                                                            p: 0,
-                                                                        }}
-                                                                    />
-                                                                </Grid>
-                                                            );
-                                                        })}
-                                                    </Grid>
+                                                        {data.trucks.length}
+                                                    </Typography>
                                                 </Box>
-                                            }
-                                        />
-                                    </TableRow>
-                                }
+
+                                                <Grid
+                                                    sx={{
+                                                        backgroundColor: theme.palette.background.paper,
+                                                        borderRadius: 1,
+                                                        border: '1px solid #ebedf2',
+                                                        pb: 1,
+                                                        m: 0,
+                                                    }}
+                                                    container
+                                                    rowSpacing={1}
+                                                    columnSpacing={1}
+                                                >
+                                                    {data.trucks.map((truck, index) => {
+                                                        return (
+                                                            <Grid item key={index}>
+                                                                <Chip
+                                                                    label={truck.name}
+                                                                    onClick={() => {}}
+                                                                    onDelete={null}
+                                                                    variant={truck.variant}
+                                                                    color={truck.color}
+                                                                    sx={{
+                                                                        borderRadius: 0,
+                                                                        fontSize: 10,
+                                                                        fontWeight: 500,
+                                                                        p: 0,
+                                                                    }}
+                                                                />
+                                                            </Grid>
+                                                        );
+                                                    })}
+
+                                                    <Grid item>
+                                                        <Chip
+                                                            label='Test'
+                                                            onClick={() => {}}
+                                                            onDelete={() => {}}
+                                                            variant='success'
+                                                            color='success'
+                                                            sx={{
+                                                                borderRadius: 0,
+                                                                fontSize: 10,
+                                                                fontWeight: 500,
+                                                                p: 0,
+                                                            }}
+                                                        />
+                                                    </Grid>
+
+                                                    <Grid item>
+                                                        {!isEmpty(trucks) && 
+                                                            <TruckAssignment 
+                                                                trucks={trucks} 
+                                                                index={index}
+                                                                data={data} 
+                                                            />
+                                                        }
+                                                    </Grid>
+                                                </Grid>
+                                            </Box>
+                                        }
+                                    />
+                                </TableRow>
                             </React.Fragment>
                         );
                     })}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import {
     Box,
@@ -14,14 +14,15 @@ import SchedulingDataFilter from './scheduling-data-filter';
 import TruckMap from './truck-map';
 import ScheduleOrders from './schedule-orders';
 import { isEmpty } from 'lodash';
+import { getSchedulePageConfig } from '../../store/actions';
 
 const Schedule = props => {
     const pageName = 'Schedule';
+    const [pageConfig, setPageConfig] = useState(null);
     const [view, setView] = useState('all');
     const [isJob, setJob] = useState(false);
     const [title, setTitle] = useState('Add Job');
     const [editData, setEditData] = useState({});
-
     const [dataFilter, setDataFilter] = useState({
         officeId: null,
         date: moment().format('MM/DD/YYYY'),
@@ -29,14 +30,33 @@ const Schedule = props => {
         hideProgressBar: false,
         sorting: 'Note'
     });
+    const [trucks, setTrucks] = useState([]);
 
-    const { userProfileMenu } = useSelector((state) => ({
-        userProfileMenu: state.UserReducer.userProfileMenu
+    const dispatch = useDispatch();
+    const { 
+        userProfileMenu,
+        schedulePageConfig
+    } = useSelector((state) => ({
+        userProfileMenu: state.UserReducer.userProfileMenu,
+        schedulePageConfig: state.SchedulingReducer.schedulePageConfig
     }));
 
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);
+
+    useEffect(() => {
+        dispatch(getSchedulePageConfig());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (pageConfig === null && !isEmpty(schedulePageConfig) && !isEmpty(schedulePageConfig.result)) {
+            const { result } = schedulePageConfig;
+            if (!isEmpty(result)) {
+                setPageConfig(result);
+            }
+        }
+    }, [schedulePageConfig, pageConfig]);
 
     useEffect(() => {
         if (dataFilter.officeId === null && 
@@ -48,6 +68,8 @@ const Schedule = props => {
             });
         }
     }, [userProfileMenu, dataFilter]);
+
+    const onSetTrucks = data => setTrucks(data);
 
     // Handle toggle button at the top right
     const handleView = (event, newView) => {
@@ -108,10 +130,19 @@ const Schedule = props => {
                     />
                     
                     {/* List of trucks */}
-                    <TruckMap dataFilter={dataFilter} />
+                    <TruckMap 
+                        pageConfig={pageConfig}
+                        dataFilter={dataFilter} 
+                        trucks={trucks} 
+                        onSetTrucks={onSetTrucks}
+                    />
 
                     {/* List of schedule orders */}
-                    <ScheduleOrders dataFilter={dataFilter} />
+                    <ScheduleOrders 
+                        pageConfig={pageConfig}
+                        dataFilter={dataFilter} 
+                        trucks={trucks}
+                    />
                 </Paper>
             </div>
         </HelmetProvider>

@@ -8,7 +8,6 @@ import { ThemeProvider } from '@mui/material';
 import { theme } from './Theme';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-
 import store from './store';
 
 // Apply options globally to all Mobiscroll components

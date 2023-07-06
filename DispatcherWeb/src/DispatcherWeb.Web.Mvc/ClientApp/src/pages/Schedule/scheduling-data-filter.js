@@ -162,11 +162,11 @@ const SchedulingDataFilter = ({
                             sx={{ flexShrink: 1, m: 0 }}
                         />
 
-                        <FormControlLabel
+                        {/* <FormControlLabel
                             control={<Checkbox />}
                             label='Hide Schedule Progress'
                             sx={{ flexShrink: 1, m: 0 }}
-                        />
+                        /> */}
 
                         <FormControlLabel
                             control={

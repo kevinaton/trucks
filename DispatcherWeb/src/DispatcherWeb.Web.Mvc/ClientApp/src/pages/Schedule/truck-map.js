@@ -8,101 +8,51 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import _, { isEmpty } from 'lodash';
-import { 
-    checkIfEnabled,
-    getUserSettingByName, 
-    getScheduleTrucks 
-} from '../../store/actions';
+import { getScheduleTrucks } from '../../store/actions';
 
 const TruckMap = ({
-    dataFilter
+    pageConfig,
+    dataFilter,
+    trucks,
+    onSetTrucks
 }) => {
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
-    const [validateUtilization, setValidateUtilization] = useState({
-        settingsKey: 'App.DispatchingAndMessaging.ValidateUtilization',
-        isEnabled: null
-    });
-    const [leaseHaulers, setLeaseHaulers] = useState({
-        feature: 'App.AllowLeaseHaulersFeature',
-        isEnabled: null
-    });
-    const [trucks, setTrucks] = useState([]);
+    const [validateUtilization, setValidateUtilization] = useState(null);
+    const [leaseHaulers, setLeaseHaulers] = useState(null);
 
     const dispatch = useDispatch();
     const { 
-        feature,
-        userSettings, 
         scheduleTrucks 
     } = useSelector((state) => ({
-        feature: state.FeatureReducer.feature,
-        userSettings: state.UserReducer.userSettings,
         scheduleTrucks: state.SchedulingReducer.scheduleTrucks,
     }));
 
     useEffect(() => {
-        if (validateUtilization.isEnabled === null) {
-            dispatch(getUserSettingByName(validateUtilization.settingsKey));
-        }
-    }, [dispatch, validateUtilization]);
-
-    useEffect(() => {
-        if (leaseHaulers.isEnabled === null) {
-            dispatch(checkIfEnabled(leaseHaulers.feature));
-        }
-    }, [dispatch, leaseHaulers]);
-    
-    useEffect(() => {
-        if (!isEmpty(userSettings) && !isEmpty(userSettings.result)) {
-            const { name, value } = userSettings.result;
-            if (validateUtilization.isEnabled === null && name === validateUtilization.settingsKey) {
-                setValidateUtilization({
-                    ...validateUtilization,
-                    isEnabled: Boolean(value)
-                });
+        if (!isEmpty(pageConfig)) {
+            if (validateUtilization === null) {
+                setValidateUtilization(pageConfig.settings.validateUtilization);
+            }
+            
+            if (leaseHaulers === null) {
+                setLeaseHaulers(pageConfig.features.leaseHaulers);
             }
         }
-    }, [userSettings, validateUtilization]);
-
-    useEffect(() => {
-        if (!isEmpty(feature) && !isEmpty(feature.result)) {
-            const { name, value } = feature.result;
-            if (leaseHaulers.isEnabled === null && name === leaseHaulers.feature) {
-                setLeaseHaulers({
-                    ...leaseHaulers,
-                    isEnabled: value
-                });
-            }
-        }
-    }, [feature, leaseHaulers]);
-
-    // useEffect(() => {
-    //     if (!isEmpty(dataFilter) && isEmpty(trucks) && !isLoading) {
-    //         const { officeId, date } = dataFilter;
-    //         if (officeId !== null && date !== null) {
-    //             setLoading(true);
-    //             dispatch(getScheduleTrucks({
-    //                 officeId,
-    //                 date: date
-    //             }));
-    //         }
-    //     }
-    // }, [dispatch, isLoading, dataFilter, trucks]);
+    }, [pageConfig, validateUtilization, leaseHaulers]);
     
     useEffect(() => {
-        if (isLoading && 
-            !isEmpty(scheduleTrucks) && 
-            !isEmpty(scheduleTrucks.result)
+        if (!isEmpty(pageConfig) && isLoading && 
+            !isEmpty(scheduleTrucks) && !isEmpty(scheduleTrucks.result)
         ) {
             const { items } = scheduleTrucks.result;
             if (!isEmpty(items) && (
                 isEmpty(trucks) || (!isEmpty(trucks) && !_.isEqual(trucks, items))
             )) {
-                setTrucks(items);
+                onSetTrucks(items);
                 setLoading(false);
             }
         }
-    }, [isLoading, scheduleTrucks, trucks]);
+    }, [pageConfig, isLoading, scheduleTrucks, trucks, onSetTrucks]);
 
     useEffect(() => {
         // check if dataFilter has changed from its previous state
@@ -161,14 +111,14 @@ const TruckMap = ({
         }
 
         if (truckHasNoDriver(truck) && 
-            (leaseHaulers.isEnabled || truckCategoryNeedsDriver(truck))) {
+            (leaseHaulers || truckCategoryNeedsDriver(truck))) {
             return {
                 ...defaultColor,
                 backgroundColor: '#0288d1' // blue
             };
         }
 
-        if (validateUtilization.isEnabled) {
+        if (validateUtilization) {
             if (truck.utilization >= 1) {
                 return {
                     ...defaultColor,
@@ -267,24 +217,6 @@ const TruckMap = ({
                                 }}
                             />
                         </Grid>
-
-                        {/* {TruckCode.map((truck) => {
-                            return (
-                                <Grid item key={truck.label}>
-                                    <Chip
-                                        label={truck.label}
-                                        color={truck.color}
-                                        onClick={() => {}}
-                                        sx={{
-                                            borderRadius: 0,
-                                            fontSize: 18,
-                                            fontWeight: 600,
-                                            py: 3,
-                                        }}
-                                    />
-                                </Grid>
-                            );
-                        })} */}
                     </Grid>
                 </Paper>
             </Box>
