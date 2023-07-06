@@ -2904,6 +2904,7 @@ namespace DispatcherWeb.Orders
                 x.ShowSignatureColumn = showSignatureColumn;
                 x.ShowTruckCategories = showTruckCategories;
                 x.CurrencyCulture = currentCulture;
+                x.DebugLayout = input.DebugLayout;
             });
 
             if (input.ShowDeliveryInfo)

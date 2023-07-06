@@ -104,20 +104,22 @@ namespace DispatcherWeb.Orders.Reports
                     await _orderTaxCalculator.CalculateTotalsAsync(model, model.Items);
                 }
 
-                if (model.LogoPath != null)
+                Table table = document.LastSection.AddTable();
+                if (model.DebugLayout)
                 {
-                    var logo = section.AddImage(model.LogoPath);
-                    logo.Height = Unit.FromCentimeter(3.2);
-                    //logo.Width = Unit.FromCentimeter(4.5);
-                    logo.LockAspectRatio = true;
-                    logo.RelativeVertical = RelativeVertical.Page;
-                    logo.RelativeHorizontal = RelativeHorizontal.Page;
-                    logo.WrapFormat.Style = WrapStyle.Through;
-                    logo.WrapFormat.DistanceLeft = Unit.FromCentimeter(15.5);
-                    logo.WrapFormat.DistanceTop = Unit.FromCentimeter(1.2);
+                    table.Borders.Width = Unit.FromPoint(1);
                 }
 
-                paragraph = document.LastSection.AddParagraph(model.UseReceipts ? "Receipt" : model.ShowDeliveryInfo ? "Delivery Report" : model.OrderIsPending ? "Quote" : "Work Order");
+                //text
+                table.AddColumn(Unit.FromCentimeter(13));
+                //logo
+                table.AddColumn(Unit.FromCentimeter(4.21));
+
+                int j = 0;
+                Row row = table.AddRow();
+                Cell cell = row.Cells[j++];
+                
+                paragraph = cell.AddParagraph(model.UseReceipts ? "Receipt" : model.ShowDeliveryInfo ? "Delivery Report" : model.OrderIsPending ? "Quote" : "Work Order");
                 paragraph.Format.Font.Size = Unit.FromPoint(18);
                 paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.7);
 
@@ -156,15 +158,15 @@ namespace DispatcherWeb.Orders.Reports
                     document.LastSection.AddParagraph("Authorized " + date);
                 }
 
-                paragraph = document.LastSection.AddParagraph("Order Number: " + model.Id);
+                paragraph = cell.AddParagraph("Order Number: " + model.Id);
 
                 if (model.ShowSpectrumNumber)
                 {
-                    paragraph = document.LastSection.AddParagraph(model.SpectrumNumberLabel + ": "); //Spectrum #
+                    paragraph = cell.AddParagraph(model.SpectrumNumberLabel + ": "); //Spectrum #
                     paragraph.AddText(model.SpectrumNumber ?? "");
                 }
 
-                paragraph = document.LastSection.AddParagraph("Account #: ");
+                paragraph = cell.AddParagraph("Account #: ");
                 paragraph.AddText(model.CustomerAccountNumber ?? "");
                 if (model.ShowOfficeName)
                 {
@@ -174,7 +176,7 @@ namespace DispatcherWeb.Orders.Reports
                     paragraph.AddText(model.OfficeName ?? "");
                 }
 
-                paragraph = document.LastSection.AddParagraph("Delivery Date: ");
+                paragraph = cell.AddParagraph("Delivery Date: ");
                 paragraph.AddText(model.OrderDeliveryDate?.ToShortDateString() ?? "");
 
                 if (model.OrderShift.HasValue)
@@ -185,18 +187,18 @@ namespace DispatcherWeb.Orders.Reports
                     paragraph.AddText(model.OrderShiftName);
                 }
 
-                paragraph = document.LastSection.AddParagraph("Customer: ");
+                paragraph = cell.AddParagraph("Customer: ");
                 paragraph.AddText(model.CustomerName ?? "");
 
-                paragraph = document.LastSection.AddParagraph("Contact: ");
+                paragraph = cell.AddParagraph("Contact: ");
                 paragraph.AddText(model.ContactFullDetails ?? "");
 
-                paragraph = document.LastSection.AddParagraph("PO Number: ");
+                paragraph = cell.AddParagraph("PO Number: ");
                 paragraph.AddText(model.PoNumber ?? "");
 
                 if (!model.HidePrices && model.SplitRateColumn)
                 {
-                    paragraph = document.LastSection.AddParagraph("Material Total: ");
+                    paragraph = cell.AddParagraph("Material Total: ");
                     paragraph.AddText(model.MaterialTotal.ToString("C2", model.CurrencyCulture) ?? "");
                     paragraph.Format.AddTabStop(secondColumnMargin);
                     paragraph.AddTab();
@@ -206,7 +208,7 @@ namespace DispatcherWeb.Orders.Reports
 
                 if (!model.HidePrices)
                 {
-                    paragraph = document.LastSection.AddParagraph("Sales Tax: ");
+                    paragraph = cell.AddParagraph("Sales Tax: ");
 
                     if (taxWarning.IsNullOrEmpty())
                     {
@@ -223,30 +225,42 @@ namespace DispatcherWeb.Orders.Reports
                     paragraph.AddText(model.CodTotal.ToString("C2", model.CurrencyCulture) ?? "");
                 }
 
-                paragraph = document.LastSection.AddParagraph("Charge To: ");
+                paragraph = cell.AddParagraph("Charge To: ");
                 paragraph.AddText(model.ChargeTo ?? "");
 
                 if (model.UseActualAmount) //this flag is set to true for backoffice reports
                 {
-                    paragraph = document.LastSection.AddParagraph("Trucks: ");
+                    paragraph = cell.AddParagraph("Trucks: ");
                     paragraph.AddText(JoinTrucks(model.GetNonLeasedTrucks(), model.ShowDriverNamesOnPrintedOrder));
                     var leasedTrucks = model.GetLeasedTrucks();
                     if (leasedTrucks.Any())
                     {
-                        paragraph = document.LastSection.AddParagraph("Lease Hauler Trucks: ");
+                        paragraph = cell.AddParagraph("Lease Hauler Trucks: ");
                         paragraph.AddText(JoinTrucks(leasedTrucks, model.ShowDriverNamesOnPrintedOrder));
                     }
                     paragraph.Format.SpaceAfter = Unit.FromCentimeter(1);
                 }
                 else
                 {
-                    paragraph = document.LastSection.AddParagraph("Trucks: ");
+                    paragraph = cell.AddParagraph("Trucks: ");
                     paragraph.AddText(JoinTrucks(model.GetAllTrucks(), model.ShowDriverNamesOnPrintedOrder));
                     paragraph.Format.SpaceAfter = Unit.FromCentimeter(1);
                 }
 
+                cell = row.Cells[j++];
+                if (model.LogoPath != null)
+                {
+                    paragraph = cell.AddParagraph();
+                    var logo = paragraph.AddImage(model.LogoPath);
+                    //logo.Height = Unit.FromCentimeter(3.2);
+                    logo.Width = Unit.FromCentimeter(4.21);
+                    logo.LockAspectRatio = true;
+                    //cell.Format.Alignment = ParagraphAlignment.Left; //default
+                    paragraph.Format.Alignment = ParagraphAlignment.Right;
+                }
 
-                Table table = document.LastSection.AddTable();
+
+                table = document.LastSection.AddTable();
                 table.Style = "Table";
                 table.Borders.Width = Unit.FromPoint(1);
                 var tm = new TextMeasurement(document.Styles["Table"].Font.Clone());
@@ -288,7 +302,7 @@ namespace DispatcherWeb.Orders.Reports
                 //Time on Job
                 table.AddColumn(Unit.FromCentimeter(1.3));
 
-                Row row = table.AddRow();
+                row = table.AddRow();
                 row.Shading.Color = Colors.LightGray;
                 row.Format.Font.Size = Unit.FromPoint(9);
                 row.Format.Font.Bold = true;
@@ -297,7 +311,7 @@ namespace DispatcherWeb.Orders.Reports
                 row.HeadingFormat = true;
 
                 int i = 0;
-                Cell cell = row.Cells[i++];
+                cell = row.Cells[i++];
                 cell.AddParagraph("Line #");
                 cell = row.Cells[i++];
                 cell.AddParagraph("Item");

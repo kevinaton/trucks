@@ -17,5 +17,6 @@ namespace DispatcherWeb.Tickets.Dto
         public decimal? MaterialQuantity { get; set; }
         public string MaterialUomName { get; set; }
         public string Note { get; set; }
+        public bool DebugLayout { get; set; }
     }
 }
