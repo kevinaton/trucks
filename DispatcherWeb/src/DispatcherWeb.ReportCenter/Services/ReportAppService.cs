@@ -20,7 +20,6 @@ namespace DispatcherWeb.ReportCenter.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly IServiceProvider _serviceProvider;
-        private bool _initialized = false;
 
         private readonly Dictionary<string, (string Description, string Path, bool HasAccess)> _reportAccessDictionary = new();
 
@@ -69,7 +68,6 @@ namespace DispatcherWeb.ReportCenter.Services
                         _reportAccessDictionary.Add(report.Name, (report.Description, report.Path, canAccess));
                     }
                 }
-                _initialized = true;
             }
         }
 
