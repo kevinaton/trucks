@@ -143,6 +143,9 @@ namespace DispatcherWeb.Authorization
 
             var driverApp = pages.CreateChildPermission(AppPermissions.Pages_DriverApplication, L("DriverApplication"), multiTenancySides: MultiTenancySides.Tenant);
             driverApp.CreateChildPermission(AppPermissions.Pages_DriverApplication_Settings, L("Settings"), multiTenancySides: MultiTenancySides.Tenant);
+            driverApp.CreateChildPermission(AppPermissions.Pages_DriverApplication_WebBasedDriverApp, L("WebBasedDriverApp"), multiTenancySides: MultiTenancySides.Tenant);
+            driverApp.CreateChildPermission(AppPermissions.Pages_DriverApplication_ReactNativeDriverApp, L("ReactNativeDriverApp"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.ReactNativeDriverApp));
 
             var reports = pages.CreateChildPermission(AppPermissions.Pages_Reports, L("Reports"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_ScheduledReports, L("ScheduledReports"), multiTenancySides: MultiTenancySides.Tenant);

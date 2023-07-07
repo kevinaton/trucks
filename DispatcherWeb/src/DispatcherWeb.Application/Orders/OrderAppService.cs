@@ -2904,6 +2904,7 @@ namespace DispatcherWeb.Orders
                 x.ShowSignatureColumn = showSignatureColumn;
                 x.ShowTruckCategories = showTruckCategories;
                 x.CurrencyCulture = currentCulture;
+                x.DebugLayout = input.DebugLayout;
             });
 
             if (input.ShowDeliveryInfo)
@@ -2971,7 +2972,7 @@ namespace DispatcherWeb.Orders
         {
             input.Date = input.Date.Date;
 
-            var items = await GetOrderSummaryReportQuery(input).GetOrderSummaryReportItems(await SettingManager.GetShiftDictionary(), _orderTaxCalculator);
+            var items = await GetOrderSummaryReportQuery(input).GetOrderSummaryReportItems(await SettingManager.GetShiftDictionary(), _orderTaxCalculator, SettingManager);
 
             var data = new OrderSummaryReportDto
             {

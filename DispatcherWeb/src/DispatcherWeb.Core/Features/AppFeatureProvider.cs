@@ -202,6 +202,13 @@ namespace DispatcherWeb.Features
                 displayName: L("PaidFunctionality"),
                 inputType: new CheckboxInputType()
             );
+
+            context.Create(
+                AppFeatures.ReactNativeDriverApp,
+                defaultValue: "false",
+                displayName: L("ReactNativeDriverApp"),
+                inputType: new CheckboxInputType()
+            );
             
             context.Create(
                 AppFeatures.CustomerPortal,

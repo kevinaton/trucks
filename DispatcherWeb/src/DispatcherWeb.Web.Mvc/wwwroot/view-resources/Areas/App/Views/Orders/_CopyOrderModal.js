@@ -8,12 +8,20 @@
         var _dateBeginPicker = null;
         var _dateEndPicker = null;
         var _$shiftSelect;
+        let _hasMultipleOrderLinesPromise = Promise.resolve(false);
+        let _modalArgs = null;
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
 
             _$form = _modalManager.getModal().find('form');
             _$form.validate();
+
+            _modalArgs = _modalManager.getArgs();
+
+            if (_modalArgs.orderId && _modalArgs.orderLineId) {
+                setHasMultipleOrderLinesFlag();
+            }
 
             abp.helper.ui.initControls();
 
@@ -44,37 +52,69 @@
 
         };
 
+        async function setHasMultipleOrderLinesFlag() {
+            _hasMultipleOrderLinesPromise = _orderService.doesOrderHaveOtherOrderLines(_modalArgs.orderId, _modalArgs.orderLineId);
+        }
+
         this.save = async function () {
-            if (!_$form.valid()) {
-                _$form.showValidateMessage();
-                return;
-            }
-
-            var today = moment().startOf('day');
-            var beginDate = _dateBeginPicker.date();
-            var endDate = _dateEndPicker.date();
-            var minDate = moment('1971-01-01', 'YYYY-MM-DD');
-            var maxDate = moment('2100-01-01', 'YYYY-MM-DD');
-            if (beginDate > maxDate || beginDate < minDate || endDate > maxDate || endDate < minDate) {
-                abp.message.error('Please correct a date', 'Some of the data is invalid');
-                return;
-            }
-
-            var daysBetween = endDate.diff(beginDate, 'days');
-            if (daysBetween + 1 > 7) {
-                abp.message.error('Please correct a date', 'You cannot copy order for more than 7 days.');
-                return;
-            }
-
-            if (beginDate < today) {
-                if (!await abp.message.confirm("You are creating an order on a previous date. Are you sure you want to do this?")) {
-                    return;
-                }
-            }
-
-            var formData = _$form.serializeFormToObject();
             try {
                 _modalManager.setBusy(true);
+                if (!_$form.valid()) {
+                    _$form.showValidateMessage();
+                    return;
+                }
+
+                var today = moment().startOf('day');
+                var beginDate = _dateBeginPicker.date();
+                var endDate = _dateEndPicker.date();
+                var minDate = moment('1971-01-01', 'YYYY-MM-DD');
+                var maxDate = moment('2100-01-01', 'YYYY-MM-DD');
+                if (beginDate > maxDate || beginDate < minDate || endDate > maxDate || endDate < minDate) {
+                    abp.message.error('Please correct a date', 'Some of the data is invalid');
+                    return;
+                }
+
+                var daysBetween = endDate.diff(beginDate, 'days');
+                if (daysBetween + 1 > 7) {
+                    abp.message.error('Please correct a date', 'You cannot copy order for more than 7 days.');
+                    return;
+                }
+
+                if (beginDate < today) {
+                    if (!await abp.message.confirm("You are creating an order on a previous date. Are you sure you want to do this?")) {
+                        return;
+                    }
+                }
+
+                var formData = _$form.serializeFormToObject();
+
+                if (_modalArgs.orderId && _modalArgs.orderLineId) {
+                    let hasMultipleOrderLines = await _hasMultipleOrderLinesPromise;
+                    if (hasMultipleOrderLines) {
+                        let multipleOrderLinesResponse = await swal(
+                            "You have selected to copy an order with multiple line items. Select the button below for how you want to handle this copy.",
+                            {
+                                buttons: {
+                                    cancel: "Cancel",
+                                    single: "Single line item",
+                                    all: "All line items"
+                                }
+                            }
+                        );
+                        switch (multipleOrderLinesResponse) {
+                            case "single":
+                                break;
+                            case "all":
+                                formData.OrderLineId = null;
+                                break;
+                            default:
+                                return;
+                        }
+                    } else {
+                        formData.OrderLineId = null;
+                    }
+                }
+
                 var newOrderIds = await _orderService.copyOrder({
                     orderId: formData.OrderId,
                     orderLineId: formData.OrderLineId,
