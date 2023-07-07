@@ -9,6 +9,9 @@
         var _orderLineId = null;
         var _selectedRowIds = [];
         var _filter = null;
+        var _showPowerUnitsSection = false;
+        var _showTrailersSection = false;
+        var _useAndForTrailerCondition = true;
 
         var rowSelectionClass = 'invoice-row-selection';
         var rowSelectAllClass = 'invoice-row-select-all';
@@ -25,28 +28,67 @@
             _$form = _modalManager.getModal().find('form');
             var $driverName = _$form.find('#DriverNameFilter');
 
+            var useAndForTrailerConditionButton = _$form.find("#UseAndForTrailerConditionButton");
+            var useOrForTrailerConditionButton = _$form.find("#UseOrForTrailerConditionButton");
+
             _orderLineId = Number(_$form.find('#OrderLineId').val());
 
             var vehicleCategoryDropdown = _$form.find("#VehicleCategoryIdsFilter");
             vehicleCategoryDropdown.select2Init({
                 abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
                 abpServiceParams: {
-                    isPowered: true,
                     isInUse: true
                 },
                 showAll: true,
-                placeholder: 'All'
-                //allowClear: false
+                placeholder: 'All',
+                allowClear: true
             });
-            _$form.find("#BedConstructionFilter").select2Init({
+            vehicleCategoryDropdown.change(handleVehicleCategoryChange);
+
+            _$form.find('#PowerUnitsMakeFilter').select2Init({
+                abpServiceMethod: abp.services.app.truck.getMakesSelectList,
                 showAll: true,
-                //allowClear: false
+                allowClear: true
             });
-            _$form.find("#IsApportionedFilter").select2Init({
+            _$form.find('#PowerUnitsModelFilter').select2Init({
+                abpServiceMethod: abp.services.app.truck.getModelsSelectList,
                 showAll: true,
-                //allowClear: false
+                allowClear: true
+            });
+            _$form.find('#PowerUnitsBedConstructionFilter').select2Init({
+                showAll: true,
+                allowClear: true
             });
 
+
+            _$form.find('#TrailersMakeFilter').select2Init({
+                abpServiceMethod: abp.services.app.truck.getMakesSelectList,
+                showAll: true,
+                allowClear: true
+            });
+            _$form.find('#TrailersModelFilter').select2Init({
+                abpServiceMethod: abp.services.app.truck.getModelsSelectList,
+                showAll: true,
+                allowClear: true
+            });
+            _$form.find('#TrailersBedConstructionFilter').select2Init({
+                showAll: true,
+                allowClear: true
+            });
+            
+            useAndForTrailerConditionButton.click(function (e) {
+                e.preventDefault();
+                _useAndForTrailerCondition = true;
+                useAndForTrailerConditionButton.removeClass("btn-secondary").addClass("btn-primary");
+                useOrForTrailerConditionButton.removeClass("btn-primary").addClass("btn-secondary");
+            });
+
+            useOrForTrailerConditionButton.click(function (e) {
+                e.preventDefault();
+                _useAndForTrailerCondition = false;
+                useOrForTrailerConditionButton.removeClass("btn-secondary").addClass("btn-primary");
+                useAndForTrailerConditionButton.removeClass("btn-primary").addClass("btn-secondary");                
+            });
 
 
             function initDriverNameTypeahead() {
@@ -118,10 +160,47 @@
                 _filter = _$form.serializeFormToObject();
                 delete _filter.VehicleCategoryIds;
                 _filter.vehicleCategoryIds = vehicleCategoryDropdown.val();
+                delete _filter.IsApportioned;
+                _filter.isApportioned = _$form.find('#IsApportionedFilter').is(':checked');
             }
 
             function showValidationError(errorMessage) {
                 abp.message.error('Please check the following: \n' + errorMessage, 'Some of the data is invalid');
+            }
+
+            function handleVehicleCategoryChange() {
+                var selectedVehicleCategories = vehicleCategoryDropdown.select2('data');
+                if (selectedVehicleCategories.length) {
+                    _showPowerUnitsSection = selectedVehicleCategories.some(x => x.item && x.item.isPowered || false);
+                    _showTrailersSection = selectedVehicleCategories.some(x => x.item && !x.item.isPowered || false);
+                } else {
+                    _showPowerUnitsSection = false;
+                    _showTrailersSection = false;
+                }
+                
+                if (_showPowerUnitsSection) {
+                    _$form.find('#PowerUnitsSection').show();
+                } else {
+                    _$form.find('#PowerUnitsSection').hide();
+                    _$form.find('#PowerUnitsMakeFilter').val('').change();
+                    _$form.find('#PowerUnitsModelFilter').val('').change();
+                    _$form.find('#PowerUnitsBedConstructionFilter').val('').change();
+                    _$form.find('#IsApportionedFilter').prop('checked', false);
+                }
+                if (_showTrailersSection) {
+                    _$form.find('#TrailersSection').show();
+                } else {
+                    _$form.find('#TrailersSection').hide();
+                    _$form.find('#TrailersMakeFilter').val('').change();
+                    _$form.find('#TrailersModelFilter').val('').change();
+                    _$form.find('#TrailersBedConstructionFilter').val('').change();
+                }
+                if (_showPowerUnitsSection && _showTrailersSection) {
+                    useAndForTrailerConditionButton.click();
+                    _$form.find('#OptionButton').show();
+                } else {
+                    _$form.find('#OptionButton').hide();
+                }
             }
 
             var trucksTable = $('#TrucksTable');
@@ -137,6 +216,7 @@
                         return;
                     }
                     var abpData = _dtHelper.toAbpData(data);
+                    abpData.useAndForTrailerCondition = _useAndForTrailerCondition;
                     $.extend(abpData, _filter);
                     _schedulingService.getTrucksToAssign(abpData).done(function (abpResult) {
                         callback(_dtHelper.fromAbpResult(abpResult));
@@ -158,7 +238,13 @@
                         data: null,
                         orderable: false,
                         render: function (data, type, full, meta) {
-                            return `<label class="m-checkbox cell-centered-checkbox"><input type="checkbox" class="minimal ${rowSelectionClass}" ${(_selectedRowIds.includes(full.id) ? 'checked' : '')}><span></span></label>`;
+                            let checkbox = 
+                                `<label class="m-checkbox cell-centered-checkbox">
+                                    <input type="checkbox" class="minimal ${rowSelectionClass}" ${(_selectedRowIds.includes(full.truckId) ? 'checked' : '')}>
+                                    <span></span>
+                                </label>`;
+                            let icon = '<i class="fa-regular fa-circle-exclamation text-warning" data-toggle="tooltip" title="Please assign a tractor to be able to schedule this trailer."></i>';
+                            return (full.truckId ? checkbox : icon);
                         },
                         className: "checkmark text-center checkbox-only-header",
                         width: "30px",
@@ -166,8 +252,12 @@
                         responsiveDispalyInHeaderOnly: true
                     },
                     {
-                        data: "truckCode",
+                        data: "truckCodeWithModelInfo",
                         title: "Truck",
+                    },
+                    {
+                        data: "trailerTruckCodeWithModelInfo",
+                        title: "Trailer",
                     },
                     {
                         data: "driverName",
@@ -181,11 +271,8 @@
                     {
                         data: "isApportioned",
                         title: "Apportioned",
+                        width: "80px",
                         render: function (data, type, full, meta) { return _dtHelper.renderCheckbox(data); },
-                    },
-                    {
-                        data: "bedConstructionName",
-                        title: "Bed"
                     }
                 ],
                 drawCallback: function (settings) {
@@ -229,12 +316,12 @@
                     if (trucksTable.find('.' + rowSelectionClass).not(':checked').length === 0) {
                         trucksTable.find('.' + rowSelectAllClass).not(':checked').prop('checked', true).change();
                     }
-                    setRowSelectionState(row.id, true);
+                    setRowSelectionState(row.truckId, true);
                 } else {
                     if (trucksTable.find('.' + rowSelectionClass + ':checked').length === 0) {
                         trucksTable.find('.' + rowSelectAllClass + ':checked').prop('checked', false).change();
                     }
-                    setRowSelectionState(row.id, false);
+                    setRowSelectionState(row.truckId, false);
                 }
                 //$.each(selectionChangedCallbacks, function (ind, callback) {
                 //var selectedRowsCount = trucksTable.find('.' + rowSelectionClass + ':checked').length;
@@ -251,16 +338,16 @@
                 return _selectedRowIds;
             }
 
-            function setRowSelectionState(id, isChecked) {
+            function setRowSelectionState(truckId, isChecked) {
                 if (isChecked) {
-                    if (!_selectedRowIds.includes(id)) {
-                        //console.log('adding ' + id);
-                        _selectedRowIds.push(id);
+                    if (!_selectedRowIds.includes(truckId)) {
+                        //console.log('adding ' + truckId);
+                        _selectedRowIds.push(truckId);
                     }
                 } else {
-                    while (_selectedRowIds.includes(id)) {
-                        //console.log('removing ' + id);
-                        _selectedRowIds.splice(_selectedRowIds.indexOf(id), 1);
+                    while (_selectedRowIds.includes(truckId)) {
+                        //console.log('removing ' + truckId);
+                        _selectedRowIds.splice(_selectedRowIds.indexOf(truckId), 1);
                     }
                 }
                 //console.log('array: ' + _selectedRowIds.join());
