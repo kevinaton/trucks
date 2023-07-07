@@ -86,7 +86,7 @@
         <div class="m-portlet__body">
             <form class="m-form m-form--label-align-right" novalidate>
                 <div id="CustomersFormFilter">
-                    @if (User.IsInRole(StaticRoleNames.Tenants.Customer) && PermissionChecker.IsGranted(AppPermissions.Pages_CustomerPortal_TicketsList) && Model != null && Model.HasCustomerPortalAccess)
+                    @if (FeatureChecker.IsEnabled(AppFeatures.CustomerPortal) && PermissionChecker.IsGranted(AppPermissions.Pages_CustomerPortal_TicketsList) && Model != null && Model.HasCustomerPortalAccess)
                     {
                         <input type="hidden" name="restrict-to-customer" id="restrict-to-customer" value="@(Model.CustomerId)" text="@(Model.CustomerName)" />
                     }
