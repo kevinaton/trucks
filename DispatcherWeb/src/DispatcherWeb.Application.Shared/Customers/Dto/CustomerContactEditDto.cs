@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using DispatcherWeb.Infrastructure;
 
 namespace DispatcherWeb.Customers.Dto
@@ -9,14 +10,20 @@ namespace DispatcherWeb.Customers.Dto
 
         public int CustomerId { get; set; }
 
-        [Required(ErrorMessage = "LastName is a required field")]
-        [StringLength(30)]
-        public string LastName { get; set; }
+        [StringLength(EntityStringFieldLengths.CustomerContact.Name)]
+        [Obsolete]
+        public string Name { get; set; }
 
-
-        [Required(ErrorMessage = "FirstName is a required field")]
-        [StringLength(30)]
+        [RegularExpression("^[a-zA-Z]+(\\s+[a-zA-Z]+)*$", ErrorMessage = "This isn't a valid first name. Only characters and spaces are allowed.")]
+        [Required(ErrorMessage = "First Name is a required field")]
+        [StringLength(EntityStringFieldLengths.CustomerContact.FirstName)]
         public string FirstName { get; set; }
+
+
+        [RegularExpression("^[a-zA-Z]+(\\s+[a-zA-Z]+)*$", ErrorMessage = "This isn't a valid last name. Only characters and spaces are allowed.")]
+        [Required(ErrorMessage = "Last Name is a required field")]
+        [StringLength(EntityStringFieldLengths.CustomerContact.LastName)]
+        public string LastName { get; set; }
 
         public string FullName => $"{FirstName} {LastName}".Trim();
 

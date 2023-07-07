@@ -937,44 +937,10 @@
         };
         menuFunctions.fn.copy = async function (element) {
             var orderLine = _dtHelper.getRowData(element);
-            try {
-                abp.ui.setBusy();
-                let hasMultipleItems = await _orderService.doesOrderHaveOtherOrderLines(orderLine.orderId, orderLine.id);
-                abp.ui.clearBusy();
-                if (!hasMultipleItems) {
-                    _copyOrderModal.open({
-                        orderId: orderLine.orderId
-                    });
-                    return;
-                }
-                let multipleOrderLinesResponse = await swal(
-                    "You have selected to copy an order with multiple line items. Select the button below for how you want to handle this copy.",
-                    {
-                        buttons: {
-                            cancel: "Cancel",
-                            single: "Single line item",
-                            all: "All line items"
-                        }
-                    }
-                );
-                var copyOrderParams = {
-                    orderId: orderLine.orderId
-                };
-                switch (multipleOrderLinesResponse) {
-                    case "single":
-                        copyOrderParams.orderLineId = orderLine.id;
-                        break;
-                    case "all":
-                        break;
-                    default:
-                        return;
-                }
-                _copyOrderModal.open(copyOrderParams);
-
-            }
-            finally {
-                abp.ui.clearBusy();
-            }
+            _copyOrderModal.open({
+                orderId: orderLine.orderId,
+                orderLineId: orderLine.id,
+            });
         };
         menuFunctions.isVisible.share = function (rowData) {
             var today = new Date(moment().format("YYYY-MM-DD") + 'T00:00:00Z');

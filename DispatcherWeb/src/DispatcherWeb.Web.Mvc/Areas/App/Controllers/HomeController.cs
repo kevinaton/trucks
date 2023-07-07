@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.Domain.Repositories;
 using Abp.MultiTenancy;
@@ -49,39 +50,50 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             }
             else
             {
-                if (await IsGrantedAsync(AppPermissions.Pages_Schedule))
+                var hasDashboardPermission = await IsGrantedAsync(AppPermissions.Pages_Dashboard);
+                var hasReactNativeDriverAppPermission = await IsGrantedAsync(AppPermissions.Pages_DriverApplication_ReactNativeDriverApp);
+                var hasPwaDriverAppPermission = await IsGrantedAsync(AppPermissions.Pages_DriverApplication_WebBasedDriverApp);
+
+                var redirectRelatedPermissionList = new[]
                 {
-                    if (!await _truckRepository.GetAll().AnyAsync())
+                    hasDashboardPermission,
+                    hasReactNativeDriverAppPermission,
+                    hasPwaDriverAppPermission,
+                };
+
+                if (redirectRelatedPermissionList.Count(x => x == true) == 1)
+                {
+                    if (hasDashboardPermission)
                     {
-                        return RedirectToAction("Index", "Scheduling");
+                        if (await IsGrantedAsync(AppPermissions.Pages_Schedule))
+                        {
+                            if (!await _truckRepository.GetAll().AnyAsync())
+                            {
+                                return RedirectToAction("Index", "Scheduling");
+                            }
+                        }
+                    
+                        return RedirectToAction("Index", "Dashboard");
+                    }
+
+                    if (hasReactNativeDriverAppPermission)
+                    {
+                        return RedirectToAction("ReactNative", "DriverApplication");
+                    }
+
+                    if (hasPwaDriverAppPermission)
+                    {
+                        return RedirectToAction("PWA", "DriverApplication");
                     }
                 }
-
-                if (await IsGrantedAsync(AppPermissions.Pages_Dashboard))
+                else if (redirectRelatedPermissionList.Any())
                 {
-                    return RedirectToAction("Index", "Dashboard");
-                }
-
-                if (await UserIsDriver())
-                {
-                    return RedirectToAction("Index", "DriverApplication");
+                    return RedirectToAction("ChooseRedirectTarget", "Welcome");
                 }
             }
 
             //Default page if no permission to the pages above
             return RedirectToAction("Index", "Welcome");
-
-            // Local functions
-            async Task<bool> UserIsDriver()
-            {
-                var user = await _userManager.GetUserAsync(AbpSession.ToUserIdentifier());
-
-                return await HasDriverRole() && await DriverIsAssociatedWithUser();
-
-                async Task<bool> HasDriverRole() => await _userManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Driver)
-                    || await _userManager.IsInRoleAsync(user, StaticRoleNames.Tenants.LeaseHaulerDriver);
-                async Task<bool> DriverIsAssociatedWithUser() => await _driverRepository.GetAll().AnyAsync(d => d.UserId == user.Id);
-            }
         }
     }
 }

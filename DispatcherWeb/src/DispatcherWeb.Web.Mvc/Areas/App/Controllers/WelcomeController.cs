@@ -12,5 +12,9 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         {
             return View();
         }
+        public ActionResult ChooseRedirectTarget()
+        {
+            return View();
+        }
     }
 }

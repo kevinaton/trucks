@@ -675,7 +675,9 @@
             let filter = {
                 customerId: customerId,
                 isBilled: false,
-                hasInvoiceLineId: false
+                isVerified: true,
+                hasInvoiceLineId: false,
+                hasRevenue: true
             };
             if (_invoiceLines) {
                 let excludeTicketIds = _invoiceLines.filter(x => x.ticketId !== null).map(x => x.ticketId);

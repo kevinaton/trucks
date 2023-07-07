@@ -394,7 +394,8 @@
             },
             {
                 data: "rate",
-                title: "Rate"
+                title: "Rate",
+                orderable: false
             },
             {
                 data: "revenue",
