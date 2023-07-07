@@ -1,3 +1,4 @@
+export * from './app-settings/actions';
 export * from './layout/actions';
 export * from './features/actions';
 export * from './dashboard/actions';

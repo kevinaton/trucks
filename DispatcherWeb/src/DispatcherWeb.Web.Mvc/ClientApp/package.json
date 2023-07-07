@@ -25,6 +25,7 @@
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "notistack": "^3.0.1",
     "prop-types": "^15.8.1",
     "push.js": "^1.0.12",

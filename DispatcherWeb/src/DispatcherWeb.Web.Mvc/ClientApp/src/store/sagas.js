@@ -1,4 +1,5 @@
 import { all, fork } from 'redux-saga/effects';
+import appSettingsSaga from './app-settings/saga';
 import layoutSaga from './layout/saga';
 import featuresSaga from './features/saga';
 import dashboardSaga from './dashboard/saga';
@@ -12,6 +13,7 @@ import schedulingSaga from './scheduling/saga';
 
 export default function* rootSaga() {
     yield all([
+        fork(appSettingsSaga),
         fork(layoutSaga),
         fork(featuresSaga),
         fork(dashboardSaga),

@@ -1,3 +1,6 @@
+//App Settings
+export const GET_TENANT_SETTINGS = '/TenantSettings/GetAllSettings';
+
 //Layout
 export const GET_MENU_ITEMS = '/Layout/GetMenu';
 export const GET_SUPPORT_LINK_ADDRESS = '/Layout/GetSupportLinkAddress';

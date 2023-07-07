@@ -17,6 +17,7 @@ using Abp.Net.Mail;
 using Abp.Runtime.Security;
 using Abp.Runtime.Session;
 using Abp.Timing;
+using Abp.Timing.Timezone;
 using Abp.UI;
 using Abp.Zero.Configuration;
 using Abp.Zero.Ldap.Configuration;
@@ -267,6 +268,7 @@ namespace DispatcherWeb.Configuration.Tenants
 
                 settings.Timezone = timezone;
                 settings.TimezoneForComparison = timezone;
+                settings.TimezoneIana = TimezoneHelper.WindowsToIana(timezone);
             }
 
             var defaultTimeZoneId = await _timeZoneService.GetDefaultTimezoneAsync(SettingScopes.Tenant, AbpSession.TenantId);

@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 
+import AppSettingsReducer from './app-settings/reducer';
 import LayoutReducer from './layout/reducer';
 import FeatureReducer from './features/reducer';
 import DashboardReducer from './dashboard/reducer';
@@ -13,6 +14,7 @@ import SchedulingReducer from './scheduling/reducer';
 
 const rootReducer = combineReducers({
     // public
+    AppSettingsReducer,
     LayoutReducer,
     FeatureReducer,
     DashboardReducer,
