@@ -42,7 +42,6 @@
             cachedFilter.customerId = $("#restrict-to-customer").val();
             cachedFilter.customerName = $("#restrict-to-customer").attr("text");
             $("#CustomerFilter").prop("disabled", true);
-            ticketGrid.column(16).visible(false);
         }
 
         var ticketDateFilterIsEmpty = false;
@@ -109,8 +108,8 @@
             autoUpdateInput: false
         }).on('apply.daterangepicker', function (ev, picker) {
             $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-             $("#OrderDateRangeBeginInput").val(picker.startDate.format('MM/DD/YYYY'));
-             $("#OrderDateRangeEndInput").val(picker.endDate.format('MM/DD/YYYY'));
+            $("#OrderDateRangeBeginInput").val(picker.startDate.format('MM/DD/YYYY'));
+            $("#OrderDateRangeEndInput").val(picker.endDate.format('MM/DD/YYYY'));
         }).on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
             $("#OrderDateRangeBeginInput").val('');
@@ -161,7 +160,7 @@
         if (cachedFilter.shifts) {
             cachedFilter.shifts.forEach(function (shift) {
                 abp.helper.ui.addAndSetDropdownValue($("#Shifts"), shift);
-            });   
+            });
         }
 
         $('#BillingStatusFilter').select2Init({
@@ -275,11 +274,15 @@
             var abpData = _dtHelper.toAbpData(data);
             _lastAbpData = $.extend({}, abpData);
             var filterData = _dtHelper.getFilterData();
+            if ($("#restrict-to-customer")) {
+                filterData.customerId = parseInt($("#restrict-to-customer").val());
+            }
             app.localStorage.setItem('tickets_filter', filterData);
             $.extend(abpData, filterData);
-
             _ticketService.ticketListView(abpData).done(function (abpResult) {
                 callback(_dtHelper.fromAbpResult(abpResult));
+            }).fail(function () {
+                callback(null);
             });
         },
         editable: {
@@ -399,7 +402,8 @@
             },
             {
                 data: "revenue",
-                title: "Revenue"
+                title: "Revenue",
+                visible: !$("#restrict-to-customer")
             },
             {
                 data: "isBilled",

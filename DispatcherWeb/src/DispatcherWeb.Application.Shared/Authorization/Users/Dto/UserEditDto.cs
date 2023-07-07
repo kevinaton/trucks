@@ -2,6 +2,7 @@
 using Abp.Auditing;
 using Abp.Authorization.Users;
 using Abp.Domain.Entities;
+using DispatcherWeb.Customers.Dto;
 using DispatcherWeb.Offices.Dto;
 
 namespace DispatcherWeb.Authorization.Users.Dto
@@ -56,6 +57,8 @@ namespace DispatcherWeb.Authorization.Users.Dto
         public string Title { get; set; }
 
         public int? CustomerContactId { get; set; }
+
+        public CustomerContactDto CustomerContact { get; set; }
 
         int IOfficeIdNameDto.OfficeId { get => OfficeId ?? 0; set => OfficeId = value; }
     }

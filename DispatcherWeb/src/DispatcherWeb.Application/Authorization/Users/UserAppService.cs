@@ -73,6 +73,7 @@ namespace DispatcherWeb.Authorization.Users
         private readonly IUserListCsvExporter _userListCsvExporter;
         private readonly ISingleOfficeAppService _singleOfficeService;
         private readonly IUserCreatorService _userCreatorService;
+        private readonly ICustomerAppService _customerService;
 
         public UserAppService(
             RoleManager roleManager,
@@ -101,7 +102,8 @@ namespace DispatcherWeb.Authorization.Users
             ICustomerContactUserLinkService customerContactUserLinkService,
             IUserListCsvExporter userListCsvExporter,
             ISingleOfficeAppService singleOfficeService,
-            IUserCreatorService userCreatorService
+            IUserCreatorService userCreatorService,
+            ICustomerAppService customerService
             )
         {
             _roleManager = roleManager;
@@ -132,6 +134,7 @@ namespace DispatcherWeb.Authorization.Users
             _userListCsvExporter = userListCsvExporter;
             _singleOfficeService = singleOfficeService;
             _userCreatorService = userCreatorService;
+            _customerService = customerService;
         }
 
         [HttpPost]
@@ -221,7 +224,8 @@ namespace DispatcherWeb.Authorization.Users
                 var user = await UserManager.Users.Include(x => x.Office).FirstOrDefaultAsync(x => x.Id == input.Id.Value);
 
                 output.User = ObjectMapper.Map<UserEditDto>(user);
-                output.ProfilePictureId = user.ProfilePictureId;
+                output.User.CustomerContact = await _customerService.GetCustomerContact(new NullableIdDto<int> { Id = user.CustomerContactId });
+                output.ProfilePictureId = user.ProfilePictureId;                
 
                 var organizationUnits = await UserManager.GetOrganizationUnitsAsync(user);
                 output.MemberedOrganizationUnits = organizationUnits.Select(ou => ou.Code).ToList();

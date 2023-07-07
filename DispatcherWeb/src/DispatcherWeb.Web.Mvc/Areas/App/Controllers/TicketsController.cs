@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
@@ -42,11 +41,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userAppService.GetUserForEdit(new NullableIdDto<long>() { Id = AbpSession.UserId.Value });
-            var input = new Customers.Dto.GetCustomerContactsInput() { CustomerId = null, Email = user.User.EmailAddress, Sorting = "Name" };
-            var customerContacts = await _customerAppService.GetCustomerContacts(input);
-            var customerContactWithPortalAccess = customerContacts.Items.FirstOrDefault(p => p.HasCustomerPortalAccess);
-
-            return View(customerContactWithPortalAccess);
+            return View(user.User.CustomerContact);
         }
 
         public IActionResult TicketsByDriver()

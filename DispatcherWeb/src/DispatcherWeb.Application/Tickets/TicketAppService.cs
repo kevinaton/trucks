@@ -10,6 +10,7 @@ using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
+using Abp.Runtime.Session;
 using Abp.UI;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Common.Dto;
@@ -18,6 +19,7 @@ using DispatcherWeb.DailyFuelCosts;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
+using DispatcherWeb.Features;
 using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Invoices;
@@ -934,6 +936,12 @@ namespace DispatcherWeb.Tickets
         [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
+            var user = await UserManager.GetUserByIdAsync(AbpSession.GetUserId());
+            if (FeatureChecker.IsEnabled(AppFeatures.CustomerPortal) && !user.CustomerContactId.HasValue)
+            {
+                throw new UserFriendlyException( L("CustomerPortalAccessDenied"));
+            }
+
             var query = GetTicketListQuery(input, await GetTimezone());
 
             var totalCount = await query.CountAsync();

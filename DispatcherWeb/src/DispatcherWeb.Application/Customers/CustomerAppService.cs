@@ -335,6 +335,29 @@ namespace DispatcherWeb.Customers
         }
 
         [AbpAuthorize(AppPermissions.Pages_Customers)]
+        public async Task<CustomerContactDto> GetCustomerContact(NullableIdDto<int> input)
+        {
+            var customerContact = await _customerContactRepository.GetAll()
+                                    .Select(x => new CustomerContactDto
+                                    {
+                                        Id = x.Id,
+                                        CustomerId = x.CustomerId,
+                                        FirstName = x.FirstName,
+                                        LastName = x.LastName,
+                                        CustomerName = x.Customer.Name,
+                                        PhoneNumber = x.PhoneNumber,
+                                        Fax = x.Fax,
+                                        Email = x.Email,
+                                        Title = x.Title,
+                                        IsActive = x.IsActive,
+                                        HasCustomerPortalAccess = x.HasCustomerPortalAccess
+                                    })
+                                    .FirstOrDefaultAsync(p=>p.Id==input.Id);
+
+            return customerContact;
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_Customers)]
         public async Task<int> GetCustomerContactDuplicateCount(GetCustomerContactDuplicateCountInput input)
         {
             var count = await _customerContactRepository.GetAll()
