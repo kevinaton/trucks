@@ -30,10 +30,6 @@ import TruckAssignment from './truck-assignment';
 
 import App from '../../config/appConfig';
 
-// to remove later
-// import data from '../../common/data/data.json';
-// const { ScheduleData } = data;
-
 const ScheduleOrders = ({
     pageConfig,
     dataFilter,
@@ -132,8 +128,6 @@ const ScheduleOrders = ({
         setTitle('Edit Job');
         setEditData(data);
         setJob(true);
-        console.log(e);
-        console.log(data);
     };
 
     const getPriorityLevel = (data) => {
@@ -237,21 +231,6 @@ const ScheduleOrders = ({
                         <Typography variant='caption'>{`${amountPercent}%`}</Typography>
                     </Box>
                 }
-
-                {/* <Box>
-                    <VerticalLinearProgress
-                        variant='determinate'
-                        color='secondary'
-                        value={data.schedProgress}
-                        sx={{
-                            [`& .${linearProgressClasses.bar}`]:
-                                {
-                                    transform: `translateY(${-data.schedProgress}%)!important`,
-                                },
-                        }}
-                    />
-                    <Typography variant='caption'>{`${data.schedProgress}%`}</Typography>
-                </Box> */}
             </Box>
         );
     };
@@ -591,7 +570,7 @@ const ScheduleOrders = ({
                                                                 <Chip
                                                                     label={truck.name}
                                                                     onClick={() => {}}
-                                                                    onDelete={null}
+                                                                    onDelete={() => {}}
                                                                     variant={truck.variant}
                                                                     color={truck.color}
                                                                     sx={{

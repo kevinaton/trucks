@@ -15,6 +15,7 @@
     "@mobiscroll/react": "^5.22.0",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.15",
+    "@mui/x-data-grid": "^6.9.2",
     "@mui/x-date-pickers": "^6.2.1",
     "@react-google-maps/api": "^2.18.1",
     "@testing-library/jest-dom": "^5.16.5",
