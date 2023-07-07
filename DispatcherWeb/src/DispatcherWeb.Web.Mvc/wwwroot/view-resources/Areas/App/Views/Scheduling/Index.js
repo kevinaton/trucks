@@ -182,7 +182,7 @@
             viewUrl: abp.appPath + 'app/Scheduling/AssignTrucksModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_AssignTrucksModal.js',
             modalClass: 'AssignTrucksModal',
-            modalSize: 'lg'
+            modalSize: 'xl'
         });
 
         var _changeDriverForOrderLineTruckModal = new app.ModalManager({
