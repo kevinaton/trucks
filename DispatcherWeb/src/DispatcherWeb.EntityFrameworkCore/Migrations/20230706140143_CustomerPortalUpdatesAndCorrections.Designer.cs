@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    [Migration("20230704122608_AddedCustomerPortalLinkToUser")]
-    partial class AddedCustomerPortalLinkToUser
+    [Migration("20230706140143_CustomerPortalUpdatesAndCorrections")]
+    partial class AddedCustomerPortalLinkToUserAndOtherUpdates
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -2099,8 +2099,8 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<bool>("HasCustomerPortalAccess")
                         .HasColumnType("bit");
@@ -2119,13 +2119,12 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
@@ -17,11 +18,17 @@ namespace DispatcherWeb.Customers
 
         public int CustomerId { get; set; }
 
-        [Required(ErrorMessage = "Firstname is a required field")]
+        [StringLength(EntityStringFieldLengths.CustomerContact.Name)]
+        [Obsolete]
+        public string Name { get; set; }
+
+        [RegularExpression("^[a-zA-Z]+(\\s+[a-zA-Z]+)*$", ErrorMessage = "This isn't a valid first name. Only characters and spaces are allowed.")]
+        [Required(ErrorMessage = "First Name is a required field")]
         [StringLength(EntityStringFieldLengths.CustomerContact.FirstName)]
         public string FirstName { get; set; }
 
-        [Required(ErrorMessage = "Lastname is a required field")]
+        [RegularExpression("^[a-zA-Z]+(\\s+[a-zA-Z]+)*$", ErrorMessage = "This isn't a valid last name. Only characters and spaces are allowed.")]
+        [Required(ErrorMessage = "Last Name is a required field")]
         [StringLength(EntityStringFieldLengths.CustomerContact.LastName)]
         public string LastName { get; set; }
 

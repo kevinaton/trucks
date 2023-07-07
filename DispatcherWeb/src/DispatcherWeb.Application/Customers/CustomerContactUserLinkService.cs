@@ -9,26 +9,22 @@ using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.Customers;
-using DispatcherWeb.Dispatching;
 using DispatcherWeb.Features;
-using DispatcherWeb.TimeClassifications;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.CustomerContacts
 {
     public class CustomerContactUserLinkService : DispatcherWebDomainServiceBase, ICustomerContactUserLinkService
     {
-        private readonly IRepository<CustomerContact> _CustomerContactRepository;
+        private readonly IRepository<CustomerContact> _customerContactRepository;
         private readonly IUserCreatorService _userCreatorService;
 
         public CustomerContactUserLinkService(
             IRepository<CustomerContact> CustomerContactRepository,
-            IRepository<Dispatch> dispatchRepository,
-            IRepository<TimeClassification> timeClassificationRepository,
             IUserCreatorService userCreatorService
         )
         {
-            _CustomerContactRepository = CustomerContactRepository;
+            _customerContactRepository = CustomerContactRepository;
             _userCreatorService = userCreatorService;
         }
 
@@ -55,7 +51,7 @@ namespace DispatcherWeb.CustomerContacts
                 return;
             }
 
-            var linkedCustomerContact = await _CustomerContactRepository.GetAll()
+            var linkedCustomerContact = await _customerContactRepository.GetAll()
                                             .FirstOrDefaultAsync(x => x.Id == user.CustomerContactId);
 
             if (linkedCustomerContact != null)
@@ -92,25 +88,29 @@ namespace DispatcherWeb.CustomerContacts
             }
             else
             {
-                user = await _userCreatorService.CreateUser(new CreateOrUpdateUserInput
+                var newUser = new UserEditDto
                 {
-                    User = new UserEditDto
-                    {
-                        CustomerContactId = customerContact.Id,
-                        EmailAddress = customerContact.Email,
-                        Title = customerContact.Title,
-                        Name = customerContact.FirstName,
-                        Surname = customerContact.LastName,
-                        PhoneNumber = customerContact.PhoneNumber,
-                        UserName = customerContact.Email.Split("@").First(),
-                        IsActive = true,
-                        IsLockoutEnabled = true,
-                        ShouldChangePasswordOnNextLogin = false
-                    },
+                    CustomerContactId = customerContact.Id,
+                    EmailAddress = customerContact.Email,
+                    Title = customerContact.Title,
+                    Name = customerContact.FirstName,
+                    Surname = "", //customerContact.LastName,
+                    PhoneNumber = customerContact.PhoneNumber,
+                    UserName = customerContact.Email.Split("@").First(),
+                    IsActive = true,
+                    IsLockoutEnabled = true,
+                    ShouldChangePasswordOnNextLogin = false
+                };
+
+                var createOrUpdateUserInput = new CreateOrUpdateUserInput
+                {
+                    User = newUser,
                     AssignedRoleNames = new[] { StaticRoleNames.Tenants.Customer },
                     SendActivationEmail = sendEmail,
                     SetRandomPassword = true
-                });
+                };
+
+                user = await _userCreatorService.CreateUser(createOrUpdateUserInput);
 
                 return user;
             }
@@ -148,7 +148,7 @@ namespace DispatcherWeb.CustomerContacts
             customerContact.Title = user.Title;
             customerContact.Email = user.EmailAddress;
             customerContact.PhoneNumber = user.PhoneNumber;
-            await _CustomerContactRepository.UpdateAsync(customerContact);
+            await _customerContactRepository.UpdateAsync(customerContact);
         }
 
         #endregion private methods

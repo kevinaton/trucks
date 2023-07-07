@@ -84,7 +84,7 @@ namespace DispatcherWeb.Imports.Services
                     {
                         Customer = customer,
                         FirstName = contactNameParts.First(),
-                        LastName = contactNameParts[1] ?? contactNameParts.First(),
+                        LastName = contactNameParts.Length > 1 ? contactNameParts[1] : contactNameParts.First(),
 
                     };
                     _customerContactRepository.Insert(customerContact);
@@ -111,7 +111,7 @@ namespace DispatcherWeb.Imports.Services
                     {
                         Customer = customer,
                         FirstName = contactNameParts.First(),
-                        LastName = contactNameParts[1] ?? contactNameParts.First(),
+                        LastName = contactNameParts.Length > 1 ? contactNameParts[1] : contactNameParts.First(),
                     };
                     _customerContactRepository.Insert(customerContact);
                 }

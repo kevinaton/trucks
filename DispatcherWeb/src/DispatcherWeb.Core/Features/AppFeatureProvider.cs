@@ -206,7 +206,7 @@ namespace DispatcherWeb.Features
             context.Create(
                 AppFeatures.CustomerPortal,
                 defaultValue: "false",
-                displayName: L("Customer Portal"),
+                displayName: L("CustomerPortal"),
                 inputType: new CheckboxInputType()
             );
         }

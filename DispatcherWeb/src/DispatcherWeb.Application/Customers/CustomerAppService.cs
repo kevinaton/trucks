@@ -438,7 +438,7 @@ namespace DispatcherWeb.Customers
             var customerContactId = await _customerContactRepository.InsertOrUpdateAndGetIdAsync(customerContact);
             var customerPortalFeatureEnabled = await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal);
 
-            if (customerContactId != 0 && customerContact.HasCustomerPortalAccess && customerPortalFeatureEnabled)
+            if (customerContact.HasCustomerPortalAccess && customerPortalFeatureEnabled)
             {
                 await _customerContactUserLinkService.UpdateUser(customerContact);
             }

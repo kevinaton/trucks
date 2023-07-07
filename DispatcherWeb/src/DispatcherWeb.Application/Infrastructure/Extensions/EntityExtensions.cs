@@ -12,15 +12,20 @@ namespace DispatcherWeb.Infrastructure.Extensions
             if (customerContact == null)
                 return string.Empty;
 
-            var fullName = (lastNameFirst ? $"{customerContact.LastName}, {customerContact.FirstName}".Trim() :
-                        $"{customerContact.FirstName} {customerContact.LastName}".Trim());
+            var fullName = lastNameFirst ? $"{customerContact.LastName}, {customerContact.FirstName}".Trim() :
+                        $"{customerContact.FirstName} {customerContact.LastName}".Trim();
 
             if (fullName.IndexOf(',') == fullName.Length - 1)
             {
                 fullName = fullName[..(fullName.IndexOf(",") - 1)];
             }
 
-            return fullName;
+            if (fullName[..1].Equals(','))
+            {
+                fullName = fullName[2..];
+            }
+
+            return fullName.Trim();
         }
     }
 }
