@@ -39,7 +39,6 @@ using DispatcherWeb.SyncRequests;
 using DispatcherWeb.Tickets;
 using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
-using DispatcherWeb.UserSettings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AppSettingsConfig = DispatcherWeb.Configuration.AppSettings;
@@ -51,7 +50,6 @@ namespace DispatcherWeb.Scheduling
     [AbpAuthorize(AppPermissions.Pages_Schedule)]
     public class SchedulingAppService : DispatcherWebAppServiceBase, ISchedulingAppService
     {
-        private readonly IUserSettingsAppService _userSettingsAppService;
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<OrderLine> _orderLineRepository;
@@ -76,7 +74,6 @@ namespace DispatcherWeb.Scheduling
         private readonly ITelematics _telematics;
 
         public SchedulingAppService(
-            IUserSettingsAppService userSettingsAppService,
             IRepository<Truck> truckRepository,
             IRepository<Order> orderRepository,
             IRepository<OrderLine> orderLineRepository,
@@ -101,7 +98,6 @@ namespace DispatcherWeb.Scheduling
             ITelematics telematics
         )
         {
-            _userSettingsAppService = userSettingsAppService;
             _truckRepository = truckRepository;
             _orderRepository = orderRepository;
             _orderLineRepository = orderLineRepository;
@@ -128,8 +124,6 @@ namespace DispatcherWeb.Scheduling
 
         public async Task<SchedulePageConfig> GetPageConfig()
         {
-            string validateUtilization = await _userSettingsAppService.GetUserSettingByName(AppSettingsConfig.DispatchingAndMessaging.ValidateUtilization);
-
             var config = new SchedulePageConfig
             {
                 Permissions = new SchedulePagePermission
@@ -150,7 +144,7 @@ namespace DispatcherWeb.Scheduling
                 },
                 Settings = new SchedulePageSettings
                 {
-                    ValidateUtilization = !string.IsNullOrEmpty(validateUtilization) && Convert.ToBoolean(validateUtilization)
+                    ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ValidateUtilization)
                 }
             };
 
