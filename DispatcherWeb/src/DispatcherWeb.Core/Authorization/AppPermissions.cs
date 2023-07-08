@@ -8,14 +8,9 @@
     {
         public static string[] ManualPermissionsList = new[]
         {
-            AppPermissions.DriverProductionPay,
-            AppPermissions.Pages_LeaseHaulerStatements,
-            AppPermissions.Pages_Imports_Customers,
-            AppPermissions.Pages_Imports_Trucks,
-            AppPermissions.Pages_Imports_Vendors,
-            AppPermissions.Pages_Imports_Services,
-            AppPermissions.Pages_Imports_Employees,
-            AppPermissions.Pages_DriverApplication_ReactNativeDriverApp
+            AppPermissions.EditInvoicedOrdersAndTickets,
+            AppPermissions.Pages_DriverApplication_ReactNativeDriverApp,
+            AppPermissions.Pages_DriverApplication_WebBasedDriverApp,
         };
 
         //COMMON PERMISSIONS (FOR BOTH OF TENANTS AND HOST)
