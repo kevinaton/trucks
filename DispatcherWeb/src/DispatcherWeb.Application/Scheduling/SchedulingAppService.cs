@@ -178,12 +178,32 @@ namespace DispatcherWeb.Scheduling
         [HttpPost]
         public async Task<PagedResultDto<TruckToAssignDto>> GetTrucksToAssign(GetTrucksToAssignInput input)
         {
-            var trucks = await (await _truckRepository.GetAll()
+            var query = _truckRepository.GetAll()
                 .Where(t => t.IsActive && !t.IsOutOfService)
-                .Where(t => t.VehicleCategory.IsPowered)
-                .WhereIf(input.VehicleCategoryIds?.Any() == true, t => input.VehicleCategoryIds.Contains(t.VehicleCategoryId))
-                .WhereIf(input.BedConstruction.HasValue, t => t.BedConstruction == input.BedConstruction)
-                .WhereIf(input.IsApportioned.HasValue, t => t.IsApportioned == input.IsApportioned)
+                .WhereIf(input.VehicleCategoryIds?.Any() == true, t =>
+                    input.VehicleCategoryIds.Contains(t.VehicleCategoryId)
+                    || t.CanPullTrailer && t.CurrentTrailer != null && input.VehicleCategoryIds.Contains(t.CurrentTrailer.VehicleCategoryId));
+            if (input.UseAndForTrailerCondition)
+            {
+                query = query.Where(t => (string.IsNullOrEmpty(input.PowerUnitsMake) || t.Make == input.PowerUnitsMake)
+                    && (string.IsNullOrEmpty(input.PowerUnitsModel) || t.Model == input.PowerUnitsModel)
+                    && (!input.PowerUnitsBedConstruction.HasValue || t.BedConstruction == input.PowerUnitsBedConstruction)
+                    && (!input.IsApportioned || t.IsApportioned == input.IsApportioned)
+                    && (string.IsNullOrEmpty(input.TrailersMake) || t.CurrentTrailer.Make == input.TrailersMake || t.VehicleCategory.AssetType == AssetType.Trailer && t.Make == input.TrailersMake)
+                    && (string.IsNullOrEmpty(input.TrailersModel) || t.CurrentTrailer.Model == input.TrailersModel || t.VehicleCategory.AssetType == AssetType.Trailer && t.Model == input.TrailersModel)
+                    && (!input.TrailersBedConstruction.HasValue || t.CurrentTrailer.BedConstruction == input.TrailersBedConstruction || t.VehicleCategory.AssetType == AssetType.Trailer && t.BedConstruction == input.TrailersBedConstruction));
+            }
+            else
+            {
+                query = query.Where(t => (string.IsNullOrEmpty(input.PowerUnitsMake) || t.Make == input.PowerUnitsMake)
+                    && (string.IsNullOrEmpty(input.PowerUnitsModel) || t.Model == input.PowerUnitsModel)
+                    && (!input.PowerUnitsBedConstruction.HasValue || t.BedConstruction == input.PowerUnitsBedConstruction)
+                    && (!input.IsApportioned || t.IsApportioned == input.IsApportioned)
+                    || (string.IsNullOrEmpty(input.TrailersMake) || t.CurrentTrailer.Make == input.TrailersMake || t.VehicleCategory.AssetType == AssetType.Trailer && t.Make == input.TrailersMake)
+                    && (string.IsNullOrEmpty(input.TrailersModel) || t.CurrentTrailer.Model == input.TrailersModel || t.VehicleCategory.AssetType == AssetType.Trailer && t.Model == input.TrailersModel)
+                    && (!input.TrailersBedConstruction.HasValue || t.CurrentTrailer.BedConstruction == input.TrailersBedConstruction || t.VehicleCategory.AssetType == AssetType.Trailer && t.BedConstruction == input.TrailersBedConstruction));
+            }
+            var trucks = await (await query
                 .GetScheduleTrucks(input, await SettingManager.UseShifts(),
                     await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature)))
                 .PopulateScheduleTruckFullFields(input, _driverAssignmentRepository.GetAll());
@@ -205,10 +225,54 @@ namespace DispatcherWeb.Scheduling
                 .ToListAsync();
             trucks.RemoveAll(x => assignedTruckIds.Contains(x.Id));
 
+            foreach (var truck in trucks.ToList())
+            {
+                if (truck.VehicleCategory.AssetType != AssetType.Trailer)
+                {
+                    continue;
+                }
+
+                if (trucks.Any(t => t.Trailer?.Id == truck.Id))
+                {
+                    trucks.Remove(truck);
+                }
+                else
+                {
+                    truck.Trailer = new ScheduleTruckTrailerDto
+                    {
+                        Id = truck.Id,
+                        TruckCode = truck.TruckCode,
+                        BedConstruction = truck.BedConstruction,
+                        Make = truck.Make,
+                        Model = truck.Model,
+                        VehicleCategory = truck.VehicleCategory
+                    };
+                    truck.Id = 0;
+                    truck.TruckCode = null;
+                    truck.BedConstruction = 0;
+                    truck.Make = null;
+                    truck.Model = null;
+                    truck.VehicleCategory = null;
+                }
+            }
+
             var items = trucks.Select(x => new TruckToAssignDto
             {
-                Id = x.Id,
+                TruckId = x.Id == 0 ? null : x.Id,
+                TrailerId = x.Trailer?.Id,
                 TruckCode = x.TruckCode,
+                TruckCodeWithModelInfo = x.Id == 0 ? null : x.TruckCode + " " + x.VehicleCategory.Name + ", "
+                    + string.Join(", ", new[] {
+                        x.Make,
+                        x.Model,
+                        x.BedConstructionFormatted
+                    }.Where(s => !string.IsNullOrWhiteSpace(s))),
+                TrailerTruckCodeWithModelInfo = x.Trailer == null ? null : x.Trailer.TruckCode + " " + x.Trailer.VehicleCategory.Name + ", "
+                    + string.Join(", ", new[] {
+                        x.Trailer.Make,
+                        x.Trailer.Model,
+                        x.Trailer.BedConstructionFormatted
+                    }.Where(s => !string.IsNullOrWhiteSpace(s))),
                 LeaseHaulerId = x.LeaseHaulerId,
                 BedConstruction = x.BedConstruction,
                 DriverId = x.DriverId,
