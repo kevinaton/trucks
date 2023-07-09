@@ -1,11 +1,10 @@
 ﻿using Abp.Application.Services.Dto;
+using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Customers.Dto
 {
-    public class GetCustomerContactForEditInput : NullableIdDto
+    public class GetCustomerContactForEditInput : NullableIdNameDto
     {
         public int? CustomerId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
     }
 }

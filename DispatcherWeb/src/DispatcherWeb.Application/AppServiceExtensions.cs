@@ -111,7 +111,7 @@ namespace DispatcherWeb
                     Id = o.Order.Id,
                     ContactEmail = o.Order.CustomerContact.Email,
                     ContactPhoneNumber = o.Order.CustomerContact.PhoneNumber,
-                    ContactName = o.Order.CustomerContact.FullName(),
+                    ContactName = o.Order.CustomerContact.Name,
                     CustomerName = o.Order.Customer.Name,
                     CustomerAccountNumber = o.Order.Customer.AccountNumber,
                     ChargeTo = o.Order.ChargeTo,
@@ -178,7 +178,10 @@ namespace DispatcherWeb
                             Note = s.OrderLine.Note,
                             NumberOfTrucks = s.OrderLine.NumberOfTrucks ?? 0,
                             TimeOnJob = s.OrderLine.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? s.OrderLine.FirstStaggeredTimeOnJob : s.OrderLine.TimeOnJob,
-                            IsTimeStaggered = s.OrderLine.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLine.OrderLineTrucks.Any(olt => olt.TimeOnJob != null)
+                            IsTimeStaggered = s.OrderLine.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLine.OrderLineTrucks.Any(olt => olt.TimeOnJob != null),
+                            OrderLineVehicleCategories = s.OrderLine.OrderLineVehicleCategories
+                                .Select(vc => vc.VehicleCategory.Name)
+                                .ToList()
                         }).ToList(),
                     DeliveryInfoItems = o.Order.OrderLines
                         .SelectMany(x => x.Tickets)
@@ -218,7 +221,7 @@ namespace DispatcherWeb
                     Id = o.Order.Id,
                     ContactEmail = o.Order.CustomerContact.Email,
                     ContactPhoneNumber = o.Order.CustomerContact.PhoneNumber,
-                    ContactName = o.Order.CustomerContact.FullName(),
+                    ContactName = o.Order.CustomerContact.Name,
                     CustomerName = o.Order.Customer.Name,
                     CustomerAccountNumber = o.Order.Customer.AccountNumber,
                     ChargeTo = o.Order.ChargeTo,

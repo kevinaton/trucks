@@ -41,12 +41,12 @@
             </span>
         </div>
         <div class="col-6 text-right">
-            @if (IsGranted(AppPermissions.AllowImportingTruxEarnings) && await SettingManager.GetSettingValueAsync<bool>(AppSettings.Trux.AllowImportingTruxEarnings))
+            @if (IsGranted(AppPermissions.Pages_Imports_TruxEarnings) && await SettingManager.GetSettingValueAsync<bool>(AppSettings.Trux.AllowImportingTruxEarnings))
             {
                 <a asp-controller="Imports" asp-action="Trux" class="btn btn-primary" data-toggle="tooltip" data-html="true"
                    title="@L("ImportTruxEarnings")"><i class="fas fa-upload"></i> @L("Trux")</a>
             }
-            @if (IsGranted(AppPermissions.AllowImportingLuckStoneEarnings) && await SettingManager.GetSettingValueAsync<bool>(AppSettings.LuckStone.AllowImportingLuckStoneEarnings))
+            @if (IsGranted(AppPermissions.Pages_Imports_LuckStoneEarnings) && await SettingManager.GetSettingValueAsync<bool>(AppSettings.LuckStone.AllowImportingLuckStoneEarnings))
             {
                 <a asp-controller="Imports" asp-action="LuckStone" class="btn btn-primary" data-toggle="tooltip" data-html="true"
                    title="@L("ImportLuckStoneEarnings")"><i class="fas fa-upload"></i> @L("LuckStone")</a>

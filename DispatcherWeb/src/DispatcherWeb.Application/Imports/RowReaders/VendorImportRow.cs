@@ -23,10 +23,10 @@ namespace DispatcherWeb.Imports.RowReaders
         public string MainEmail => GetString(VendorColumn.MainEmail, EntityStringFieldLengths.General.Email);
 
         public string ContactTitle => GetString(VendorColumn.ContactTitle, EntityStringFieldLengths.CustomerContact.Title);
-        public string ContactName => GetString(VendorColumn.ContactName, EntityStringFieldLengths.CustomerContact.FirstName + EntityStringFieldLengths.CustomerContact.LastName + 1);
+        public string ContactName => GetString(VendorColumn.ContactName, EntityStringFieldLengths.CustomerContact.Name);
         public string ContactPhone => GetString(VendorColumn.ContactPhone, EntityStringFieldLengths.General.PhoneNumber);
         public string ContactFax => GetString(VendorColumn.ContactFax, EntityStringFieldLengths.General.PhoneNumber);
-        public string Contact2Name => GetString(VendorColumn.Contact2Name, EntityStringFieldLengths.CustomerContact.FirstName + EntityStringFieldLengths.CustomerContact.LastName + 1);
+        public string Contact2Name => GetString(VendorColumn.Contact2Name, EntityStringFieldLengths.CustomerContact.Name);
         public string Contact2Phone => GetString(VendorColumn.Contact2Phone, EntityStringFieldLengths.General.PhoneNumber);
     }
 }

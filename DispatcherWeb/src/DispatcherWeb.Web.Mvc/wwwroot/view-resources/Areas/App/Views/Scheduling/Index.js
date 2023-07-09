@@ -182,7 +182,7 @@
             viewUrl: abp.appPath + 'app/Scheduling/AssignTrucksModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_AssignTrucksModal.js',
             modalClass: 'AssignTrucksModal',
-            modalSize: 'lg'
+            modalSize: 'xl'
         });
 
         var _changeDriverForOrderLineTruckModal = new app.ModalManager({
@@ -2503,15 +2503,6 @@
                             callback: function () {
                                 menuFunctions.fn.printBackOfficeDetail(this);
                             }
-                        },
-                        printWithDeliveryInfo: {
-                            name: app.localize('Schedule_DataTable_MenuItems_WithDeliveryInfo'),
-                            visible: function () {
-                                return true;
-                            },
-                            callback: function () {
-                                menuFunctions.fn.printWithDeliveryInfo(this);
-                            }
                         }
                     }
                 },
@@ -2604,6 +2595,15 @@
                     },
                     callback: function () {
                         menuFunctions.fn.viewDispatches(this);
+                    }
+                },
+                printWithDeliveryInfo: {
+                    name: app.localize('Schedule_DataTable_MenuItems_WithDeliveryInfo'),
+                    visible: function () {
+                        return true;
+                    },
+                    callback: function () {
+                        menuFunctions.fn.printWithDeliveryInfo(this);
                     }
                 },
                 activateClosedTrucks: {

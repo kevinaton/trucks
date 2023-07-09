@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DispatcherWeb.Migrations
 {
-    public partial class AddedCustomerPortalLinkToUserAndOtherUpdates : Migration
+    public partial class AddedCustomerPortal : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,26 +14,17 @@ namespace DispatcherWeb.Migrations
                 table: "CustomerContact",
                 type: "nvarchar(128)",
                 maxLength: 128,
-                nullable: true,
+                nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(100)",
                 oldMaxLength: 100);
 
-            migrationBuilder.AddColumn<string>(
-                name: "FirstName",
+            migrationBuilder.AddColumn<bool>(
+                name: "HasCustomerPortalAccess",
                 table: "CustomerContact",
-                type: "nvarchar(64)",
-                maxLength: 64,
+                type: "bit",
                 nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "LastName",
-                table: "CustomerContact",
-                type: "nvarchar(64)",
-                maxLength: 64,
-                nullable: false,
-                defaultValue: "");
+                defaultValue: false);
 
             migrationBuilder.AddColumn<int>(
                 name: "CustomerContactId",
@@ -53,18 +44,12 @@ namespace DispatcherWeb.Migrations
                 principalTable: "CustomerContact",
                 principalColumn: "Id");
 
-            migrationBuilder.Sql(@"DECLARE @DB_NAME nvarchar(128) = DB_NAME();
-EXEC ('ALTER DATABASE [' + @DB_NAME + ']  SET COMPATIBILITY_LEVEL = 130');", true);
-
             var sql = this.ReadSql();
             migrationBuilder.Sql(sql);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"DECLARE @DB_NAME nvarchar(128) = DB_NAME();
-EXEC ('ALTER DATABASE [' + @DB_NAME + ']  SET COMPATIBILITY_LEVEL = 100');", true);
-
             migrationBuilder.DropForeignKey(
                 name: "FK_AbpUsers_CustomerContact_CustomerContactId",
                 table: "AbpUsers");
@@ -74,11 +59,7 @@ EXEC ('ALTER DATABASE [' + @DB_NAME + ']  SET COMPATIBILITY_LEVEL = 100');", tru
                 table: "AbpUsers");
 
             migrationBuilder.DropColumn(
-                name: "FirstName",
-                table: "CustomerContact");
-
-            migrationBuilder.DropColumn(
-                name: "LastName",
+                name: "HasCustomerPortalAccess",
                 table: "CustomerContact");
 
             migrationBuilder.DropColumn(
@@ -91,11 +72,9 @@ EXEC ('ALTER DATABASE [' + @DB_NAME + ']  SET COMPATIBILITY_LEVEL = 100');", tru
                 type: "nvarchar(100)",
                 maxLength: 100,
                 nullable: false,
-                defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "nvarchar(128)",
-                oldMaxLength: 128,
-                oldNullable: true);
+                oldMaxLength: 128);
         }
     }
 }

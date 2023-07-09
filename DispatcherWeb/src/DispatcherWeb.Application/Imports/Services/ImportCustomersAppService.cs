@@ -4,7 +4,6 @@ using Abp.Domain.Repositories;
 using Abp.Extensions;
 using DispatcherWeb.Customers;
 using DispatcherWeb.Imports.RowReaders;
-using DispatcherWeb.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Imports.Services
@@ -75,17 +74,14 @@ namespace DispatcherWeb.Imports.Services
                 CustomerContact customerContact = null;
                 if (customer.Id > 0)
                 {
-                    customerContact = customer.CustomerContacts?.FirstOrDefault(x => x.FullName() == contactName);
+                    customerContact = customer.CustomerContacts?.FirstOrDefault(x => x.Name == contactName);
                 }
                 if (customerContact == null)
                 {
-                    var contactNameParts = contactName.Split(" ");
                     customerContact = new CustomerContact
                     {
                         Customer = customer,
-                        FirstName = contactNameParts.First(),
-                        LastName = contactNameParts.Length > 1 ? contactNameParts[1] : contactNameParts.First(),
-
+                        Name = contactName
                     };
                     _customerContactRepository.Insert(customerContact);
                 }
@@ -102,16 +98,14 @@ namespace DispatcherWeb.Imports.Services
                 CustomerContact customerContact = null;
                 if (customer.Id > 0)
                 {
-                    customerContact = customer.CustomerContacts?.FirstOrDefault(x => x.FullName() == contactName);
+                    customerContact = customer.CustomerContacts?.FirstOrDefault(x => x.Name == contactName);
                 }
                 if (customerContact == null)
                 {
-                    var contactNameParts = contactName.Split(" ");
                     customerContact = new CustomerContact
                     {
                         Customer = customer,
-                        FirstName = contactNameParts.First(),
-                        LastName = contactNameParts.Length > 1 ? contactNameParts[1] : contactNameParts.First(),
+                        Name = contactName
                     };
                     _customerContactRepository.Insert(customerContact);
                 }

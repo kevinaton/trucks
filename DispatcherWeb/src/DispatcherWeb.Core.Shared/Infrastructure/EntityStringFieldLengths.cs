@@ -108,8 +108,6 @@
         public static class CustomerContact
         {
             public const int Title = 40;
-            public const int LastName = 64;
-            public const int FirstName = 64;
             public const int Name = 128;
         }
 

@@ -16,10 +16,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Migrations\20230607154131_AddedActiveReports.sql" />
-    <None Remove="Migrations\20230706140143_CustomerPortalUpdatesAndCorrections.sql" />
+    <None Remove="Migrations\20230707141545_AddedCustomerPortal.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\20230706140143_CustomerPortalUpdatesAndCorrections.sql" />
+    <EmbeddedResource Include="Migrations\20230707141545_AddedCustomerPortal.sql" />
     <EmbeddedResource Include="Migrations\20230607154131_AddedActiveReports.sql" />
   </ItemGroup>
   <ItemGroup>
