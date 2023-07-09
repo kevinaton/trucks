@@ -407,7 +407,7 @@ namespace DispatcherWeb.Authorization.Roles
                 },
                 // Imports_LuckStoneEarnings
                 {
-                    AppPermissions.AllowImportingLuckStoneEarnings, new[]
+                    AppPermissions.Pages_Imports_LuckStoneEarnings, new[]
                     {
                         StaticRoleNames.Tenants.Admin,
                     }
@@ -428,7 +428,7 @@ namespace DispatcherWeb.Authorization.Roles
                 },
                 // Imports_TruxEarnings
                 {
-                    AppPermissions.AllowImportingTruxEarnings, new[]
+                    AppPermissions.Pages_Imports_TruxEarnings, new[]
                     {
                         StaticRoleNames.Tenants.Admin,
                     }

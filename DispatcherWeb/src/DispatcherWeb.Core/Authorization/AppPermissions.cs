@@ -116,8 +116,6 @@
         public const string Pages_TicketsByDriver = "Pages.TicketsByDriver";
         public const string Pages_Invoices = "Pages.Invoices";
         public const string DriverProductionPay = "DriverProductionPay";
-        public const string AllowImportingTruxEarnings = "AllowImportingTruxEarnings";
-        public const string AllowImportingLuckStoneEarnings = "AllowImportingLuckStoneEarnings";
         public const string EditInvoicedOrdersAndTickets = "EditInvoicedOrdersAndTickets";
 
         public const string Pages_VehicleService_View = "Pages.VehicleService.View";
@@ -153,6 +151,8 @@
         public const string Pages_Imports_Vendors = "Pages.Imports.Vendors";
         public const string Pages_Imports_Services = "Pages.Imports.Services";
         public const string Pages_Imports_Employees = "Pages.Imports.Employees";
+        public const string Pages_Imports_LuckStoneEarnings = "AllowImportingLuckStoneEarnings";
+        public const string Pages_Imports_TruxEarnings = "AllowImportingTruxEarnings";
 
         public const string Pages_OfficeAccess_All = "Pages.OfficeAccess.All";
         public const string Pages_OfficeAccess_UserOnly = "Pages.OfficeAccess.UserOnly";

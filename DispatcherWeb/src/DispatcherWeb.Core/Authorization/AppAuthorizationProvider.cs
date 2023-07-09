@@ -108,10 +108,6 @@ namespace DispatcherWeb.Authorization
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature));
             pages.CreateChildPermission(AppPermissions.DriverProductionPay, L("DriverProductionPay"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.DriverProductionPayFeature));
-            pages.CreateChildPermission(AppPermissions.AllowImportingTruxEarnings, L("AllowImportingTruxEarnings"), multiTenancySides: MultiTenancySides.Tenant,
-                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingTruxEarnings));
-            pages.CreateChildPermission(AppPermissions.AllowImportingLuckStoneEarnings, L("AllowImportingLuckStoneEarnings"), multiTenancySides: MultiTenancySides.Tenant,
-                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingLuckStoneEarnings));
 
             var vehicleService = pages.CreateChildPermission(AppPermissions.Pages_VehicleService_View, L("VehicleService"), multiTenancySides: MultiTenancySides.Tenant);
             vehicleService.CreateChildPermission(AppPermissions.Pages_VehicleService_Edit, L("EditingVehicleService"), multiTenancySides: MultiTenancySides.Tenant);
@@ -175,6 +171,10 @@ namespace DispatcherWeb.Authorization
                 featureDependency: new SimpleFeatureDependency(AppFeatures.QuickbooksImportFeature));
             imports.CreateChildPermission(AppPermissions.Pages_Imports_Employees, L("ImportEmployeesPermission"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.QuickbooksImportFeature));
+            imports.CreateChildPermission(AppPermissions.Pages_Imports_TruxEarnings, L("TruxEarnings"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingTruxEarnings));
+            imports.CreateChildPermission(AppPermissions.Pages_Imports_LuckStoneEarnings, L("LuckStoneEarnings"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingLuckStoneEarnings));
 
             var officeAccess = pages.CreateChildPermission(AppPermissions.Pages_OfficeAccess_UserOnly, L("OfficeAccessUserOnly"), multiTenancySides: MultiTenancySides.Tenant);
             officeAccess.CreateChildPermission(AppPermissions.Pages_OfficeAccess_All, L("OfficeAccessAll"), multiTenancySides: MultiTenancySides.Tenant);
