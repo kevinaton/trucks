@@ -88,13 +88,14 @@ namespace DispatcherWeb.CustomerContacts
             }
             else
             {
+                var nameParts = customerContact.Name.Split(' ');
                 var newUser = new UserEditDto
                 {
                     CustomerContactId = customerContact.Id,
                     EmailAddress = customerContact.Email,
                     Title = customerContact.Title,
-                    Name = customerContact.FirstName,
-                    Surname = "", //customerContact.LastName,
+                    Name = nameParts.First(),
+                    Surname = nameParts.Length > 1 ? nameParts[1] : nameParts.First(),
                     PhoneNumber = customerContact.PhoneNumber,
                     UserName = customerContact.Email.Split("@").First(),
                     IsActive = true,
@@ -130,8 +131,9 @@ namespace DispatcherWeb.CustomerContacts
                 throw new UserFriendlyException("EmailAddress is required");
             }
 
-            user.Name = customerContact.FirstName;
-            user.Surname = customerContact.LastName;
+            var nameParts = customerContact.Name.Split(' ');
+            user.Name = nameParts.First();
+            user.Surname = nameParts.Length > 1 ? nameParts[1] : nameParts.First();
             user.Title = customerContact.Title;
             user.EmailAddress = customerContact.Email;
             user.PhoneNumber = customerContact.PhoneNumber;
@@ -143,8 +145,7 @@ namespace DispatcherWeb.CustomerContacts
 
         private async Task UpdateCustomerContactFromUser(CustomerContact customerContact, User user)
         {
-            customerContact.FirstName = user.Name;
-            customerContact.LastName = user.Surname;
+            customerContact.Name = $"{user.Name} {user.Surname}";
             customerContact.Title = user.Title;
             customerContact.Email = user.EmailAddress;
             customerContact.PhoneNumber = user.PhoneNumber;

@@ -34,12 +34,12 @@ namespace DispatcherWeb.Imports.RowReaders
 
 
         public string ContactTitle => GetString(CustomerColumn.ContactTitle, EntityStringFieldLengths.CustomerContact.Title);
-        public string ContactName => GetString(CustomerColumn.ContactName, EntityStringFieldLengths.CustomerContact.FirstName + EntityStringFieldLengths.CustomerContact.LastName + 1);
+        public string ContactName => GetString(CustomerColumn.ContactName, EntityStringFieldLengths.CustomerContact.Name);
         public string ContactPhone => GetString(CustomerColumn.ContactPhone, EntityStringFieldLengths.General.PhoneNumber);
         public string ContactFax => GetString(CustomerColumn.ContactFax, EntityStringFieldLengths.General.PhoneNumber);
         public string ContactEmail => GetString(CustomerColumn.ContactEmail, EntityStringFieldLengths.General.Email);
         public string Contact2Title => GetString(CustomerColumn.Contact2Title, EntityStringFieldLengths.CustomerContact.Title);
-        public string Contact2Name => GetString(CustomerColumn.Contact2Name, EntityStringFieldLengths.CustomerContact.FirstName + EntityStringFieldLengths.CustomerContact.LastName + 1);
+        public string Contact2Name => GetString(CustomerColumn.Contact2Name, EntityStringFieldLengths.CustomerContact.Name);
         public string Contact2Phone => GetString(CustomerColumn.Contact2Phone, EntityStringFieldLengths.General.PhoneNumber);
         public string Contact2Email => GetString(CustomerColumn.Contact2Email, EntityStringFieldLengths.General.Email);
     }

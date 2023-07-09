@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    [Migration("20230625081119_AddedCustomerPortal")]
+    [Migration("20230707141545_AddedCustomerPortal")]
     partial class AddedCustomerPortal
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1667,6 +1667,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<int?>("CustomerContactId")
+                        .HasColumnType("int");
+
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
 
@@ -1785,6 +1788,8 @@ namespace DispatcherWeb.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorUserId");
+
+                    b.HasIndex("CustomerContactId");
 
                     b.HasIndex("DeleterUserId");
 
@@ -2109,8 +2114,8 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)
@@ -9060,6 +9065,10 @@ namespace DispatcherWeb.Migrations
                         .WithMany()
                         .HasForeignKey("CreatorUserId");
 
+                    b.HasOne("DispatcherWeb.Customers.CustomerContact", "CustomerContact")
+                        .WithMany()
+                        .HasForeignKey("CustomerContactId");
+
                     b.HasOne("DispatcherWeb.Authorization.Users.User", "DeleterUser")
                         .WithMany()
                         .HasForeignKey("DeleterUserId");
@@ -9073,6 +9082,8 @@ namespace DispatcherWeb.Migrations
                         .HasForeignKey("OfficeId");
 
                     b.Navigation("CreatorUser");
+
+                    b.Navigation("CustomerContact");
 
                     b.Navigation("DeleterUser");
 

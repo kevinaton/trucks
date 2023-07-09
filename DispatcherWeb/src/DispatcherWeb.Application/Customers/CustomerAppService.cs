@@ -314,8 +314,7 @@ namespace DispatcherWeb.Customers
                 {
                     Id = x.Id,
                     CustomerId = x.CustomerId,
-                    FirstName = x.FirstName,
-                    LastName = x.LastName,
+                    Name = x.Name,
                     PhoneNumber = x.PhoneNumber,
                     Fax = x.Fax,
                     Email = x.Email,
@@ -333,13 +332,9 @@ namespace DispatcherWeb.Customers
         [AbpAuthorize(AppPermissions.Pages_Customers)]
         public async Task<int> GetCustomerContactDuplicateCount(GetCustomerContactDuplicateCountInput input)
         {
-            var count = await _customerContactRepository.GetAll()
-                .Where(x => x.CustomerId == input.CustomerId && x.Id != input.ExceptId)
-                .WhereIf(!input.FirstName.IsNullOrEmpty(), x => x.FirstName == input.FirstName)
-                .WhereIf(!input.LastName.IsNullOrEmpty(), x => x.LastName == input.LastName)
+            return await _customerContactRepository.GetAll()
+                .Where(x => x.CustomerId == input.CustomerId && x.Id != input.ExceptId && x.Name == input.Name)
                 .CountAsync();
-
-            return count;
         }
 
         [HttpPost]
@@ -350,7 +345,7 @@ namespace DispatcherWeb.Customers
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),
-                    Name = x.FullName()
+                    Name = x.Name
                 })
                 .OrderBy(x => x.Name)
                 .ToListAsync();
@@ -364,14 +359,13 @@ namespace DispatcherWeb.Customers
             {
                 return new ListResultDto<SelectListDto>();
             }
-
             var contacts = await _customerContactRepository.GetAll()
                 .Where(x => x.CustomerId == input.Id && x.IsActive)
-                .OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
+                .OrderBy(x => x.Name)
                 .Select(x => new SelectListDto<CustomerContactSelectListInfoDto>
                 {
                     Id = x.Id.ToString(),
-                    Name = x.FullName(),
+                    Name = x.Name,
                     Item = new CustomerContactSelectListInfoDto
                     {
                         PhoneNumber = x.PhoneNumber
@@ -388,13 +382,12 @@ namespace DispatcherWeb.Customers
 
             if (input.Id.HasValue)
             {
-                CustomerContact customerContact = await _customerContactRepository.GetAsync(input.Id.Value);
+                var customerContact = await _customerContactRepository.GetAsync(input.Id.Value);
                 customerContactEditDto = new CustomerContactEditDto
                 {
                     Id = customerContact.Id,
                     CustomerId = customerContact.CustomerId,
-                    LastName = customerContact.LastName,
-                    FirstName = customerContact.FirstName,
+                    Name = customerContact.Name,
                     PhoneNumber = customerContact.PhoneNumber,
                     Fax = customerContact.Fax,
                     Email = customerContact.Email,
@@ -407,8 +400,7 @@ namespace DispatcherWeb.Customers
             {
                 customerContactEditDto = new CustomerContactEditDto
                 {
-                    FirstName = input.FirstName,
-                    LastName = input.LastName,
+                    Name = input.Name,
                     CustomerId = input.CustomerId ?? throw new UserFriendlyException("Please select a customer first"),
                     IsActive = true,
                 };
@@ -424,8 +416,7 @@ namespace DispatcherWeb.Customers
             {
                 Id = model.Id ?? 0,
                 CustomerId = model.CustomerId,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
+                Name = model.Name,
                 PhoneNumber = model.PhoneNumber,
                 Fax = model.Fax,
                 Email = model.Email,

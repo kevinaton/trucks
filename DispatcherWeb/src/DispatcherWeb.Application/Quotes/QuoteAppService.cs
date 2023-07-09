@@ -126,7 +126,7 @@ namespace DispatcherWeb.Quotes
                     Description = x.Description,
                     CustomerName = x.Customer.Name,
                     QuoteDate = x.ProposalDate,
-                    ContactName = x.Contact.FullName(),
+                    ContactName = x.Contact.Name,
                     SalesPersonName = x.SalesPerson.Name + " " + x.SalesPerson.Surname,
                     PONumber = x.PONumber,
                     EmailDeliveryStatuses = x.QuoteEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList(),
@@ -151,7 +151,7 @@ namespace DispatcherWeb.Quotes
                 {
                     Id = x.Id,
                     CustomerName = x.Customer.Name,
-                    ContactName = x.Contact.FullName(),
+                    ContactName = x.Contact.Name,
                     ContactPhone = x.Contact.PhoneNumber,
                     ContactEmail = x.Contact.Email
                 })
@@ -227,7 +227,7 @@ namespace DispatcherWeb.Quotes
                         CustomerId = quote.CustomerId,
                         CustomerName = quote.Customer.Name,
                         ContactId = quote.ContactId,
-                        ContactName = quote.Contact.FullName(),
+                        ContactName = quote.Contact.Name,
                         Description = quote.Description,
                         ProposalDate = quote.ProposalDate,
                         ProposalExpiryDate = quote.ProposalExpiryDate,
@@ -630,7 +630,7 @@ namespace DispatcherWeb.Quotes
                     .Select(x => new
                     {
                         CustomerName = x.Customer.Name,
-                        ContactName = x.Contact.FullName(),
+                        ContactName = x.Contact.Name,
                         ProjectName = x.Project.Name,
                         SalesPersonName = x.SalesPerson.Name + " " + x.SalesPerson.Surname,
                         FuelSurchargeCalculationName = x.FuelSurchargeCalculation.Name,
@@ -862,8 +862,7 @@ namespace DispatcherWeb.Quotes
 
             quote.Id = await _quoteRepository.InsertAndGetIdAsync(quote);
 
-            var quoteServices = orderLines.Select(x =>
-            {
+            var quoteServices = orderLines.Select(x => {
                 var newQuoteService = new QuoteService
                 {
                     QuoteId = quote.Id,
@@ -1339,7 +1338,7 @@ namespace DispatcherWeb.Quotes
                 .Where(x => x.Id == input.QuoteId)
                 .Select(x => new QuoteReportDto
                 {
-                    ContactAttn = x.Contact.FullName(),
+                    ContactAttn = x.Contact.Name,
                     ContactPhoneNumber = x.Contact.PhoneNumber,
                     CustomerName = x.Customer.Name,
                     CustomerAddress1 = x.Customer.Address1,

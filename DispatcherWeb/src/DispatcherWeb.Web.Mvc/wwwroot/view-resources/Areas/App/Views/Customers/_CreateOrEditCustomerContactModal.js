@@ -37,13 +37,13 @@
             }
 
             var customerContact = _$form.serializeFormToObject();
+            customerContact.Name = customerContact.Name.trim().split(/[\s,\t,\n]+/).join(' ');
 
             _modalManager.setBusy(true);
             _customerService.getCustomerContactDuplicateCount({
                 customerId: customerContact.CustomerId,
                 exceptId: customerContact.Id,
-                firstName: customerContact.FirstName,
-                lastName: customerContact.LastName
+                Name: customerContact.Name
             }).done(async function (duplicateCount) {
 
                 if (duplicateCount) {
