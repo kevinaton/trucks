@@ -64,35 +64,5 @@ namespace DispatcherWeb.EntityFrameworkCore
                 uow.Complete();
             }
         }
-
-        public void SeedExistingTenant(AbpTenantBase tenant)
-        {
-            var args = new DbPerTenantConnectionStringResolveArgs(
-                tenant == null ? (int?)null : (int?)tenant.Id,
-                tenant == null ? MultiTenancySides.Host : MultiTenancySides.Tenant
-            );
-
-            args["DbContextType"] = typeof(DispatcherWebDbContext);
-            args["DbContextConcreteType"] = typeof(DispatcherWebDbContext);
-
-            var nameOrConnectionString = ConnectionStringHelper.GetConnectionString(
-                _connectionStringResolver.GetNameOrConnectionString(args)
-            );
-
-            using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.Suppress))
-            {
-                using (_unitOfWorkManager.Current.SetTenantId(tenant.Id))
-                {
-                    using (var context = _dbContextResolver.Resolve<DispatcherWebDbContext>(nameOrConnectionString, null))
-                    {
-                        Debug.Assert(tenant != null, nameof(tenant) + " != null");
-                        new TenantRoleAndUserBuilder(context, tenant.Id).Create();
-                    }
-
-                    _unitOfWorkManager.Current.SaveChanges();
-                    uow.Complete();
-                }
-            }
-        }
     }
 }

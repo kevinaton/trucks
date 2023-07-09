@@ -204,6 +204,13 @@ namespace DispatcherWeb.Features
             );
 
             context.Create(
+                AppFeatures.WebBasedDriverApp,
+                defaultValue: "false",
+                displayName: L("WebBasedDriverApp"),
+                inputType: new CheckboxInputType()
+            );
+
+            context.Create(
                 AppFeatures.ReactNativeDriverApp,
                 defaultValue: "false",
                 displayName: L("ReactNativeDriverApp"),
