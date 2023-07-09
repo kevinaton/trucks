@@ -25,6 +25,7 @@ import {
     ListItemButton,
     Collapse,
     List,
+    Link,
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { grey } from '@mui/material/colors';
@@ -417,7 +418,19 @@ const Schedule = (props) => {
                                                                         />
                                                                     </ListItemButton>
                                                                 </ListItem>
-
+                                                                <ListItem disablePadding>
+                                                                    <ListItemButton
+                                                                        component={Link}
+                                                                        to='/job-summary'>
+                                                                        <ListItemText
+                                                                            primary={
+                                                                                <Typography align='left'>
+                                                                                    Job Summary
+                                                                                </Typography>
+                                                                            }
+                                                                        />
+                                                                    </ListItemButton>
+                                                                </ListItem>
                                                                 <ListItem disablePadding>
                                                                     <ListItemButton
                                                                         onClick={() => {
