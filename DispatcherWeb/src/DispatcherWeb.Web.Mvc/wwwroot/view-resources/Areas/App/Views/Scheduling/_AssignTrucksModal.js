@@ -12,6 +12,8 @@
         var _showPowerUnitsSection = false;
         var _showTrailersSection = false;
         var _useAndForTrailerCondition = true;
+        var _powerUnitsVehicleCategoryIds = [];
+        var _trailersVehicleCategoryIds = [];
 
         var rowSelectionClass = 'invoice-row-selection';
         var rowSelectAllClass = 'invoice-row-select-all';
@@ -159,8 +161,6 @@
             function updateFilter() {
                 //_selectedRowIds = [];
                 _filter = _$form.serializeFormToObject();
-                delete _filter.VehicleCategoryIds;
-                _filter.vehicleCategoryIds = vehicleCategoryDropdown.val();
                 delete _filter.IsApportioned;
                 _filter.isApportioned = _$form.find('#IsApportionedFilter').is(':checked');
             }
@@ -171,13 +171,10 @@
 
             function handleVehicleCategoryChange() {
                 var selectedVehicleCategories = vehicleCategoryDropdown.select2('data');
-                if (selectedVehicleCategories.length) {
-                    _showPowerUnitsSection = selectedVehicleCategories.some(x => x.item && x.item.isPowered || false);
-                    _showTrailersSection = selectedVehicleCategories.some(x => x.item && !x.item.isPowered || false);
-                } else {
-                    _showPowerUnitsSection = false;
-                    _showTrailersSection = false;
-                }
+                _powerUnitsVehicleCategoryIds = selectedVehicleCategories.filter(x => x.item && x.item.isPowered || false).map(x => x.id);
+                _trailersVehicleCategoryIds = selectedVehicleCategories.filter(x => x.item && x.item.assetType === abp.enums.assetType.trailer || false).map(x => x.id);
+                _showPowerUnitsSection = _powerUnitsVehicleCategoryIds.length > 0;
+                _showTrailersSection = _trailersVehicleCategoryIds.length > 0;
                 
                 if (_showPowerUnitsSection) {
                     _$form.find('#PowerUnitsSection').show();
@@ -221,6 +218,8 @@
                     }
                     var abpData = _dtHelper.toAbpData(data);
                     abpData.useAndForTrailerCondition = _useAndForTrailerCondition;
+                    abpData.powerUnitsVehicleCategoryIds = _powerUnitsVehicleCategoryIds;
+                    abpData.trailersVehicleCategoryIds = _trailersVehicleCategoryIds;
                     $.extend(abpData, _filter);
                     _schedulingService.getTrucksToAssign(abpData).done(function (abpResult) {
                         callback(_dtHelper.fromAbpResult(abpResult));
