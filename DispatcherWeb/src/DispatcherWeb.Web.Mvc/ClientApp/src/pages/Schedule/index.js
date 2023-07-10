@@ -1,63 +1,73 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import {
-    Autocomplete,
-    Box,
-    Paper,
-    TextField,
-    Typography,
-    Checkbox,
-    FormControlLabel,
-    ToggleButtonGroup,
-    ToggleButton,
-    Chip,
-    IconButton,
-    Menu,
-    MenuItem,
-    Grid,
-    TableContainer,
-    Table,
-    TableHead,
-    TableRow,
-    TableBody,
-    ListItem,
-    ListItemText,
-    ListItemButton,
-    Collapse,
-    List,
-    Link,
-} from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { grey } from '@mui/material/colors';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { linearProgressClasses } from '@mui/material/LinearProgress';
+import { Box, Paper, Typography, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import moment from 'moment';
-import data from '../../common/data/data.json';
-import { Tablecell, VerticalLinearProgress } from '../../components/DTComponents';
 import AddEditJob from '../../components/common/modals/addEditJob';
-import { theme } from '../../Theme';
-
-const { offices, TruckCode, ScheduleData } = data;
+import SchedulingDataFilter from './scheduling-data-filter';
+import TruckMap from './truck-map';
+import ScheduleOrders from './schedule-orders';
+import { isEmpty } from 'lodash';
+import { getSchedulePageConfig } from '../../store/actions';
 
 const Schedule = (props) => {
     const pageName = 'Schedule';
-    const [date, setDate] = React.useState(moment());
-    const [view, setView] = React.useState('all');
-    const [settingsAnchor, setSettingsAnchor] = React.useState(null);
-    const settingsOpen = Boolean(settingsAnchor);
-    const [actionAnchor, setActionAnchor] = React.useState(null);
-    const actionOpen = Boolean(actionAnchor);
-    const [isOrderOpen, setIsOrderOpen] = React.useState(false);
-    const [isPrintOrderOpen, setIsPrintOrderOpen] = React.useState(false);
-    const [hoveredRow, setHoveredRow] = React.useState(null);
-    const [isAssignTruck, setIsAssignTruck] = React.useState(false);
-    const [isJob, setJob] = React.useState(false);
-    const [title, setTitle] = React.useState('Add Job');
-    const [editData, setEditData] = React.useState({});
+    const [pageConfig, setPageConfig] = useState(null);
+    const [view, setView] = useState('all');
+    const [isJob, setJob] = useState(false);
+    const [title, setTitle] = useState('Add Job');
+    const [editData, setEditData] = useState({});
+    const [dataFilter, setDataFilter] = useState({
+        officeId: null,
+        date: moment().format('MM/DD/YYYY'),
+        hideCompletedOrders: false,
+        hideProgressBar: false,
+        sorting: 'Note',
+    });
+    const [trucks, setTrucks] = useState([]);
+
+    const dispatch = useDispatch();
+    const { userProfileMenu, schedulePageConfig } = useSelector((state) => ({
+        userProfileMenu: state.UserReducer.userProfileMenu,
+        schedulePageConfig: state.SchedulingReducer.schedulePageConfig,
+    }));
 
     useEffect(() => {
         props.handleCurrentPageName(pageName);
     }, [props]);
+
+    useEffect(() => {
+        dispatch(getSchedulePageConfig());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (
+            pageConfig === null &&
+            !isEmpty(schedulePageConfig) &&
+            !isEmpty(schedulePageConfig.result)
+        ) {
+            const { result } = schedulePageConfig;
+            if (!isEmpty(result)) {
+                setPageConfig(result);
+            }
+        }
+    }, [schedulePageConfig, pageConfig]);
+
+    useEffect(() => {
+        if (
+            dataFilter.officeId === null &&
+            !isEmpty(userProfileMenu) &&
+            !isEmpty(userProfileMenu.result)
+        ) {
+            const { sessionOfficeId } = userProfileMenu.result;
+            setDataFilter({
+                ...dataFilter,
+                officeId: sessionOfficeId,
+            });
+        }
+    }, [userProfileMenu, dataFilter]);
+
+    const onSetTrucks = (data) => setTrucks(data);
 
     // Handle toggle button at the top right
     const handleView = (event, newView) => {
@@ -66,48 +76,7 @@ const Schedule = (props) => {
         }
     };
 
-    // Handle click of settings located at the top right
-    const handleSettingsClick = (event) => {
-        setSettingsAnchor(event.currentTarget);
-    };
-    const handleSettingsClose = () => {
-        setSettingsAnchor(null);
-    };
-
-    // Handle action on table rows
-    const handleActionClick = (event) => {
-        setActionAnchor(event.currentTarget);
-    };
-    const handleActionClose = () => {
-        setActionAnchor(null);
-        setIsOrderOpen(false);
-    };
-
-    // Handle row hover on table
-    const handleRowHover = (index) => {
-        setHoveredRow(index);
-    };
-    const handleRowLeave = () => {
-        setHoveredRow(null);
-    };
-
-    // Handle Add jobs
-    const handleAddJob = () => {
-        setSettingsAnchor(null);
-        setTitle('Add Job');
-        setJob(true);
-    };
-
-    // Handle edit jobs
-    const handleEditJob = (event, data) => {
-        setActionAnchor(null);
-        setIsOrderOpen(false);
-        setTitle('Edit Job');
-        setEditData(data);
-        setJob(true);
-        console.log(event);
-        console.log(data);
-    };
+    const handleFilterChange = (dataFilter) => setDataFilter(dataFilter);
 
     return (
         <HelmetProvider>
@@ -145,512 +114,28 @@ const Schedule = (props) => {
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Box>
+
                 <Paper>
                     {/* Filter settings */}
-                    <Box
-                        component='form'
-                        sx={{
-                            p: 3,
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 2,
-                            justifyContent: 'flex-start',
-                        }}>
-                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='de'>
-                            <DatePicker
-                                label='date'
-                                value={date}
-                                onChange={(newVal) => setDate(newVal)}
-                                sx={{ flexShrink: 0 }}
-                            />
+                    <SchedulingDataFilter
+                        dataFilter={dataFilter}
+                        handleFilterChange={handleFilterChange}
+                    />
 
-                            <Autocomplete
-                                id='office'
-                                options={offices}
-                                sx={{ flex: 1, flexShrink: 0 }}
-                                renderInput={(params) => <TextField {...params} label='Office' />}
-                            />
+                    {/* List of trucks */}
+                    <TruckMap
+                        pageConfig={pageConfig}
+                        dataFilter={dataFilter}
+                        trucks={trucks}
+                        onSetTrucks={onSetTrucks}
+                    />
 
-                            <FormControlLabel
-                                control={<Checkbox />}
-                                label='Hide Completed Orders'
-                                sx={{ flexShrink: 0, m: 0 }}
-                            />
-
-                            <FormControlLabel
-                                control={<Checkbox />}
-                                label='Hide Progress Bar'
-                                sx={{ flexShrink: 1, m: 0 }}
-                            />
-
-                            <FormControlLabel
-                                control={<Checkbox />}
-                                label='Hide Schedule Progress'
-                                sx={{ flexShrink: 1, m: 0 }}
-                            />
-
-                            <FormControlLabel
-                                control={
-                                    <IconButton
-                                        sx={{ width: 25, height: 25 }}
-                                        onClick={handleSettingsClick}>
-                                        <i className='fa-regular fa-ellipsis-vertical'></i>
-                                    </IconButton>
-                                }
-                                sx={{
-                                    flex: 1,
-                                    m: 0,
-                                    justifyContent: 'flex-end',
-                                }}></FormControlLabel>
-
-                            <Menu
-                                anchorEl={settingsAnchor}
-                                id='settings-menu'
-                                open={settingsOpen}
-                                onClose={handleSettingsClose}
-                                onClick={handleSettingsClose}>
-                                <MenuItem onClick={handleSettingsClose}>
-                                    <i className='fa-regular fa-truck secondary-icon pr-2'></i> Add
-                                    a lease hauler
-                                </MenuItem>
-                                <MenuItem onClick={handleSettingsClose}>
-                                    <i className='fa-regular fa-check secondary-icon pr-2'></i> Mark
-                                    all jobs complete
-                                </MenuItem>
-                                <MenuItem onClick={handleAddJob}>
-                                    <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add
-                                    job
-                                </MenuItem>
-                                <MenuItem onClick={handleSettingsClose}>
-                                    <i className='fa-regular fa-print secondary-icon pr-2'></i>
-                                    Print schedule
-                                </MenuItem>
-                                <MenuItem onClick={handleSettingsClose}>
-                                    <i className='fa-regular fa-print secondary-icon pr-2'></i>
-                                    Print all orders
-                                </MenuItem>
-                            </Menu>
-                        </LocalizationProvider>
-                    </Box>
-
-                    {/* Truck Map */}
-                    <Box sx={{ p: 3 }}>
-                        <Paper variant='outlined' sx={{ p: 1 }}>
-                            <Grid container rowSpacing={1} columnSpacing={1}>
-                                {TruckCode.map((truck) => {
-                                    return (
-                                        <Grid item key={truck.label}>
-                                            <Chip
-                                                label={truck.label}
-                                                color={truck.color}
-                                                onClick={() => {}}
-                                                sx={{
-                                                    borderRadius: 0,
-                                                    fontSize: 18,
-                                                    fontWeight: 600,
-                                                    py: 3,
-                                                }}
-                                            />
-                                        </Grid>
-                                    );
-                                })}
-                            </Grid>
-                        </Paper>
-                    </Box>
-
-                    <TableContainer component={Box}>
-                        <Table stickyHeader aria-label='schedule table' size='small'>
-                            <TableHead>
-                                <TableRow
-                                    sx={{
-                                        '& th': {
-                                            backgroundColor: grey[200],
-                                        },
-                                    }}>
-                                    <Tablecell
-                                        label='Priority'
-                                        value={<i className='fa-regular fa-circle'></i>}
-                                    />
-                                    <Tablecell
-                                        label='Cash on delivery'
-                                        value='COD'
-                                        tableCellClasses
-                                    />
-                                    <Tablecell label='Note' value='' />
-                                    <Tablecell label='Customer' value='Customer' />
-                                    <Tablecell label='Job Number' value='Job #' />
-                                    <Tablecell
-                                        label='Time on job'
-                                        value={<i className='fa-regular fa-clock'></i>}
-                                    />
-                                    <Tablecell label='Load at' value='Load At' />
-                                    <Tablecell label='Deliver to' value='Deliver To' />
-                                    <Tablecell label='Item' value='Item' />
-                                    <Tablecell label='Quantity' value='Qty' />
-                                    <Tablecell
-                                        label='Required truck'
-                                        value={<i className='fa-regular fa-truck'></i>}
-                                    />
-                                    <Tablecell label='Progress' value='Progress' />
-                                    <Tablecell label='Closed' value='Closed' />
-                                    <Tablecell label='' value='' />
-                                </TableRow>
-                            </TableHead>
-
-                            <TableBody>
-                                {ScheduleData.map((data, index) => {
-                                    return (
-                                        <React.Fragment key={index}>
-                                            <TableRow
-                                                hover={true}
-                                                onMouseEnter={() => handleRowHover(index)}
-                                                onMouseLeave={() => handleRowLeave}
-                                                sx={{
-                                                    backgroundColor:
-                                                        hoveredRow === index
-                                                            ? theme.palette.action.hover
-                                                            : '#ffffff',
-                                                    '&.MuiTableRow-root:hover': {
-                                                        backgroundColor: theme.palette.action.hover,
-                                                    },
-                                                }}>
-                                                <Tablecell
-                                                    label='priority'
-                                                    value={
-                                                        <i className='fa-solid fa-circle-arrow-up error-icon'></i>
-                                                    }
-                                                />
-                                                <Tablecell
-                                                    label='Cash on delivery'
-                                                    value={<Checkbox checked={data.checkbox} />}
-                                                />
-                                                <Tablecell
-                                                    label='Notes'
-                                                    value={
-                                                        <i className='fa-solid fa-notebook icon'></i>
-                                                    }
-                                                />
-                                                <Tablecell label='Customer' value={data.customer} />
-                                                <Tablecell label='Job number' value={data.job} />
-                                                <Tablecell label='Time on job' value={data.time} />
-                                                <Tablecell label='Load at' value={data.load} />
-                                                <Tablecell
-                                                    label='Deliver to'
-                                                    value={data.deliver}
-                                                />
-                                                <Tablecell label='Item' value={data.item} />
-                                                <Tablecell label='Quantity' value={data.quantity} />
-                                                <Tablecell
-                                                    label='Required trucks'
-                                                    value={data.required}
-                                                />
-                                                <Tablecell
-                                                    label='Progress'
-                                                    value={
-                                                        <Box
-                                                            sx={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                            }}>
-                                                            <Box>
-                                                                <VerticalLinearProgress
-                                                                    variant='determinate'
-                                                                    color='secondary'
-                                                                    value={data.amountProgress}
-                                                                    sx={{
-                                                                        [`& .${linearProgressClasses.bar}`]:
-                                                                            {
-                                                                                transform: `translateY(${-data.amountProgress}%)!important`,
-                                                                            },
-                                                                    }}
-                                                                />
-                                                                <Typography variant='caption'>{`${data.amountProgress}%`}</Typography>
-                                                            </Box>
-                                                            <Box>
-                                                                <VerticalLinearProgress
-                                                                    variant='determinate'
-                                                                    color='secondary'
-                                                                    value={data.schedProgress}
-                                                                    sx={{
-                                                                        [`& .${linearProgressClasses.bar}`]:
-                                                                            {
-                                                                                transform: `translateY(${-data.schedProgress}%)!important`,
-                                                                            },
-                                                                    }}
-                                                                />
-                                                                <Typography variant='caption'>{`${data.schedProgress}%`}</Typography>
-                                                            </Box>
-                                                        </Box>
-                                                    }
-                                                />
-                                                <Tablecell
-                                                    label='Closed'
-                                                    value={<Checkbox checked={data.closed} />}
-                                                />
-                                                <Tablecell
-                                                    label='Action'
-                                                    value={
-                                                        <div>
-                                                            <IconButton
-                                                                sx={{ width: 25, height: 25 }}
-                                                                onClick={handleActionClick}>
-                                                                <i className='fa-regular fa-ellipsis-vertical'></i>
-                                                            </IconButton>
-                                                            <Menu
-                                                                anchorEl={actionAnchor}
-                                                                id='settings-menu'
-                                                                open={actionOpen}
-                                                                onClose={handleActionClose}>
-                                                                <ListItem disablePadding>
-                                                                    <ListItemButton
-                                                                        onClick={(event) =>
-                                                                            handleEditJob(
-                                                                                event,
-                                                                                data
-                                                                            )
-                                                                        }>
-                                                                        <ListItemText
-                                                                            primary={
-                                                                                <Typography align='left'>
-                                                                                    Edit Job
-                                                                                </Typography>
-                                                                            }
-                                                                        />
-                                                                    </ListItemButton>
-                                                                </ListItem>
-                                                                <ListItem disablePadding>
-                                                                    <ListItemButton
-                                                                        component={Link}
-                                                                        to='/job-summary'>
-                                                                        <ListItemText
-                                                                            primary={
-                                                                                <Typography align='left'>
-                                                                                    Job Summary
-                                                                                </Typography>
-                                                                            }
-                                                                        />
-                                                                    </ListItemButton>
-                                                                </ListItem>
-                                                                <ListItem disablePadding>
-                                                                    <ListItemButton
-                                                                        onClick={() => {
-                                                                            setIsOrderOpen(
-                                                                                !isOrderOpen
-                                                                            );
-                                                                        }}>
-                                                                        <ListItemText
-                                                                            primary={
-                                                                                <Typography align='left'>
-                                                                                    Order
-                                                                                </Typography>
-                                                                            }
-                                                                        />
-                                                                        {isOrderOpen ? (
-                                                                            <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
-                                                                        ) : (
-                                                                            <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
-                                                                        )}
-                                                                    </ListItemButton>
-                                                                </ListItem>
-
-                                                                <Collapse
-                                                                    in={isOrderOpen}
-                                                                    onClick={() => {
-                                                                        setIsOrderOpen(false);
-                                                                    }}
-                                                                    timeout='auto'
-                                                                    unmountOnExit
-                                                                    sx={{
-                                                                        backgroundColor: grey[100],
-                                                                    }}>
-                                                                    <List
-                                                                        component='div'
-                                                                        disablePadding>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='View/Edit' />
-                                                                        </ListItemButton>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='Mark Complete' />
-                                                                        </ListItemButton>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='Cancel' />
-                                                                        </ListItemButton>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='Copy' />
-                                                                        </ListItemButton>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='Transfer' />
-                                                                        </ListItemButton>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='Change date' />
-                                                                        </ListItemButton>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='Delete' />
-                                                                        </ListItemButton>
-                                                                    </List>
-                                                                </Collapse>
-
-                                                                <ListItem disablePadding>
-                                                                    <ListItemButton
-                                                                        onClick={() => {
-                                                                            setIsPrintOrderOpen(
-                                                                                !isPrintOrderOpen
-                                                                            );
-                                                                        }}>
-                                                                        <ListItemText
-                                                                            primary={
-                                                                                <Typography align='left'>
-                                                                                    Print Order
-                                                                                </Typography>
-                                                                            }
-                                                                        />
-                                                                        {isPrintOrderOpen ? (
-                                                                            <i className='fa-regular fa-chevron-down secondary-icon fa-sm'></i>
-                                                                        ) : (
-                                                                            <i className='fa-regular fa-chevron-right secondary-icon fa-sm'></i>
-                                                                        )}
-                                                                    </ListItemButton>
-                                                                </ListItem>
-
-                                                                <Collapse
-                                                                    in={isPrintOrderOpen}
-                                                                    onClick={() => {
-                                                                        setIsPrintOrderOpen(false);
-                                                                    }}
-                                                                    timeout='auto'
-                                                                    unmountOnExit
-                                                                    sx={{
-                                                                        backgroundColor: grey[100],
-                                                                    }}>
-                                                                    <List
-                                                                        component='div'
-                                                                        disablePadding>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='No Prices' />
-                                                                        </ListItemButton>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='Combined Prices' />
-                                                                        </ListItemButton>
-                                                                        <ListItemButton>
-                                                                            <ListItemText primary='Separate Prices' />
-                                                                        </ListItemButton>
-                                                                    </List>
-                                                                </Collapse>
-                                                                <ListItem disablePadding>
-                                                                    <ListItemButton
-                                                                        onClick={handleActionClose}>
-                                                                        <ListItemText>
-                                                                            <Typography align='left'>
-                                                                                Tickets
-                                                                            </Typography>
-                                                                        </ListItemText>
-                                                                    </ListItemButton>
-                                                                </ListItem>
-                                                                <ListItem disablePadding>
-                                                                    <ListItemButton
-                                                                        onClick={handleActionClose}>
-                                                                        <ListItemText>
-                                                                            <Typography align='left'>
-                                                                                View Load History
-                                                                            </Typography>
-                                                                        </ListItemText>
-                                                                    </ListItemButton>
-                                                                </ListItem>
-                                                            </Menu>
-                                                        </div>
-                                                    }
-                                                />
-                                            </TableRow>
-
-                                            <TableRow
-                                                hover={true}
-                                                onMouseEnter={() => handleRowHover(index)}
-                                                onMouseLeave={() => handleRowLeave}
-                                                sx={{
-                                                    backgroundColor:
-                                                        hoveredRow === index
-                                                            ? theme.palette.action.hover
-                                                            : '#ffffff',
-                                                    '&.MuiTableRow-root:hover': {
-                                                        backgroundColor: theme.palette.action.hover,
-                                                    },
-                                                }}>
-                                                <Tablecell
-                                                    label='Trucks'
-                                                    colSpan={14}
-                                                    value={
-                                                        <Box>
-                                                            <Box
-                                                                sx={{
-                                                                    display: 'flex',
-                                                                    alignContent: 'center',
-                                                                    mb: 1,
-                                                                }}>
-                                                                <Typography
-                                                                    variant='subtitle2'
-                                                                    sx={{ mr: 1 }}>
-                                                                    Trucks assigned
-                                                                </Typography>
-                                                                <Typography
-                                                                    sx={{
-                                                                        px: 1,
-                                                                        w: '10px',
-                                                                        h: '10px',
-                                                                        textAlign: 'center',
-                                                                        backgroundColor:
-                                                                            theme.palette.grey[200],
-                                                                        borderRadius: 80,
-                                                                    }}
-                                                                    variant='subtitle2'>
-                                                                    {data.trucks.length}
-                                                                </Typography>
-                                                            </Box>
-
-                                                            <Grid
-                                                                sx={{
-                                                                    backgroundColor:
-                                                                        theme.palette.background
-                                                                            .paper,
-                                                                    borderRadius: 1,
-                                                                    border: '1px solid #ebedf2',
-                                                                    pb: 1,
-                                                                    m: 0,
-                                                                }}
-                                                                container
-                                                                rowSpacing={1}
-                                                                columnSpacing={1}>
-                                                                {data.trucks.map((truck, index) => {
-                                                                    return (
-                                                                        <Grid item key={index}>
-                                                                            <Chip
-                                                                                label={truck.name}
-                                                                                onClick={() => {}}
-                                                                                onDelete={() => {}}
-                                                                                variant={
-                                                                                    truck.variant
-                                                                                }
-                                                                                color={truck.color}
-                                                                                sx={{
-                                                                                    borderRadius: 0,
-                                                                                    fontSize: 10,
-                                                                                    fontWeight: 500,
-                                                                                    p: 0,
-                                                                                }}
-                                                                            />
-                                                                        </Grid>
-                                                                    );
-                                                                })}
-                                                            </Grid>
-                                                        </Box>
-                                                    }
-                                                />
-                                            </TableRow>
-                                        </React.Fragment>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    {/* List of schedule orders */}
+                    <ScheduleOrders
+                        pageConfig={pageConfig}
+                        dataFilter={dataFilter}
+                        trucks={trucks}
+                    />
                 </Paper>
             </div>
         </HelmetProvider>

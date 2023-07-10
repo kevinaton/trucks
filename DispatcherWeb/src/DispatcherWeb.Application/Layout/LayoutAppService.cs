@@ -54,7 +54,9 @@ namespace DispatcherWeb.Layout
                 CurrentLanguage = _languageManager.CurrentLanguage,
                 IsMultiTenancyEnabled = _multiTenancyConfig.IsEnabled,
                 IsImpersonatedLogin = AbpSession.ImpersonatorUserId.HasValue,
-                SubscriptionExpireNootifyDayCount = SettingManager.GetSettingValue<int>(AppSettings.TenantManagement.SubscriptionExpireNotifyDayCount)
+                SubscriptionExpireNootifyDayCount = SettingManager.GetSettingValue<int>(AppSettings.TenantManagement.SubscriptionExpireNotifyDayCount),
+                SessionOfficeId = Session.OfficeId,
+                SessionOfficeName = Session.OfficeName
             };
 
             return data;

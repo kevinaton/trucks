@@ -14,6 +14,11 @@ namespace DispatcherWeb.Configuration.Host.Dto
         /// </summary>
         public string TimezoneForComparison { get; set; }
 
+        /// <summary>
+        /// This value maps windows timezone to IANA time zone
+        /// </summary>
+        public string TimezoneIana { get; set; }
+
         public string OrderEmailBodyTemplate { get; set; }
 
         public string OrderEmailSubjectTemplate { get; set; }
