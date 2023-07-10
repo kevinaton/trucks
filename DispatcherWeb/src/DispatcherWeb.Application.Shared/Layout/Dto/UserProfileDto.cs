@@ -17,6 +17,10 @@ namespace DispatcherWeb.Layout.Dto
         public bool IsImpersonatedLogin { get; set; }
 
         public int SubscriptionExpireNootifyDayCount { get; set; }
+
+        public int? SessionOfficeId { get; set; }
+
+        public string SessionOfficeName { get; set; }
     }
 }
 

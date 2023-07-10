@@ -219,6 +219,10 @@ code {
     color: #dd4b39;
 }
 
+.success-icon {
+    color: #00a65a;
+}
+
 .active-icon {
     fill: #6aa0ca;
     color: #6aa0ca;

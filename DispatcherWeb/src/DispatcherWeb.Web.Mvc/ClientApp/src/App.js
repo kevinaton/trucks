@@ -9,10 +9,12 @@ import { RouterConfig } from './navigation/RouterConfig';
 import { DrawerHeader } from './components/DTComponents';
 import { sideMenuItems } from './common/data/menus';
 import { Appbar, SideMenu } from './components';
-import { getUserInfo } from './store/actions';
+import { getUserGeneralSettings, getUserInfo } from './store/actions';
 import { isEmpty } from 'lodash';
 import { baseUrl } from './helpers/api_helper';
 import * as signalR from '@microsoft/signalr';
+import moment from 'moment';
+import 'moment-timezone';
 import SignalRContext from './components/common/signalr/signalrContext';
 import { CustomModal } from './components/common/modals/customModal';
 import { CustomDialog } from './components/common/dialogs/customDialog';
@@ -32,13 +34,31 @@ const App = (props) => {
     );
     const [currentPageName, setCurrentPageName] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const [generalSettings, setGeneralSettings] = useState(null);
     const [connection, setConnection] = useState(null);
     const [modals, setModals] = useState([]);
     const [nextModalZIndex, setNextModalZIndex] = useState(1);
     const [dialog, setDialog] = useState(null);
 
-    const userInfo = useSelector(state => state.UserReducer.userInfo);
     const dispatch = useDispatch();
+    const {
+        userInfo,
+        userGeneralSettings
+    } = useSelector(state => ({
+        userInfo: state.UserReducer.userInfo,
+        userGeneralSettings: state.UserReducer.userGeneralSettings
+    }));
+
+    // Checks screen if it is small
+    useEffect(() => {
+        if (isSmall) {
+            setDrawerOpen(false);
+        }
+
+        if (isBig) {
+            setDrawerOpen(true);
+        }
+    }, [isSmall, isBig]);
 
     useEffect(() => {
         const checkLoginStatus = async () => {
@@ -95,16 +115,22 @@ const App = (props) => {
         }
     }, [isAuthenticated, connection]);
 
-    // Checks screen if it is small
     useEffect(() => {
-        if (isSmall) {
-            setDrawerOpen(false);
+        if (isAuthenticated) {
+            dispatch(getUserGeneralSettings());
         }
+    }, [dispatch, isAuthenticated]);
 
-        if (isBig) {
-            setDrawerOpen(true);
+    useEffect(() => {
+        if (generalSettings === null && !isEmpty(userGeneralSettings) && !isEmpty(userGeneralSettings.result)) {
+            const { result } = userGeneralSettings;
+            if (!isEmpty(result) && result.timezoneIana) {
+                setGeneralSettings(result);
+                // set moment timezone
+                moment.tz.setDefault(result.timezoneIana);
+            }
         }
-    }, [isSmall, isBig]);
+    }, [generalSettings, userGeneralSettings]);
 
     const handleCurrentPageName = (name) => {
         document.title = name;
@@ -183,53 +209,57 @@ const App = (props) => {
                     <CssBaseline />
                     {/* This is the appbar located at the top of the app. */}
 
-                    <Appbar 
-                        isAuthenticated={isAuthenticated}
-                        drawerOpen={drawerOpen}
-                        handleDrawerClose={handleDrawerClose}
-                        handleDrawerOpen={handleDrawerOpen}
-                        handleOpenNavMenu={handleOpenNavMenu}
-                        anchorElNav={anchorElNav}
-                        handleCloseNavMenu={handleCloseNavMenu} 
-                        openModal={(content, size) => openModal(content, size)} 
-                        closeModal={closeModal} 
-                        openDialog={(data) => openDialog(data)}
-                        closeDialog={closeDialog}
-                    />
+                    { generalSettings !== null &&
+                        <React.Fragment>
+                            <Appbar 
+                                isAuthenticated={isAuthenticated}
+                                drawerOpen={drawerOpen}
+                                handleDrawerClose={handleDrawerClose}
+                                handleDrawerOpen={handleDrawerOpen}
+                                handleOpenNavMenu={handleOpenNavMenu}
+                                anchorElNav={anchorElNav}
+                                handleCloseNavMenu={handleCloseNavMenu} 
+                                openModal={(content, size) => openModal(content, size)} 
+                                closeModal={closeModal} 
+                                openDialog={(data) => openDialog(data)}
+                                closeDialog={closeDialog}
+                            />
 
-                    <SideMenu 
-                        isAuthenticated={isAuthenticated}
-                        currentPageName={currentPageName}
-                        drawerOpen={drawerOpen}
-                        DrawerHeader={DrawerHeader}
-                        collapseOpen={collapseOpen}
-                        isSmall={isSmall}
-                        setCollapseOpen={setCollapseOpen}
-                        handleDrawerOpen={handleDrawerOpen}
-                        handleDrawerClose={handleDrawerClose}
-                    />
-            
-                    <Box 
-                        component='main' 
-                        sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}
-                    >
-                        <Paper
-                            sx={{
-                                backgroundColor: '#f1f5f8',
-                                padding: 2,
-                                height: '100vh',
-                                overflow: 'auto',
-                                pb: '50px',
-                            }}
-                        >
-                            <DrawerHeader />
+                            <SideMenu 
+                                isAuthenticated={isAuthenticated}
+                                currentPageName={currentPageName}
+                                drawerOpen={drawerOpen}
+                                DrawerHeader={DrawerHeader}
+                                collapseOpen={collapseOpen}
+                                isSmall={isSmall}
+                                setCollapseOpen={setCollapseOpen}
+                                handleDrawerOpen={handleDrawerOpen}
+                                handleDrawerClose={handleDrawerClose}
+                            />
+                    
+                            <Box 
+                                component='main' 
+                                sx={{ flexGrow: 1, height: '100%', overflow: 'auto' }}
+                            >
+                                <Paper
+                                    sx={{
+                                        backgroundColor: '#f1f5f8',
+                                        padding: 2,
+                                        height: '100vh',
+                                        overflow: 'auto',
+                                        pb: '50px',
+                                    }}
+                                >
+                                    <DrawerHeader />
 
-                            {/* This is the route configuration */}
-                            <RouterConfig 
-                                isAuthenticated={isAuthenticated} 
-                                handleCurrentPageName={handleCurrentPageName} />
-                        </Paper>
-                    </Box>
+                                    {/* This is the route configuration */}
+                                    <RouterConfig 
+                                        isAuthenticated={isAuthenticated} 
+                                        handleCurrentPageName={handleCurrentPageName} />
+                                </Paper>
+                            </Box>
+                        </React.Fragment>
+                    }
                 </Box>
                 
                 {/* Render the modals */}

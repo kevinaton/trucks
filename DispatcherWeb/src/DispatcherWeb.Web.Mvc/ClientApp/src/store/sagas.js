@@ -1,20 +1,28 @@
 import { all, fork } from 'redux-saga/effects';
+import appSettingsSaga from './app-settings/saga';
 import layoutSaga from './layout/saga';
+import featuresSaga from './features/saga';
 import dashboardSaga from './dashboard/saga';
 import accountSaga from './account/saga';
 import userSaga from './user/saga';
 import userProfileSaga from './authorization/users/profile/saga';
 import userLinkSaga from './authorization/users/userLink/saga';
 import notificationSaga from './notifications/saga';
+import officeSaga from './offices/saga';
+import schedulingSaga from './scheduling/saga';
 
 export default function* rootSaga() {
     yield all([
+        fork(appSettingsSaga),
         fork(layoutSaga),
+        fork(featuresSaga),
         fork(dashboardSaga),
         fork(accountSaga),
         fork(userSaga),
+        fork(notificationSaga),
+        fork(officeSaga),
+        fork(schedulingSaga),
         fork(userProfileSaga),
-        fork(userLinkSaga),
-        fork(notificationSaga)
+        fork(userLinkSaga)
     ]);
 };
