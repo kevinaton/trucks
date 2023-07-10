@@ -149,6 +149,7 @@
 
             _$form.find("#ClearSearchButton").click(function () {
                 $(this).closest('form')[0].reset();
+                useAndForTrailerConditionButton.click();
                 $(".filter").change();
                 //updateFilter();
                 _filter = null;
@@ -196,10 +197,13 @@
                     _$form.find('#TrailersBedConstructionFilter').val('').change();
                 }
                 if (_showPowerUnitsSection && _showTrailersSection) {
-                    useAndForTrailerConditionButton.click();
                     _$form.find('#OptionButton').show();
                 } else {
                     _$form.find('#OptionButton').hide();
+                }
+
+                if (_showPowerUnitsSection && !_showTrailersSection || !_showPowerUnitsSection && _showTrailersSection || !_showPowerUnitsSection && !_showTrailersSection) {
+                    useAndForTrailerConditionButton.click();
                 }
             }
 
