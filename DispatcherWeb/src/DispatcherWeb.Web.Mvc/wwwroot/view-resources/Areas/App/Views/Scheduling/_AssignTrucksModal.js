@@ -161,6 +161,8 @@
             function updateFilter() {
                 //_selectedRowIds = [];
                 _filter = _$form.serializeFormToObject();
+                delete _filter.VehicleCategoryIds;
+                _filter.vehicleCategoryIds = vehicleCategoryDropdown.val();
                 delete _filter.IsApportioned;
                 _filter.isApportioned = _$form.find('#IsApportionedFilter').is(':checked');
             }
