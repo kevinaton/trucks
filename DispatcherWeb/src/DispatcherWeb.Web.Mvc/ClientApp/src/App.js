@@ -9,7 +9,7 @@ import { RouterConfig } from './navigation/RouterConfig';
 import { DrawerHeader } from './components/DTComponents';
 import { sideMenuItems } from './common/data/menus';
 import { Appbar, SideMenu } from './components';
-import { getTenantSettings, getUserInfo } from './store/actions';
+import { getUserGeneralSettings, getUserInfo } from './store/actions';
 import { isEmpty } from 'lodash';
 import { baseUrl } from './helpers/api_helper';
 import * as signalR from '@microsoft/signalr';
@@ -34,7 +34,7 @@ const App = (props) => {
     );
     const [currentPageName, setCurrentPageName] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(null);
-    const [allSettings, setAllSettings] = useState(null);
+    const [generalSettings, setGeneralSettings] = useState(null);
     const [connection, setConnection] = useState(null);
     const [modals, setModals] = useState([]);
     const [nextModalZIndex, setNextModalZIndex] = useState(1);
@@ -43,10 +43,10 @@ const App = (props) => {
     const dispatch = useDispatch();
     const {
         userInfo,
-        tenantSettings
+        userGeneralSettings
     } = useSelector(state => ({
         userInfo: state.UserReducer.userInfo,
-        tenantSettings: state.AppSettingsReducer.tenantSettings
+        userGeneralSettings: state.UserReducer.userGeneralSettings
     }));
 
     // Checks screen if it is small
@@ -117,22 +117,20 @@ const App = (props) => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            dispatch(getTenantSettings());
+            dispatch(getUserGeneralSettings());
         }
     }, [dispatch, isAuthenticated]);
 
     useEffect(() => {
-        if (allSettings === null && !isEmpty(tenantSettings) && !isEmpty(tenantSettings.result)) {
-            const { result } = tenantSettings;
-            setAllSettings(result);
-            
-            const { general } = result;
-            // set moment timezone
-            if (!isEmpty(general) && general.timezoneIana) {
-                moment.tz.setDefault(general.timezoneIana);
+        if (generalSettings === null && !isEmpty(userGeneralSettings) && !isEmpty(userGeneralSettings.result)) {
+            const { result } = userGeneralSettings;
+            if (!isEmpty(result) && result.timezoneIana) {
+                setGeneralSettings(result);
+                // set moment timezone
+                moment.tz.setDefault(result.timezoneIana);
             }
         }
-    }, [allSettings, tenantSettings]);
+    }, [generalSettings, userGeneralSettings]);
 
     const handleCurrentPageName = (name) => {
         document.title = name;
@@ -211,7 +209,7 @@ const App = (props) => {
                     <CssBaseline />
                     {/* This is the appbar located at the top of the app. */}
 
-                    { allSettings !== null &&
+                    { generalSettings !== null &&
                         <React.Fragment>
                             <Appbar 
                                 isAuthenticated={isAuthenticated}

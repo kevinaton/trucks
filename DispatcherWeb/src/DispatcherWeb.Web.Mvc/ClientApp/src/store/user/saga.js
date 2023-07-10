@@ -1,16 +1,23 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import { 
-    GET_USER_INFO, 
-    GET_USER_PROFILE_MENU,
-    GET_USER_SETTING } from './actionTypes';
+    GET_USER_INFO,
+    GET_USER_GENERAL_SETTINGS,
+    GET_USER_SETTING, 
+    GET_USER_PROFILE_MENU } from './actionTypes';
 import { 
     getUserInfoSuccess, 
     getUserInfoFailure,
-    getUserProfileMenuSuccess,
-    getUserProfileMenuFailure,
+    getUserGeneralSettingsSuccess,
+    getUserGeneralSettingsFailure,
     getUserSettingByNameSuccess,
-    getUserSettingByNameFailure } from './actions';
-import { getUserInfo, getUserProfileMenu, getUserSetting } from './service';
+    getUserSettingByNameFailure,
+    getUserProfileMenuSuccess,
+    getUserProfileMenuFailure, } from './actions';
+import { 
+    getUserInfo, 
+    getUserGeneralSettings,
+    getUserSetting, 
+    getUserProfileMenu } from './service';
 
 function* fetchUserInfo() {
     try {
@@ -21,12 +28,12 @@ function* fetchUserInfo() {
     }
 }
 
-function* fetchUserProfileMenu() {
+function* fetchUserGeneralSettings() {
     try {
-        const response = yield call(getUserProfileMenu);
-        yield put(getUserProfileMenuSuccess(response));
+        const response = yield call(getUserGeneralSettings);
+        yield put(getUserGeneralSettingsSuccess(response));
     } catch (error) {
-        yield put(getUserProfileMenuFailure(error));
+        yield put(getUserGeneralSettingsFailure(error));
     }
 }
 
@@ -43,10 +50,20 @@ function* fetchUserSetting({ payload: settingName }) {
     }
 }
 
+function* fetchUserProfileMenu() {
+    try {
+        const response = yield call(getUserProfileMenu);
+        yield put(getUserProfileMenuSuccess(response));
+    } catch (error) {
+        yield put(getUserProfileMenuFailure(error));
+    }
+}
+
 function* userSaga() {
     yield takeEvery(GET_USER_INFO, fetchUserInfo);
-    yield takeEvery(GET_USER_PROFILE_MENU, fetchUserProfileMenu);
+    yield takeEvery(GET_USER_GENERAL_SETTINGS, fetchUserGeneralSettings);
     yield takeEvery(GET_USER_SETTING, fetchUserSetting);
+    yield takeEvery(GET_USER_PROFILE_MENU, fetchUserProfileMenu);
 }
 
 export default userSaga;

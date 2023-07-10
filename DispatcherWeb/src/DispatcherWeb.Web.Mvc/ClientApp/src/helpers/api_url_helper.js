@@ -14,6 +14,7 @@ export const GET_SCHEDULED_TRUCK_COUNT_PARTIAL_VIEW = '/DashboardView/GetSchedul
 
 //User
 export const GET_CURRENT_LOGIN_INFO = '/Session/GetCurrentLoginInformations';
+export const GET_USER_GENERAL_SETTINGS = '/UserSettings/GetGeneralSettings';
 export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 
 //User Profile
