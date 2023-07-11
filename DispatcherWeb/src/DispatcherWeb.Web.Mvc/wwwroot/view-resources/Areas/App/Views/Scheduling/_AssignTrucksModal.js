@@ -269,7 +269,7 @@
                         render: function (data, type, full, meta) {
                             let icon = '<i class="fa-regular fa-circle-exclamation text-warning pl-1 assignDriverIcon" data-toggle="tooltip" title="No driver assigned to this truck. You won\'t be able to dispatch without a driver. Click here to assign a driver."></i>';
                             return _dtHelper.renderText(data)
-                                + (!full.driverId ? icon : '');
+                                + (full.truckId && !full.driverId ? icon : '');
                         }
                     },
                     {
