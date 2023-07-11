@@ -4,17 +4,21 @@ import {
     Box,
     Paper,
     Chip,
-    Grid
+    Grid,
+    Tooltip 
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import _, { isEmpty } from 'lodash';
 import { getScheduleTrucks } from '../../store/actions';
+import AddTruckForm from '../../components/trucks/addTruck';
 
 const TruckMap = ({
     pageConfig,
     dataFilter,
     trucks,
-    onSetTrucks
+    onSetTrucks,
+    openModal,
+    closeModal
 }) => {
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
@@ -59,9 +63,6 @@ const TruckMap = ({
         if (
             prevDataFilterRef.current.officeId !== dataFilter.officeId ||
             prevDataFilterRef.current.date !== dataFilter.date
-            // prevDataFilterRef.current.hideCompletedOrders !== dataFilter.hideCompletedOrders ||
-            // prevDataFilterRef.current.hideProgressBar !== dataFilter.hideProgressBar ||
-            // prevDataFilterRef.current.sorting !== dataFilter.sorting
         ) {
             const fetchData = async () => {
                 const { officeId, date } = dataFilter;
@@ -164,25 +165,49 @@ const TruckMap = ({
         }
     };
 
+    const getTruckTileTitle = (truck) => {
+        let title = truck.truckCode;
+        if (truckCategoryNeedsDriver(truck)) {
+            title += ' - ' + truck.driverName;
+        }
+        return title;
+    };
+
+    const handleCreateNewTruck = (e) => {
+        e.preventDefault();
+
+        openModal(
+            <AddTruckForm 
+                pageConfig={pageConfig} 
+                closeModal={closeModal} 
+            />,
+            500
+        );
+    };
+
     const renderTrucks = () => (
         <>
             { trucks.map((truck) => {
                 const truckColors = getTruckColor(truck);
+                const truckTitle = getTruckTileTitle(truck);
+
                 return (
                     <Grid item key={truck.truckCode}>
-                        <Chip
-                            label={truck.truckCode}
-                            onClick={() => {}}
-                            sx={{
-                                borderRadius: 0,
-                                fontSize: 18,
-                                fontWeight: 600,
-                                py: 3,
-                                backgroundColor: `${truckColors.backgroundColor}`,
-                                color: `${truckColors.color}`,
-                                border: `${truckColors.border}`
-                            }}
-                        />
+                        <Tooltip title={truckTitle}>
+                            <Chip
+                                label={truck.truckCode}
+                                onClick={() => {}}
+                                sx={{
+                                    borderRadius: 0,
+                                    fontSize: 18,
+                                    fontWeight: 600,
+                                    py: 3,
+                                    backgroundColor: `${truckColors.backgroundColor}`,
+                                    color: `${truckColors.color}`,
+                                    border: `${truckColors.border}`
+                                }}
+                            />
+                        </Tooltip>
                     </Grid>
                 );
             })}
@@ -194,7 +219,7 @@ const TruckMap = ({
             {/* Truck Map */}
             <Box sx={{ p: 3 }}>
                 <Paper variant='outlined' sx={{ p: 1 }}>
-                    <Grid container rowSpacing={1} columnSpacing={1}>
+                    <Grid id='TruckTiles' container rowSpacing={1} columnSpacing={1}>
                         {!isEmpty(trucks) && renderTrucks()}
 
                         <Grid item>
@@ -204,7 +229,7 @@ const TruckMap = ({
                                         <AddIcon sx={{ mt: '5px' }} />
                                     </>
                                 }
-                                onClick={() => {}}
+                                onClick={(e) => handleCreateNewTruck(e)}
                                 sx={{
                                     backgroundColor: '#fff',
                                     border: '1px solid #ebedf2',

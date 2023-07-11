@@ -45,6 +45,9 @@ export const UPDATE_USER_NOTIFICATION_SETTINGS = '/Notification/UpdateNotificati
 //Offices
 export const GET_OFFICES = '/Office/GetOfficesSelectList';
 
+//Trucks
+export const GET_VEHICLE_CATEGORIES = '/Truck/GetVehicleCategoriesSelectList';
+
 //Scheduling
 export const GET_PAGE_CONFIG = '/Scheduling/GetPageConfig';
 export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';

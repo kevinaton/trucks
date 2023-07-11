@@ -10,6 +10,7 @@ import UserProfileReducer from './authorization/users/profile/reducer';
 import UserLinkReducer from './authorization/users/userLink/reducer';
 import NotificationReducer from './notifications/reducer';
 import OfficeReducer from './offices/reducer';
+import TruckReducer from './trucks/reducer';
 import SchedulingReducer from './scheduling/reducer';
 
 const rootReducer = combineReducers({
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
     UserReducer,
     NotificationReducer,
     OfficeReducer,
+    TruckReducer,
     SchedulingReducer,
     UserProfileReducer,
     UserLinkReducer

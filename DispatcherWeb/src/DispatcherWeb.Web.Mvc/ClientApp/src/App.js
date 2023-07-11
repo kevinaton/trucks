@@ -255,7 +255,9 @@ const App = (props) => {
                                     {/* This is the route configuration */}
                                     <RouterConfig 
                                         isAuthenticated={isAuthenticated} 
-                                        handleCurrentPageName={handleCurrentPageName} />
+                                        handleCurrentPageName={handleCurrentPageName} 
+                                        openModal={(content, size) => openModal(content, size)} 
+                                        closeModal={closeModal}  />
                                 </Paper>
                             </Box>
                         </React.Fragment>

@@ -5,7 +5,9 @@ import { authProtectedRoutes } from './index';
   
 export const RouterConfig = ({
     isAuthenticated,
-    handleCurrentPageName
+    handleCurrentPageName,
+    openModal,
+    closeModal
 }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -28,7 +30,11 @@ export const RouterConfig = ({
                                 key={index}
                                 path={route.path}
                                 element={
-                                    <route.component handleCurrentPageName={handleCurrentPageName} />
+                                    <route.component 
+                                        handleCurrentPageName={handleCurrentPageName} 
+                                        openModal={openModal} 
+                                        closeModal={closeModal}
+                                    />
                                 }
                             />
                         );

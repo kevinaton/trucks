@@ -8,4 +8,5 @@ export * from './authorization/users/profile/actions';
 export * from './authorization/users/userLink/actions';
 export * from './notifications/actions';
 export * from './offices/actions';
+export * from './trucks/actions';
 export * from './scheduling/actions';

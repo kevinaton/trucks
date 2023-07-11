@@ -173,7 +173,9 @@ const Schedule = props => {
                         pageConfig={pageConfig}
                         dataFilter={dataFilter} 
                         trucks={trucks} 
-                        onSetTrucks={onSetTrucks}
+                        onSetTrucks={onSetTrucks} 
+                        openModal={props.openModal}
+                        closeModal={props.closeModal} 
                     />
 
                     {/* List of schedule orders */}
