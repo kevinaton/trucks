@@ -293,7 +293,7 @@
                 var row = _dtHelper.getRowData(this);
                 var result = await app.getModalResultAsync(
                     _assignDriverForTruckModal.open({
-                        truckId: row.id,
+                        truckId: row.truckId,
                         truckCode: row.truckCode,
                         leaseHaulerId: row.leaseHaulerId,
                         date: _$form.find("#Date").val(),
