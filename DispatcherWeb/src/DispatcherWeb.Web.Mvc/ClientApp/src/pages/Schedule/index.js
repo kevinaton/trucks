@@ -15,6 +15,7 @@ import TruckMap from './truck-map';
 import ScheduleOrders from './schedule-orders';
 import { isEmpty } from 'lodash';
 import { getSchedulePageConfig } from '../../store/actions';
+import { appLocalStorage } from '../../utils';
 
 const Schedule = props => {
     const pageName = 'Schedule';
@@ -24,8 +25,10 @@ const Schedule = props => {
     const [title, setTitle] = useState('Add Job');
     const [editData, setEditData] = useState({});
     const [dataFilter, setDataFilter] = useState({
-        officeId: null,
         date: moment().format('MM/DD/YYYY'),
+        shift: null,
+        officeId: null, 
+        officeName: null,
         hideCompletedOrders: false,
         hideProgressBar: false,
         sorting: 'Note'
@@ -61,10 +64,43 @@ const Schedule = props => {
     useEffect(() => {
         if (dataFilter.officeId === null && 
             !isEmpty(userProfileMenu) && !isEmpty(userProfileMenu.result)) {
-            const { sessionOfficeId } = userProfileMenu.result;
-            setDataFilter({
-                ...dataFilter,
-                officeId: sessionOfficeId,
+            const { sessionOfficeId, sessionOfficeName } = userProfileMenu.result;
+            let { ...dfilter } = dataFilter;
+
+            appLocalStorage.getItem('schedule_filter', (result) => {
+                var filter = result || {};
+                if (filter.date) {
+                    dfilter.date = filter.date;
+                }
+
+                if (filter.officeId) {
+                    dfilter.officeId = filter.officeId;
+                } else {
+                    dfilter.officeId = sessionOfficeId;
+                }
+
+                if (filter.officeName) {
+                    dfilter.officeName = filter.officeName;
+                } else {
+                    dfilter.officeName = sessionOfficeName;
+                }
+
+                if (filter.hideCompletedOrders) {
+                    dfilter.hideCompletedOrders = filter.hideCompletedOrders;
+                }
+
+                if (filter.hideProgressBar) {
+                    dfilter.hideProgressBar = filter.hideProgressBar;
+                }
+    
+                setDataFilter({
+                    ...dataFilter,
+                    officeId:  parseInt(dfilter.officeId),
+                    officeName: dfilter.officeName,
+                    date: dfilter.date,
+                    hideCompletedOrders: dfilter.hideCompletedOrders,
+                    hideProgressBar: dfilter.hideProgressBar,
+                });
             });
         }
     }, [userProfileMenu, dataFilter]);
@@ -78,7 +114,10 @@ const Schedule = props => {
         }
     };
 
-    const handleFilterChange = (dataFilter) => setDataFilter(dataFilter);
+    const handleFilterChange = (dataFilter) => {
+        setDataFilter(dataFilter);
+        appLocalStorage.setItem('schedule_filter', dataFilter);
+    };
 
     return (
         <HelmetProvider>

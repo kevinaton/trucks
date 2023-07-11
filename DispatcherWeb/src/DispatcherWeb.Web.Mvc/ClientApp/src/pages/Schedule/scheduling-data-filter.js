@@ -72,12 +72,13 @@ const SchedulingDataFilter = ({
         }
     }, [officeId, officeOptions]);
 
-    const handleOfficeFilterChange = (e, newValue) => {
+    const handleOfficeFilterChange = (e, newValue, newValueName) => {
         e.preventDefault();
 
         handleFilterChange({
             ...dataFilter,
-            officeId: newValue
+            officeId: newValue,
+            officeName: newValueName
         });
     }
 
@@ -141,7 +142,7 @@ const SchedulingDataFilter = ({
                                 defaultValue={officeOptions[defaultSelection]}
                                 sx={{ flex: 1, flexShrink: 0 }}
                                 renderInput={(params) => <TextField {...params} label='Office' />} 
-                                onChange={(e, value) => handleOfficeFilterChange(e, value.id)}
+                                onChange={(e, value) => handleOfficeFilterChange(e, value.id, value.name)}
                             />
                         }
 
