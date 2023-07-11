@@ -860,6 +860,7 @@ namespace DispatcherWeb.DriverAssignments
                 {
                     await ThrowIfDriverHasTimeOffRequests(input.DriverId.Value, driverAssignment.Date, driverAssignment.Date);
                 }
+                var updateOrderLineTrucks = false;
                 if (input.Id > 0 && oldDriverId.HasValue)
                 {
                     var validationResult = await HasOrderLineTrucks(new HasOrderLineTrucksInput
@@ -881,17 +882,26 @@ namespace DispatcherWeb.DriverAssignments
                             throw new UserFriendlyException(L("CannotRemoveDriverBecauseOfOrderLineTrucksError"));
                         }
 
-                        var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                        updateOrderLineTrucks = true;
+                    }
+                }
+                else if (oldDriverId == null)
+                {
+                    updateOrderLineTrucks = true;
+                }
+
+                if (updateOrderLineTrucks)
+                {
+                    var orderLineTrucks = await _orderLineTruckRepository.GetAll()
                             .Where(x => driverAssignment.Date == x.OrderLine.Order.DeliveryDate && driverAssignment.Shift == x.OrderLine.Order.Shift)
                             .WhereIf(driverAssignment.OfficeId.HasValue, x => driverAssignment.OfficeId == x.OrderLine.Order.LocationId)
                             .Where(x => oldDriverId == x.DriverId)
                             .Where(x => driverAssignment.TruckId == x.TruckId)
                             .ToListAsync();
 
-                        foreach (var orderLineTruck in orderLineTrucks)
-                        {
-                            orderLineTruck.DriverId = input.DriverId.Value;
-                        }
+                    foreach (var orderLineTruck in orderLineTrucks)
+                    {
+                        orderLineTruck.DriverId = input.DriverId;
                     }
                 }
 

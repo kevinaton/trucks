@@ -179,27 +179,28 @@ namespace DispatcherWeb.Scheduling
         public async Task<PagedResultDto<TruckToAssignDto>> GetTrucksToAssign(GetTrucksToAssignInput input)
         {
             var query = _truckRepository.GetAll()
-                .Where(t => t.IsActive && !t.IsOutOfService)
-                .WhereIf(input.VehicleCategoryIds?.Any() == true, t =>
-                    input.VehicleCategoryIds.Contains(t.VehicleCategoryId)
-                    || t.CanPullTrailer && t.CurrentTrailer != null && input.VehicleCategoryIds.Contains(t.CurrentTrailer.VehicleCategoryId));
+                .Where(t => t.IsActive && !t.IsOutOfService);
             if (input.UseAndForTrailerCondition)
             {
-                query = query.Where(t => (string.IsNullOrEmpty(input.PowerUnitsMake) || t.Make == input.PowerUnitsMake)
+                query = query.Where(t => (!input.PowerUnitsVehicleCategoryIds.Any() || input.PowerUnitsVehicleCategoryIds.Contains(t.VehicleCategoryId))
+                    && (string.IsNullOrEmpty(input.PowerUnitsMake) || t.Make == input.PowerUnitsMake)
                     && (string.IsNullOrEmpty(input.PowerUnitsModel) || t.Model == input.PowerUnitsModel)
                     && (!input.PowerUnitsBedConstruction.HasValue || t.BedConstruction == input.PowerUnitsBedConstruction)
                     && (!input.IsApportioned || t.IsApportioned == input.IsApportioned)
+                    && (!input.TrailersVehicleCategoryIds.Any() || t.CurrentTrailer != null && input.TrailersVehicleCategoryIds.Contains(t.CurrentTrailer.VehicleCategoryId) || t.VehicleCategory.AssetType == AssetType.Trailer && input.TrailersVehicleCategoryIds.Contains(t.VehicleCategoryId))
                     && (string.IsNullOrEmpty(input.TrailersMake) || t.CurrentTrailer.Make == input.TrailersMake || t.VehicleCategory.AssetType == AssetType.Trailer && t.Make == input.TrailersMake)
                     && (string.IsNullOrEmpty(input.TrailersModel) || t.CurrentTrailer.Model == input.TrailersModel || t.VehicleCategory.AssetType == AssetType.Trailer && t.Model == input.TrailersModel)
                     && (!input.TrailersBedConstruction.HasValue || t.CurrentTrailer.BedConstruction == input.TrailersBedConstruction || t.VehicleCategory.AssetType == AssetType.Trailer && t.BedConstruction == input.TrailersBedConstruction));
             }
             else
             {
-                query = query.Where(t => (string.IsNullOrEmpty(input.PowerUnitsMake) || t.Make == input.PowerUnitsMake)
+                query = query.Where(t => (!input.PowerUnitsVehicleCategoryIds.Any() || input.PowerUnitsVehicleCategoryIds.Contains(t.VehicleCategoryId))
+                    && (string.IsNullOrEmpty(input.PowerUnitsMake) || t.Make == input.PowerUnitsMake)
                     && (string.IsNullOrEmpty(input.PowerUnitsModel) || t.Model == input.PowerUnitsModel)
                     && (!input.PowerUnitsBedConstruction.HasValue || t.BedConstruction == input.PowerUnitsBedConstruction)
                     && (!input.IsApportioned || t.IsApportioned == input.IsApportioned)
-                    || (string.IsNullOrEmpty(input.TrailersMake) || t.CurrentTrailer.Make == input.TrailersMake || t.VehicleCategory.AssetType == AssetType.Trailer && t.Make == input.TrailersMake)
+                    || (!input.TrailersVehicleCategoryIds.Any() || t.CurrentTrailer != null && input.TrailersVehicleCategoryIds.Contains(t.CurrentTrailer.VehicleCategoryId) || t.VehicleCategory.AssetType == AssetType.Trailer && input.TrailersVehicleCategoryIds.Contains(t.VehicleCategoryId))
+                    && (string.IsNullOrEmpty(input.TrailersMake) || t.CurrentTrailer.Make == input.TrailersMake || t.VehicleCategory.AssetType == AssetType.Trailer && t.Make == input.TrailersMake)
                     && (string.IsNullOrEmpty(input.TrailersModel) || t.CurrentTrailer.Model == input.TrailersModel || t.VehicleCategory.AssetType == AssetType.Trailer && t.Model == input.TrailersModel)
                     && (!input.TrailersBedConstruction.HasValue || t.CurrentTrailer.BedConstruction == input.TrailersBedConstruction || t.VehicleCategory.AssetType == AssetType.Trailer && t.BedConstruction == input.TrailersBedConstruction));
             }
