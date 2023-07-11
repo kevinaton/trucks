@@ -10,11 +10,12 @@ namespace DispatcherWeb.Infrastructure.Telematics.Dto.DtdTracker
         public decimal Longitude { get; set; }
         public decimal? AltitudeInMeters { get; set; }
         public int SpeedInKMPH { get; set; }
+        public int Heading { get; set; }
 
         public override string ToString()
         {
             var altitude = AltitudeInMeters.HasValue ? $"ALT:{AltitudeInMeters}" : "";
-            return $"REG;{Timestamp.ToUnixTimestamp()};{Longitude};{Latitude};{SpeedInKMPH};0;{altitude};;;;;";
+            return $"REG;{Timestamp.ToUnixTimestamp()};{Longitude};{Latitude};{SpeedInKMPH};{Heading};{altitude};;;;;";
         }
     }
 }
