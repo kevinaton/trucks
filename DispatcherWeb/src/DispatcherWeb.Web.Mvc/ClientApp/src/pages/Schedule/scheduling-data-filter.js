@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { 
+import {
     Autocomplete,
     Box,
     Checkbox,
@@ -16,10 +16,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import _, { isEmpty } from 'lodash';
 import { getOffices } from '../../store/actions';
 
-const SchedulingDataFilter = ({
-    dataFilter,
-    handleFilterChange
-}) => {
+const SchedulingDataFilter = ({ dataFilter, handleFilterChange }) => {
     const [date, setDate] = useState(null);
     const [officeOptions, setOfficeOptions] = useState([]);
     const [officeId, setOfficeId] = useState(null);
@@ -33,7 +30,7 @@ const SchedulingDataFilter = ({
 
     const dispatch = useDispatch();
     const { offices } = useSelector((state) => ({
-        offices: state.OfficeReducer.offices
+        offices: state.OfficeReducer.offices,
     }));
 
     useEffect(() => {
@@ -43,10 +40,13 @@ const SchedulingDataFilter = ({
     // set default filter
     useEffect(() => {
         if (!isEmpty(officeOptions) && !isEmpty(dataFilter)) {
-            if (officeId === null && 
-                date === null && 
-                dataFilter.officeId !== null && dataFilter.date !== null && 
-                dataFilter.officeId !== officeId && dataFilter.date !== date
+            if (
+                officeId === null &&
+                date === null &&
+                dataFilter.officeId !== null &&
+                dataFilter.date !== null &&
+                dataFilter.officeId !== officeId &&
+                dataFilter.date !== date
             ) {
                 setOfficeId(dataFilter.officeId);
                 setDate(moment(dataFilter.date));
@@ -65,7 +65,8 @@ const SchedulingDataFilter = ({
 
     useEffect(() => {
         if (officeId !== null && !isEmpty(officeOptions)) {
-            const defaultSelectionIndex = _.findIndex(officeOptions, 
+            const defaultSelectionIndex = _.findIndex(
+                officeOptions,
                 (item) => parseInt(item.id) === officeId
             );
             setDefaultSelection(defaultSelectionIndex);
@@ -77,14 +78,14 @@ const SchedulingDataFilter = ({
 
         handleFilterChange({
             ...dataFilter,
-            officeId: newValue
+            officeId: newValue,
         });
-    }
+    };
 
     const handleDateFilterChange = (newDate) => {
         handleFilterChange({
             ...dataFilter,
-            date: moment(newDate).format('MM/DD/YYYY')
+            date: moment(newDate).format('MM/DD/YYYY'),
         });
     };
 
@@ -93,9 +94,9 @@ const SchedulingDataFilter = ({
 
         handleFilterChange({
             ...dataFilter,
-            hideCompletedOrders: e.target.checked
+            hideCompletedOrders: e.target.checked,
         });
-    }
+    };
 
     // Handle click of settings located at the top right
     const handleSettingsClick = (e) => {
@@ -115,7 +116,7 @@ const SchedulingDataFilter = ({
 
     return (
         <React.Fragment>
-            { !isEmpty(dataFilter) && 
+            {!isEmpty(dataFilter) && (
                 <Box
                     component='form'
                     sx={{
@@ -133,26 +134,26 @@ const SchedulingDataFilter = ({
                             sx={{ flexShrink: 0 }}
                         />
 
-                        {!isEmpty(officeOptions) && defaultSelection !== -1 && 
+                        {!isEmpty(officeOptions) && defaultSelection !== -1 && (
                             <Autocomplete
                                 id='office'
-                                options={officeOptions} 
-                                getOptionLabel={(option) => option.name} 
+                                options={officeOptions}
+                                getOptionLabel={(option) => option.name}
                                 defaultValue={officeOptions[defaultSelection]}
                                 sx={{ flex: 1, flexShrink: 0 }}
-                                renderInput={(params) => <TextField {...params} label='Office' />} 
+                                renderInput={(params) => <TextField {...params} label='Office' />}
                                 onChange={(e, value) => handleOfficeFilterChange(e, value.id)}
                             />
-                        }
+                        )}
 
                         <FormControlLabel
                             control={
-                                <Checkbox 
+                                <Checkbox
                                     checked={dataFilter.hideCompletedOrders}
                                     onChange={handleHideOrShowCompletedOrders}
                                 />
                             }
-                            label='Hide Completed Orders'
+                            label='Hide Completed Jobs'
                             sx={{ flexShrink: 0, m: 0 }}
                         />
 
@@ -189,16 +190,15 @@ const SchedulingDataFilter = ({
                             onClose={handleSettingsClose}
                             onClick={handleSettingsClose}>
                             <MenuItem onClick={handleSettingsClose}>
-                                <i className='fa-regular fa-truck secondary-icon pr-2'></i> Add
-                                a lease hauler
+                                <i className='fa-regular fa-truck secondary-icon pr-2'></i> Add a
+                                lease hauler
                             </MenuItem>
                             <MenuItem onClick={handleSettingsClose}>
-                                <i className='fa-regular fa-check secondary-icon pr-2'></i> Mark
-                                all jobs complete
+                                <i className='fa-regular fa-check secondary-icon pr-2'></i> Mark all
+                                jobs complete
                             </MenuItem>
                             <MenuItem onClick={handleAddJob}>
-                                <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add
-                                job
+                                <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add job
                             </MenuItem>
                             <MenuItem onClick={handleSettingsClose}>
                                 <i className='fa-regular fa-print secondary-icon pr-2'></i>
@@ -211,9 +211,9 @@ const SchedulingDataFilter = ({
                         </Menu>
                     </LocalizationProvider>
                 </Box>
-            }
+            )}
         </React.Fragment>
-    )
-}
+    );
+};
 
 export default SchedulingDataFilter;

@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { Box, Paper, Typography, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import {
+    Box,
+    Paper,
+    Typography,
+    ToggleButtonGroup,
+    ToggleButton,
+} from '@mui/material';
 import moment from 'moment';
 import AddEditJob from '../../components/common/modals/addEditJob';
 import SchedulingDataFilter from './scheduling-data-filter';
@@ -27,7 +33,8 @@ const Schedule = (props) => {
     const [trucks, setTrucks] = useState([]);
 
     const dispatch = useDispatch();
-    const { userProfileMenu, schedulePageConfig } = useSelector((state) => ({
+    const { userProfileMenu, schedulePageConfig } =
+        useSelector((state) => ({
         userProfileMenu: state.UserReducer.userProfileMenu,
         schedulePageConfig: state.SchedulingReducer.schedulePageConfig,
     }));
@@ -59,7 +66,8 @@ const Schedule = (props) => {
             !isEmpty(userProfileMenu) &&
             !isEmpty(userProfileMenu.result)
         ) {
-            const { sessionOfficeId } = userProfileMenu.result;
+            const { sessionOfficeId } =
+                userProfileMenu.result;
             setDataFilter({
                 ...dataFilter,
                 officeId: sessionOfficeId,
@@ -76,7 +84,8 @@ const Schedule = (props) => {
         }
     };
 
-    const handleFilterChange = (dataFilter) => setDataFilter(dataFilter);
+    const handleFilterChange = (dataFilter) =>
+        setDataFilter(dataFilter);
 
     return (
         <HelmetProvider>
@@ -84,9 +93,15 @@ const Schedule = (props) => {
                 <Helmet>
                     <meta charSet='utf-8' />
                     <title>{pageName}</title>
-                    <meta name='description' content='Dumptruckdispatcher app' />
+                    <meta
+                        name='description'
+                        content='Dumptruckdispatcher app'
+                    />
                     <meta content='' name='author' />
-                    <meta property='og:title' content={pageName} />
+                    <meta
+                        property='og:title'
+                        content={pageName}
+                    />
                     <meta
                         property='og:image'
                         content='%PUBLIC_URL%/assets/dumptruckdispatcher-logo-mini.png'
@@ -94,10 +109,23 @@ const Schedule = (props) => {
                 </Helmet>
 
                 {/* Modals */}
-                <AddEditJob state={isJob} setJob={setJob} title={title} data={editData} />
+                <AddEditJob
+                    state={isJob}
+                    setJob={setJob}
+                    title={title}
+                    data={editData}
+                />
 
-                <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant='h6' component='h2' sx={{ mb: 1 }}>
+                <Box
+                    sx={{
+                        mb: 2,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                    }}>
+                    <Typography
+                        variant='h6'
+                        component='h2'
+                        sx={{ mb: 1 }}>
                         {pageName}
                     </Typography>
                     <ToggleButtonGroup
@@ -106,10 +134,14 @@ const Schedule = (props) => {
                         exclusive
                         value={view}
                         onChange={handleView}>
-                        <ToggleButton value='all' aria-label='all view'>
+                        <ToggleButton
+                            value='all'
+                            aria-label='all view'>
                             All
                         </ToggleButton>
-                        <ToggleButton value='bycategory' aria-label='By category'>
+                        <ToggleButton
+                            value='bycategory'
+                            aria-label='By category'>
                             By Category
                         </ToggleButton>
                     </ToggleButtonGroup>
@@ -119,7 +151,9 @@ const Schedule = (props) => {
                     {/* Filter settings */}
                     <SchedulingDataFilter
                         dataFilter={dataFilter}
-                        handleFilterChange={handleFilterChange}
+                        handleFilterChange={
+                            handleFilterChange
+                        }
                     />
 
                     {/* List of trucks */}
