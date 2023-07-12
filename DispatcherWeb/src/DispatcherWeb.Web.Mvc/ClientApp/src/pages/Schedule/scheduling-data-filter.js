@@ -16,7 +16,10 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import _, { isEmpty } from 'lodash';
 import { getOffices } from '../../store/actions';
 
-const SchedulingDataFilter = ({ dataFilter, handleFilterChange }) => {
+const SchedulingDataFilter = ({ 
+    dataFilter, 
+    handleFilterChange 
+}) => {
     const [date, setDate] = useState(null);
     const [officeOptions, setOfficeOptions] = useState([]);
     const [officeId, setOfficeId] = useState(null);
