@@ -16,8 +16,8 @@ const authProtectedRoutes = [
     { path: '/locations', component: Locations },
     { path: '/dispatching/schedule', component: Schedule },
     { path: '/dispatching/dispatches/truck-list', component: TruckDispatchList },
-    { path: '/order/details', component: OrderDetails },
     { path: '/job-summary', component: JobSummary },
+    { path: '/order/details', component: OrderDetails },
 ];
 
 export { authProtectedRoutes };
