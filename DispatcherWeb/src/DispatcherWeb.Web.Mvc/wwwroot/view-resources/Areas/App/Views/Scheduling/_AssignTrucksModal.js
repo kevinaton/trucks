@@ -12,6 +12,8 @@
         var _showPowerUnitsSection = false;
         var _showTrailersSection = false;
         var _useAndForTrailerCondition = true;
+        var _powerUnitsVehicleCategoryIds = [];
+        var _trailersVehicleCategoryIds = [];
 
         var rowSelectionClass = 'invoice-row-selection';
         var rowSelectAllClass = 'invoice-row-select-all';
@@ -149,6 +151,7 @@
 
             _$form.find("#ClearSearchButton").click(function () {
                 $(this).closest('form')[0].reset();
+                useAndForTrailerConditionButton.click();
                 $(".filter").change();
                 //updateFilter();
                 _filter = null;
@@ -159,7 +162,6 @@
                 //_selectedRowIds = [];
                 _filter = _$form.serializeFormToObject();
                 delete _filter.VehicleCategoryIds;
-                _filter.vehicleCategoryIds = vehicleCategoryDropdown.val();
                 delete _filter.IsApportioned;
                 _filter.isApportioned = _$form.find('#IsApportionedFilter').is(':checked');
             }
@@ -170,13 +172,10 @@
 
             function handleVehicleCategoryChange() {
                 var selectedVehicleCategories = vehicleCategoryDropdown.select2('data');
-                if (selectedVehicleCategories.length) {
-                    _showPowerUnitsSection = selectedVehicleCategories.some(x => x.item && x.item.isPowered || false);
-                    _showTrailersSection = selectedVehicleCategories.some(x => x.item && !x.item.isPowered || false);
-                } else {
-                    _showPowerUnitsSection = false;
-                    _showTrailersSection = false;
-                }
+                _powerUnitsVehicleCategoryIds = selectedVehicleCategories.filter(x => x.item && x.item.isPowered || false).map(x => x.id);
+                _trailersVehicleCategoryIds = selectedVehicleCategories.filter(x => x.item && x.item.assetType === abp.enums.assetType.trailer || false).map(x => x.id);
+                _showPowerUnitsSection = _powerUnitsVehicleCategoryIds.length > 0;
+                _showTrailersSection = _trailersVehicleCategoryIds.length > 0;
                 
                 if (_showPowerUnitsSection) {
                     _$form.find('#PowerUnitsSection').show();
@@ -196,10 +195,13 @@
                     _$form.find('#TrailersBedConstructionFilter').val('').change();
                 }
                 if (_showPowerUnitsSection && _showTrailersSection) {
-                    useAndForTrailerConditionButton.click();
                     _$form.find('#OptionButton').show();
                 } else {
                     _$form.find('#OptionButton').hide();
+                }
+
+                if (_showPowerUnitsSection && !_showTrailersSection || !_showPowerUnitsSection && _showTrailersSection || !_showPowerUnitsSection && !_showTrailersSection) {
+                    useAndForTrailerConditionButton.click();
                 }
             }
 
@@ -217,6 +219,8 @@
                     }
                     var abpData = _dtHelper.toAbpData(data);
                     abpData.useAndForTrailerCondition = _useAndForTrailerCondition;
+                    abpData.powerUnitsVehicleCategoryIds = _powerUnitsVehicleCategoryIds;
+                    abpData.trailersVehicleCategoryIds = _trailersVehicleCategoryIds;
                     $.extend(abpData, _filter);
                     _schedulingService.getTrucksToAssign(abpData).done(function (abpResult) {
                         callback(_dtHelper.fromAbpResult(abpResult));
@@ -265,7 +269,7 @@
                         render: function (data, type, full, meta) {
                             let icon = '<i class="fa-regular fa-circle-exclamation text-warning pl-1 assignDriverIcon" data-toggle="tooltip" title="No driver assigned to this truck. You won\'t be able to dispatch without a driver. Click here to assign a driver."></i>';
                             return _dtHelper.renderText(data)
-                                + (!full.driverId ? icon : '');
+                                + (full.truckId && !full.driverId ? icon : '');
                         }
                     },
                     {
@@ -289,7 +293,7 @@
                 var row = _dtHelper.getRowData(this);
                 var result = await app.getModalResultAsync(
                     _assignDriverForTruckModal.open({
-                        truckId: row.id,
+                        truckId: row.truckId,
                         truckCode: row.truckCode,
                         leaseHaulerId: row.leaseHaulerId,
                         date: _$form.find("#Date").val(),

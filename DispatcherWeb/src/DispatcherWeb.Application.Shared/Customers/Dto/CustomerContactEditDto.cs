@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using DispatcherWeb.Dto;
 using System.Text.RegularExpressions;
 using DispatcherWeb.Infrastructure;
+using System.Linq;
 
 namespace DispatcherWeb.Customers.Dto
 {
@@ -35,9 +36,10 @@ namespace DispatcherWeb.Customers.Dto
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+            var name = Name.Trim();
             if (HasCustomerPortalAccess &&
-                !string.IsNullOrEmpty(Name) &&
-                !Regex.IsMatch(Name, @"^(?<firstchar>(?=[A-Za-z]))((?<alphachars>[A-Za-z])|(?<specialchars>[A-Za-z]['-](?=[A-Za-z]))|(?<spaces> (?=[A-Za-z])))*$"))
+                !string.IsNullOrEmpty(name) &&
+                name.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length > 2)
             {
                 yield return new ValidationResult("This isn't a valid name for when contact is given access to customer portal. Please enter only the first and last name.");
             }

@@ -89,6 +89,8 @@ namespace DispatcherWeb
         }
 
         protected int OfficeId => Session.GetOfficeIdOrThrow();
+        
+        protected int CustomerId => Session.GetCustomerIdOrThrow();
 
         protected async Task SaveOrThrowConcurrencyErrorAsync()
         {

@@ -39,6 +39,10 @@ namespace DispatcherWeb.Web.Session
                 script.AppendLine("    abp.session.officeName = " + HtmlHelper.EscapeJsString(officeName) + ";");
                 var officeCopyChargeTo = session.OfficeCopyChargeTo;
                 script.AppendLine("    abp.session.officeCopyChargeTo = " + (officeCopyChargeTo ? "true" : "false") + ";");
+                var customerId = session.CustomerId;
+                script.AppendLine("    abp.session.customerId = " + (customerId.HasValue ? customerId.Value.ToString() : "null") + ";");
+                var customerName = session.CustomerName;
+                script.AppendLine("    abp.session.customerName = " + HtmlHelper.EscapeJsString(customerName) + ";");
             }
 
             script.AppendLine("    abp.entityStringFieldLengths = abp.entityStringFieldLengths || {};");

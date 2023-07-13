@@ -31,27 +31,28 @@ namespace DispatcherWeb.Authorization.Users
 
             bool officeCopyChargeTo = false;
             string officeName = null;
-            if (user.OfficeId.HasValue)
+
+            int? customerId = null;
+            string customerName = null;
+
+            if (user.OfficeId.HasValue || user.CustomerContactId.HasValue)
             {
-                if (user.Office != null)
-                {
-                    officeName = user.Office.Name;
-                    officeCopyChargeTo = user.Office.CopyDeliverToLoadAtChargeTo;
-                }
-                else
-                {
-                    var userWithOffice = await UserManager.Users
-                        .Include(x => x.Office)
-                        .Where(x => x.Id == user.Id)
-                        .Select(x => new
-                        {
-                            OfficeName = x.Office.Name,
-                            OfficeCopyChargeTo = x.Office.CopyDeliverToLoadAtChargeTo
-                        })
-                        .FirstOrDefaultAsync();
-                    officeName = userWithOffice?.OfficeName;
-                    officeCopyChargeTo = userWithOffice?.OfficeCopyChargeTo ?? false;
-                }
+
+                var userWithOfficeAndCustomerContact = await UserManager.Users
+                    .Where(x => x.Id == user.Id)
+                    .Select(x => new
+                    {
+                        OfficeName = x.Office.Name,
+                        OfficeCopyChargeTo = x.Office.CopyDeliverToLoadAtChargeTo,
+                        CustomerId = (int?)x.CustomerContact.Customer.Id,
+                        CustomerName = x.CustomerContact.Customer.Name,
+                    })
+                    .FirstOrDefaultAsync();
+
+                officeName = userWithOfficeAndCustomerContact?.OfficeName;
+                officeCopyChargeTo = userWithOfficeAndCustomerContact?.OfficeCopyChargeTo ?? false;
+                customerId = userWithOfficeAndCustomerContact.CustomerId;
+                customerName = userWithOfficeAndCustomerContact.CustomerName;
             }
 
             if (principal.Identity is ClaimsIdentity identity)
@@ -59,6 +60,8 @@ namespace DispatcherWeb.Authorization.Users
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserOfficeId, user.OfficeId + ""));
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserOfficeName, officeName ?? ""));
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserOfficeCopyChargeTo, officeCopyChargeTo ? "true" : "false"));
+                identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerId, customerId + ""));
+                identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerName, customerName + ""));
             }
 
             return principal;

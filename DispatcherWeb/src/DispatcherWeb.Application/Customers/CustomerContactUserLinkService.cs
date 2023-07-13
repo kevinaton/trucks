@@ -93,7 +93,6 @@ namespace DispatcherWeb.CustomerContacts
                 {
                     CustomerContactId = customerContact.Id,
                     EmailAddress = customerContact.Email,
-                    Title = customerContact.Title,
                     Name = nameParts.First(),
                     Surname = nameParts.Length > 1 ? nameParts[1] : nameParts.First(),
                     PhoneNumber = customerContact.PhoneNumber,

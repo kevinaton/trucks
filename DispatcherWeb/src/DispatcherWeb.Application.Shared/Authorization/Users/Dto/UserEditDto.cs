@@ -54,8 +54,6 @@ namespace DispatcherWeb.Authorization.Users.Dto
 
         public bool IsSingleOffice { get; set; }
 
-        public string Title { get; set; }
-
         public int? CustomerContactId { get; set; }
 
         public CustomerContactDto CustomerContact { get; set; }

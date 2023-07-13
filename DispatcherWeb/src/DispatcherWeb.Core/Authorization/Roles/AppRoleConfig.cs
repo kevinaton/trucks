@@ -105,6 +105,7 @@ namespace DispatcherWeb.Authorization.Roles
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Customer,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
         }
     }

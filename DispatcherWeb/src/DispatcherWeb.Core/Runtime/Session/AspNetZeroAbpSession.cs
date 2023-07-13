@@ -68,5 +68,35 @@ namespace DispatcherWeb.Runtime.Session
             }
         }
 
+        public int? CustomerId
+        {
+            get
+            {
+                var claimsPrincipal = PrincipalAccessor.Principal; 
+
+                var customerIdClaim = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == DispatcherWebConsts.Claims.UserCustomerId);
+                if (string.IsNullOrEmpty(customerIdClaim?.Value))
+                {
+                    return null;
+                }
+
+                return int.Parse(customerIdClaim.Value);
+            }
+        }
+
+        public string CustomerName
+        {
+            get
+            {
+                var claimsPrincipal = PrincipalAccessor.Principal;
+
+                var customerNameClaim = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == DispatcherWebConsts.Claims.UserCustomerName);
+                if (string.IsNullOrEmpty(customerNameClaim?.Value))
+                {
+                    return null;
+                }
+                return customerNameClaim.Value;
+            }
+        }
     }
 }
