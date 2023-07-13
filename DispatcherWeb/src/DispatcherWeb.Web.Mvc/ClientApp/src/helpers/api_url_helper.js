@@ -47,6 +47,7 @@ export const GET_OFFICES = '/Office/GetOfficesSelectList';
 
 //Trucks
 export const GET_VEHICLE_CATEGORIES = '/Truck/GetVehicleCategoriesSelectList';
+export const GET_TRUCK_FOR_EDIT = '/Truck/GetTruckForEdit';
 
 //Scheduling
 export const GET_PAGE_CONFIG = '/Scheduling/GetPageConfig';

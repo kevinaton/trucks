@@ -1,10 +1,13 @@
 import {
     GET_VEHICLE_CATEGORIES_SUCCESS,
     GET_VEHICLE_CATEGORIES_FAILURE,
+    GET_TRUCK_FOR_EDIT_SUCCESS,
+    GET_TRUCK_FOR_EDIT_FAILURE,
 } from './actionTypes';
 
 const INIT_STATE = {
     vehicleCategories: null,
+    truckForEdit: null
 };
 
 const TruckReducer = (state = INIT_STATE, action) => {
@@ -15,6 +18,16 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 vehicleCategories: action.payload,
             };
         case GET_VEHICLE_CATEGORIES_FAILURE:
+            return {
+                ...state,
+                error: action.payload,
+            };
+        case GET_TRUCK_FOR_EDIT_SUCCESS:
+            return {
+                ...state,
+                truckForEdit: action.payload,
+            };
+        case GET_TRUCK_FOR_EDIT_FAILURE:
             return {
                 ...state,
                 error: action.payload,

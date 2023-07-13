@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { styled } from '@mui/material/styles';
 import {
     Box,
     Button,
+    Checkbox,
     FormControl,
+    FormControlLabel,
+    Grid,
     InputLabel,
     MenuItem,
+    Paper,
     Select,
     Stack,
     Tabs,
     Tab,
     TextField,
-    Typography
+    Typography,
+    FormGroup
 } from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import CloseIcon from '@mui/icons-material/Close';
+import moment from 'moment';
 import { isEmpty } from 'lodash';
-import { getVehicleCategories } from '../../store/actions';
+import { getVehicleCategories, getTruckForEdit } from '../../store/actions';
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -56,9 +65,11 @@ const AddTruckForm = ({
     closeModal
 }) => {
     console.log('pageConfig: ', pageConfig)
+    const today = moment();
     const [value, setValue] = useState(0);
     const [officeOptions, setOfficeOptions] = useState(null);
     const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState(null);
+    const [truckInfo, setTruckInfo] = useState(null);
 
     // general tab
     const [truckCode, setTruckCode] = useState({
@@ -74,33 +85,53 @@ const AddTruckForm = ({
         errorText: ''
     });
     const [vehicleCategoryId, setVehicleCategoryId] = useState({
-        value: '',
+        value: truckInfo != null ? truckInfo.vehicleCategoryId : '',
         required: true,
         error: false,
         errorText: ''
     });
-    const [defaultDriverId, setDefaultDriverId] = useState(null);
+    const [defaultDriverId, setDefaultDriverId] = useState({
+        value: truckInfo != null ? truckInfo.defaultDriverId : '',
+        required: false,
+        error: false,
+        errorText: ''
+    });
     const [defaultTrailerId, setDefaultTrailerId] = useState(null);
     const [isActive, setIsActive] = useState(true);
-    const [inactivationDate, setInactivationDate] = useState(null);
+    const [inactivationDate, setInactivationDate] = useState({
+        value: today,
+        required: !isActive ? true : false,
+        error: false,
+        errorText: ''
+    });
     const [isOutOfService, setIsOutOfService] = useState(false);
-    const [reason, setReason] = useState('');
+    const [reason, setReason] = useState({
+        value: '',
+        required: isOutOfService ? true : false,
+        error: false,
+        errorText: ''
+    });
     const [isApportioned, setIsApportioned] = useState(false);
     const [canPullTrailer, setCanPullTrailer] = useState(false);
     const [year, setYear] = useState('');
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
-    const [inServiceDate, setInServiceDate] = useState('');
+    const [inServiceDate, setInServiceDate] = useState({
+        value: today,
+        required: true,
+        error: false,
+        errorText: ''
+    });
     const [vin, setVin] = useState('');
     const [plate, setPlate] = useState('');
-    const [plateExpiration, setPlateExpiration] = useState('');
+    const [plateExpiration, setPlateExpiration] = useState(today);
     const [cargoCapacity, setCargoCapacity] = useState('');
     const [cargoCapacityCyds, setCargoCapacityCyds] = useState('');
     const [insurancePolicyNumber, setInsurancePolicyNumber] = useState('');
-    const [insuranceValidUntil, setInsuranceValidUntil] = useState('');
-    const [purchaseDate, setPurchaseDate] = useState('');
+    const [insuranceValidUntil, setInsuranceValidUntil] = useState(today);
+    const [purchaseDate, setPurchaseDate] = useState(today);
     const [purchasePrice, setPurchasePrice] = useState('');
-    const [soldDate, setSoldDate] = useState('');
+    const [soldDate, setSoldDate] = useState(today);
     const [soldPrice, setSoldPrice] = useState('');
     const [truxTruckId, setTruxTruckId] = useState('');
 
@@ -126,10 +157,12 @@ const AddTruckForm = ({
     const dispatch = useDispatch();
     const { 
         offices,
-        vehicleCategories
+        vehicleCategories,
+        truckForEdit
     } = useSelector((state) => ({
         offices: state.OfficeReducer.offices,
-        vehicleCategories: state.TruckReducer.vehicleCategories
+        vehicleCategories: state.TruckReducer.vehicleCategories,
+        truckForEdit: state.TruckReducer.truckForEdit
     }));
 
     useEffect(() => {
@@ -142,10 +175,9 @@ const AddTruckForm = ({
     }, [officeOptions, offices]);
 
     useEffect(() => {
-        if (vehicleCategoryOptions === null) {
-            dispatch(getVehicleCategories());
-        }
-    }, [dispatch, vehicleCategoryOptions]);
+        dispatch(getVehicleCategories());
+        dispatch(getTruckForEdit());
+    }, []);
 
     useEffect(() => {
         if (!isEmpty(vehicleCategories) && !isEmpty(vehicleCategories.result)) {
@@ -155,6 +187,16 @@ const AddTruckForm = ({
             }
         }
     }, [vehicleCategories]);
+
+    useEffect(() => {
+        if (truckInfo === null && !isEmpty(truckForEdit) && !isEmpty(truckForEdit.result)) {
+            const { result } = truckForEdit;
+            if (!isEmpty(result)) {
+                console.log('result: ', result)
+                setTruckInfo(result);
+            }
+        }
+    }, [truckInfo, truckForEdit]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -198,6 +240,133 @@ const AddTruckForm = ({
         });
     };
 
+    const handleDefaultDriverIdInputChange = (e) => {
+        e.preventDefault();
+
+        const inputValue = e.target.value;
+        setDefaultDriverId({
+            ...defaultDriverId,
+            value: inputValue,
+            error: false,
+            errorText: ''
+        });
+    };
+
+    const handleDefaultTrailerIdInputChange = (e) => {
+        e.preventDefault();
+
+        const inputValue = e.target.value;
+        setDefaultTrailerId({
+            ...defaultTrailerId,
+            value: inputValue,
+            error: false,
+            errorText: ''
+        });
+    };
+
+    const handleIsActiveChange = (e) => {
+        setIsActive(e.target.checked);
+    };
+
+    const handleInactivationDateChange = (newDate) => {
+        setInactivationDate({
+            ...inactivationDate,
+            value: moment(newDate).format('MM/DD/YYYY'),
+            error: false,
+            errorText: ''
+        });
+    };
+
+    const handleIsOutOfServiceChange = (e) => {
+        setIsOutOfService(e.target.checked);
+    };
+
+    const handleReasonInputChange = (e) => {
+        setReason({
+            ...reason,
+            value: e.target.value,
+            error: false,
+            errorText: ''
+        });
+    };
+
+    const handleIsApportionedChange = (e) => {
+        setIsApportioned(e.target.checked);
+    };
+
+    const handleCanPullTrailerChange = (e) => {
+        setCanPullTrailer(e.target.checked);
+    };
+
+    const handleYearInputChange = (e) => {
+        setYear(e.target.value);
+    };
+
+    const handleMakeInputChange = (e) => {
+        setMake(e.target.value);
+    };
+
+    const handleModelInputChange = (e) => {
+        setModel(e.target.value);
+    };
+
+    const handleInServiceDateChange = (newDate) => {
+        setInServiceDate({
+            ...inServiceDate,
+            value: moment(newDate).format('MM/DD/YYYY'),
+            error: false,
+            errorText: ''
+        });
+    };
+
+    const handleVinInputChange = (e) => {
+        setVin(e.target.value);
+    };
+
+    const handlePlateInputChange = (e) => {
+        setPlate(e.target.value);
+    };
+
+    const handlePlateExpirationChange = (newDate) => {
+        setPlateExpiration(moment(newDate).format('MM/DD/YYYY'));
+    };
+
+    const handleCargoCapacityInputChange = (e) => {
+        setCargoCapacity(e.target.value);
+    };
+
+    const handleCargoCapacityCydsInputChange = (e) => {
+        setCargoCapacityCyds(e.target.value);
+    };
+
+    const handleInsurancePolicyNumberInputChange = (e) => {
+        setInsurancePolicyNumber(e.target.value);
+    };
+
+    const handleInsuranceValidUntilChange = (newDate) => {
+        setInsuranceValidUntil(moment(newDate).format('MM/DD/YYYY'));
+    };
+
+    const handlePurchaseDateChange = (newDate) => {
+        setPurchaseDate(moment(newDate).format('MM/DD/YYYY'));
+    };
+
+    const handlePurchasePriceInputChange = (e) => {
+        setPurchasePrice(e.target.value);
+    };
+
+    const handleSoldDateChange = (newDate) => {
+        setSoldDate(moment(newDate).format('MM/DD/YYYY'));
+    };
+
+    const handleSoldPriceInputChange = (e) => {
+        setSoldPrice(e.target.value);
+    };
+
+    const handleTruxTruckIdInputChange = (e) => {
+        setTruxTruckId(e.target.value);
+    };
+
     const handleCancel = () => {
         // Reset the form
         closeModal();
@@ -209,49 +378,49 @@ const AddTruckForm = ({
 
     const renderGeneralForm = () => {
         const { features } = pageConfig;
-
         return (
-            <div>
+            <Stack 
+                spacing={2} 
+                sx={{
+                    maxHeight: '712px',
+                    overflowY: 'auto'
+                }}
+            >
                 <TextField 
                     id='truck-code'
                     name='truck-code' 
                     type='text' 
-                    value={truckCode.value} 
-                    error={truckCode.error} 
-                    helperText={truckCode.error ? truckCode.errorText : ''} 
-                    defaultValue={truckCode.value} 
                     label={
                         <>
                             Truck Code {truckCode.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
                         </>
                     }
-                    sx={{ marginBottom: '15px' }} 
-                    fullWidth 
-                    onChange={handleTruckCodeInputChange}
+                    value={truckCode.value} 
+                    defaultValue={truckInfo.truckCode} 
+                    onChange={handleTruckCodeInputChange} 
+                    error={truckCode.error} 
+                    helperText={truckCode.error ? truckCode.errorText : ''} 
+                    fullWidth
                 />
-
-                { features.allowMultiOffice &&
-                    <FormControl 
-                        fullWidth
-                        sx={{ marginBottom: '15px' }} 
-                    >
+                
+                { features.allowMultiOffice && 
+                    <FormControl fullWidth>
                         <InputLabel id='officeId-label'>
                             Office {officeId.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
                         </InputLabel>
                         <Select
                             labelId='officeId-label'
                             id='officeId'
-                            value={officeId.value} 
                             label={
                                 <>
                                     Office {officeId.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
                                 </>
                             }
+                            value={officeId.value} 
+                            defaultValue={truckInfo.officeId}
                             onChange={handleOfficeIdInputChange}
                         >
-                            <MenuItem value=''>
-                                Select an option
-                            </MenuItem>
+                            <MenuItem value=''>Select an option</MenuItem>
                             
                             { officeOptions && officeOptions.map((option) => (
                                 <MenuItem key={option.id} value={option.id}>
@@ -262,27 +431,23 @@ const AddTruckForm = ({
                     </FormControl>
                 }
 
-                <FormControl  
-                    fullWidth
-                    sx={{ marginBottom: '15px' }} 
-                >
+                <FormControl fullWidth>
                     <InputLabel id='vehicleCategoryId-label'>
                         Category {vehicleCategoryId.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
                     </InputLabel>
                     <Select
                         labelId='vehicleCategoryId-label'
                         id='vehicleCategoryId'
-                        value={vehicleCategoryId.value}
                         label={
                             <>
                                 Category {vehicleCategoryId.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
                             </>
                         }
+                        value={vehicleCategoryId.value} 
+                        defaultValue={truckInfo.vehicleCategoryId}
                         onChange={handleVehicleCategoryIdInputChange}
                     >
-                        <MenuItem value=''>
-                            Select an option
-                        </MenuItem>
+                        <MenuItem value=''>Select an option</MenuItem>
 
                         { vehicleCategoryOptions && vehicleCategoryOptions.map((option) => (
                             <MenuItem key={option.id} value={option.id}>
@@ -291,7 +456,479 @@ const AddTruckForm = ({
                         ))}
                     </Select>
                 </FormControl>
-            </div>
+
+                <FormControl
+                    disabled={Boolean(truckInfo.vehicleCategoryIsPowered)}
+                    fullWidth
+                >
+                    <InputLabel id='defaultDriver-label'>Default Driver</InputLabel>
+                    <Select
+                        labelId='defaultDriver-label'
+                        id='defaultDriver'
+                        label='Default Driver' 
+                        value={defaultDriverId.value} 
+                        defaultValue={truckInfo.defaultDriverId}
+                        onChange={handleDefaultDriverIdInputChange}
+                    >
+                        <MenuItem value=''>Select an option</MenuItem>
+
+                        { truckInfo.defaultDriverId !== null && 
+                            <MenuItem value={truckInfo.defaultDriverId}>
+                                {truckInfo.defaultDriverName}
+                            </MenuItem>
+                        }
+                    </Select>
+                </FormControl>
+
+                { Boolean(truckInfo.canPullTrailer) && 
+                    <FormControl fullWidth>
+                        <InputLabel id='defaultTrailer-label'>Default Trailer</InputLabel>
+                        <Select
+                            labelId='defaultTrailer-label'
+                            id='defaultTrailer'
+                            label='Default Trailer' 
+                            value={defaultDriverId.value} 
+                            defaultValue={truckInfo.defaultTrailerId}
+                            onChange={handleDefaultTrailerIdInputChange}
+                        >
+                            <MenuItem value=''>Select an option</MenuItem>
+
+                            { truckInfo.defailtTrailerId !== null && 
+                                <MenuItem value={truckInfo.defailtTrailerId}>
+                                    {truckInfo.defaultTrailerCode}
+                                </MenuItem>
+                            }
+                        </Select>
+                    </FormControl>
+                }
+
+                <FormControlLabel 
+                    control={
+                        <Checkbox 
+                            checked={isActive} 
+                            defaultChecked={truckInfo.isActive}
+                            onChange={handleIsActiveChange}
+                        />
+                    } 
+                    label="Active" 
+                    fullWidth
+                />
+
+                { !isActive && 
+                    <LocalizationProvider 
+                        dateAdapter={AdapterMoment} 
+                        adapterLocale='en-us'
+                        fullWidth
+                    >
+                        <DatePicker 
+                            id='inactivationDate'
+                            name='inactivationDate'
+                            label={
+                                <>
+                                    Inactivation Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                                </>
+                            } 
+                            value={inactivationDate.value} 
+                            defaultValue={truckInfo.inactivationDate !== null ? moment(truckInfo.inactivationDate) : moment()}
+                            onChange={handleInactivationDateChange} 
+                            error={inactivationDate.error}
+                            helperText={inactivationDate.error ? inactivationDate.errorText : ''} 
+                            sx={{ flexShrink: 0 }} 
+                        />
+                    </LocalizationProvider>
+                }
+
+                <FormControlLabel 
+                    control={
+                        <Checkbox 
+                            checked={isOutOfService} 
+                            defaultChecked={truckInfo.isOutOfService}
+                            onChange={handleIsOutOfServiceChange}
+                        />
+                    } 
+                    label="Out of Service" 
+                    fullWidth
+                />
+
+                { isOutOfService && 
+                    <TextField
+                        id="reason"
+                        label="Reason" 
+                        value={reason.value} 
+                        defaultValue={truckInfo.reason}
+                        onChange={handleReasonInputChange} 
+                        multiline
+                        rows={2} 
+                        fullWidth
+                    />
+                }
+
+                { Boolean(truckInfo.vehicleCategoryIsPowered) && 
+                    <React.Fragment>
+                        <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                    checked={isApportioned} 
+                                    defaultChecked={truckInfo.isApportioned}
+                                    onChange={handleIsApportionedChange}
+                                />
+                            } 
+                            label="Apportioned" 
+                            fullWidth
+                        />
+
+                        <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                    checked={canPullTrailer} 
+                                    defaultChecked={truckInfo.canPullTrailer}
+                                    onChange={handleCanPullTrailerChange}
+                                />
+                            } 
+                            label="Can Pull Trailer" 
+                            fullWidth
+                        />
+                    </React.Fragment>
+                }
+
+                <TextField 
+                    id='year'
+                    name='year'
+                    type='number' 
+                    label='Year'
+                    value={year} 
+                    defaultValue={truckInfo.year}
+                    onChange={handleYearInputChange} 
+                    fullWidth
+                />
+
+                <TextField 
+                    id='make'
+                    name='make'
+                    type='text'
+                    label='Make'
+                    value={make} 
+                    defaultValue={truckInfo.make}
+                    onChange={handleMakeInputChange}
+                    fullWidth
+                />
+
+                <TextField
+                    id='model'
+                    name='model'
+                    type='text'
+                    label='Model'
+                    value={model} 
+                    defaultValue={truckInfo.model}
+                    onChange={handleModelInputChange}
+                    fullWidth
+                />
+
+                <LocalizationProvider 
+                    dateAdapter={AdapterMoment} 
+                    adapterLocale='en-us'
+                    fullWidth
+                >
+                    <DatePicker 
+                        id='inServiceDate'
+                        name='inServiceDate'
+                        label={
+                            <>
+                                In Service Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                            </>
+                        } 
+                        value={inServiceDate.value} 
+                        defaultValue={truckInfo.inServiceDate !== null ? moment(truckInfo.inServiceDate) : moment()} 
+                        onChange={handleInServiceDateChange} 
+                        error={inServiceDate.error}
+                        helperText={inServiceDate.error ? inServiceDate.errorText : ''} 
+                        sx={{ flexShrink: 0 }} 
+                        fullWidth
+                    />
+                </LocalizationProvider>
+
+                <TextField
+                    id='vin'
+                    name='vin'
+                    type='text'
+                    label='VIN'
+                    value={vin} 
+                    defaultValue={truckInfo.vin}
+                    onChange={handleVinInputChange}
+                    fullWidth
+                />
+
+                <TextField
+                    id='plate'
+                    name='plate'
+                    type='text'
+                    label='Plate'
+                    value={plate} 
+                    defaultValue={truckInfo.plate}
+                    onChange={handlePlateInputChange}
+                    fullWidth
+                />
+
+                <LocalizationProvider 
+                    dateAdapter={AdapterMoment} 
+                    adapterLocale='en-us'
+                    fullWidth
+                >
+                    <DatePicker 
+                        id='plateExpiration'
+                        name='plateExpiration'
+                        label='Plate Expiration'
+                        value={plateExpiration} 
+                        defaultValue={truckInfo.plateExpiration !== null ? moment(truckInfo.plateExpiration) : moment()}
+                        onChange={handlePlateExpirationChange} 
+                        sx={{ flexShrink: 0 }} 
+                        fullWidth
+                    />
+                </LocalizationProvider>
+
+                <TextField 
+                    id='cargoCapacity'
+                    name='cargoCapacity'
+                    type='text'
+                    label='Ave Load (tons)'
+                    value={cargoCapacity} 
+                    defaultValue={truckInfo.cargoCapacity}
+                    onChange={handleCargoCapacityInputChange}
+                    fullWidth 
+                />
+
+                <TextField 
+                    id='cargoCapacityCyds' 
+                    name='cargoCapacityCyds'
+                    type='text' 
+                    label='Ave Load (cyds)' 
+                    value={cargoCapacityCyds} 
+                    defaultValue={truckInfo.cargoCapacityCyds}
+                    onChange={handleCargoCapacityCydsInputChange}
+                    fullWidth
+                />
+
+                <TextField 
+                    id='insurancePolicyNumber' 
+                    name='insurancePolicyNumber'
+                    type='text' 
+                    label='Insurance Policy Number' 
+                    value={insurancePolicyNumber} 
+                    defaultValue={truckInfo.insurancePolicyNumber}
+                    onChange={handleInsurancePolicyNumberInputChange}
+                    fullWidth
+                />
+
+                <LocalizationProvider 
+                    dateAdapter={AdapterMoment} 
+                    adapterLocale='en-us'
+                    fullWidth
+                >
+                    <DatePicker 
+                        id='insuranceValidUntil'
+                        name='insuranceValidUntil'
+                        label='Insurance Valid Until'
+                        value={insuranceValidUntil} 
+                        defaultValue={truckInfo.insuranceValidUntil !== null ? moment(truckInfo.insuranceValidUntil) : moment()}
+                        onChange={handleInsuranceValidUntilChange} 
+                        sx={{ flexShrink: 0 }} 
+                        fullWidth
+                    />
+                </LocalizationProvider>
+
+                <LocalizationProvider 
+                    dateAdapter={AdapterMoment} 
+                    adapterLocale='en-us'
+                    fullWidth
+                >
+                    <DatePicker 
+                        id='purchaseDate'
+                        name='purchaseDate'
+                        label='Purchase Date'
+                        value={purchaseDate} 
+                        defaultValue={truckInfo.purchaseDate !== null ? moment(truckInfo.purchaseDate) : moment()}
+                        onChange={handlePurchaseDateChange} 
+                        sx={{ flexShrink: 0 }} 
+                        fullWidth
+                    />
+                </LocalizationProvider>
+
+                <TextField 
+                    id='purchasePrice'
+                    name='purchasePrice'
+                    type='text'
+                    label='Purchase Price'
+                    value={purchasePrice} 
+                    defaultValue={truckInfo.purchasePrice}
+                    onChange={handlePurchasePriceInputChange}
+                    fullWidth
+                />
+
+                <LocalizationProvider 
+                    dateAdapter={AdapterMoment} 
+                    adapterLocale='en-us'
+                    fullWidth
+                >
+                    <DatePicker 
+                        id='soldDate'
+                        name='soldDate'
+                        label='Sold Date'
+                        value={soldDate} 
+                        defaultValue={truckInfo.soldDate !== null ? moment(truckInfo.soldDate) : moment()}
+                        onChange={handleSoldDateChange} 
+                        sx={{ flexShrink: 0 }} 
+                        fullWidth
+                    />
+                </LocalizationProvider>
+
+                <TextField 
+                    id='soldPrice'
+                    name='soldPrice'
+                    type='text'
+                    label='Sold Price'
+                    value={soldPrice} 
+                    defaultValue={truckInfo.soldPrice}
+                    onChange={handleSoldPriceInputChange}
+                    fullWidth
+                />
+
+                { Boolean(features.allowImportingTruxEarnings) && 
+                    <TextField 
+                        id='truxTruckId' 
+                        name='truxTruckId'
+                        type='text'
+                        label='Trux Truck Id' 
+                        value={truxTruckId} 
+                        defaultValue={truckInfo.truxTruckId}
+                        onChange={handleTruxTruckIdInputChange}
+                        fullWidth
+                    />
+                }
+            </Stack>
+        );
+    };
+
+    const renderMaintenanceForm = () => {
+        return (
+            <Stack 
+                spacing={2} 
+                sx={{
+                    maxHeight: '712px',
+                    overflowY: 'auto'
+                }}
+            >
+                <FormControl fullWidth>
+                    <InputLabel id='bedConstruction-label'>Bed Construction</InputLabel>
+                    <Select
+                        labelId='bedConstruction-label'
+                        id='bedConstruction'
+                        label='Bed Construction'
+                        value={bedConstruction} 
+                        defaultValue={truckInfo.bedConstruction}
+                    >
+                        <MenuItem value=''>Select an option</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl fullWidth>
+                    <InputLabel id='fuelType-label'>Fuel Type</InputLabel>
+                    <Select
+                        labelId='fuelType-label'
+                        id='fuelType'
+                        label='fuelType'
+                        value={fuelType} 
+                        defaultValue={truckInfo.fuelType}
+                    >
+                        <MenuItem value=''>Select an option</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <TextField 
+                    id='fuelCapacity'
+                    name='fuelCapacity'
+                    type='text'
+                    label='Fuel Capacity'
+                    value={fuelCapacity}
+                    defaultValue={truckInfo.fuelCapacity}
+                />
+
+                <TextField 
+                    id='steerTires' 
+                    name='steerTires'
+                    type='text'
+                    label='Steer Tires'
+                    value={steerTires}
+                    defaultValue={truckInfo.steerTires}
+                />
+
+                <TextField 
+                    id='driveAxleTires' 
+                    name='driveAxleTires'
+                    type='text'
+                    label='Drive Axle Tires'
+                    value={driveAxleTires}
+                    defaultValue={truckInfo.driveAxleTires}
+                /> 
+
+                <TextField 
+                    id='dropAxleTires'
+                    name='dropAxleTires'
+                    type='text'
+                    label='Drop Axle Tires'
+                    value={dropAxleTires}
+                    defaultValue={truckInfo.dropAxleTires}
+                />
+
+                <TextField 
+                    id='trailerTires'
+                    name='trailerTires'
+                    type='text'
+                    label='Trailer Tires'
+                    value={trailerTires}
+                    defaultValue={truckInfo.trailerTires}
+                />
+
+                <TextField 
+                    id='transmission' 
+                    name='transmission'
+                    type='text'
+                    label='Transmission'
+                    value={transmission}
+                    defaultValue={truckInfo.transmission}
+                />
+
+                <TextField 
+                    id='engine'
+                    name='engine'
+                    type='text'
+                    label='Engine'
+                    value={engine}
+                    defaultValue={truckInfo.engine}
+                />
+
+                <TextField 
+                    id='rearEnd'
+                    name='rearEnd'
+                    type='text'
+                    label='Rear End'
+                    value={rearEnd}
+                    defaultValue={truckInfo.rearEnd}
+                />
+            </Stack>
+        );
+    };
+
+    const renderGpsConfigurationForm = () => {
+        return (
+            <Stack 
+                spacing={2} 
+                sx={{
+                    maxHeight: '712px',
+                    overflowY: 'auto'
+                }}
+            >
+                
+            </Stack>
         );
     };
 
@@ -316,43 +953,37 @@ const AddTruckForm = ({
                 </Button>
             </Box>
 
-            <Box 
-                component='form'
-                noValidate 
-                autoComplete='off'
-            >
-                <Box sx={{ width: '100%' }}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="Create new truck tabs">
-                            <Tab label="General" {...a11yProps(0)} />
-                            <Tab label="Maintenance" {...a11yProps(1)} />
-                            <Tab label="GPS Configuration" {...a11yProps(2)} />
-                        </Tabs>
-                    </Box>
-                    <TabPanel value={value} index={0}>
-                        {!isEmpty(pageConfig) && renderGeneralForm()}
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
-                        
-                    </TabPanel>
+            <Box sx={{ width: '100%' }}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={value} onChange={handleChange} aria-label="Create new truck tabs">
+                        <Tab label="General" {...a11yProps(0)} />
+                        <Tab label="Maintenance" {...a11yProps(1)} />
+                        <Tab label="GPS Configuration" {...a11yProps(2)} />
+                    </Tabs>
                 </Box>
+                <TabPanel value={value} index={0}>
+                    {!isEmpty(pageConfig) && !isEmpty(truckInfo) && renderGeneralForm()}
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    {!isEmpty(pageConfig) && !isEmpty(truckInfo) && renderMaintenanceForm()}
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                    {!isEmpty(pageConfig) && !isEmpty(truckInfo) && renderGpsConfigurationForm()}
+                </TabPanel>
+            </Box>
 
-                <Box sx={{ p: 2 }}>
-                    <Stack 
-                        spacing={2}
-                        direction='row' 
-                        justifyContent='flex-end'
-                    >
-                        <Button variant='outlined' onClick={handleCancel}>Cancel</Button>
-                        <Button variant='contained' color='primary' onClick={(e) => handleSave(e)}>
-                            <i className='fa-regular fa-save' style={{ marginRight: '6px' }}></i>
-                            <Typography>Save</Typography>
-                        </Button>
-                    </Stack>
-                </Box>
+            <Box sx={{ p: 2 }}>
+                <Stack 
+                    spacing={2}
+                    direction='row' 
+                    justifyContent='flex-end'
+                >
+                    <Button variant='outlined' onClick={handleCancel}>Cancel</Button>
+                    <Button variant='contained' color='primary' onClick={(e) => handleSave(e)}>
+                        <i className='fa-regular fa-save' style={{ marginRight: '6px' }}></i>
+                        <Typography>Save</Typography>
+                    </Button>
+                </Stack>
             </Box>
         </React.Fragment>
     );
