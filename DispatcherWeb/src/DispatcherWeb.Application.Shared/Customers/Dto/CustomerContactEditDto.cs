@@ -39,7 +39,7 @@ namespace DispatcherWeb.Customers.Dto
             var name = Name.Trim();
             if (HasCustomerPortalAccess &&
                 !string.IsNullOrEmpty(name) &&
-                string.Join(" ", name.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)).Split(new[] { ' ' }).Length > 2)
+                name.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length > 2)
             {
                 yield return new ValidationResult("This isn't a valid name for when contact is given access to customer portal. Please enter only the first and last name.");
             }
