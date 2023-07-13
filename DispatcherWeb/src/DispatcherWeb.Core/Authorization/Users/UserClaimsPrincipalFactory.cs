@@ -44,14 +44,14 @@ namespace DispatcherWeb.Authorization.Users
                     {
                         OfficeName = x.Office.Name,
                         OfficeCopyChargeTo = x.Office.CopyDeliverToLoadAtChargeTo,
-                        CustomerId = x.CustomerContact.Customer.Id,
+                        CustomerId = (int?)x.CustomerContact.Customer.Id,
                         CustomerName = x.CustomerContact.Customer.Name,
                     })
                     .FirstOrDefaultAsync();
 
                 officeName = userWithOfficeAndCustomerContact?.OfficeName;
                 officeCopyChargeTo = userWithOfficeAndCustomerContact?.OfficeCopyChargeTo ?? false;
-                customerId = (int?)userWithOfficeAndCustomerContact.CustomerId;
+                customerId = userWithOfficeAndCustomerContact.CustomerId;
                 customerName = userWithOfficeAndCustomerContact.CustomerName;
             }
 
