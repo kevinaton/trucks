@@ -108,7 +108,7 @@
         public static class CustomerContact
         {
             public const int Title = 40;
-            public const int Name = 128;
+            public const int Name = 129;
         }
 
         public static class Order
