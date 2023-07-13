@@ -56,8 +56,6 @@ namespace DispatcherWeb.Authorization.Users.Dto
 
         public int? CustomerContactId { get; set; }
 
-        public CustomerContactDto CustomerContact { get; set; }
-
         int IOfficeIdNameDto.OfficeId { get => OfficeId ?? 0; set => OfficeId = value; }
     }
 }

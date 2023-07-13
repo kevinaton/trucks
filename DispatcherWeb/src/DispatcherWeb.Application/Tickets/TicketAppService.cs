@@ -936,8 +936,7 @@ namespace DispatcherWeb.Tickets
         [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
-            var user = await UserManager.GetUserByIdAsync(AbpSession.GetUserId());
-            if (FeatureChecker.IsEnabled(AppFeatures.CustomerPortal) && !user.CustomerContactId.HasValue)
+            if (FeatureChecker.IsEnabled(AppFeatures.CustomerPortal) && !Session.CustomerId.HasValue)
             {
                 throw new UserFriendlyException( L("CustomerPortalAccessDenied"));
             }

@@ -10,6 +10,11 @@
     var _isFilterReady = false;
     var _isGridInitialized = false;
 
+    var _customerPortalEnabled = () =>
+        abp.features.getValue('App.CustomerPortalFeature') === "true" &&
+        abp.auth.hasPermission('Pages.CustomerPortal.TicketsList') &&
+        abp.session.hasCustomerPortalAccess;
+
     $('[data-toggle="tooltip"]').tooltip();
 
     var _createOrEditTicketModal = new app.ModalManager({
@@ -38,9 +43,9 @@
             };
         }
 
-        if ($("#restrict-to-customer")) {
-            cachedFilter.customerId = $("#restrict-to-customer").val();
-            cachedFilter.customerName = $("#restrict-to-customer").attr("text");
+        if (_customerPortalEnabled()) {
+            cachedFilter.customerId = abp.session.customerId;
+            cachedFilter.customerName = abp.session.customerName;
             $("#CustomerFilter").prop("disabled", true);
         }
 
@@ -274,8 +279,8 @@
             var abpData = _dtHelper.toAbpData(data);
             _lastAbpData = $.extend({}, abpData);
             var filterData = _dtHelper.getFilterData();
-            if ($("#restrict-to-customer")) {
-                filterData.customerId = parseInt($("#restrict-to-customer").val());
+            if (_customerPortalEnabled()) {
+                filterData.customerId = abp.session.customerId;
             }
             app.localStorage.setItem('tickets_filter', filterData);
             $.extend(abpData, filterData);
@@ -403,7 +408,7 @@
             {
                 data: "revenue",
                 title: "Revenue",
-                visible: !$("#restrict-to-customer")
+                visible: !_customerPortalEnabled()
             },
             {
                 data: "isBilled",

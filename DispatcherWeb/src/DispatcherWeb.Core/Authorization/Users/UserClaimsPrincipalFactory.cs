@@ -34,10 +34,10 @@ namespace DispatcherWeb.Authorization.Users
 
             int? customerId = null;
             string customerName = null;
+            bool? hasCustomerPortalAccess = null;
 
             if (user.OfficeId.HasValue || user.CustomerContactId.HasValue)
             {
-
                 var userWithOfficeAndCustomerContact = await UserManager.Users
                     .Where(x => x.Id == user.Id)
                     .Select(x => new
@@ -46,6 +46,7 @@ namespace DispatcherWeb.Authorization.Users
                         OfficeCopyChargeTo = x.Office.CopyDeliverToLoadAtChargeTo,
                         CustomerId = (int?)x.CustomerContact.Customer.Id,
                         CustomerName = x.CustomerContact.Customer.Name,
+                        HasCustomerPortalAccess = (bool?)x.CustomerContact.HasCustomerPortalAccess
                     })
                     .FirstOrDefaultAsync();
 
@@ -53,6 +54,7 @@ namespace DispatcherWeb.Authorization.Users
                 officeCopyChargeTo = userWithOfficeAndCustomerContact?.OfficeCopyChargeTo ?? false;
                 customerId = userWithOfficeAndCustomerContact.CustomerId;
                 customerName = userWithOfficeAndCustomerContact.CustomerName;
+                hasCustomerPortalAccess = userWithOfficeAndCustomerContact.HasCustomerPortalAccess;
             }
 
             if (principal.Identity is ClaimsIdentity identity)
@@ -62,6 +64,7 @@ namespace DispatcherWeb.Authorization.Users
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserOfficeCopyChargeTo, officeCopyChargeTo ? "true" : "false"));
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerId, customerId + ""));
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerName, customerName + ""));
+                identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserHasCustomerPortalAccess, (hasCustomerPortalAccess ?? false) ? "true" : "false"));
             }
 
             return principal;

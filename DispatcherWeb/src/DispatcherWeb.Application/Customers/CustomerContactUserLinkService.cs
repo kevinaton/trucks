@@ -136,8 +136,12 @@ namespace DispatcherWeb.CustomerContacts
             user.Title = customerContact.Title;
             user.EmailAddress = customerContact.Email;
             user.PhoneNumber = customerContact.PhoneNumber;
-            user.OfficeId = null;
             user.CustomerContactId = customerContact.Id;
+
+            if (!user.OfficeId.HasValue)
+            {
+                user.OfficeId = null;
+            }
 
             (await UserManager.UpdateAsync(user)).CheckErrors(LocalizationManager);
         }

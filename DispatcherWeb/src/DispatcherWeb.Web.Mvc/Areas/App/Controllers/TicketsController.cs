@@ -2,9 +2,6 @@
 using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Authorization;
 using DispatcherWeb.Authorization;
-using DispatcherWeb.Authorization.Roles;
-using DispatcherWeb.Authorization.Users;
-using DispatcherWeb.Customers;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Tickets;
 using DispatcherWeb.Tickets.Dto;
@@ -21,27 +18,17 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
     public class TicketsController : DispatcherWebControllerBase
     {
         private readonly ITicketAppService _ticketService;
-        private readonly ICustomerAppService _customerAppService;
-        private readonly IUserAppService _userAppService;
-        private readonly IRoleAppService _roleAppService;
 
         public TicketsController(
-            ITicketAppService ticketService,
-            ICustomerAppService customerAppService,
-            IUserAppService userAppService,
-            IRoleAppService roleAppService
+            ITicketAppService ticketService
         )
         {
             _ticketService = ticketService;
-            _customerAppService = customerAppService;
-            _userAppService = userAppService;
-            _roleAppService = roleAppService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var user = await _userAppService.GetUserForEdit(new NullableIdDto<long>() { Id = AbpSession.UserId.Value });
-            return View(user.User.CustomerContact);
+            return View();
         }
 
         public IActionResult TicketsByDriver()
