@@ -18,76 +18,87 @@ namespace DispatcherWeb.Authorization.Roles
 
             //Static tenant roles
             roleManagementConfig.StaticRoles.Add(
-                    new StaticRoleDefinition(
-                        StaticRoleNames.Tenants.User,
-                        MultiTenancySides.Tenant)
-                    );
+                new StaticRoleDefinition(
+                    StaticRoleNames.Tenants.User,
+                    MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
+                );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Admin,
-                    MultiTenancySides.Tenant,
-                    grantAllPermissionsByDefault: true)
+                    MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Dispatching,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.LimitedQuoting,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Quoting,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Backoffice,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Administrative,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Managers,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Maintenance,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.MaintenanceSupervisor,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.Driver,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
 
             roleManagementConfig.StaticRoles.Add(
                 new StaticRoleDefinition(
                     StaticRoleNames.Tenants.LeaseHaulerDriver,
                     MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
                 );
         }
     }

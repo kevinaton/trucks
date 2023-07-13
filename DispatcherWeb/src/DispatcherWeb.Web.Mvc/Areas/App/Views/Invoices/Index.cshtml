@@ -37,7 +37,7 @@
             @if (await FeatureChecker.IsEnabledAsync(AppFeatures.QuickbooksFeature))
             {
                 var accountingIntegrationKind = (QuickbooksIntegrationKind)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.Quickbooks.IntegrationKind);
-                @if (accountingIntegrationKind.IsIn(QuickbooksIntegrationKind.Desktop, QuickbooksIntegrationKind.QboExport, QuickbooksIntegrationKind.TransactionProExport))
+                @if (accountingIntegrationKind.IsIn(QuickbooksIntegrationKind.Desktop, QuickbooksIntegrationKind.QboExport, QuickbooksIntegrationKind.TransactionProExport, QuickbooksIntegrationKind.SbtCsvExport))
                 {
                     <button type="button" id="QbExportButton" class="btn btn-primary" data-toggle="tooltip" title="@L("CreateQuickBooksExportFile")">@L("QbExport")</button>
                 }

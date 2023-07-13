@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
+using Abp.Linq.Extensions;
 using Abp.Timing;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Customers;
@@ -52,10 +53,11 @@ namespace DispatcherWeb.QuickbooksDesktop
             _binaryObjectManager = binaryObjectManager;
         }
 
-        public async Task<ExportInvoicesToIIFResult> ExportInvoicesToIIF()
+        public async Task<ExportInvoicesToIIFResult> ExportInvoicesToIIF(ExportInvoicesToIIFInput input)
         {
             var invoicesToUpload = await _invoiceRepository.GetAll()
-                .Where(x => x.QuickbooksExportDateTime == null && x.Status == InvoiceStatus.ReadyForQuickbooks)
+                .Where(x => x.QuickbooksExportDateTime == null)
+                .WhereIf(input.InvoiceStatuses?.Any() == true, x => input.InvoiceStatuses.Contains(x.Status))
                 .ToInvoiceToUploadList(await GetTimezone());
 
             var invoiceNumberPrefix = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.Quickbooks.InvoiceNumberPrefix);

@@ -182,7 +182,7 @@
             viewUrl: abp.appPath + 'app/Scheduling/AssignTrucksModal',
             scriptUrl: abp.appPath + 'view-resources/Areas/app/Views/Scheduling/_AssignTrucksModal.js',
             modalClass: 'AssignTrucksModal',
-            modalSize: 'lg'
+            modalSize: 'xl'
         });
 
         var _changeDriverForOrderLineTruckModal = new app.ModalManager({
@@ -937,44 +937,10 @@
         };
         menuFunctions.fn.copy = async function (element) {
             var orderLine = _dtHelper.getRowData(element);
-            try {
-                abp.ui.setBusy();
-                let hasMultipleItems = await _orderService.doesOrderHaveMultipleLines(orderLine.orderId);
-                abp.ui.clearBusy();
-                if (!hasMultipleItems) {
-                    _copyOrderModal.open({
-                        orderId: orderLine.orderId
-                    });
-                    return;
-                }
-                let multipleOrderLinesResponse = await swal(
-                    "You have selected to copy an order with multiple line items. Select the button below for how you want to handle this copy.",
-                    {
-                        buttons: {
-                            cancel: "Cancel",
-                            single: "Single line item",
-                            all: "All line items"
-                        }
-                    }
-                );
-                var copyOrderParams = {
-                    orderId: orderLine.orderId
-                };
-                switch (multipleOrderLinesResponse) {
-                    case "single":
-                        copyOrderParams.orderLineId = orderLine.id;
-                        break;
-                    case "all":
-                        break;
-                    default:
-                        return;
-                }
-                _copyOrderModal.open(copyOrderParams);
-
-            }
-            finally {
-                abp.ui.clearBusy();
-            }
+            _copyOrderModal.open({
+                orderId: orderLine.orderId,
+                orderLineId: orderLine.id,
+            });
         };
         menuFunctions.isVisible.share = function (rowData) {
             var today = new Date(moment().format("YYYY-MM-DD") + 'T00:00:00Z');
@@ -1022,7 +988,7 @@
             }
             try {
                 abp.ui.setBusy();
-                let hasMultipleLines = await _orderService.doesOrderHaveMultipleLines(orderLine.orderId);
+                let hasMultipleLines = await _orderService.doesOrderHaveOtherOrderLines(orderLine.orderId, orderLine.id);
                 if (!hasMultipleLines) {
                     await deleteOrder(orderLine.orderId);
                     return;
@@ -2537,15 +2503,6 @@
                             callback: function () {
                                 menuFunctions.fn.printBackOfficeDetail(this);
                             }
-                        },
-                        printWithDeliveryInfo: {
-                            name: app.localize('Schedule_DataTable_MenuItems_WithDeliveryInfo'),
-                            visible: function () {
-                                return true;
-                            },
-                            callback: function () {
-                                menuFunctions.fn.printWithDeliveryInfo(this);
-                            }
                         }
                     }
                 },
@@ -2638,6 +2595,15 @@
                     },
                     callback: function () {
                         menuFunctions.fn.viewDispatches(this);
+                    }
+                },
+                printWithDeliveryInfo: {
+                    name: app.localize('Schedule_DataTable_MenuItems_WithDeliveryInfo'),
+                    visible: function () {
+                        return true;
+                    },
+                    callback: function () {
+                        menuFunctions.fn.printWithDeliveryInfo(this);
                     }
                 },
                 activateClosedTrucks: {

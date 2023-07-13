@@ -1366,8 +1366,8 @@ namespace DispatcherWeb.Orders
 
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<bool> DoesOrderHaveMultipleLines(int orderId) =>
-            await _orderLineRepository.GetAll().CountAsync(ol => ol.OrderId == orderId) > 1;
+        public async Task<bool> DoesOrderHaveOtherOrderLines(int orderId, int orderLineId) =>
+            await _orderLineRepository.GetAll().AnyAsync(ol => ol.OrderId == orderId && ol.Id != orderLineId);
 
         [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<int[]> CopyOrder(CopyOrderInput input)
@@ -1391,6 +1391,15 @@ namespace DispatcherWeb.Orders
                     .ThenInclude(x => x.OrderLineVehicleCategories)
                 .Include(x => x.SharedOrders)
                 .FirstAsync(x => x.Id == input.OrderId);
+
+            var serviceIds = order.OrderLines.Select(x => x.ServiceId).ToList();
+            var serviceDetails = await _serviceRepository.GetAll()
+                .Where(x => serviceIds.Contains(x.Id))
+                .Select(x => new
+                {
+                    x.Id,
+                    x.IsTaxable
+                }).ToListAsync();
 
             bool allowCopyZeroQuantity = await FeatureChecker.IsEnabledAsync(AppFeatures.AllowCopyingZeroQuantityOrderLineItemsFeature);
             var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
@@ -1470,9 +1479,17 @@ namespace DispatcherWeb.Orders
                         _orderLineRepository.Insert(newOrderLine);
                     }
 
+                    var newOrderLinesTaxDetails = newOrderLines.Select(x => new OrderLineTaxDetailsDto
+                    {
+                        MaterialPrice = x.MaterialPrice,
+                        FreightPrice = x.FreightPrice,
+                        IsTaxable = serviceDetails.FirstOrDefault(s => s.Id == x.ServiceId)?.IsTaxable ?? false,
+                    });
+                    await _orderTaxCalculator.CalculateTotalsAsync(newOrder, newOrderLinesTaxDetails);
+
                     var newId = await _orderRepository.InsertAndGetIdAsync(newOrder);
                     newOrder.Id = newId;
-                    await _orderTaxCalculator.CalculateTotalsAsync(newOrder.Id);
+                    
                     await _fuelSurchargeCalculator.RecalculateOrderLinesWithTicketsForOrder(newOrder.Id);
                     createdOrderIds.Add(newId);
                 }
@@ -2887,6 +2904,7 @@ namespace DispatcherWeb.Orders
                 x.ShowSignatureColumn = showSignatureColumn;
                 x.ShowTruckCategories = showTruckCategories;
                 x.CurrencyCulture = currentCulture;
+                x.DebugLayout = input.DebugLayout;
             });
 
             if (input.ShowDeliveryInfo)
@@ -2954,7 +2972,7 @@ namespace DispatcherWeb.Orders
         {
             input.Date = input.Date.Date;
 
-            var items = await GetOrderSummaryReportQuery(input).GetOrderSummaryReportItems(await SettingManager.GetShiftDictionary(), _orderTaxCalculator);
+            var items = await GetOrderSummaryReportQuery(input).GetOrderSummaryReportItems(await SettingManager.GetShiftDictionary(), _orderTaxCalculator, SettingManager);
 
             var data = new OrderSummaryReportDto
             {

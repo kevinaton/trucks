@@ -638,9 +638,9 @@
             });
         });
 
-        $("#MarkReadyForQuickbooksButton").click(function (e) {
+        $("#MarkReadyForExportButton").click(function (e) {
             e.preventDefault();
-            $("#Status").val(abp.enums.invoiceStatus.readyForQuickbooks);
+            $("#Status").val(abp.enums.invoiceStatus.readyForExport);
             saveInvoiceAsync(function () {
                 //reloadInvoiceLinesGrid();
                 setTimeout(() => abp.ui.setBusy(form), 100);
@@ -675,7 +675,9 @@
             let filter = {
                 customerId: customerId,
                 isBilled: false,
-                hasInvoiceLineId: false
+                isVerified: true,
+                hasInvoiceLineId: false,
+                hasRevenue: true
             };
             if (_invoiceLines) {
                 let excludeTicketIds = _invoiceLines.filter(x => x.ticketId !== null).map(x => x.ticketId);

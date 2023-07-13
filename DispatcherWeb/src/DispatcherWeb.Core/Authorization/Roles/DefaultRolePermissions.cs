@@ -24,9 +24,15 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Quoting,
                     }
                 },
+                // EditInvoicedOrdersAndTickets
+                {
+                    AppPermissions.EditInvoicedOrdersAndTickets, new string[]
+                    {
+                    }
+                },
                 // Pages_Administration
                 {
-                    AppPermissions.Pages_Administration, new[]
+                    AppPermissions.Pages_Administration, new string[]
                     {
                         StaticRoleNames.Tenants.Admin,
                         StaticRoleNames.Tenants.Administrative,
@@ -41,16 +47,16 @@ namespace DispatcherWeb.Authorization.Roles
                 },
                 // Pages_Administration_Languages
                 {
-                    AppPermissions.Pages_Administration_Languages, new[]
+                    AppPermissions.Pages_Administration_Languages, new string[]
                     {
-                        StaticRoleNames.Tenants.Admin,
+                        //StaticRoleNames.Tenants.Admin,
                     }
                 },
                 // Pages_Administration_OrganizationUnits
                 {
-                    AppPermissions.Pages_Administration_OrganizationUnits, new[]
+                    AppPermissions.Pages_Administration_OrganizationUnits, new string[]
                     {
-                        StaticRoleNames.Tenants.Admin,
+                        //StaticRoleNames.Tenants.Admin,
                     }
                 },
 
@@ -144,6 +150,14 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Administrative,
                     }
                 },
+                // Pages_Administration_Users_Unlock
+                {
+                    AppPermissions.Pages_Administration_Users_Unlock, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                    }
+                },
 
                 // CannedText
                 {
@@ -199,6 +213,38 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
 
+                // Dashboard Dispatching
+                {
+                    AppPermissions.Pages_Dashboard_Dispatching, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+
+                // Dashboard Driver DOT Requirements
+                {
+                    AppPermissions.Pages_Dashboard_DriverDotRequirements, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+
+                // Dashboard Truck Maintenance
+                {
+                    AppPermissions.Pages_Dashboard_TruckMaintenance, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+
+                // Dashboard Truck Utilization
+                {
+                    AppPermissions.Pages_Dashboard_TruckUtilization, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+
                 // Dispatches
                 {
                     AppPermissions.Pages_Dispatches, new[]
@@ -248,6 +294,24 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Administrative,
                     }
                 },
+
+                // DriverApplication_ReactNativeDriverApp
+                {
+                    AppPermissions.Pages_DriverApplication_ReactNativeDriverApp, new string[]
+                    {
+                        //StaticRoleNames.Tenants.Driver,
+                        //StaticRoleNames.Tenants.LeaseHaulerDriver
+                    }
+                },
+
+                // DriverApplication_WebBasedDriverApp
+                {
+                    AppPermissions.Pages_DriverApplication_WebBasedDriverApp, new[]
+                    {
+                        StaticRoleNames.Tenants.Driver,
+                        StaticRoleNames.Tenants.LeaseHaulerDriver
+                    }
+                },
                 
                 // DriverAssignment
                 {
@@ -259,14 +323,25 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Managers,
                     }
                 },
+
+                // DriverProductionPay
+                {
+                    AppPermissions.DriverProductionPay, new string[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+
                 // Backoffice_DriverPay
                 {
                     AppPermissions.Pages_Backoffice_DriverPay, new[]
                     {
                         StaticRoleNames.Tenants.Admin,
-                        StaticRoleNames.Tenants.Administrative
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Backoffice,
                     }
                 },
+
                 // Drivers
                 {
                     AppPermissions.Pages_Drivers, new[]
@@ -287,6 +362,20 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Managers,
                     }
                 },
+                //Fuel View
+                {
+                    AppPermissions.Pages_FuelPurchases_View, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+                //Fuel Edit
+                {
+                    AppPermissions.Pages_FuelPurchases_Edit, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
                 // Imports
                 {
                     AppPermissions.Pages_Imports, new[]
@@ -295,12 +384,68 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Administrative,
                     }
                 },
+                // Imports_Customers
+                {
+                    AppPermissions.Pages_Imports_Customers, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+                // Imports_Employees
+                {
+                    AppPermissions.Pages_Imports_Employees, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+                // Imports_FuelUsage
+                {
+                    AppPermissions.Pages_Imports_FuelUsage, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+                // Imports_LuckStoneEarnings
+                {
+                    AppPermissions.Pages_Imports_LuckStoneEarnings, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+                // Imports_Services
+                {
+                    AppPermissions.Pages_Imports_Services, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+                // Imports_Trucks
+                {
+                    AppPermissions.Pages_Imports_Trucks, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+                // Imports_TruxEarnings
+                {
+                    AppPermissions.Pages_Imports_TruxEarnings, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
                 // Imports_VehicleUsage
                 {
                     AppPermissions.Pages_Imports_VehicleUsage, new[]
                     {
                         StaticRoleNames.Tenants.Admin,
                         StaticRoleNames.Tenants.Administrative,
+                    }
+                },
+                // Imports_Vendors
+                {
+                    AppPermissions.Pages_Imports_Vendors, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
                     }
                 },
 
@@ -590,7 +735,7 @@ namespace DispatcherWeb.Authorization.Roles
                     AppPermissions.Pages_ActiveReports, new[]
                     {
                         StaticRoleNames.Tenants.Admin,
-                        StaticRoleNames.Tenants.Administrative,
+                        //StaticRoleNames.Tenants.Administrative,
                     }
                 },
                 
@@ -635,6 +780,18 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
                 
+                // Tickets by Driver
+                {
+                    AppPermissions.Pages_TicketsByDriver, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Dispatching,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Managers,
+                    }
+                },
+                
                 // Tickets_View
                 {
                     AppPermissions.Pages_Tickets_View, new[]
@@ -658,6 +815,65 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
                 
+                
+                // TimeOff
+                {
+                    AppPermissions.Pages_TimeOff, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Backoffice,
+                    }
+                },
+                // TimeEntry
+                {
+                    AppPermissions.Pages_TimeEntry, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Managers,
+                    }
+                },
+                // TimeEntry_EditAll
+                {
+                    AppPermissions.Pages_TimeEntry_EditAll, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Managers,
+                        StaticRoleNames.Tenants.Backoffice,
+                    }
+                },
+                // TimeEntry_EditTimeClassifications
+                {
+                    AppPermissions.Pages_TimeEntry_EditTimeClassifications, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Managers,
+                    }
+                },
+                // TimeEntry_EditPersonal
+                {
+                    AppPermissions.Pages_TimeEntry_EditPersonal, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                    }
+                },
+
+                // TimeEntry_ViewOnly
+                {
+                    AppPermissions.Pages_TimeEntry_ViewOnly, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                    }
+                },
+
                 // Invoices
                 {
                     AppPermissions.Pages_Invoices, new[]
@@ -708,6 +924,20 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.MaintenanceSupervisor,
                     }
                 },
+                // VehicleUsage_View
+                {
+                    AppPermissions.Pages_VehicleUsages_View, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
+                // VehicleUsage_Edit
+                {
+                    AppPermissions.Pages_VehicleUsages_Edit, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                    }
+                },
                 // WorkOrders_View
                 {
                     AppPermissions.Pages_WorkOrders_View, new[]
@@ -737,48 +967,7 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.MaintenanceSupervisor,
                     }
                 },
-                // TimeOff
-                {
-                    AppPermissions.Pages_TimeOff, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                        StaticRoleNames.Tenants.Administrative,
-                    }
-                },
-                // TimeEntry
-                {
-                    AppPermissions.Pages_TimeEntry, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                        StaticRoleNames.Tenants.Administrative,
-                    }
-                },
-                // TimeEntry_EditAll
-                {
-                    AppPermissions.Pages_TimeEntry_EditAll, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                        StaticRoleNames.Tenants.Administrative,
-                        StaticRoleNames.Tenants.Backoffice,
-                        StaticRoleNames.Tenants.Managers
-                    }
-                },
-                // TimeEntry_EditTimeClassifications
-                {
-                    AppPermissions.Pages_TimeEntry_EditTimeClassifications, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                        StaticRoleNames.Tenants.Administrative,
-                    }
-                },
-                // TimeEntry_EditPersonal
-                {
-                    AppPermissions.Pages_TimeEntry_EditPersonal, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                        StaticRoleNames.Tenants.Administrative,
-                    }
-                },
+
             };
 
         public static string[] DefaultPermissions => _defaultRolePermissions.Keys.ToArray();

@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Collections.Extensions;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
@@ -233,8 +234,15 @@ namespace DispatcherWeb.Invoices
             return new PagedResultDto<InvoiceLineEditDto>(items.Count, items);
         }
 
-        private IQueryable<Ticket> GetCustomerTicketsQuery(GetCustomerTicketsInput input)
+        public async Task<bool> GetCustomerHasTickets(GetCustomerTicketsInput input)
         {
+            return (await GetCustomerTickets(input)).Items.Any();
+        }
+
+        public async Task<GetCustomerTicketsResult> GetCustomerTickets(GetCustomerTicketsInput input)
+        {
+            input.Normalize();
+
             var query = _ticketRepository.GetAll()
                 .WhereIf(input.CustomerId.HasValue,
                     x => x.CustomerId == input.CustomerId)
@@ -249,25 +257,7 @@ namespace DispatcherWeb.Invoices
                 .WhereIf(input.ExcludeTicketIds?.Any() == true,
                     x => !input.ExcludeTicketIds.Contains(x.Id))
                 .WhereIf(input.TicketIds != null,
-                    x => input.TicketIds.Contains(x.Id));
-
-            return query;
-        }
-
-        public async Task<bool> GetCustomerHasTickets(GetCustomerTicketsInput input)
-        {
-            return await GetCustomerTicketsQuery(input).AnyAsync();
-        }
-
-        public async Task<GetCustomerTicketsResult> GetCustomerTickets(GetCustomerTicketsInput input)
-        {
-            input.Normalize();
-
-            var query = GetCustomerTicketsQuery(input);
-
-            //var totalCount = await query.CountAsync();
-
-            var items = await query
+                    x => input.TicketIds.Contains(x.Id))
                 .Select(x => new CustomerTicketDto
                 {
                     Id = x.Id,
@@ -317,18 +307,9 @@ namespace DispatcherWeb.Invoices
                     LeaseHaulerName = x.Truck.LeaseHaulerTruck.LeaseHauler.Name,
                     InvoiceLineId = x.InvoiceLine.Id,
                     InvoicingMethod = x.Customer.InvoicingMethod,
-                    //InvoiceLine = new InvoiceLineEditDto
-                    //{
-                    //    LineNumber = 0,
-                    //    TicketId = x.Id,
-                    //    DeliveryDateTime = x.TicketDateTime,
-                    //    CarrierId = x.CarrierId,
-                    //    CarrierName = x.Carrier.Name,
-                    //    TruckCode = x.TruckCode,
-                    //    MaterialExtendedAmount = x.MaterialQuantity * x.OrderLine.MaterialPricePerUnit ?? 0,
-                    //    FreightExtendedAmount = x.Freigh
-                    //}
-                })
+                });
+
+            var items = await query
                 .OrderBy(input.Sorting)
                 //.PageBy(input)
                 .ToListAsync();
@@ -339,6 +320,11 @@ namespace DispatcherWeb.Invoices
             {
                 OrderTaxCalculator.CalculateSingleOrderLineTotals(taxCalculationType, x, x.SalesTaxRate ?? 0);
             });
+
+            items = items
+                .WhereIf(input.HasRevenue == true, x => x.Total > 0)
+                .WhereIf(input.HasRevenue == false, x => x.Total == 0)
+                .ToList();
 
             return new GetCustomerTicketsResult(
                 items.Count,
@@ -391,12 +377,12 @@ namespace DispatcherWeb.Invoices
                 {
                     case InvoiceStatus.Draft:
                     case InvoiceStatus.Printed:
-                        if (model.Status.IsIn(InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Sent))
+                        if (model.Status.IsIn(InvoiceStatus.ReadyForExport, InvoiceStatus.Sent))
                         {
                             invoice.Status = model.Status;
                         }
                         break;
-                    case InvoiceStatus.ReadyForQuickbooks:
+                    case InvoiceStatus.ReadyForExport:
                         if (model.Status.IsIn(InvoiceStatus.Sent))
                         {
                             invoice.Status = model.Status;
@@ -449,9 +435,11 @@ namespace DispatcherWeb.Invoices
                     .Where(x => ticketIds.Contains(x.Id) && x.InvoiceLine != null)
                     .Select(x => x.Id).ToListAsync();
 
+                var timezone = await GetTimezone();
+
                 model.InvoiceLines = model.InvoiceLines
                         .OrderByDescending(x => x.ChildInvoiceLineKind != ChildInvoiceLineKind.BottomFuelSurchargeLine)
-                        .ThenBy(x => x.DeliveryDateTime)
+                        .ThenBy(x => x.DeliveryDateTime?.ConvertTimeZoneTo(timezone).Date)
                         .ThenBy(x => x.TruckCode)
                         .ThenBy(x => x.TicketNumber)
                         .ToList();
@@ -602,10 +590,11 @@ namespace DispatcherWeb.Invoices
         {
             var tickets = await GetCustomerTickets(new GetCustomerTicketsInput
             {
-                //IsBilled = false,
+                IsBilled = false,
                 IsVerified = true,
                 TicketIds = input.TicketIds,
-                HasInvoiceLineId = false
+                HasInvoiceLineId = false,
+                HasRevenue = true,
             });
 
             if (!tickets.Items.Any())
@@ -896,7 +885,7 @@ namespace DispatcherWeb.Invoices
             invoice.UploadBatchId = null;
             invoice.QuickbooksExportDateTime = null;
             invoice.QuickbooksInvoiceId = null;
-            invoice.Status = InvoiceStatus.ReadyForQuickbooks;
+            invoice.Status = InvoiceStatus.ReadyForExport;
         }
 
 
@@ -963,6 +952,7 @@ namespace DispatcherWeb.Invoices
                     TotalAmount = x.TotalAmount,
                     InvoiceLines = x.InvoiceLines.Select(l => new InvoicePrintOutLineItemDto
                     {
+                        Id = l.Id,
                         DeliveryDateTime = l.DeliveryDateTime,
                         Description = l.Description,
                         Quantity = l.Quantity,
@@ -979,6 +969,7 @@ namespace DispatcherWeb.Invoices
                         LineNumber = l.LineNumber,
                         TicketNumber = l.Ticket.TicketNumber,
                         TruckCode = l.TruckCode,
+                        ParentInvoiceLineId = l.ParentInvoiceLineId,
                         ChildInvoiceLineKind = l.ChildInvoiceLineKind
                     }).ToList()
                 }).FirstOrDefaultAsync();
@@ -1104,7 +1095,7 @@ namespace DispatcherWeb.Invoices
                 });
 
                 var invoice = await _invoiceRepository.GetAsync(input.InvoiceId);
-                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForQuickbooks, InvoiceStatus.Printed))
+                if (invoice.Status.IsIn(InvoiceStatus.Draft, InvoiceStatus.ReadyForExport, InvoiceStatus.Printed))
                 {
                     invoice.Status = InvoiceStatus.Sent;
                 }

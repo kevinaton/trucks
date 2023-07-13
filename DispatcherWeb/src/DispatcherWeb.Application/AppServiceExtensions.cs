@@ -177,7 +177,10 @@ namespace DispatcherWeb
                             Note = s.OrderLine.Note,
                             NumberOfTrucks = s.OrderLine.NumberOfTrucks ?? 0,
                             TimeOnJob = s.OrderLine.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? s.OrderLine.FirstStaggeredTimeOnJob : s.OrderLine.TimeOnJob,
-                            IsTimeStaggered = s.OrderLine.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLine.OrderLineTrucks.Any(olt => olt.TimeOnJob != null)
+                            IsTimeStaggered = s.OrderLine.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLine.OrderLineTrucks.Any(olt => olt.TimeOnJob != null),
+                            OrderLineVehicleCategories = s.OrderLine.OrderLineVehicleCategories
+                                .Select(vc => vc.VehicleCategory.Name)
+                                .ToList()
                         }).ToList(),
                     DeliveryInfoItems = o.Order.OrderLines
                         .SelectMany(x => x.Tickets)
@@ -312,8 +315,10 @@ namespace DispatcherWeb
             return newQuery;
         }
 
-        public static async Task<List<OrderSummaryReportItemDto>> GetOrderSummaryReportItems(this IQueryable<OrderLine> query, IDictionary<Shift, string> shiftDictionary, OrderTaxCalculator taxCalculator)
+        public static async Task<List<OrderSummaryReportItemDto>> GetOrderSummaryReportItems(this IQueryable<OrderLine> query, IDictionary<Shift, string> shiftDictionary, OrderTaxCalculator taxCalculator, ISettingManager settingManager)
         {
+            var showTrailersOnSchedule = await settingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule);
+
             var items = await query.Select(o => new OrderSummaryReportItemDto
             {
                 OrderId = o.OrderId,
@@ -322,7 +327,12 @@ namespace DispatcherWeb
                 SalesTaxRate = o.Order.SalesTaxRate,
                 OrderDeliveryDate = o.Order.DeliveryDate,
                 OrderShift = o.Order.Shift,
-                Trucks = o.OrderLineTrucks.Select(s => s.Truck.TruckCode).Distinct().ToList(),
+                Trucks = o.OrderLineTrucks.Select(olt => new OrderSummaryReportItemDto.ItemOrderLineTruck
+                {
+                    TruckCode = olt.Truck.TruckCode,
+                    TrailerTruckCode = showTrailersOnSchedule ? olt.Trailer.TruckCode : null,
+                    DriverName = olt.Driver.FirstName + " " + olt.Driver.LastName
+                }).ToList(),
                 NumberOfTrucks = o.NumberOfTrucks,
                 LoadAt = o.LoadAt == null ? null : new LocationNameDto
                 {

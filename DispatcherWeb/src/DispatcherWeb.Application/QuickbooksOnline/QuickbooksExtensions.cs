@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Extensions;
-using DispatcherWeb.Orders;
 using DispatcherWeb.QuickbooksOnline.Dto;
 using Microsoft.EntityFrameworkCore;
 
@@ -83,6 +82,17 @@ namespace DispatcherWeb.QuickbooksOnline
                         Ticket = l.Ticket != null ? new TicketToUploadDto
                         {
                             TicketDateTimeUtc = l.Ticket.TicketDateTime,
+                            MaterialUomId = l.Ticket.OrderLine.MaterialUomId,
+                            FreightUomId = l.Ticket.OrderLine.FreightUomId,
+                            TicketUomId = l.Ticket.UnitOfMeasureId,
+                            TicketUomName = l.Ticket.UnitOfMeasure.Name,
+                            IsOrderLineMaterialTotalOverridden = l.Ticket.OrderLine.IsMaterialPriceOverridden,
+                            IsOrderLineFreightTotalOverridden = l.Ticket.OrderLine.IsFreightPriceOverridden,
+                            OrderLineMaterialTotal = l.Ticket.OrderLine.MaterialPrice,
+                            OrderLineFreightTotal = l.Ticket.OrderLine.FreightPrice,
+                            Designation = l.Ticket.OrderLine.Designation,
+                            Quantity = l.Ticket.Quantity,
+                            HasOrderLine = l.Ticket.OrderLine != null,
                             //OrderMaterialPrice = l.Ticket.OrderLine.MaterialPricePerUnit,
                             //OrderFreightPrice = l.Ticket.OrderLine.FreightPricePerUnit
                         } : null,
@@ -122,17 +132,33 @@ namespace DispatcherWeb.QuickbooksOnline
                     }
 
                     var materialLine = invoiceLine.Clone();
+                    materialLine.FreightRate = 0;
+                    if (materialLine.Ticket != null)
+                    {
+                        materialLine.Ticket.FreightUomId = null;
+                        materialLine.Ticket.OrderLineFreightTotal = null;
+                        materialLine.Ticket.IsOrderLineFreightTotalOverridden = false;
+                    }
                     materialLine.Subtotal -= materialLine.FreightExtendedAmount;
                     materialLine.ExtendedAmount -= materialLine.FreightExtendedAmount;
                     materialLine.FreightExtendedAmount = 0;
+                    materialLine.IsSplitMaterialLine = true;
                     newLinesList.Add(materialLine);
 
                     var freightLine = invoiceLine.Clone();
+                    freightLine.MaterialRate = 0;
+                    if (freightLine.Ticket != null)
+                    {
+                        freightLine.Ticket.MaterialUomId = null;
+                        freightLine.Ticket.OrderLineMaterialTotal = null;
+                        freightLine.Ticket.IsOrderLineMaterialTotalOverridden = false;
+                    }
                     freightLine.Subtotal -= freightLine.MaterialExtendedAmount;
                     freightLine.ExtendedAmount -= freightLine.MaterialExtendedAmount + freightLine.Tax;
                     freightLine.MaterialExtendedAmount = 0;
                     freightLine.Tax = 0;
                     //freightLine.IsTaxable = false;
+                    freightLine.IsSplitFreightLine = true;
                     newLinesList.Add(freightLine);
                 }
 
@@ -144,16 +170,6 @@ namespace DispatcherWeb.QuickbooksOnline
 
                 invoice.InvoiceLines = newLinesList;
             }
-        }
-
-        public static void RecalculateTotals(this InvoiceToUploadDto<Invoices.Invoice> invoiceToUpload, TaxCalculationType taxCalculationType)
-        {
-            foreach (var line in invoiceToUpload.InvoiceLines)
-            {
-                OrderTaxCalculator.CalculateSingleOrderLineTotals(taxCalculationType, line, invoiceToUpload.TaxRate);
-            }
-            invoiceToUpload.Tax = invoiceToUpload.InvoiceLines.Sum(x => x.Tax);
-            invoiceToUpload.TotalAmount = invoiceToUpload.InvoiceLines.Sum(x => x.ExtendedAmount);
         }
     }
 }

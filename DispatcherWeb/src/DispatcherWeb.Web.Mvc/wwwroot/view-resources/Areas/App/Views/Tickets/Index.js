@@ -386,6 +386,11 @@
                 title: "Qty"
             },
             {
+                data: "rate",
+                title: "Rate",
+                orderable: false
+            },
+            {
                 data: "revenue",
                 title: "Revenue"
             },

@@ -4,6 +4,7 @@ using Abp.Dependency;
 using DispatcherWeb.Tickets.Dto;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Shapes;
+using MigraDoc.DocumentObjectModel.Tables;
 
 namespace DispatcherWeb.Tickets.Reports
 {
@@ -38,6 +39,9 @@ namespace DispatcherWeb.Tickets.Reports
             headerStyle.Font.Size = Unit.FromPoint(10);
             
             Paragraph paragraph;
+            Table table;
+            Row row;
+            Cell cell;
 
             var firstTicket = true;
 
@@ -52,30 +56,49 @@ namespace DispatcherWeb.Tickets.Reports
                     section.AddPageBreak();
                 }
 
-                paragraph = document.LastSection.AddParagraph(model.LegalName ?? "");
-                paragraph.Format.Font.Size = Unit.FromPoint(14);
-                paragraph.Format.Font.Bold = true;
-
-                paragraph = document.LastSection.AddParagraph(model.LegalAddress ?? "");
-                paragraph.Format.Font.Size = Unit.FromPoint(10);
-
-                paragraph = document.LastSection.AddParagraph(model.BillingPhoneNumber ?? "");
-                paragraph.Format.Font.Size = Unit.FromPoint(10);
-
-                if (model.LogoPath != null)
+                table = document.LastSection.AddTable();
+                table.Style = "Table";
+                if (model.DebugLayout)
                 {
-                    var logo = section.AddImage(model.LogoPath);
-                    logo.Height = Unit.FromCentimeter(3.2);
-                    //logo.Width = Unit.FromCentimeter(4.5);
-                    logo.LockAspectRatio = true;
-                    logo.RelativeVertical = RelativeVertical.Page;
-                    logo.RelativeHorizontal = RelativeHorizontal.Page;
-                    logo.WrapFormat.Style = WrapStyle.Through;
-                    logo.WrapFormat.DistanceLeft = Unit.FromCentimeter(15.5);
-                    logo.WrapFormat.DistanceTop = Unit.FromCentimeter(1.2);
+                    table.Borders.Width = Unit.FromPoint(1);
                 }
 
-                paragraph.Format.SpaceAfter = Unit.FromCentimeter(2.5);
+                //18.6cm total width
+                //Legal Name, Legal Address and Billing Phone Number
+                table.AddColumn(Unit.FromCentimeter(10));
+                //logo
+                table.AddColumn(Unit.FromCentimeter(8.6));
+
+                row = table.AddRow();
+                row.Format.Alignment = ParagraphAlignment.Left;
+                row.Format.Font.Size = Unit.FromPoint(10);
+
+                int i = 0;
+
+                cell = row.Cells[i++];
+                paragraph = cell.AddParagraph(model.LegalName ?? "");
+                paragraph.Format.Font.Size = Unit.FromPoint(14);
+                paragraph.Format.Font.Bold = true;
+                //paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.7);
+                paragraph = cell.AddParagraph(model.LegalAddress ?? "");
+                paragraph.Format.Font.Size = Unit.FromPoint(10);
+                paragraph = cell.AddParagraph(model.BillingPhoneNumber ?? "");
+                paragraph.Format.Font.Size = Unit.FromPoint(10);
+
+
+                cell = row.Cells[i++];
+                if (model.LogoPath != null)
+                {                   
+                    paragraph = cell.AddParagraph();
+                    var logo = paragraph.AddImage(model.LogoPath);
+                    //logo.Height = Unit.FromCentimeter(3.2);
+                    logo.Width = Unit.FromCentimeter(4.21);
+                    logo.LockAspectRatio = true;
+                    //cell.Format.Alignment = ParagraphAlignment.Left; //default
+                    paragraph.Format.Alignment = ParagraphAlignment.Right;
+                }
+
+                paragraph.Format.SpaceAfter = Unit.FromCentimeter(1.5);
 
                 var secondColumnMargin = Unit.FromCentimeter(4);
 

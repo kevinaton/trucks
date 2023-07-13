@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using DispatcherWeb.Orders.TaxDetails;
+using DispatcherWeb.Tickets;
 
 namespace DispatcherWeb.QuickbooksOnline.Dto
 {
-    public class InvoiceLineToUploadDto : IOrderLineTaxTotalDetails
+    public class InvoiceLineToUploadDto
     {
         public DateTime? DeliveryDateTime { get; set; }
         public string Description { get; set; }
@@ -17,7 +17,6 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public decimal? MaterialRate { get; set; }
         public decimal Tax { get; set; }
         public bool? IsTaxable { get; set; }
-        bool IOrderLineTaxDetails.IsTaxable => IsTaxable ?? true;
         public string LeaseHaulerName { get; set; }
         public short LineNumber { get; set; }
         public string TicketNumber { get; set; }
@@ -30,12 +29,67 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public string ItemIncomeAccount { get; set; }
         public TicketToUploadDto Ticket { get; set; }
 
-        decimal IOrderLineTaxTotalDetails.TotalAmount { get => ExtendedAmount; set => ExtendedAmount = value; }
-        decimal IOrderLineTaxDetails.MaterialPrice => MaterialExtendedAmount;
-        decimal IOrderLineTaxDetails.FreightPrice => FreightExtendedAmount;
-
         public string JobNumber { get; set; }
+        public bool IsSplitMaterialLine { get; set; }
+        public bool IsSplitFreightLine { get; set; }
         public ChildInvoiceLineKind? ChildInvoiceLineKind { get; set; }
+
+        public decimal? Rate
+        {
+            get
+            {
+                if (Ticket == null || !Ticket.HasOrderLine)
+                {
+                    return FreightRate + MaterialRate;
+                }
+
+                var (ticketMaterialQuantity, ticketFreightQuantity) = Ticket.GetMaterialAndFreightQuantity();
+
+                decimal? materialRate;
+                if (!Ticket.GetAmountTypeToUse().useMaterial)
+                {
+                    materialRate = null;
+                }
+                else if (Ticket.IsOrderLineMaterialTotalOverridden == true)
+                {
+                    if (ticketMaterialQuantity == 0)
+                    {
+                        materialRate = null;
+                    }
+                    else
+                    {
+                        materialRate = Math.Round((Ticket.OrderLineMaterialTotal / ticketMaterialQuantity) ?? 0, 2);
+                    }
+                }
+                else
+                {
+                    materialRate = MaterialRate;
+                }
+
+                decimal? freightRate;
+                if (!Ticket.GetAmountTypeToUse().useFreight)
+                {
+                    freightRate = null;
+                }
+                else if (Ticket.IsOrderLineFreightTotalOverridden == true)
+                {
+                    if (ticketFreightQuantity == 0)
+                    {
+                        freightRate = null;
+                    }
+                    else
+                    {
+                        freightRate = Math.Round((Ticket.OrderLineFreightTotal / ticketFreightQuantity) ?? 0, 2);
+                    }
+                }
+                else
+                {
+                    freightRate = FreightRate;
+                }
+
+                return (materialRate ?? 0) + (freightRate ?? 0);
+            }
+        }
 
         private string GetDescriptionAndTicketWithTruck()
         {
@@ -89,7 +143,7 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
                 ItemType = ItemType,
                 ItemIncomeAccount = ItemIncomeAccount,
                 Ticket = Ticket?.Clone(),
-                JobNumber = JobNumber
+                JobNumber = JobNumber,
             };
         }
     }
