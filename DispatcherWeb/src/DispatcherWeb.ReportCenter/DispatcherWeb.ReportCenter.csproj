@@ -41,10 +41,18 @@
 	<ItemGroup>
 		<None Include="ClientApp\package.json" />
 		<None Include="Properties\launchSettings.json" />
-		<None Include="Reports\_TenantsDS.json" />
-		<None Include="Reports\_TenantStatisticsReportDS.json" />
-		<None Include="Reports\_VehicleMaintenanceWorkOrder.json" />
-		<None Include="Reports\_VehicleMaintenanceWorkOrderLines.json" />
+		<None Include="Reports\_TenantsDS.json">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Include="Reports\_TenantStatisticsReportDS.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Include="Reports\_VehicleMaintenanceWorkOrder.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Include="Reports\_VehicleMaintenanceWorkOrderLines.json" >
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
 		<None Include="wwwroot\lib\grapecity\jsViewer.min.js" />
 		<Resource Include="Properties\licenses.licx">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

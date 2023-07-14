@@ -1,64 +1,43 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net.Http.Headers;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base;
 using DispatcherWeb.ReportCenter.Services;
-using GrapeCity.ActiveReports;
 using GrapeCity.ActiveReports.Web.Viewer;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using HttpClient = System.Net.Http.HttpClient;
 
 namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 {
     public class TenantStatisticsReportDataDefinitions : ReportDataDefinitionBase
     {
-        private readonly ReportAppService _reportAppService;
-        private readonly IHostEnvironment _environment;
-
         public TenantStatisticsReportDataDefinitions(IHostEnvironment environment,
-                                        ReportAppService reportAppService, 
+                                        ReportAppService reportAppService,
                                         IConfiguration configuration,
-                                        IHttpContextAccessor httpContextAccessor,                                        
+                                        IHttpContextAccessor httpContextAccessor,
+                                        IHttpClientFactory httpClientFactory,
                                         ILoggerFactory loggerFactory)
 
-                    : base(configuration, httpContextAccessor, loggerFactory)
+                    : base(configuration, httpContextAccessor, httpClientFactory, loggerFactory, reportAppService, environment)
         {
-            _environment = environment;
-            _reportAppService = reportAppService;
         }
 
         public override bool HasTenantsParameter => true;
 
-        public override async Task Initialize()
+        public override async Task PostInitialize()
         {
-            var getReportInfoResult = await _reportAppService.TryGetReport(ReportId);
-
-            if (!getReportInfoResult.Success)
-                throw new Exception("Report is not registered.");
-
-            if (!getReportInfoResult.ReportInfo.HasAccess)
-                throw new Exception("You do not have access to view this report.");
-
-            var reportsDirPath = new DirectoryInfo($"{_environment.ContentRootPath}\\Reports\\");
-            var reportPath = $"{Path.Combine(reportsDirPath.FullName, getReportInfoResult.ReportInfo.Path)}.rdlx";
-
-            ThisPageReport = new PageReport(new FileInfo(reportPath));
             ThisPageReport.Report.DataSources.ResetDataSourceConnectionString("TenantsStatisticsDataSource");
             ThisPageReport.Document.PageReport.Report.DataSources.ResetDataSourceConnectionString("TenantsStatisticsDataSource");
 
-            await base.Initialize();
+            await base.PostInitialize();
         }
 
         public override async Task<(bool IsMasterDataSource, object DataSourceJson)> LocateDataSource(LocateDataSourceArgs arg)
         {
-            var contentJson = _emptyArrayInResult;
+            var jsonContent = _emptyArrayInResult;
             var (isMasterDataSource, dataSourceJson) = await base.LocateDataSource(arg);
             if (isMasterDataSource)
             {
@@ -69,28 +48,17 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
             {
                 var paramsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
                 var tenantId = paramsDic.ContainsKey("TenantId") ? paramsDic["TenantId"] : null;
-                var hostApiUrl = Configuration["IdentityServer:Authority"];
-                var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
 
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var httpClientInfo = await GetHttpClient();
 
-                var endDate = paramsDic["EndDate"] != null ? paramsDic["EndDate"] : paramsDic["StartDate"];
-                var url = $"{hostApiUrl}/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={tenantId}&startDate={paramsDic["StartDate"]:o}&endDate={endDate:o}";
-                var response = await client.GetAsync(url);
+                var endDate = paramsDic["EndDate"] ?? paramsDic["StartDate"];
+                var url = $"{httpClientInfo.HostApiUrl}/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={tenantId}&startDate={paramsDic["StartDate"]:o}&endDate={endDate:o}";
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine(response.StatusCode);
-                    Logger.Log(LogLevel.Error, $"Error: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
-                }
-                else
-                {
-                    contentJson = await response.Content.ReadAsStringAsync();
-                    Logger.Log(LogLevel.Information, $"Success: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
-                }
+                var response = await httpClientInfo.HttpClient.GetAsync(url);
+                jsonContent = await ValidateResponse(response, Extensions.GetMethodName(), _emptyArrayInResult);
             }
-            return (isMasterDataSource, contentJson);
+
+            return (isMasterDataSource, jsonContent);
         }
     }
 }

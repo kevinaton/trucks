@@ -46,6 +46,7 @@ namespace DispatcherWeb.ReportCenter
 
             var connectionString = Configuration.GetConnectionString("Default");
 
+            services.AddHttpClient();
             services.AddHttpContextAccessor();
             services.AddScoped<ReportAppService>();
             services.AddScoped<TenantStatisticsReportDataDefinitions>();
