@@ -43,8 +43,8 @@ namespace DispatcherWeb.Web.Session
                 script.AppendLine("    abp.session.customerId = " + (customerId.HasValue ? customerId.Value.ToString() : "null") + ";");
                 var customerName = session.CustomerName ?? "null";
                 script.AppendLine("    abp.session.customerName = " + HtmlHelper.EscapeJsString(customerName) + ";");
-                var hasCustomerPortalAccess = session.HasCustomerPortalAccess;
-                script.AppendLine("    abp.session.hasCustomerPortalAccess = " + ((hasCustomerPortalAccess ?? false) ? "true" : "false") + ";");
+                var customerPortalAccessEnabled = session.CustomerPortalAccessEnabled;
+                script.AppendLine("    abp.session.customerPortalAccessEnabled = " + ((customerPortalAccessEnabled ?? false) ? "true" : "false") + ";");
             }
 
             script.AppendLine("    abp.entityStringFieldLengths = abp.entityStringFieldLengths || {};");

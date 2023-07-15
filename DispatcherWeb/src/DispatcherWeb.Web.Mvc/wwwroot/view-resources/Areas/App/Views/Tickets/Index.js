@@ -13,7 +13,7 @@
     var _customerPortalEnabled = () =>
         abp.features.getValue('App.CustomerPortalFeature') === "true" &&
         abp.auth.hasPermission('Pages.CustomerPortal.TicketsList') &&
-        abp.session.hasCustomerPortalAccess;
+        abp.session.customerPortalAccessEnabled;
 
     $('[data-toggle="tooltip"]').tooltip();
 

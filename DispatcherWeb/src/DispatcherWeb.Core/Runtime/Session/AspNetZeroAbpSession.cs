@@ -99,18 +99,18 @@ namespace DispatcherWeb.Runtime.Session
             }
         }
 
-        public bool? HasCustomerPortalAccess
+        public bool? CustomerPortalAccessEnabled
         {
             get
             {
                 var claimsPrincipal = PrincipalAccessor.Principal;
 
-                var hasCustomerPortalAccessClaim = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == DispatcherWebConsts.Claims.UserHasCustomerPortalAccess);
-                if (string.IsNullOrEmpty(hasCustomerPortalAccessClaim?.Value))
+                var customerPortalAccessEnabledClaim = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == DispatcherWebConsts.Claims.UserCustomerPortalAccessEnabled);
+                if (string.IsNullOrEmpty(customerPortalAccessEnabledClaim?.Value))
                 {
                     return null;
                 }
-                return bool.Parse(hasCustomerPortalAccessClaim.Value);
+                return bool.Parse(customerPortalAccessEnabledClaim.Value);
             }
         }
     }

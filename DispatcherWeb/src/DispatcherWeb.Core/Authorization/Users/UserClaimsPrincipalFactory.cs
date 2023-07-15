@@ -34,7 +34,7 @@ namespace DispatcherWeb.Authorization.Users
 
             int? customerId = null;
             string customerName = null;
-            bool? hasCustomerPortalAccess = null;
+            bool? customerPortalAccessEnabled = null;
 
             if (user.OfficeId.HasValue || user.CustomerContactId.HasValue)
             {
@@ -46,7 +46,7 @@ namespace DispatcherWeb.Authorization.Users
                         OfficeCopyChargeTo = x.Office.CopyDeliverToLoadAtChargeTo,
                         CustomerId = (int?)x.CustomerContact.Customer.Id,
                         CustomerName = x.CustomerContact.Customer.Name,
-                        HasCustomerPortalAccess = (bool?)x.CustomerContact.HasCustomerPortalAccess
+                        CustomerPortalAccessEnabled = (bool?)x.CustomerContact.HasCustomerPortalAccess
                     })
                     .FirstOrDefaultAsync();
 
@@ -54,7 +54,7 @@ namespace DispatcherWeb.Authorization.Users
                 officeCopyChargeTo = userWithOfficeAndCustomerContact?.OfficeCopyChargeTo ?? false;
                 customerId = userWithOfficeAndCustomerContact.CustomerId;
                 customerName = userWithOfficeAndCustomerContact.CustomerName;
-                hasCustomerPortalAccess = userWithOfficeAndCustomerContact.HasCustomerPortalAccess;
+                customerPortalAccessEnabled = userWithOfficeAndCustomerContact.CustomerPortalAccessEnabled;
             }
 
             if (principal.Identity is ClaimsIdentity identity)
@@ -64,7 +64,7 @@ namespace DispatcherWeb.Authorization.Users
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserOfficeCopyChargeTo, officeCopyChargeTo ? "true" : "false"));
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerId, customerId + ""));
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerName, customerName + ""));
-                identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserHasCustomerPortalAccess, (hasCustomerPortalAccess ?? false) ? "true" : "false"));
+                identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerPortalAccessEnabled, (customerPortalAccessEnabled ?? false) ? "true" : "false"));
             }
 
             return principal;

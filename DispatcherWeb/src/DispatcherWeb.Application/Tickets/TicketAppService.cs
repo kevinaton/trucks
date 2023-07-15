@@ -936,9 +936,17 @@ namespace DispatcherWeb.Tickets
         [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
-            if (FeatureChecker.IsEnabled(AppFeatures.CustomerPortal) && !Session.CustomerId.HasValue)
+            var customerPortalFeatureEnabled = FeatureChecker.IsEnabled(AppFeatures.CustomerPortal);
+            if ((Session.CustomerPortalAccessEnabled ?? false) && customerPortalFeatureEnabled)
             {
-                throw new UserFriendlyException( L("CustomerPortalAccessDenied"));
+                if (!Session.CustomerId.HasValue)
+                {
+                    throw new UserFriendlyException(L("CustomerPortalAccessDenied"));
+                }
+                else
+                {
+                    input.CustomerId = Session.CustomerId;
+                }
             }
 
             var query = GetTicketListQuery(input, await GetTimezone());
