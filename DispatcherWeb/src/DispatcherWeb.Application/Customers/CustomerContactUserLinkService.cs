@@ -138,11 +138,6 @@ namespace DispatcherWeb.CustomerContacts
             user.PhoneNumber = customerContact.PhoneNumber;
             user.CustomerContactId = customerContact.Id;
 
-            if (!user.OfficeId.HasValue)
-            {
-                user.OfficeId = null;
-            }
-
             (await UserManager.UpdateAsync(user)).CheckErrors(LocalizationManager);
         }
 
