@@ -50,7 +50,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
         #region private variables
 
         private readonly IHostEnvironment _environment;
-
+        private readonly string _httpClientName = "DispatcherWeb.ReportCenter";
         #endregion
 
         protected const string _emptyArrayInResult = "{result:[]}";
@@ -210,7 +210,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
         {
             var hostApiUrl = Configuration["IdentityServer:Authority"];
             var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-            var httpClient = HttpClientFactory.CreateClient();
+            var httpClient = HttpClientFactory.CreateClient(_httpClientName);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             return (hostApiUrl, httpClient);
         }
