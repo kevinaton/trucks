@@ -936,8 +936,9 @@ namespace DispatcherWeb.Tickets
         [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
-            var customerPortalFeatureEnabled = FeatureChecker.IsEnabled(AppFeatures.CustomerPortal);
-            if ((Session.CustomerPortalAccessEnabled ?? false) && customerPortalFeatureEnabled)
+            var customerPortalFeaturePermitted = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_CustomerPortal_TicketsList);
+            if (customerPortalFeaturePermitted && 
+                (Session.CustomerPortalAccessEnabled ?? false))
             {
                 if (!Session.CustomerId.HasValue)
                 {
