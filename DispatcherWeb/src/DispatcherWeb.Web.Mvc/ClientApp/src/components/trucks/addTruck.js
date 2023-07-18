@@ -147,6 +147,13 @@ const AddTruckForm = ({
     const [engine, setEngine] = useState('');
     const [rearEnd, setRearEnd] = useState('');
 
+    // service tab
+    const [currentMileage, setCurrentMileage] = useState('');
+    const [currentHours, setCurrentHours] = useState('');
+
+    // files tab
+    const [file, setFile] = useState(null);
+
     // gps configuration tab
     const [dtdTrackerDeviceTypeId, setDtdTrackerDeviceTypeId] = useState(null);
     const [dtdTrackerDeviceTypeName, setDtdTrackerDeviceTypeName] = useState('');
@@ -199,6 +206,7 @@ const AddTruckForm = ({
     }, [truckInfo, truckForEdit]);
 
     const handleChange = (event, newValue) => {
+        console.log('newValue: ', newValue);
         setValue(newValue);
     };
 
@@ -365,6 +373,66 @@ const AddTruckForm = ({
 
     const handleTruxTruckIdInputChange = (e) => {
         setTruxTruckId(e.target.value);
+    };
+
+    const handleBedConstructionInputChange = (e) => {
+        setBedConstruction(e.target.value);
+    };
+
+    const handleFuelTypeInputChange = (e) => {
+        setFuelType(e.target.value);
+    };
+
+    const handleFuelCapacityInputChange = (e) => {
+        setFuelCapacity(e.target.value);
+    };
+
+    const handleSteerTiresInputChange = (e) => {
+        setSteerTires(e.target.value);
+    };
+
+    const handleDriveAxleTiresInputChange = (e) => {
+        setDriveAxleTires(e.target.value);
+    }; 
+    
+    const handleDropAxleTiresInputChange = (e) => {
+        setDropAxleTires(e.target.value);
+    };
+
+    const handleTrailerTiresInputChange = (e) => {
+        setTrailerTires(e.target.value);
+    };
+
+    const handleTransmissionInputChange = (e) => {
+        setTransmission(e.target.value);
+    };
+
+    const handleEngineInputChange = (e) => {
+        setEngine(e.target.value);
+    };
+
+    const handleRearEndInputChange = (e) => {
+        setRearEnd(e.target.value);
+    };
+
+    const handleCurrentMileageInputChange = (e) => {
+        setCurrentMileage(e.target.value);
+    };
+
+    const handleCurrentHoursInputChange = (e) => {
+        setCurrentHours(e.target.value);
+    }; 
+
+    const handleDtdTrackerDeviceTypeIdInputChange = (e) => {
+        setDtdTrackerDeviceTypeId(e.target.value);
+    };
+
+    const handleDtdTrackerUniqueIdInputChange = (e) => {
+        setDtdTrackerUniqueId(e.target.value);
+    }; 
+
+    const handleDtdTrackerPasswordInputChange = (e) => {
+        setDtdTrackerPassword(e.target.value);
     };
 
     const handleCancel = () => {
@@ -824,7 +892,8 @@ const AddTruckForm = ({
                         id='bedConstruction'
                         label='Bed Construction'
                         value={bedConstruction} 
-                        defaultValue={truckInfo.bedConstruction}
+                        defaultValue={truckInfo.bedConstruction} 
+                        onChange={handleBedConstructionInputChange}
                     >
                         <MenuItem value=''>Select an option</MenuItem>
                     </Select>
@@ -837,7 +906,8 @@ const AddTruckForm = ({
                         id='fuelType'
                         label='fuelType'
                         value={fuelType} 
-                        defaultValue={truckInfo.fuelType}
+                        defaultValue={truckInfo.fuelType} 
+                        onChange={handleFuelTypeInputChange}
                     >
                         <MenuItem value=''>Select an option</MenuItem>
                     </Select>
@@ -849,7 +919,8 @@ const AddTruckForm = ({
                     type='text'
                     label='Fuel Capacity'
                     value={fuelCapacity}
-                    defaultValue={truckInfo.fuelCapacity}
+                    defaultValue={truckInfo.fuelCapacity} 
+                    onChange={handleFuelCapacityInputChange}
                 />
 
                 <TextField 
@@ -858,7 +929,8 @@ const AddTruckForm = ({
                     type='text'
                     label='Steer Tires'
                     value={steerTires}
-                    defaultValue={truckInfo.steerTires}
+                    defaultValue={truckInfo.steerTires} 
+                    onChange={handleSteerTiresInputChange}
                 />
 
                 <TextField 
@@ -867,7 +939,8 @@ const AddTruckForm = ({
                     type='text'
                     label='Drive Axle Tires'
                     value={driveAxleTires}
-                    defaultValue={truckInfo.driveAxleTires}
+                    defaultValue={truckInfo.driveAxleTires} 
+                    onChange={handleDriveAxleTiresInputChange}
                 /> 
 
                 <TextField 
@@ -876,7 +949,8 @@ const AddTruckForm = ({
                     type='text'
                     label='Drop Axle Tires'
                     value={dropAxleTires}
-                    defaultValue={truckInfo.dropAxleTires}
+                    defaultValue={truckInfo.dropAxleTires} 
+                    onChange={handleDropAxleTiresInputChange}
                 />
 
                 <TextField 
@@ -885,7 +959,8 @@ const AddTruckForm = ({
                     type='text'
                     label='Trailer Tires'
                     value={trailerTires}
-                    defaultValue={truckInfo.trailerTires}
+                    defaultValue={truckInfo.trailerTires} 
+                    onChange={handleTrailerTiresInputChange}
                 />
 
                 <TextField 
@@ -894,7 +969,8 @@ const AddTruckForm = ({
                     type='text'
                     label='Transmission'
                     value={transmission}
-                    defaultValue={truckInfo.transmission}
+                    defaultValue={truckInfo.transmission} 
+                    onChange={handleTransmissionInputChange}
                 />
 
                 <TextField 
@@ -903,7 +979,8 @@ const AddTruckForm = ({
                     type='text'
                     label='Engine'
                     value={engine}
-                    defaultValue={truckInfo.engine}
+                    defaultValue={truckInfo.engine} 
+                    onChange={handleEngineInputChange}
                 />
 
                 <TextField 
@@ -912,13 +989,46 @@ const AddTruckForm = ({
                     type='text'
                     label='Rear End'
                     value={rearEnd}
-                    defaultValue={truckInfo.rearEnd}
+                    defaultValue={truckInfo.rearEnd} 
+                    onChange={handleRearEndInputChange}
                 />
             </Stack>
         );
     };
 
-    const renderGpsConfigurationForm = () => {
+    const renderServiceForm = () => {
+        return (
+            <Stack 
+                spacing={2} 
+                sx={{
+                    maxHeight: '712px',
+                    overflowY: 'auto'
+                }}
+            >
+                <TextField 
+                    id='currentMileage' 
+                    name='currentMileage'
+                    type='text'
+                    label='Current Mileage' 
+                    value={currentMileage}
+                    defaultValue={truckInfo.currentMileage} 
+                    onChange={handleCurrentMileageInputChange}
+                />
+
+                <TextField 
+                    id='currentHours'
+                    name='currentHours'
+                    type='text'
+                    label='Current Hours'
+                    value={currentHours} 
+                    defaultValue={truckInfo.currentHours} 
+                    onChange={handleCurrentHoursInputChange}
+                />
+            </Stack>
+        );
+    };
+
+    const renderFilesForm = () => {
         return (
             <Stack 
                 spacing={2} 
@@ -928,6 +1038,70 @@ const AddTruckForm = ({
                 }}
             >
                 
+            </Stack>
+        );
+    };
+
+    const renderGPSConfigurationForm = () => {
+        return (
+            <Stack 
+                spacing={2} 
+                sx={{
+                    maxHeight: '712px',
+                    overflowY: 'auto'
+                }}
+            >
+                <FormControl fullWidth>
+                    <InputLabel id='dtdTrackerDeviceTypeId-label'>Device Type</InputLabel>
+                    <Select
+                        labelId='dtdTrackerDeviceTypeId-label'
+                        id='dtdTrackerDeviceTypeId'
+                        label='dtdTrackerDeviceTypeId'
+                        value={dtdTrackerDeviceTypeId} 
+                        defaultValue={truckInfo.dtdTrackerDeviceTypeId} 
+                        onChange={handleDtdTrackerDeviceTypeIdInputChange}
+                    >
+                        <MenuItem value=''>Select an option</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <TextField 
+                    id='dtdTrackerDeviceTypeName' 
+                    name='dtdTrackerDeviceTypeName'
+                    type='hidden' 
+                    value={dtdTrackerDeviceTypeName} 
+                    defaultValue={truckInfo.dtdTrackerDeviceTypeName} 
+                /> 
+
+                <TextField 
+                    id='dtdTrackerServerAddress' 
+                    name='dtdTrackerServerAddress'
+                    type='text' 
+                    label='Server Address' 
+                    value={dtdTrackerServerAddress} 
+                    defaultValue={truckInfo.dtdTrackerServerAddress} 
+                    disabled
+                />
+
+                <TextField 
+                    id='dtdTrackerUniqueId' 
+                    name='dtdTrackerUniqueId'
+                    type='text'
+                    label='Unique Id'
+                    value={dtdTrackerUniqueId}
+                    defaultValue={truckInfo.dtdTrackerUniqueId} 
+                    onChange={handleDtdTrackerUniqueIdInputChange}
+                />
+
+                <TextField 
+                    id='dtdTrackerPassword' 
+                    name='dtdTrackerPassword'
+                    type='text'
+                    label='Password'
+                    value={dtdTrackerPassword}
+                    defaultValue={truckInfo.dtdTrackerPassword} 
+                    onChange={handleDtdTrackerPasswordInputChange}
+                />
             </Stack>
         );
     };
@@ -953,24 +1127,50 @@ const AddTruckForm = ({
                 </Button>
             </Box>
 
-            <Box sx={{ width: '100%' }}>
-                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Tabs value={value} onChange={handleChange} aria-label="Create new truck tabs">
-                        <Tab label="General" {...a11yProps(0)} />
-                        <Tab label="Maintenance" {...a11yProps(1)} />
-                        <Tab label="GPS Configuration" {...a11yProps(2)} />
-                    </Tabs>
+            { !isEmpty(pageConfig) && !isEmpty(truckInfo) && 
+                <Box sx={{ width: '100%' }}>
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <Tabs value={value} onChange={handleChange} aria-label="Create new truck tabs">
+                            <Tab label="General" {...a11yProps(0)} />
+
+                            <Tab label="Maintenance" {...a11yProps(1)} />
+
+                            {/* { truckInfo.id > 0 && 
+                                <React.Fragment>
+                                    <Tab label="Service" {...a11yProps(2)} />
+                                    <Tab label="Files" {...a11yProps(3)} />
+                                </React.Fragment>
+                            } */}
+
+                            <Tab label="GPS Configuration" {...a11yProps(2)} />
+                        </Tabs>
+                    </Box>
+
+                    <TabPanel value={value} index={0}>
+                        {renderGeneralForm()}
+                    </TabPanel>
+
+                    <TabPanel value={value} index={1}>
+                        {renderMaintenanceForm()}
+                    </TabPanel>
+
+                    {/* { truckInfo.id > 0 && 
+                        <React.Fragment>
+                            <TabPanel value={value} index={2}>
+                                {renderServiceForm()}
+                            </TabPanel>
+                            
+                            <TabPanel value={value} index={3}>
+                                {renderFilesForm()}
+                            </TabPanel>
+                        </React.Fragment>
+                    } */}
+
+                    <TabPanel value={value} index={2}>
+                        {renderGPSConfigurationForm()}
+                    </TabPanel>
                 </Box>
-                <TabPanel value={value} index={0}>
-                    {!isEmpty(pageConfig) && !isEmpty(truckInfo) && renderGeneralForm()}
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    {!isEmpty(pageConfig) && !isEmpty(truckInfo) && renderMaintenanceForm()}
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                    {!isEmpty(pageConfig) && !isEmpty(truckInfo) && renderGpsConfigurationForm()}
-                </TabPanel>
-            </Box>
+            }
 
             <Box sx={{ p: 2 }}>
                 <Stack 
