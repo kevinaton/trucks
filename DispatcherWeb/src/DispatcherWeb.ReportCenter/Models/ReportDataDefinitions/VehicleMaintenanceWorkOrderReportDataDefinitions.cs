@@ -77,9 +77,9 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
         internal async Task<string> GetVehicleMaintenanceWorkOrderLinesJson(int? entityId)
         {
-            var httpClientInfo = await GetHttpClient();
-            var url = $"{httpClientInfo.HostApiUrl}/api/services/app/workorder/GetWorkOrderLines?id={entityId}";
-            var response = await httpClientInfo.HttpClient.GetAsync(url);
+            var httpClient= GetHttpClient();
+            var url = $"/api/services/app/workorder/GetWorkOrderLines?id={entityId}";
+            var response = await httpClient.GetAsync(url);
             var jsonContent = await ValidateResponse(response, Extensions.GetMethodName(), "[]");
             return jsonContent;
         }
@@ -87,9 +87,9 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
         internal async Task<string> GetVehicleMaintenanceWorkOrderDataSource(LocateDataSourceArgs arg)
         {
             var reportParamsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
-            var httpClientInfo = await GetHttpClient();
-            var url = $"{httpClientInfo.HostApiUrl}/api/services/app/workorder/getworkorderforedit?id={reportParamsDic["EntityId"]}";
-            var response = await httpClientInfo.HttpClient.GetAsync(url);
+            var httpClient= GetHttpClient();
+            var url = $"/api/services/app/workorder/getworkorderforedit?id={reportParamsDic["EntityId"]}";
+            var response = await httpClient.GetAsync(url);
             var jsonContent = await ValidateResponse(response, Extensions.GetMethodName(), "{}");
             return jsonContent;
         }

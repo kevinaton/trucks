@@ -49,12 +49,12 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 var paramsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
                 var tenantId = paramsDic.ContainsKey("TenantId") ? paramsDic["TenantId"] : null;
 
-                var httpClientInfo = await GetHttpClient();
+                var httpClient= GetHttpClient();
 
                 var endDate = paramsDic["EndDate"] ?? paramsDic["StartDate"];
-                var url = $"{httpClientInfo.HostApiUrl}/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={tenantId}&startDate={paramsDic["StartDate"]:o}&endDate={endDate:o}";
+                var url = $"/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={tenantId}&startDate={paramsDic["StartDate"]:o}&endDate={endDate:o}";
 
-                var response = await httpClientInfo.HttpClient.GetAsync(url);
+                var response = await httpClient.GetAsync(url);
                 jsonContent = await ValidateResponse(response, Extensions.GetMethodName(), _emptyArrayInResult);
             }
 

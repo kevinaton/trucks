@@ -50,7 +50,7 @@
 		<None Include="Reports\_VehicleMaintenanceWorkOrder.json">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
-		<None Include="Reports\_VehicleMaintenanceWorkOrderLines.json" >
+		<None Include="Reports\_VehicleMaintenanceWorkOrderLines.json">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 		<None Include="wwwroot\lib\grapecity\jsViewer.min.js" />
@@ -78,6 +78,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="Controllers\HomeController.cs" />
+		<Compile Include="Helpers\AuthorizationHeaderHandler.cs" />
 		<Compile Include="Models\ActiveReportItemDto.cs" />
 		<Compile Include="Models\UserFriendlyException.cs" />
 		<Compile Include="Helpers\Extensions.cs" />

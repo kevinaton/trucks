@@ -6,16 +6,20 @@ using DispatcherWeb.ReportCenter.Helpers;
 using DispatcherWeb.ReportCenter.Models.ReportDataDefinitions;
 using DispatcherWeb.ReportCenter.Services;
 using GrapeCity.ActiveReports.Aspnetcore.Viewer;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -46,7 +50,14 @@ namespace DispatcherWeb.ReportCenter
 
             var connectionString = Configuration.GetConnectionString("Default");
 
-            services.AddHttpClient();
+            services.AddTransient<AuthorizationHeaderHandler>();
+            services.AddHttpClient("DispatcherWeb.ReportCenter", (serviceProvider, httpClient) =>
+                {
+                    var hostApiUrl = Configuration["IdentityServer:Authority"];
+                    httpClient.BaseAddress = new Uri(hostApiUrl);
+                })
+                .AddHttpMessageHandler<AuthorizationHeaderHandler>(); ;
+
             services.AddHttpContextAccessor();
             services.AddScoped<ReportAppService>();
             services.AddScoped<TenantStatisticsReportDataDefinitions>();

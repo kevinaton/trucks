@@ -206,13 +206,9 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         #region private methods
 
-        protected async Task<(string HostApiUrl, HttpClient HttpClient)> GetHttpClient()
+        protected HttpClient GetHttpClient()
         {
-            var hostApiUrl = Configuration["IdentityServer:Authority"];
-            var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-            var httpClient = HttpClientFactory.CreateClient(_httpClientName);
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            return (hostApiUrl, httpClient);
+             return HttpClientFactory.CreateClient(_httpClientName);
         }
 
         protected bool IsForTenantsDataSet(LocateDataSourceArgs arg)
@@ -238,9 +234,9 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         private async Task<string> GetTenantsJson()
         {
-            var httpClientInfo = await GetHttpClient();
-            var url = $"{httpClientInfo.HostApiUrl}/api/services/activeReports/tenantStatisticsReport/GetTenants";
-            var response = await httpClientInfo.HttpClient.GetAsync(url);
+            var httpClient = GetHttpClient();
+            var url = $"/api/services/activeReports/tenantStatisticsReport/GetTenants";
+            var response = await httpClient.GetAsync(url);
 
             var jsonContent = await ValidateResponse(response, Extensions.GetMethodName());
             return jsonContent;
