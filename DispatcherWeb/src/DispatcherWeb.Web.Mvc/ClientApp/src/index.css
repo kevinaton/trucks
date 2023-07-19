@@ -200,6 +200,20 @@ code {
 .mbsc-icon {
     color: #a8b2bb;
 }
+
+
+.mbsc-material.mbsc-textfield-fieldset {
+    border-color: #ebedf2 !important;
+}
+
+.mbsc-material.mbsc-textfield-outline {
+    height: 36.7px !important;
+    font-size: 14px !important;
+}
+
+.mbsc-no-margin {
+    margin: 0 !important;
+}
 /* Mobiscroll Custom CSS */
 
 /* Icon style */
@@ -219,8 +233,11 @@ code {
     color: #dd4b39;
 }
 
-.success-icon {
-    color: #00a65a;
+warning-icon {	
+    color: #ed6c02;	
+}	
+.success-icon {	
+    color: #2e7d32;	
 }
 
 .active-icon {
@@ -279,7 +296,7 @@ code {
 }
 
 .tableHeader {
-    background-color: #eeeeee;
+    background-color: #f8f9fa;
 }
 
 .list-item-checkbox {

@@ -106,10 +106,10 @@ export const Drawer = styled(MuiDrawer, {
 }));
 
 // Custom TableCell
-export const Tablecell = ({ label, value, colSpan }) => {
+export const Tablecell = ({ label, value, style, colSpan }) => {
     return (
         <Tooltip title={label} enterNextDelay={2000}>
-            <TableCell style={{ borderBottom: 'none' }} aria-label={label} colSpan={colSpan}>
+            <TableCell style={{ ...style, borderBottom: 'none' }} aria-label={label} colSpan={colSpan}>
                 {value}
             </TableCell>
         </Tooltip>
