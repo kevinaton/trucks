@@ -10,7 +10,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import _, { isEmpty } from 'lodash';
 import { getScheduleTrucks } from '../../store/actions';
-import AddTruckForm from '../../components/trucks/addTruck';
+import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
 
 const TruckMap = ({
     pageConfig,
@@ -177,7 +177,7 @@ const TruckMap = ({
         e.preventDefault();
 
         openModal(
-            <AddTruckForm 
+            <AddOrEditTruckForm 
                 pageConfig={pageConfig} 
                 closeModal={closeModal} 
             />,

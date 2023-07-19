@@ -20,7 +20,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import CloseIcon from '@mui/icons-material/Close';
 import moment from 'moment';
-import { isEmpty } from 'lodash';
+import { isEmpty, set } from 'lodash';
 import { 
     getVehicleCategories, 
     getBedConstructionSelectList,
@@ -62,7 +62,7 @@ const a11yProps = (index) => {
     };
 };
 
-const AddTruckForm = ({
+const AddOrEditTruckForm = ({
     pageConfig,
     closeModal
 }) => {
@@ -76,6 +76,9 @@ const AddTruckForm = ({
     const [truckInfo, setTruckInfo] = useState(null);
 
     // general tab
+    const [id, setId] = useState(null);
+    const [vehicleCategoryIsPowered, setVehicleCategoryIsPowered] = useState(null);
+    const [vehicleCategoryAssetType, setVehicleCategoryAssetType] = useState(null);
     const [truckCode, setTruckCode] = useState({
         value: '',
         required: true,
@@ -117,7 +120,11 @@ const AddTruckForm = ({
     });
     const [isApportioned, setIsApportioned] = useState(false);
     const [canPullTrailer, setCanPullTrailer] = useState(false);
-    const [year, setYear] = useState('');
+    const [year, setYear] = useState({
+        value: truckInfo != null ? truckInfo.year : '',
+        error: false,
+        errorText: ''
+    });
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
     const [inServiceDate, setInServiceDate] = useState({
@@ -129,8 +136,16 @@ const AddTruckForm = ({
     const [vin, setVin] = useState('');
     const [plate, setPlate] = useState('');
     const [plateExpiration, setPlateExpiration] = useState(today);
-    const [cargoCapacity, setCargoCapacity] = useState('');
-    const [cargoCapacityCyds, setCargoCapacityCyds] = useState('');
+    const [cargoCapacity, setCargoCapacity] = useState({
+        value: truckInfo != null ? truckInfo.cargoCapacity : '',
+        error: false,
+        errorText: ''
+    });
+    const [cargoCapacityCyds, setCargoCapacityCyds] = useState({
+        value: truckInfo != null ? truckInfo.cargoCapacityCyds : '',
+        error: false,
+        errorText: ''
+    });
     const [insurancePolicyNumber, setInsurancePolicyNumber] = useState('');
     const [insuranceValidUntil, setInsuranceValidUntil] = useState(today);
     const [purchaseDate, setPurchaseDate] = useState(today);
@@ -217,7 +232,6 @@ const AddTruckForm = ({
     useEffect(() => {
         if (!isEmpty(fuelTypeSelectList) && !isEmpty(fuelTypeSelectList.result)) {
             const { result } = fuelTypeSelectList;
-            console.log('result: ', result)
             if (!isEmpty(result)) {
                 setFuelTypeOptions(result);
             }
@@ -228,14 +242,19 @@ const AddTruckForm = ({
         if (truckInfo === null && !isEmpty(truckForEdit) && !isEmpty(truckForEdit.result)) {
             const { result } = truckForEdit;
             if (!isEmpty(result)) {
-                console.log('result: ', result)
                 setTruckInfo(result);
+                setId(result.id);
+                setVehicleCategoryAssetType(result.vehicleCategoryAssetType);
+
+                if (result.vehicleCategoryIsPowered !== null) {
+                    setVehicleCategoryIsPowered(result.vehicleCategoryIsPowered.toLowerCase());
+                }
             }
         }
     }, [truckInfo, truckForEdit]);
 
+    // handle change tab
     const handleChange = (event, newValue) => {
-        console.log('newValue: ', newValue);
         setValue(newValue);
     };
 
@@ -243,7 +262,7 @@ const AddTruckForm = ({
         e.preventDefault();
 
         const inputValue = e.target.value;
-        if (inputValue.length <= 64) {
+        if (inputValue.length <= 25) {
             setTruckCode({
                 ...truckCode,
                 value: inputValue,
@@ -319,9 +338,12 @@ const AddTruckForm = ({
     };
 
     const handleReasonInputChange = (e) => {
+        const inputValue = e.target.value;
+        //const remainingChars = 500 - inputValue.length;
+
         setReason({
             ...reason,
-            value: e.target.value,
+            value: inputValue,
             error: false,
             errorText: ''
         });
@@ -336,15 +358,41 @@ const AddTruckForm = ({
     };
 
     const handleYearInputChange = (e) => {
-        setYear(e.target.value);
+        const inputValue = parseInt(e.target.value);
+        const minValue = 1900;
+        const maxValue = 2100;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Year must be greater than ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Year must be less than ${maxValue}`;
+        }
+
+        setYear({
+            ...year,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        });
     };
 
     const handleMakeInputChange = (e) => {
-        setMake(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setMake(inputValue);
+        }
     };
 
     const handleModelInputChange = (e) => {
-        setModel(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setModel(inputValue);
+        }
     };
 
     const handleInServiceDateChange = (newDate) => {
@@ -357,11 +405,17 @@ const AddTruckForm = ({
     };
 
     const handleVinInputChange = (e) => {
-        setVin(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setVin(inputValue);
+        }
     };
 
     const handlePlateInputChange = (e) => {
-        setPlate(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 20) {
+            setPlate(inputValue);
+        }
     };
 
     const handlePlateExpirationChange = (newDate) => {
@@ -369,15 +423,58 @@ const AddTruckForm = ({
     };
 
     const handleCargoCapacityInputChange = (e) => {
-        setCargoCapacity(e.target.value);
+        const inputValue = parseInt(e.target.value);
+        const minValue = 0;
+        const maxValue = 100000;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Please enter a value greater than or equal to ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Please enter a value less than or equal to ${maxValue}`;
+        }
+
+        setCargoCapacity({
+            ...cargoCapacity,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        });
     };
 
     const handleCargoCapacityCydsInputChange = (e) => {
-        setCargoCapacityCyds(e.target.value);
+        const inputValue = parseInt(e.target.value);
+        const minValue = 0;
+        const maxValue = 100000;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Please enter a value greater than or equal to ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Please enter a value less than or equal to ${maxValue}`;
+        }
+        
+        setCargoCapacityCyds({
+            ...cargoCapacityCyds,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        });
     };
 
     const handleInsurancePolicyNumberInputChange = (e) => {
-        setInsurancePolicyNumber(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setInsurancePolicyNumber(inputValue);
+        }
     };
 
     const handleInsuranceValidUntilChange = (newDate) => {
@@ -389,7 +486,14 @@ const AddTruckForm = ({
     };
 
     const handlePurchasePriceInputChange = (e) => {
-        setPurchasePrice(e.target.value);
+        const inputValue = parseFloat(e.target.value);
+        if (!isNaN(inputValue) && 
+            inputValue >= 0 && 
+            inputValue <= 999999999999999) {
+            setPurchasePrice(inputValue);
+        } else {
+            setPurchasePrice('');
+        }
     };
 
     const handleSoldDateChange = (newDate) => {
@@ -397,11 +501,21 @@ const AddTruckForm = ({
     };
 
     const handleSoldPriceInputChange = (e) => {
-        setSoldPrice(e.target.value);
+        const inputValue = parseFloat(e.target.value);
+        if (!isNaN(inputValue) && 
+            inputValue >= 0 && 
+            inputValue <= 999999999999999) {
+            setSoldPrice(inputValue);
+        } else {
+            setSoldPrice('');
+        }
     };
 
     const handleTruxTruckIdInputChange = (e) => {
-        setTruxTruckId(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 20) {
+            setTruxTruckId(inputValue);
+        }
     };
 
     const handleBedConstructionInputChange = (e) => {
@@ -471,6 +585,64 @@ const AddTruckForm = ({
     
     const handleSave = (e) => {
         e.preventDefault();
+        
+        // validate truck code
+        if (truckCode.required && !truckCode.value) {
+            setTruckCode({
+                ...truckCode,
+                error: true
+            });
+        }
+
+        // validate office id
+        if (officeId.required && !officeId.value) {
+            setOfficeId({
+                ...officeId,
+                error: true
+            });
+        }
+
+        // validate vehicle category id
+        if (vehicleCategoryId.required && !vehicleCategoryId.value) {
+            setVehicleCategoryId({
+                ...vehicleCategoryId,
+                error: true
+            });
+        }
+
+        var data = {
+            id,
+            vehicleCategoryIsPowered,
+            vehicleCategoryAssetType,
+            truckCode: truckCode.value,
+            officeId: officeId.value,
+            vehicleCategoryId: vehicleCategoryId.value,
+            defaultDriverId: defaultDriverId.value,
+            defaultTrailerId: defaultTrailerId,
+            isActive,
+            inactivationDate: moment(inactivationDate.value).format('MM/DD/YYYY'),
+            isOutOfService,
+            reason: reason.value,
+            isApportioned,
+            canPullTrailer,
+            year: year.value,
+            make,
+            model,
+            inServiceDate: moment(inServiceDate.value).format('MM/DD/YYYY'),
+            vin,
+            plate,
+            plateExpiration: moment(plateExpiration).format('MM/DD/YYYY'),
+            cargoCapacity: cargoCapacity.value,
+            cargoCapacityCyds: cargoCapacityCyds.value,
+            insurancePolicyNumber,
+            insuranceValidUntil: moment(insuranceValidUntil).format('MM/DD/YYYY'),
+            purchaseDate: moment(purchaseDate).format('MM/DD/YYYY'),
+            purchasePrice,
+            soldDate: moment(soldDate).format('MM/DD/YYYY'),
+            soldPrice,
+            truxTruckId,
+        };
+        console.log('data: ', data)
     };
 
     const renderGeneralForm = () => {
@@ -516,7 +688,9 @@ const AddTruckForm = ({
                             }
                             value={officeId.value} 
                             defaultValue={truckInfo.officeId}
-                            onChange={handleOfficeIdInputChange}
+                            onChange={handleOfficeIdInputChange} 
+                            error={officeId.error} 
+                            helperText={officeId.error ? officeId.errorText : ''} 
                         >
                             <MenuItem value=''>Select an option</MenuItem>
                             
@@ -543,7 +717,9 @@ const AddTruckForm = ({
                         }
                         value={vehicleCategoryId.value} 
                         defaultValue={truckInfo.vehicleCategoryId}
-                        onChange={handleVehicleCategoryIdInputChange}
+                        onChange={handleVehicleCategoryIdInputChange} 
+                        error={vehicleCategoryId.error} 
+                        helperText={vehicleCategoryId.error ? vehicleCategoryId.errorText : ''} 
                     >
                         <MenuItem value=''>Select an option</MenuItem>
 
@@ -657,7 +833,8 @@ const AddTruckForm = ({
                         onChange={handleReasonInputChange} 
                         multiline
                         rows={2} 
-                        fullWidth
+                        fullWidth 
+                        maxLength={500}
                     />
                 }
 
@@ -692,11 +869,13 @@ const AddTruckForm = ({
                 <TextField 
                     id='year'
                     name='year'
-                    type='number' 
+                    type='text' 
                     label='Year'
-                    value={year} 
+                    value={year.value} 
                     defaultValue={truckInfo.year}
                     onChange={handleYearInputChange} 
+                    error={year.error} 
+                    helperText={year.error ? year.errorText : ''} 
                     fullWidth
                 />
 
@@ -789,9 +968,11 @@ const AddTruckForm = ({
                     name='cargoCapacity'
                     type='text'
                     label='Ave Load (tons)'
-                    value={cargoCapacity} 
+                    value={cargoCapacity.value} 
                     defaultValue={truckInfo.cargoCapacity}
                     onChange={handleCargoCapacityInputChange}
+                    error={cargoCapacity.error} 
+                    helperText={cargoCapacity.error ? cargoCapacity.errorText : ''} 
                     fullWidth 
                 />
 
@@ -800,9 +981,11 @@ const AddTruckForm = ({
                     name='cargoCapacityCyds'
                     type='text' 
                     label='Ave Load (cyds)' 
-                    value={cargoCapacityCyds} 
+                    value={cargoCapacityCyds.value} 
                     defaultValue={truckInfo.cargoCapacityCyds}
                     onChange={handleCargoCapacityCydsInputChange}
+                    error={cargoCapacityCyds.error} 
+                    helperText={cargoCapacityCyds.error ? cargoCapacityCyds.errorText : ''} 
                     fullWidth
                 />
 
@@ -907,7 +1090,6 @@ const AddTruckForm = ({
     };
 
     const renderMaintenanceForm = () => {
-        console.log('bedConstructionOptions: ', bedConstructionOptions)
         return (
             <Stack 
                 spacing={2} 
@@ -1157,85 +1339,87 @@ const AddTruckForm = ({
 
     return (
         <React.Fragment>
-            <Box
-                display='flex'
-                justifyContent='space-between'
-                alignItems='center'
-                sx={{ 
-                    p: 2 
-                }} 
-            >
-                <Typography variant='h6' component='h2'>
-                    Create new truck
-                </Typography>
-                <Button 
-                    onClick={closeModal} 
-                    sx={{ minWidth: '32px' }}
-                >
-                    <CloseIcon />
-                </Button>
-            </Box>
-
             { !isEmpty(pageConfig) && !isEmpty(truckInfo) && 
-                <Box sx={{ width: '100%' }}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="Create new truck tabs">
-                            <Tab label="General" {...a11yProps(0)} />
-
-                            <Tab label="Maintenance" {...a11yProps(1)} />
-
-                            { truckInfo.id > 0 && 
-                                <React.Fragment>
-                                    <Tab label="Service" {...a11yProps(2)} />
-                                    <Tab label="Files" {...a11yProps(3)} />
-                                </React.Fragment>
-                            }
-
-                            <Tab label="GPS Configuration" {...a11yProps(truckInfo.id > 0 ? 4 : 2)} />
-                        </Tabs>
+                <React.Fragment>
+                    <Box
+                        display='flex'
+                        justifyContent='space-between'
+                        alignItems='center'
+                        sx={{ 
+                            p: 2 
+                        }} 
+                    >
+                        <Typography variant='h6' component='h2'>
+                            { truckInfo.id > 0 ? <>Edit truck</> : <>Create new truck</> }
+                        </Typography>
+                        <Button 
+                            onClick={closeModal} 
+                            sx={{ minWidth: '32px' }}
+                        >
+                            <CloseIcon />
+                        </Button>
                     </Box>
 
-                    <TabPanel value={value} index={0}>
-                        {renderGeneralForm()}
-                    </TabPanel>
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Tabs value={value} onChange={handleChange} aria-label="Create new truck tabs">
+                                <Tab label="General" {...a11yProps(0)} />
 
-                    <TabPanel value={value} index={1}>
-                        {renderMaintenanceForm()}
-                    </TabPanel>
+                                <Tab label="Maintenance" {...a11yProps(1)} />
 
-                    { truckInfo.id > 0 && 
-                        <React.Fragment>
-                            <TabPanel value={value} index={2}>
-                                {renderServiceForm()}
-                            </TabPanel>
-                            
-                            <TabPanel value={value} index={3}>
-                                {renderFilesForm()}
-                            </TabPanel>
-                        </React.Fragment>
-                    }
+                                { truckInfo.id > 0 && 
+                                    <React.Fragment>
+                                        <Tab label="Service" {...a11yProps(2)} />
+                                        <Tab label="Files" {...a11yProps(3)} />
+                                    </React.Fragment>
+                                }
 
-                    <TabPanel value={value} index={truckInfo.id > 0 ? 4 : 2}>
-                        {renderGPSConfigurationForm()}
-                    </TabPanel>
-                </Box>
+                                <Tab label="GPS Configuration" {...a11yProps(truckInfo.id > 0 ? 4 : 2)} />
+                            </Tabs>
+                        </Box>
+
+                        <TabPanel value={value} index={0}>
+                            {renderGeneralForm()}
+                        </TabPanel>
+
+                        <TabPanel value={value} index={1}>
+                            {renderMaintenanceForm()}
+                        </TabPanel>
+
+                        { truckInfo.id > 0 && 
+                            <React.Fragment>
+                                <TabPanel value={value} index={2}>
+                                    {renderServiceForm()}
+                                </TabPanel>
+                                
+                                <TabPanel value={value} index={3}>
+                                    {renderFilesForm()}
+                                </TabPanel>
+                            </React.Fragment>
+                        }
+
+                        <TabPanel value={value} index={truckInfo.id > 0 ? 4 : 2}>
+                            {renderGPSConfigurationForm()}
+                        </TabPanel>
+                    </Box>
+
+                    <Box sx={{ p: 2 }}>
+                        <Stack 
+                            spacing={2}
+                            direction='row' 
+                            justifyContent='flex-end'
+                        >
+                            <Button variant='outlined' onClick={handleCancel}>Cancel</Button>
+                            <Button variant='contained' color='primary' onClick={(e) => handleSave(e)}>
+                                <i className='fa-regular fa-save' style={{ marginRight: '6px' }}></i>
+                                <Typography>Save</Typography>
+                            </Button>
+                        </Stack>
+                    </Box>
+                </React.Fragment>
             }
-
-            <Box sx={{ p: 2 }}>
-                <Stack 
-                    spacing={2}
-                    direction='row' 
-                    justifyContent='flex-end'
-                >
-                    <Button variant='outlined' onClick={handleCancel}>Cancel</Button>
-                    <Button variant='contained' color='primary' onClick={(e) => handleSave(e)}>
-                        <i className='fa-regular fa-save' style={{ marginRight: '6px' }}></i>
-                        <Typography>Save</Typography>
-                    </Button>
-                </Stack>
-            </Box>
         </React.Fragment>
     );
 };
 
-export default AddTruckForm;
+export default AddOrEditTruckForm;
