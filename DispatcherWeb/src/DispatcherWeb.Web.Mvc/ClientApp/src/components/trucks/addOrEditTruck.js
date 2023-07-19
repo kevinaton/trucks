@@ -157,7 +157,11 @@ const AddOrEditTruckForm = ({
     // maintenance tab
     const [bedConstruction, setBedConstruction] = useState('');
     const [fuelType, setFuelType] = useState('');
-    const [fuelCapacity, setFuelCapacity] = useState('');
+    const [fuelCapacity, setFuelCapacity] = useState({
+        value: truckInfo != null ? truckInfo.fuelCapacity : '',
+        error: false,
+        errorText: ''
+    });
     const [steerTires, setSteerTires] = useState('');
     const [driveAxleTires, setDriveAxleTires] = useState('');
     const [dropAxleTires, setDropAxleTires] = useState('');
@@ -527,35 +531,76 @@ const AddOrEditTruckForm = ({
     };
 
     const handleFuelCapacityInputChange = (e) => {
-        setFuelCapacity(e.target.value);
+        const inputValue = parseInt(e.target.value);
+        const minValue = 0;
+        const maxValue = 10000;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Please enter a value greater than or equal to ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Please enter a value less than or equal to ${maxValue}`;
+        }
+        
+        setFuelCapacity({
+            ...fuelCapacity,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        });
     };
 
     const handleSteerTiresInputChange = (e) => {
-        setSteerTires(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setSteerTires(inputValue);
+        }
     };
 
     const handleDriveAxleTiresInputChange = (e) => {
-        setDriveAxleTires(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setDriveAxleTires(inputValue);
+        }
     }; 
     
     const handleDropAxleTiresInputChange = (e) => {
-        setDropAxleTires(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setDropAxleTires(inputValue);
+        }
     };
 
     const handleTrailerTiresInputChange = (e) => {
-        setTrailerTires(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setTrailerTires(inputValue);
+        }
     };
 
     const handleTransmissionInputChange = (e) => {
-        setTransmission(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setTransmission(inputValue);
+        }
     };
 
     const handleEngineInputChange = (e) => {
-        setEngine(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setEngine(inputValue);
+        }
     };
 
     const handleRearEndInputChange = (e) => {
-        setRearEnd(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 50) {
+            setRearEnd(inputValue);
+        }
     };
 
     const handleCurrentMileageInputChange = (e) => {
