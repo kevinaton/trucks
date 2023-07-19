@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
@@ -11,6 +12,8 @@ namespace DispatcherWeb.Trucks
     {
         Task<PagedResultDto<TruckDto>> GetTrucks(GetTrucksInput input);
         Task<PagedResultDto<SelectListDto>> GetTrucksSelectList(GetTrucksSelectListInput input);
+        Task<IList<KeyValuePair<int, string>>> GetBedConstructionSelectList();
+        Task<IList<KeyValuePair<int, string>>> GetFuelTypeSelectList();
         Task<TruckEditDto> GetTruckForEdit(GetTruckForEditInput input);
         Task<EditTruckResult> EditTruck(TruckEditDto model);
         Task<SetTruckIsOutOfServiceResult> SetTruckIsOutOfService(SetTruckIsOutOfServiceInput input);

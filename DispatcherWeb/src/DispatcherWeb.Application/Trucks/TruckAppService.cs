@@ -317,6 +317,21 @@ namespace DispatcherWeb.Trucks
                 .GetSelectListResult(input);
 
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
+        public async Task<IList<KeyValuePair<int, string>>> GetBedConstructionSelectList()
+        {
+            var options = AppServiceExtensions.EnumToIntList<BedConstructionEnum>();
+            return options
+                .OrderBy(x => x.Value)
+                .ToList();
+        }
+        
+        [AbpAuthorize(AppPermissions.Pages_Trucks)]
+        public async Task<IList<KeyValuePair<int, string>>> GetFuelTypeSelectList()
+        {
+            return AppServiceExtensions.EnumToIntList<FuelType>();
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_Trucks)]
         public async Task<TruckEditDto> GetTruckForEdit(GetTruckForEditInput input)
         {
             TruckEditDto truckEditDto;

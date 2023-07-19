@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { styled } from '@mui/material/styles';
 import {
     Box,
     Button,
     Checkbox,
     FormControl,
     FormControlLabel,
-    Grid,
     InputLabel,
     MenuItem,
-    Paper,
     Select,
     Stack,
     Tabs,
     Tab,
     TextField,
-    Typography,
-    FormGroup
+    Typography
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import CloseIcon from '@mui/icons-material/Close';
 import moment from 'moment';
 import { isEmpty } from 'lodash';
-import { getVehicleCategories, getTruckForEdit } from '../../store/actions';
+import { 
+    getVehicleCategories, 
+    getBedConstructionSelectList,
+    getFuelTypeSelectList,
+    getTruckForEdit 
+} from '../../store/actions';
+import { assetType } from '../../common/enums/assetType';
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -69,6 +71,8 @@ const AddTruckForm = ({
     const [value, setValue] = useState(0);
     const [officeOptions, setOfficeOptions] = useState(null);
     const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState(null);
+    const [bedConstructionOptions, setBedConstructionOptions] = useState(null);
+    const [fuelTypeOptions, setFuelTypeOptions] = useState(null);
     const [truckInfo, setTruckInfo] = useState(null);
 
     // general tab
@@ -164,11 +168,15 @@ const AddTruckForm = ({
     const dispatch = useDispatch();
     const { 
         offices,
-        vehicleCategories,
+        vehicleCategories, 
+        bedConstructionSelectList,
+        fuelTypeSelectList,
         truckForEdit
     } = useSelector((state) => ({
         offices: state.OfficeReducer.offices,
-        vehicleCategories: state.TruckReducer.vehicleCategories,
+        vehicleCategories: state.TruckReducer.vehicleCategories, 
+        bedConstructionSelectList: state.TruckReducer.bedConstructionSelectList,
+        fuelTypeSelectList: state.TruckReducer.fuelTypeSelectList,
         truckForEdit: state.TruckReducer.truckForEdit
     }));
 
@@ -183,6 +191,8 @@ const AddTruckForm = ({
 
     useEffect(() => {
         dispatch(getVehicleCategories());
+        dispatch(getBedConstructionSelectList());
+        dispatch(getFuelTypeSelectList());
         dispatch(getTruckForEdit());
     }, []);
 
@@ -194,6 +204,25 @@ const AddTruckForm = ({
             }
         }
     }, [vehicleCategories]);
+
+    useEffect(() => {
+        if (!isEmpty(bedConstructionSelectList) && !isEmpty(bedConstructionSelectList.result)) {
+            const { result } = bedConstructionSelectList;
+            if (!isEmpty(result)) {
+                setBedConstructionOptions(result);
+            }
+        }
+    }, [bedConstructionSelectList]);
+
+    useEffect(() => {
+        if (!isEmpty(fuelTypeSelectList) && !isEmpty(fuelTypeSelectList.result)) {
+            const { result } = fuelTypeSelectList;
+            console.log('result: ', result)
+            if (!isEmpty(result)) {
+                setFuelTypeOptions(result);
+            }
+        }
+    }, [fuelTypeSelectList])
 
     useEffect(() => {
         if (truckInfo === null && !isEmpty(truckForEdit) && !isEmpty(truckForEdit.result)) {
@@ -450,6 +479,7 @@ const AddTruckForm = ({
             <Stack 
                 spacing={2} 
                 sx={{
+                    paddingTop: '8px',
                     maxHeight: '712px',
                     overflowY: 'auto'
                 }}
@@ -877,27 +907,37 @@ const AddTruckForm = ({
     };
 
     const renderMaintenanceForm = () => {
+        console.log('bedConstructionOptions: ', bedConstructionOptions)
         return (
             <Stack 
                 spacing={2} 
                 sx={{
+                    paddingTop: '8px',
                     maxHeight: '712px',
                     overflowY: 'auto'
                 }}
             >
-                <FormControl fullWidth>
-                    <InputLabel id='bedConstruction-label'>Bed Construction</InputLabel>
-                    <Select
-                        labelId='bedConstruction-label'
-                        id='bedConstruction'
-                        label='Bed Construction'
-                        value={bedConstruction} 
-                        defaultValue={truckInfo.bedConstruction} 
-                        onChange={handleBedConstructionInputChange}
-                    >
-                        <MenuItem value=''>Select an option</MenuItem>
-                    </Select>
-                </FormControl>
+                { (truckInfo.vehicleCategoryAssetType === assetType.DUMP_TRUCK || truckInfo.vehicleCategoryAssetType === assetType.TRAILER) && 
+                    <FormControl fullWidth>
+                        <InputLabel id='bedConstruction-label'>Bed Construction</InputLabel>
+                        <Select
+                            labelId='bedConstruction-label'
+                            id='bedConstruction'
+                            label='Bed Construction'
+                            value={bedConstruction} 
+                            defaultValue={truckInfo.bedConstruction} 
+                            onChange={handleBedConstructionInputChange}
+                        >
+                            <MenuItem value=''>Select an option</MenuItem>
+
+                            { bedConstructionOptions && bedConstructionOptions.map((option) => (
+                                <MenuItem key={option.key} value={option.key}>
+                                    {option.value}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                }
 
                 <FormControl fullWidth>
                     <InputLabel id='fuelType-label'>Fuel Type</InputLabel>
@@ -907,9 +947,15 @@ const AddTruckForm = ({
                         label='fuelType'
                         value={fuelType} 
                         defaultValue={truckInfo.fuelType} 
-                        onChange={handleFuelTypeInputChange}
+                        onChange={handleFuelTypeInputChange} 
                     >
                         <MenuItem value=''>Select an option</MenuItem>
+
+                        { fuelTypeOptions && fuelTypeOptions.map((option) => (
+                            <MenuItem key={option.key} value={option.key}>
+                                {option.value}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
 
@@ -1001,6 +1047,7 @@ const AddTruckForm = ({
             <Stack 
                 spacing={2} 
                 sx={{
+                    paddingTop: '8px',
                     maxHeight: '712px',
                     overflowY: 'auto'
                 }}
@@ -1033,6 +1080,7 @@ const AddTruckForm = ({
             <Stack 
                 spacing={2} 
                 sx={{
+                    paddingTop: '8px',
                     maxHeight: '712px',
                     overflowY: 'auto'
                 }}
@@ -1047,6 +1095,7 @@ const AddTruckForm = ({
             <Stack 
                 spacing={2} 
                 sx={{
+                    paddingTop: '8px',
                     maxHeight: '712px',
                     overflowY: 'auto'
                 }}
@@ -1135,14 +1184,14 @@ const AddTruckForm = ({
 
                             <Tab label="Maintenance" {...a11yProps(1)} />
 
-                            {/* { truckInfo.id > 0 && 
+                            { truckInfo.id > 0 && 
                                 <React.Fragment>
                                     <Tab label="Service" {...a11yProps(2)} />
                                     <Tab label="Files" {...a11yProps(3)} />
                                 </React.Fragment>
-                            } */}
+                            }
 
-                            <Tab label="GPS Configuration" {...a11yProps(2)} />
+                            <Tab label="GPS Configuration" {...a11yProps(truckInfo.id > 0 ? 4 : 2)} />
                         </Tabs>
                     </Box>
 
@@ -1154,7 +1203,7 @@ const AddTruckForm = ({
                         {renderMaintenanceForm()}
                     </TabPanel>
 
-                    {/* { truckInfo.id > 0 && 
+                    { truckInfo.id > 0 && 
                         <React.Fragment>
                             <TabPanel value={value} index={2}>
                                 {renderServiceForm()}
@@ -1164,9 +1213,9 @@ const AddTruckForm = ({
                                 {renderFilesForm()}
                             </TabPanel>
                         </React.Fragment>
-                    } */}
+                    }
 
-                    <TabPanel value={value} index={2}>
+                    <TabPanel value={value} index={truckInfo.id > 0 ? 4 : 2}>
                         {renderGPSConfigurationForm()}
                     </TabPanel>
                 </Box>

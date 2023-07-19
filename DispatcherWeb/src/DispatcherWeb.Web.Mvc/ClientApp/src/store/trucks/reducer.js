@@ -1,12 +1,18 @@
 import {
     GET_VEHICLE_CATEGORIES_SUCCESS,
     GET_VEHICLE_CATEGORIES_FAILURE,
+    GET_BED_CONSTRUCTION_SELECT_LIST_SUCCESS,
+    GET_BED_CONSTRUCTION_SELECT_LIST_FAILURE,
+    GET_FUEL_TYPE_SELECT_LIST_SUCCESS,
+    GET_FUEL_TYPE_SELECT_LIST_FAILURE,
     GET_TRUCK_FOR_EDIT_SUCCESS,
     GET_TRUCK_FOR_EDIT_FAILURE,
 } from './actionTypes';
 
 const INIT_STATE = {
     vehicleCategories: null,
+    bedConstructionSelectList: null,
+    fuelTypeSelectList: null,
     truckForEdit: null
 };
 
@@ -18,6 +24,26 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 vehicleCategories: action.payload,
             };
         case GET_VEHICLE_CATEGORIES_FAILURE:
+            return {
+                ...state,
+                error: action.payload,
+            };
+        case GET_BED_CONSTRUCTION_SELECT_LIST_SUCCESS:
+            return {
+                ...state,
+                bedConstructionSelectList: action.payload,
+            };
+        case GET_BED_CONSTRUCTION_SELECT_LIST_FAILURE:
+            return {
+                ...state,
+                error: action.payload,
+            }
+        case GET_FUEL_TYPE_SELECT_LIST_SUCCESS:
+            return {
+                ...state,
+                fuelTypeSelectList: action.payload,
+            };
+        case GET_FUEL_TYPE_SELECT_LIST_FAILURE:
             return {
                 ...state,
                 error: action.payload,
