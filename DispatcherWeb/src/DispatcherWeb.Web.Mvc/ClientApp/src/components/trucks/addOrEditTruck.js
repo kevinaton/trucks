@@ -288,10 +288,13 @@ const AddOrEditTruckForm = ({
         });
     };
 
-    const handleVehicleCategoryIdInputChange = (e) => {
-        e.preventDefault();
+    const handleVehicleCategoryIdInputChange = (selectedOption) => {
+        console.log('selectedOption: ', selectedOption)
+        const { isPowered, assetType } = selectedOption.item;
+        setVehicleCategoryIsPowered(isPowered);
+        setVehicleCategoryAssetType(assetType);
         
-        const inputValue = e.target.value;
+        const inputValue = selectedOption.id;
         setVehicleCategoryId({
             ...vehicleCategoryId,
             value: inputValue,
@@ -616,7 +619,10 @@ const AddOrEditTruckForm = ({
     };
 
     const handleDtdTrackerUniqueIdInputChange = (e) => {
-        setDtdTrackerUniqueId(e.target.value);
+        const inputValue = e.target.value;
+        if (inputValue.length <= 100) {
+            setDtdTrackerUniqueId(inputValue);
+        }
     }; 
 
     const handleDtdTrackerPasswordInputChange = (e) => {
@@ -762,14 +768,17 @@ const AddOrEditTruckForm = ({
                         }
                         value={vehicleCategoryId.value} 
                         defaultValue={truckInfo.vehicleCategoryId}
-                        onChange={handleVehicleCategoryIdInputChange} 
                         error={vehicleCategoryId.error} 
                         helperText={vehicleCategoryId.error ? vehicleCategoryId.errorText : ''} 
                     >
                         <MenuItem value=''>Select an option</MenuItem>
 
                         { vehicleCategoryOptions && vehicleCategoryOptions.map((option) => (
-                            <MenuItem key={option.id} value={option.id}>
+                            <MenuItem 
+                                key={option.id} 
+                                value={option.id}
+                                onClick={() => handleVehicleCategoryIdInputChange(option)}
+                            >
                                 {option.name}
                             </MenuItem>
                         ))}
@@ -777,7 +786,7 @@ const AddOrEditTruckForm = ({
                 </FormControl>
 
                 <FormControl
-                    disabled={Boolean(truckInfo.vehicleCategoryIsPowered)}
+                    disabled={Boolean(vehicleCategoryIsPowered)}
                     fullWidth
                 >
                     <InputLabel id='defaultDriver-label'>Default Driver</InputLabel>
@@ -883,7 +892,7 @@ const AddOrEditTruckForm = ({
                     />
                 }
 
-                { Boolean(truckInfo.vehicleCategoryIsPowered) && 
+                { Boolean(vehicleCategoryIsPowered) && 
                     <React.Fragment>
                         <FormControlLabel 
                             control={
@@ -1338,16 +1347,11 @@ const AddOrEditTruckForm = ({
                         onChange={handleDtdTrackerDeviceTypeIdInputChange}
                     >
                         <MenuItem value=''>Select an option</MenuItem>
+                        { truckInfo.dtdTrackerDeviceTypeId !== null && 
+                            <MenuItem value={truckInfo.dtdTrackerDeviceTypeId}>{truckInfo.dtdTrackerDeviceTypeName}</MenuItem>
+                        }
                     </Select>
                 </FormControl>
-
-                <TextField 
-                    id='dtdTrackerDeviceTypeName' 
-                    name='dtdTrackerDeviceTypeName'
-                    type='hidden' 
-                    value={dtdTrackerDeviceTypeName} 
-                    defaultValue={truckInfo.dtdTrackerDeviceTypeName} 
-                /> 
 
                 <TextField 
                     id='dtdTrackerServerAddress' 
