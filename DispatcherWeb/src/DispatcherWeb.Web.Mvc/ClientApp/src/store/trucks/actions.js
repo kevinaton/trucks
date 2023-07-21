@@ -8,9 +8,15 @@ import {
     GET_FUEL_TYPE_SELECT_LIST,
     GET_FUEL_TYPE_SELECT_LIST_SUCCESS,
     GET_FUEL_TYPE_SELECT_LIST_FAILURE,
+    GET_ACTIVE_TRAILERS_SELECT_LIST,
+    GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
+    GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
     GET_TRUCK_FOR_EDIT,
     GET_TRUCK_FOR_EDIT_SUCCESS,
     GET_TRUCK_FOR_EDIT_FAILURE,
+    GET_WIALON_DEVICE_TYPES_SELECT_LIST,
+    GET_WIALON_DEVICE_TYPES_SELECT_LIST_SUCCESS,
+    GET_WIALON_DEVICE_TYPES_SELECT_LIST_FAILURE,
 } from './actionTypes';
 
 export const getVehicleCategories = () => ({
@@ -55,6 +61,20 @@ export const getFuelTypeSelectListFailure = error => ({
     payload: error,
 });
 
+export const getActiveTrailersSelectList = () => ({
+    type: GET_ACTIVE_TRAILERS_SELECT_LIST,
+});
+
+export const getActiveTrailersSelectListSuccess = activeTrailersSelectList => ({
+    type: GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
+    payload: activeTrailersSelectList,
+});
+
+export const getActiveTrailersSelectListFailure = error => ({
+    type: GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    payload: error,
+});
+
 export const getTruckForEdit = input => ({
     type: GET_TRUCK_FOR_EDIT,
     payload: input,
@@ -67,5 +87,19 @@ export const getTruckForEditSuccess = truckForEdit => ({
 
 export const getTruckForEditFailure = error => ({
     type: GET_TRUCK_FOR_EDIT_FAILURE,
+    payload: error,
+});
+
+export const getWialonDeviceTypesSelectList = () => ({
+    type: GET_WIALON_DEVICE_TYPES_SELECT_LIST,
+});
+
+export const getWialonDeviceTypesSelectListSuccess = wialonDeviceTypesSelectList => ({
+    type: GET_WIALON_DEVICE_TYPES_SELECT_LIST_SUCCESS,
+    payload: wialonDeviceTypesSelectList,
+});
+
+export const getWialonDeviceTypesSelectListFailure = error => ({
+    type: GET_WIALON_DEVICE_TYPES_SELECT_LIST_FAILURE,
     payload: error,
 });

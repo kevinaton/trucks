@@ -45,11 +45,16 @@ export const UPDATE_USER_NOTIFICATION_SETTINGS = '/Notification/UpdateNotificati
 //Offices
 export const GET_OFFICES = '/Office/GetOfficesSelectList';
 
+//Drivers
+export const GET_DRIVERS_SELECT_LIST = '/Driver/GetDriversSelectList';
+
 //Trucks
 export const GET_VEHICLE_CATEGORIES = '/Truck/GetVehicleCategoriesSelectList';
+export const GET_ACTIVE_TRAILERs_SELECT_LIST = '/Truck/GetActiveTrailersSelectList';
 export const GET_BED_CONSTRUCTION_SELECT_LIST = '/Truck/GetBedConstructionSelectList';
 export const GET_FUEL_TYPE_SELECT_LIST = '/Truck/GetFuelTypeSelectList';
 export const GET_TRUCK_FOR_EDIT = '/Truck/GetTruckForEdit';
+export const GET_WIALON_DEVICE_TYPES_SELECT_LIST = '/TruckTelematics/GetWialonDeviceTypesSelectList';
 
 //Scheduling
 export const GET_PAGE_CONFIG = '/Scheduling/GetPageConfig';

@@ -5,6 +5,10 @@ import {
     GET_BED_CONSTRUCTION_SELECT_LIST_FAILURE,
     GET_FUEL_TYPE_SELECT_LIST_SUCCESS,
     GET_FUEL_TYPE_SELECT_LIST_FAILURE,
+    GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
+    GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    GET_WIALON_DEVICE_TYPES_SELECT_LIST_SUCCESS,
+    GET_WIALON_DEVICE_TYPES_SELECT_LIST_FAILURE,
     GET_TRUCK_FOR_EDIT_SUCCESS,
     GET_TRUCK_FOR_EDIT_FAILURE,
 } from './actionTypes';
@@ -13,6 +17,8 @@ const INIT_STATE = {
     vehicleCategories: null,
     bedConstructionSelectList: null,
     fuelTypeSelectList: null,
+    activeTrailersSelectList: null,
+    wialonDeviceTypesSelectList: null,
     truckForEdit: null
 };
 
@@ -44,6 +50,26 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 fuelTypeSelectList: action.payload,
             };
         case GET_FUEL_TYPE_SELECT_LIST_FAILURE:
+            return {
+                ...state,
+                error: action.payload,
+            };
+        case GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS:
+            return {
+                ...state,
+                activeTrailersSelectList: action.payload,  
+            };
+        case GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE:
+            return {
+                ...state,
+                error: action.payload,
+            };
+        case GET_WIALON_DEVICE_TYPES_SELECT_LIST_SUCCESS:
+            return {
+                ...state,
+                wialonDeviceTypesSelectList: action.payload,
+            };
+        case GET_WIALON_DEVICE_TYPES_SELECT_LIST_FAILURE:
             return {
                 ...state,
                 error: action.payload,

@@ -20,11 +20,14 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import CloseIcon from '@mui/icons-material/Close';
 import moment from 'moment';
-import { isEmpty, set } from 'lodash';
+import { isEmpty } from 'lodash';
 import { 
     getVehicleCategories, 
+    getDriversSelectList,
+    getActiveTrailersSelectList,
     getBedConstructionSelectList,
-    getFuelTypeSelectList,
+    getFuelTypeSelectList, 
+    getWialonDeviceTypesSelectList,
     getTruckForEdit 
 } from '../../store/actions';
 import { assetType } from '../../common/enums/assetType';
@@ -71,8 +74,11 @@ const AddOrEditTruckForm = ({
     const [value, setValue] = useState(0);
     const [officeOptions, setOfficeOptions] = useState(null);
     const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState(null);
+    const [defaultDriverOptions, setDefaultDriverOptions] = useState(null);
+    const [activeTrailersOptions, setActiveTrailersOptions] = useState(null);
     const [bedConstructionOptions, setBedConstructionOptions] = useState(null);
     const [fuelTypeOptions, setFuelTypeOptions] = useState(null);
+    const [wialonDeviceTypesOptions, setWialonDeviceTypesOptions] = useState(null);
     const [truckInfo, setTruckInfo] = useState(null);
 
     // general tab
@@ -101,7 +107,8 @@ const AddOrEditTruckForm = ({
         value: truckInfo != null ? truckInfo.defaultDriverId : '',
         required: false,
         error: false,
-        errorText: ''
+        errorText: '',
+        disabled: true
     });
     const [defaultTrailerId, setDefaultTrailerId] = useState(null);
     const [isActive, setIsActive] = useState(true);
@@ -119,6 +126,7 @@ const AddOrEditTruckForm = ({
         errorText: ''
     });
     const [isApportioned, setIsApportioned] = useState(false);
+    const [showCanPullTrailer, setShowCanPullTrailer] = useState(false);
     const [canPullTrailer, setCanPullTrailer] = useState(false);
     const [year, setYear] = useState({
         value: truckInfo != null ? truckInfo.year : '',
@@ -155,6 +163,7 @@ const AddOrEditTruckForm = ({
     const [truxTruckId, setTruxTruckId] = useState('');
 
     // maintenance tab
+    const [showBedConstruction, setShowBedConstruction] = useState(false);
     const [bedConstruction, setBedConstruction] = useState('');
     const [fuelType, setFuelType] = useState('');
     const [fuelCapacity, setFuelCapacity] = useState({
@@ -188,14 +197,20 @@ const AddOrEditTruckForm = ({
     const { 
         offices,
         vehicleCategories, 
+        driversSelectList,
+        activeTrailersSelectList,
         bedConstructionSelectList,
         fuelTypeSelectList,
+        wialonDeviceTypesSelectList,
         truckForEdit
     } = useSelector((state) => ({
         offices: state.OfficeReducer.offices,
         vehicleCategories: state.TruckReducer.vehicleCategories, 
+        driversSelectList: state.DriverReducer.driversSelectList,
+        activeTrailersSelectList: state.TruckReducer.activeTrailersSelectList,
         bedConstructionSelectList: state.TruckReducer.bedConstructionSelectList,
-        fuelTypeSelectList: state.TruckReducer.fuelTypeSelectList,
+        fuelTypeSelectList: state.TruckReducer.fuelTypeSelectList, 
+        wialonDeviceTypesSelectList: state.TruckReducer.wialonDeviceTypesSelectList,
         truckForEdit: state.TruckReducer.truckForEdit
     }));
 
@@ -210,8 +225,10 @@ const AddOrEditTruckForm = ({
 
     useEffect(() => {
         dispatch(getVehicleCategories());
+        dispatch(getDriversSelectList());
         dispatch(getBedConstructionSelectList());
         dispatch(getFuelTypeSelectList());
+        dispatch(getWialonDeviceTypesSelectList());
         dispatch(getTruckForEdit());
     }, []);
 
@@ -223,6 +240,24 @@ const AddOrEditTruckForm = ({
             }
         }
     }, [vehicleCategories]);
+
+    useEffect(() => {
+        if (!isEmpty(driversSelectList) && !isEmpty(driversSelectList.result)) {
+            const { result } = driversSelectList;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setDefaultDriverOptions(result.items);
+            }
+        }
+    }, [driversSelectList]);
+
+    useEffect(() => {
+        if (!isEmpty(activeTrailersSelectList) && !isEmpty(activeTrailersSelectList.result)) {
+            const { result } = activeTrailersSelectList;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setActiveTrailersOptions(result.items);
+            }
+        }
+    }, [activeTrailersSelectList]);
 
     useEffect(() => {
         if (!isEmpty(bedConstructionSelectList) && !isEmpty(bedConstructionSelectList.result)) {
@@ -240,7 +275,16 @@ const AddOrEditTruckForm = ({
                 setFuelTypeOptions(result);
             }
         }
-    }, [fuelTypeSelectList])
+    }, [fuelTypeSelectList]);
+
+    useEffect(() => {
+        if (!isEmpty(wialonDeviceTypesSelectList) && !isEmpty(wialonDeviceTypesSelectList.result)) {
+            const { result } = wialonDeviceTypesSelectList;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setWialonDeviceTypesOptions(result.items);
+            }
+        }
+    }, [wialonDeviceTypesSelectList]);
 
     useEffect(() => {
         if (truckInfo === null && !isEmpty(truckForEdit) && !isEmpty(truckForEdit.result)) {
@@ -249,13 +293,28 @@ const AddOrEditTruckForm = ({
                 setTruckInfo(result);
                 setId(result.id);
                 setVehicleCategoryAssetType(result.vehicleCategoryAssetType);
+                setShowCanPullTrailer(Boolean(result.canPullTrailer));
 
-                if (result.vehicleCategoryIsPowered !== null) {
-                    setVehicleCategoryIsPowered(result.vehicleCategoryIsPowered.toLowerCase());
+                if (result.vehicleCategoryAssetType === assetType.DUMP_TRUCK || result.vehicleCategoryAssetType === assetType.TRAILER) {
+                    showBedConstruction(true);
                 }
+                
+                let shouldDisableDefaultDriver;
+                if (result.vehicleCategoryIsPowered !== null) {
+                    const isPowered = Boolean(result.vehicleCategoryIsPowered.toLowerCase());
+                    setVehicleCategoryIsPowered(isPowered);
+                    shouldDisableDefaultDriver = !isPowered;
+                } else {
+                    shouldDisableDefaultDriver = true;
+                }
+
+                setDefaultDriverId({
+                    ...defaultDriverId,
+                    disabled: shouldDisableDefaultDriver
+                })
             }
         }
-    }, [truckInfo, truckForEdit]);
+    }, [truckInfo, truckForEdit, defaultDriverId, showBedConstruction]);
 
     // handle change tab
     const handleChange = (event, newValue) => {
@@ -289,10 +348,23 @@ const AddOrEditTruckForm = ({
     };
 
     const handleVehicleCategoryIdInputChange = (selectedOption) => {
-        console.log('selectedOption: ', selectedOption)
         const { isPowered, assetType } = selectedOption.item;
         setVehicleCategoryIsPowered(isPowered);
         setVehicleCategoryAssetType(assetType);
+
+        if ([assetType.DUMP_TRUCK, assetType.TRAILER].includes(assetType)) {
+            setBedConstruction(true);
+        }
+
+        if (isPowered) {
+            setShowCanPullTrailer(true);
+            setCanPullTrailer(assetType === assetType.TRACTOR);
+        } else {
+            setDefaultDriverId({
+                ...defaultDriverId,
+                disabled: true
+            })
+        }
         
         const inputValue = selectedOption.id;
         setVehicleCategoryId({
@@ -361,6 +433,9 @@ const AddOrEditTruckForm = ({
     };
 
     const handleCanPullTrailerChange = (e) => {
+        if (e.target.checked && activeTrailersOptions === null) {
+            dispatch(getActiveTrailersSelectList());
+        }
         setCanPullTrailer(e.target.checked);
     };
 
@@ -614,8 +689,10 @@ const AddOrEditTruckForm = ({
         setCurrentHours(e.target.value);
     }; 
 
-    const handleDtdTrackerDeviceTypeIdInputChange = (e) => {
-        setDtdTrackerDeviceTypeId(e.target.value);
+    const handleDtdTrackerDeviceTypeIdInputChange = (selectedOption) => {
+        const { serverAddress } = selectedOption.item;
+        setDtdTrackerDeviceTypeId(selectedOption.id);
+        setDtdTrackerServerAddress(serverAddress);
     };
 
     const handleDtdTrackerUniqueIdInputChange = (e) => {
@@ -786,7 +863,7 @@ const AddOrEditTruckForm = ({
                 </FormControl>
 
                 <FormControl
-                    disabled={Boolean(vehicleCategoryIsPowered)}
+                    disabled={defaultDriverId.disabled}
                     fullWidth
                 >
                     <InputLabel id='defaultDriver-label'>Default Driver</InputLabel>
@@ -805,10 +882,16 @@ const AddOrEditTruckForm = ({
                                 {truckInfo.defaultDriverName}
                             </MenuItem>
                         }
+
+                        { defaultDriverOptions && defaultDriverOptions.map((option) => (
+                            <MenuItem key={option.id} value={option.id}>
+                                {option.name}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
 
-                { Boolean(truckInfo.canPullTrailer) && 
+                { showCanPullTrailer && 
                     <FormControl fullWidth>
                         <InputLabel id='defaultTrailer-label'>Default Trailer</InputLabel>
                         <Select
@@ -826,6 +909,12 @@ const AddOrEditTruckForm = ({
                                     {truckInfo.defaultTrailerCode}
                                 </MenuItem>
                             }
+
+                            { activeTrailersOptions && activeTrailersOptions.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>
+                                    {option.name}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 }
@@ -1153,7 +1242,7 @@ const AddOrEditTruckForm = ({
                     overflowY: 'auto'
                 }}
             >
-                { (truckInfo.vehicleCategoryAssetType === assetType.DUMP_TRUCK || truckInfo.vehicleCategoryAssetType === assetType.TRAILER) && 
+                { showBedConstruction && 
                     <FormControl fullWidth>
                         <InputLabel id='bedConstruction-label'>Bed Construction</InputLabel>
                         <Select
@@ -1200,7 +1289,7 @@ const AddOrEditTruckForm = ({
                     name='fuelCapacity'
                     type='text'
                     label='Fuel Capacity'
-                    value={fuelCapacity}
+                    value={fuelCapacity.value}
                     defaultValue={truckInfo.fuelCapacity} 
                     onChange={handleFuelCapacityInputChange}
                 />
@@ -1344,12 +1433,24 @@ const AddOrEditTruckForm = ({
                         label='dtdTrackerDeviceTypeId'
                         value={dtdTrackerDeviceTypeId} 
                         defaultValue={truckInfo.dtdTrackerDeviceTypeId} 
-                        onChange={handleDtdTrackerDeviceTypeIdInputChange}
                     >
                         <MenuItem value=''>Select an option</MenuItem>
+
                         { truckInfo.dtdTrackerDeviceTypeId !== null && 
-                            <MenuItem value={truckInfo.dtdTrackerDeviceTypeId}>{truckInfo.dtdTrackerDeviceTypeName}</MenuItem>
+                            <MenuItem value={truckInfo.dtdTrackerDeviceTypeId}>
+                                {truckInfo.dtdTrackerDeviceTypeName}
+                            </MenuItem>
                         }
+                        
+                        { wialonDeviceTypesOptions && wialonDeviceTypesOptions.map((option) => (
+                            <MenuItem 
+                                key={option.id}
+                                value={option.id} 
+                                onClick={() => handleDtdTrackerDeviceTypeIdInputChange(option)}
+                            >
+                                {option.name}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </FormControl>
 
