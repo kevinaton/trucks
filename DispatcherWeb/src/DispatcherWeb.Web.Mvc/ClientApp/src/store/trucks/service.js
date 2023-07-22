@@ -1,4 +1,4 @@
-import { get } from '../../helpers/api_helper';
+import { get, post } from '../../helpers/api_helper';
 import * as url from '../../helpers/api_url_helper';
 
 // get vehicle categories
@@ -18,3 +18,6 @@ export const getTruckForEdit = () => get(url.GET_TRUCK_FOR_EDIT);
 
 // get wialon device types select list
 export const getWialonDeviceTypesSelectList = () => get(`${url.GET_WIALON_DEVICE_TYPES_SELECT_LIST}?maxResultCount=1000&skipCount=0`);
+
+// edit truck
+export const editTruck = (truck) => post(url.EDIT_TRUCK, truck);

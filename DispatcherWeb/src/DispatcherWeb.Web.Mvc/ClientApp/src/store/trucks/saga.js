@@ -5,7 +5,8 @@ import {
     GET_FUEL_TYPE_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST,
     GET_WIALON_DEVICE_TYPES_SELECT_LIST,
-    GET_TRUCK_FOR_EDIT 
+    GET_TRUCK_FOR_EDIT,
+    EDIT_TRUCK,
 } from './actionTypes';
 import { 
     getVehicleCategoriesSuccess, 
@@ -20,6 +21,8 @@ import {
     getWialonDeviceTypesSelectListFailure,
     getTruckForEditSuccess,
     getTruckForEditFailure,
+    editTruckSuccess,
+    editTruckFailure,
 } from './actions';
 import { 
     getVehicleCategories, 
@@ -27,7 +30,8 @@ import {
     getFuelTypeSelectList,
     getActiveTrailersSelectList,
     getWialonDeviceTypesSelectList,
-    getTruckForEdit 
+    getTruckForEdit,
+    editTruck,
 } from './service';
 
 function* fetchVehicleCategories() {
@@ -84,6 +88,15 @@ function* fetchTruckForEdit(action) {
     }
 };
 
+function* onEditTruck({ payload: truck }) {
+    try {
+        const response = yield call(editTruck, truck);
+        yield put(editTruckSuccess(response, truck));
+    } catch (error) {
+        yield put(editTruckFailure(error));
+    }
+}
+
 function* trucksSaga() {
     yield takeEvery(GET_VEHICLE_CATEGORIES, fetchVehicleCategories);
     yield takeEvery(GET_BED_CONSTRUCTION_SELECT_LIST, fetchBedConstructionSelectList);
@@ -91,6 +104,7 @@ function* trucksSaga() {
     yield takeEvery(GET_ACTIVE_TRAILERS_SELECT_LIST, fetchActiveTrailersSelectList);
     yield takeEvery(GET_WIALON_DEVICE_TYPES_SELECT_LIST, fetchWialonDeviceTypesSelectList);
     yield takeEvery(GET_TRUCK_FOR_EDIT, fetchTruckForEdit);
+    yield takeEvery(EDIT_TRUCK, onEditTruck);
 }
 
 export default trucksSaga;

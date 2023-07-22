@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import {
     GET_VEHICLE_CATEGORIES_SUCCESS,
     GET_VEHICLE_CATEGORIES_FAILURE,
@@ -11,6 +12,8 @@ import {
     GET_WIALON_DEVICE_TYPES_SELECT_LIST_FAILURE,
     GET_TRUCK_FOR_EDIT_SUCCESS,
     GET_TRUCK_FOR_EDIT_FAILURE,
+    EDIT_TRUCK_SUCCESS,
+    EDIT_TRUCK_FAILURE,
 } from './actionTypes';
 
 const INIT_STATE = {
@@ -19,7 +22,8 @@ const INIT_STATE = {
     fuelTypeSelectList: null,
     activeTrailersSelectList: null,
     wialonDeviceTypesSelectList: null,
-    truckForEdit: null
+    truckForEdit: null,
+    editSuccess: null
 };
 
 const TruckReducer = (state = INIT_STATE, action) => {
@@ -84,6 +88,28 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 ...state,
                 error: action.payload,
             };
+        case EDIT_TRUCK_SUCCESS: {
+            const { response, data } = action.payload;
+            if (!isEmpty(response) && response.success && 
+                !isEmpty(data)
+            ) {
+                let newData = data;
+                const { result } = response;
+                newData.id = result.id;
+
+                console.log('newData: ', newData);
+
+                return {
+                    ...state,
+                    editSuccess: true
+                };
+            }
+
+            return {
+                ...state,
+                editSuccess: false
+            };
+        }
         default:
             return state;
     }

@@ -28,7 +28,8 @@ import {
     getBedConstructionSelectList,
     getFuelTypeSelectList, 
     getWialonDeviceTypesSelectList,
-    getTruckForEdit 
+    getTruckForEdit,
+    editTruck as onEditTruck
 } from '../../store/actions';
 import { assetType } from '../../common/enums/assetType';
 
@@ -113,7 +114,7 @@ const AddOrEditTruckForm = ({
     const [defaultTrailerId, setDefaultTrailerId] = useState(null);
     const [isActive, setIsActive] = useState(true);
     const [inactivationDate, setInactivationDate] = useState({
-        value: today,
+        value: null,
         required: !isActive ? true : false,
         error: false,
         errorText: ''
@@ -143,7 +144,7 @@ const AddOrEditTruckForm = ({
     });
     const [vin, setVin] = useState('');
     const [plate, setPlate] = useState('');
-    const [plateExpiration, setPlateExpiration] = useState(today);
+    const [plateExpiration, setPlateExpiration] = useState(null);
     const [cargoCapacity, setCargoCapacity] = useState({
         value: truckInfo != null ? truckInfo.cargoCapacity : '',
         error: false,
@@ -155,10 +156,10 @@ const AddOrEditTruckForm = ({
         errorText: ''
     });
     const [insurancePolicyNumber, setInsurancePolicyNumber] = useState('');
-    const [insuranceValidUntil, setInsuranceValidUntil] = useState(today);
-    const [purchaseDate, setPurchaseDate] = useState(today);
+    const [insuranceValidUntil, setInsuranceValidUntil] = useState(null);
+    const [purchaseDate, setPurchaseDate] = useState(null);
     const [purchasePrice, setPurchasePrice] = useState('');
-    const [soldDate, setSoldDate] = useState(today);
+    const [soldDate, setSoldDate] = useState(null);
     const [soldPrice, setSoldPrice] = useState('');
     const [truxTruckId, setTruxTruckId] = useState('');
 
@@ -265,6 +266,8 @@ const AddOrEditTruckForm = ({
             const { result } = bedConstructionSelectList;
             if (!isEmpty(result)) {
                 setBedConstructionOptions(result);
+                // set default
+                setBedConstruction(result[0].key)
             }
         }
     }, [bedConstructionSelectList]);
@@ -740,38 +743,59 @@ const AddOrEditTruckForm = ({
         }
 
         var data = {
-            id,
-            vehicleCategoryIsPowered,
-            vehicleCategoryAssetType,
+            id: id ?? '',
+            vehicleCategoryIsPowered: vehicleCategoryIsPowered.toString(),
+            vehicleCategoryAssetType: vehicleCategoryAssetType.toString(),
             truckCode: truckCode.value,
             officeId: officeId.value,
             vehicleCategoryId: vehicleCategoryId.value,
             defaultDriverId: defaultDriverId.value,
-            defaultTrailerId: defaultTrailerId,
-            isActive,
-            inactivationDate: moment(inactivationDate.value).format('MM/DD/YYYY'),
-            isOutOfService,
+            defaultTrailerId: defaultTrailerId ?? '',
+            isActive: isActive.toString(),
+            inactivationDate: inactivationDate.value !== null ? moment(inactivationDate.value).format('MM/DD/YYYY') : '',
+            isOutOfService: isOutOfService.toString(),
             reason: reason.value,
-            isApportioned,
-            canPullTrailer,
-            year: year.value,
+            isApportioned: isApportioned.toString(),
+            year: year.value.toString(),
             make,
             model,
             inServiceDate: moment(inServiceDate.value).format('MM/DD/YYYY'),
             vin,
             plate,
-            plateExpiration: moment(plateExpiration).format('MM/DD/YYYY'),
+            plateExpiration: plateExpiration !== null ? moment(plateExpiration).format('MM/DD/YYYY') : '',
             cargoCapacity: cargoCapacity.value,
             cargoCapacityCyds: cargoCapacityCyds.value,
             insurancePolicyNumber,
-            insuranceValidUntil: moment(insuranceValidUntil).format('MM/DD/YYYY'),
-            purchaseDate: moment(purchaseDate).format('MM/DD/YYYY'),
+            insuranceValidUntil: insuranceValidUntil !== null ? moment(insuranceValidUntil).format('MM/DD/YYYY') : '',
+            purchaseDate: purchaseDate !== null ? moment(purchaseDate).format('MM/DD/YYYY') : '',
             purchasePrice,
-            soldDate: moment(soldDate).format('MM/DD/YYYY'),
+            soldDate: soldDate !== null ? moment(soldDate).format('MM/DD/YYYY') : '',
             soldPrice,
             truxTruckId,
+            bedConstruction: bedConstruction.toString(),
+            fuelType: fuelType.toString(),
+            fuelCapacity: fuelCapacity.value,
+            steerTires,
+            driveAxleTires,
+            dropAxleTires,
+            trailerTires,
+            transmission,
+            engine,
+            rearEnd,
+            dtdTrackerDeviceTypeId: dtdTrackerDeviceTypeId ?? '',
+            dtdTrackerDeviceTypeName,
+            dtdTrackerServerAddress,
+            dtdTrackerUniqueId,
+            dtdTrackerPassword,
+            files
         };
+
+        if (canPullTrailer) {
+            data.canPullTrailer = canPullTrailer;
+        }
+
         console.log('data: ', data)
+        dispatch(onEditTruck(data));
     };
 
     const renderGeneralForm = () => {
@@ -880,7 +904,7 @@ const AddOrEditTruckForm = ({
                         <MenuItem value=''>Select an option</MenuItem>
 
                         { truckInfo.defaultDriverId !== null && 
-                            <MenuItem value={truckInfo.defaultDriverId}>
+                            <MenuItem key={truckInfo.defaultDriverId} value={truckInfo.defaultDriverId}>
                                 {truckInfo.defaultDriverName}
                             </MenuItem>
                         }
@@ -948,7 +972,7 @@ const AddOrEditTruckForm = ({
                                 </>
                             } 
                             value={inactivationDate.value} 
-                            defaultValue={truckInfo.inactivationDate !== null ? moment(truckInfo.inactivationDate) : moment()}
+                            emptyLabel='' 
                             onChange={handleInactivationDateChange} 
                             error={inactivationDate.error}
                             helperText={inactivationDate.error ? inactivationDate.errorText : ''} 
@@ -1066,7 +1090,7 @@ const AddOrEditTruckForm = ({
                             </>
                         } 
                         value={inServiceDate.value} 
-                        defaultValue={truckInfo.inServiceDate !== null ? moment(truckInfo.inServiceDate) : moment()} 
+                        emptyLabel=''
                         onChange={handleInServiceDateChange} 
                         error={inServiceDate.error}
                         helperText={inServiceDate.error ? inServiceDate.errorText : ''} 
@@ -1107,7 +1131,7 @@ const AddOrEditTruckForm = ({
                         name='plateExpiration'
                         label='Plate Expiration'
                         value={plateExpiration} 
-                        defaultValue={truckInfo.plateExpiration !== null ? moment(truckInfo.plateExpiration) : moment()}
+                        emptyLabel=''
                         onChange={handlePlateExpirationChange} 
                         sx={{ flexShrink: 0 }} 
                         fullWidth
@@ -1161,7 +1185,7 @@ const AddOrEditTruckForm = ({
                         name='insuranceValidUntil'
                         label='Insurance Valid Until'
                         value={insuranceValidUntil} 
-                        defaultValue={truckInfo.insuranceValidUntil !== null ? moment(truckInfo.insuranceValidUntil) : moment()}
+                        emptyLabel=''
                         onChange={handleInsuranceValidUntilChange} 
                         sx={{ flexShrink: 0 }} 
                         fullWidth
@@ -1178,7 +1202,7 @@ const AddOrEditTruckForm = ({
                         name='purchaseDate'
                         label='Purchase Date'
                         value={purchaseDate} 
-                        defaultValue={truckInfo.purchaseDate !== null ? moment(truckInfo.purchaseDate) : moment()}
+                        emptyLabel=''
                         onChange={handlePurchaseDateChange} 
                         sx={{ flexShrink: 0 }} 
                         fullWidth
@@ -1206,7 +1230,7 @@ const AddOrEditTruckForm = ({
                         name='soldDate'
                         label='Sold Date'
                         value={soldDate} 
-                        defaultValue={truckInfo.soldDate !== null ? moment(truckInfo.soldDate) : moment()}
+                        emptyLabel=''
                         onChange={handleSoldDateChange} 
                         sx={{ flexShrink: 0 }} 
                         fullWidth

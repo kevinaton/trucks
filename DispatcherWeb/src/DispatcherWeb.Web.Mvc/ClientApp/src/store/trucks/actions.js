@@ -17,6 +17,9 @@ import {
     GET_WIALON_DEVICE_TYPES_SELECT_LIST,
     GET_WIALON_DEVICE_TYPES_SELECT_LIST_SUCCESS,
     GET_WIALON_DEVICE_TYPES_SELECT_LIST_FAILURE,
+    EDIT_TRUCK,
+    EDIT_TRUCK_SUCCESS,
+    EDIT_TRUCK_FAILURE,
 } from './actionTypes';
 
 export const getVehicleCategories = () => ({
@@ -101,5 +104,23 @@ export const getWialonDeviceTypesSelectListSuccess = wialonDeviceTypesSelectList
 
 export const getWialonDeviceTypesSelectListFailure = error => ({
     type: GET_WIALON_DEVICE_TYPES_SELECT_LIST_FAILURE,
+    payload: error,
+});
+
+export const editTruck = truck => ({
+    type: EDIT_TRUCK,
+    payload: truck
+});
+
+export const editTruckSuccess = (response, truck) => ({
+    type: EDIT_TRUCK_SUCCESS,
+    payload: {
+        response,
+        data: truck
+    },
+});
+
+export const editTruckFailure = error => ({
+    type: EDIT_TRUCK_FAILURE,
     payload: error,
 });
