@@ -185,6 +185,7 @@ const AddOrEditTruckForm = ({
 
     // files tab
     const [file, setFile] = useState(null);
+    const [files, setFiles] = useState([]);
 
     // gps configuration tab
     const [dtdTrackerDeviceTypeId, setDtdTrackerDeviceTypeId] = useState(null);
@@ -775,6 +776,7 @@ const AddOrEditTruckForm = ({
 
     const renderGeneralForm = () => {
         const { features } = pageConfig;
+        console.log('defaultDriverId.disabled: ', defaultDriverId.disabled)
         return (
             <Stack 
                 spacing={2} 
@@ -891,7 +893,7 @@ const AddOrEditTruckForm = ({
                     </Select>
                 </FormControl>
 
-                { showCanPullTrailer && 
+                { canPullTrailer !== null && canPullTrailer && 
                     <FormControl fullWidth>
                         <InputLabel id='defaultTrailer-label'>Default Trailer</InputLabel>
                         <Select
@@ -970,12 +972,18 @@ const AddOrEditTruckForm = ({
                 { isOutOfService && 
                     <TextField
                         id="reason"
-                        label="Reason" 
+                        label={
+                            <>
+                                Reason {truckCode.required && <span style={{ marginLeft: '5px', color: 'red' }}>*</span>}
+                            </>
+                        }
                         value={reason.value} 
                         defaultValue={truckInfo.reason}
                         onChange={handleReasonInputChange} 
                         multiline
                         rows={2} 
+                        error={reason.error} 
+                        helperText={reason.error ? reason.errorText : ''} 
                         fullWidth 
                         maxLength={500}
                     />
