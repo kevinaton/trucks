@@ -40,6 +40,10 @@ namespace DispatcherWeb.Trucks
         [StringLength(MaxTruckCodeLength)]
         public string TruckCode { get; set; }
 
+        [Required(ErrorMessage = "License Plate is a required field")]
+        [StringLength(EntityStringFieldLengths.Truck.Plate)]
+        public string LicensePlate { get; set; }
+
         public int? LocationId { get; set; }
 
         [Obsolete]
