@@ -4,7 +4,7 @@ namespace DispatcherWeb.Scheduling.Dto
 {
     public class GetTrucksForOrderLineInput : IGetScheduleInput
     {
-        public int OfficeId { get; set; }
+        public int? OfficeId { get; set; }
         public DateTime Date { get; set; }
         public Shift? Shift { get; set; }
         public int OrderLineId { get; set; }

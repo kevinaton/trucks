@@ -496,7 +496,10 @@ namespace DispatcherWeb.DriverAssignments
         [AbpAuthorize(AppPermissions.Pages_DriverAssignment)]
         public async Task<byte[]> GetDriverAssignmentReport(GetDriverAssignmentsInput input)
         {
-            var officeName = await _officeRepository.GetAll().Where(x => x.Id == input.OfficeId).Select(x => x.Name).FirstAsync();
+            var officeName = await _officeRepository.GetAll()
+                                            .Where(x => !input.OfficeId.HasValue || (input.OfficeId.HasValue && x.Id == input.OfficeId))
+                                            .Select(x => x.Name)
+                                            .FirstAsync();
 
             Shift? shift = input.Shift == Shift.NoShift ? null : input.Shift;
             var items = await _driverAssignmentRepository.GetAll(input.Date, shift, input.OfficeId)

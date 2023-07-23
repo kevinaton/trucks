@@ -240,7 +240,7 @@
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
-            allowClear: false
+            allowClear: true
         });
         abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
         $('#ShiftFilter').select2Init({ allowClear: false });
@@ -1559,6 +1559,7 @@
                         let askToAssignDriverAndAddTagAgain = async function (tag, eventOptions) {
                             eventOptions = eventOptions || {};
                             var filterData = _dtHelper.getFilterData();
+                            filterData.officeId = filterData.officeId.length === 0 ? null : parseInt(filterData.officeId);
                             var assignDriverResult = await app.getModalResultAsync(
                                 _assignDriverForTruckModal.open({
                                     message: 'There was no driver assigned to this truck. Please select a driver.',
@@ -2740,7 +2741,7 @@
                                 trailerVehicleCategoryId: item.trailer && item.trailer.vehicleCategory.id || null
                             })
                         );
-                        
+
                         if (order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(trailer.vehicleCategory.id)) {
                             abp.message.error(app.localize("CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError"));
                             return;
@@ -2844,6 +2845,7 @@
                     callback: function () {
                         var truck = $(this).data('truck');
                         var filterData = _dtHelper.getFilterData();
+                        filterData.officeId = filterData.officeId.length === 0 ? null : parseInt(filterData.officeId);
                         _assignDriverForTruckModal.open({
                             truckId: truck.id,
                             truckCode: truck.truckCode,
@@ -2984,7 +2986,7 @@
                             truckId: truck.id,
                             truckCode: truck.truckCode
                         });
-                        
+
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
                             trailerId: null,
@@ -3054,7 +3056,7 @@
                         var truck = $(this).data('truck');
                         return !truck.isExternal && !truck.alwaysShowOnSchedule
                             && (_features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService
-                            || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
+                                || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
                     }
                 },
                 addSharedTruck: {

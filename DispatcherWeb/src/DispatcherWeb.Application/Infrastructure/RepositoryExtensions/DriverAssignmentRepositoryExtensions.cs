@@ -11,11 +11,12 @@ namespace DispatcherWeb.Infrastructure.RepositoryExtensions
             this IRepository<DriverAssignment> driverAssignmentRepository,
             DateTime date,
             Shift? shift,
-            int officeId
+            int? officeId
         )
         {
             return driverAssignmentRepository.GetAll()
-                .Where(da => da.Date == date && da.Shift == shift && da.OfficeId == officeId);
+                .Where(da => da.Date == date && da.Shift == shift &&
+                            (!officeId.HasValue || (officeId.HasValue && da.OfficeId == officeId)));
         }
     }
 }
