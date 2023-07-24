@@ -126,6 +126,7 @@ namespace DispatcherWeb.Trucks
                     OfficeName = x.Office.Name,
                     VehicleCategoryName = x.VehicleCategory.Name,
                     DefaultDriverName = x.DefaultDriver != null ? x.DefaultDriver.LastName + ", " + x.DefaultDriver.FirstName : "",
+                    YearMakeModel = $"{x.Year} {x.Make} {x.Model}",
                     IsActive = x.IsActive,
                     IsOutOfService = x.IsOutOfService,
                     CurrentMileage = x.CurrentMileage,
