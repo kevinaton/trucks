@@ -10,7 +10,7 @@
     var _isFilterReady = false;
     var _isGridInitialized = false;
 
-    var _isCustomerPortalEnabled = !abp.auth.hasPermission('Pages.Tickets.View')
+    var _isCustomerPortalUser = !abp.auth.hasPermission('Pages.Tickets.View')
         && abp.auth.hasPermission('CustomerPortal.TicketList')
         && abp.session.customerId;
 
@@ -42,7 +42,7 @@
             };
         }
 
-        if (_isCustomerPortalEnabled) {
+        if (_isCustomerPortalUser) {
             cachedFilter.customerId = abp.session.customerId;
             cachedFilter.customerName = abp.session.customerName;
             $("#CustomerFilter").prop("disabled", true);
@@ -404,7 +404,7 @@
             {
                 data: "revenue",
                 title: "Revenue",
-                visible: !_isCustomerPortalEnabled
+                visible: !_isCustomerPortalUser
             },
             {
                 data: "isBilled",
@@ -652,6 +652,9 @@
         $("#OrderDateRangeBeginInput").val('');
         $("#OrderDateRangeEndInput").val('');
         $('#OfficeIdFilter').val('').trigger("change");
+        if (_isCustomerPortalUser) {
+            abp.helper.ui.addAndSetDropdownValue($("#CustomerFilter"), abp.session.customerId, abp.session.customerName);
+        }
         _selectedRowIds = [];
         reloadMainGrid();
     });
