@@ -42,7 +42,7 @@
         </div>
         @if (await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal))
         {
-            <div class="m-form__group form-group" id="HasCustomerPortalAccessContainer" style="visibility:@((string.IsNullOrEmpty(Model.Email) ? "hidden" : "visible"))">
+            <div class="m-form__group form-group" id="HasCustomerPortalAccessContainer" @Html.StyleDisplayNone(string.IsNullOrEmpty(Model.Email))>
                 <label class="m-checkbox">
                     <input id="HasCustomerPortalAccess" type="checkbox" name="HasCustomerPortalAccess" value="true" checked="@(Model.HasCustomerPortalAccess ? "checked" : null)">
                     @L("HasCustomerPortalAccess")

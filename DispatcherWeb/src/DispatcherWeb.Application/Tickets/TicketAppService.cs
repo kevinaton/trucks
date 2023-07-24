@@ -10,7 +10,6 @@ using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
-using Abp.Runtime.Session;
 using Abp.UI;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Common.Dto;
@@ -28,6 +27,7 @@ using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Services;
 using DispatcherWeb.Services.Dto;
+using DispatcherWeb.Sessions;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Tickets.Dto;
 using DispatcherWeb.Tickets.Exporting;
@@ -933,21 +933,26 @@ namespace DispatcherWeb.Tickets
             await _ticketRepository.UpdateAsync(ticket);
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
+        [AbpAuthorize(AppPermissions.Pages_Tickets_View, AppPermissions.CustomerPortal_TicketList)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
-            var customerPortalFeaturePermitted = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_CustomerPortal_TicketsList);
-            if (customerPortalFeaturePermitted && 
-                (Session.CustomerPortalAccessEnabled ?? false))
+            var permissions = new
             {
-                if (!Session.CustomerId.HasValue)
-                {
-                    throw new UserFriendlyException(L("CustomerPortalAccessDenied"));
-                }
-                else
-                {
-                    input.CustomerId = Session.CustomerId;
-                }
+                ViewAnyTickets = await IsGrantedAsync(AppPermissions.Pages_Tickets_View),
+                ViewCustomerTicketsOnly = await IsGrantedAsync(AppPermissions.CustomerPortal_TicketList),
+            };
+
+            if (permissions.ViewAnyTickets)
+            {
+                //do not additionally filter the data
+            }
+            else if (permissions.ViewCustomerTicketsOnly)
+            {
+                input.CustomerId = Session.GetCustomerIdOrThrow(this);
+            }
+            else
+            {
+                throw new AbpAuthorizationException();
             }
 
             var query = GetTicketListQuery(input, await GetTimezone());
@@ -967,6 +972,14 @@ namespace DispatcherWeb.Tickets
             {
                 OrderTaxCalculator.CalculateSingleOrderLineTotals(taxCalculationType, x, x.SalesTaxRate ?? 0);
             });
+
+            if (!permissions.ViewAnyTickets && permissions.ViewCustomerTicketsOnly)
+            {
+                items.ForEach(x =>
+                {
+                    x.Revenue = 0; //revenue is hidden from customer portal users.
+                });
+            }
 
             return new PagedResultDto<TicketListViewDto>(
                 totalCount,

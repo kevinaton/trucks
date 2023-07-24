@@ -11,6 +11,7 @@ using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Exceptions;
+using DispatcherWeb.Localization;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Runtime.Session;
 using DispatcherWeb.Sessions;
@@ -22,13 +23,15 @@ namespace DispatcherWeb
     /// <summary>
     /// Derive your application services from this class.
     /// </summary>
-    public abstract class DispatcherWebAppServiceBase : ApplicationService
+    public abstract class DispatcherWebAppServiceBase : ApplicationService, ILocalizationHelperProvider
     {
         public TenantManager TenantManager { get; set; }
 
         public UserManager UserManager { get; set; }
 
         public AspNetZeroAbpSession Session { get; set; }
+
+        public LocalizationHelper LocalizationHelper { get; set; }
 
         protected DispatcherWebAppServiceBase()
         {
@@ -89,8 +92,6 @@ namespace DispatcherWeb
         }
 
         protected int OfficeId => Session.GetOfficeIdOrThrow();
-        
-        protected int CustomerId => Session.GetCustomerIdOrThrow();
 
         protected async Task SaveOrThrowConcurrencyErrorAsync()
         {

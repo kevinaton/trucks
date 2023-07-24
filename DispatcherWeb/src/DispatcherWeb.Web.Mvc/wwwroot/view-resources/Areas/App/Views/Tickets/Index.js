@@ -10,10 +10,9 @@
     var _isFilterReady = false;
     var _isGridInitialized = false;
 
-    var _customerPortalEnabled = () =>
-        abp.features.getValue('App.CustomerPortalFeature') === "true" &&
-        abp.auth.hasPermission('Pages.CustomerPortal.TicketsList') &&
-        abp.session.customerPortalAccessEnabled;
+    var _isCustomerPortalEnabled = !abp.autth.hasPermission('Pages.Tickets.View')
+        && abp.auth.hasPermission('CustomerPortal.TicketList')
+        && abp.session.customerId;
 
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -43,7 +42,7 @@
             };
         }
 
-        if (_customerPortalEnabled()) {
+        if (_isCustomerPortalEnabled) {
             cachedFilter.customerId = abp.session.customerId;
             cachedFilter.customerName = abp.session.customerName;
             $("#CustomerFilter").prop("disabled", true);
@@ -279,9 +278,6 @@
             var abpData = _dtHelper.toAbpData(data);
             _lastAbpData = $.extend({}, abpData);
             var filterData = _dtHelper.getFilterData();
-            if (_customerPortalEnabled()) {
-                filterData.customerId = abp.session.customerId;
-            }
             app.localStorage.setItem('tickets_filter', filterData);
             $.extend(abpData, filterData);
             _ticketService.ticketListView(abpData).done(function (abpResult) {
@@ -408,7 +404,7 @@
             {
                 data: "revenue",
                 title: "Revenue",
-                visible: !_customerPortalEnabled()
+                visible: !_isCustomerPortalEnabled
             },
             {
                 data: "isBilled",

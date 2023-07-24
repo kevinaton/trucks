@@ -180,8 +180,10 @@
 
         public const string Pages_Administration_Tenant_SubscriptionManagement = "Pages.Administration.Tenant.SubscriptionManagement";
 
-        public const string Pages_CustomerPortal = "Pages.CustomerPortal";
-        public const string Pages_CustomerPortal_TicketsList = "Pages.CustomerPortal.TicketsList";
+        //Customer Portal Specific Permissions
+
+        public const string CustomerPortal = "CustomerPortal";
+        public const string CustomerPortal_TicketList = "CustomerPortal.TicketList";
 
         //HOST-SPECIFIC PERMISSIONS
 

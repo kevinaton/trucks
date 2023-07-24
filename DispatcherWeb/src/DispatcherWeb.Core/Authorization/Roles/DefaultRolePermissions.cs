@@ -169,6 +169,23 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
 
+                // Customer Portal
+                {
+                    AppPermissions.CustomerPortal, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+                
+                // Customer Portal - Ticket List
+                {
+                    AppPermissions.CustomerPortal_TicketList, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+
+
                 // Customers
                 {
                     AppPermissions.Pages_Customers, new[]
@@ -965,14 +982,6 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Administrative,
                         StaticRoleNames.Tenants.Maintenance,
                         StaticRoleNames.Tenants.MaintenanceSupervisor,
-                    }
-                },
-
-                // CustomerPortal
-                {
-                    AppPermissions.Pages_CustomerPortal, new[]
-                    {
-                        StaticRoleNames.Tenants.Customer
                     }
                 },
             };

@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
@@ -35,6 +34,7 @@ namespace DispatcherWeb.Customers
         public string Title { get; set; }
 
         public bool IsActive { get; set; }
+
         public bool HasCustomerPortalAccess { get; set; }
 
         public virtual Customer Customer { get; set; }
