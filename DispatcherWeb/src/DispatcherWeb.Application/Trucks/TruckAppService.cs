@@ -31,6 +31,7 @@ using DispatcherWeb.Notifications;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.SyncRequests;
+using DispatcherWeb.SyncRequests.Scheduling;
 using DispatcherWeb.TimeOffs;
 using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.Trucks.Exporting;
@@ -64,6 +65,7 @@ namespace DispatcherWeb.Trucks
         private readonly IEmailSender _emailSender;
         private readonly IAppNotifier _appNotifier;
         private readonly ICrossTenantOrderSender _crossTenantOrderSender;
+        private readonly ISchedulingSyncRequestSender _schedulingSyncRequestSender;
 
         public TruckAppService(
             IRepository<Truck> truckRepository,
@@ -85,7 +87,8 @@ namespace DispatcherWeb.Trucks
             ISyncRequestSender syncRequestSender,
             IEmailSender emailSender,
             IAppNotifier appNotifier,
-            ICrossTenantOrderSender crossTenantOrderSender
+            ICrossTenantOrderSender crossTenantOrderSender,
+            ISchedulingSyncRequestSender schedulingSyncRequestSender
             )
         {
             _truckRepository = truckRepository;
@@ -108,6 +111,7 @@ namespace DispatcherWeb.Trucks
             _emailSender = emailSender;
             _appNotifier = appNotifier;
             _crossTenantOrderSender = crossTenantOrderSender;
+            _schedulingSyncRequestSender = schedulingSyncRequestSender;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
@@ -580,6 +584,8 @@ namespace DispatcherWeb.Trucks
             result.Id = await _truckRepository.InsertOrUpdateAndGetIdAsync(entity);
 
             await _crossTenantOrderSender.SyncMaterialCompanyTrucksIfNeeded(entity.Id);
+
+            await _schedulingSyncRequestSender.SendSyncScheduledTrucksRequest();
 
             return result;
 

@@ -14,6 +14,7 @@ import {
     GET_TRUCK_FOR_EDIT_FAILURE,
     EDIT_TRUCK_SUCCESS,
     EDIT_TRUCK_FAILURE,
+    EDIT_TRUCK_RESET
 } from './actionTypes';
 
 const INIT_STATE = {
@@ -23,7 +24,7 @@ const INIT_STATE = {
     activeTrailersSelectList: null,
     wialonDeviceTypesSelectList: null,
     truckForEdit: null,
-    editSuccess: null
+    editTruckSuccess: null
 };
 
 const TruckReducer = (state = INIT_STATE, action) => {
@@ -89,27 +90,22 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 error: action.payload,
             };
         case EDIT_TRUCK_SUCCESS: {
-            const { response, data } = action.payload;
-            if (!isEmpty(response) && response.success && 
-                !isEmpty(data)
-            ) {
-                let newData = data;
-                const { result } = response;
-                newData.id = result.id;
-
-                console.log('newData: ', newData);
-
-                return {
-                    ...state,
-                    editSuccess: true
-                };
-            }
-
             return {
                 ...state,
-                editSuccess: false
+                editTruckSuccess: true
             };
         }
+        case EDIT_TRUCK_FAILURE:
+            return {
+                ...state,
+                editTruckSuccess: false,
+                error: action.payload
+            }
+        case EDIT_TRUCK_RESET: 
+            return {
+                ...state,
+                editTruckSuccess: null
+            }
         default:
             return state;
     }

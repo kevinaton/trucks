@@ -47,6 +47,7 @@ export const GET_OFFICES = '/Office/GetOfficesSelectList';
 
 //Drivers
 export const GET_DRIVERS_SELECT_LIST = '/Driver/GetDriversSelectList';
+export const GET_DRIVER_FOR_EDIT = '/Driver/GetDriverForEdit';
 
 //Trucks
 export const GET_VEHICLE_CATEGORIES = '/Truck/GetVehicleCategoriesSelectList';

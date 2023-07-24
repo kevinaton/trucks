@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import {
+    Autocomplete,
     Box,
     Button,
     Checkbox,
     FormControl,
     FormControlLabel,
+    IconButton,
     InputLabel,
     MenuItem,
     Select,
@@ -19,7 +22,7 @@ import {
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import CloseIcon from '@mui/icons-material/Close';
-import moment from 'moment';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { isEmpty } from 'lodash';
 import { 
     getVehicleCategories, 
@@ -29,9 +32,14 @@ import {
     getFuelTypeSelectList, 
     getWialonDeviceTypesSelectList,
     getTruckForEdit,
-    editTruck as onEditTruck
+    editTruck as onEditTruck,
+    resetEditTruck as onResetEditTruck
 } from '../../store/actions';
 import { assetType } from '../../common/enums/assetType';
+import AddOrEditDriver from '../drivers/addOrEditDriver';
+import { AlertDialog } from '../common/dialogs';
+import { renderDate } from '../../helpers/misc_helper';
+import { getDefaultVal, formatDate } from '../../utils';
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -67,11 +75,11 @@ const a11yProps = (index) => {
 };
 
 const AddOrEditTruckForm = ({
-    pageConfig,
-    closeModal
+    pageConfig, 
+    openModal,
+    closeModal,
+    openDialog
 }) => {
-    console.log('pageConfig: ', pageConfig)
-    const today = moment();
     const [value, setValue] = useState(0);
     const [officeOptions, setOfficeOptions] = useState(null);
     const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState(null);
@@ -105,7 +113,7 @@ const AddOrEditTruckForm = ({
         errorText: ''
     });
     const [defaultDriverId, setDefaultDriverId] = useState({
-        value: truckInfo != null ? truckInfo.defaultDriverId : '',
+        value: null,
         required: false,
         error: false,
         errorText: '',
@@ -127,7 +135,6 @@ const AddOrEditTruckForm = ({
         errorText: ''
     });
     const [isApportioned, setIsApportioned] = useState(false);
-    const [showCanPullTrailer, setShowCanPullTrailer] = useState(false);
     const [canPullTrailer, setCanPullTrailer] = useState(false);
     const [year, setYear] = useState({
         value: truckInfo != null ? truckInfo.year : '',
@@ -137,7 +144,7 @@ const AddOrEditTruckForm = ({
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
     const [inServiceDate, setInServiceDate] = useState({
-        value: today,
+        value: null,
         required: true,
         error: false,
         errorText: ''
@@ -195,6 +202,9 @@ const AddOrEditTruckForm = ({
     const [dtdTrackerUniqueId, setDtdTrackerUniqueId] = useState('');
     const [dtdTrackerPassword, setDtdTrackerPassword] = useState('');
 
+    // State to store the newly added option
+    const [newOption, setNewOption] = useState('');
+
     const dispatch = useDispatch();
     const { 
         offices,
@@ -204,7 +214,9 @@ const AddOrEditTruckForm = ({
         bedConstructionSelectList,
         fuelTypeSelectList,
         wialonDeviceTypesSelectList,
-        truckForEdit
+        truckForEdit,
+        editTruckSuccess,
+        error
     } = useSelector((state) => ({
         offices: state.OfficeReducer.offices,
         vehicleCategories: state.TruckReducer.vehicleCategories, 
@@ -213,7 +225,9 @@ const AddOrEditTruckForm = ({
         bedConstructionSelectList: state.TruckReducer.bedConstructionSelectList,
         fuelTypeSelectList: state.TruckReducer.fuelTypeSelectList, 
         wialonDeviceTypesSelectList: state.TruckReducer.wialonDeviceTypesSelectList,
-        truckForEdit: state.TruckReducer.truckForEdit
+        truckForEdit: state.TruckReducer.truckForEdit,
+        editTruckSuccess: state.TruckReducer.editTruckSuccess,
+        error: state.TruckReducer.error
     }));
 
     useEffect(() => {
@@ -297,10 +311,16 @@ const AddOrEditTruckForm = ({
                 setTruckInfo(result);
                 setId(result.id);
                 setVehicleCategoryAssetType(result.vehicleCategoryAssetType);
-                setShowCanPullTrailer(Boolean(result.canPullTrailer));
+
+                if (result.defaultDriverId !== null) {
+                    setDefaultDriverId({
+                        ...defaultDriverId,
+                        value: result.defaultDriverId
+                    });
+                }
 
                 if (result.vehicleCategoryAssetType === assetType.DUMP_TRUCK || result.vehicleCategoryAssetType === assetType.TRAILER) {
-                    showBedConstruction(true);
+                    setShowBedConstruction(true);
                 }
                 
                 let shouldDisableDefaultDriver;
@@ -315,10 +335,38 @@ const AddOrEditTruckForm = ({
                 setDefaultDriverId({
                     ...defaultDriverId,
                     disabled: shouldDisableDefaultDriver
-                })
+                });
+
+                if (result.inServiceDate !== null) {
+                    setInServiceDate({
+                        ...inServiceDate,
+                        value: result.inServiceDate
+                    });
+                }
             }
         }
-    }, [truckInfo, truckForEdit, defaultDriverId, showBedConstruction]);
+    }, [truckInfo, truckForEdit, defaultDriverId, inServiceDate, showBedConstruction]);
+
+    useEffect(() => {
+        if (editTruckSuccess) {
+            dispatch(onResetEditTruck());
+            closeModal();
+        }
+    }, [dispatch, editTruckSuccess, closeModal]);
+
+    useEffect(() => {
+        console.log('error: ', error)
+        if (!isEmpty(error) && !error.success) {
+            const { message } = error.error;
+
+            openDialog({
+                type: 'alert',
+                content: (
+                    <AlertDialog variant='error' message={message} />
+                )
+            });
+        }
+    }, [error, openDialog]);
 
     // handle change tab
     const handleChange = (event, newValue) => {
@@ -359,15 +407,23 @@ const AddOrEditTruckForm = ({
         if ([assetType.DUMP_TRUCK, assetType.TRAILER].includes(assetType)) {
             setBedConstruction(true);
         }
-
+        
         if (isPowered) {
-            setShowCanPullTrailer(true);
             setCanPullTrailer(assetType === assetType.TRACTOR);
+        }
+        
+        const shouldDisableDefaultDriver = isPowered !== true;
+        if (shouldDisableDefaultDriver) {
+            setDefaultDriverId({
+                ...defaultDriverId,
+                value: '',
+                disabled: shouldDisableDefaultDriver
+            });
         } else {
             setDefaultDriverId({
                 ...defaultDriverId,
-                disabled: true
-            })
+                disabled: shouldDisableDefaultDriver
+            });
         }
         
         const inputValue = selectedOption.id;
@@ -379,13 +435,13 @@ const AddOrEditTruckForm = ({
         });
     };
 
-    const handleDefaultDriverIdInputChange = (e) => {
+    const handleDefaultDriverIdInputChange = (e, newValue) => {
         e.preventDefault();
 
-        const inputValue = e.target.value;
+        const inputValue = newValue;
         setDefaultDriverId({
             ...defaultDriverId,
-            value: inputValue,
+            value: inputValue !== null ? inputValue.id : '',
             error: false,
             errorText: ''
         });
@@ -743,50 +799,50 @@ const AddOrEditTruckForm = ({
         }
 
         var data = {
-            id: id ?? '',
+            id: getDefaultVal(id, ''),
             vehicleCategoryIsPowered: vehicleCategoryIsPowered.toString(),
             vehicleCategoryAssetType: vehicleCategoryAssetType.toString(),
-            truckCode: truckCode.value,
-            officeId: officeId.value,
+            truckCode: truckCode.value.toString(),
+            officeId: officeId.value.toString(),
             vehicleCategoryId: vehicleCategoryId.value,
             defaultDriverId: defaultDriverId.value,
-            defaultTrailerId: defaultTrailerId ?? '',
+            defaultTrailerId: getDefaultVal(defaultTrailerId, ''),
             isActive: isActive.toString(),
-            inactivationDate: inactivationDate.value !== null ? moment(inactivationDate.value).format('MM/DD/YYYY') : '',
+            inactivationDate: formatDate(inactivationDate.value),
             isOutOfService: isOutOfService.toString(),
             reason: reason.value,
             isApportioned: isApportioned.toString(),
             year: year.value.toString(),
             make,
             model,
-            inServiceDate: moment(inServiceDate.value).format('MM/DD/YYYY'),
+            inServiceDate: formatDate(inServiceDate.value),
             vin,
             plate,
-            plateExpiration: plateExpiration !== null ? moment(plateExpiration).format('MM/DD/YYYY') : '',
-            cargoCapacity: cargoCapacity.value,
-            cargoCapacityCyds: cargoCapacityCyds.value,
-            insurancePolicyNumber,
-            insuranceValidUntil: insuranceValidUntil !== null ? moment(insuranceValidUntil).format('MM/DD/YYYY') : '',
-            purchaseDate: purchaseDate !== null ? moment(purchaseDate).format('MM/DD/YYYY') : '',
-            purchasePrice,
-            soldDate: soldDate !== null ? moment(soldDate).format('MM/DD/YYYY') : '',
-            soldPrice,
-            truxTruckId,
+            plateExpiration: formatDate(plateExpiration),
+            cargoCapacity: cargoCapacity.value.toString(),
+            cargoCapacityCyds: cargoCapacityCyds.value.toString(),
+            insurancePolicyNumber: insurancePolicyNumber.toString(),
+            insuranceValidUntil: formatDate(insuranceValidUntil),
+            purchaseDate: formatDate(purchaseDate),
+            purchasePrice: purchasePrice.toString(),
+            soldDate: formatDate(soldDate),
+            soldPrice: soldPrice.toString(),
+            truxTruckId: truxTruckId.toString(),
             bedConstruction: bedConstruction.toString(),
             fuelType: fuelType.toString(),
-            fuelCapacity: fuelCapacity.value,
-            steerTires,
-            driveAxleTires,
-            dropAxleTires,
-            trailerTires,
-            transmission,
-            engine,
-            rearEnd,
-            dtdTrackerDeviceTypeId: dtdTrackerDeviceTypeId ?? '',
-            dtdTrackerDeviceTypeName,
-            dtdTrackerServerAddress,
-            dtdTrackerUniqueId,
-            dtdTrackerPassword,
+            fuelCapacity: fuelCapacity.value.toString(),
+            steerTires: steerTires.toString(),
+            driveAxleTires: driveAxleTires.toString(),
+            dropAxleTires: dropAxleTires.toString(),
+            trailerTires: trailerTires.toString(),
+            transmission: transmission.toString(),
+            engine: engine.toString(),
+            rearEnd: rearEnd.toString(),
+            dtdTrackerDeviceTypeId: getDefaultVal(dtdTrackerDeviceTypeId, ''),
+            dtdTrackerDeviceTypeName: dtdTrackerDeviceTypeName.toString(),
+            dtdTrackerServerAddress: dtdTrackerServerAddress.toString(),
+            dtdTrackerUniqueId: dtdTrackerUniqueId.toString(),
+            dtdTrackerPassword: dtdTrackerPassword.toString(),
             files
         };
 
@@ -794,19 +850,44 @@ const AddOrEditTruckForm = ({
             data.canPullTrailer = canPullTrailer;
         }
 
-        console.log('data: ', data)
         dispatch(onEditTruck(data));
+    };
+
+    // Handler to add a new option
+    const handleAddOption = () => {
+        if (newOption.trim() !== '') {
+            const newOptionValue = newOption.trim().toLowerCase();
+
+            openModal(
+                <AddOrEditDriver 
+                    name={newOptionValue}
+                    closeModal={closeModal}
+                />,
+                500
+            );
+
+            // TODO: add new option to dropdown
+            //   // Check if the option already exists in the options array
+            //   const optionExists = options.some((opt) => opt.value === newOptionValue);
+            //   if (!optionExists) {
+            //     setOptions((prevOptions) => [
+            //       ...prevOptions,
+            //       { label: newOption, value: newOptionValue },
+            //     ]);
+            //   }
+            //   setNewOption(''); // Clear the input field after adding the option
+        }
     };
 
     const renderGeneralForm = () => {
         const { features } = pageConfig;
-        console.log('defaultDriverId.disabled: ', defaultDriverId.disabled)
         return (
             <Stack 
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    maxHeight: '712px',
+                    paddingBottom: '8px',
+                    maxHeight: 'calc(100vh - 300px)',
                     overflowY: 'auto'
                 }}
             >
@@ -824,6 +905,7 @@ const AddOrEditTruckForm = ({
                     onChange={handleTruckCodeInputChange} 
                     error={truckCode.error} 
                     helperText={truckCode.error ? truckCode.errorText : ''} 
+                    autoFocus
                     fullWidth
                 />
                 
@@ -888,33 +970,46 @@ const AddOrEditTruckForm = ({
                     </Select>
                 </FormControl>
 
-                <FormControl
-                    disabled={defaultDriverId.disabled}
-                    fullWidth
-                >
-                    <InputLabel id='defaultDriver-label'>Default Driver</InputLabel>
-                    <Select
-                        labelId='defaultDriver-label'
-                        id='defaultDriver'
-                        label='Default Driver' 
-                        value={defaultDriverId.value} 
-                        defaultValue={truckInfo.defaultDriverId}
-                        onChange={handleDefaultDriverIdInputChange}
-                    >
-                        <MenuItem value=''>Select an option</MenuItem>
-
-                        { truckInfo.defaultDriverId !== null && 
-                            <MenuItem key={truckInfo.defaultDriverId} value={truckInfo.defaultDriverId}>
-                                {truckInfo.defaultDriverName}
-                            </MenuItem>
-                        }
-
-                        { defaultDriverOptions && defaultDriverOptions.map((option) => (
-                            <MenuItem key={option.id} value={option.id}>
+                <FormControl fullWidth>
+                    <Autocomplete
+                        options={defaultDriverOptions}
+                        getOptionLabel={(option) => option.name}
+                        renderOption={(props, option) => (
+                            <li {...props}>
                                 {option.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
+                            </li>
+                        )}
+                        onChange={(event, newValue) => handleDefaultDriverIdInputChange(event, newValue)}
+                        renderInput={(params) => (
+                            <div>
+                                <TextField
+                                    {...params}
+                                    label="Default Driver"
+                                    variant="outlined"
+                                    value={newOption}
+                                    onChange={(e) => {
+                                        setNewOption(e.target.value)
+                                    }} 
+                                    emptyLabel='' 
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <React.Fragment>
+                                                {params.InputProps.endAdornment}
+                                                <IconButton
+                                                    onClick={handleAddOption}
+                                                    disabled={newOption.trim() === ''}
+                                                >
+                                                    <AddCircleOutlineIcon />
+                                                </IconButton>
+                                            </React.Fragment>
+                                        ),
+                                    }}
+                                />
+                            </div>
+                        )}
+                        disabled={defaultDriverId.disabled}
+                    />
                 </FormControl>
 
                 { canPullTrailer !== null && canPullTrailer && 
@@ -958,27 +1053,21 @@ const AddOrEditTruckForm = ({
                 />
 
                 { !isActive && 
-                    <LocalizationProvider 
-                        dateAdapter={AdapterMoment} 
-                        adapterLocale='en-us'
-                        fullWidth
-                    >
-                        <DatePicker 
-                            id='inactivationDate'
-                            name='inactivationDate'
-                            label={
-                                <>
-                                    Inactivation Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
-                                </>
-                            } 
-                            value={inactivationDate.value} 
-                            emptyLabel='' 
-                            onChange={handleInactivationDateChange} 
-                            error={inactivationDate.error}
-                            helperText={inactivationDate.error ? inactivationDate.errorText : ''} 
-                            sx={{ flexShrink: 0 }} 
-                        />
-                    </LocalizationProvider>
+                    <DatePicker 
+                        id='inactivationDate'
+                        name='inactivationDate'
+                        label={
+                            <>
+                                Inactivation Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                            </>
+                        } 
+                        value={inactivationDate.value !== null ? renderDate(inactivationDate.value) : moment()} 
+                        emptyLabel='' 
+                        onChange={handleInactivationDateChange} 
+                        error={inactivationDate.error}
+                        helperText={inactivationDate.error ? inactivationDate.errorText : ''} 
+                        sx={{ flexShrink: 0 }} 
+                    />
                 }
 
                 <FormControlLabel 
@@ -1076,28 +1165,22 @@ const AddOrEditTruckForm = ({
                     fullWidth
                 />
 
-                <LocalizationProvider 
-                    dateAdapter={AdapterMoment} 
-                    adapterLocale='en-us'
+                <DatePicker 
+                    id='inServiceDate'
+                    name='inServiceDate'
+                    label={
+                        <>
+                            In Service Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                        </>
+                    } 
+                    value={inServiceDate.value !== null ? renderDate(inServiceDate.value) : moment()} 
+                    emptyLabel=''
+                    onChange={handleInServiceDateChange} 
+                    error={inServiceDate.error}
+                    helperText={inServiceDate.error ? inServiceDate.errorText : ''} 
+                    sx={{ flexShrink: 0 }} 
                     fullWidth
-                >
-                    <DatePicker 
-                        id='inServiceDate'
-                        name='inServiceDate'
-                        label={
-                            <>
-                                In Service Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
-                            </>
-                        } 
-                        value={inServiceDate.value} 
-                        emptyLabel=''
-                        onChange={handleInServiceDateChange} 
-                        error={inServiceDate.error}
-                        helperText={inServiceDate.error ? inServiceDate.errorText : ''} 
-                        sx={{ flexShrink: 0 }} 
-                        fullWidth
-                    />
-                </LocalizationProvider>
+                />
 
                 <TextField
                     id='vin'
@@ -1110,59 +1193,57 @@ const AddOrEditTruckForm = ({
                     fullWidth
                 />
 
-                <TextField
-                    id='plate'
-                    name='plate'
-                    type='text'
-                    label='Plate'
-                    value={plate} 
-                    defaultValue={truckInfo.plate}
-                    onChange={handlePlateInputChange}
-                    fullWidth
-                />
+                <Stack direction='row' spacing={2}>
+                    <TextField
+                        id='plate'
+                        name='plate'
+                        type='text'
+                        label='Plate'
+                        value={plate} 
+                        defaultValue={truckInfo.plate}
+                        onChange={handlePlateInputChange}
+                        fullWidth
+                    />
 
-                <LocalizationProvider 
-                    dateAdapter={AdapterMoment} 
-                    adapterLocale='en-us'
-                    fullWidth
-                >
                     <DatePicker 
                         id='plateExpiration'
                         name='plateExpiration'
                         label='Plate Expiration'
-                        value={plateExpiration} 
+                        value={plateExpiration !== null ? renderDate(plateExpiration) : null } 
                         emptyLabel=''
                         onChange={handlePlateExpirationChange} 
                         sx={{ flexShrink: 0 }} 
                         fullWidth
                     />
-                </LocalizationProvider>
+                </Stack>
 
-                <TextField 
-                    id='cargoCapacity'
-                    name='cargoCapacity'
-                    type='text'
-                    label='Ave Load (tons)'
-                    value={cargoCapacity.value} 
-                    defaultValue={truckInfo.cargoCapacity}
-                    onChange={handleCargoCapacityInputChange}
-                    error={cargoCapacity.error} 
-                    helperText={cargoCapacity.error ? cargoCapacity.errorText : ''} 
-                    fullWidth 
-                />
+                <Stack direction='row' spacing={2}>
+                    <TextField 
+                        id='cargoCapacity'
+                        name='cargoCapacity'
+                        type='text'
+                        label='Ave Load (tons)'
+                        value={cargoCapacity.value} 
+                        defaultValue={truckInfo.cargoCapacity}
+                        onChange={handleCargoCapacityInputChange}
+                        error={cargoCapacity.error} 
+                        helperText={cargoCapacity.error ? cargoCapacity.errorText : ''} 
+                        fullWidth 
+                    />
 
-                <TextField 
-                    id='cargoCapacityCyds' 
-                    name='cargoCapacityCyds'
-                    type='text' 
-                    label='Ave Load (cyds)' 
-                    value={cargoCapacityCyds.value} 
-                    defaultValue={truckInfo.cargoCapacityCyds}
-                    onChange={handleCargoCapacityCydsInputChange}
-                    error={cargoCapacityCyds.error} 
-                    helperText={cargoCapacityCyds.error ? cargoCapacityCyds.errorText : ''} 
-                    fullWidth
-                />
+                    <TextField 
+                        id='cargoCapacityCyds' 
+                        name='cargoCapacityCyds'
+                        type='text' 
+                        label='Ave Load (cyds)' 
+                        value={cargoCapacityCyds.value} 
+                        defaultValue={truckInfo.cargoCapacityCyds}
+                        onChange={handleCargoCapacityCydsInputChange}
+                        error={cargoCapacityCyds.error} 
+                        helperText={cargoCapacityCyds.error ? cargoCapacityCyds.errorText : ''} 
+                        fullWidth
+                    />
+                </Stack>
 
                 <TextField 
                     id='insurancePolicyNumber' 
@@ -1175,78 +1256,64 @@ const AddOrEditTruckForm = ({
                     fullWidth
                 />
 
-                <LocalizationProvider 
-                    dateAdapter={AdapterMoment} 
-                    adapterLocale='en-us'
+                <DatePicker 
+                    id='insuranceValidUntil'
+                    name='insuranceValidUntil'
+                    label='Insurance Valid Until'
+                    value={insuranceValidUntil !== null ? renderDate(insuranceValidUntil) : null} 
+                    emptyLabel=''
+                    onChange={handleInsuranceValidUntilChange} 
+                    sx={{ flexShrink: 0 }} 
                     fullWidth
-                >
-                    <DatePicker 
-                        id='insuranceValidUntil'
-                        name='insuranceValidUntil'
-                        label='Insurance Valid Until'
-                        value={insuranceValidUntil} 
-                        emptyLabel=''
-                        onChange={handleInsuranceValidUntilChange} 
-                        sx={{ flexShrink: 0 }} 
-                        fullWidth
-                    />
-                </LocalizationProvider>
+                />
 
-                <LocalizationProvider 
-                    dateAdapter={AdapterMoment} 
-                    adapterLocale='en-us'
-                    fullWidth
-                >
+                <Stack direction='row' spacing={2}>
                     <DatePicker 
                         id='purchaseDate'
                         name='purchaseDate'
                         label='Purchase Date'
-                        value={purchaseDate} 
+                        value={purchaseDate !== null ? renderDate(purchaseDate) : null} 
                         emptyLabel=''
                         onChange={handlePurchaseDateChange} 
                         sx={{ flexShrink: 0 }} 
                         fullWidth
                     />
-                </LocalizationProvider>
 
-                <TextField 
-                    id='purchasePrice'
-                    name='purchasePrice'
-                    type='text'
-                    label='Purchase Price'
-                    value={purchasePrice} 
-                    defaultValue={truckInfo.purchasePrice}
-                    onChange={handlePurchasePriceInputChange}
-                    fullWidth
-                />
+                    <TextField 
+                        id='purchasePrice'
+                        name='purchasePrice'
+                        type='text'
+                        label='Purchase Price'
+                        value={purchasePrice} 
+                        defaultValue={truckInfo.purchasePrice}
+                        onChange={handlePurchasePriceInputChange}
+                        fullWidth
+                    />
+                </Stack>
 
-                <LocalizationProvider 
-                    dateAdapter={AdapterMoment} 
-                    adapterLocale='en-us'
-                    fullWidth
-                >
+                <Stack direction='row' spacing={2}>
                     <DatePicker 
                         id='soldDate'
                         name='soldDate'
                         label='Sold Date'
-                        value={soldDate} 
+                        value={soldDate !== null ? renderDate(soldDate) : null} 
                         emptyLabel=''
                         onChange={handleSoldDateChange} 
                         sx={{ flexShrink: 0 }} 
                         fullWidth
                     />
-                </LocalizationProvider>
 
-                <TextField 
-                    id='soldPrice'
-                    name='soldPrice'
-                    type='text'
-                    label='Sold Price'
-                    value={soldPrice} 
-                    defaultValue={truckInfo.soldPrice}
-                    onChange={handleSoldPriceInputChange}
-                    fullWidth
-                />
+                    <TextField 
+                        id='soldPrice'
+                        name='soldPrice'
+                        type='text'
+                        label='Sold Price'
+                        value={soldPrice} 
+                        defaultValue={truckInfo.soldPrice}
+                        onChange={handleSoldPriceInputChange}
+                        fullWidth
+                    />
+                </Stack>
 
                 { Boolean(features.allowImportingTruxEarnings) && 
                     <TextField 
@@ -1270,7 +1337,8 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    maxHeight: '712px',
+                    paddingBottom: '8px',
+                    maxHeight: 'calc(100vh - 300px)',
                     overflowY: 'auto'
                 }}
             >
@@ -1400,12 +1468,14 @@ const AddOrEditTruckForm = ({
     };
 
     const renderServiceForm = () => {
+        // TODO: edit truck functionality
         return (
             <Stack 
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    maxHeight: '712px',
+                    paddingBottom: '8px',
+                    maxHeight: 'calc(100vh - 300px)',
                     overflowY: 'auto'
                 }}
             >
@@ -1433,12 +1503,14 @@ const AddOrEditTruckForm = ({
     };
 
     const renderFilesForm = () => {
+        // TODO: edit truck functionality
         return (
             <Stack 
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    maxHeight: '712px',
+                    paddingBottom: '8px',
+                    maxHeight: 'calc(100vh - 300px)',
                     overflowY: 'auto'
                 }}
             >
@@ -1453,7 +1525,8 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    maxHeight: '712px',
+                    paddingBottom: '8px',
+                    maxHeight: 'calc(100vh - 300px)',
                     overflowY: 'auto'
                 }}
             >
@@ -1527,9 +1600,7 @@ const AddOrEditTruckForm = ({
                         display='flex'
                         justifyContent='space-between'
                         alignItems='center'
-                        sx={{ 
-                            p: 2 
-                        }} 
+                        sx={{ p: 2 }} 
                     >
                         <Typography variant='h6' component='h2'>
                             { truckInfo.id > 0 ? <>Edit truck</> : <>Create new truck</> }
@@ -1543,46 +1614,52 @@ const AddOrEditTruckForm = ({
                     </Box>
 
                     <Box sx={{ width: '100%' }}>
-                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                            <Tabs value={value} onChange={handleChange} aria-label="Create new truck tabs">
-                                <Tab label="General" {...a11yProps(0)} />
+                        <LocalizationProvider 
+                            dateAdapter={AdapterMoment} 
+                            adapterLocale={moment.locale()}
+                            fullWidth
+                        >
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <Tabs value={value} onChange={handleChange} aria-label="Create new truck tabs">
+                                    <Tab label="General" {...a11yProps(0)} />
 
-                                <Tab label="Maintenance" {...a11yProps(1)} />
+                                    <Tab label="Maintenance" {...a11yProps(1)} />
 
-                                { truckInfo.id > 0 && 
-                                    <React.Fragment>
-                                        <Tab label="Service" {...a11yProps(2)} />
-                                        <Tab label="Files" {...a11yProps(3)} />
-                                    </React.Fragment>
-                                }
+                                    { truckInfo.id > 0 && 
+                                        <React.Fragment>
+                                            <Tab label="Service" {...a11yProps(2)} />
+                                            <Tab label="Files" {...a11yProps(3)} />
+                                        </React.Fragment>
+                                    }
 
-                                <Tab label="GPS Configuration" {...a11yProps(truckInfo.id > 0 ? 4 : 2)} />
-                            </Tabs>
-                        </Box>
+                                    <Tab label="GPS Configuration" {...a11yProps(truckInfo.id > 0 ? 4 : 2)} />
+                                </Tabs>
+                            </Box>
 
-                        <TabPanel value={value} index={0}>
-                            {renderGeneralForm()}
-                        </TabPanel>
+                            <TabPanel value={value} index={0}>
+                                {renderGeneralForm()}
+                            </TabPanel>
 
-                        <TabPanel value={value} index={1}>
-                            {renderMaintenanceForm()}
-                        </TabPanel>
+                            <TabPanel value={value} index={1}>
+                                {renderMaintenanceForm()}
+                            </TabPanel>
 
-                        { truckInfo.id > 0 && 
-                            <React.Fragment>
-                                <TabPanel value={value} index={2}>
-                                    {renderServiceForm()}
-                                </TabPanel>
-                                
-                                <TabPanel value={value} index={3}>
-                                    {renderFilesForm()}
-                                </TabPanel>
-                            </React.Fragment>
-                        }
+                            { truckInfo.id > 0 && 
+                                <React.Fragment>
+                                    <TabPanel value={value} index={2}>
+                                        {renderServiceForm()}
+                                    </TabPanel>
+                                    
+                                    <TabPanel value={value} index={3}>
+                                        {renderFilesForm()}
+                                    </TabPanel>
+                                </React.Fragment>
+                            }
 
-                        <TabPanel value={value} index={truckInfo.id > 0 ? 4 : 2}>
-                            {renderGPSConfigurationForm()}
-                        </TabPanel>
+                            <TabPanel value={value} index={truckInfo.id > 0 ? 4 : 2}>
+                                {renderGPSConfigurationForm()}
+                            </TabPanel>
+                        </LocalizationProvider>
                     </Box>
 
                     <Box sx={{ p: 2 }}>

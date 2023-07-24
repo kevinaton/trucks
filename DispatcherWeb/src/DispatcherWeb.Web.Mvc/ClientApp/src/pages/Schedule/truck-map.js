@@ -4,11 +4,14 @@ import {
     Box,
     Paper,
     Chip,
-    Grid,
+    Grid, 
+    Skeleton,
     Tooltip 
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import _, { isEmpty } from 'lodash';
+import { baseUrl } from '../../helpers/api_helper';
+import * as signalR from '@microsoft/signalr';
 import { getScheduleTrucks } from '../../store/actions';
 import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
 
@@ -18,18 +21,22 @@ const TruckMap = ({
     trucks,
     onSetTrucks,
     openModal,
-    closeModal
+    closeModal,
+    openDialog
 }) => {
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
     const [validateUtilization, setValidateUtilization] = useState(null);
     const [leaseHaulers, setLeaseHaulers] = useState(null);
+    const [isConnectedToSignalR, setIsConnectedToSignalR] = useState(false);
 
     const dispatch = useDispatch();
     const { 
-        scheduleTrucks 
+        scheduleTrucks,
+        editTruckSuccess
     } = useSelector((state) => ({
         scheduleTrucks: state.SchedulingReducer.scheduleTrucks,
+        editTruckSuccess: state.TruckReducer.editTruckSuccess
     }));
 
     useEffect(() => {
@@ -64,23 +71,12 @@ const TruckMap = ({
             prevDataFilterRef.current.officeId !== dataFilter.officeId ||
             prevDataFilterRef.current.date !== dataFilter.date
         ) {
-            const fetchData = async () => {
-                const { officeId, date } = dataFilter;
-                if (officeId !== null && date !== null) {
-                    setLoading(true);
-                    dispatch(getScheduleTrucks({
-                        officeId,
-                        date: date
-                    }));
-                }
-            };
-
             fetchData();
 
             // update the previous dataFilter value
             prevDataFilterRef.current = dataFilter;
         }
-    }, [dispatch, dataFilter]);
+    }, [dataFilter]);
 
     useEffect(() => {
         // cleanup logic
@@ -90,16 +86,75 @@ const TruckMap = ({
         };
     }, []);
 
+    useEffect(() => {
+        if (!isConnectedToSignalR && dataFilter.officeId !== null && dataFilter.date !== null) {
+            const startConnection = (transport) => {
+                const url = `${baseUrl}/signalr-scheduling`;
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl(url, transport)
+                    .withAutomaticReconnect()
+                    .build();
+
+                connection.onclose((err) => {
+                    if (err) {
+                        console.log('Connection closed with error: ', err);
+                    } else {
+                        console.log('Disconnected');
+                    }
+
+                    setTimeout(() => {
+                        connection.start();
+                    }, 5000);
+                });
+
+                connection.on('syncScheduledTrucks', () => {
+                    fetchData();
+                });
+
+                connection
+                    .start()
+                    .then(() => {
+                        setIsConnectedToSignalR(true);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        if (transport !== signalR.HttpTransportType.LongPolling) {
+                            return startConnection(transport + 1);
+                        }
+                    });
+            };
+            
+            startConnection(signalR.HttpTransportType.WebSockets);
+        }
+    }, [dispatch, isConnectedToSignalR, dataFilter]);
+
+    useEffect(() => {
+        if (editTruckSuccess) {
+            fetchData();
+        }
+    }, [editTruckSuccess]);
+
+    const fetchData = () => {
+        const { officeId, date } = dataFilter;
+        if (officeId !== null && date !== null) {
+            setLoading(true);
+            dispatch(getScheduleTrucks({
+                officeId,
+                date: date
+            }));
+        }
+    };
+
     const truckHasNoDriver = truck => !truck.isExternal && 
         (truck.hasNoDriver || (!truck.hasDefaultDriver && !truck.hasDriverAssignment));
 
     const truckCategoryNeedsDriver = truck => 
         truck.vehicleCategory.isPowered && 
-        ((!truck.alwaysShowOnSchedule && !truck.isExternal));
+        (leaseHaulers || (!truck.alwaysShowOnSchedule && !truck.isExternal));
 
     const getTruckColor = (truck) => {
         const defaultColor = {
-            backgroundColor: '#f8f9fa', // grey
+            backgroundColor: '#f8f9fa', // gray
             color: '#fff',
             border: '1px solid transparent'
         };
@@ -111,8 +166,7 @@ const TruckMap = ({
             };
         }
 
-        if (truckHasNoDriver(truck) && 
-            (leaseHaulers || truckCategoryNeedsDriver(truck))) {
+        if (truckHasNoDriver(truck) && truckCategoryNeedsDriver(truck)) {
             return {
                 ...defaultColor,
                 backgroundColor: '#0288d1' // blue
@@ -179,9 +233,11 @@ const TruckMap = ({
         openModal(
             <AddOrEditTruckForm 
                 pageConfig={pageConfig} 
+                openModal={openModal}
                 closeModal={closeModal} 
+                openDialog={openDialog}
             />,
-            500
+            560
         );
     };
 
@@ -204,7 +260,10 @@ const TruckMap = ({
                                     py: 3,
                                     backgroundColor: `${truckColors.backgroundColor}`,
                                     color: `${truckColors.color}`,
-                                    border: `${truckColors.border}`
+                                    border: `${truckColors.border}`,
+                                    '&:hover': {
+                                        backgroundColor: `${truckColors.backgroundColor}`
+                                    }
                                 }}
                             />
                         </Tooltip>
@@ -220,28 +279,50 @@ const TruckMap = ({
             <Box sx={{ p: 3 }}>
                 <Paper variant='outlined' sx={{ p: 1 }}>
                     <Grid id='TruckTiles' container rowSpacing={1} columnSpacing={1}>
-                        {!isEmpty(trucks) && renderTrucks()}
+                        { isLoading && 
+                            <React.Fragment>
+                                <Grid item>
+                                    <Skeleton variant="rectangular" width={82} height={50} />
+                                </Grid>
+                                <Grid item>
+                                    <Skeleton variant="rectangular" width={82} height={50} />
+                                </Grid>
+                                <Grid item>
+                                    <Skeleton variant="rectangular" width={82} height={50} />
+                                </Grid>
+                                <Grid item>
+                                    <Skeleton variant="rectangular" width={82} height={50} />
+                                </Grid>
+                                <Grid item>
+                                    <Skeleton variant="rectangular" width={82} height={50} />
+                                </Grid>
+                            </React.Fragment>
+                        }
 
-                        <Grid item>
-                            <Chip
-                                label={
-                                    <>
-                                        <AddIcon sx={{ mt: '5px' }} />
-                                    </>
-                                }
-                                onClick={(e) => handleCreateNewTruck(e)}
-                                sx={{
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #ebedf2',
-                                    color: '#6f727d',
-                                    borderRadius: 0,
-                                    fontSize: 18,
-                                    fontWeight: 600,
-                                    py: 3,
-                                    px: 1
-                                }}
-                            />
-                        </Grid>
+                        {!isLoading && !isEmpty(trucks) && renderTrucks()}
+
+                        {!isLoading && 
+                            <Grid item>
+                                <Chip
+                                    label={
+                                        <>
+                                            <AddIcon sx={{ mt: '5px' }} />
+                                        </>
+                                    }
+                                    onClick={(e) => handleCreateNewTruck(e)}
+                                    sx={{
+                                        backgroundColor: '#fff',
+                                        border: '1px solid #ebedf2',
+                                        color: '#6f727d',
+                                        borderRadius: 0,
+                                        fontSize: 18,
+                                        fontWeight: 600,
+                                        py: 3,
+                                        px: 1
+                                    }}
+                                />
+                            </Grid>
+                        }
                     </Grid>
                 </Paper>
             </Box>

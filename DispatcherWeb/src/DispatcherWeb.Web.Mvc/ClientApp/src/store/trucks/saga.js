@@ -91,7 +91,7 @@ function* fetchTruckForEdit(action) {
 function* onEditTruck({ payload: truck }) {
     try {
         const response = yield call(editTruck, truck);
-        yield put(editTruckSuccess(response, truck));
+        yield put(editTruckSuccess(response));
     } catch (error) {
         yield put(editTruckFailure(error));
     }

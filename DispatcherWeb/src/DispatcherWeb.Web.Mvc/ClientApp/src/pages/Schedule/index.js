@@ -65,10 +65,11 @@ const Schedule = props => {
         if (dataFilter.officeId === null && 
             !isEmpty(userProfileMenu) && !isEmpty(userProfileMenu.result)) {
             const { sessionOfficeId, sessionOfficeName } = userProfileMenu.result;
-            let { ...dfilter } = dataFilter;
 
             appLocalStorage.getItem('schedule_filter', (result) => {
-                var filter = result || {};
+                let { ...dfilter } = dataFilter;
+
+                const filter = result || {};
                 if (filter.date) {
                     dfilter.date = filter.date;
                 }
@@ -176,6 +177,7 @@ const Schedule = props => {
                         onSetTrucks={onSetTrucks} 
                         openModal={props.openModal}
                         closeModal={props.closeModal} 
+                        openDialog={props.openDialog}
                     />
 
                     {/* List of schedule orders */}

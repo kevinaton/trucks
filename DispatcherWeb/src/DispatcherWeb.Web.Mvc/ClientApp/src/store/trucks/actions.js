@@ -20,6 +20,7 @@ import {
     EDIT_TRUCK,
     EDIT_TRUCK_SUCCESS,
     EDIT_TRUCK_FAILURE,
+    EDIT_TRUCK_RESET
 } from './actionTypes';
 
 export const getVehicleCategories = () => ({
@@ -112,15 +113,16 @@ export const editTruck = truck => ({
     payload: truck
 });
 
-export const editTruckSuccess = (response, truck) => ({
+export const editTruckSuccess = response => ({
     type: EDIT_TRUCK_SUCCESS,
-    payload: {
-        response,
-        data: truck
-    },
+    payload: response
 });
 
 export const editTruckFailure = error => ({
     type: EDIT_TRUCK_FAILURE,
     payload: error,
+});
+
+export const resetEditTruck = () => ({
+    type: EDIT_TRUCK_RESET
 });

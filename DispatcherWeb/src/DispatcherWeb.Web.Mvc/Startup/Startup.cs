@@ -394,6 +394,7 @@ namespace DispatcherWeb.Web.Startup
                 endpoints.MapHub<AbpCommonHub>("/signalr");
                 endpoints.MapHub<ChatHub>("/signalr-chat");
                 endpoints.MapHub<SignalRHub>("/signalr-dispatcher");
+                endpoints.MapHub<SchedulingHub>("/signalr-scheduling");
 
                 endpoints.MapControllerRoute("defaultWithArea", "{area}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");

@@ -7,7 +7,9 @@ export const RouterConfig = ({
     isAuthenticated,
     handleCurrentPageName,
     openModal,
-    closeModal
+    closeModal,
+    openDialog,
+    closeDialog
 }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -33,7 +35,9 @@ export const RouterConfig = ({
                                     <route.component 
                                         handleCurrentPageName={handleCurrentPageName} 
                                         openModal={openModal} 
-                                        closeModal={closeModal}
+                                        closeModal={closeModal} 
+                                        openDialog={openDialog} 
+                                        closeDialog={closeDialog}
                                     />
                                 }
                             />

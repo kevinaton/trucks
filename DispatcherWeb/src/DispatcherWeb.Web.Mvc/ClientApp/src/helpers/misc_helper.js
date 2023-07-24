@@ -7,6 +7,13 @@ export const renderTime = (value, emptyValue) => {
     return emptyValue !== undefined ? emptyValue : '-';
 }
 
+export const renderDate = (value, emptyValue) => {
+    if (value) {
+        return moment(value, ['YYYY-MM-DDTHH:mm:ss', 'MM/DD/YYYY']);
+    }
+    return emptyValue !== undefined ? emptyValue : null;
+}
+
 export const isToday = (value) => {
     var isToday = moment(value, 'MM/DD/YYYY').isSame(moment().startOf('day'));
     return isToday;

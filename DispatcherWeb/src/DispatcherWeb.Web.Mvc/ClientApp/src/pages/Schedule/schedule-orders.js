@@ -567,7 +567,7 @@ const ScheduleOrders = ({
                                                         return (
                                                             <Grid item key={index}>
                                                                 <Chip
-                                                                    label={truck.name}
+                                                                    label={truck.truckCode}
                                                                     onClick={() => {}}
                                                                     onDelete={() => {}}
                                                                     variant={truck.variant}
