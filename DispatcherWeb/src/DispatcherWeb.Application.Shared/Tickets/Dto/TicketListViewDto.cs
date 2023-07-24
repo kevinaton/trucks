@@ -17,8 +17,10 @@ namespace DispatcherWeb.Tickets.Dto
         public string Uom { get; set; }
         public string Carrier { get; set; }
         public string Truck { get; set; }
+        public string TruckOffice { get; set; }
         public string Trailer { get; set; }
         public string DriverName { get; set; }
+        public string DriverOffice { get; set; }
         public string JobNumber { get; set; }
         public string QuoteName { get; set; }
         public bool IsBilled { get; set; }
