@@ -17,7 +17,6 @@ namespace DispatcherWeb.Customers
         Task DeleteCustomer(EntityDto input);
 
         Task<PagedResultDto<CustomerContactDto>> GetCustomerContacts(GetCustomerContactsInput input);
-        Task<CustomerContactDto> GetCustomerContact(NullableIdDto<int> input);
         Task<ListResultDto<SelectListDto>> GetCustomerContactsByIdsSelectList(GetItemsByIdsInput input);
         Task<ListResultDto<SelectListDto>> GetContactsForCustomer(NullableIdDto input);
         Task<CustomerContactEditDto> GetCustomerContactForEdit(GetCustomerContactForEditInput input);

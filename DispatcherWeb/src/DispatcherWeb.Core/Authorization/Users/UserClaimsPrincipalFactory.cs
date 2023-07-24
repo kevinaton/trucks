@@ -31,10 +31,8 @@ namespace DispatcherWeb.Authorization.Users
 
             bool officeCopyChargeTo = false;
             string officeName = null;
-
             int? customerId = null;
             string customerName = null;
-            bool? customerPortalAccessEnabled = null;
 
             if (user.OfficeId.HasValue || user.CustomerContactId.HasValue)
             {
@@ -54,7 +52,6 @@ namespace DispatcherWeb.Authorization.Users
                 officeCopyChargeTo = userDetails?.OfficeCopyChargeTo ?? false;
                 customerId = userDetails.CustomerId;
                 customerName = userDetails.CustomerName;
-                customerPortalAccessEnabled = userDetails.CustomerPortalAccessEnabled;
             }
 
             if (principal.Identity is ClaimsIdentity identity)
@@ -64,7 +61,6 @@ namespace DispatcherWeb.Authorization.Users
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserOfficeCopyChargeTo, officeCopyChargeTo ? "true" : "false"));
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerId, customerId + ""));
                 identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerName, customerName + ""));
-                identity.AddClaim(new Claim(DispatcherWebConsts.Claims.UserCustomerPortalAccessEnabled, (customerPortalAccessEnabled ?? false) ? "true" : "false"));
             }
 
             return principal;

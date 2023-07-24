@@ -98,20 +98,5 @@ namespace DispatcherWeb.Runtime.Session
                 return customerNameClaim.Value;
             }
         }
-
-        public bool? CustomerPortalAccessEnabled
-        {
-            get
-            {
-                var claimsPrincipal = PrincipalAccessor.Principal;
-
-                var customerPortalAccessEnabledClaim = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == DispatcherWebConsts.Claims.UserCustomerPortalAccessEnabled);
-                if (string.IsNullOrEmpty(customerPortalAccessEnabledClaim?.Value))
-                {
-                    return null;
-                }
-                return bool.Parse(customerPortalAccessEnabledClaim.Value);
-            }
-        }
     }
 }

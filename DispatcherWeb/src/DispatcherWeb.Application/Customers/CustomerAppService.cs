@@ -305,9 +305,7 @@ namespace DispatcherWeb.Customers
         public async Task<PagedResultDto<CustomerContactDto>> GetCustomerContacts(GetCustomerContactsInput input)
         {
             var query = _customerContactRepository.GetAll()
-                            .Include(p => p.Customer)
-                            .WhereIf(input.CustomerId.HasValue, x => x.CustomerId == input.CustomerId)
-                            .WhereIf(input.Email != null, x => x.Email == input.Email);
+                            .Where(x => x.CustomerId == input.CustomerId);
 
             var totalCount = await query.CountAsync();
             
@@ -317,13 +315,11 @@ namespace DispatcherWeb.Customers
                     Id = x.Id,
                     CustomerId = x.CustomerId,
                     Name = x.Name,
-                    CustomerName = x.Customer.Name,
                     PhoneNumber = x.PhoneNumber,
                     Fax = x.Fax,
                     Email = x.Email,
                     Title = x.Title,
                     IsActive = x.IsActive,
-                    HasCustomerPortalAccess = x.HasCustomerPortalAccess
                 })
                 .OrderBy(input.Sorting)
                 .ToListAsync();
@@ -331,28 +327,6 @@ namespace DispatcherWeb.Customers
             return new PagedResultDto<CustomerContactDto>(
                 totalCount,
                 items);
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Customers)]
-        public async Task<CustomerContactDto> GetCustomerContact(NullableIdDto<int> input)
-        {
-            var customerContact = await _customerContactRepository.GetAll()
-                                    .Select(x => new CustomerContactDto
-                                    {
-                                        Id = x.Id,
-                                        CustomerId = x.CustomerId,
-                                        Name = x.Name,
-                                        CustomerName = x.Customer.Name,
-                                        PhoneNumber = x.PhoneNumber,
-                                        Fax = x.Fax,
-                                        Email = x.Email,
-                                        Title = x.Title,
-                                        IsActive = x.IsActive,
-                                        HasCustomerPortalAccess = x.HasCustomerPortalAccess
-                                    })
-                                    .FirstOrDefaultAsync(p=>p.Id==input.Id);
-
-            return customerContact;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Customers)]

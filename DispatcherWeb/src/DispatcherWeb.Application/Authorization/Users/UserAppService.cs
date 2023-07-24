@@ -221,7 +221,7 @@ namespace DispatcherWeb.Authorization.Users
                 var user = await UserManager.Users.Include(x => x.Office).FirstOrDefaultAsync(x => x.Id == input.Id.Value);
 
                 output.User = ObjectMapper.Map<UserEditDto>(user);
-                output.ProfilePictureId = user.ProfilePictureId;                
+                output.ProfilePictureId = user.ProfilePictureId;
 
                 var organizationUnits = await UserManager.GetOrganizationUnitsAsync(user);
                 output.MemberedOrganizationUnits = organizationUnits.Select(ou => ou.Code).ToList();

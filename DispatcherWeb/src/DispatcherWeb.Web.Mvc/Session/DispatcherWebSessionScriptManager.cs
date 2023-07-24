@@ -35,16 +35,12 @@ namespace DispatcherWeb.Web.Session
             {
                 var officeId = session.OfficeId?.ToString() ?? "null";
                 script.AppendLine("    abp.session.officeId = " + officeId + ";");
-                var officeName = session.OfficeName ?? "null";
-                script.AppendLine("    abp.session.officeName = " + HtmlHelper.EscapeJsString(officeName) + ";");
+                script.AppendLine("    abp.session.officeName = " + HtmlHelper.EscapeJsString(session.OfficeName) + ";");
                 var officeCopyChargeTo = session.OfficeCopyChargeTo;
                 script.AppendLine("    abp.session.officeCopyChargeTo = " + (officeCopyChargeTo ? "true" : "false") + ";");
-                var customerId = session.CustomerId;
-                script.AppendLine("    abp.session.customerId = " + (customerId.HasValue ? customerId.Value.ToString() : "null") + ";");
-                var customerName = session.CustomerName ?? "null";
-                script.AppendLine("    abp.session.customerName = " + HtmlHelper.EscapeJsString(customerName) + ";");
-                var customerPortalAccessEnabled = session.CustomerPortalAccessEnabled;
-                script.AppendLine("    abp.session.customerPortalAccessEnabled = " + ((customerPortalAccessEnabled ?? false) ? "true" : "false") + ";");
+                var customerId = session.CustomerId?.ToString() ?? "null";
+                script.AppendLine("    abp.session.customerId = " + customerId + ";");
+                script.AppendLine("    abp.session.customerName = " + HtmlHelper.EscapeJsString(session.CustomerName) + ";");
             }
 
             script.AppendLine("    abp.entityStringFieldLengths = abp.entityStringFieldLengths || {};");

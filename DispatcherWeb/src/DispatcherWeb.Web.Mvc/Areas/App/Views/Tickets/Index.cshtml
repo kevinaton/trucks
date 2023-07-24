@@ -3,9 +3,7 @@
 @using Abp.Configuration
 @using Abp.Application.Features
 @using DispatcherWeb.Authorization
-@using DispatcherWeb.Authorization.Roles
 @using DispatcherWeb.Configuration
-@using DispatcherWeb.Customers.Dto
 @using DispatcherWeb.Features
 @using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Web.Areas.App.Startup
@@ -14,8 +12,7 @@
     ViewBag.CurrentPageName = AppPageNames.Tenant.Tickets;
 }
 
-@section Scripts
-    {
+@section Scripts {
     <environment names="Development">
         <script src="~/view-resources/Areas/app/Views/Tickets/Index.js" asp-append-version="true"></script>
         <script src="~/view-resources/Areas/App/Views/Tickets/_CreateOrEditTicketModal.js" asp-append-version="true"></script>

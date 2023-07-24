@@ -2,7 +2,6 @@
 using Abp.Auditing;
 using Abp.Authorization.Users;
 using Abp.Domain.Entities;
-using DispatcherWeb.Customers.Dto;
 using DispatcherWeb.Offices.Dto;
 
 namespace DispatcherWeb.Authorization.Users.Dto

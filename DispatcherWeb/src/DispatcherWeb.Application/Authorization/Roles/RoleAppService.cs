@@ -154,8 +154,6 @@ namespace DispatcherWeb.Authorization.Roles
 
             var role = await _roleManager.GetRoleByIdAsync(input.Role.Id.Value);
             role.DisplayName = input.Role.DisplayName;
-            role.Name = input.Role.DisplayName;
-            role.NormalizedName = input.Role.DisplayName.ToUpper();
             role.IsDefault = input.Role.IsDefault;
 
             await UpdateGrantedPermissionsAsync(role, input.GrantedPermissionNames);
@@ -164,12 +162,7 @@ namespace DispatcherWeb.Authorization.Roles
         [AbpAuthorize(AppPermissions.Pages_Administration_Roles_Create)]
         protected virtual async Task CreateRoleAsync(CreateOrUpdateRoleInput input)
         {
-            var role = new Role(AbpSession.TenantId, input.Role.DisplayName)
-            {
-                IsDefault = input.Role.IsDefault,
-                Name = input.Role.DisplayName.Replace(" ", string.Empty),
-                NormalizedName = input.Role.DisplayName.Replace(" ", string.Empty).ToUpper()
-            };
+            var role = new Role(AbpSession.TenantId, input.Role.DisplayName) { IsDefault = input.Role.IsDefault };
             CheckErrors(await _roleManager.CreateAsync(role));
             await CurrentUnitOfWork.SaveChangesAsync(); //It's done to get Id of the role.
             await UpdateGrantedPermissionsAsync(role, input.GrantedPermissionNames);

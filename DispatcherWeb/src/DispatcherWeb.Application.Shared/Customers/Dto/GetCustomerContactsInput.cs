@@ -6,8 +6,7 @@ namespace DispatcherWeb.Customers.Dto
 {
     public class GetCustomerContactsInput : SortedInputDto, IShouldNormalize
     {
-        public int? CustomerId { get; set; }
-        public string Email { get; set; }
+        public int CustomerId { get; set; }
 
         public void Normalize()
         {
