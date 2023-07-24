@@ -200,6 +200,17 @@ code {
 .mbsc-icon {
     color: #a8b2bb;
 }
+
+.mbsc-material.mbsc-textfield-fieldset {
+    border-color: #ebedf2 !important;
+}
+.mbsc-material.mbsc-textfield-outline {
+    height: 36.7px !important;
+    font-size: 14px !important;
+}
+.mbsc-no-margin {
+    margin: 0 !important;
+}
 /* Mobiscroll Custom CSS */
 
 /* Icon style */
