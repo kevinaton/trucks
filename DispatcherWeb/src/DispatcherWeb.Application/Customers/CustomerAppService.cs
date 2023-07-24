@@ -453,12 +453,8 @@ namespace DispatcherWeb.Customers
             };
 
             var customerContactId = await _customerContactRepository.InsertOrUpdateAndGetIdAsync(customerContact);
-            var customerPortalFeatureEnabled = await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal);
 
-            if (customerContact.HasCustomerPortalAccess && customerPortalFeatureEnabled)
-            {
-                await _customerContactUserLinkService.UpdateUser(customerContact);
-            }
+            await _customerContactUserLinkService.UpdateUser(customerContact);
 
             return customerContactId;
         }

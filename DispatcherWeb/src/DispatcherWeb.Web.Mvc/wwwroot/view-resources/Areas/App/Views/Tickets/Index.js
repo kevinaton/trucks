@@ -10,7 +10,7 @@
     var _isFilterReady = false;
     var _isGridInitialized = false;
 
-    var _isCustomerPortalEnabled = !abp.autth.hasPermission('Pages.Tickets.View')
+    var _isCustomerPortalEnabled = !abp.auth.hasPermission('Pages.Tickets.View')
         && abp.auth.hasPermission('CustomerPortal.TicketList')
         && abp.session.customerId;
 

@@ -38,23 +38,23 @@ namespace DispatcherWeb.Authorization.Users
 
             if (user.OfficeId.HasValue || user.CustomerContactId.HasValue)
             {
-                var userWithOfficeAndCustomerContact = await UserManager.Users
+                var userDetails = await UserManager.Users
                     .Where(x => x.Id == user.Id)
                     .Select(x => new
                     {
                         OfficeName = x.Office.Name,
-                        OfficeCopyChargeTo = x.Office.CopyDeliverToLoadAtChargeTo,
+                        OfficeCopyChargeTo = (bool?)x.Office.CopyDeliverToLoadAtChargeTo,
                         CustomerId = (int?)x.CustomerContact.Customer.Id,
                         CustomerName = x.CustomerContact.Customer.Name,
                         CustomerPortalAccessEnabled = (bool?)x.CustomerContact.HasCustomerPortalAccess
                     })
                     .FirstOrDefaultAsync();
 
-                officeName = userWithOfficeAndCustomerContact?.OfficeName;
-                officeCopyChargeTo = userWithOfficeAndCustomerContact?.OfficeCopyChargeTo ?? false;
-                customerId = userWithOfficeAndCustomerContact.CustomerId;
-                customerName = userWithOfficeAndCustomerContact.CustomerName;
-                customerPortalAccessEnabled = userWithOfficeAndCustomerContact.CustomerPortalAccessEnabled;
+                officeName = userDetails?.OfficeName;
+                officeCopyChargeTo = userDetails?.OfficeCopyChargeTo ?? false;
+                customerId = userDetails.CustomerId;
+                customerName = userDetails.CustomerName;
+                customerPortalAccessEnabled = userDetails.CustomerPortalAccessEnabled;
             }
 
             if (principal.Identity is ClaimsIdentity identity)
