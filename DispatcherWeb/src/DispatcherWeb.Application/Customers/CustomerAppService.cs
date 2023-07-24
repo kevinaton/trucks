@@ -305,7 +305,7 @@ namespace DispatcherWeb.Customers
         public async Task<PagedResultDto<CustomerContactDto>> GetCustomerContacts(GetCustomerContactsInput input)
         {
             var query = _customerContactRepository.GetAll()
-                .Where(x => x.CustomerId == input.CustomerId);
+                            .Where(x => x.CustomerId == input.CustomerId);
 
             var totalCount = await query.CountAsync();
             
@@ -319,7 +319,7 @@ namespace DispatcherWeb.Customers
                     Fax = x.Fax,
                     Email = x.Email,
                     Title = x.Title,
-                    IsActive = x.IsActive
+                    IsActive = x.IsActive,
                 })
                 .OrderBy(input.Sorting)
                 .ToListAsync();
@@ -427,12 +427,8 @@ namespace DispatcherWeb.Customers
             };
 
             var customerContactId = await _customerContactRepository.InsertOrUpdateAndGetIdAsync(customerContact);
-            var customerPortalFeatureEnabled = await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal);
 
-            if (customerContact.HasCustomerPortalAccess && customerPortalFeatureEnabled)
-            {
-                await _customerContactUserLinkService.UpdateUser(customerContact);
-            }
+            await _customerContactUserLinkService.UpdateUser(customerContact);
 
             return customerContactId;
         }

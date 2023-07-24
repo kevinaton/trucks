@@ -21,8 +21,8 @@
             _$form.find('#Email').rules('add', { regex: app.regex.email });
             _$form.find('#Email').change(e => {
                 var email = $(e.target).val();
-                var visibility = _$form.valid() && email.length > 0 ? "visible" : "hidden";
-                _$form.find('#HasCustomerPortalAccessContainer').css("visibility", visibility);
+                var customerPortalCheckboxIsVisible = _$form.valid() && email.length > 0;
+                _$form.find('#HasCustomerPortalAccessContainer').toggle(customerPortalCheckboxIsVisible);
             });
 
             abp.helper.ui.initControls();

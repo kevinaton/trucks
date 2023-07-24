@@ -1864,5 +1864,6 @@
 		<text name="HasCustomerPortalAccess">Portal Access</text>
 		<text name="CustomerPortalTicketsList">Tickets List</text>
 		<text name="RequiredToAllowPortalAccess)">(Required to allow portal access)</text>
+		<text name="CustomerPortalUserWithCustomerIdMissing">Customer Portal feature is enabled but you are not using a customer user. Please contact support to resolve this issue.</text>
 	</texts>
 </localizationDictionary>

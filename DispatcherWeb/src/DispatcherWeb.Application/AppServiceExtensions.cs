@@ -15,7 +15,6 @@ using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
-using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Locations;
 using DispatcherWeb.Locations.Dto;
 using DispatcherWeb.Orders;

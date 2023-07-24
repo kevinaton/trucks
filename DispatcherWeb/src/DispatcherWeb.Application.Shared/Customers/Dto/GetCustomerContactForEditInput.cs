@@ -1,5 +1,4 @@
-﻿using Abp.Application.Services.Dto;
-using DispatcherWeb.Dto;
+﻿using DispatcherWeb.Dto;
 
 namespace DispatcherWeb.Customers.Dto
 {

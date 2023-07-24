@@ -45,18 +45,15 @@ namespace DispatcherWeb.CustomerContacts
 
             var userIsInCustomerRole = await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Customer);
             var customerPortalFeatureEnabled = await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal);
-            if (!userIsInCustomerRole || !customerPortalFeatureEnabled)
-            {
-                //throw new UserFriendlyException("Customer portal feature is not enabled for this user.");
-                return;
-            }
+            var shouldCustomerContactHaveAccessToCustomerPortal = userIsInCustomerRole && customerPortalFeatureEnabled;
 
             var linkedCustomerContact = await _customerContactRepository.GetAll()
                                             .FirstOrDefaultAsync(x => x.Id == user.CustomerContactId);
 
             if (linkedCustomerContact != null)
             {
-                await UpdateCustomerContactFromUser(linkedCustomerContact, user);
+                linkedCustomerContact.HasCustomerPortalAccess = shouldCustomerContactHaveAccessToCustomerPortal;
+                UpdateCustomerContactFromUser(linkedCustomerContact, user);
             }
         }
 
@@ -65,10 +62,21 @@ namespace DispatcherWeb.CustomerContacts
         /// </summary>
         public async Task<User> UpdateUser(CustomerContact customerContact, bool sendEmail = true)
         {
+            if (customerContact.Id == 0)
+            {
+                throw new ArgumentException("CustomerContact should be saved first", nameof(customerContact));
+            }
+
             var linkedUser = await UserManager.Users.FirstOrDefaultAsync(x => x.CustomerContactId == customerContact.Id);
+            var shouldCustomerContactBeLinkedToUser = await ShouldUserBeLinkedToCustomerContact(customerContact);
             if (linkedUser != null)
             {
-                if (!await IsUserInCustomerContactRole(linkedUser))
+                var isUserInCustomerRole = await IsUserInCustomerRole(linkedUser);
+                if (!shouldCustomerContactBeLinkedToUser && isUserInCustomerRole)
+                {
+                    await UserManager.RemoveFromRoleAsync(linkedUser, StaticRoleNames.Tenants.Customer);
+                }
+                else if (shouldCustomerContactBeLinkedToUser && !isUserInCustomerRole)
                 {
                     await UserManager.AddToRoleAsync(linkedUser, StaticRoleNames.Tenants.Customer);
                 }
@@ -76,10 +84,15 @@ namespace DispatcherWeb.CustomerContacts
                 return linkedUser;
             }
 
+            if (!shouldCustomerContactBeLinkedToUser)
+            {
+                return null;
+            }
+
             var user = await UserManager.FindByEmailAsync(customerContact.Email);
             if (user != null)
             {
-                if (!await IsUserInCustomerContactRole(user))
+                if (!await IsUserInCustomerRole(user))
                 {
                     await UserManager.AddToRoleAsync(user, StaticRoleNames.Tenants.Customer);
                 }
@@ -118,9 +131,24 @@ namespace DispatcherWeb.CustomerContacts
 
         #region private methods
 
-        private async Task<bool> IsUserInCustomerContactRole(User user)
+        private async Task<bool> IsUserInCustomerRole(User user)
         {
             return await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Customer);
+        }
+
+        private async Task<bool> ShouldUserBeLinkedToCustomerContact(CustomerContact customerContact)
+        {
+            if (!await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal))
+            {
+                return false;
+            }
+
+            if (!customerContact.HasCustomerPortalAccess || string.IsNullOrEmpty(customerContact.Email))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private async Task UpdateUserFromCustomerContactAsync(User user, CustomerContact customerContact)
@@ -136,19 +164,17 @@ namespace DispatcherWeb.CustomerContacts
             user.Title = customerContact.Title;
             user.EmailAddress = customerContact.Email;
             user.PhoneNumber = customerContact.PhoneNumber;
-            user.OfficeId = null;
             user.CustomerContactId = customerContact.Id;
 
             (await UserManager.UpdateAsync(user)).CheckErrors(LocalizationManager);
         }
 
-        private async Task UpdateCustomerContactFromUser(CustomerContact customerContact, User user)
+        private void UpdateCustomerContactFromUser(CustomerContact customerContact, User user)
         {
             customerContact.Name = $"{user.Name} {user.Surname}";
             customerContact.Title = user.Title;
             customerContact.Email = user.EmailAddress;
             customerContact.PhoneNumber = user.PhoneNumber;
-            await _customerContactRepository.UpdateAsync(customerContact);
         }
 
         #endregion private methods
