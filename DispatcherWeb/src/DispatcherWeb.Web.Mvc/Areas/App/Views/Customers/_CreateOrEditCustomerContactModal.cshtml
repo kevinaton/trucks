@@ -30,7 +30,7 @@
             <input class="form-control" type="text" asp-for="Email">
             @if (await FeatureChecker.IsEnabledAsync(AppFeatures.CustomerPortal))
             {
-                <small style="color: cornflowerblue;">@L("RequiredToAllowPortalAccess")</small>
+                <small style="color: cornflowerblue;">(@L("RequiredToAllowPortalAccess"))</small>
             }
         </div>
         <div class="m-form__group form-group">
