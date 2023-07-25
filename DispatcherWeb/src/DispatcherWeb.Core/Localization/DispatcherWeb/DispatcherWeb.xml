@@ -1766,6 +1766,7 @@ admin -> for your tenant's admin
     <text name="VehicleCategoriesHeaderInfo">Manage your vehicle categories</text>
     <text name="VehicleMaintenance">Vehicle Maintenance</text>
     <text name="VehicleMaintenanceServices">Services</text>
+    <text name="VehicleMaintenanceWorkOrderReport">Vehicle Maintenance Work Order Report</text>
     <text name="VehicleService">Vehicle Service</text>
     <text name="VehicleServiceTypes">Vehicle Service Types</text>
     <text name="VehicleUsageMenuItem">Vehicle Usage</text>
