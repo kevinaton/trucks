@@ -28,7 +28,7 @@ const { Customers, Contact, Status, HistoryItems } = data;
 
 const columns = [
     {
-        field: 'xpand',
+        field: 'expand',
         headerName: '',
         width: 50,
         renderCell: (params) => (
@@ -114,6 +114,14 @@ const ActionsMenuRow = ({ row }) => {
         </div>
     );
 };
+
+const handleContact = (option) => {
+    if(typeof option === 'string') {
+        return option
+    } else {
+        return option.name
+    }
+}
 
 const AddQuote = ({
     quote,
@@ -247,10 +255,10 @@ const AddQuote = ({
                             <TextField
                                 id='quote-name'
                                 size='small'
-                                value={quote.name}
+                                value={quote.quoteName}
                                 required
                                 label='Name'
-                                onChange={(event, value) => handleValues('name', event, value)}
+                                onChange={(event, value) => handleValues('quoteName', event, value)}
                                 sx={{
                                     flexBasis: { xs: '100%', sm: '50%' },
                                 }}
@@ -322,12 +330,14 @@ const AddQuote = ({
                                 renderInput={(params) => <TextField {...params} label='Customer' />}
                             />
                             <Autocomplete
-                                id='contact'
+                                id='contact-name'
                                 value={quote.contact}
                                 options={Contact}
                                 size='small'
-                                getOptionLabel={(option) => option.name}
-                                onChange={(event, value) => handleValues('contact', event, value)}
+                                isOptionEqualToValue={(option, value) => option.name === value.name }
+                                getOptionLabel={(option) => handleContact(option)}
+                                onChange={(event, value) => 
+                                    handleValues('contact', event, value)}
                                 sx={{
                                     flexBasis: { xs: '100%', sm: '50%' },
                                 }}
@@ -351,14 +361,14 @@ const AddQuote = ({
                             />
                             <Autocomplete
                                 id='sales-person'
-                                value={quote.salesPerson}
+                                value={quote.salesRep}
                                 options={[]}
                                 size='small'
                                 sx={{
                                     flexBasis: { xs: '100%', sm: '50%' },
                                 }}
                                 onChange={(event, value) =>
-                                    handleValues('salesPerson', event, value)
+                                    handleValues('salesRep', event, value)
                                 }
                                 renderInput={(params) => (
                                     <TextField {...params} label='Sales Person' />
@@ -368,10 +378,10 @@ const AddQuote = ({
                         <TextField
                             id='quote-po-number'
                             size='small'
-                            value={quote.poNumber}
+                            value={quote.po}
                             required
                             label='PO Number'
-                            onChange={(event, value) => handleValues('poNumber', event, value)}
+                            onChange={(event, value) => handleValues('po', event, value)}
                         />
                         <Divider sx={{ my: 3 }} />
                         <Box>
