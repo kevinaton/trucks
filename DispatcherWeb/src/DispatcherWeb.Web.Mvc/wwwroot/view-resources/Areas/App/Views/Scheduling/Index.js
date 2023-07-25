@@ -1559,7 +1559,6 @@
                         let askToAssignDriverAndAddTagAgain = async function (tag, eventOptions) {
                             eventOptions = eventOptions || {};
                             var filterData = _dtHelper.getFilterData();
-                            filterData.officeId = filterData.officeId.length === 0 ? null : parseInt(filterData.officeId);
                             var assignDriverResult = await app.getModalResultAsync(
                                 _assignDriverForTruckModal.open({
                                     message: 'There was no driver assigned to this truck. Please select a driver.',
@@ -2260,15 +2259,17 @@
         $('#SendOrdersToDriversButton').click(function (e) {
             e.preventDefault();
             var filterData = _dtHelper.getFilterData();
+            let selectedOffices = [];
+            if (filterData.officeId) {
+                selectedOffices.push({
+                    id: filterData.officeId,
+                    name: filterData.officeName
+                });
+            }
             _sendOrdersToDriversModal.open({
                 deliveryDate: filterData.date,
                 shift: filterData.shift,
-                selectedOffices: [
-                    {
-                        id: filterData.officeId,
-                        name: filterData.officeName
-                    }
-                ]
+                selectedOffices
             });
         });
 
@@ -2845,7 +2846,6 @@
                     callback: function () {
                         var truck = $(this).data('truck');
                         var filterData = _dtHelper.getFilterData();
-                        filterData.officeId = filterData.officeId.length === 0 ? null : parseInt(filterData.officeId);
                         _assignDriverForTruckModal.open({
                             truckId: truck.id,
                             truckCode: truck.truckCode,

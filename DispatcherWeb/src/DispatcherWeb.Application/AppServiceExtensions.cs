@@ -394,8 +394,8 @@ namespace DispatcherWeb
                 })
                 .ToListAsync();
 
-            var truckIdsSharedWithThisOffice = sharedTrucks.Where(x => !input.OfficeId.HasValue || (input.OfficeId.HasValue && x.OfficeId == input.OfficeId)).Select(x => x.TruckId).ToList();
-            var trucksSharedWithOtherOffices = sharedTrucks.Where(x => !x.TruckOfficeId.HasValue || (x.TruckOfficeId.HasValue && x.OfficeId != x.TruckOfficeId)).ToList();
+            var truckIdsSharedWithThisOffice = sharedTrucks.Where(x => x.OfficeId == input.OfficeId).Select(x => x.TruckId).ToList();
+            var trucksSharedWithOtherOffices = sharedTrucks.Where(x => x.OfficeId != x.TruckOfficeId).ToList();
 
             var leaseHaulerTrucks = await truckQuery
                 .Where(x => useLeaseHaulers && x.LocationId == null)

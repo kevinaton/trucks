@@ -12,14 +12,15 @@
     ViewBag.CurrentPageName = AppPageNames.Tenant.Schedule;
 }
 @section Styles
-    {
+{
     <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-typeahead.css" asp-append-version="true" />
     <link href="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.css" rel="stylesheet" />
     <link href="~/view-resources/areas/app/views/scheduling/jobsummarymodal.css" rel="stylesheet" />
     @await Component.InvokeAsync(typeof(OfficeTruckStylesViewComponent))
 }
-@section Scripts{
+@section Scripts
+{
     <environment names="Development">
         <script src="~/lib/typeahead.js/dist/typeahead.bundle.js" asp-append-version="true"></script>
         <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.js" asp-append-version="true"></script>

@@ -299,7 +299,7 @@ namespace DispatcherWeb.Scheduling
                     (ol.MaterialQuantity > 0 || ol.FreightQuantity > 0 || ol.NumberOfTrucks > 0)
                 )
                 .WhereIf(await FeatureChecker.AllowMultiOfficeFeature(),
-                    ol => (!input.OfficeId.HasValue || input.OfficeId.HasValue && ol.Order.LocationId == input.OfficeId) ||
+                    ol => ol.Order.LocationId == input.OfficeId ||
                             ol.SharedOrderLines.Any(sol => sol.OfficeId == input.OfficeId))
                 .WhereIf(await SettingManager.UseShifts(), ol => ol.Order.Shift == input.Shift)
                 .WhereIf(input.HideCompletedOrders, ol => !ol.IsComplete);
@@ -394,7 +394,7 @@ namespace DispatcherWeb.Scheduling
                 orderLine.AmountOrdered = designationHasMaterial ? orderLine.MaterialQuantity : orderLine.FreightQuantity;
 
                 var orderLineProgress = progressData.FirstOrDefault(x => x.Id == orderLine.Id);
-                
+
                 if (orderLineProgress != null)
                 {
                     orderLine.DispatchCount = orderLineProgress.DispatchCount;
@@ -742,7 +742,7 @@ namespace DispatcherWeb.Scheduling
                             AssetType = x.VehicleCategory.AssetType,
                             IsPowered = x.VehicleCategory.IsPowered,
                             SortOrder = x.VehicleCategory.SortOrder,
-                            
+
                         }
                     })
                     .FirstOrDefaultAsync();

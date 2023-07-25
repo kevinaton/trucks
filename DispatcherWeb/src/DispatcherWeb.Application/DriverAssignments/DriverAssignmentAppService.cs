@@ -86,8 +86,7 @@ namespace DispatcherWeb.DriverAssignments
                 .Where(da => da.Date == input.Date && da.OfficeId == input.OfficeId && da.Truck.LocationId.HasValue)
                 .WhereIf(input.Shift.HasValue && input.Shift != Shift.NoShift, da => da.Shift == input.Shift.Value)
                 .WhereIf(input.Shift.HasValue && input.Shift == Shift.NoShift, da => da.Shift == null)
-                .WhereIf(input.TruckId.HasValue, da => da.TruckId == input.TruckId)
-                ;
+                .WhereIf(input.TruckId.HasValue, da => da.TruckId == input.TruckId);
 
             var items = await query
                 .Select(x => new DriverAssignmentLiteDto
@@ -209,7 +208,7 @@ namespace DispatcherWeb.DriverAssignments
                         syncRequest.AddChange(EntityEnum.DriverAssignment,
                             existingAssignment
                                 .ToChangedEntity()
-                                .SetOldDriverIdToNotify(oldDriverId), 
+                                .SetOldDriverIdToNotify(oldDriverId),
                             changeType: firstDriverAssignment ? ChangeType.Modified : ChangeType.Removed);
 
                         firstDriverAssignment = false;
@@ -458,7 +457,7 @@ namespace DispatcherWeb.DriverAssignments
                         }
                         syncRequest
                             .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId), ChangeType.Removed);
-                        
+
                         await _driverAssignmentRepository.DeleteAsync(driverAssignment);
                     }
                     else
@@ -497,7 +496,7 @@ namespace DispatcherWeb.DriverAssignments
         public async Task<byte[]> GetDriverAssignmentReport(GetDriverAssignmentsInput input)
         {
             var officeName = await _officeRepository.GetAll()
-                                            .Where(x => !input.OfficeId.HasValue || (input.OfficeId.HasValue && x.Id == input.OfficeId))
+                                            .Where(x => input.OfficeId.HasValue && x.Id == input.OfficeId.Value)
                                             .Select(x => x.Name)
                                             .FirstAsync();
 
@@ -682,7 +681,7 @@ namespace DispatcherWeb.DriverAssignments
 
             if (driverAssignments[0].DriverId == null)
             {
-                foreach (var driverAssignment in driverAssignments.Skip(1)) 
+                foreach (var driverAssignment in driverAssignments.Skip(1))
                 {
                     await _driverAssignmentRepository.DeleteAsync(driverAssignment);
                 }
