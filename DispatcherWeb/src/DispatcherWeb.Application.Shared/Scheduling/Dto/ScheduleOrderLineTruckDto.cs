@@ -20,7 +20,6 @@ namespace DispatcherWeb.Scheduling.Dto
         public VehicleCategoryDto VehicleCategory { get; set; }
         public bool AlwaysShowOnSchedule { get; set; }
         public bool CanPullTrailer { get; set; }
-        public int? SharedOfficeId { get; set; }
         public bool IsDone { get; set; }
         public DateTime? TimeOnJob { get; set; }
     }

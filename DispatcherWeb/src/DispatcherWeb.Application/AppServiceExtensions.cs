@@ -528,10 +528,6 @@ namespace DispatcherWeb
                 }
 
                 truck.SharedWithOfficeId = trucksSharedWithOtherOffices.FirstOrDefault(y => y.TruckId == truck.Id)?.OfficeId;
-                truck.SharedFromOfficeId = sharedTrucks
-                                                .WhereIf(input.OfficeId.HasValue, st => st.OfficeId == input.OfficeId)
-                                                .Where(st => st.TruckId == truck.Id).Select(st => (int?)st.OfficeId)
-                                                .FirstOrDefault();
 
                 truck.Utilization = !truck.VehicleCategory.IsPowered
                         //previous trailer utilization logic
@@ -677,7 +673,6 @@ namespace DispatcherWeb
                         OrderLineId = ol.Id,
                         IsExternal = olt.Truck.LocationId == null,
                         OfficeId = olt.Truck.LocationId ?? ol.Order.LocationId /* Available Lease Hauler Truck */,
-                        SharedOfficeId = olt.Truck.SharedTrucks.Where(st => st.Date == ol.Order.DeliveryDate && st.Shift == ol.Order.Shift).Select(st => st.OfficeId).FirstOrDefault(),
                         Utilization = olt.Utilization,
                         VehicleCategory = new VehicleCategoryDto
                         {

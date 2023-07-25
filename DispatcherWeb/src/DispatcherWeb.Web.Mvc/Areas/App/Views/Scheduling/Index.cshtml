@@ -11,33 +11,32 @@
 @{
     ViewBag.CurrentPageName = AppPageNames.Tenant.Schedule;
 }
-@section Styles
-{
-    <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-typeahead.css" asp-append-version="true" />
-    <link href="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.css" rel="stylesheet" />
-    <link href="~/view-resources/areas/app/views/scheduling/jobsummarymodal.css" rel="stylesheet" />
+@section Styles {
+        <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-typeahead.css" asp-append-version="true" />
+        <link href="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.css" rel="stylesheet" />
+        <link href="~/view-resources/areas/app/views/scheduling/jobsummarymodal.css" rel="stylesheet" />
     @await Component.InvokeAsync(typeof(OfficeTruckStylesViewComponent))
 }
-@section Scripts
-{
-    <environment names="Development">
-        <script src="~/lib/typeahead.js/dist/typeahead.bundle.js" asp-append-version="true"></script>
-        <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.js" asp-append-version="true"></script>
-        <script src="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.js" asp-append-version="true"></script>
-        <script src="~/lib/jQuery-contextMenu/dist/jquery.ui.position.min.js" asp-append-version="true"></script>
-        <script src="~/lib/jquery-ui/jquery-ui.js" asp-append-version="true"></script>
-        <script src="~/view-resources/Areas/app/Views/Scheduling/Index.js" asp-append-version="true"></script>
-    </environment>
 
-    <environment names="Staging,Production">
-        <script src="~/lib/typeahead.js/dist/typeahead.bundle.js" asp-append-version="true"></script>
-        <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.js" asp-append-version="true"></script>
-        <script src="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.js" asp-append-version="true"></script>
-        <script src="~/lib/jQuery-contextMenu/dist/jquery.ui.position.min.js" asp-append-version="true"></script>
-        <script src="~/lib/jquery-ui/jquery-ui.min.js" asp-append-version="true"></script>
-        <script src="~/view-resources/Areas/app/Views/Scheduling/Index.js" asp-append-version="true"></script>
-    </environment>
+@section Scripts {
+        <environment names="Development">
+            <script src="~/lib/typeahead.js/dist/typeahead.bundle.js" asp-append-version="true"></script>
+            <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.js" asp-append-version="true"></script>
+            <script src="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.js" asp-append-version="true"></script>
+            <script src="~/lib/jQuery-contextMenu/dist/jquery.ui.position.min.js" asp-append-version="true"></script>
+            <script src="~/lib/jquery-ui/jquery-ui.js" asp-append-version="true"></script>
+            <script src="~/view-resources/Areas/app/Views/Scheduling/Index.js" asp-append-version="true"></script>
+        </environment>
+
+        <environment names="Staging,Production">
+            <script src="~/lib/typeahead.js/dist/typeahead.bundle.js" asp-append-version="true"></script>
+            <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.js" asp-append-version="true"></script>
+            <script src="~/lib/jQuery-contextMenu/dist/jquery.contextMenu.min.js" asp-append-version="true"></script>
+            <script src="~/lib/jQuery-contextMenu/dist/jquery.ui.position.min.js" asp-append-version="true"></script>
+            <script src="~/lib/jquery-ui/jquery-ui.min.js" asp-append-version="true"></script>
+            <script src="~/view-resources/Areas/app/Views/Scheduling/Index.js" asp-append-version="true"></script>
+        </environment>
 }
 
 <div class="m-subheader ">
@@ -71,10 +70,10 @@
                         </div>
                         @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.UseShifts))
                         {
-                            <label for="ShiftFilter" class="col-lg-1 col-md-1 col-form-label required-label mb-2">@L("Shift"):</label>
-                            <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
-                                <select class="form-control filter" name="Shift" id="ShiftFilter" asp-items="@((await SettingManager.GetShiftSelectList()).Union(new List<SelectListDto> { new SelectListDto { Id = "", Name = "[No Shift]" } }).Select(x => new SelectListItem(x.Name, x.Id)))"></select>
-                            </div>
+                                <label for="ShiftFilter" class="col-lg-1 col-md-1 col-form-label required-label mb-2">@L("Shift"):</label>
+                                <div class="col-xl-2 col-lg-4 col-sm-6 mb-3">
+                                    <select class="form-control filter" name="Shift" id="ShiftFilter" asp-items="@((await SettingManager.GetShiftSelectList()).Union(new List<SelectListDto> { new SelectListDto { Id = "", Name = "[No Shift]" } }).Select(x => new SelectListItem(x.Name, x.Id)))"></select>
+                                </div>
                         }
 
                         <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6 mb-3" @Html.StyleDisplayNone(!await FeatureChecker.AllowMultiOfficeFeature())>

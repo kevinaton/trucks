@@ -503,7 +503,6 @@
                     officeId: truck.officeId,
                     isExternal: truck.isExternal,
                     leaseHaulerId: truck.leaseHaulerId,
-                    sharedOfficeId: truck.sharedFromOfficeId,
                     vehicleCategory: {
                         id: truck.vehicleCategory.id,
                         name: truck.vehicleCategory.name,
@@ -549,7 +548,6 @@
                             officeId: truck.officeId,
                             isExternal: truck.isExternal,
                             leaseHaulerId: truck.leaseHaulerId,
-                            sharedOfficeId: truck.sharedFromOfficeId,
                             vehicleCategory: {
                                 id: truck.vehicleCategory.id,
                                 name: truck.vehicleCategory.name,
@@ -1957,7 +1955,7 @@
         });
 
         function isTruckFromOfficeOrSharedOffice(truck) {
-            return true; //truck.officeId === abp.session.officeId || truck.sharedOfficeId === abp.session.officeId;
+            return true;
         }
 
         function handlePopupException(failResult) {
