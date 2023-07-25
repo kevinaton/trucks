@@ -1861,5 +1861,7 @@
 		<text name="InvoiceTermsAndConditions">Terms and Conditions</text>
 		<text name="VehicleMaintenanceWorkOrderReport">Vehicle Maintenance Work Order Report</text>
 		<text name="SelectStatusesOfInvoicesToExport">Select statuses of invoices to export</text>
+		<text name="YearMakeModel"><![CDATA[Year, Make, & Model]]></text>
+		<text name="LicenseState">License State</text>
 	</texts>
 </localizationDictionary>

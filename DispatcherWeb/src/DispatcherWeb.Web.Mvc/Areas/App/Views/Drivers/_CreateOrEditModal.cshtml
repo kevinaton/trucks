@@ -93,6 +93,10 @@
         <div class="tab-pane" id="StatusTab" role="tabpanel">
             <form role="form" novalidate class="form-validation" name="DriverStatusForm">
                 <div class="form-group">
+                    <label>@L("LicenseState")</label>
+                    <input class="form-control" type="text" asp-for="LicenseState">
+                </div>
+                <div class="form-group">
                     <label>@L("LicenseNumber")</label>
                     <input class="form-control" type="text" asp-for="LicenseNumber">
                 </div>
