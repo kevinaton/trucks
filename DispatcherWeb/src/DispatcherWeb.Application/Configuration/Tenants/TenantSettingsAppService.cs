@@ -252,6 +252,7 @@ namespace DispatcherWeb.Configuration.Tenants
             settings.DontValidateDriverAndTruckOnTickets = !await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ValidateDriverAndTruckOnTickets);
             settings.ShowDriverNamesOnPrintedOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ShowDriverNamesOnPrintedOrder);
             settings.SplitBillingByOffices = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.SplitBillingByOffices);
+            settings.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders);
 
             settings.UseShifts = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.UseShifts);
             settings.ShiftName1 = await SettingManager.GetSettingValueAsync(AppSettings.General.ShiftName1);
@@ -384,6 +385,7 @@ namespace DispatcherWeb.Configuration.Tenants
                 TaxVatNo = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingTaxVatNo),
                 TaxCalculationType = (TaxCalculationType)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.TaxCalculationType),
                 AutopopulateDefaultTaxRate = autopopulateDefaultTaxRate,
+                InvoiceTermsAndConditions = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.TermsAndConditions),
                 DefaultTaxRate = await SettingManager.GetSettingValueAsync<decimal>(AppSettings.Invoice.DefaultTaxRate),
                 InvoiceTemplate = (InvoiceTemplateEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.InvoiceTemplate),
                 QuickbooksIntegrationKind = (QuickbooksIntegrationKind)await SettingManager.GetSettingValueAsync<int>(AppSettings.Invoice.Quickbooks.IntegrationKind),
@@ -836,6 +838,7 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ValidateDriverAndTruckOnTickets, (!input.General.DontValidateDriverAndTruckOnTickets).ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ShowDriverNamesOnPrintedOrder, input.General.ShowDriverNamesOnPrintedOrder.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.SplitBillingByOffices, input.General.SplitBillingByOffices.ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders, input.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DriverOrderNotification.EmailTitle, input.General.DriverOrderEmailTitle);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DriverOrderNotification.EmailBody, input.General.DriverOrderEmailBody);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DriverOrderNotification.Sms, input.General.DriverOrderSms);
@@ -935,6 +938,7 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TenantManagement.BillingTaxVatNo, input.TaxVatNo);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.TaxCalculationType, ((int)input.TaxCalculationType).ToString("N0"));
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.AutopopulateDefaultTaxRate, (input.TaxCalculationType == TaxCalculationType.NoCalculation ? false : input.AutopopulateDefaultTaxRate).ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.TermsAndConditions, input.InvoiceTermsAndConditions);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.DefaultTaxRate, (input.DefaultTaxRate ?? 0).ToString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.InvoiceTemplate, ((int)input.InvoiceTemplate).ToString("N0"));
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.Invoice.Quickbooks.IntegrationKind, ((int)(input.QuickbooksIntegrationKind ?? 0)).ToString());

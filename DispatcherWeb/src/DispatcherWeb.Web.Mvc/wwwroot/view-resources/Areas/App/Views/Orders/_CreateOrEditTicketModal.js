@@ -71,20 +71,6 @@
                 reader.readAsDataURL(file);
             });
 
-            function getTicketFromRowData(rowData) {
-                return {
-                    id: rowData.id,
-                    orderLineId: rowData.orderLineId,
-                    ticketNumber: rowData.ticketNumber,
-                    ticketDateTime: rowData.ticketDateTime,
-                    quantity: rowData.quantity,
-                    truckId: rowData.truckId,
-                    truckCode: rowData.truck, //api is expecting 'truckCode' on edit, but sends 'truck' in grid data
-                    driverId: rowData.driverId,
-                    driverName: rowData.driverName
-                };
-            }
-
             function editTicket(ticket, cell) {
                 //abp.ui.setBusy(cell);
                 return _ticketService.editOrderTicket(ticket).done(function (result) {
@@ -114,8 +100,7 @@
                 },
                 editable: {
                     saveCallback: function (rowData, cell) {
-                        var ticket = getTicketFromRowData(rowData);
-                        return editTicket(ticket, cell);
+                        return editTicket(rowData, cell);
                     }
                 },
                 columns: [
@@ -158,37 +143,56 @@
                         title: "UOM"
                     },
                     {
-                        data: "truck",
+                        data: "truckCode",
                         title: "Truck",
                         width: "90px",
                         className: "truck-code-column all",
                         editable: {
                             editor: _dtHelper.editors.dropdown,
                             idField: 'truckId',
-                            nameField: 'truck',
+                            nameField: 'truckCode',
                             dropdownOptions: {
                                 abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
                                 abpServiceParams: {
                                     allOffices: true,
                                     includeLeaseHaulerTrucks: true,
                                     activeOnly: true,
+                                    excludeTrailers: true,
                                     orderLineId: _validateTrucksAndDrivers ? _orderLineId : null
                                 },
                                 showAll: false,
                                 allowClear: true
                             },
                             editCompleteCallback: function editCompleteCallback(editResult, rowData, cell) {
-                                var driverCell = $(cell).closest('tr').find('td.driver-name-column');
-                                var driverEditor = driverCell.find('select');
-                                if (!driverEditor.length) {
-                                    driverCell.text(editResult.ticket.driverName);
-                                } else {
-                                    if (parseInt(rowData.driverId) !== editResult.ticket.driverId) {
-                                        abp.helper.ui.addAndSetSelect2ValueSilently(driverEditor, editResult.ticket.driverId, editResult.ticket.driverName);
-                                    }
-                                }
-                                rowData.driverId = editResult.ticket.driverId;
-                                rowData.driverName = editResult.ticket.driverName;
+                                updateRelatedDropdownCellValue(cell, rowData, editResult.ticket, 'driver-name-column', 'driverId', 'driverName');
+                                updateRelatedDropdownCellValue(cell, rowData, editResult.ticket, 'trailer-truck-code-column', 'trailerId', 'trailerTruckCode');
+                            }
+                        }
+                    },
+                    {
+                        data: "trailerTruckCode",
+                        title: "Trailer",
+                        width: "90px",
+                        className: "trailer-truck-code-column all",
+                        editable: {
+                            editor: _dtHelper.editors.dropdown,
+                            idField: 'trailerId',
+                            nameField: 'trailerTruckCode',
+                            dropdownOptions: {
+                                abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
+                                abpServiceParams: {
+                                    allOffices: true,
+                                    includeLeaseHaulerTrucks: true,
+                                    activeOnly: true,
+                                    assetType: abp.enums.assetType.trailer,
+                                    orderLineId: _validateTrucksAndDrivers ? _orderLineId : null
+                                },
+                                showAll: false,
+                                allowClear: true
+                            },
+                            editCompleteCallback: function editCompleteCallback(editResult, rowData, cell) {
+                                updateRelatedDropdownCellValue(cell, rowData, editResult.ticket, 'driver-name-column', 'driverId', 'driverName');
+                                updateRelatedDropdownCellValue(cell, rowData, editResult.ticket, 'truck-code-column', 'truckId', 'truckCode');
                             }
                         }
                     },
@@ -214,17 +218,8 @@
                                 allowClear: true
                             },
                             editCompleteCallback: function editCompleteCallback(editResult, rowData, cell) {
-                                var truckCell = $(cell).closest('tr').find('td.truck-code-column');
-                                var truckEditor = truckCell.find('select');
-                                if (!truckEditor.length) {
-                                    truckCell.text(editResult.ticket.truckCode);
-                                } else {
-                                    if (parseInt(rowData.truckId) !== editResult.ticket.truckId) {
-                                        abp.helper.ui.addAndSetSelect2ValueSilently(truckEditor, editResult.ticket.truckId, editResult.ticket.truckCode);
-                                    }
-                                }
-                                rowData.truckId = editResult.ticket.truckId;
-                                rowData.truckCode = editResult.ticket.truckCode;
+                                updateRelatedDropdownCellValue(cell, rowData, editResult.ticket, 'truck-code-column', 'truckId', 'truckCode');
+                                updateRelatedDropdownCellValue(cell, rowData, editResult.ticket, 'trailer-truck-code-column', 'trailerId', 'trailerTruckCode');
                             }
                         }
                     },
@@ -257,6 +252,20 @@
                     }
                 ]
             });
+
+            function updateRelatedDropdownCellValue(editedCell, rowData, editResult, relatedCellClass, relatedIdField, relatedNameField) {
+                let relatedCell = $(editedCell).closest('tr').find('td.' + relatedCellClass);
+                let relatedEditor = relatedCell.find('select');
+                if (!relatedEditor.length) {
+                    relatedCell.text(editResult[relatedNameField]);
+                } else {
+                    if (parseInt(rowData[relatedIdField]) !== editResult[relatedIdField]) {
+                        abp.helper.ui.addAndSetSelect2ValueSilently(relatedEditor, editResult[relatedIdField], editResult[relatedNameField]);
+                    }
+                }
+                rowData[relatedIdField] = editResult[relatedIdField];
+                rowData[relatedNameField] = editResult[relatedNameField];
+            }
 
             _modalManager.getModal().on('shown.bs.modal', function () {
                 ticketsGrid.columns.adjust().responsive.recalc();

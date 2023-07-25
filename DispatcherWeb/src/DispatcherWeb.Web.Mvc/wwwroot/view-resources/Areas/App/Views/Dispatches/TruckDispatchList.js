@@ -255,6 +255,17 @@
                 waitForSyncOrReloadList();
             });
         });
+        $dispatchList.on('click', 'a.btnComplete', async function (e) {
+            e.preventDefault();
+            let dispatch = $(this).closest('.dispatch');
+            var dispatchId = dispatch.data('id');
+            if (!await abp.message.confirm('Are you sure you want to complete this dispatch?')) {
+                return;
+            }
+            await _dispatchingService.markDispatchComplete({ dispatchId: dispatchId });
+            abp.notify.info('Completed successfully.');
+            waitForSyncOrReloadList();
+        });
         $dispatchList.on('click', 'a.btnSendSyncRequest', function (e) {
             e.preventDefault();
             var driverId = $(this).closest('.dispatch').data('driverid');
@@ -400,6 +411,8 @@
                     dispatchDiv.append(
                         $('<div>').text(`${deliveryDate} ${timeOnJob} ${shiftName}`)
                     ).append(
+                        $('<div>').text(dispatch.trailerTruckCode)
+                    ).append(
                         $('<div>').text(dispatch.customerName)
                     ).append(
                         $('<div>').text(dispatch.loadAtName)
@@ -522,6 +535,9 @@
                 }
                 if (firstActiveDispatch && (dispatch.status === abp.enums.dispatchStatus.loaded)) {
                     links.append(renderLink('btnMarkAsDelivered', app.localize('MarkAsDelivered'), 'fa fa-check'));
+                }
+                if (firstActiveDispatch && (dispatch.status !== abp.enums.dispatchStatus.loaded) && dispatch.hasTickets) {
+                    links.append(renderLink('btnComplete', app.localize('Complete'), 'fa fa-check'));
                 }
                 if (dispatch.status !== abp.enums.dispatchStatus.completed && dispatch.status !== abp.enums.dispatchStatus.canceled) {
                     links.append(renderLink('btnCancel', app.localize('Cancel'), 'fa fa-times'));

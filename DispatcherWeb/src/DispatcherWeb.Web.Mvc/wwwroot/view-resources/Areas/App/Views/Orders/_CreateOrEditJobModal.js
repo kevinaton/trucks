@@ -28,6 +28,7 @@
         var _materialUomDropdown = null;
         var _freightUomDropdown = null;
         var _designationDropdown = null;
+        var _vehicleCategoriesDropdown = null;
         var _isMaterialPricePerUnitOverriddenInput = null;
         var _isFreightPricePerUnitOverriddenInput = null;
         var _materialQuantityInput = null;
@@ -145,6 +146,7 @@
             _freightUomDropdown = _$form.find("#FreightUomId");
             _designationDropdown = _$form.find("#JobDesignation");
             _customerDropdown = _$form.find("#JobCustomerId");
+            _vehicleCategoriesDropdown = _$form.find("#VehicleCategories");
 
             _projectInput = _$form.find("#ProjectId");
             _isMaterialPricePerUnitOverriddenInput = _$form.find("#IsMaterialPricePerUnitOverridden");
@@ -464,6 +466,11 @@
                 showAll: true,
                 allowClear: false
             });
+            _vehicleCategoriesDropdown.select2Init({
+                abpServiceMethod: abp.services.app.truck.getVehicleCategoriesSelectList,
+                showAll: true,
+                allowClear: true
+            });
 
             if (isNewOrder()) {
                 setDefaultValueForProductionPay();
@@ -670,6 +677,9 @@
             _$form.find("#TimeOnJob").val(_orderLine.timeOnJob);
             _$form.find("#JobNumber").val(_orderLine.jobNumber);
             _$form.find("#Note").val(_orderLine.note);
+            if (_orderLine.vehicleCategories) {
+                abp.helper.ui.addAndSetDropdownValues(_$form.find("#VehicleCategories"), _orderLine.vehicleCategories);
+            }
 
             //_quoteId = _$form.find("#QuoteId").val();
             _quoteServiceId = _$form.find("#QuoteServiceId").val();
@@ -1294,6 +1304,7 @@
             _model.requiresCustomerNotification = !!model.RequiresCustomerNotification;
             _model.customerNotificationContactName = model.CustomerNotificationContactName;
             _model.customerNotificationPhoneNumber = model.CustomerNotificationPhoneNumber;
+            _model.vehicleCategories = _$form.find("#VehicleCategories").select2('data').map(x => ({ id: x.id, name: x.text }));
 
             let materialQuantity = model.MaterialQuantity === "" ? null : abp.utils.round(parseFloat(model.MaterialQuantity));
             let freightQuantity = model.FreightQuantity === "" ? null : abp.utils.round(parseFloat(model.FreightQuantity));

@@ -197,6 +197,8 @@
 		<text name="WelcomePage_Title">Welcome!</text>
 		<text name="WelcomePage_Info">Welcome to the application. You can use the menu to start using the application. If you don't see any menu item, probably you don't have permission to see any page. Consider to ask system administration for permissions.</text>
 		<text name="WelcomePage_DriverInfo">If you are trying to log in to the driver app, please close this browser and open the app directly.</text>
+		<text name="ChooseRedirectTargetPage_Title">Welcome to Dump Truck Dispatcher. Please select the application you would like to use.</text>
+		<text name="ChooseRedirectTargetPage_Info"></text>
 		<text name="RequestedFileDoesNotExists">Requested file does not exists!</text>
 		<text name="MailSent">Mail sent</text>
 		<text name="PasswordResetMailSentMessage">A password reset link was sent to your e-mail address. Please check your emails.</text>
@@ -1077,6 +1079,8 @@
 		<text name="EditingFuelPurchases">Editing fuel</text>
 		<text name="EditingVehicleUsages">Editing vehicle usage</text>
 		<text name="DriverApplication">Driver Application</text>
+		<text name="WebBasedDriverApp">Web-based driver app</text>
+		<text name="ReactNativeDriverApp">Native driver app</text>
 		<text name="Text">Text</text>
 		<text name="IssueDateRange">Issue date range</text>
 		<text name="StartDateRange">Start date range</text>
@@ -1188,7 +1192,7 @@
 		<text name="FreightRateToPayDriversShort">Driver Pay Freight Rate</text>
 		<text name="TruckCode">Truck Code</text>
 		<text name="DefaultDriver">Default Driver</text>
-		<text name="DefaultTrailer">Default Trailer</text>
+		<text name="CurrentTrailer">Current Trailer</text>
 		<text name="OutOfService">Out of Service</text>
 		<text name="CurrentMileage">Current Mileage</text>
 		<text name="CurrentHours">Current Hours</text>
@@ -1469,8 +1473,7 @@
 		<text name="SendSyncRequest">Send sync request</text>
 		<text name="CleanupSubscriptions">Cleanup Subscriptions</text>
 		<text name="Miscellaneous">Miscellaneous</text>
-		<text name="ReadyForQuickbooks">Ready for QuickBooks</text>
-		<text name="SendToQuickbooks">Send to QuickBooks</text>
+		<text name="ReadyForExport">Ready for export</text>
 		<text name="ThisDriverAlreadyUsesDriverApplication">This driver already uses driver application</text>
 		<text name="DriverActivityReport">Driver Activity Report</text>
 		<text name="ConnectToUserAccount">Connect to user account</text>
@@ -1510,11 +1513,11 @@
 		<text name="EditTimeClassifications">Edit time classifications</text>
 		<text name="Sales">Sales</text>
 		<text name="Dispatching">Dispatching</text>
-		<text name="ImportCustomersPermission">Import Customers</text>
-		<text name="ImportTrucksPermission">Import Trucks</text>
-		<text name="ImportVendorsPermission">Import Vendors</text>
-		<text name="ImportServicesPermission">Import Services</text>
-		<text name="ImportEmployeesPermission">Import Employees</text>
+		<text name="ImportCustomersPermission">Customers</text>
+		<text name="ImportTrucksPermission">Trucks</text>
+		<text name="ImportVendorsPermission">Vendors</text>
+		<text name="ImportServicesPermission">Products/Services</text>
+		<text name="ImportEmployeesPermission">Employees</text>
 		<text name="QuickbooksImportFeature">Import data from QuickBooks</text>
 		<text name="PayPercent">Pay Percent</text>
 		<text name="DriverPay">Driver Pay</text>
@@ -1628,12 +1631,14 @@
 		<text name="TruxTruckId">Trux Truck Id</text>
 		<text name="Trux">Trux</text>
 		<text name="ImportTruxEarnings">Import Trux Earnings</text>
+		<text name="TruxEarnings">Trux Earnings</text>
 		<text name="AllowImportingLuckStoneEarnings">Allow importing Luck Stone Earnings</text>
 		<text name="EditInvoicedOrdersAndTickets">Edit invoiced orders and tickets</text>
 		<text name="OverrideReadOnlyStateOfOrderLineBlockPrompt">You are about to edit an order or ticket that has already been used in an invoice or pay statement. Changing this value will result in a different value being used in the pay statement or invoice than what was used when it was initially generated. If you are sure you want to do this, click the OK button?</text>
 		<text name="SelectLuckStoneCustomer">Select the Luck Stone customer</text>
 		<text name="LuckStone">Luck Stone</text>
 		<text name="ImportLuckStoneEarnings">Import Luck Stone Earnings</text>
+		<text name="LuckStoneEarnings">Luck Stone Earnings</text>
 		<text name="FileShouldBeCsv_PleaseProvideCsv">This file should be a csv and is not. Please provide a file in the csv format</text>
 		<text name="ThisDoesntLooksLikeTruxFile_PleaseVerifyAndUploadAgain">This file does not look like a Trux Earnings file. Please verify and upload a file of the correct format.</text>
 		<text name="ThisDoesntLooksLikeLuckStoneFile_PleaseVerifyAndUploadAgain">This file does not look like a Luck Stone Hauling file. Please verify and upload a file of the correct format.</text>
@@ -1840,5 +1845,22 @@
 		<text name="ImportFuel">Import Fuel</text>
 		<text name="DriverIsPaidForLoadBasedOn">Driver is paid for load based on</text>
 		<text name="DriverAppImageResolution">Driver App Image Resolution</text>
+		<text name="PayStatement">Pay Statement</text>
+		<text name="LeaseHaulerStatement">Lease Hauler Statement</text>
+		<text name="EmployeeId">Employee Id</text>
+		<text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
+		<text name="TruckTrailerCategory">Truck/Trailer category</text>
+		<text name="Trailer">Trailer</text>
+		<text name="ThereWasTractorAssociatedWithThisTrailer">There was a tractor associated with this trailer. This tractor has been removed from the trailer.</text>
+		<text name="ActiveReports">Active Reports</text>
+		<text name="TenantStatisticsReport">Tenant Statistics Report</text>
+		<text name="YouHaveScheduledTrucksWithNoDrivers">You have scheduled trucks with no drivers. Please add a driver to each truck scheduled before trying to dispatch again.</text>
+		<text name="TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace">This trailer is already scheduled with truck {0} for a job on this date. Do you want to change the trailer for this job? Select yes to change the trailer assignment for this job.</text>
+		<text name="CannotChangeTrailerBecauseOfDispatchesError">There are dispatches for this truck. Remove the dispatches if you want to change the trailer.</text>
+		<text name="CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError">This trailer doesn't match any vehicle categories selected for this job</text>
+		<text name="InvoiceTermsAndConditions">Terms and Conditions</text>
+		<text name="SelectStatusesOfInvoicesToExport">Select statuses of invoices to export</text>
+		<text name="YearMakeModel"><![CDATA[Year, Make, & Model]]></text>
+		<text name="LicenseState">License State</text>
 	</texts>
 </localizationDictionary>

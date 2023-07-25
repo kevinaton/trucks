@@ -841,6 +841,7 @@ namespace DispatcherWeb.Trucks
                             x.Latitude,
                             x.Longitude,
                             x.Speed,
+                            x.Heading
                         })
                         .ToList();
 
@@ -883,7 +884,8 @@ namespace DispatcherWeb.Trucks
                                 AltitudeInMeters = x.Altitude,
                                 Latitude = x.Latitude.Value,
                                 Longitude = x.Longitude.Value,
-                                SpeedInKMPH = (int)Math.Round((x.Speed ?? 0) * 3.6M, 0) //m/s to km/h
+                                SpeedInKMPH = (int)Math.Round((x.Speed ?? 0) * 3.6M, 0), //m/s to km/h,
+                                Heading = x.Heading > 0 ? (int)Math.Round(x.Heading.Value, 0) : 0
                             }).ToList();
 
                             Logger.Info($"UploadTruckPositionsToWialon|{runId}| Uploading {messages.Count} messages for truck with unique id {dtdTrackerUniqueId} (unitId {unit.Id})");

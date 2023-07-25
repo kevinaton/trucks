@@ -4,6 +4,7 @@ namespace DispatcherWeb.Invoices.Dto
 {
     public class InvoicePrintOutLineItemDto
     {
+        public int Id { get; set; }
         public short? LineNumber { get; set; }
         public string TicketNumber { get; set; }
         public string LeaseHaulerName { get; set; }
@@ -22,6 +23,7 @@ namespace DispatcherWeb.Invoices.Dto
         public decimal? MaterialRate { get; set; }
         public decimal? RateSum => (FreightRate ?? 0) + (MaterialRate ?? 0);
         public ChildInvoiceLineKind? ChildInvoiceLineKind { get; set; }
+        public int? ParentInvoiceLineId { get; set; }
         public string JobNumber { get; set; }
     }
 }

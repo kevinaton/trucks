@@ -60,6 +60,7 @@ namespace DispatcherWeb.DriverApp.Tickets
                     x.OrderLine.DeliverToId,
                     x.TruckId,
                     x.Truck.TruckCode,
+                    x.OrderLineTruck.TrailerId,
                     LeaseHaulerId = (int?)x.Truck.LeaseHaulerTruck.LeaseHaulerId,
                     x.OrderLine.Order.CustomerId,
                     x.OrderLine.ServiceId,
@@ -95,6 +96,7 @@ namespace DispatcherWeb.DriverApp.Tickets
                 ticket.DeliverToId = dispatchData.DeliverToId;
                 ticket.TruckId = dispatchData.TruckId;
                 ticket.TruckCode = dispatchData.TruckCode;
+                ticket.TrailerId = dispatchData.TrailerId;
                 ticket.CarrierId = dispatchData.LeaseHaulerId;
                 ticket.CustomerId = dispatchData.CustomerId;
                 ticket.ServiceId = dispatchData.ServiceId;
@@ -115,12 +117,12 @@ namespace DispatcherWeb.DriverApp.Tickets
                 await _ticketRepository.InsertAndGetIdAsync(ticket);
 
                 model.Id = ticket.Id;
+            }
 
-                if (ticket.TicketNumber.IsNullOrEmpty())
-                {
-                    ticket.TicketNumber = "G-" + ticket.Id;
-                    model.TicketNumber = ticket.TicketNumber;
-                }
+            if (ticket.TicketNumber.IsNullOrEmpty())
+            {
+                ticket.TicketNumber = "G-" + ticket.Id;
+                model.TicketNumber = ticket.TicketNumber;
             }
 
             await CurrentUnitOfWork.SaveChangesAsync();

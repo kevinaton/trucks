@@ -170,7 +170,7 @@ namespace DispatcherWeb.Tests.Dashboard
                             // Order from another office
                             orderLineTruck.OrderLine.Order.Office = new Office() { TenantId = 1, Name = "office2", TruckColor = "fff" };
                         }
-                        truck.OrderLineTrucks.Add(orderLineTruck);
+                        truck.OrderLineTrucksOfTruck.Add(orderLineTruck);
                     }
                     await context.Trucks.AddAsync(truck);
                 }

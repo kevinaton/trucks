@@ -51,6 +51,7 @@ namespace DispatcherWeb.Imports.Services
 
             customer.IsActive = row.IsActive;
             customer.AccountNumber = row.AccountNumber;
+            customer.IsCod = row.IsCod;
             customer.Address1 = row.Address1;
             customer.Address2 = row.Address2;
             customer.City = row.City;
@@ -85,7 +86,7 @@ namespace DispatcherWeb.Imports.Services
                     _customerContactRepository.Insert(customerContact);
                 }
                 customerContact.IsActive = true;
-                customerContact.Email = row.InvoiceEmail;
+                customerContact.Email = row.ContactEmail;
                 customerContact.Fax = row.ContactFax;
                 customerContact.PhoneNumber = row.ContactPhone;
                 customerContact.Title = row.ContactTitle;
@@ -110,6 +111,8 @@ namespace DispatcherWeb.Imports.Services
                 }
                 customerContact.IsActive = true;
                 customerContact.PhoneNumber = row.Contact2Phone;
+                customerContact.Title = row.Contact2Title;
+                customerContact.Email = row.Contact2Email;
             }
 
             if (!_existingCustomerNames.Contains(row.Name))

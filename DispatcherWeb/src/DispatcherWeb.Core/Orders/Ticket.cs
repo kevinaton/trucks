@@ -48,6 +48,9 @@ namespace DispatcherWeb.Orders
         [StringLength(Truck.MaxTruckCodeLength)]
         public string TruckCode { get; set; }
 
+        public int? TrailerId { get; set; }
+        public virtual Truck Trailer { get; set; }
+
         public int? CarrierId { get; set; }
         [ForeignKey("CarrierId")]
         public virtual LeaseHauler Carrier { get; set; }

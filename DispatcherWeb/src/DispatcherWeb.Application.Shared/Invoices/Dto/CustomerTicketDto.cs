@@ -57,7 +57,6 @@ namespace DispatcherWeb.Invoices.Dto
         decimal IOrderLineTaxDetails.MaterialPrice => MaterialTotal;
 
         decimal IOrderLineTaxDetails.FreightPrice => FreightTotal;
-        //public InvoiceLineEditDto InvoiceLine { get; set; }
         public decimal Subtotal { get; set; }
 
         public decimal Total { get; set; } //=> MaterialTotal + FreightTotal + Tax;
@@ -78,17 +77,12 @@ namespace DispatcherWeb.Invoices.Dto
 
                 if (!designationHasMaterial && FreightUomName?.ToLower().StartsWith("hour") == true)
                 {
-                    return $"{Quantity} hours {ServiceName}{jobNumber}{poNumber}";
+                    return $"hours {ServiceName}{jobNumber}{poNumber}";
                 }
-
-                //if (designationHasMaterial)
-                //{
-                //    return $"{Quantity} {MaterialUomName} {ServiceName} from {LoadAt} to {DeliverTo}";
-                //}
 
                 var useFreight = this.GetAmountTypeToUse().useFreight;
 
-                return $"{Quantity} {(useFreight ? FreightUomName : MaterialUomName)} {ServiceName} from {LoadAtName} to {DeliverToName}{jobNumber}{poNumber}";
+                return $"{(useFreight ? FreightUomName : MaterialUomName)} {ServiceName} from {LoadAtName} to {DeliverToName}{jobNumber}{poNumber}";
             }
         }
 

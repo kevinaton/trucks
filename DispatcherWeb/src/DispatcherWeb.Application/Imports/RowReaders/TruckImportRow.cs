@@ -19,7 +19,7 @@ namespace DispatcherWeb.Imports.RowReaders
         //public bool IsOutOfService
         public decimal CurrentMileage => GetDecimal(TruckColumn.CurrentMileage) ?? 0;
         public decimal CurrentHours => GetDecimal(TruckColumn.CurrentHours) ?? 0;
-        public int? Year => (int)GetDecimal(TruckColumn.Year, 0);
+        public int? Year => (int?)GetDecimal(TruckColumn.Year, 0);
         public string Make => GetString(TruckColumn.Make, EntityStringFieldLengths.Truck.Make);
         public string Model => GetString(TruckColumn.Model, EntityStringFieldLengths.Truck.Model);
         public string Vin => GetString(TruckColumn.Vin, EntityStringFieldLengths.Truck.Vin);

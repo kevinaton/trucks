@@ -218,5 +218,15 @@
         {
             public const int Name = 50;
         }
+
+        public static class Driver
+        {
+            public const int FirstName = 50;
+            public const int LastName = 50;
+            public const int EmailAddress = 256;
+            public const int LicenseNumber = 20;
+            public const int TypeOfLicense = 50;
+            public const int EmployeeId = 10;
+        }
     }
 }

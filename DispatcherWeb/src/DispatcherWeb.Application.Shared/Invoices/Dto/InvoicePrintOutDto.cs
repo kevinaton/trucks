@@ -31,6 +31,8 @@ namespace DispatcherWeb.Invoices.Dto
         public string LogoPath { get; set; }
         public string TimeZone { get; set; }
         public CultureInfo CurrencyCulture { get; set; }
+        public string TermsAndConditions { get; set; }
+        public string CompanyName { get; set; }
 
         public bool DebugLayout { get; set; }
         public GetInvoicePrintOutInput DebugInput { get; set; }

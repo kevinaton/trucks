@@ -64,28 +64,36 @@ namespace DispatcherWeb.Dispatching.Reports
                 paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.7);
                 paragraph.Format.Alignment = ParagraphAlignment.Center;
 
+                var firstColumnMargin = Unit.FromCentimeter(1);
                 var secondColumnMargin = Unit.FromCentimeter(7.5);
 
 
-                paragraph = document.LastSection.AddParagraph(model.Date.ToString("d"));
+                paragraph = document.LastSection.AddParagraph();
+                paragraph.AddFormattedText("Date: ", TextFormat.Bold);
+                paragraph.AddText(model.Date.ToString("d"));
+                paragraph.Format.AddTabStop(secondColumnMargin);
+                paragraph.AddTab();
+                paragraph.AddFormattedText("Scheduled Start Time: ", TextFormat.Bold);
+                paragraph.AddText(model.ScheduledStartTime?.ToShortTimeString() ?? "-");
 
-                paragraph = document.LastSection.AddParagraph("Name: ");
+                paragraph = document.LastSection.AddParagraph();
+                paragraph.AddFormattedText("Name: ", TextFormat.Bold);
                 paragraph.AddText(model.DriverName ?? "");
                 paragraph.Format.AddTabStop(secondColumnMargin);
                 paragraph.AddTab();
-                paragraph.AddText("Scheduled start time: ");
-                paragraph.AddText(model.ScheduledStartTime?.ToShortTimeString() ?? "-");
+                paragraph.AddText(model.CarrierName ?? "");
 
                 var elapsedTime = TimeSpan.FromSeconds(0);
                 foreach (var employeeTime in model.EmployeeTimes)
                 {
-                    paragraph = document.LastSection.AddParagraph("Clock-in: ");
+                    paragraph = document.LastSection.AddParagraph();
+                    paragraph.AddFormattedText("Clock-in: ", TextFormat.Bold);
                     paragraph.AddText(employeeTime.ClockInTime.ConvertTimeZoneTo(input.Timezone).ToString("t") ?? "");
                     paragraph.Format.AddTabStop(secondColumnMargin);
                     paragraph.AddSpace(12);
                     paragraph.AddText(employeeTime.TimeClassificationName);
                     paragraph.AddTab();
-                    paragraph.AddText("Clock-out: ");
+                    paragraph.AddFormattedText("Clock-out: ", TextFormat.Bold);
                     paragraph.AddText(employeeTime.ClockOutTime?.ConvertTimeZoneTo(input.Timezone).ToString("t") ?? "");
                     if (employeeTime.ClockOutTime.HasValue)
                     {
@@ -93,189 +101,150 @@ namespace DispatcherWeb.Dispatching.Reports
                     }
                 }
 
-                paragraph = document.LastSection.AddParagraph("Elapsed Time: ");
+                paragraph = document.LastSection.AddParagraph();
+                paragraph.AddFormattedText("Elapsed Time: ", TextFormat.Bold);
                 paragraph.AddText(Math.Round(elapsedTime.TotalHours, 2).ToString("0.##") + " Hours");
 
 
 
-                paragraph = document.LastSection.AddParagraph("Tickets");
-
-                Table table = document.LastSection.AddTable();
-                table.Style = "Table";
-                table.Borders.Width = Unit.FromPoint(1);
-                var tm = new TextMeasurement(document.Styles["Table"].Font.Clone());
-
-                //Customer
-                table.AddColumn(Unit.FromCentimeter(3.4));
-                //Load At
-                table.AddColumn(Unit.FromCentimeter(3.5));
-                //Deliver To
-                table.AddColumn(Unit.FromCentimeter(3.5));
-                //Ticket Number
-                table.AddColumn(Unit.FromCentimeter(2.2));
-                //Quantity
-                table.AddColumn(Unit.FromCentimeter(2.2));
-                //Load Time
-                table.AddColumn(Unit.FromCentimeter(1.5)); //1.9 is still too small to fit 12:34 PM on one line
-                //Delivery Time
-                table.AddColumn(Unit.FromCentimeter(1.5));
-                //Cycle Time
-                table.AddColumn(Unit.FromCentimeter(1.2));
-
-                Row row = table.AddRow();
-                row.Shading.Color = Colors.LightGray;
-                row.Format.Font.Size = Unit.FromPoint(9);
-                row.Format.Font.Bold = true;
-                row.Format.Alignment = ParagraphAlignment.Center;
-                row.Height = Unit.FromCentimeter(0.5);
-                row.HeadingFormat = true;
-
-                int i = 0;
-                Cell cell = row.Cells[i++];
-                cell.AddParagraph("Customer");
-                cell = row.Cells[i++];
-                cell.AddParagraph("Load At");
-                cell = row.Cells[i++];
-                cell.AddParagraph("Deliver To");
-                cell = row.Cells[i++];
-                cell.AddParagraph("Ticket Number");
-                cell = row.Cells[i++];
-                cell.AddParagraph("Quantity");
-                cell = row.Cells[i++];
-                cell.AddParagraph("Load Time");
-                cell = row.Cells[i++];
-                cell.AddParagraph("Delivery Time");
-                cell = row.Cells[i++];
-                cell.AddParagraph("Cycle Time");
 
                 if (model.Loads.Any())
                 {
-                    var lastTruckId = (int?)null;
-
-                    foreach (var load in model.Loads)
+                    foreach (var loadGroup in model.Loads.GroupBy(x => new
                     {
-                        if (load.TruckId != lastTruckId)
+                        x.CustomerName,
+                        x.JobNumber,
+                        x.LoadAtName,
+                        x.DeliverToName,
+                        x.TruckCode,
+                        x.TrailerTruckCode,
+                        x.VehicleCategory,
+                        x.QuantityOrdered,
+                        x.UomName,
+                        x.ProductOrService
+                    }))
+                    {
+                        paragraph = document.LastSection.AddParagraph();
+                        paragraph.Format.SpaceBefore = Unit.FromCentimeter(0.7);
+                        paragraph.Format.AddTabStop(firstColumnMargin);
+                        paragraph.AddTab();
+                        paragraph.AddFormattedText("Customer: ", TextFormat.Bold);
+                        paragraph.AddText(loadGroup.Key.CustomerName ?? "");
+
+                        paragraph.Format.AddTabStop(secondColumnMargin);
+                        paragraph.AddTab();
+                        paragraph.AddFormattedText("Job Number: ", TextFormat.Bold);
+                        paragraph.AddText(loadGroup.Key.JobNumber ?? "");
+
+                        paragraph = document.LastSection.AddParagraph();
+                        paragraph.Format.AddTabStop(firstColumnMargin);
+                        paragraph.AddTab();
+                        paragraph.AddFormattedText("Load At: ", TextFormat.Bold);
+                        paragraph.AddText(loadGroup.Key.LoadAtName ?? "");
+
+                        paragraph = document.LastSection.AddParagraph();
+                        paragraph.Format.AddTabStop(firstColumnMargin);
+                        paragraph.AddTab();
+                        paragraph.AddFormattedText("Deliver To: ", TextFormat.Bold);
+                        paragraph.AddText(loadGroup.Key.DeliverToName ?? "");
+
+                        paragraph = document.LastSection.AddParagraph();
+                        paragraph.Format.AddTabStop(firstColumnMargin);
+                        paragraph.AddTab();
+                        paragraph.AddFormattedText("Truck: ", TextFormat.Bold);
+                        paragraph.AddText(loadGroup.Key.TruckCode ?? "");
+
+                        if (loadGroup.Key.TrailerTruckCode != null)
                         {
-                            lastTruckId = load.TruckId;
+                            paragraph = document.LastSection.AddParagraph();
+                            paragraph.Format.AddTabStop(firstColumnMargin);
+                            paragraph.AddTab();
+                            paragraph.AddFormattedText("Trailer: ", TextFormat.Bold);
+                            paragraph.AddText(loadGroup.Key.VehicleCategory + " " + loadGroup.Key.TrailerTruckCode);
+                        }
+
+                        paragraph = document.LastSection.AddParagraph();
+                        paragraph.Format.LeftIndent = firstColumnMargin;
+                        paragraph.AddFormattedText("Item: ", TextFormat.Bold);
+                        paragraph.AddText(loadGroup.Key.ProductOrService ?? "");
+
+                        paragraph.Format.AddTabStop(firstColumnMargin);
+                        paragraph.AddTab();
+                        paragraph.AddFormattedText("Quantity Ordered: ", TextFormat.Bold);
+                        paragraph.AddText(loadGroup.Key.QuantityOrdered.HasValue ? loadGroup.Key.QuantityOrdered?.ToString(Utilities.NumberFormatWithoutRounding) + " " + loadGroup.Key.UomName : "");
+
+                        paragraph.Format.AddTabStop(firstColumnMargin);
+                        paragraph.AddTab();
+                        paragraph.AddFormattedText("Quantity Delivered: ", TextFormat.Bold);
+                        decimal? quantityDelivered = 0;
+                        foreach (var load in loadGroup)
+                        {
+                            quantityDelivered += load.Quantity;
+                        }
+                        paragraph.AddText(quantityDelivered.HasValue ? quantityDelivered?.ToString(Utilities.NumberFormatWithoutRounding) + " " + loadGroup.Key.UomName : "");
+
+                        paragraph.Format.SpaceAfter = Unit.FromCentimeter(0.7);
+                        
+
+                        Table table = document.LastSection.AddTable();
+                        table.Style = "Table";
+                        table.Borders.Width = Unit.FromPoint(1);
+                        table.Rows.LeftIndent = firstColumnMargin;
+                        var tm = new TextMeasurement(document.Styles["Table"].Font.Clone());
+
+                        //Load Time
+                        table.AddColumn(Unit.FromCentimeter(3.2)); //1.9 is still too small to fit 12:34 PM on one line
+                        //Load Ticket
+                        table.AddColumn(Unit.FromCentimeter(3.2));
+                        //Delivery Time
+                        table.AddColumn(Unit.FromCentimeter(3.2));
+                        //Cycle Time
+                        table.AddColumn(Unit.FromCentimeter(3.2));
+                        //Quantity
+                        table.AddColumn(Unit.FromCentimeter(3.2));
+
+                        Row row = table.AddRow();
+                        row.Shading.Color = Colors.LightGray;
+                        row.Format.Font.Size = Unit.FromPoint(9);
+                        row.Format.Font.Bold = true;
+                        row.Format.Alignment = ParagraphAlignment.Center;
+                        row.Height = Unit.FromCentimeter(0.5);
+                        row.HeadingFormat = true;
+
+                        int i = 0;
+                        Cell cell = row.Cells[i++];
+                        cell.AddParagraph("Load Time");
+                        cell = row.Cells[i++];
+                        cell.AddParagraph("Load Ticket");
+                        cell = row.Cells[i++];
+                        cell.AddParagraph("Delivery Time");
+                        cell = row.Cells[i++];
+                        cell.AddParagraph("Cycle Time");
+                        cell = row.Cells[i++];
+                        cell.AddParagraph("Quantity");
+
+                        foreach (var load in loadGroup)
+                        {
                             i = 0;
                             row = table.AddRow();
                             cell = row.Cells[i++];
-                            cell.MergeRight = table.Columns.Count - 1;
-                            paragraph = cell.AddParagraph($"Truck {load.TruckCode}:", tm);
-                            paragraph.Format.SpaceAfter = Unit.FromMillimeter(2);
-                            paragraph.Format.SpaceBefore = Unit.FromMillimeter(1);
+                            paragraph = cell.AddParagraph(load.LoadTime?.ConvertTimeZoneTo(input.Timezone).ToShortTimeString(), tm);
+                            cell = row.Cells[i++];
+                            paragraph = cell.AddParagraph(load.LoadTicket, tm);
+                            paragraph.Format.Alignment = ParagraphAlignment.Center;
+                            cell = row.Cells[i++];
+                            paragraph = cell.AddParagraph(load.DeliveryTime?.ConvertTimeZoneTo(input.Timezone).ToShortTimeString(), tm);
+                            paragraph.Format.Alignment = ParagraphAlignment.Center;
+                            cell = row.Cells[i++];
+                            paragraph = cell.AddParagraph(load.CycleTime?.ToString("h\\:mm") ?? "", tm);
+                            paragraph.Format.Alignment = ParagraphAlignment.Center;
+                            cell = row.Cells[i++];
+                            paragraph = cell.AddParagraph(load.Quantity.ToString(Utilities.NumberFormatWithoutRounding) + " " + load.UomName ?? "", tm);
                         }
 
-                        i = 0;
-                        row = table.AddRow();
-                        cell = row.Cells[i++];
-                        if (!string.IsNullOrEmpty(load.JobNumber))
-                        {
-                            paragraph = cell.AddParagraph(load.CustomerName + " - " + load.JobNumber, tm);
-                        }
-                        else
-                        {
-                            paragraph = cell.AddParagraph(load.CustomerName, tm);
-                        }
-                        cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(load.LoadAtName, tm);
-                        cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(load.DeliverToName, tm);
-                        cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(load.TicketNumber, tm);
-                        cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(load.Quantity.HasValue ? load.Quantity?.ToString(Utilities.NumberFormatWithoutRounding) + " " + load.UomName : "", tm);
-                        cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(load.LoadTime?.ConvertTimeZoneTo(input.Timezone).ToShortTimeString(), tm);
-                        paragraph.Format.Alignment = ParagraphAlignment.Center;
-                        cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(load.DeliveryTime?.ConvertTimeZoneTo(input.Timezone).ToShortTimeString(), tm);
-                        paragraph.Format.Alignment = ParagraphAlignment.Center;
-                        cell = row.Cells[i++];
-                        paragraph = cell.AddParagraph(load.CycleTime?.ToString("h\\:mm") ?? "", tm);
-                        paragraph.Format.Alignment = ParagraphAlignment.Center;
-                    }
-
-                    section.AddParagraph();
-                    paragraph = document.LastSection.AddParagraph("Job Summary");
-
-                    Table summaryTable = document.LastSection.AddTable();
-                    summaryTable.Style = "Table";
-                    summaryTable.Borders.Width = Unit.FromPoint(1);
-
-                    //Customer
-                    summaryTable.AddColumn(Unit.FromCentimeter(3.85));
-                    //Load At
-                    summaryTable.AddColumn(Unit.FromCentimeter(3.95));
-                    //Deliver To
-                    summaryTable.AddColumn(Unit.FromCentimeter(3.95));
-                    //Ticket Number
-                    summaryTable.AddColumn(Unit.FromCentimeter(2.65));
-                    //Quantity
-                    summaryTable.AddColumn(Unit.FromCentimeter(2.62));
-                    //Load Time
-                    summaryTable.AddColumn(Unit.FromCentimeter(1.95)); //1.9 is still too small to fit 12:34 PM on one line
-
-                    Row summaryRow = summaryTable.AddRow();
-                    summaryRow.Shading.Color = Colors.LightGray;
-                    summaryRow.Format.Font.Size = Unit.FromPoint(9);
-                    summaryRow.Format.Font.Bold = true;
-                    summaryRow.Format.Alignment = ParagraphAlignment.Center;
-                    summaryRow.Height = Unit.FromCentimeter(0.5);
-                    summaryRow.HeadingFormat = true;
-
-                    i = 0;
-                    Cell summaryCell = summaryRow.Cells[i++];
-                    summaryCell.AddParagraph("Customer");
-                    summaryCell = summaryRow.Cells[i++];
-                    summaryCell.AddParagraph("Load At");
-                    summaryCell = summaryRow.Cells[i++];
-                    summaryCell.AddParagraph("Deliver To");
-                    summaryCell = summaryRow.Cells[i++];
-                    summaryCell.AddParagraph("Item");
-                    summaryCell = summaryRow.Cells[i++];
-                    summaryCell.AddParagraph("Quantity");
-                    summaryCell = summaryRow.Cells[i++];
-                    summaryCell.AddParagraph("Job Time");
-
-                    foreach (var jobLoads in model.Loads.GroupBy(l => l.OrderLineId))
-                    {
-                        i = 0;
-                        summaryRow = summaryTable.AddRow();
-                        summaryCell = summaryRow.Cells[i++];
-
-                        var job = jobLoads.First();
-                        var jobNumber = job.JobNumber;
-                        if (!string.IsNullOrEmpty(jobNumber))
-                        {
-                            paragraph = summaryCell.AddParagraph(job.CustomerName + " - " + jobNumber, tm);
-                        }
-                        else
-                        {
-                            paragraph = summaryCell.AddParagraph(job.CustomerName, tm);
-                        }
-
-                        summaryCell = summaryRow.Cells[i++];
-                        paragraph = summaryCell.AddParagraph(job.LoadAtName, tm);
-                        summaryCell = summaryRow.Cells[i++];
-                        paragraph = summaryCell.AddParagraph(job.DeliverToName, tm);
-                        summaryCell = summaryRow.Cells[i++];
-                        paragraph = summaryCell.AddParagraph(job.ProductOrService, tm);
-                        summaryCell = summaryRow.Cells[i++];
-                        paragraph = summaryCell.AddParagraph(jobLoads.Where(j => j.Quantity.HasValue).Sum(j => j.Quantity.Value).ToString(Utilities.NumberFormatWithoutRounding) + " " + job.UomName, tm);
-                        paragraph.Format.Alignment = ParagraphAlignment.Center;
-                        summaryCell = summaryRow.Cells[i++];
-                        paragraph = summaryCell.AddParagraph(new TimeSpan(jobLoads.Where(s => s.CycleTime.HasValue).Sum(s => s.CycleTime.Value.Ticks)).ToString("h\\:mm") ?? "", tm);
-                        paragraph.Format.Alignment = ParagraphAlignment.Center;
-
+                        table.SetEdge(0, 0, table.Columns.Count, table.Rows.Count, Edge.Box, BorderStyle.Single, 1, Colors.Black);
                     }
                 }
-                else
-                {
-                    table.AddRow();
-                }
-
-                table.SetEdge(0, 0, table.Columns.Count, table.Rows.Count, Edge.Box, BorderStyle.Single, 1, Colors.Black);
             }
 
             return document;

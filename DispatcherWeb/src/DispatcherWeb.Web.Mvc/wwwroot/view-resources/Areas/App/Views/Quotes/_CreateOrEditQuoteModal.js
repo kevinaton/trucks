@@ -586,6 +586,8 @@
                     _$form.dirtyForms('setClean');
                     _$form.uniform.update();
 
+                    abp.event.trigger('app.createOrEditQuoteModalSaved');
+
                     if (callback) {
                         callback();
                     }

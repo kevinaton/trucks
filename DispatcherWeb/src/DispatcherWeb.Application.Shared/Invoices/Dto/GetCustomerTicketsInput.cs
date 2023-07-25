@@ -10,6 +10,7 @@ namespace DispatcherWeb.Invoices.Dto
         public int? CustomerId { get; set; }
         public bool? IsBilled { get; set; }
         public bool? IsVerified { get; set; }
+        public bool? HasRevenue { get; set; }
         public bool? HasInvoiceLineId { get; set; }
         public List<int> ExcludeTicketIds { get; set; }
         public List<int> TicketIds { get; set; }

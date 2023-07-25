@@ -43,6 +43,7 @@ namespace DispatcherWeb.Dispatching.Dto
             public DateTime DeliveryDate { get; set; }
             public Shift? Shift { get; set; }
             public DateTime? TimeOnJob { get; set; }
+            public string TrailerTruckCode { get; set; }
             public string CustomerName { get; set; }
             public string LoadAtName => LoadAt?.FormattedAddress;
             [JsonIgnore]
@@ -57,6 +58,7 @@ namespace DispatcherWeb.Dispatching.Dto
             public DateTime? Complete { get; set; }
             public bool IsMultipleLoads { get; set; }
             public bool WasMultipleLoads { get; set; }
+            public bool HasTickets { get; set; }
 
             public bool IsDraggable => Status.IsIn(DispatchStatus.Created, DispatchStatus.Sent);
 

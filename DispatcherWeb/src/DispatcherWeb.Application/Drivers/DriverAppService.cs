@@ -144,6 +144,7 @@ namespace DispatcherWeb.Drivers
                 NextMvrDueDate = x.NextMvrDueDate,
                 DateOfHire = x.DateOfHire,
                 TerminationDate = x.TerminationDate,
+                EmployeeId = x.EmployeeId,
             });
 
         [AbpAuthorize(AppPermissions.Pages_Drivers)]
@@ -293,6 +294,7 @@ namespace DispatcherWeb.Drivers
                         City = x.City,
                         State = x.State,
                         ZipCode = x.ZipCode,
+                        LicenseState = x.LicenseState,
                         LicenseNumber = x.LicenseNumber,
                         TypeOfLicense = x.TypeOfLicense,
                         LicenseExpirationDate = x.LicenseExpirationDate,
@@ -301,7 +303,8 @@ namespace DispatcherWeb.Drivers
                         LastMvrDate = x.LastMvrDate,
                         NextMvrDueDate = x.NextMvrDueDate,
                         DateOfHire = x.DateOfHire,
-                        TerminationDate = x.TerminationDate
+                        TerminationDate = x.TerminationDate,
+                        EmployeeId = x.EmployeeId
                     })
                     .FirstAsync();
             }
@@ -471,6 +474,7 @@ namespace DispatcherWeb.Drivers
             driver.City = model.City;
             driver.State = model.State;
             driver.ZipCode = model.ZipCode;
+            driver.LicenseState = model.LicenseState;
             driver.LicenseNumber = model.LicenseNumber;
             driver.TypeOfLicense = model.TypeOfLicense;
             driver.LicenseExpirationDate = model.LicenseExpirationDate;
@@ -480,6 +484,7 @@ namespace DispatcherWeb.Drivers
             driver.NextMvrDueDate = model.NextMvrDueDate;
             driver.DateOfHire = model.DateOfHire;
             driver.TerminationDate = model.TerminationDate;
+            driver.EmployeeId = model.EmployeeId;
 
             driver.EmailAddress = model.EmailAddress;
 

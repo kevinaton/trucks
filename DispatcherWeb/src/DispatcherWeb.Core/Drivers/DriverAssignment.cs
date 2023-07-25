@@ -15,9 +15,6 @@ namespace DispatcherWeb.Drivers
         public DateTime Date { get; set; }
         public Shift? Shift { get; set; }
 
-        [Obsolete]
-        public DateTime? StartTimeObsolete { get; set; }
-
         public DateTime? StartTime { get; set; }
 
         public int? OfficeId { get; set; }
