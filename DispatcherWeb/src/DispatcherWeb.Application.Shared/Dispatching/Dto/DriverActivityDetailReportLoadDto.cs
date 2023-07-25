@@ -1,10 +1,11 @@
 ﻿using System;
 using DispatcherWeb.Common.Dto;
+using DispatcherWeb.Tickets;
 using Newtonsoft.Json;
 
 namespace DispatcherWeb.Dispatching.Dto
 {
-    public class DriverActivityDetailReportLoadDto
+    public class DriverActivityDetailReportLoadDto : ITicketQuantity
     {
         public int? TruckId { get; set; }
         public string TruckCode { get; set; }
@@ -18,8 +19,13 @@ namespace DispatcherWeb.Dispatching.Dto
         [JsonIgnore]
         public LocationNameDto DeliverTo { get; set; }
         public string LoadTicket { get; set; }
-        public decimal? Quantity { get; set; }
-        public decimal? QuantityOrdered { get; set; }
+        public decimal? FreightQuantityOrdered { get; set; }
+        public decimal? MaterialQuantityOrdered { get; set; }
+        public decimal Quantity { get; set; }
+        public DesignationEnum Designation { get; set; }
+        public int? MaterialUomId { get; set; }
+        public int? FreightUomId { get; set; }
+        public int? TicketUomId { get; set; }
         public string UomName { get; set; }
         public string TrailerTruckCode { get; set; }
         public string VehicleCategory { get; set; }
@@ -28,5 +34,21 @@ namespace DispatcherWeb.Dispatching.Dto
         public TimeSpan? CycleTime { get; set; }
         public string JobNumber { get; set; }
         public string ProductOrService { get; set; }
+
+        public decimal? QuantityOrdered
+        {
+            get
+            {
+                var useMaterial = this.GetAmountTypeToUse().useMaterial;
+                if (useMaterial)
+                {
+                    return MaterialQuantityOrdered;
+                }
+                else
+                {
+                    return FreightQuantityOrdered;
+                }
+            }
+        }
     }
 }

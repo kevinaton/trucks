@@ -2950,10 +2950,11 @@ namespace DispatcherWeb.Dispatching
                     Tickets = x.Tickets.Select(t => new
                     {
                         TicketNumber = t.TicketNumber,
-                        Quantity = (decimal?)t.Quantity,
+                        Quantity = t.Quantity,
                         UomName = t.UnitOfMeasure.Name,
                         TrailerTruckCode = t.Trailer.TruckCode,
-                        VehicleCategory = t.Trailer.VehicleCategory.Name
+                        VehicleCategory = t.Trailer.VehicleCategory.Name,
+                        TicketUomId = t.UnitOfMeasureId
                     }).ToList(),
                     LoadTime = x.SourceDateTime,
                     DeliveryTime = x.DestinationDateTime,
@@ -2961,7 +2962,11 @@ namespace DispatcherWeb.Dispatching
                     ProductOrService = x.Dispatch.OrderLine.Service.Service1,
                     DispatchId = x.DispatchId,
                     OrderLineId = x.Dispatch.OrderLineId,
-                    QuantityOrdered = x.Dispatch.OrderLine.FreightQuantity
+                    FreightQuantityOrdered = x.Dispatch.OrderLine.FreightQuantity,
+                    MaterialQuantityOrdered = x.Dispatch.OrderLine.MaterialQuantity,
+                    Designation = x.Dispatch.OrderLine.Designation,
+                    MaterialUomId = x.Dispatch.OrderLine.MaterialUomId,
+                    FreightUomId = x.Dispatch.OrderLine.FreightUomId
                 })
                 .OrderBy(x => x.LoadTime)
                 .ToListAsync();
@@ -3031,14 +3036,19 @@ namespace DispatcherWeb.Dispatching
                         DeliveryTime = load.DeliveryTime,
                         LoadAt = load.LoadAt,
                         LoadTime = load.LoadTime,
-                        QuantityOrdered = load.QuantityOrdered,
-                        Quantity = ticket?.Quantity,
+                        Quantity = ticket?.Quantity ?? 0,
                         UomName = ticket?.UomName,
                         TrailerTruckCode = ticket?.TrailerTruckCode,
                         VehicleCategory = ticket?.VehicleCategory,
                         LoadTicket = ticket?.TicketNumber,
                         JobNumber = load.JobNumber,
-                        ProductOrService = load.ProductOrService
+                        ProductOrService = load.ProductOrService,
+                        FreightQuantityOrdered = load.FreightQuantityOrdered,
+                        MaterialQuantityOrdered = load.MaterialQuantityOrdered,
+                        Designation = load.Designation,
+                        MaterialUomId = load.MaterialUomId,
+                        FreightUomId = load.FreightUomId,
+                        TicketUomId = ticket?.TicketUomId
                     });
                 }
             }

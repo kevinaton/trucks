@@ -179,10 +179,7 @@ namespace DispatcherWeb.Dispatching.Reports
                         decimal? quantityDelivered = 0;
                         foreach (var load in loadGroup)
                         {
-                            if (load.Quantity.HasValue)
-                            {
-                                quantityDelivered += load.Quantity;
-                            }
+                            quantityDelivered += load.Quantity;
                         }
                         paragraph.AddText(quantityDelivered.HasValue ? quantityDelivered?.ToString(Utilities.NumberFormatWithoutRounding) + " " + loadGroup.Key.UomName : "");
 
@@ -242,7 +239,7 @@ namespace DispatcherWeb.Dispatching.Reports
                             paragraph = cell.AddParagraph(load.CycleTime?.ToString("h\\:mm") ?? "", tm);
                             paragraph.Format.Alignment = ParagraphAlignment.Center;
                             cell = row.Cells[i++];
-                            paragraph = cell.AddParagraph(load.Quantity.HasValue ? load.Quantity?.ToString(Utilities.NumberFormatWithoutRounding) + " " + load.UomName : "", tm);
+                            paragraph = cell.AddParagraph(load.Quantity.ToString(Utilities.NumberFormatWithoutRounding) + " " + load.UomName ?? "", tm);
                         }
 
                         table.SetEdge(0, 0, table.Columns.Count, table.Rows.Count, Edge.Box, BorderStyle.Single, 1, Colors.Black);
