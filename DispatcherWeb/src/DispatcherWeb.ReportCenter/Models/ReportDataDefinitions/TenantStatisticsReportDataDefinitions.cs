@@ -49,7 +49,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
                 var paramsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
                 var tenantId = paramsDic.ContainsKey("TenantId") ? paramsDic["TenantId"] : null;
 
-                var httpClient= GetHttpClient();
+                var httpClient = GetHttpClient();
 
                 var endDate = paramsDic["EndDate"] ?? paramsDic["StartDate"];
                 var url = $"/api/services/activeReports/tenantStatisticsReport/getTenantStatistics?tenantId={tenantId}&startDate={paramsDic["StartDate"]:o}&endDate={endDate:o}";

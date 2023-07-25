@@ -124,7 +124,7 @@
                         }, {
                             text: '<i class="fa fa-print"></i> ' + app.localize('Print'),
                             visible: function (data) {
-                                return data.record.canEdit;
+                                return (abp.auth.isGranted('Pages.ActiveReports.VehicleMaintenanceWorkOrderReport')) && data.record.canEdit;
                             },
                             action: function (data) {
                                 var workOrderId = data.record.id;

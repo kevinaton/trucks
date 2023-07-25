@@ -77,7 +77,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
 
         internal async Task<string> GetVehicleMaintenanceWorkOrderLinesJson(int? entityId)
         {
-            var httpClient= GetHttpClient();
+            var httpClient = GetHttpClient();
             var url = $"/api/services/app/workorder/GetWorkOrderLines?id={entityId}";
             var response = await httpClient.GetAsync(url);
             var jsonContent = await ValidateResponse(response, Extensions.GetMethodName(), "[]");
@@ -87,7 +87,7 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions
         internal async Task<string> GetVehicleMaintenanceWorkOrderDataSource(LocateDataSourceArgs arg)
         {
             var reportParamsDic = arg.ReportParameters.ToDictionary(p => p.Name, p => p.Value);
-            var httpClient= GetHttpClient();
+            var httpClient = GetHttpClient();
             var url = $"/api/services/app/workorder/getworkorderforedit?id={reportParamsDic["EntityId"]}";
             var response = await httpClient.GetAsync(url);
             var jsonContent = await ValidateResponse(response, Extensions.GetMethodName(), "{}");
