@@ -17,9 +17,12 @@ namespace DispatcherWeb.Dispatching.Dto
         public string DeliverToName => DeliverTo?.FormattedAddress;
         [JsonIgnore]
         public LocationNameDto DeliverTo { get; set; }
-        public string TicketNumber { get; set; }
+        public string LoadTicket { get; set; }
         public decimal? Quantity { get; set; }
+        public decimal? QuantityOrdered { get; set; }
         public string UomName { get; set; }
+        public string TrailerTruckCode { get; set; }
+        public string VehicleCategory { get; set; }
         public DateTime? LoadTime { get; set; }
         public DateTime? DeliveryTime { get; set; }
         public TimeSpan? CycleTime { get; set; }

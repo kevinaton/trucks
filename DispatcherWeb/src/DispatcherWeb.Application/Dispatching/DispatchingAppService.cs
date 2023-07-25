@@ -2886,7 +2886,8 @@ namespace DispatcherWeb.Dispatching
                 {
                     DriverId = x.Id,
                     DriverName = x.LastName + ", " + x.FirstName,
-                    UserId = x.UserId.Value
+                    UserId = x.UserId.Value,
+                    CarrierName = x.LeaseHaulerDriver.LeaseHauler.Name
                 }).OrderBy(d => d.DriverName).ToListAsync();
 
             var userId = input.DriverId.HasValue ? drivers.FirstOrDefault(x => x.DriverId == input.DriverId)?.UserId : null;
@@ -2951,13 +2952,16 @@ namespace DispatcherWeb.Dispatching
                         TicketNumber = t.TicketNumber,
                         Quantity = (decimal?)t.Quantity,
                         UomName = t.UnitOfMeasure.Name,
+                        TrailerTruckCode = t.Trailer.TruckCode,
+                        VehicleCategory = t.Trailer.VehicleCategory.Name
                     }).ToList(),
                     LoadTime = x.SourceDateTime,
                     DeliveryTime = x.DestinationDateTime,
                     JobNumber = x.Dispatch.OrderLine.JobNumber,
                     ProductOrService = x.Dispatch.OrderLine.Service.Service1,
                     DispatchId = x.DispatchId,
-                    OrderLineId = x.Dispatch.OrderLineId
+                    OrderLineId = x.Dispatch.OrderLineId,
+                    QuantityOrdered = x.Dispatch.OrderLine.FreightQuantity
                 })
                 .OrderBy(x => x.LoadTime)
                 .ToListAsync();
@@ -3005,6 +3009,7 @@ namespace DispatcherWeb.Dispatching
                         Date = load.Date ?? Clock.Now,
                         DriverId = load.DriverId ?? 0,
                         DriverName = driver?.DriverName,
+                        CarrierName = driver?.CarrierName,
                         UserId = driver?.UserId ?? 0,
                         ScheduledStartTime = driverAssignments.FirstOrDefault(x => x.DriverId == load.DriverId && x.Date == load.Date)?.StartTimeUtc?.ConvertTimeZoneTo(timezone),
                         EmployeeTimes = new List<DriverActivityDetailReportEmployeeTimeDto>(),
@@ -3026,9 +3031,12 @@ namespace DispatcherWeb.Dispatching
                         DeliveryTime = load.DeliveryTime,
                         LoadAt = load.LoadAt,
                         LoadTime = load.LoadTime,
+                        QuantityOrdered = load.QuantityOrdered,
                         Quantity = ticket?.Quantity,
                         UomName = ticket?.UomName,
-                        TicketNumber = ticket?.TicketNumber,
+                        TrailerTruckCode = ticket?.TrailerTruckCode,
+                        VehicleCategory = ticket?.VehicleCategory,
+                        LoadTicket = ticket?.TicketNumber,
                         JobNumber = load.JobNumber,
                         ProductOrService = load.ProductOrService
                     });
