@@ -40,7 +40,7 @@ export const sideMenuItems = [
     {
         icon: 'fa-regular fa-clipboard-list',
         name: 'Orders',
-        path: '/orders',
+        path: '/order',
         select: false,
     },
     {

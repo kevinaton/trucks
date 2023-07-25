@@ -457,9 +457,9 @@ function Quotes() {
                                                                     hoveredRow ===
                                                                     index
                                                                         ? theme
-                                                                              .palette
-                                                                              .action
-                                                                              .hover
+                                                                            .palette
+                                                                            .action
+                                                                            .hover
                                                                         : '#ffffff',
                                                                 '&.MuiTableRow-root:hover':
                                                                     {

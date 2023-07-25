@@ -8,6 +8,7 @@ import TruckDispatchList from '../pages/TruckDispatchList';
 import OrderDetails from '../pages/Orders/orderdetails';
 import JobSummary from '../pages/Schedule/JobSummary';
 import Quotes from '../pages/Quotes'
+import Order from '../pages/Orders'
 
 const authProtectedRoutes = [
     { path: '/dashboard', component: Dashboard },
@@ -18,6 +19,7 @@ const authProtectedRoutes = [
     { path: '/dispatching/schedule', component: Schedule },
     { path: '/dispatching/dispatches/truck-list', component: TruckDispatchList },
     { path: '/job-summary', component: JobSummary },
+    { path: '/order', component: Order },
     { path: '/order/details', component: OrderDetails },
     { path: '/quotes', component: Quotes },
 ];
