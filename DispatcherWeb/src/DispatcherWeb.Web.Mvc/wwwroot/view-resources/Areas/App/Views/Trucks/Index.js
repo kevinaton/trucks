@@ -93,6 +93,10 @@
                     title: app.localize('Category')
                 },
                 {
+                    data: "yearMakeModel",
+                    title: app.localize('YearMakeModel')
+                },
+                {
                     data: "defaultDriverName",
                     title: app.localize('DefaultDriver')
                 },

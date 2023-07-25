@@ -2886,7 +2886,8 @@ namespace DispatcherWeb.Dispatching
                 {
                     DriverId = x.Id,
                     DriverName = x.LastName + ", " + x.FirstName,
-                    UserId = x.UserId.Value
+                    UserId = x.UserId.Value,
+                    CarrierName = x.LeaseHaulerDriver.LeaseHauler.Name
                 }).OrderBy(d => d.DriverName).ToListAsync();
 
             var userId = input.DriverId.HasValue ? drivers.FirstOrDefault(x => x.DriverId == input.DriverId)?.UserId : null;
@@ -2949,15 +2950,23 @@ namespace DispatcherWeb.Dispatching
                     Tickets = x.Tickets.Select(t => new
                     {
                         TicketNumber = t.TicketNumber,
-                        Quantity = (decimal?)t.Quantity,
+                        Quantity = t.Quantity,
                         UomName = t.UnitOfMeasure.Name,
+                        TrailerTruckCode = t.Trailer.TruckCode,
+                        VehicleCategory = t.Trailer.VehicleCategory.Name,
+                        TicketUomId = t.UnitOfMeasureId
                     }).ToList(),
                     LoadTime = x.SourceDateTime,
                     DeliveryTime = x.DestinationDateTime,
                     JobNumber = x.Dispatch.OrderLine.JobNumber,
                     ProductOrService = x.Dispatch.OrderLine.Service.Service1,
                     DispatchId = x.DispatchId,
-                    OrderLineId = x.Dispatch.OrderLineId
+                    OrderLineId = x.Dispatch.OrderLineId,
+                    FreightQuantityOrdered = x.Dispatch.OrderLine.FreightQuantity,
+                    MaterialQuantityOrdered = x.Dispatch.OrderLine.MaterialQuantity,
+                    Designation = x.Dispatch.OrderLine.Designation,
+                    MaterialUomId = x.Dispatch.OrderLine.MaterialUomId,
+                    FreightUomId = x.Dispatch.OrderLine.FreightUomId
                 })
                 .OrderBy(x => x.LoadTime)
                 .ToListAsync();
@@ -3005,6 +3014,7 @@ namespace DispatcherWeb.Dispatching
                         Date = load.Date ?? Clock.Now,
                         DriverId = load.DriverId ?? 0,
                         DriverName = driver?.DriverName,
+                        CarrierName = driver?.CarrierName,
                         UserId = driver?.UserId ?? 0,
                         ScheduledStartTime = driverAssignments.FirstOrDefault(x => x.DriverId == load.DriverId && x.Date == load.Date)?.StartTimeUtc?.ConvertTimeZoneTo(timezone),
                         EmployeeTimes = new List<DriverActivityDetailReportEmployeeTimeDto>(),
@@ -3026,11 +3036,19 @@ namespace DispatcherWeb.Dispatching
                         DeliveryTime = load.DeliveryTime,
                         LoadAt = load.LoadAt,
                         LoadTime = load.LoadTime,
-                        Quantity = ticket?.Quantity,
+                        Quantity = ticket?.Quantity ?? 0,
                         UomName = ticket?.UomName,
-                        TicketNumber = ticket?.TicketNumber,
+                        TrailerTruckCode = ticket?.TrailerTruckCode,
+                        VehicleCategory = ticket?.VehicleCategory,
+                        LoadTicket = ticket?.TicketNumber,
                         JobNumber = load.JobNumber,
-                        ProductOrService = load.ProductOrService
+                        ProductOrService = load.ProductOrService,
+                        FreightQuantityOrdered = load.FreightQuantityOrdered,
+                        MaterialQuantityOrdered = load.MaterialQuantityOrdered,
+                        Designation = load.Designation,
+                        MaterialUomId = load.MaterialUomId,
+                        FreightUomId = load.FreightUomId,
+                        TicketUomId = ticket?.TicketUomId
                     });
                 }
             }

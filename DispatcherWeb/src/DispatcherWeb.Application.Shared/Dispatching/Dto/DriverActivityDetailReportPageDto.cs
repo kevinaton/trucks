@@ -9,6 +9,7 @@ namespace DispatcherWeb.Dispatching.Dto
         public int DriverId { get; set; }
         public long UserId { get; set; }
         public string DriverName { get; set; }
+        public string CarrierName { get; set; }
         public DateTime? ScheduledStartTime { get; set; }
         public List<DriverActivityDetailReportEmployeeTimeDto> EmployeeTimes { get; set; }
         public List<DriverActivityDetailReportLoadDto> Loads { get; set; }
