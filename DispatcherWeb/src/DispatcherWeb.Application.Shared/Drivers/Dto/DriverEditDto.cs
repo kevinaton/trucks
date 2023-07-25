@@ -51,6 +51,9 @@ namespace DispatcherWeb.Drivers.Dto
 
         public List<EmployeeTimeClassificationEditDto> EmployeeTimeClassifications { get; set; }
 
+        [StringLength(EntityStringFieldLengths.GeneralAddress.MaxStateLength)]
+        public string LicenseState { get; set; }
+
         [StringLength(EntityStringFieldLengths.Driver.LicenseNumber)]
         public string LicenseNumber { get; set; }
 

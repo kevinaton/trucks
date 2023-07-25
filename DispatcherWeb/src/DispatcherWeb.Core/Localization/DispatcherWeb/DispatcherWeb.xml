@@ -1861,6 +1861,7 @@
 		<text name="InvoiceTermsAndConditions">Terms and Conditions</text>
 		<text name="SelectStatusesOfInvoicesToExport">Select statuses of invoices to export</text>
 		<text name="YearMakeModel"><![CDATA[Year, Make, & Model]]></text>
+		<text name="LicenseState">License State</text>
 		<text name="CustomerPortal">Customer Portal</text>
 		<text name="HasCustomerPortalAccess">Portal Access</text>
 		<text name="CustomerPortalTicketsList">Tickets List</text>

@@ -78,6 +78,9 @@ namespace DispatcherWeb.Drivers
         [Column(TypeName = "date")]
         public DateTime? EmploymentStartDate { get; set; }
 
+        [StringLength(EntityStringFieldLengths.GeneralAddress.MaxStateLength)]
+        public string LicenseState { get; set; }
+
         [StringLength(EntityStringFieldLengths.Driver.LicenseNumber)]
         public string LicenseNumber { get; set; }
 

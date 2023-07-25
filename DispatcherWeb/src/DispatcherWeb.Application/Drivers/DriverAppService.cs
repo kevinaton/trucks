@@ -294,6 +294,7 @@ namespace DispatcherWeb.Drivers
                         City = x.City,
                         State = x.State,
                         ZipCode = x.ZipCode,
+                        LicenseState = x.LicenseState,
                         LicenseNumber = x.LicenseNumber,
                         TypeOfLicense = x.TypeOfLicense,
                         LicenseExpirationDate = x.LicenseExpirationDate,
@@ -473,6 +474,7 @@ namespace DispatcherWeb.Drivers
             driver.City = model.City;
             driver.State = model.State;
             driver.ZipCode = model.ZipCode;
+            driver.LicenseState = model.LicenseState;
             driver.LicenseNumber = model.LicenseNumber;
             driver.TypeOfLicense = model.TypeOfLicense;
             driver.LicenseExpirationDate = model.LicenseExpirationDate;
