@@ -321,7 +321,7 @@ namespace DispatcherWeb.DriverAssignments
                 await ThrowIfDriverHasTimeOffRequests(input.DriverId.Value, input.Date, input.Date);
             }
             var sharedTruckResult = await _truckRepository.EnsureCanEditTruckOrSharedTruckAsync(input.TruckId, OfficeId, input.Date);
-            var officeIdForDriverAssignment = sharedTruckResult.GetLocationForDate(input.Date, input.Shift) ?? input.OfficeId;
+            var officeIdForDriverAssignment = sharedTruckResult.GetLocationForDate(input.Date, input.Shift) ?? input.OfficeId ?? throw new UserFriendlyException("You need to select the office first");
 
             var driverAssignments = await GetAllDriverAssignmentsLite(new GetDriverAssignmentsInput()
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
+using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Linq.Extensions;
@@ -15,7 +16,6 @@ using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverAssignments;
 using DispatcherWeb.DriverAssignments.Dto;
-using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Extensions;
@@ -61,7 +61,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
 
         public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestForEdit(GetLeaseHaulerRequestForEditInput input)
         {
-            var model = input.LeaseHaulerRequestId != null 
+            var model = input.LeaseHaulerRequestId != null
                 ? await _leaseHaulerRequestRepository.GetAll()
                     .Where(lhr => lhr.Id == input.LeaseHaulerRequestId)
                     .Select(lhr => new LeaseHaulerRequestEditDto
@@ -78,7 +78,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     })
                     .FirstAsync()
                 : new LeaseHaulerRequestEditDto
-                { 
+                {
                     Date = input.Date
                 };
 
@@ -505,8 +505,8 @@ namespace DispatcherWeb.LeaseHaulerRequests
             }
 
             var availableLeaseHaulerTrucks = await _availableLeaseHaulerTruckRepository.GetAll()
+                .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
                 .Where(x => x.Date == input.Date
-                    && x.OfficeId == input.OfficeId
                     && x.Shift == input.Shift
                     && x.TruckId == input.TruckId)
                 .ToListAsync();
@@ -535,8 +535,8 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     //}
 
                     var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                        .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
                         .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
-                        .Where(x => input.OfficeId == x.OrderLine.Order.LocationId)
                         .Where(x => oldDriverId == x.DriverId)
                         .Where(x => input.TruckId == x.TruckId)
                         .ToListAsync();
