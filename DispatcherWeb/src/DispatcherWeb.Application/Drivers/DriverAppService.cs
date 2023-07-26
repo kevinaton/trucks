@@ -136,6 +136,7 @@ namespace DispatcherWeb.Drivers
                 OfficeName = x.Office.Name,
                 IsInactive = x.IsInactive,
                 LicenseNumber = x.LicenseNumber,
+                LicenseState = x.LicenseState,
                 TypeOfLicense = x.TypeOfLicense,
                 LicenseExpirationDate = x.LicenseExpirationDate,
                 LastPhysicalDate = x.LastPhysicalDate,
