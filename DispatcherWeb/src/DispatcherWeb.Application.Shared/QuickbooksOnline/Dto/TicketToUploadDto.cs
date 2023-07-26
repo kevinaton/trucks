@@ -1,5 +1,7 @@
 ﻿using System;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Tickets;
+using Newtonsoft.Json;
 
 namespace DispatcherWeb.QuickbooksOnline.Dto
 {
@@ -16,6 +18,13 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public decimal? OrderLineFreightTotal { get; set; }
         public DesignationEnum? Designation { get; set; }
         DesignationEnum ITicketQuantity.Designation => Designation ?? DesignationEnum.MaterialOnly;
+        public string LoadAtName => LoadAt?.FormattedAddress;
+        [JsonIgnore]
+        public LocationNameDto LoadAt { get; set; }
+        public string DeliverToName => DeliverTo?.FormattedAddress;
+        [JsonIgnore]
+        public LocationNameDto DeliverTo { get; set; }
+
         public bool HasOrderLine { get; set; }
 
         public decimal Quantity { get; set; }
