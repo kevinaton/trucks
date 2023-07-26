@@ -129,6 +129,35 @@ namespace DispatcherWeb.CustomerContacts
             }
         }
 
+        public async Task EnsureCanDeleteUser(User user)
+        {
+            if (user.CustomerContactId == null)
+            {
+                return;
+            }
+            
+            var customerContact = await _customerContactRepository.GetAll()
+                .FirstOrDefaultAsync(x => x.Id == user.CustomerContactId);
+            
+            if (customerContact != null)
+            {
+                customerContact.HasCustomerPortalAccess = false;
+            }
+        }
+
+        public async Task EnsureCanDeleteCustomerContact(CustomerContact customerContact)
+        {
+            var users = await UserManager.Users.Where(x => x.CustomerContactId == customerContact.Id).ToListAsync();
+            foreach (var user in users)
+            {
+                if (await IsUserInCustomerRole(user))
+                {
+                    await UserManager.RemoveFromRoleAsync(user, StaticRoleNames.Tenants.Customer);
+                }
+                user.CustomerContactId = null;
+            }
+        }
+
         #region private methods
 
         private async Task<bool> IsUserInCustomerRole(User user)

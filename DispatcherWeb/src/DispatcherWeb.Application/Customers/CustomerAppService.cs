@@ -452,7 +452,11 @@ namespace DispatcherWeb.Customers
             {
                 throw new UserFriendlyException("You can't delete selected row because it has data associated with it.");
             }
-            await _customerContactRepository.DeleteAsync(input.Id);
+
+            var customerContact = await _customerContactRepository.GetAll().FirstAsync(x => x.Id == input.Id);
+
+            await _customerContactUserLinkService.EnsureCanDeleteCustomerContact(customerContact);
+            await _customerContactRepository.DeleteAsync(customerContact);
         }
 
         [AbpAuthorize(AppPermissions.Pages_Customers_Merge)]

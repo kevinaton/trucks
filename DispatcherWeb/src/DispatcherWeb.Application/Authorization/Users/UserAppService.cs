@@ -345,6 +345,7 @@ namespace DispatcherWeb.Authorization.Users
             }
 
             await _driverUserLinkService.EnsureCanDeleteUser(user);
+            await _customerContactUserLinkService.EnsureCanDeleteUser(user);
             CheckErrors(await UserManager.DeleteAsync(user));
         }
 
