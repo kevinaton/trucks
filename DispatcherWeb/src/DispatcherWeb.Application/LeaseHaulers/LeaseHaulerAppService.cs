@@ -466,7 +466,7 @@ namespace DispatcherWeb.LeaseHaulers
                         Id = t.Id,
                         TruckCode = t.TruckCode,
                         LeaseHaulerId = t.LeaseHaulerTruck.LeaseHaulerId,
-                        LicensePlate = t.LicensePlate,
+                        LicensePlate = t.Plate,
                         VehicleCategoryId = t.VehicleCategoryId,
                         VehicleCategoryName = t.VehicleCategory.Name,
                         DefaultDriverId = t.DefaultDriverId,
@@ -608,7 +608,7 @@ namespace DispatcherWeb.LeaseHaulers
             }
 
             truck.TruckCode = model.TruckCode;
-            truck.LicensePlate = model.LicensePlate;
+            truck.Plate = model.LicensePlate;
             truck.VehicleCategoryId = model.VehicleCategoryId;
             truck.CanPullTrailer = model.CanPullTrailer;
             truck.InactivationDate = model.IsActive ? null : model.InactivationDate;
