@@ -38,6 +38,8 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
                 OrderLineMaterialTotal = OrderLineMaterialTotal,
                 OrderLineFreightTotal = OrderLineFreightTotal,
                 Designation = Designation,
+                LoadAt = LoadAt,
+                DeliverTo = DeliverTo,
                 HasOrderLine = HasOrderLine,
                 Quantity = Quantity,
             };
