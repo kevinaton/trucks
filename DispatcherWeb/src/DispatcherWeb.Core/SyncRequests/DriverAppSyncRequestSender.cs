@@ -23,9 +23,13 @@ namespace DispatcherWeb.SyncRequests
 {
     public class DriverAppSyncRequestSender : IDriverAppSyncRequestSender, ITransientDependency
     {
-        public static EntityEnum[] EntityTypesToIgnore = new[]
+        public static EntityEnum[] EntityTypesToSync = new[]
         {
-            EntityEnum.DriverAssignment,
+            EntityEnum.Dispatch,
+            EntityEnum.EmployeeTime,
+            EntityEnum.EmployeeTimeClassification,
+            EntityEnum.TimeClassification,
+            EntityEnum.ChatMessage,
         };
 
         private readonly IRepository<Driver> _driverRepository;
@@ -106,7 +110,7 @@ namespace DispatcherWeb.SyncRequests
             foreach (var entityTypeGroup in syncRequestChanges.GroupBy(x => x.EntityType))
             {
                 var entityType = entityTypeGroup.Key;
-                if (EntityTypesToIgnore.Contains(entityType))
+                if (!EntityTypesToSync.Contains(entityType))
                 {
                     continue;
                 }

@@ -78,7 +78,7 @@ const App = (props) => {
     }, [dispatch, userInfo]);
 
     useEffect(() => {
-        if (isAuthenticated && isEmpty(connection)) {
+        if (isAuthenticated && connection == null) {
             const startConnection = (transport) => {
                 const url = `${baseUrl}/signalr`;
                 const newConnection = new signalR.HubConnectionBuilder()
@@ -255,7 +255,12 @@ const App = (props) => {
                                     {/* This is the route configuration */}
                                     <RouterConfig 
                                         isAuthenticated={isAuthenticated} 
-                                        handleCurrentPageName={handleCurrentPageName} />
+                                        handleCurrentPageName={handleCurrentPageName} 
+                                        openModal={(content, size) => openModal(content, size)} 
+                                        closeModal={closeModal} 
+                                        openDialog={(data) => openDialog(data)}
+                                        closeDialog={closeDialog}
+                                    />
                                 </Paper>
                             </Box>
                         </React.Fragment>

@@ -23,7 +23,7 @@ namespace DispatcherWeb.SyncRequests
         {
             foreach (var change in Changes.OfType<ISyncRequestChangeDetail>())
             {
-                if (change.Entity is IChangedDriverAppEntity changedDriverAppEntity)
+                if (change.Entity is IChangedEntity changedDriverAppEntity)
                 {
                     changedDriverAppEntity.UpdateFromEntityReference();
                 }

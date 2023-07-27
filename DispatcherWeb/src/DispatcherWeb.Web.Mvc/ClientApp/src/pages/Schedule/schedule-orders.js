@@ -27,7 +27,6 @@ import _, { isEmpty } from 'lodash';
 import { renderTime, isToday, round } from '../../helpers/misc_helper';
 import { getScheduleOrders } from '../../store/actions';
 import TruckAssignment from './truck-assignment';
-
 import App from '../../config/appConfig';
 
 const ScheduleOrders = ({
@@ -69,7 +68,7 @@ const ScheduleOrders = ({
                 setLoading(false);
             }
         }
-    }, [isLoading, scheduleOrders, scheduleData]);
+    }, [isLoading, scheduleOrders, scheduleData, dataFilter]);
 
     useEffect(() => {
         // check if dataFilter has changed from its previous state
@@ -568,7 +567,7 @@ const ScheduleOrders = ({
                                                         return (
                                                             <Grid item key={index}>
                                                                 <Chip
-                                                                    label={truck.name}
+                                                                    label={truck.truckCode}
                                                                     onClick={() => {}}
                                                                     onDelete={() => {}}
                                                                     variant={truck.variant}

@@ -23,6 +23,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
     "fs": "^0.0.1-security",
+    "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",

@@ -140,7 +140,8 @@ namespace DispatcherWeb.Scheduling
                     AllowSharedOrders = await IsEnabledAsync(AppFeatures.AllowSharedOrdersFeature),
                     AllowMultiOffice = await IsEnabledAsync(AppFeatures.AllowMultiOfficeFeature),
                     AllowSendingOrdersToDifferentTenant = await IsEnabledAsync(AppFeatures.AllowSendingOrdersToDifferentTenant),
-                    LeaseHaulers = await IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature)
+                    AllowImportingTruxEarnings = await IsEnabledAsync(AppFeatures.AllowImportingTruxEarnings),
+                    LeaseHaulers = await IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature),
                 },
                 Settings = new SchedulePageSettings
                 {

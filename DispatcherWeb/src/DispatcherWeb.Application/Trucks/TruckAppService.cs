@@ -393,6 +393,21 @@ namespace DispatcherWeb.Trucks
                 .GetSelectListResult(input);
 
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
+        public async Task<IList<KeyValuePair<int, string>>> GetBedConstructionSelectList()
+        {
+            var options = AppServiceExtensions.EnumToIntList<BedConstructionEnum>();
+            return options
+                .OrderBy(x => x.Value)
+                .ToList();
+        }
+        
+        [AbpAuthorize(AppPermissions.Pages_Trucks)]
+        public async Task<IList<KeyValuePair<int, string>>> GetFuelTypeSelectList()
+        {
+            return AppServiceExtensions.EnumToIntList<FuelType>();
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_Trucks)]
         public async Task<TruckEditDto> GetTruckForEdit(GetTruckForEditInput input)
         {
             TruckEditDto truckEditDto;
@@ -660,6 +675,9 @@ namespace DispatcherWeb.Trucks
             result.Id = await _truckRepository.InsertOrUpdateAndGetIdAsync(entity);
 
             await _crossTenantOrderSender.SyncMaterialCompanyTrucksIfNeeded(entity.Id);
+
+            await _syncRequestSender.SendSyncRequest(
+                new SyncRequest().AddChange(EntityEnum.Truck, entity.ToChangedEntity()));
 
             return result;
 

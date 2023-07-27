@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Configuration;
@@ -856,6 +858,31 @@ namespace DispatcherWeb
             var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
             culture.NumberFormat.CurrencySymbol = currencySymbol;
             return culture;
+        }
+
+        public static IList<KeyValuePair<int, string>> EnumToIntList<T>()
+        {
+            List<KeyValuePair<int, string>> keyValuePairs = new List<KeyValuePair<int, string>>();
+
+            var type = typeof(T);
+
+            return (IList<KeyValuePair<int, string>>)
+                Enum.GetValues(type)
+                    .OfType<Enum>()
+                    .Select(e => new KeyValuePair<int, string>(Convert.ToInt32(e), e.EnumDescription()))
+                    .ToArray();
+        }
+
+        private static string EnumDescription(this Enum value)
+        {
+            string description = value.ToString();
+            FieldInfo fieldInfo = value.GetType().GetField(description);
+            DescriptionAttribute[] attributes = (DescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+            if (attributes != null && attributes.Length > 0)
+                description = attributes[0].Description;
+
+            return description;
         }
     }
 }

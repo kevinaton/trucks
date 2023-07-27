@@ -13,7 +13,8 @@ const StyledBox = styled(Box)(({ theme, size }) => ({
     boxShadow: theme.shadows[5],
     padding: 0,
     width: size,
-    position: 'relative'
+    position: 'relative',
+    maxHeight: '96%'
 }));
 
 export const CustomModal = ({
