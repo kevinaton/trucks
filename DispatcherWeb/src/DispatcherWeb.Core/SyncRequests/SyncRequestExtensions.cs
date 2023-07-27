@@ -3,6 +3,7 @@ using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.TimeClassifications;
+using DispatcherWeb.Trucks;
 
 namespace DispatcherWeb.SyncRequests
 {
@@ -75,5 +76,13 @@ namespace DispatcherWeb.SyncRequests
                 EntityReference = entity
             };
         }
+
+        public static ChangedTruck ToChangedEntity(this Truck entity)
+        {
+            return new ChangedTruck
+            {
+                Id = entity.Id
+            };
+        } 
     }
 }

@@ -89,7 +89,7 @@ const TruckMap = ({
     useEffect(() => {
         if (!isConnectedToSignalR && dataFilter.officeId !== null && dataFilter.date !== null) {
             const startConnection = (transport) => {
-                const url = `${baseUrl}/signalr-scheduling`;
+                const url = `${baseUrl}/signalr-dispatcher`;
                 const connection = new signalR.HubConnectionBuilder()
                     .withUrl(url, transport)
                     .withAutomaticReconnect()
@@ -107,7 +107,8 @@ const TruckMap = ({
                     }, 5000);
                 });
 
-                connection.on('syncScheduledTrucks', () => {
+                connection.on('syncRequest', payload => {
+                    console.log('payload: ', payload)
                     fetchData();
                 });
 

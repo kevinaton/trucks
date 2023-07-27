@@ -31,20 +31,29 @@ namespace DispatcherWeb.SyncRequests
 
         public async Task SendSyncRequest(SyncRequest syncRequest)
         {
-            syncRequest.UpdateChangesFromReferences();
-            if (!syncRequest.Changes.Any())
+            await SendRequest(syncRequest);
+            await _driverAppSyncRequestSender.SendSyncRequestAsync(syncRequest);
+        }
+
+        public async Task SendDataSyncRequest(SyncRequest syncRequest)
+        {
+            await SendRequest(syncRequest);
+        }
+
+        private async Task SendRequest(SyncRequest request)
+        {
+            request.UpdateChangesFromReferences();
+            if (!request.Changes.Any())
             {
                 return;
             }
 
             var clients = _onlineClientManager.GetAllClients()
                 .Where(x => x.TenantId == Session.TenantId)
-                .WhereIf(syncRequest.IgnoreForCurrentUser, x => x.UserId != Session.UserId)
+                .WhereIf(request.IgnoreForCurrentUser, x => x.UserId != Session.UserId)
                 .ToList();
 
-            await _signalRCommunicator.SendSyncRequest(clients, syncRequest);
-
-            await _driverAppSyncRequestSender.SendSyncRequestAsync(syncRequest);
+            await _signalRCommunicator.SendSyncRequest(clients, request);
         }
     }
 }

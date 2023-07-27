@@ -682,6 +682,7 @@ namespace DispatcherWeb
         EmployeeTimeClassification = 4,
         TimeClassification = 5,
         ChatMessage = 6,
+        Truck = 7,
     }
 
     public enum ChangeType
