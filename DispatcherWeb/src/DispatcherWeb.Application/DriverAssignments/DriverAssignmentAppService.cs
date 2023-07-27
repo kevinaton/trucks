@@ -495,11 +495,6 @@ namespace DispatcherWeb.DriverAssignments
         [AbpAuthorize(AppPermissions.Pages_DriverAssignment)]
         public async Task<byte[]> GetDriverAssignmentReport(GetDriverAssignmentsInput input)
         {
-            var officeName = await _officeRepository.GetAll()
-                                            .Where(x => input.OfficeId.HasValue && x.Id == input.OfficeId.Value)
-                                            .Select(x => x.Name)
-                                            .FirstAsync();
-
             Shift? shift = input.Shift == Shift.NoShift ? null : input.Shift;
             var items = await _driverAssignmentRepository.GetAll(input.Date, shift, input.OfficeId)
                 .Where(da => da.Truck.LocationId.HasValue)
@@ -515,6 +510,7 @@ namespace DispatcherWeb.DriverAssignments
                     DriverIsExternal = da.Driver.IsExternal == true,
                     DriverIsActive = da.Driver.IsInactive != true,
                     StartTime = da.StartTime,
+                    OfficeName = da.Office != null ? da.Office.Name : string.Empty
                 })
                 .OrderBy(x => x.TruckCode)
                 .ToListAsync();
@@ -529,7 +525,6 @@ namespace DispatcherWeb.DriverAssignments
                 Date = input.Date,
                 Shift = input.Shift,
                 ShiftName = await SettingManager.GetShiftName(input.Shift),
-                OfficeName = officeName,
                 Items = items,
             };
 
