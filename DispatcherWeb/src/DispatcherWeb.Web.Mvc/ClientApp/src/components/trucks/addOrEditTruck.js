@@ -119,7 +119,7 @@ const AddOrEditTruckForm = ({
         errorText: '',
         disabled: true
     });
-    const [defaultTrailerId, setDefaultTrailerId] = useState(null);
+    const [currentTrailerId, setCurrentTrailerId] = useState(null);
     const [isActive, setIsActive] = useState(true);
     const [inactivationDate, setInactivationDate] = useState({
         value: null,
@@ -447,12 +447,12 @@ const AddOrEditTruckForm = ({
         });
     };
 
-    const handleDefaultTrailerIdInputChange = (e) => {
+    const handleCurrentTrailerIdInputChange = (e) => {
         e.preventDefault();
 
         const inputValue = e.target.value;
-        setDefaultTrailerId({
-            ...defaultTrailerId,
+        setCurrentTrailerId({
+            ...currentTrailerId,
             value: inputValue,
             error: false,
             errorText: ''
@@ -806,7 +806,7 @@ const AddOrEditTruckForm = ({
             officeId: officeId.value.toString(),
             vehicleCategoryId: vehicleCategoryId.value,
             defaultDriverId: defaultDriverId.value,
-            defaultTrailerId: getDefaultVal(defaultTrailerId, ''),
+            currentTrailerId: getDefaultVal(currentTrailerId, ''),
             isActive: isActive.toString(),
             inactivationDate: formatDate(inactivationDate.value),
             isOutOfService: isOutOfService.toString(),
@@ -1014,20 +1014,20 @@ const AddOrEditTruckForm = ({
 
                 { canPullTrailer !== null && canPullTrailer && 
                     <FormControl fullWidth>
-                        <InputLabel id='defaultTrailer-label'>Default Trailer</InputLabel>
+                        <InputLabel id='currentTrailer-label'>Current Trailer</InputLabel>
                         <Select
-                            labelId='defaultTrailer-label'
-                            id='defaultTrailer'
-                            label='Default Trailer' 
+                            labelId='currentTrailer-label'
+                            id='currentTrailer'
+                            label='Current Trailer' 
                             value={defaultDriverId.value} 
-                            defaultValue={truckInfo.defaultTrailerId}
-                            onChange={handleDefaultTrailerIdInputChange}
+                            defaultValue={truckInfo.currentTrailerId}
+                            onChange={handleCurrentTrailerIdInputChange}
                         >
                             <MenuItem value=''>Select an option</MenuItem>
 
-                            { truckInfo.defailtTrailerId !== null && 
-                                <MenuItem value={truckInfo.defailtTrailerId}>
-                                    {truckInfo.defaultTrailerCode}
+                            { truckInfo.currentTrailerId !== null && 
+                                <MenuItem value={truckInfo.currentTrailerId}>
+                                    {truckInfo.currentTrailerCode}
                                 </MenuItem>
                             }
 
