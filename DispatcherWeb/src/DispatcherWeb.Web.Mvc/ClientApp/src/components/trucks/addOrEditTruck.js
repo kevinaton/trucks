@@ -355,16 +355,24 @@ const AddOrEditTruckForm = ({
     }, [dispatch, editTruckSuccess, closeModal]);
 
     useEffect(() => {
-        console.log('error: ', error)
-        if (!isEmpty(error) && !error.success) {
-            const { message } = error.error;
+        if (!isEmpty(error) && 
+            error.response !== null && 
+            !isEmpty(error.response)
+        ) {
+            const { data } = error.response;
+            if (!isEmpty(data)) { 
+                const { success } = data;
+                if (!success) {
+                    const { message } = data.error;
 
-            openDialog({
-                type: 'alert',
-                content: (
-                    <AlertDialog variant='error' message={message} />
-                )
-            });
+                    openDialog({
+                        type: 'alert',
+                        content: (
+                            <AlertDialog variant='error' message={message} />
+                        )
+                    });
+                }
+            }
         }
     }, [error, openDialog]);
 
@@ -752,7 +760,13 @@ const AddOrEditTruckForm = ({
     const handleDtdTrackerDeviceTypeIdInputChange = (selectedOption) => {
         const { serverAddress } = selectedOption.item;
         setDtdTrackerDeviceTypeId(selectedOption.id);
-        setDtdTrackerServerAddress(serverAddress);
+        setDtdTrackerDeviceTypeName(selectedOption.name);
+
+        if (serverAddress) {
+            setDtdTrackerServerAddress(serverAddress);
+        } else {
+            setDtdTrackerServerAddress('');
+        }
     };
 
     const handleDtdTrackerUniqueIdInputChange = (e) => {

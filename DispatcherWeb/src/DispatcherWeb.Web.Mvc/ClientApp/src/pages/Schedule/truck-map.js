@@ -12,8 +12,13 @@ import AddIcon from '@mui/icons-material/Add';
 import _, { isEmpty } from 'lodash';
 import { baseUrl } from '../../helpers/api_helper';
 import * as signalR from '@microsoft/signalr';
-import { getScheduleTrucks } from '../../store/actions';
+import { 
+    getScheduleTrucks, 
+    getScheduleTruckBySyncRequest, 
+    getScheduleTruckBySyncRequestReset as onResetGetScheduleTruckBySyncRequest } from '../../store/actions';
 import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
+import { entityType } from '../../common/enums/entityType';
+import { changeType } from '../../common/enums/changeType';
 
 const TruckMap = ({
     pageConfig,
@@ -32,10 +37,14 @@ const TruckMap = ({
 
     const dispatch = useDispatch();
     const { 
+        isLoadingScheduleTrucks,
         scheduleTrucks,
+        isModifiedScheduleTrucks,
         editTruckSuccess
     } = useSelector((state) => ({
+        isLoadingScheduleTrucks: state.SchedulingReducer.isLoadingScheduleTrucks,
         scheduleTrucks: state.SchedulingReducer.scheduleTrucks,
+        isModifiedScheduleTrucks: state.SchedulingReducer.isModifiedScheduleTrucks,
         editTruckSuccess: state.TruckReducer.editTruckSuccess
     }));
 
@@ -60,7 +69,6 @@ const TruckMap = ({
                 isEmpty(trucks) || (!isEmpty(trucks) && !_.isEqual(trucks, items))
             )) {
                 onSetTrucks(items);
-                setLoading(false);
             }
         }
     }, [pageConfig, isLoading, scheduleTrucks, trucks, onSetTrucks]);
@@ -108,8 +116,28 @@ const TruckMap = ({
                 });
 
                 connection.on('syncRequest', payload => {
-                    console.log('payload: ', payload)
-                    fetchData();
+                    const { changes } = payload;
+                    if (!isEmpty(changes)) {
+                        _.forEach(changes, change => {
+                            const { entity } = change;
+                            if (!isEmpty(entity) && 
+                                entity.id !== null && 
+                                change.entityType === entityType.TRUCK
+                            ) {
+                                if (change.changeType === changeType.MODIFIED) {
+                                    dispatch(getScheduleTruckBySyncRequest({
+                                        officeId: dataFilter.officeId,
+                                        date: dataFilter.date,
+                                        truckId: entity.id
+                                    }));
+                                }
+
+                                if (change.changeType === changeType.REMOVED) {
+                                    // todo: remove the entity from the list
+                                }
+                            }
+                        });
+                    }
                 });
 
                 connection
@@ -135,10 +163,27 @@ const TruckMap = ({
         }
     }, [editTruckSuccess]);
 
+    useEffect(() => {
+        if (isModifiedScheduleTrucks) {
+            const { items } = scheduleTrucks.result;
+            if (!isEmpty(items) && (
+                isEmpty(trucks) || (!isEmpty(trucks) && !_.isEqual(trucks, items))
+            )) {
+                onSetTrucks(items);
+                dispatch(onResetGetScheduleTruckBySyncRequest());
+            }
+        }
+    }, [dispatch, isModifiedScheduleTrucks, scheduleTrucks, trucks, onSetTrucks]);
+
+    useEffect(() => {
+        if (isLoading !== isLoadingScheduleTrucks) {
+            setLoading(isLoadingScheduleTrucks);
+        }
+    }, [isLoading, isLoadingScheduleTrucks]);
+
     const fetchData = () => {
         const { officeId, date } = dataFilter;
         if (officeId !== null && date !== null) {
-            setLoading(true);
             dispatch(getScheduleTrucks({
                 officeId,
                 date: date

@@ -5,6 +5,10 @@ import {
     GET_SCHEDULE_TRUCKS,
     GET_SCHEDULE_TRUCKS_SUCCESS,
     GET_SCHEDULE_TRUCKS_FAILURE,
+    GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST,
+    GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_SUCCESS,
+    GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_FAILURE,
+    GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_RESET,
     GET_SCHEDULE_ORDERS,
     GET_SCHEDULE_ORDERS_SUCCESS,
     GET_SCHEDULE_ORDERS_FAILURE,
@@ -37,6 +41,25 @@ export const getScheduleTrucksSuccess = scheduleTrucks => ({
 export const getScheduleTrucksFailure = error => ({
     type: GET_SCHEDULE_TRUCKS_FAILURE,
     payload: error,
+});
+
+export const getScheduleTruckBySyncRequest = filter => ({
+    type: GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST,
+    payload: filter,
+});
+
+export const getScheduleTruckBySyncRequestSuccess = scheduleTruck => ({
+    type: GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_SUCCESS,
+    payload: scheduleTruck,
+});
+
+export const getScheduleTruckBySyncRequestFailure = error => ({
+    type: GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_FAILURE,
+    payload: error,
+});
+
+export const getScheduleTruckBySyncRequestReset = () => ({
+    type: GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_RESET,
 });
 
 export const getScheduleOrders = filter => ({

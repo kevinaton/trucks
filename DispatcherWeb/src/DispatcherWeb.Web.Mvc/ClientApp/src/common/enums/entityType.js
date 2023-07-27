@@ -1,0 +1,9 @@
+export const entityType = {
+    DISPATCH: 1,
+    EMPLOYEE_TIME: 2,
+    DRIVER_ASSIGNMENT: 3,
+    EMPLOYEE_TIME_CLASSIFICATION: 4,
+    TIME_CLASSIFICATION: 5,
+    CHAT_MESSAGE: 6,
+    TRUCK: 7
+};
