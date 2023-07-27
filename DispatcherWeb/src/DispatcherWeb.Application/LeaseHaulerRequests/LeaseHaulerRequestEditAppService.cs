@@ -558,16 +558,17 @@ namespace DispatcherWeb.LeaseHaulerRequests
         {
             var hasOrderLineTrucks = await _orderLineTruckRepository.GetAll()
                         .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
-                        .Where(x => input.OfficeId == x.OrderLine.Order.LocationId)
+                        .Where(x => !input.OfficeId.HasValue || input.OfficeId == x.OrderLine.Order.LocationId)
                         .Where(x => input.TruckId == x.TruckId)
                         .AnyAsync();
+
             if (hasOrderLineTrucks)
             {
                 throw new UserFriendlyException("You cannot remove this truck because it was already added to orders");
             }
 
             await _availableLeaseHaulerTruckRepository.DeleteAsync(x => x.Date == input.Date
-                    && x.OfficeId == input.OfficeId
+                    && (!input.OfficeId.HasValue || x.OfficeId == input.OfficeId)
                     && x.Shift == input.Shift
                     && x.TruckId == input.TruckId);
         }
