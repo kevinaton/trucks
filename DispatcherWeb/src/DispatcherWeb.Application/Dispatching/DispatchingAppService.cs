@@ -2317,6 +2317,11 @@ namespace DispatcherWeb.Dispatching
                     {
                         t.Id,
                         t.IsDone,
+                    }).ToList(),
+                    RelatedDispatches = x.OrderLineTruck.Dispatches.Select(d => new
+                    {
+                        d.Id,
+                        d.Status
                     }).ToList()
                 }).FirstAsync();
 
@@ -2328,14 +2333,17 @@ namespace DispatcherWeb.Dispatching
                 return;
             }
 
-            var orderLineTruck = await _orderLineTruckRepository.GetAsync(dispatch.OrderLineTruckId.Value);
-            orderLineTruck.IsDone = true;
-            orderLineTruck.Utilization = 0;
-
-            if (dispatchData.OrderLineTrucks.Where(x => x.Id != orderLineTruck.Id).All(x => x.IsDone))
+            if (!dispatchData.RelatedDispatches.Where(x => x.Id != dispatch.Id).Any(x => Dispatch.OpenStatuses.Contains(x.Status)))
             {
-                var orderLine = await _orderLineRepository.GetAsync(dispatch.OrderLineId);
-                orderLine.IsComplete = true;
+                var orderLineTruck = await _orderLineTruckRepository.GetAsync(dispatch.OrderLineTruckId.Value);
+                orderLineTruck.IsDone = true;
+                orderLineTruck.Utilization = 0;
+
+                if (dispatchData.OrderLineTrucks.Where(x => x.Id != orderLineTruck.Id).All(x => x.IsDone))
+                {
+                    var orderLine = await _orderLineRepository.GetAsync(dispatch.OrderLineId);
+                    orderLine.IsComplete = true;
+                }
             }
         }
 
