@@ -119,7 +119,7 @@ const AddOrEditTruckForm = ({
         errorText: '',
         disabled: true
     });
-    const [defaultTrailerId, setDefaultTrailerId] = useState(null);
+    const [currentTrailerId, setCurrentTrailerId] = useState(null);
     const [isActive, setIsActive] = useState(true);
     const [inactivationDate, setInactivationDate] = useState({
         value: null,
@@ -451,8 +451,8 @@ const AddOrEditTruckForm = ({
         e.preventDefault();
 
         const inputValue = e.target.value;
-        setDefaultTrailerId({
-            ...defaultTrailerId,
+        setCurrentTrailerId({
+            ...currentTrailerId,
             value: inputValue,
             error: false,
             errorText: ''
@@ -806,7 +806,7 @@ const AddOrEditTruckForm = ({
             officeId: officeId.value.toString(),
             vehicleCategoryId: vehicleCategoryId.value,
             defaultDriverId: defaultDriverId.value,
-            defaultTrailerId: getDefaultVal(defaultTrailerId, ''),
+            currentTrailerId: getDefaultVal(currentTrailerId, ''),
             isActive: isActive.toString(),
             inactivationDate: formatDate(inactivationDate.value),
             isOutOfService: isOutOfService.toString(),
@@ -1020,7 +1020,7 @@ const AddOrEditTruckForm = ({
                             id='defaultTrailer'
                             label='Default Trailer' 
                             value={defaultDriverId.value} 
-                            defaultValue={truckInfo.defaultTrailerId}
+                            defaultValue={truckInfo.currentTrailerId}
                             onChange={handleDefaultTrailerIdInputChange}
                         >
                             <MenuItem value=''>Select an option</MenuItem>
