@@ -1,6 +1,6 @@
 namespace DispatcherWeb.SyncRequests.Entities
 {
-    public class ChangedTruck : ChangedDriverAppEntity
+    public class ChangedTruck : ChangedEntityId<int>
     {
         public override bool IsSame(ChangedEntityAbstract obj)
         {

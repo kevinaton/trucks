@@ -81,7 +81,8 @@ namespace DispatcherWeb.SyncRequests
         {
             return new ChangedTruck
             {
-                Id = entity.Id
+                Id = entity.Id,
+                EntityReference = entity
             };
         } 
     }

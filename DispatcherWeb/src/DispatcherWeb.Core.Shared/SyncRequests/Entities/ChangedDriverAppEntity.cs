@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Abp.Timing;
 using Newtonsoft.Json;
@@ -39,14 +38,11 @@ namespace DispatcherWeb.SyncRequests.Entities
             return this;
         }
 
-        [JsonIgnore]
-        public Entity<TKey> EntityReference { get; set; }
-
-        public void UpdateFromEntityReference()
+        public override void UpdateFromEntityReference()
         {
+            base.UpdateFromEntityReference();
             if (EntityReference != null)
             {
-                Id = EntityReference.Id;
                 if (EntityReference is FullAuditedEntity<TKey> fullAuditedEntity)
                 {
                     this.SetLastUpdateDateTime(fullAuditedEntity);

@@ -10,6 +10,5 @@ namespace DispatcherWeb.SyncRequests.Entities
         long? UserId { get; set; }
         DateTime LastUpdateDateTime { get; set; }
         int? OldDriverIdToNotify { get; set; }
-        void UpdateFromEntityReference();
     }
 }

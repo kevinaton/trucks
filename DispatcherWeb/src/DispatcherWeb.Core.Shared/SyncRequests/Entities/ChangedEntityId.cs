@@ -1,4 +1,9 @@
-﻿namespace DispatcherWeb.SyncRequests.Entities
+﻿using Abp.Domain.Entities.Auditing;
+using Abp.Domain.Entities;
+using Abp.Timing;
+using Newtonsoft.Json;
+
+namespace DispatcherWeb.SyncRequests.Entities
 {
     public abstract class ChangedEntityAbstract
     {
@@ -8,7 +13,7 @@
         }
     }
 
-    public class ChangedEntityId<TKey> : ChangedEntityAbstract
+    public class ChangedEntityId<TKey> : ChangedEntityAbstract, IChangedEntity
     {
         public TKey Id { get; set; }
 
@@ -26,6 +31,17 @@
             return obj is ChangedEntityId<TKey> other
                 && other.Id.Equals(Id)
                 && base.IsSame(obj);
+        }
+
+        [JsonIgnore]
+        public Entity<TKey> EntityReference { get; set; }
+
+        public virtual void UpdateFromEntityReference()
+        {
+            if (EntityReference != null)
+            {
+                Id = EntityReference.Id;
+            }
         }
     }
 

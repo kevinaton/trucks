@@ -581,7 +581,7 @@ namespace DispatcherWeb.Trucks
 
             await _crossTenantOrderSender.SyncMaterialCompanyTrucksIfNeeded(entity.Id);
 
-            await _syncRequestSender.SendDataSyncRequest(
+            await _syncRequestSender.SendSyncRequest(
                 new SyncRequest().AddChange(EntityEnum.Truck, entity.ToChangedEntity()));
 
             return result;
