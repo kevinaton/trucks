@@ -863,6 +863,7 @@ admin -> for your tenant's admin
     <text name="LHRate">LH Rate</text>
     <text name="LicenseExpirationDate">License Expiration Date</text>
     <text name="LicenseNumber">License Number</text>
+    <text name="LicensePlate">License Plate</text>
     <text name="LicensePlateStatus">License Plate Status</text>
     <text name="LicensePlateStatusChart">License Plate Status Chart</text>
     <text name="LicenseState">License State</text>

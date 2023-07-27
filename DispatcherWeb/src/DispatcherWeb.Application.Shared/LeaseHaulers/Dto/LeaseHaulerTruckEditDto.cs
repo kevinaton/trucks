@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Offices.Dto;
 
 namespace DispatcherWeb.LeaseHaulers.Dto
@@ -14,6 +15,9 @@ namespace DispatcherWeb.LeaseHaulers.Dto
         [Required(ErrorMessage = "Truck Code is a required field")]
         [StringLength(25)]
         public string TruckCode { get; set; }
+
+        [StringLength(EntityStringFieldLengths.Truck.Plate)]
+        public string LicensePlate { get; set; }
 
         public int VehicleCategoryId { get; set; }
         public string VehicleCategoryName { get; set; }
