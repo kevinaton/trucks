@@ -394,13 +394,13 @@ namespace DispatcherWeb
                 })
                 .ToListAsync();
 
-            var truckIdsSharedWithThisOffice = sharedTrucks.Where(x => x.OfficeId == input.OfficeId).Select(x => x.TruckId).ToList();
-            var trucksSharedWithOtherOffices = sharedTrucks.Where(x => x.OfficeId != x.TruckOfficeId).ToList();
+            var truckIdsSharedWithThisOffice = sharedTrucks.Where(x => !input.OfficeId.HasValue || x.OfficeId == input.OfficeId).Select(x => x.TruckId).ToList();
+            var trucksSharedWithOtherOffices = sharedTrucks.Where(x => !x.TruckOfficeId.HasValue || x.OfficeId != x.TruckOfficeId).ToList();
 
             var leaseHaulerTrucks = await truckQuery
                 .Where(x => useLeaseHaulers && x.LocationId == null)
                 .SelectMany(x => x.AvailableLeaseHaulerTrucks)
-                .Where(a => !input.OfficeId.HasValue || input.OfficeId.HasValue && a.OfficeId == input.OfficeId.Value
+                .Where(a => !input.OfficeId.HasValue || a.OfficeId == input.OfficeId.Value
                         && (!useShifts || a.Shift == input.Shift)
                         && a.Date == input.Date)
                 .Select(x => new
@@ -419,7 +419,7 @@ namespace DispatcherWeb
 
             var trucks = await truckQuery
                 .WhereIf(!skipTruckFiltering, t => t.IsActive
-                    && (!input.OfficeId.HasValue || (input.OfficeId.HasValue && t.LocationId == input.OfficeId)) ||
+                    && (!input.OfficeId.HasValue || t.LocationId == input.OfficeId) ||
                         (truckIdsSharedWithThisOffice.Contains(t.Id) || leaseHaulerTruckIds.Contains(t.Id)))
                 .Select(t => new ScheduleTruckDto
                 {

@@ -16,7 +16,7 @@ namespace DispatcherWeb.Infrastructure.RepositoryExtensions
         {
             return driverAssignmentRepository.GetAll()
                 .Where(da => da.Date == date && da.Shift == shift &&
-                            (!officeId.HasValue || (officeId.HasValue && da.OfficeId == officeId)));
+                            (!officeId.HasValue || da.OfficeId == officeId));
         }
     }
 }
