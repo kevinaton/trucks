@@ -108,10 +108,6 @@ namespace DispatcherWeb.Authorization
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature));
             pages.CreateChildPermission(AppPermissions.DriverProductionPay, L("DriverProductionPay"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.DriverProductionPayFeature));
-            pages.CreateChildPermission(AppPermissions.AllowImportingTruxEarnings, L("AllowImportingTruxEarnings"), multiTenancySides: MultiTenancySides.Tenant,
-                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingTruxEarnings));
-            pages.CreateChildPermission(AppPermissions.AllowImportingLuckStoneEarnings, L("AllowImportingLuckStoneEarnings"), multiTenancySides: MultiTenancySides.Tenant,
-                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingLuckStoneEarnings));
 
             var vehicleService = pages.CreateChildPermission(AppPermissions.Pages_VehicleService_View, L("VehicleService"), multiTenancySides: MultiTenancySides.Tenant);
             vehicleService.CreateChildPermission(AppPermissions.Pages_VehicleService_Edit, L("EditingVehicleService"), multiTenancySides: MultiTenancySides.Tenant);
@@ -143,6 +139,10 @@ namespace DispatcherWeb.Authorization
 
             var driverApp = pages.CreateChildPermission(AppPermissions.Pages_DriverApplication, L("DriverApplication"), multiTenancySides: MultiTenancySides.Tenant);
             driverApp.CreateChildPermission(AppPermissions.Pages_DriverApplication_Settings, L("Settings"), multiTenancySides: MultiTenancySides.Tenant);
+            driverApp.CreateChildPermission(AppPermissions.Pages_DriverApplication_WebBasedDriverApp, L("WebBasedDriverApp"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.WebBasedDriverApp));
+            driverApp.CreateChildPermission(AppPermissions.Pages_DriverApplication_ReactNativeDriverApp, L("ReactNativeDriverApp"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.ReactNativeDriverApp));
 
             var reports = pages.CreateChildPermission(AppPermissions.Pages_Reports, L("Reports"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_ScheduledReports, L("ScheduledReports"), multiTenancySides: MultiTenancySides.Tenant);
@@ -155,6 +155,9 @@ namespace DispatcherWeb.Authorization
             reports.CreateChildPermission(AppPermissions.Pages_Reports_DriverActivityDetail, L("DriverActivityReport"), multiTenancySides: MultiTenancySides.Tenant);
             reports.CreateChildPermission(AppPermissions.Pages_Reports_RevenueAnalysis, L("RevenueAnalysis"), multiTenancySides: MultiTenancySides.Tenant);
 
+            var activeReports = pages.CreateChildPermission(AppPermissions.Pages_ActiveReports, L("ActiveReports"), multiTenancySides: MultiTenancySides.Host | MultiTenancySides.Tenant);
+            activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_TenantStatisticsReport, L("TenantStatisticsReport"), multiTenancySides: MultiTenancySides.Host);
+            
             var imports = pages.CreateChildPermission(AppPermissions.Pages_Imports, L("Imports"), multiTenancySides: MultiTenancySides.Tenant);
             imports.CreateChildPermission(AppPermissions.Pages_Imports_FuelUsage, L("ImportFuelUsagePermission"), multiTenancySides: MultiTenancySides.Tenant);
             imports.CreateChildPermission(AppPermissions.Pages_Imports_VehicleUsage, L("ImportVehicleUsagePermission"), multiTenancySides: MultiTenancySides.Tenant);
@@ -168,6 +171,10 @@ namespace DispatcherWeb.Authorization
                 featureDependency: new SimpleFeatureDependency(AppFeatures.QuickbooksImportFeature));
             imports.CreateChildPermission(AppPermissions.Pages_Imports_Employees, L("ImportEmployeesPermission"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.QuickbooksImportFeature));
+            imports.CreateChildPermission(AppPermissions.Pages_Imports_TruxEarnings, L("TruxEarnings"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingTruxEarnings));
+            imports.CreateChildPermission(AppPermissions.Pages_Imports_LuckStoneEarnings, L("LuckStoneEarnings"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.AllowImportingLuckStoneEarnings));
 
             var officeAccess = pages.CreateChildPermission(AppPermissions.Pages_OfficeAccess_UserOnly, L("OfficeAccessUserOnly"), multiTenancySides: MultiTenancySides.Tenant);
             officeAccess.CreateChildPermission(AppPermissions.Pages_OfficeAccess_All, L("OfficeAccessAll"), multiTenancySides: MultiTenancySides.Tenant);

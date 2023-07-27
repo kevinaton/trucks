@@ -431,7 +431,7 @@
         draft: 0,
         sent: 1,
         viewed: 2,
-        readyForQuickbooks: 3
+        readyForExport: 3
     };
 
     abp.enums.quickbooksIntegrationKind = {
@@ -439,7 +439,8 @@
         desktop: 1,
         online: 2,
         qboExport: 3,
-        transactionProExport: 4
+        transactionProExport: 4,
+        sbtCsvExport: 5
     };
     abp.enums.staggeredTimeKind = {
         none: 0,
@@ -1890,6 +1891,14 @@
     };
     abp.helper.ui.initCannedTextLists();
 
+    abp.helper.ui.addAndSetDropdownValues = function addAndSetDropdownValues(dropdown, array) {
+        let values = [];
+        array.forEach(i => {
+            $('<option></option>').text(i.name).attr('value', i.id).appendTo(dropdown);
+            values.push(i.id);
+        });
+        dropdown.val(values).change();
+    };
 
     jQuery.fn.replaceSelectedText = function (newText) {
         var start = $(this).prop('selectionStart');

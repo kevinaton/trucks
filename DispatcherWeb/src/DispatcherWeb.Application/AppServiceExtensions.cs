@@ -179,7 +179,10 @@ namespace DispatcherWeb
                             Note = s.OrderLine.Note,
                             NumberOfTrucks = s.OrderLine.NumberOfTrucks ?? 0,
                             TimeOnJob = s.OrderLine.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? s.OrderLine.FirstStaggeredTimeOnJob : s.OrderLine.TimeOnJob,
-                            IsTimeStaggered = s.OrderLine.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLine.OrderLineTrucks.Any(olt => olt.TimeOnJob != null)
+                            IsTimeStaggered = s.OrderLine.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLine.OrderLineTrucks.Any(olt => olt.TimeOnJob != null),
+                            OrderLineVehicleCategories = s.OrderLine.OrderLineVehicleCategories
+                                .Select(vc => vc.VehicleCategory.Name)
+                                .ToList()
                         }).ToList(),
                     DeliveryInfoItems = o.Order.OrderLines
                         .SelectMany(x => x.Tickets)
@@ -287,7 +290,10 @@ namespace DispatcherWeb
                             Note = s.Note,
                             NumberOfTrucks = s.NumberOfTrucks ?? 0,
                             TimeOnJob = s.StaggeredTimeKind == StaggeredTimeKind.SetInterval ? s.FirstStaggeredTimeOnJob : s.TimeOnJob,
-                            IsTimeStaggered = s.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLineTrucks.Any(olt => olt.TimeOnJob != null)
+                            IsTimeStaggered = s.StaggeredTimeKind != StaggeredTimeKind.None || s.OrderLineTrucks.Any(olt => olt.TimeOnJob != null),
+                            OrderLineVehicleCategories = s.OrderLineVehicleCategories
+                                .Select(vc => vc.VehicleCategory.Name)
+                                .ToList()
                         }).ToList(),
                     DeliveryInfoItems = o.Order.OrderLines
                         .SelectMany(x => x.Tickets)
@@ -311,8 +317,10 @@ namespace DispatcherWeb
             return newQuery;
         }
 
-        public static async Task<List<OrderSummaryReportItemDto>> GetOrderSummaryReportItems(this IQueryable<OrderLine> query, IDictionary<Shift, string> shiftDictionary, OrderTaxCalculator taxCalculator)
+        public static async Task<List<OrderSummaryReportItemDto>> GetOrderSummaryReportItems(this IQueryable<OrderLine> query, IDictionary<Shift, string> shiftDictionary, OrderTaxCalculator taxCalculator, ISettingManager settingManager)
         {
+            var showTrailersOnSchedule = await settingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule);
+
             var items = await query.Select(o => new OrderSummaryReportItemDto
             {
                 OrderId = o.OrderId,
@@ -321,7 +329,12 @@ namespace DispatcherWeb
                 SalesTaxRate = o.Order.SalesTaxRate,
                 OrderDeliveryDate = o.Order.DeliveryDate,
                 OrderShift = o.Order.Shift,
-                Trucks = o.OrderLineTrucks.Select(s => s.Truck.TruckCode).Distinct().ToList(),
+                Trucks = o.OrderLineTrucks.Select(olt => new OrderSummaryReportItemDto.ItemOrderLineTruck
+                {
+                    TruckCode = olt.Truck.TruckCode,
+                    TrailerTruckCode = showTrailersOnSchedule ? olt.Trailer.TruckCode : null,
+                    DriverName = olt.Driver.FirstName + " " + olt.Driver.LastName
+                }).ToList(),
                 NumberOfTrucks = o.NumberOfTrucks,
                 LoadAt = o.LoadAt == null ? null : new LocationNameDto
                 {
@@ -422,6 +435,9 @@ namespace DispatcherWeb
                         SortOrder = t.VehicleCategory.SortOrder,
                     },
                     BedConstruction = t.BedConstruction,
+                    Year = t.Year,
+                    Make = t.Make,
+                    Model = t.Model,
                     IsApportioned = t.IsApportioned,
                     AlwaysShowOnSchedule = t.LeaseHaulerTruck.AlwaysShowOnSchedule == true,
                     CanPullTrailer = t.CanPullTrailer,
@@ -429,7 +445,28 @@ namespace DispatcherWeb
                     IsActive = t.IsActive,
                     DefaultDriverId = t.DefaultDriverId,
                     DefaultDriverName = t.DefaultDriver.FirstName + " " + t.DefaultDriver.LastName,
-                    UtilizationList = t.OrderLineTrucks
+                    Trailer = t.CurrentTrailer == null ? null : new ScheduleTruckTrailerDto
+                    {
+                        Id = t.CurrentTrailer.Id,
+                        TruckCode = t.CurrentTrailer.TruckCode,
+                        VehicleCategory = new VehicleCategoryDto
+                        {
+                            Id = t.CurrentTrailer.VehicleCategory.Id,
+                            Name = t.CurrentTrailer.VehicleCategory.Name,
+                            AssetType = t.CurrentTrailer.VehicleCategory.AssetType,
+                            IsPowered = t.CurrentTrailer.VehicleCategory.IsPowered,
+                            SortOrder = t.CurrentTrailer.VehicleCategory.SortOrder,
+                        },
+                        Make = t.CurrentTrailer.Make,
+                        Model = t.CurrentTrailer.Model,
+                        BedConstruction = t.CurrentTrailer.BedConstruction
+                    },
+                    Tractor = t.CurrentTractors.Select(x => new ScheduleTruckTractorDto
+                    {
+                        Id = x.Id,
+                        TruckCode = x.TruckCode,
+                    }).FirstOrDefault(),
+                    UtilizationList = t.OrderLineTrucksOfTruck
                         .Where(olt => !olt.OrderLine.IsComplete
                                 && olt.OrderLine.Order.DeliveryDate == input.Date
                                 && olt.OrderLine.Order.Shift == input.Shift
@@ -541,13 +578,13 @@ namespace DispatcherWeb
 
             trucks.ForEach(x =>
             {
-                if (x.IsExternal)
+                if (!x.IsExternal)
                 {
-                    return;
+                    var driverAssignment = driverAssignments.FirstOrDefault(y => y.TruckId == x.Id);
+                    x.HasNoDriver = driverAssignment != null && driverAssignment.DriverId == null;
+                    x.HasDriverAssignment = driverAssignment?.DriverId != null;
                 }
-                var driverAssignment = driverAssignments.FirstOrDefault(y => y.TruckId == x.Id);
-                x.HasNoDriver = driverAssignment != null && driverAssignment.DriverId == null;
-                x.HasDriverAssignment = driverAssignment?.DriverId != null;
+
             });
 
             return trucks;
@@ -608,6 +645,7 @@ namespace DispatcherWeb
                     HaulingCompanyOrderLineId = ol.HaulingCompanyOrderLineId,
                     MaterialCompanyOrderLineId = ol.MaterialCompanyOrderLineId,
                     SharedOfficeIds = ol.SharedOrderLines.Select(sol => sol.OfficeId).ToArray(),
+                    VehicleCategoryIds = ol.OrderLineVehicleCategories.Select(x => x.VehicleCategoryId).ToList(),
                     Utilization = ol.OrderLineTrucks.Where(t => t.Truck.VehicleCategory.IsPowered).Select(t => t.Utilization).Sum(),
                     Trucks = ol.OrderLineTrucks.Select(olt => new ScheduleOrderLineTruckDto
                     {
@@ -615,6 +653,22 @@ namespace DispatcherWeb
                         ParentId = olt.ParentOrderLineTruckId,
                         TruckId = olt.TruckId,
                         TruckCode = olt.Truck.TruckCode,
+                        Trailer = olt.Trailer == null ? null : new ScheduleTruckTrailerDto
+                        {
+                            Id = olt.Trailer.Id,
+                            TruckCode = olt.Trailer.TruckCode,
+                            VehicleCategory = new VehicleCategoryDto
+                            {
+                                Id = olt.Trailer.VehicleCategory.Id,
+                                Name = olt.Trailer.VehicleCategory.Name,
+                                AssetType = olt.Trailer.VehicleCategory.AssetType,
+                                IsPowered = olt.Trailer.VehicleCategory.IsPowered,
+                                SortOrder = olt.Trailer.VehicleCategory.SortOrder,
+                            },
+                            Make = olt.Trailer.Make,
+                            Model = olt.Trailer.Model,
+                            BedConstruction = olt.Trailer.BedConstruction
+                        },
                         DriverId = olt.DriverId,
                         OrderId = ol.OrderId,
                         OrderLineId = ol.Id,

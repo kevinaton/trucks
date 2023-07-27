@@ -92,7 +92,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             return View();
         }
 
-        [AbpMvcAuthorize(AppPermissions.AllowImportingTruxEarnings)]
+        [AbpMvcAuthorize(AppPermissions.Pages_Imports_TruxEarnings)]
         [RequiresFeature(AppFeatures.AllowImportingTruxEarnings)]
         [Route("app/TruxImport")]
         public virtual IActionResult Trux()
@@ -100,7 +100,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             return View();
         }
 
-        [AbpMvcAuthorize(AppPermissions.AllowImportingLuckStoneEarnings)]
+        [AbpMvcAuthorize(AppPermissions.Pages_Imports_LuckStoneEarnings)]
         [RequiresFeature(AppFeatures.AllowImportingLuckStoneEarnings)]
         [Route("app/LuckStoneImport")]
         public virtual IActionResult LuckStone()

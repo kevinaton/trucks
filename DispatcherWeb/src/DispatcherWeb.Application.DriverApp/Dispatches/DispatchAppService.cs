@@ -44,6 +44,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                 .Where(x => x.Driver.UserId == Session.UserId)
                 .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
                 .WhereIf(input.Id == null, x => Dispatch.OpenStatuses.Contains(x.Status) || x.Status == DispatchStatus.Completed)
+                .WhereIf(input.DispatchStatuses?.Any() == true, x => input.DispatchStatuses.Contains(x.Status))
                 .WhereIf(input.TruckId.HasValue, x => x.TruckId == input.TruckId)
                 .WhereIf(input.OrderDateBegin.HasValue, x => x.OrderLine.Order.DeliveryDate >= input.OrderDateBegin)
                 .WhereIf(input.OrderDateEnd.HasValue, x => x.OrderLine.Order.DeliveryDate <= input.OrderDateEnd)
@@ -131,6 +132,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                         LoadId = t.LoadId,
                         DispatchId = di.Id,
                         Quantity = t.Quantity,
+                        UnitOfMeasureId = t.UnitOfMeasureId,
                         TicketDateTime = t.TicketDateTime,
                         TicketNumber = t.TicketNumber,
                         TicketPhotoId = t.TicketPhotoId,
@@ -138,6 +140,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                     }).ToList(),
                     TruckId = di.TruckId,
                     TruckCode = di.Truck.TruckCode,
+                    TrailerTruckCode = di.OrderLineTruck.Trailer.TruckCode,
                     OrderLineTruckId = di.OrderLineTruckId,
                     //WasMultipleLoads = di.WasMultipleLoads,
                     //SignatureId = di.Loads.OrderByDescending(l => l.Id).Select(l => l.SignatureId).FirstOrDefault(), //.DefaultIfEmpty((Guid?)null)

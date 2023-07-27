@@ -17,6 +17,7 @@ namespace DispatcherWeb.Configuration.Tenants.Dto
         public TaxCalculationType TaxCalculationType { get; set; }
         public decimal? DefaultTaxRate { get; set; }
         public bool AutopopulateDefaultTaxRate { get; set; }
+        public string InvoiceTermsAndConditions { get; set; }
         public InvoiceTemplateEnum InvoiceTemplate { get; set; }
 
         public QuickbooksIntegrationKind? QuickbooksIntegrationKind { get; set; }

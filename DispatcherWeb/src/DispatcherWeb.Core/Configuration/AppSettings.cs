@@ -22,6 +22,7 @@ namespace DispatcherWeb.Configuration
             public const string ShiftName1 = "App.General.ShiftName1";
             public const string ShiftName2 = "App.General.ShiftName2";
             public const string ShiftName3 = "App.General.ShiftName3";
+            public const string AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = "App.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders";
         }
 
         public static class Trux
@@ -150,6 +151,7 @@ namespace DispatcherWeb.Configuration
             public const string TaxCalculationType = "App.Invoice.TaxCalculationType";
             public const string DefaultTaxRate = "App.Invoice.DefaultTaxRate";
             public const string AutopopulateDefaultTaxRate = "App.Invoice.AutopopulateDefaultTaxRate";
+            public const string TermsAndConditions = "App.Invoice.TermsAndConditions";
             public const string EmailSubjectTemplate = "App.Invoice.EmailSubjectTemplate";
             public const string EmailBodyTemplate = "App.Invoice.EmailBodyTemplate";
             public const string DefaultMessageOnInvoice = "App.Invoice.DefaultInvoiceComments";

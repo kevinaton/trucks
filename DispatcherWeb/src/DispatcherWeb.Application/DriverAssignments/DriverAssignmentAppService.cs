@@ -137,7 +137,10 @@ namespace DispatcherWeb.DriverAssignments
 
         public async Task<SetNoDriverForTruckResult> SetNoDriverForTruck(SetNoDriverForTruckInput input)
         {
-            await ThrowExceptionForPastDates();
+            if (input.StartDate < await GetToday())
+            {
+                throw new UserFriendlyException("Cannot set driver for date in past");
+            }
 
             input.StartDate = input.StartDate.Date;
             input.EndDate = input.EndDate.Date;
@@ -156,7 +159,26 @@ namespace DispatcherWeb.DriverAssignments
             var today = await GetToday();
             var syncRequest = new SyncRequest();
             var result = new SetNoDriverForTruckResult();
-            await CancelUnacknowledgedDispatches(input.TruckId, input.StartDate, input.EndDate, input.Shift);
+
+            var dispatchesToCancel = await _dispatchRepository.GetAll()
+                .Where(d => d.TruckId == input.TruckId
+                    && d.OrderLine.Order.DeliveryDate >= input.StartDate
+                    && d.OrderLine.Order.DeliveryDate <= input.EndDate
+                    && d.OrderLine.Order.Shift == input.Shift
+                    && Dispatch.UnacknowledgedStatuses.Contains(d.Status))
+                .ToListAsync();
+            dispatchesToCancel.ForEach(d =>
+            {
+                d.Status = DispatchStatus.Canceled;
+                d.Canceled = Clock.Now;
+            });
+            await CurrentUnitOfWork.SaveChangesAsync();
+            if (dispatchesToCancel.Any())
+            {
+                syncRequest
+                    .AddChanges(EntityEnum.Dispatch, dispatchesToCancel.Select(x => x.ToChangedEntity()), ChangeType.Removed)
+                    .AddLogMessage("Canceled unacknowledged dispatches after no driver was set for the truck");
+            }
 
             var driverIdsToNotify = new List<int>();
             var orderLineIdsNeedingStaggeredTimeRecalculation = new List<int>();
@@ -164,20 +186,34 @@ namespace DispatcherWeb.DriverAssignments
             var date = input.StartDate;
             while (date <= input.EndDate)
             {
-                var existingAssignment = existingAssignments.FirstOrDefault(x => x.Date == date && x.Shift == input.Shift);
-                if (existingAssignment != null)
+                var existingAssignmentsForDay = existingAssignments.Where(x => x.Date == date && x.Shift == input.Shift);
+                if (existingAssignmentsForDay.Any())
                 {
-                    if (existingAssignment.DriverId.HasValue)
+                    var firstDriverAssignment = true;
+                    foreach (var existingAssignment in existingAssignmentsForDay)
                     {
-                        driverIdsToNotify.Add(existingAssignment.DriverId.Value);
+                        if (existingAssignment.DriverId.HasValue)
+                        {
+                            driverIdsToNotify.Add(existingAssignment.DriverId.Value);
+                        }
+                        var oldDriverId = existingAssignment.DriverId;
+                        if (firstDriverAssignment)
+                        {
+                            existingAssignment.DriverId = null;
+                            existingAssignment.OfficeId = sharedTruckResult.GetLocationForDate(date, input.Shift);
+                        }
+                        else
+                        {
+                            await _driverAssignmentRepository.DeleteAsync(existingAssignment);
+                        }
+                        syncRequest.AddChange(EntityEnum.DriverAssignment,
+                            existingAssignment
+                                .ToChangedEntity()
+                                .SetOldDriverIdToNotify(oldDriverId), 
+                            changeType: firstDriverAssignment ? ChangeType.Modified : ChangeType.Removed);
+
+                        firstDriverAssignment = false;
                     }
-                    var oldDriverId = existingAssignment.DriverId;
-                    existingAssignment.DriverId = null;
-                    existingAssignment.OfficeId = sharedTruckResult.GetLocationForDate(date, input.Shift);
-                    syncRequest.AddChange(EntityEnum.DriverAssignment,
-                        existingAssignment
-                            .ToChangedEntity()
-                            .SetOldDriverIdToNotify(oldDriverId));
                 }
                 else
                 {
@@ -235,33 +271,6 @@ namespace DispatcherWeb.DriverAssignments
             await _syncRequestSender.SendSyncRequest(syncRequest.AddLogMessage("Set no driver for truck"));
 
             return result;
-
-            // Local functions
-            async Task ThrowExceptionForPastDates()
-            {
-                if (input.StartDate < await GetToday())
-                {
-                    throw new UserFriendlyException("Cannot set driver for date in past");
-                }
-            }
-            async Task CancelUnacknowledgedDispatches(int truckId, DateTime startDate, DateTime endDate, Shift? shift)
-            {
-                var dispatchesToCancel = await _dispatchRepository.GetAll()
-                    .Where(d => d.TruckId == truckId && d.OrderLine.Order.DeliveryDate >= startDate && d.OrderLine.Order.DeliveryDate <= endDate && d.OrderLine.Order.Shift == shift && Dispatch.UnacknowledgedStatuses.Contains(d.Status))
-                    .ToListAsync();
-                dispatchesToCancel.ForEach(d =>
-                {
-                    d.Status = DispatchStatus.Canceled;
-                    d.Canceled = Clock.Now;
-                });
-                await CurrentUnitOfWork.SaveChangesAsync();
-                if (dispatchesToCancel.Any())
-                {
-                    syncRequest
-                        .AddChanges(EntityEnum.Dispatch, dispatchesToCancel.Select(x => x.ToChangedEntity()), ChangeType.Removed)
-                        .AddLogMessage("Canceled unacknowledged dispatches after no driver was set for the truck");
-                }
-            }
         }
 
         public async Task<ThereAreOpenDispatchesForTruckOnDateResult> ThereAreOpenDispatchesForTruckOnDate(ThereAreOpenDispatchesForTruckOnDateInput input)
@@ -435,21 +444,42 @@ namespace DispatcherWeb.DriverAssignments
                 .Where(x => x.Date >= input.StartDate && x.Date <= input.EndDate && x.Shift == input.Shift && x.TruckId == input.TruckId)
                 .ToListAsync();
 
-            existingAssignments.ForEach(da =>
+            foreach (var dayGroup in existingAssignments.GroupBy(x => x.Date))
             {
-                var oldDriverId = da.DriverId;
-                if (da.DriverId.HasValue && da.DriverId != defaultDriverId.Value)
+                var firstAssignment = true;
+                foreach (var driverAssignment in dayGroup)
                 {
-                    driverIdsToNotify.Add(da.DriverId.Value);
-                    da.DriverId = defaultDriverId.Value;
-                    syncRequest
-                        .AddChange(EntityEnum.DriverAssignment, da.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId));
+                    var oldDriverId = driverAssignment.DriverId;
+                    if (!firstAssignment)
+                    {
+                        if (oldDriverId.HasValue)
+                        {
+                            driverIdsToNotify.Add(oldDriverId.Value);
+                        }
+                        syncRequest
+                            .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId), ChangeType.Removed);
+                        
+                        await _driverAssignmentRepository.DeleteAsync(driverAssignment);
+                    }
+                    else
+                    {
+                        if (driverAssignment.DriverId.HasValue && driverAssignment.DriverId != defaultDriverId.Value)
+                        {
+                            driverIdsToNotify.Add(driverAssignment.DriverId.Value);
+                            driverAssignment.DriverId = defaultDriverId.Value;
+                            syncRequest
+                                .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId));
+                        }
+                        else
+                        {
+                            driverAssignment.DriverId = defaultDriverId.Value;
+                        }
+                    }
+
+                    firstAssignment = false;
                 }
-                else
-                {
-                    da.DriverId = defaultDriverId.Value;
-                }
-            });
+            }
+
             await CurrentUnitOfWork.SaveChangesAsync();
             await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(driverIdsToNotify)
             {
@@ -555,7 +585,17 @@ namespace DispatcherWeb.DriverAssignments
                     if (driverAssignment != null)
                     {
                         oldDriverId = driverAssignment.DriverId;
-                        driverAssignment.DriverId = input.DriverId;
+                        //driverAssignment.DriverId = input.DriverId;
+                        await EditDriverAssignment(new DriverAssignmentEditDto()
+                        {
+                            Id = driverAssignment.Id,
+                            TruckId = driverAssignment.TruckId,
+                            DriverId = input.DriverId,
+                            StartTime = driverAssignment.StartTime,
+                            OfficeId = driverAssignment.OfficeId,
+                            Date = driverAssignment.Date,
+                            Shift = driverAssignment.Shift,
+                        });
                     }
                     else
                     {
@@ -575,42 +615,92 @@ namespace DispatcherWeb.DriverAssignments
                     .AnyAsync(x => x.TruckId == orderLineTruck.TruckId && x.DriverId == input.DriverId))
                 {
                     var sharedTruckResult = await _truckRepository.EnsureCanEditTruckOrSharedTruckAsync(orderLineTruck.TruckId, OfficeId, orderDetails.DeliveryDate.Value);
-                    driverAssignment = new DriverAssignment
+
+                    await EditDriverAssignment(new DriverAssignmentEditDto()
                     {
+                        Id = 0,
                         Date = orderDetails.DeliveryDate.Value,
                         Shift = orderDetails.Shift,
                         OfficeId = sharedTruckResult.GetLocationForDate(orderDetails.DeliveryDate.Value, orderDetails.Shift),
                         TruckId = orderLineTruck.TruckId,
                         DriverId = input.DriverId,
-                    };
-                    _driverAssignmentRepository.Insert(driverAssignment);
+                    });
                 }
             }
 
             orderLineTruck.DriverId = input.DriverId;
 
 
+            //await CurrentUnitOfWork.SaveChangesAsync();
+            //if (driverAssignment != null)
+            //{
+            //    var logMessage = $"Changed or created driver assignment for truck {driverAssignment.TruckId} from driver {oldDriverId?.ToString() ?? "null"} to {input.DriverId}";
+            //    if (oldDriverId.HasValue && oldDriverId != driverAssignment.DriverId)
+            //    {
+            //        await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(oldDriverId.Value)
+            //        {
+            //            LogMessage = logMessage
+            //        });
+            //    }
+            //    if (input.DriverId != oldDriverId)
+            //    {
+            //        await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(input.DriverId)
+            //        {
+            //            LogMessage = logMessage
+            //        });
+            //    }
+            //    await _syncRequestSender.SendSyncRequest(new SyncRequest()
+            //        .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId))
+            //        .AddLogMessage(logMessage));
+            //}
+            //
+            //await RemoveDuplicateDriverAssignments(new RemoveDuplicateDriverAssignmentsInput
+            //{
+            //    Date = orderDetails.DeliveryDate.Value,
+            //    Shift = orderDetails.Shift,
+            //    OfficeId = orderDetails.OfficeId,
+            //    TruckId = orderLineTruck.TruckId,
+            //});
+        }
+
+        private async Task RemoveDuplicateDriverAssignments(RemoveDuplicateDriverAssignmentsInput input)
+        {
             await CurrentUnitOfWork.SaveChangesAsync();
-            if (driverAssignment != null)
+
+            var driverAssignments = await _driverAssignmentRepository.GetAll(input.Date, input.Shift, input.OfficeId)
+                .Where(x => x.TruckId == input.TruckId)
+                .OrderByDescending(x => x.Id)
+                .ToListAsync();
+
+            if (driverAssignments.Count <= 1)
             {
-                var logMessage = $"Changed or created driver assignment for truck {driverAssignment.TruckId} from driver {oldDriverId?.ToString() ?? "null"} to {input.DriverId}";
-                if (oldDriverId.HasValue && oldDriverId != driverAssignment.DriverId)
+                return;
+            }
+
+            if (driverAssignments[0].DriverId == null)
+            {
+                foreach (var driverAssignment in driverAssignments.Skip(1)) 
                 {
-                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(oldDriverId.Value)
-                    {
-                        LogMessage = logMessage
-                    });
+                    await _driverAssignmentRepository.DeleteAsync(driverAssignment);
                 }
-                if (input.DriverId != oldDriverId)
+                return;
+            }
+
+            if (driverAssignments.Any(x => x.DriverId == null) && driverAssignments.Any(x => x.DriverId != null))
+            {
+                foreach (var driverAssignment in driverAssignments.Where(x => x.DriverId == null).ToList())
                 {
-                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(input.DriverId)
-                    {
-                        LogMessage = logMessage
-                    });
+                    await _driverAssignmentRepository.DeleteAsync(driverAssignment);
+                    driverAssignments.Remove(driverAssignment);
                 }
-                await _syncRequestSender.SendSyncRequest(new SyncRequest()
-                    .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId))
-                    .AddLogMessage(logMessage));
+            }
+
+            foreach (var driverAssignmentGroup in driverAssignments.GroupBy(x => x.DriverId))
+            {
+                foreach (var driverAssignment in driverAssignmentGroup.Skip(1))
+                {
+                    await _driverAssignmentRepository.DeleteAsync(driverAssignment);
+                }
             }
         }
 
@@ -745,8 +835,10 @@ namespace DispatcherWeb.DriverAssignments
         }
 
         [AbpAuthorize(AppPermissions.Pages_DriverAssignment)]
-        public async Task EditDriverAssignment(DriverAssignmentEditDto input)
+        public async Task<EditDriverAssignmentResult> EditDriverAssignment(DriverAssignmentEditDto input)
         {
+            var result = new EditDriverAssignmentResult();
+
             var driverAssignment = input.Id > 0 ? await _driverAssignmentRepository.GetAsync(input.Id) : new DriverAssignment();
             if (driverAssignment.Id == 0)
             {
@@ -760,6 +852,7 @@ namespace DispatcherWeb.DriverAssignments
             var logMessage = "";
             var oldDriverId = driverAssignment.DriverId;
             var driverAssignmentWasChanged = false;
+            var driverAssignmentWasDeleted = false;
 
             if (driverAssignment.DriverId != input.DriverId)
             {
@@ -767,6 +860,7 @@ namespace DispatcherWeb.DriverAssignments
                 {
                     await ThrowIfDriverHasTimeOffRequests(input.DriverId.Value, driverAssignment.Date, driverAssignment.Date);
                 }
+                var updateOrderLineTrucks = false;
                 if (input.Id > 0 && oldDriverId.HasValue)
                 {
                     var validationResult = await HasOrderLineTrucks(new HasOrderLineTrucksInput
@@ -788,21 +882,71 @@ namespace DispatcherWeb.DriverAssignments
                             throw new UserFriendlyException(L("CannotRemoveDriverBecauseOfOrderLineTrucksError"));
                         }
 
-                        var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                        updateOrderLineTrucks = true;
+                    }
+                }
+                else if (oldDriverId == null)
+                {
+                    updateOrderLineTrucks = true;
+                }
+
+                if (updateOrderLineTrucks)
+                {
+                    var orderLineTrucks = await _orderLineTruckRepository.GetAll()
                             .Where(x => driverAssignment.Date == x.OrderLine.Order.DeliveryDate && driverAssignment.Shift == x.OrderLine.Order.Shift)
                             .WhereIf(driverAssignment.OfficeId.HasValue, x => driverAssignment.OfficeId == x.OrderLine.Order.LocationId)
                             .Where(x => oldDriverId == x.DriverId)
                             .Where(x => driverAssignment.TruckId == x.TruckId)
                             .ToListAsync();
 
-                        foreach (var orderLineTruck in orderLineTrucks)
-                        {
-                            orderLineTruck.DriverId = input.DriverId.Value;
-                        }
+                    foreach (var orderLineTruck in orderLineTrucks)
+                    {
+                        orderLineTruck.DriverId = input.DriverId;
                     }
                 }
 
                 driverAssignment.DriverId = input.DriverId;
+
+                var sameTruckDriverAssignments = await _driverAssignmentRepository.GetAll()
+                    .Where(x => x.Shift == driverAssignment.Shift
+                        && x.OfficeId == driverAssignment.OfficeId
+                        && x.Date == driverAssignment.Date
+                        && x.TruckId == driverAssignment.TruckId
+                        && x.Id != driverAssignment.Id)
+                    .ToListAsync();
+
+                var duplicateDriverAssignments = sameTruckDriverAssignments
+                    .Where(x => x.DriverId == driverAssignment.DriverId)
+                    .ToList();
+
+                if (duplicateDriverAssignments.Any())
+                {
+                    foreach (var duplicateDriverAssignment in duplicateDriverAssignments)
+                    {
+                        await _driverAssignmentRepository.DeleteAsync(duplicateDriverAssignment);
+                        sameTruckDriverAssignments.Remove(duplicateDriverAssignment);
+                    }
+                    result.ReloadRequired = true;
+                }
+
+                if (input.DriverId == null)
+                {
+                    if (input.Id > 0)
+                    {
+                        await _driverAssignmentRepository.DeleteAsync(driverAssignment);
+                        driverAssignmentWasDeleted = true;
+                        result.ReloadRequired = true;
+                    }
+                    else
+                    {
+                        foreach (var sameTruckDriverAssignment in sameTruckDriverAssignments.ToList())
+                        {
+                            await _driverAssignmentRepository.DeleteAsync(sameTruckDriverAssignment);
+                            sameTruckDriverAssignments.Remove(sameTruckDriverAssignment);
+                            result.ReloadRequired = true;
+                        }
+                    }
+                }
 
                 logMessage += $"Changed driver assignment for truck {driverAssignment.TruckId} from driver {oldDriverId?.ToString() ?? "null"} to {input.DriverId?.ToString() ?? "null"}\n";
                 driverAssignmentWasChanged = true;
@@ -824,24 +968,26 @@ namespace DispatcherWeb.DriverAssignments
             if (driverAssignmentWasChanged)
             {
                 await CurrentUnitOfWork.SaveChangesAsync();
-                if (oldDriverId.HasValue && oldDriverId != driverAssignment.DriverId)
+                if (oldDriverId.HasValue && (oldDriverId != input.DriverId || driverAssignmentWasDeleted))
                 {
                     await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(oldDriverId.Value)
                     {
                         LogMessage = logMessage
                     });
                 }
-                if (driverAssignment.DriverId.HasValue && driverAssignmentWasChanged)
+                if (!driverAssignmentWasDeleted && driverAssignment.DriverId.HasValue && driverAssignmentWasChanged)
                 {
-                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(input.DriverId.Value)
+                    await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(driverAssignment.DriverId.Value)
                     {
                         LogMessage = logMessage
                     });
                 }
                 await _syncRequestSender.SendSyncRequest(new SyncRequest()
-                    .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId))
+                    .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId), driverAssignmentWasDeleted ? ChangeType.Removed : ChangeType.Modified)
                     .AddLogMessage(logMessage));
             }
+
+            return result;
         }
 
         [AbpAuthorize(AppPermissions.Pages_DriverAssignment)]
@@ -852,6 +998,7 @@ namespace DispatcherWeb.DriverAssignments
                 .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
                 .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
                 .WhereIf(input.DriverId.HasValue, x => input.DriverId == x.DriverId)
+                .WhereIf(input.TrailerId.HasValue || input.ForceTrailerIdFilter, x => input.TrailerId == x.TrailerId)
                 .WhereIf(input.TruckId.HasValue, x => input.TruckId == x.TruckId)
                 .AnyAsync();
 
@@ -861,6 +1008,7 @@ namespace DispatcherWeb.DriverAssignments
                     && Dispatch.OpenStatuses.Contains(x.Status))
                 .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
                 .WhereIf(input.DriverId.HasValue, x => input.DriverId == x.DriverId)
+                .WhereIf(input.TrailerId.HasValue, x => input.TrailerId == x.OrderLineTruck.TrailerId)
                 .WhereIf(input.TruckId.HasValue, x => input.TruckId == x.TruckId)
                 .AnyAsync();
 

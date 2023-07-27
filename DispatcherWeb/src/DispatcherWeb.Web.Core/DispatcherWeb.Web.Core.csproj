@@ -17,6 +17,7 @@
     <RootNamespace>DispatcherWeb.Web</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DispatcherWeb.Application.ActiveReports\DispatcherWeb.Application.ActiveReports.csproj" />
     <ProjectReference Include="..\DispatcherWeb.Application.DriverApp\DispatcherWeb.Application.DriverApp.csproj" />
     <ProjectReference Include="..\DispatcherWeb.Application\DispatcherWeb.Application.csproj" />
     <ProjectReference Include="..\DispatcherWeb.EntityFrameworkCore\DispatcherWeb.EntityFrameworkCore.csproj" />

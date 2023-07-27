@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Abp.Extensions;
 using CsvHelper;
 using DispatcherWeb.Infrastructure.Extensions;
 
@@ -60,6 +61,22 @@ namespace DispatcherWeb.Imports.RowReaders
                 return resultString.Substring(0, maxLength);
             }
             return resultString;
+        }
+
+        protected bool GetBoolean(string fieldName, params string[] additionalTrueValues)
+        {
+            return GetBoolean(fieldName, false, additionalTrueValues);
+        }
+
+        protected bool GetBoolean(string fieldName, bool trueIfColumnIsNotSpecified, params string[] additionalTrueValues)
+        {
+            if (!HasField(fieldName))
+            {
+                return trueIfColumnIsNotSpecified;
+            }
+            var cellValue = GetString(fieldName, 20)?.ToLower();
+            var trueValues = new[] { "true", "1", "y", "yes" }.Union(additionalTrueValues.Select(x => x.ToLower())).ToArray();
+            return cellValue.IsIn(trueValues) == true;
         }
 
         protected DateTime? GetDate(string fieldName, bool required = false)

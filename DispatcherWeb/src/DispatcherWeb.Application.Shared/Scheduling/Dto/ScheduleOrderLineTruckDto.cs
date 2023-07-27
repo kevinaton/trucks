@@ -11,6 +11,8 @@ namespace DispatcherWeb.Scheduling.Dto
         public int OrderLineId { get; set; }
         public int TruckId { get; set; }
         public string TruckCode { get; set; }
+        public string TruckCodeCombined => Trailer != null ? TruckCode + " :: " + Trailer.TruckCode : TruckCode; 
+        public ScheduleTruckTrailerDto Trailer { get; set; }
         public int? DriverId { get; set; }
         public int? OfficeId { get; set; }
         public bool IsExternal { get; set; }

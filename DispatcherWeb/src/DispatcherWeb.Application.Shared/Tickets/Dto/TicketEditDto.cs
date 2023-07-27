@@ -41,9 +41,13 @@ namespace DispatcherWeb.Tickets.Dto
         public bool? OrderLineIsProductionPay { get; set; }
         public int? TruckId { get; set; }
         public string TruckCode { get; set; }
+        public int? TrailerId { get; set; }
+        public string TrailerTruckCode { get; set; }
         public int? DriverId { get; set; }
         public string DriverName { get; set; }
         public string CannotEditReason { get; set; }
         public bool IsReadOnly { get; set; }
+        public bool HasPayStatements { get; set; }
+        public bool HasLeaseHaulerStatements { get; set; }
     }
 }

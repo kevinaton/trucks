@@ -446,6 +446,16 @@
                 .off('click');
         }
 
+        if (block.orderLine.note) {
+            block.ui.orderLineNoteIcon
+                .prop('title', abp.utils.replaceAll(block.orderLine.note, '\n', '<br>'))
+                .tooltip()
+                .show();
+        } else {
+            block.ui.orderLineNoteIcon
+                .hide();
+        }
+
         var noteIcons = $();
         var notes = block.orderLine.orderLineTrucks.filter(olt => olt.driverId === block.driverId && olt.driverNote).map(x => x.driverNote);
         notes.forEach(note => {
@@ -482,7 +492,7 @@
         var affectedBlocks = _orderLineBlocks.filter(o => o.orderLine.id === block.orderLine.id);
         try {
             affectedBlocks.forEach(x => x.ui && abp.ui.setBusy(x.ui.card));
-            let result = await _orderService.resetOverriddenOrderLineValues({ id: block.orderLine.id });
+            let result = await _orderService.resetOverriddenOrderLineValues({ id: block.orderLine.id, overrideReadOnlyState: block.overrideReadOnlyState || false });
             block.orderLine.materialTotal = result.materialTotal;
             block.orderLine.freightTotal = result.freightTotal;
             block.orderLine.isFreightTotalOverridden = false;
@@ -769,8 +779,22 @@
 
     function getAssignedTruckForBlock(block) {
         let driverId = block.driver && block.driver.id || null;
-        if (!driverId) {
+        if (!driverId || !block.orderLine) {
             return null;
+        }
+        let orderLineTrucks = block.orderLine.orderLineTrucks.filter(x => x.driverId === driverId);
+        let truckId = null;
+        if (orderLineTrucks.length === 1)
+        {
+            truckId = orderLineTrucks[0].truckId;
+        }
+        if (orderLineTrucks.length) {
+            truckId = orderLineTrucks
+                .reduce((a, b) => a.id > b.id ? a : b, orderLineTrucks[0].id)
+                .truckId;
+        }
+        if (truckId) {
+            return _trucks.find(x => x.id === truckId);
         }
         let driverAssignment = _driverAssignments.find(x => x.driverId === driverId && x.shift === block.orderLine.shift);
         if (driverAssignment) {
@@ -779,8 +803,33 @@
         return _trucks.find(x => x.defaultDriverId === driverId);
     }
 
+    function getAssignedTrailerForTruckAndBlock(truck, block) {
+        let driverId = block.driver && block.driver.id || null;
+        if (!truck || !truck.canPullTrailer || !block.orderLine || !driverId) {
+            return null;
+        }
+        let orderLineTrucks = block.orderLine.orderLineTrucks.filter(x => x.driverId === driverId && x.truckId === truck.id);
+        let trailerId = null;
+        if (orderLineTrucks.length === 1) {
+            trailerId = orderLineTrucks[0].trailerId;
+        }
+        if (orderLineTrucks.length) {
+            trailerId = orderLineTrucks
+                .reduce((a, b) => a.id > b.id ? a : b, orderLineTrucks[0].id)
+                .trailerId;
+        }
+        if (trailerId) {
+            return _trucks.find(x => x.id === trailerId);
+        }
+        if (truck.currentTrailerId) {
+            return _trucks.find(x => x.id === truck.currentTrailerId);
+        }
+        return null;
+    }
+
     function getEmptyTicket(block) {
         let truck = getAssignedTruckForBlock(block);
+        let trailer = getAssignedTrailerForTruckAndBlock(truck, block);
         return {
             id: 0,
             orderLineId: block.orderLine.id,
@@ -793,6 +842,8 @@
             uomId: block.orderLine.uomId,
             truckId: truck && truck.id || null,
             truckCode: truck && truck.truckCode || null,
+            trailerId: trailer && trailer.id || null,
+            trailerTruckCode: trailer && trailer.truckCode || null,
             ticketPhotoId: null,
             receiptLineId: null,
             isReadOnly: false
@@ -1116,6 +1167,7 @@
 
         ui.form.append(
             $('<div class="d-flex justify-content-end"></div>').append(
+                renderOrderLineNoteIcon(ui),
                 renderOverrideReadOnlyStateButton(ui)
             )
         ).append(
@@ -1569,6 +1621,7 @@
                                     allOffices: true,
                                     includeLeaseHaulerTrucks: true,
                                     activeOnly: true,
+                                    excludeTrailers: true,
                                     //orderLineId: _validateTrucksAndDrivers ? _orderLineId : null
                                 },
                                 showAll: false,
@@ -1585,6 +1638,28 @@
                                 return true;
                             },
                         }
+                    },
+                    {
+                        data: 'trailerTruckCode',
+                        title: 'Trailer',
+                        width: '90px',
+                        className: 'all',
+                        editable: {
+                            editor: _dtHelper.editors.dropdown,
+                            idField: 'trailerId',
+                            nameField: 'trailerTruckCode',
+                            dropdownOptions: {
+                                abpServiceMethod: abp.services.app.truck.getTrucksSelectList,
+                                abpServiceParams: {
+                                    allOffices: true,
+                                    includeLeaseHaulerTrucks: true,
+                                    activeOnly: true,
+                                    assetType: abp.enums.assetType.trailer,
+                                },
+                                showAll: false,
+                                allowClear: true
+                            },
+                        },
                     },
                     {
                         data: 'ticketPhotoId',
@@ -1919,6 +1994,10 @@
 
     function renderOverrideReadOnlyStateButton(ui) {
         return ui.overrideReadOnlyStateButton = $('<button class="btn btn-default" type="button"><span class="fa fa-edit"></span></button>').hide();
+    }
+
+    function renderOrderLineNoteIcon(ui) {
+        return ui.orderLineNoteIcon = $('<i class="la la-files-o directions-icon order-line-note-icon" data-toggle="tooltip" data-html="true"></i>').hide();
     }
 
     function renderClickableWarningIcon(ui) {

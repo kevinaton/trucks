@@ -49,6 +49,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -374,7 +375,10 @@ namespace DispatcherWeb.Web.Controllers
 
             if (!string.IsNullOrEmpty(logoutId))
             {
+                Logger.Info("LogoutId: " + logoutId);
                 var logoutContext = await interaction.GetLogoutContextAsync(logoutId);
+                Logger.Info("PostLogoutRedirectUri: " + logoutContext.PostLogoutRedirectUri);
+                Logger.Info("logoutContext: " + JsonConvert.SerializeObject(logoutContext));
                 if (!string.IsNullOrEmpty(logoutContext.PostLogoutRedirectUri))
                 {
                     return Redirect(logoutContext.PostLogoutRedirectUri);

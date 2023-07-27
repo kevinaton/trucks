@@ -200,7 +200,7 @@ namespace DispatcherWeb.Dispatching
             var query = filteredQuery.ToRawDispatchDto();
 
             return query
-                .WhereIf(input.MissingTickets, d => d.Status == DispatchStatus.Completed && (d.Quantity == null || d.Quantity == 0));
+                .WhereIf(input.MissingTickets, d => d.Status == DispatchStatus.Completed && (d.FilledTicketCount == null || d.FilledTicketCount == 0));
 
         }
 
@@ -210,7 +210,6 @@ namespace DispatcherWeb.Dispatching
             return
                 from d in query
                 from l in d.Loads.DefaultIfEmpty()
-                from t in l.Tickets.DefaultIfEmpty()
                 select new RawDispatchDto
                 {
                     Id = d.Id,
@@ -242,10 +241,9 @@ namespace DispatcherWeb.Dispatching
                         State = d.OrderLine.DeliverTo.State
                     },
                     Item = d.OrderLine.Service.Service1,
-                    Quantity = t != null ? t.Quantity : (decimal?)null,
-                    Uom = t != null ? t.UnitOfMeasure.Name : null,
                     Guid = d.Guid,
                     IsMultipleLoads = d.IsMultipleLoads,
+                    FilledTicketCount = l.Tickets.Count(t => t.Quantity > 0),
                 };
         }
 
@@ -270,8 +268,6 @@ namespace DispatcherWeb.Dispatching
                 DeliverTo = d.DeliverTo,
                 DeliverToNamePlain = d.DeliverToNamePlain,
                 Item = d.Item,
-                Quantity = d.Quantity,
-                Uom = d.Uom,
                 Cancelable = d.Status != DispatchStatus.Completed && d.Status != DispatchStatus.Canceled,
                 Guid = d.Guid,
                 ShortGuid = d.Guid.ToShortGuid(),
@@ -854,10 +850,13 @@ namespace DispatcherWeb.Dispatching
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            //await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchEntity.DriverId)
-            //{
-            //    LogMessage = $"Canceled dispatch {dispatchEntity.Id}"
-            //});
+            if (input.Info == null)
+            {
+                await _driverApplicationPushSender.SendPushMessageToDrivers(new SendPushMessageToDriversInput(dispatchEntity.DriverId)
+                {
+                    LogMessage = $"Marked dispatch {dispatchEntity.Id} complete"
+                });
+            }
             await _syncRequestSender.SendSyncRequest(new SyncRequest()
                 .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), ChangeType.Removed)
                 .SetIgnoreForDeviceId(input.Info?.DeviceId)
@@ -925,6 +924,7 @@ namespace DispatcherWeb.Dispatching
                     OfficeName = d.OrderLine.Order.Office.Name,
                     TruckId = d.TruckId,
                     TruckCode = d.Truck.TruckCode,
+                    TrailerTruckCode = d.OrderLineTruck.Trailer.TruckCode,
                     DriverId = d.DriverId,
                     LastName = d.Driver.LastName,
                     FirstName = d.Driver.FirstName,
@@ -962,7 +962,8 @@ namespace DispatcherWeb.Dispatching
                     Loaded = d.Loads.OrderByDescending(l => l.Id).Select(l => l.SourceDateTime).FirstOrDefault(),
                     Complete = d.Loads.OrderByDescending(l => l.Id).Select(l => l.DestinationDateTime).FirstOrDefault(),
                     d.IsMultipleLoads,
-                    d.WasMultipleLoads
+                    d.WasMultipleLoads,
+                    HasTickets = d.Loads.Any(l => l.Tickets.Any()),
                 })
                 .ToListAsync();
 
@@ -996,6 +997,7 @@ namespace DispatcherWeb.Dispatching
                             DeliveryDate = d.DeliveryDate,
                             Shift = d.Shift,
                             TimeOnJob = d.TimeOnJobUtc?.ConvertTimeZoneTo(timeZone),
+                            TrailerTruckCode = d.TrailerTruckCode,
                             CustomerName = d.CustomerName,
                             LoadAt = d.LoadAt,
                             DeliverTo = d.DeliverTo,
@@ -1008,7 +1010,8 @@ namespace DispatcherWeb.Dispatching
                             Loaded = d.Loaded?.ConvertTimeZoneTo(timeZone),
                             Complete = d.Complete?.ConvertTimeZoneTo(timeZone),
                             IsMultipleLoads = d.IsMultipleLoads,
-                            WasMultipleLoads = d.WasMultipleLoads
+                            WasMultipleLoads = d.WasMultipleLoads,
+                            HasTickets = d.HasTickets,
                         }).ToList()
                 })
                 .ToList();
@@ -1356,6 +1359,7 @@ namespace DispatcherWeb.Dispatching
                 Designation = di.OrderLine.Designation,
                 TimeOnJob = di.TimeOnJob,
                 TruckCode = di.Truck.TruckCode,
+                TrailerTruckCode = di.OrderLineTruck.Trailer.TruckCode,
                 LoadAtName = di.OrderLine.LoadAt.Name,
                 LoadAt = di.OrderLine.LoadAt == null ? null : new LocationAddressDto
                 {
@@ -1661,6 +1665,7 @@ namespace DispatcherWeb.Dispatching
         {
             var dispatchEntity = await _dispatchRepository.GetAll()
                 .Include(d => d.Truck)
+                .Include(d => d.OrderLineTruck)
                 .Include(d => d.OrderLine)
                     .ThenInclude(ol => ol.Order)
                 .FirstOrDefaultAsync(d => d.Guid == input.DispatchTicket.Guid);
@@ -1757,6 +1762,7 @@ namespace DispatcherWeb.Dispatching
         {
             var dispatchEntity = await _dispatchRepository.GetAll()
                 .Include(d => d.Truck)
+                .Include(d => d.OrderLineTruck)
                 .Include(d => d.OrderLine)
                     .ThenInclude(ol => ol.Order)
                 .FirstOrDefaultAsync(d => d.Guid == input.DispatchTicket.Guid);
@@ -1821,6 +1827,7 @@ namespace DispatcherWeb.Dispatching
                         DeliverToId = dispatchEntity.OrderLine.DeliverToId,
                         TruckId = dispatchEntity.TruckId,
                         TruckCode = dispatchEntity.Truck.TruckCode,
+                        TrailerId = dispatchEntity.OrderLineTruck?.TrailerId,
                         CustomerId = dispatchEntity.OrderLine.Order.CustomerId,
                         ServiceId = dispatchEntity.OrderLine.ServiceId,
                         DriverId = dispatchEntity.DriverId,
@@ -2119,7 +2126,7 @@ namespace DispatcherWeb.Dispatching
                     });
                 }
                 await _syncRequestSender.SendSyncRequest(new SyncRequest()
-                    .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), ChangeType.Removed)
+                    .AddChange(EntityEnum.Dispatch, dispatchEntity.ToChangedEntity(), completeDispatch.ContinueMultiload == true ? ChangeType.Modified : ChangeType.Removed)
                     .SetIgnoreForDeviceId(completeDispatch.Info?.DeviceId)
                     .AddLogMessage("Completed dispatch"));
                 return result;
@@ -2879,7 +2886,8 @@ namespace DispatcherWeb.Dispatching
                 {
                     DriverId = x.Id,
                     DriverName = x.LastName + ", " + x.FirstName,
-                    UserId = x.UserId.Value
+                    UserId = x.UserId.Value,
+                    CarrierName = x.LeaseHaulerDriver.LeaseHauler.Name
                 }).OrderBy(d => d.DriverName).ToListAsync();
 
             var userId = input.DriverId.HasValue ? drivers.FirstOrDefault(x => x.DriverId == input.DriverId)?.UserId : null;
@@ -2942,15 +2950,23 @@ namespace DispatcherWeb.Dispatching
                     Tickets = x.Tickets.Select(t => new
                     {
                         TicketNumber = t.TicketNumber,
-                        Quantity = (decimal?)t.Quantity,
+                        Quantity = t.Quantity,
                         UomName = t.UnitOfMeasure.Name,
+                        TrailerTruckCode = t.Trailer.TruckCode,
+                        VehicleCategory = t.Trailer.VehicleCategory.Name,
+                        TicketUomId = t.UnitOfMeasureId
                     }).ToList(),
                     LoadTime = x.SourceDateTime,
                     DeliveryTime = x.DestinationDateTime,
                     JobNumber = x.Dispatch.OrderLine.JobNumber,
                     ProductOrService = x.Dispatch.OrderLine.Service.Service1,
                     DispatchId = x.DispatchId,
-                    OrderLineId = x.Dispatch.OrderLineId
+                    OrderLineId = x.Dispatch.OrderLineId,
+                    FreightQuantityOrdered = x.Dispatch.OrderLine.FreightQuantity,
+                    MaterialQuantityOrdered = x.Dispatch.OrderLine.MaterialQuantity,
+                    Designation = x.Dispatch.OrderLine.Designation,
+                    MaterialUomId = x.Dispatch.OrderLine.MaterialUomId,
+                    FreightUomId = x.Dispatch.OrderLine.FreightUomId
                 })
                 .OrderBy(x => x.LoadTime)
                 .ToListAsync();
@@ -2998,6 +3014,7 @@ namespace DispatcherWeb.Dispatching
                         Date = load.Date ?? Clock.Now,
                         DriverId = load.DriverId ?? 0,
                         DriverName = driver?.DriverName,
+                        CarrierName = driver?.CarrierName,
                         UserId = driver?.UserId ?? 0,
                         ScheduledStartTime = driverAssignments.FirstOrDefault(x => x.DriverId == load.DriverId && x.Date == load.Date)?.StartTimeUtc?.ConvertTimeZoneTo(timezone),
                         EmployeeTimes = new List<DriverActivityDetailReportEmployeeTimeDto>(),
@@ -3019,11 +3036,19 @@ namespace DispatcherWeb.Dispatching
                         DeliveryTime = load.DeliveryTime,
                         LoadAt = load.LoadAt,
                         LoadTime = load.LoadTime,
-                        Quantity = ticket?.Quantity,
+                        Quantity = ticket?.Quantity ?? 0,
                         UomName = ticket?.UomName,
-                        TicketNumber = ticket?.TicketNumber,
+                        TrailerTruckCode = ticket?.TrailerTruckCode,
+                        VehicleCategory = ticket?.VehicleCategory,
+                        LoadTicket = ticket?.TicketNumber,
                         JobNumber = load.JobNumber,
-                        ProductOrService = load.ProductOrService
+                        ProductOrService = load.ProductOrService,
+                        FreightQuantityOrdered = load.FreightQuantityOrdered,
+                        MaterialQuantityOrdered = load.MaterialQuantityOrdered,
+                        Designation = load.Designation,
+                        MaterialUomId = load.MaterialUomId,
+                        FreightUomId = load.FreightUomId,
+                        TicketUomId = ticket?.TicketUomId
                     });
                 }
             }

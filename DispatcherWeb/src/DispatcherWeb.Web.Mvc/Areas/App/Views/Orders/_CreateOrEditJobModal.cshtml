@@ -141,6 +141,18 @@
                         }
                     </select>
                 </div>
+                <div class="col-6 form-group" @Html.StyleDisplayNone(!await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders))>
+                    <label>@L("TruckTrailerCategory")</label>
+                    <select class="form-control" name="VehicleCategories" id="VehicleCategories" multiple="multiple">
+                        @if (Model.VehicleCategories != null)
+                        {
+                            foreach (var category in Model.VehicleCategories)
+                            {
+                                <option value="@category.Id" selected>@category.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
             </div>
             <div class="row">
                 <div class="col-6 form-group">

@@ -1,0 +1,5 @@
+GrapeCity.ActiveReports.SectionReport, GrapeCity.ActiveReports
+GrapeCity.ActiveReports.PageReport, GrapeCity.ActiveReports
+GrapeCity.ActiveReports.Export.Pdf.Section.PdfExport, GrapeCity.ActiveReports.Export.Pdf
+GrapeCity.ActiveReports.Aspnet.WebViewer, GrapeCity.ActiveReports.Aspnet.Viewer
+GrapeCity.ActiveReports.Aspnet.WebDesigner, GrapeCity.ActiveReports.Aspnet.Designer

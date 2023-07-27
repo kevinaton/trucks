@@ -386,6 +386,11 @@
                 title: "Qty"
             },
             {
+                data: "rate",
+                title: "Rate",
+                orderable: false
+            },
+            {
                 data: "revenue",
                 title: "Revenue"
             },
@@ -404,6 +409,16 @@
                 editable: {
                     editor: _dtHelper.editors.checkbox
                 }
+            },
+            {
+                data: "hasPayStatements",
+                render: function (data, type, full, meta) { return _dtHelper.renderCheckbox(full.hasPayStatements); },
+                title: "Pay Stmt"
+            },
+            {
+                data: "hasLeaseHaulerStatements",
+                render: function (data, type, full, meta) { return _dtHelper.renderCheckbox(full.hasLeaseHaulerStatements); },
+                title: "LH Stmt"
             },
             {
                 data: 'ticketPhotoId',

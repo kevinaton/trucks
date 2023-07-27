@@ -7,6 +7,7 @@ import Schedule from '../pages/Schedule';
 import TruckDispatchList from '../pages/TruckDispatchList';
 import OrderDetails from '../pages/Orders/orderdetails';
 import JobSummary from '../pages/Schedule/JobSummary';
+import Quotes from '../pages/Quotes'
 import Order from '../pages/Orders'
 
 const authProtectedRoutes = [
@@ -20,6 +21,7 @@ const authProtectedRoutes = [
     { path: '/job-summary', component: JobSummary },
     { path: '/order', component: Order },
     { path: '/order/details', component: OrderDetails },
+    { path: '/quotes', component: Quotes },
 ];
 
 export { authProtectedRoutes };

@@ -179,9 +179,9 @@
             quotesGrid.ajax.reload();
         };
 
-        //abp.event.on('app.createOrEditQuoteModalSaved', function () {
-        //    reloadMainGrid();
-        //});
+        abp.event.on('app.createOrEditQuoteModalSaved', function () {
+            reloadMainGrid();
+        });
 
         quotesTable.on('click', '.btnEditRow', function () {
             var quoteId = _dtHelper.getRowData(this).id;

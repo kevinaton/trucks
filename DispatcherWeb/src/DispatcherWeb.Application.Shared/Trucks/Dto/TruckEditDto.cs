@@ -29,8 +29,8 @@ namespace DispatcherWeb.Trucks.Dto
 
         public string DefaultDriverName { get; set; }
 
-        public int? DefaultTrailerId { get; set; }
-        public string DefaultTrailerCode { get; set; }
+        public int? CurrentTrailerId { get; set; }
+        public string CurrentTrailerCode { get; set; }
 
         public bool IsActive { get; set; }
         public DateTime? InactivationDate { get; set; }

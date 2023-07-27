@@ -14,5 +14,7 @@ namespace DispatcherWeb.DriverApp.Dispatches.Dto
         public DateTime? OrderDateEnd { get; set; }
 
         public DateTime? ModifiedAfterDateTime { get; set; }
+
+        public DispatchStatus[] DispatchStatuses { get; set; }
     }
 }
