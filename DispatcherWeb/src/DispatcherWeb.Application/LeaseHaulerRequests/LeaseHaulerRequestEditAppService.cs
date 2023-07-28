@@ -15,7 +15,6 @@ using DispatcherWeb.Configuration;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverAssignments;
 using DispatcherWeb.DriverAssignments.Dto;
-using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Infrastructure.Extensions;
@@ -61,7 +60,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
 
         public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestForEdit(GetLeaseHaulerRequestForEditInput input)
         {
-            var model = input.LeaseHaulerRequestId != null 
+            var model = input.LeaseHaulerRequestId != null
                 ? await _leaseHaulerRequestRepository.GetAll()
                     .Where(lhr => lhr.Id == input.LeaseHaulerRequestId)
                     .Select(lhr => new LeaseHaulerRequestEditDto
@@ -78,7 +77,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     })
                     .FirstAsync()
                 : new LeaseHaulerRequestEditDto
-                { 
+                {
                     Date = input.Date
                 };
 
@@ -505,8 +504,8 @@ namespace DispatcherWeb.LeaseHaulerRequests
             }
 
             var availableLeaseHaulerTrucks = await _availableLeaseHaulerTruckRepository.GetAll()
+                .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
                 .Where(x => x.Date == input.Date
-                    && x.OfficeId == input.OfficeId
                     && x.Shift == input.Shift
                     && x.TruckId == input.TruckId)
                 .ToListAsync();
@@ -535,8 +534,8 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     //}
 
                     var orderLineTrucks = await _orderLineTruckRepository.GetAll()
+                        .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
                         .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
-                        .Where(x => input.OfficeId == x.OrderLine.Order.LocationId)
                         .Where(x => oldDriverId == x.DriverId)
                         .Where(x => input.TruckId == x.TruckId)
                         .ToListAsync();
@@ -558,16 +557,17 @@ namespace DispatcherWeb.LeaseHaulerRequests
         {
             var hasOrderLineTrucks = await _orderLineTruckRepository.GetAll()
                         .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
-                        .Where(x => input.OfficeId == x.OrderLine.Order.LocationId)
+                        .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
                         .Where(x => input.TruckId == x.TruckId)
                         .AnyAsync();
+
             if (hasOrderLineTrucks)
             {
                 throw new UserFriendlyException("You cannot remove this truck because it was already added to orders");
             }
 
             await _availableLeaseHaulerTruckRepository.DeleteAsync(x => x.Date == input.Date
-                    && x.OfficeId == input.OfficeId
+                    && (!input.OfficeId.HasValue || x.OfficeId == input.OfficeId)
                     && x.Shift == input.Shift
                     && x.TruckId == input.TruckId);
         }

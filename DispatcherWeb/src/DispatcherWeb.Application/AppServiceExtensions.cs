@@ -393,15 +393,15 @@ namespace DispatcherWeb
                 })
                 .ToListAsync();
 
-            var truckIdsSharedWithThisOffice = sharedTrucks.Where(x => x.OfficeId == input.OfficeId).Select(x => x.TruckId).ToList();
+            var truckIdsSharedWithThisOffice = sharedTrucks.Where(x => x.OfficeId == input.OfficeId).Select(x => x.TruckId).ToList(); //this will be an empty list if input.OfficeId is null, that's intended
             var trucksSharedWithOtherOffices = sharedTrucks.Where(x => x.OfficeId != x.TruckOfficeId).ToList();
 
             var leaseHaulerTrucks = await truckQuery
                 .Where(x => useLeaseHaulers && x.LocationId == null)
                 .SelectMany(x => x.AvailableLeaseHaulerTrucks)
-                .Where(a => a.OfficeId == input.OfficeId
-                        && (!useShifts || a.Shift == input.Shift)
-                        && a.Date == input.Date)
+                .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
+                .WhereIf(useShifts, x => x.Shift == input.Shift)
+                .Where(x => x.Date == input.Date)
                 .Select(x => new
                 {
                     x.Id,
@@ -417,8 +417,11 @@ namespace DispatcherWeb
             var leaseHaulerTruckIds = leaseHaulerTrucks.Select(x => x.TruckId).ToList();
 
             var trucks = await truckQuery
-                .WhereIf(!skipTruckFiltering, t => t.IsActive
-                    && (t.LocationId == input.OfficeId || truckIdsSharedWithThisOffice.Contains(t.Id) || leaseHaulerTruckIds.Contains(t.Id)))
+                .WhereIf(!skipTruckFiltering, t => t.IsActive)
+                .WhereIf(!skipTruckFiltering && input.OfficeId.HasValue, t => 
+                    t.LocationId == input.OfficeId
+                    || truckIdsSharedWithThisOffice.Contains(t.Id) 
+                    || leaseHaulerTruckIds.Contains(t.Id))
                 .Select(t => new ScheduleTruckDto
                 {
                     Id = t.Id,
@@ -469,7 +472,7 @@ namespace DispatcherWeb
                                 && olt.OrderLine.Order.DeliveryDate == input.Date
                                 && olt.OrderLine.Order.Shift == input.Shift
                                 && !olt.OrderLine.Order.IsPending
-                                && (olt.OrderLine.Order.LocationId == input.OfficeId || olt.OrderLine.SharedOrderLines.Any(s => s.OfficeId == input.OfficeId)))
+                                && (!input.OfficeId.HasValue || olt.OrderLine.Order.LocationId == input.OfficeId || olt.OrderLine.SharedOrderLines.Any(s => s.OfficeId == input.OfficeId)))
                         .Select(olt => olt.Utilization)
                         .ToList()
                 })
@@ -526,7 +529,6 @@ namespace DispatcherWeb
                 }
 
                 truck.SharedWithOfficeId = trucksSharedWithOtherOffices.FirstOrDefault(y => y.TruckId == truck.Id)?.OfficeId;
-                truck.SharedFromOfficeId = sharedTrucks.Where(st => st.TruckId == truck.Id && st.OfficeId == input.OfficeId).Select(st => (int?)st.OfficeId).FirstOrDefault();
 
                 truck.Utilization = !truck.VehicleCategory.IsPowered
                         //previous trailer utilization logic
@@ -539,7 +541,7 @@ namespace DispatcherWeb
                 //'skip truck filtering' is set on adding new trucks, when the actual filter values (Date and OfficeId) are not sent and the values from the order are used instead.
                 if (!skipTruckFiltering)
                 {
-                    if (truck.SharedWithOfficeId != null && truck.SharedWithOfficeId != input.OfficeId)
+                    if (truck.SharedWithOfficeId != null && input.OfficeId.HasValue && truck.SharedWithOfficeId != input.OfficeId)
                     {
                         truck.Utilization = 1;
                     }
@@ -672,7 +674,6 @@ namespace DispatcherWeb
                         OrderLineId = ol.Id,
                         IsExternal = olt.Truck.LocationId == null,
                         OfficeId = olt.Truck.LocationId ?? ol.Order.LocationId /* Available Lease Hauler Truck */,
-                        SharedOfficeId = olt.Truck.SharedTrucks.Where(st => st.Date == ol.Order.DeliveryDate && st.Shift == ol.Order.Shift).Select(st => st.OfficeId).FirstOrDefault(),
                         Utilization = olt.Utilization,
                         VehicleCategory = new VehicleCategoryDto
                         {

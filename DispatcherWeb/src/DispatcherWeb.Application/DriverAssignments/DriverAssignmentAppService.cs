@@ -83,11 +83,11 @@ namespace DispatcherWeb.DriverAssignments
         public async Task<ListResultDto<DriverAssignmentLiteDto>> GetAllDriverAssignmentsLite(GetDriverAssignmentsInput input)
         {
             var query = _driverAssignmentRepository.GetAll()
-                .Where(da => da.Date == input.Date && da.OfficeId == input.OfficeId && da.Truck.LocationId.HasValue)
+                .WhereIf(input.OfficeId.HasValue, da => da.OfficeId == input.OfficeId)
+                .Where(da => da.Date == input.Date && da.Truck.LocationId.HasValue)
                 .WhereIf(input.Shift.HasValue && input.Shift != Shift.NoShift, da => da.Shift == input.Shift.Value)
                 .WhereIf(input.Shift.HasValue && input.Shift == Shift.NoShift, da => da.Shift == null)
-                .WhereIf(input.TruckId.HasValue, da => da.TruckId == input.TruckId)
-                ;
+                .WhereIf(input.TruckId.HasValue, da => da.TruckId == input.TruckId);
 
             var items = await query
                 .Select(x => new DriverAssignmentLiteDto
@@ -209,7 +209,7 @@ namespace DispatcherWeb.DriverAssignments
                         syncRequest.AddChange(EntityEnum.DriverAssignment,
                             existingAssignment
                                 .ToChangedEntity()
-                                .SetOldDriverIdToNotify(oldDriverId), 
+                                .SetOldDriverIdToNotify(oldDriverId),
                             changeType: firstDriverAssignment ? ChangeType.Modified : ChangeType.Removed);
 
                         firstDriverAssignment = false;
@@ -322,7 +322,7 @@ namespace DispatcherWeb.DriverAssignments
                 await ThrowIfDriverHasTimeOffRequests(input.DriverId.Value, input.Date, input.Date);
             }
             var sharedTruckResult = await _truckRepository.EnsureCanEditTruckOrSharedTruckAsync(input.TruckId, OfficeId, input.Date);
-            var officeIdForDriverAssignment = sharedTruckResult.GetLocationForDate(input.Date, input.Shift) ?? input.OfficeId;
+            var officeIdForDriverAssignment = sharedTruckResult.GetLocationForDate(input.Date, input.Shift) ?? input.OfficeId ?? throw new UserFriendlyException("You need to select the office first");
 
             var driverAssignments = await GetAllDriverAssignmentsLite(new GetDriverAssignmentsInput()
             {
@@ -458,7 +458,7 @@ namespace DispatcherWeb.DriverAssignments
                         }
                         syncRequest
                             .AddChange(EntityEnum.DriverAssignment, driverAssignment.ToChangedEntity().SetOldDriverIdToNotify(oldDriverId), ChangeType.Removed);
-                        
+
                         await _driverAssignmentRepository.DeleteAsync(driverAssignment);
                     }
                     else
@@ -496,8 +496,6 @@ namespace DispatcherWeb.DriverAssignments
         [AbpAuthorize(AppPermissions.Pages_DriverAssignment)]
         public async Task<byte[]> GetDriverAssignmentReport(GetDriverAssignmentsInput input)
         {
-            var officeName = await _officeRepository.GetAll().Where(x => x.Id == input.OfficeId).Select(x => x.Name).FirstAsync();
-
             Shift? shift = input.Shift == Shift.NoShift ? null : input.Shift;
             var items = await _driverAssignmentRepository.GetAll(input.Date, shift, input.OfficeId)
                 .Where(da => da.Truck.LocationId.HasValue)
@@ -513,6 +511,7 @@ namespace DispatcherWeb.DriverAssignments
                     DriverIsExternal = da.Driver.IsExternal == true,
                     DriverIsActive = da.Driver.IsInactive != true,
                     StartTime = da.StartTime,
+                    OfficeName = da.Office.Name
                 })
                 .OrderBy(x => x.TruckCode)
                 .ToListAsync();
@@ -527,7 +526,6 @@ namespace DispatcherWeb.DriverAssignments
                 Date = input.Date,
                 Shift = input.Shift,
                 ShiftName = await SettingManager.GetShiftName(input.Shift),
-                OfficeName = officeName,
                 Items = items,
             };
 
@@ -679,7 +677,7 @@ namespace DispatcherWeb.DriverAssignments
 
             if (driverAssignments[0].DriverId == null)
             {
-                foreach (var driverAssignment in driverAssignments.Skip(1)) 
+                foreach (var driverAssignment in driverAssignments.Skip(1))
                 {
                     await _driverAssignmentRepository.DeleteAsync(driverAssignment);
                 }
@@ -707,7 +705,8 @@ namespace DispatcherWeb.DriverAssignments
         private async Task FillFirstTimeOnJob(IEnumerable<DriverAssignmentDto> items, GetDriverAssignmentsInput input)
         {
             var timesOnJobRaw = await _orderLineTruckRepository.GetAll()
-                .Where(x => x.OrderLine.Order.DeliveryDate == input.Date && x.OrderLine.Order.Shift == input.Shift && x.OrderLine.Order.LocationId == input.OfficeId)
+                .WhereIf(input.OfficeId.HasValue, x => x.OrderLine.Order.LocationId == input.OfficeId)
+                .Where(x => x.OrderLine.Order.DeliveryDate == input.Date && x.OrderLine.Order.Shift == input.Shift)
                 .Select(x => new
                 {
                     x.TruckId,

@@ -240,7 +240,7 @@
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
-            allowClear: false
+            allowClear: true
         });
         abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
         $('#ShiftFilter').select2Init({ allowClear: false });
@@ -503,7 +503,6 @@
                     officeId: truck.officeId,
                     isExternal: truck.isExternal,
                     leaseHaulerId: truck.leaseHaulerId,
-                    sharedOfficeId: truck.sharedFromOfficeId,
                     vehicleCategory: {
                         id: truck.vehicleCategory.id,
                         name: truck.vehicleCategory.name,
@@ -549,7 +548,6 @@
                             officeId: truck.officeId,
                             isExternal: truck.isExternal,
                             leaseHaulerId: truck.leaseHaulerId,
-                            sharedOfficeId: truck.sharedFromOfficeId,
                             vehicleCategory: {
                                 id: truck.vehicleCategory.id,
                                 name: truck.vehicleCategory.name,
@@ -1957,7 +1955,7 @@
         });
 
         function isTruckFromOfficeOrSharedOffice(truck) {
-            return true; //truck.officeId === abp.session.officeId || truck.sharedOfficeId === abp.session.officeId;
+            return true;
         }
 
         function handlePopupException(failResult) {
@@ -2259,15 +2257,17 @@
         $('#SendOrdersToDriversButton').click(function (e) {
             e.preventDefault();
             var filterData = _dtHelper.getFilterData();
+            let selectedOffices = [];
+            if (filterData.officeId) {
+                selectedOffices.push({
+                    id: filterData.officeId,
+                    name: filterData.officeName
+                });
+            }
             _sendOrdersToDriversModal.open({
                 deliveryDate: filterData.date,
                 shift: filterData.shift,
-                selectedOffices: [
-                    {
-                        id: filterData.officeId,
-                        name: filterData.officeName
-                    }
-                ]
+                selectedOffices
             });
         });
 
@@ -2740,7 +2740,7 @@
                                 trailerVehicleCategoryId: item.trailer && item.trailer.vehicleCategory.id || null
                             })
                         );
-                        
+
                         if (order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(trailer.vehicleCategory.id)) {
                             abp.message.error(app.localize("CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError"));
                             return;
@@ -2984,7 +2984,7 @@
                             truckId: truck.id,
                             truckCode: truck.truckCode
                         });
-                        
+
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
                             trailerId: null,
@@ -3054,7 +3054,7 @@
                         var truck = $(this).data('truck');
                         return !truck.isExternal && !truck.alwaysShowOnSchedule
                             && (_features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService
-                            || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
+                                || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
                     }
                 },
                 addSharedTruck: {

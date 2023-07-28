@@ -7,7 +7,7 @@ namespace DispatcherWeb.Scheduling.Dto
 {
     public class GetScheduleOrdersInput : SortedInputDto, IShouldNormalize, IGetScheduleInput
     {
-        public int OfficeId { get; set; }
+        public int? OfficeId { get; set; }
         public DateTime Date { get; set; }
         public Shift? Shift { get; set; }
         public bool HideCompletedOrders { get; set; }
