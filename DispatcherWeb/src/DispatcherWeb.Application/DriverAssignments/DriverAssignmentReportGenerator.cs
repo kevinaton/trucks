@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using DispatcherWeb.DriverAssignments.Dto;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
-using NUglify.Helpers;
 
 namespace DispatcherWeb.DriverAssignments
 {
@@ -13,6 +11,17 @@ namespace DispatcherWeb.DriverAssignments
         {
             var document = new Document();
 
+            Section section = document.AddSection();
+            section.PageSetup = document.DefaultPageSetup.Clone();
+            //section.PageSetup.Orientation = Orientation.Landscape;
+            section.PageSetup.PageFormat = PageFormat.Letter;
+            section.PageSetup.PageHeight = Unit.FromInch(11);
+            section.PageSetup.PageWidth = Unit.FromInch(8.5);
+            section.PageSetup.TopMargin = Unit.FromCentimeter(1.3);
+            section.PageSetup.LeftMargin = Unit.FromCentimeter(2.5);
+            section.PageSetup.BottomMargin = Unit.FromCentimeter(2.5);
+            section.PageSetup.RightMargin = Unit.FromCentimeter(2.5);
+
             Style style = document.Styles[StyleNames.Normal];
             style.Font.Name = "Times New Roman";
             style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.5);
@@ -21,21 +30,18 @@ namespace DispatcherWeb.DriverAssignments
             tableStyle.Font.Name = "Times New Roman";
             tableStyle.Font.Size = Unit.FromPoint(9.75);
             tableStyle.ParagraphFormat.SpaceAfter = 0;
-
-            var offices = model.Items.Select(x => (x.OfficeId, x.OfficeName)).Distinct().ToArray();
-
-            void PrintDocumentSection((int? OfficeId, string OfficeName) office)
+                        
+            var firstOfficeGroup = true;
+            foreach (var officeGroup in model.Items.GroupBy(x => new { x.OfficeId, x.OfficeName }).DefaultIfEmpty())
             {
-                Section section = document.AddSection();
-                section.PageSetup = document.DefaultPageSetup.Clone();
-                section.PageSetup.PageFormat = PageFormat.Letter;
-                section.PageSetup.PageHeight = Unit.FromInch(11);
-                section.PageSetup.PageWidth = Unit.FromInch(8.5);
-                section.PageSetup.TopMargin = Unit.FromCentimeter(1.3);
-                section.PageSetup.LeftMargin = Unit.FromCentimeter(2.5);
-                section.PageSetup.BottomMargin = Unit.FromCentimeter(2.5);
-                section.PageSetup.RightMargin = Unit.FromCentimeter(2.5);
-
+                if (firstOfficeGroup)
+                {
+                    firstOfficeGroup = false;
+                }
+                else
+                {
+                    document.LastSection.AddPageBreak();
+                }
                 Paragraph paragraph = document.LastSection.AddParagraph("Driver Assignments");
                 paragraph.Format.Font.Size = Unit.FromPoint(18);
 
@@ -53,7 +59,7 @@ namespace DispatcherWeb.DriverAssignments
                     paragraph.Format.AddTabStop(Unit.FromCentimeter(12), TabAlignment.Right);
                 }
                 paragraph.AddTab();
-                paragraph.AddText($"Office: {(!string.IsNullOrEmpty(office.OfficeName) ? office.OfficeName : "[N/A]")}");
+                paragraph.AddText("Office: " + officeGroup?.Key.OfficeName);
 
                 Table table = document.LastSection.AddTable();
                 table.Style = "Table";
@@ -83,10 +89,9 @@ namespace DispatcherWeb.DriverAssignments
                 cell = row.Cells[i++];
                 cell.AddParagraph("Start time");
 
-                var items = model.Items.Where(i => !i.OfficeId.HasValue || i.OfficeId == office.OfficeId).ToList();
-                if (items.Any())
+                if (officeGroup?.Any() == true)
                 {
-                    foreach (var item in items)
+                    foreach (var item in officeGroup)
                     {
                         i = 0;
                         row = table.AddRow();
@@ -106,10 +111,9 @@ namespace DispatcherWeb.DriverAssignments
                     table.AddRow();
                 }
 
+
                 table.SetEdge(0, 0, table.Columns.Count, table.Rows.Count, Edge.Box, BorderStyle.Single, 1, Colors.Black);
             }
-
-            offices.ForEach(office => PrintDocumentSection(office));
 
             return document.SaveToBytesArray();
         }

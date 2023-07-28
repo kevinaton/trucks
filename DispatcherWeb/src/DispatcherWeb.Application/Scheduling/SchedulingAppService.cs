@@ -299,8 +299,9 @@ namespace DispatcherWeb.Scheduling
                     (ol.MaterialQuantity > 0 || ol.FreightQuantity > 0 || ol.NumberOfTrucks > 0)
                 )
                 .WhereIf(await FeatureChecker.AllowMultiOfficeFeature(),
-                    ol => (!input.OfficeId.HasValue || ol.Order.LocationId == input.OfficeId) ||
-                            ol.SharedOrderLines.Any(sol => sol.OfficeId == input.OfficeId))
+                    ol => !input.OfficeId.HasValue 
+                        || ol.Order.LocationId == input.OfficeId
+                        || ol.SharedOrderLines.Any(sol => sol.OfficeId == input.OfficeId))
                 .WhereIf(await SettingManager.UseShifts(), ol => ol.Order.Shift == input.Shift)
                 .WhereIf(input.HideCompletedOrders, ol => !ol.IsComplete);
         }

@@ -510,7 +510,7 @@ namespace DispatcherWeb.DriverAssignments
                     DriverIsExternal = da.Driver.IsExternal == true,
                     DriverIsActive = da.Driver.IsInactive != true,
                     StartTime = da.StartTime,
-                    OfficeName = da.Office != null ? da.Office.Name : string.Empty
+                    OfficeName = da.Office.Name
                 })
                 .OrderBy(x => x.TruckCode)
                 .ToListAsync();
