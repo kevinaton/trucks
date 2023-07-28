@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
 using DispatcherWeb.Drivers;
 
 namespace DispatcherWeb.Infrastructure.RepositoryExtensions
@@ -15,8 +16,8 @@ namespace DispatcherWeb.Infrastructure.RepositoryExtensions
         )
         {
             return driverAssignmentRepository.GetAll()
-                .Where(da => da.Date == date && da.Shift == shift &&
-                            (!officeId.HasValue || da.OfficeId == officeId));
+                .WhereIf(officeId.HasValue, da => da.OfficeId == officeId)
+                .Where(da => da.Date == date && da.Shift == shift);
         }
     }
 }

@@ -473,7 +473,7 @@ namespace DispatcherWeb
                                 && olt.OrderLine.Order.DeliveryDate == input.Date
                                 && olt.OrderLine.Order.Shift == input.Shift
                                 && !olt.OrderLine.Order.IsPending
-                                && (olt.OrderLine.Order.LocationId == input.OfficeId || olt.OrderLine.SharedOrderLines.Any(s => s.OfficeId == input.OfficeId)))
+                                && (!input.OfficeId.HasValue || olt.OrderLine.Order.LocationId == input.OfficeId || olt.OrderLine.SharedOrderLines.Any(s => s.OfficeId == input.OfficeId)))
                         .Select(olt => olt.Utilization)
                         .ToList()
                 })

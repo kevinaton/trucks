@@ -83,7 +83,8 @@ namespace DispatcherWeb.DriverAssignments
         public async Task<ListResultDto<DriverAssignmentLiteDto>> GetAllDriverAssignmentsLite(GetDriverAssignmentsInput input)
         {
             var query = _driverAssignmentRepository.GetAll()
-                .Where(da => da.Date == input.Date && da.OfficeId == input.OfficeId && da.Truck.LocationId.HasValue)
+                .WhereIf(input.OfficeId.HasValue, da => da.OfficeId == input.OfficeId)
+                .Where(da => da.Date == input.Date && da.Truck.LocationId.HasValue)
                 .WhereIf(input.Shift.HasValue && input.Shift != Shift.NoShift, da => da.Shift == input.Shift.Value)
                 .WhereIf(input.Shift.HasValue && input.Shift == Shift.NoShift, da => da.Shift == null)
                 .WhereIf(input.TruckId.HasValue, da => da.TruckId == input.TruckId);
@@ -704,7 +705,8 @@ namespace DispatcherWeb.DriverAssignments
         private async Task FillFirstTimeOnJob(IEnumerable<DriverAssignmentDto> items, GetDriverAssignmentsInput input)
         {
             var timesOnJobRaw = await _orderLineTruckRepository.GetAll()
-                .Where(x => x.OrderLine.Order.DeliveryDate == input.Date && x.OrderLine.Order.Shift == input.Shift && x.OrderLine.Order.LocationId == input.OfficeId)
+                .WhereIf(input.OfficeId.HasValue, x => x.OrderLine.Order.LocationId == input.OfficeId)
+                .Where(x => x.OrderLine.Order.DeliveryDate == input.Date && x.OrderLine.Order.Shift == input.Shift)
                 .Select(x => new
                 {
                     x.TruckId,
