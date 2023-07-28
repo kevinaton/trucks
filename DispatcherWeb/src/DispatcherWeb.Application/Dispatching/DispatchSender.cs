@@ -149,7 +149,7 @@ namespace DispatcherWeb.Dispatching
                     da.Truck.OrderLineTrucksOfTruck.Any(olt =>
                         olt.OrderLine.Order.DeliveryDate == input.DeliveryDate &&
                         olt.OrderLine.Order.Shift == input.Shift &&
-                        input.OfficeIds.Contains(olt.OrderLine.Order.LocationId) &&
+                        (!input.OfficeIds.Any() || input.OfficeIds.Contains(olt.OrderLine.Order.LocationId)) &&
                         !olt.IsDone &&
                         !olt.OrderLine.IsComplete
                     )
@@ -259,7 +259,7 @@ namespace DispatcherWeb.Dispatching
                     .Where(olt =>
                         olt.OrderLine.Order.DeliveryDate == input.DeliveryDate &&
                         olt.OrderLine.Order.Shift == input.Shift &&
-                        input.OfficeIds.Contains(olt.OrderLine.Order.LocationId) &&
+                        (!input.OfficeIds.Any() || input.OfficeIds.Contains(olt.OrderLine.Order.LocationId)) &&
                         !olt.IsDone &&
                         !olt.OrderLine.IsComplete
                     )
