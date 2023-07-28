@@ -394,15 +394,15 @@ namespace DispatcherWeb
                 })
                 .ToListAsync();
 
-            var truckIdsSharedWithThisOffice = sharedTrucks.Where(x => x.OfficeId == input.OfficeId).Select(x => x.TruckId).ToList(); //will be an empty list if input.OfficeId is null, that's intended
+            var truckIdsSharedWithThisOffice = sharedTrucks.Where(x => x.OfficeId == input.OfficeId).Select(x => x.TruckId).ToList(); //this will be an empty list if input.OfficeId is null, that's intended
             var trucksSharedWithOtherOffices = sharedTrucks.Where(x => x.OfficeId != x.TruckOfficeId).ToList();
 
             var leaseHaulerTrucks = await truckQuery
                 .Where(x => useLeaseHaulers && x.LocationId == null)
                 .SelectMany(x => x.AvailableLeaseHaulerTrucks)
-                .Where(a => (!input.OfficeId.HasValue || a.OfficeId == input.OfficeId.Value)
-                        && (!useShifts || a.Shift == input.Shift)
-                        && a.Date == input.Date)
+                .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
+                .WhereIf(useShifts, x => x.Shift == input.Shift)
+                .Where(x => x.Date == input.Date)
                 .Select(x => new
                 {
                     x.Id,
@@ -418,8 +418,11 @@ namespace DispatcherWeb
             var leaseHaulerTruckIds = leaseHaulerTrucks.Select(x => x.TruckId).ToList();
 
             var trucks = await truckQuery
-                .WhereIf(!skipTruckFiltering, t => t.IsActive
-                    && (!input.OfficeId.HasValue || t.LocationId == input.OfficeId || truckIdsSharedWithThisOffice.Contains(t.Id) || leaseHaulerTruckIds.Contains(t.Id)))
+                .WhereIf(!skipTruckFiltering, t => t.IsActive)
+                .WhereIf(!skipTruckFiltering && input.OfficeId.HasValue, t => 
+                    t.LocationId == input.OfficeId
+                    || truckIdsSharedWithThisOffice.Contains(t.Id) 
+                    || leaseHaulerTruckIds.Contains(t.Id))
                 .Select(t => new ScheduleTruckDto
                 {
                     Id = t.Id,

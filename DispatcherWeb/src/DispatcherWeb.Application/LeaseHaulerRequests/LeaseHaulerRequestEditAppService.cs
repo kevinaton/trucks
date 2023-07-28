@@ -558,7 +558,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
         {
             var hasOrderLineTrucks = await _orderLineTruckRepository.GetAll()
                         .Where(x => input.Date == x.OrderLine.Order.DeliveryDate && input.Shift == x.OrderLine.Order.Shift)
-                        .Where(x => !input.OfficeId.HasValue || input.OfficeId == x.OrderLine.Order.LocationId)
+                        .WhereIf(input.OfficeId.HasValue, x => input.OfficeId == x.OrderLine.Order.LocationId)
                         .Where(x => input.TruckId == x.TruckId)
                         .AnyAsync();
 
