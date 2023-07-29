@@ -118,25 +118,29 @@ const TruckMap = ({
                 connection.on('syncRequest', payload => {
                     const { changes } = payload;
                     if (!isEmpty(changes)) {
-                        _.forEach(changes, change => {
-                            const { entity } = change;
-                            if (!isEmpty(entity) && 
-                                entity.id !== null && 
-                                change.entityType === entityType.TRUCK
-                            ) {
-                                if (change.changeType === changeType.MODIFIED) {
-                                    dispatch(getScheduleTruckBySyncRequest({
-                                        officeId: dataFilter.officeId,
-                                        date: dataFilter.date,
-                                        truckId: entity.id
-                                    }));
-                                }
+                        let changedTrucks = _.filter(changes, i => i.entityType === entityType.TRUCK);
+                        const modifiedTrucks = _.map(
+                            _.filter(changedTrucks, change => change.changeType === changeType.MODIFIED), 
+                            item => item.entity.id
+                        );
 
-                                if (change.changeType === changeType.REMOVED) {
-                                    // todo: remove the entity from the list
-                                }
-                            }
-                        });
+                        const removedTrucks = _.map(
+                            _.filter(changedTrucks, change => change.changeType === changeType.REMOVED),
+                            item => item.entity.id
+                        );
+
+                        if (modifiedTrucks.length > 0) {
+                            dispatch(getScheduleTruckBySyncRequest({
+                                officeId: dataFilter.officeId,
+                                date: dataFilter.date,
+                                truckIds: modifiedTrucks
+                            }));
+                        }
+
+                        // todo: remove the entity from the list
+                        if (removedTrucks.length > 0) {
+
+                        }
                     }
                 });
 
@@ -157,11 +161,11 @@ const TruckMap = ({
         }
     }, [dispatch, isConnectedToSignalR, dataFilter]);
 
-    useEffect(() => {
-        if (editTruckSuccess) {
-            fetchData();
-        }
-    }, [editTruckSuccess]);
+    // useEffect(() => {
+    //     if (editTruckSuccess) {
+    //         fetchData();
+    //     }
+    // }, [editTruckSuccess]);
 
     useEffect(() => {
         if (isModifiedScheduleTrucks) {
@@ -300,6 +304,7 @@ const TruckMap = ({
                                 label={truck.truckCode}
                                 onClick={() => {}}
                                 sx={{
+                                    minWidth: '81px',
                                     borderRadius: 0,
                                     fontSize: 18,
                                     fontWeight: 600,

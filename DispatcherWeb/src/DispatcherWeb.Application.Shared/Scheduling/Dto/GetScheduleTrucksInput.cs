@@ -7,6 +7,6 @@ namespace DispatcherWeb.Scheduling.Dto
         public int OfficeId { get; set; }
         public DateTime Date { get; set; }
         public Shift? Shift { get; set; }
-        public int? TruckId { get; set; }
+        public int?[] TruckIds { get; set; }
     }
 }

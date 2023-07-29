@@ -36,6 +36,7 @@ using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.Trucks.Exporting;
 using DispatcherWeb.VehicleCategories;
 using DispatcherWeb.VehicleMaintenance;
+using Geotab.Checkmate.ObjectModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -529,15 +530,22 @@ namespace DispatcherWeb.Trucks
         [AbpAuthorize(AppPermissions.Pages_Trucks)]
         public async Task<EditTruckResult> EditTruck(TruckEditDto model)
         {
+            var syncRequest = new SyncRequest();
             EditTruckResult result = new EditTruckResult();
 
-            Truck entity = model.Id.HasValue ? await _truckRepository.GetAsync(model.Id.Value) : new Truck();
+            Truck entity = model.Id.HasValue 
+                ? await _truckRepository.GetAsync(model.Id.Value) 
+                : new Truck();
 
-            var newVehicleCategory = await _vehicleCategoryRepository.GetAll().Where(x => x.Id == model.VehicleCategoryId).FirstOrDefaultAsync();
+            var newVehicleCategory = await _vehicleCategoryRepository.GetAll()
+                .Where(x => x.Id == model.VehicleCategoryId)
+                .FirstOrDefaultAsync();
+
             if (newVehicleCategory == null)
             {
                 throw new UserFriendlyException("Category is required");
             }
+
             var oldVehicleCategory = entity.VehicleCategoryId == model.VehicleCategoryId
                 ? newVehicleCategory
                 : entity.VehicleCategoryId != 0
@@ -602,7 +610,11 @@ namespace DispatcherWeb.Trucks
             if (model.Id.HasValue && newVehicleCategory.AssetType == AssetType.Trailer && model.IsActive != true)
             {
                 var tractors = await _truckRepository.GetAll().Where(x => x.CurrentTrailerId == model.Id).ToListAsync();
-                tractors.ForEach(x => x.CurrentTrailerId = null);
+                tractors.ForEach(x =>
+                {
+                    x.CurrentTrailerId = null;
+                    syncRequest.AddChange(EntityEnum.Truck, x.ToChangedEntity());
+                });
             }
             await ThrowUserFriendlyExceptionIfTruckWasTrailerAndCategoryChanged();
 
@@ -673,12 +685,12 @@ namespace DispatcherWeb.Trucks
             }
 
             result.Id = await _truckRepository.InsertOrUpdateAndGetIdAsync(entity);
+            syncRequest.AddChange(EntityEnum.Truck, entity.ToChangedEntity());
 
             await _crossTenantOrderSender.SyncMaterialCompanyTrucksIfNeeded(entity.Id);
 
-            await _syncRequestSender.SendSyncRequest(new SyncRequest()
-                .AddChange(EntityEnum.Truck, entity.ToChangedEntity())
-                .SetIgnoreForCurrentUser(true));
+            await _syncRequestSender.SendSyncRequest(syncRequest);
+                //.SetIgnoreForCurrentUser(true));
 
             return result;
 
@@ -741,25 +753,30 @@ namespace DispatcherWeb.Trucks
                 {
                     throw new ArgumentException("The truck must be able to pull a trailer to set a CurrentTrailerId");
                 }
+
                 if (entity.CanPullTrailer && model.CurrentTrailerId != null)
                 {
                     var trailer = await _truckRepository.GetAll()
                         .Where(t => t.Id == model.CurrentTrailerId)
-                        .Select(t => new 
-                        { 
-                            t.VehicleCategory.AssetType, 
+                        .Select(t => new
+                        {
+                            t.VehicleCategory.AssetType,
                             t.IsActive,
-                            t.IsOutOfService
+                            t.IsOutOfService,
+                            Entity = t
                         })
                         .FirstOrDefaultAsync();
+
                     if (trailer.AssetType != AssetType.Trailer)
                     {
                         throw new UserFriendlyException("The current trailer must be a trailer!");
                     }
+
                     if (!trailer.IsActive || trailer.IsOutOfService)
                     {
                         throw new UserFriendlyException("The current trailer must be active!");
                     }
+
                     var tractorWithCurrentTrailer = await _truckRepository.GetAll()
                         .WhereIf(model.Id != null, t => t.Id != model.Id)
                         .Where(t => t.CurrentTrailerId == model.CurrentTrailerId)
@@ -767,9 +784,26 @@ namespace DispatcherWeb.Trucks
                     if (tractorWithCurrentTrailer != null)
                     {
                         tractorWithCurrentTrailer.CurrentTrailerId = null;
+                        syncRequest.AddChange(EntityEnum.Truck, tractorWithCurrentTrailer.ToChangedEntity());
+                    }
+
+                    // check if truck's current trailer has been set/changed
+                    // if yes, then send sync requests to update client
+                    if (entity.CurrentTrailerId != model.CurrentTrailerId)
+                    {
+                        if (entity.CurrentTrailerId != null)
+                        {
+                            var oldTrailerEntity = await _truckRepository.GetAll()
+                                .WhereIf(model.Id != null, t => t.Id == entity.CurrentTrailerId)
+                                .FirstOrDefaultAsync();
+                            syncRequest.AddChange(EntityEnum.Truck, oldTrailerEntity.ToChangedEntity());
+                        }
+
+                        syncRequest.AddChange(EntityEnum.Truck, trailer.Entity.ToChangedEntity());
                     }
                 }
 
+                // set current trailer changes
                 entity.CurrentTrailerId = model.CurrentTrailerId;
             }
 

@@ -18,7 +18,6 @@ import {
 import { 
     getPageConfig,
     getScheduleTrucks, 
-    getScheduleTruckById,
     getScheduleOrders 
 } from './service';
 
@@ -42,7 +41,7 @@ function* fetchScheduleTrucks({ payload: filter }) {
 
 function* fetchScheduleTruckBySyncRequest({ payload: filter }) {
     try {
-        const response = yield call(getScheduleTruckById, filter);
+        const response = yield call(getScheduleTrucks, filter);
         yield put(getScheduleTruckBySyncRequestSuccess(response));
     } catch (error) {
         yield put(getScheduleTruckBySyncRequestFailure(error));

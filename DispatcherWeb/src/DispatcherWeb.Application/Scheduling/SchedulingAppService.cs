@@ -152,38 +152,20 @@ namespace DispatcherWeb.Scheduling
             return config;
         }
 
-        public async Task<ScheduleTruckDto> GetScheduleTruckById(GetScheduleTrucksInput input)
-        {
-            if (!input.TruckId.HasValue || (input.TruckId.HasValue && input.TruckId.Value == 0)) 
-                return null;
-
-            var showTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule);
-            var trucksLite = await _truckRepository.GetAll()
-                .Where(q => q.Id == input.TruckId.Value)
-                .WhereIf(!showTrailersOnSchedule, t => t.VehicleCategory.IsPowered)
-                .GetScheduleTrucks(input, 
-                    await SettingManager.UseShifts(),
-                    await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature));
-
-            if (trucksLite != null)
-            {
-                var truck = (await trucksLite.PopulateScheduleTruckFullFields(input,
-                    _driverAssignmentRepository.GetAll()))
-                    .FirstOrDefault();
-                return truck;
-            }
-
-            return null;
-        }
-
         //truck tiles
         public async Task<ListResultDto<ScheduleTruckDto>> GetScheduleTrucks(GetScheduleTrucksInput input)
         {
             var showTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule);
             var trucksLite = await _truckRepository.GetAll()
                 .WhereIf(!showTrailersOnSchedule, t => t.VehicleCategory.IsPowered)
-                .GetScheduleTrucks(input, await SettingManager.UseShifts(),
+                .GetScheduleTrucks(input,
+                    await SettingManager.UseShifts(),
                     await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature));
+
+            if (input.TruckIds != null && input.TruckIds.Any())
+            {
+                trucksLite = trucksLite.Where(t => input.TruckIds.Contains(t.Id)).ToList();
+            }
 
             var trucks = await trucksLite
                 .PopulateScheduleTruckFullFields(input, _driverAssignmentRepository.GetAll());

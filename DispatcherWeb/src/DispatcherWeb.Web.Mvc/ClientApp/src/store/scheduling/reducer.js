@@ -60,27 +60,30 @@ const SchedulingReducer = (state = INIT_STATE, action) => {
             if (state.scheduleTrucks !== null && state.scheduleTrucks.result !== null) {
                 let { items } = state.scheduleTrucks.result;
                 if (items !== null) {
-                    const index = _.findIndex(items, { id: parseInt(payload.id) });
-                    if (index !== -1) {
-                        items[index] = payload;
-                    } else {
-                        items.push(payload);
-                    }
+                    const newItems = payload.items;
+                    _.forEach(newItems, (newItem) => {
+                        const index = _.findIndex(items, { id: parseInt(newItem.id) });
+                        if (index !== -1) {
+                            items[index] = newItem;
+                        } else {
+                            items.push(newItem);
+                        }
 
-                    if (items.length > 1) {
-                        // order by isExternal in ascending order (true first)
-                        // then by isPowered in descending order (false first)
-                        // then by truckCode in ascending order
-                        items = _.orderBy(items, [
-                            'isExternal', 
-                            'vehicleCategory.isPowered',
-                            'truckCode'
-                        ], [
-                            'asc',
-                            'desc',
-                            'asc'
-                        ]);
-                    }
+                        if (items.length > 1) {
+                            // order by isExternal in ascending order (true first)
+                            // then by isPowered in descending order (false first)
+                            // then by truckCode in ascending order
+                            items = _.orderBy(items, [
+                                'isExternal', 
+                                'vehicleCategory.isPowered',
+                                'truckCode'
+                            ], [
+                                'asc',
+                                'desc',
+                                'asc'
+                            ]);
+                        }
+                    });
                 } else {
                     items = [payload];
                 }
