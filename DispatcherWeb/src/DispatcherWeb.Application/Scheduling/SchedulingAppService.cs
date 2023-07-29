@@ -158,7 +158,9 @@ namespace DispatcherWeb.Scheduling
             var showTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettings.DispatchingAndMessaging.ShowTrailersOnSchedule);
             var trucksLite = await _truckRepository.GetAll()
                 .WhereIf(!showTrailersOnSchedule, t => t.VehicleCategory.IsPowered)
-                .GetScheduleTrucks(input, await SettingManager.UseShifts(),
+                .WhereIf(input.TruckIds?.Any() == true, x => input.TruckIds.Contains(x.Id))
+                .GetScheduleTrucks(input,
+                    await SettingManager.UseShifts(),
                     await FeatureChecker.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature));
 
             var trucks = await trucksLite

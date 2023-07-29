@@ -61,4 +61,5 @@ export const EDIT_TRUCK = '/Truck/EditTruck';
 //Scheduling
 export const GET_PAGE_CONFIG = '/Scheduling/GetPageConfig';
 export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';
+export const GET_SCHEDULE_TRUCK_BY_ID = '/Scheduling/GetScheduleTruckById';
 export const GET_SCHEDULE_ORDERS = '/Scheduling/GetScheduleOrders';

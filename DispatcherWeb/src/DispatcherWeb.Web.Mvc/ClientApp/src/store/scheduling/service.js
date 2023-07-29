@@ -5,7 +5,15 @@ import * as url from '../../helpers/api_url_helper';
 export const getPageConfig = () => get(url.GET_PAGE_CONFIG);
 
 // get schedule trucks
-export const getScheduleTrucks = filter => get(`${url.GET_SCHEDULE_TRUCKS}?officeId=${filter.officeId}&date=${filter.date}`);
+export const getScheduleTrucks = filter => {
+    let queryString = `officeId=${filter.officeId}&date=${encodeURIComponent(filter.date)}`;
+
+    if (filter.truckIds) {
+        queryString += `&truckIds=${filter.truckIds.join('&truckIds=')}`;
+    }
+
+    return get(`${url.GET_SCHEDULE_TRUCKS}?${queryString}`);
+};
 
 // get schedule orders
 export const getScheduleOrders = filter => get(`${url.GET_SCHEDULE_ORDERS}?officeId=${filter.officeId}&date=${filter.date}&hideCompletedOrders=${filter.hideCompletedOrders}&hideProgressBar=${filter.hideProgressBar}&sorting=${filter.sorting}`);
