@@ -1191,7 +1191,7 @@
                     if (filter.shift) {
                         $('#ShiftFilter').val(filter.shift).trigger("change");
                     }
-                    if (filter.officeId) {
+                    if (filter.officeId !== undefined) { //allow null
                         abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), filter.officeId, filter.officeName);
                         $('#OfficeIdFilter').val(filter.officeId).trigger("change");
                     }
