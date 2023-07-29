@@ -99,7 +99,14 @@
                     //refreshLogo(abp.appPath + 'Common/Images/app-logo-dump-truck-130x35.gif');
                     abp.notify.info(app.localize('ClearedSuccessfully'));
                     officeLogoUploadForm.find('button[type=reset]').hide();
+                    updateSubmitButtonState(officeLogoUploadForm.find('input[name=ApplicationLogoImage]'));
                 });
+            });
+
+            officeLogoUploadForm.find('input[name=ApplicationLogoImage]').on("change", function () {
+                var filename = $(this).val().split('\\').pop();
+                officeLogoUploadForm.find("#uploadApplicationLogoFile").val(filename);
+                updateSubmitButtonState(this);
             });
 
             //Office/ReportsLogo
@@ -153,8 +160,25 @@
                 _officeService.clearReportsLogo(_officeId).done(function () {
                     abp.notify.info(app.localize('ClearedSuccessfully'));
                     officeReportsLogoUploadForm.find('button[type=reset]').hide();
+                    updateSubmitButtonState(officeReportsLogoUploadForm.find('input[name=ReportsLogoImage]'));
                 });
             });
+
+            officeReportsLogoUploadForm.find('input[name=ReportsLogoImage]').on("change", function () {
+                var filename = $(this).val().split('\\').pop();
+                officeReportsLogoUploadForm.find("#uploadReportsLogoFile").val(filename);
+                updateSubmitButtonState(this);
+            });
+
+            function updateSubmitButtonState(inputFile) {
+                var $form = $(inputFile).closest('form');
+                if ($(inputFile).val()) {
+                    $form.find('button:submit').removeAttr('disabled');
+                }
+                else {
+                    $form.find('button:submit').attr('disabled', true);
+                }
+            }
 
             //function refreshLogo(url) {
             //    $('#AppLogo').attr('src', url);
