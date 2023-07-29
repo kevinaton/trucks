@@ -3,18 +3,17 @@
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel("Vehicle Usage Import"))
 
 <div class="modal-body">
-    <form role="form" novalidate class="form-validation" id="ImportForm" asp-action="UploadFile">
+    <form role="form" novalidate class="form-validation m-form" id="ImportForm" asp-action="UploadFile">
         <input type="hidden" id="ImportType" value="@ViewBag.ImportType" />
-        <div class="d-flex">
-            <div class="form-group fileUpload">
-                <div class="col-12 btn btn-primary browse_btn">
-                    <span>@L("Browse")</span>
-                    <input id="ImportFile" type="file" accept=".csv" class="upload">
-                </div>
-                <div class="col-xs-12 mt-1">
-                    <span class="m-form__help">This should be a CSV file.</span>
-                </div>
+        <div class="form-group fileUpload">
+            <div class="btn btn-primary browse_btn">
+                <span>@L("Browse")</span>
+                <input id="ImportFile" type="file" accept=".csv" class="upload">
             </div>
+            <input class="form-control file-upload" placeholder="No File Selected." disabled="disabled">
+        </div>
+        <div class="col-xs-12 mt-1">
+            <span class="m-form__help">This should be a CSV file.</span>
         </div>
     </form>
 </div>
