@@ -4,7 +4,9 @@ using Abp.MultiTenancy;
 using Abp.Timing;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Editions;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.MultiTenancy.Payments;
+using DispatcherWeb.Offices;
 
 namespace DispatcherWeb.MultiTenancy
 {
@@ -13,10 +15,8 @@ namespace DispatcherWeb.MultiTenancy
     /// A tenant is a isolated customer for the application
     /// which has it's own users, roles and other application entities.
     /// </summary>
-    public class Tenant : AbpTenant<User>
+    public class Tenant : AbpTenant<User>, ILogoStorageObject
     {
-        public const int MaxLogoMimeTypeLength = 64;
-
         public new const string TenancyNameRegex = "^[a-zA-Z0-9][a-zA-Z0-9_-]{1,}$";
         public const string CompanyNameRegex = "^[a-zA-Z0-9][a-zA-Z0-9_ -]{1,}$";
 
@@ -30,14 +30,13 @@ namespace DispatcherWeb.MultiTenancy
 
         public virtual Guid? LogoId { get; set; }
 
-        public virtual Guid? ReportsLogoId { get; set; }
-
-        public virtual string ReportsLogoFileType { get; set; }
-
-
-
-        [MaxLength(MaxLogoMimeTypeLength)]
+        [MaxLength(EntityStringFieldLengths.Tenant.MaxLogoMimeTypeLength)]
         public virtual string LogoFileType { get; set; }
+
+        public Guid? ReportsLogoId { get; set; }
+        
+        [MaxLength(EntityStringFieldLengths.Tenant.MaxLogoMimeTypeLength)]
+        public string ReportsLogoFileType { get; set; }
 
         public SubscriptionPaymentType SubscriptionPaymentType { get; set; }
 

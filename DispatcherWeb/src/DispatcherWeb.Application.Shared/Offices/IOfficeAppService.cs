@@ -13,7 +13,7 @@ namespace DispatcherWeb.Offices
         Task<PagedResultDto<OfficeDto>> GetOffices(GetOfficesInput input);
         Task<PagedResultDto<SelectListDto>> GetOfficesSelectList(GetSelectListInput input);
         Task<OfficeEditDto> GetOfficeForEdit(NullableIdDto input);
-        Task EditOffice(OfficeEditDto model);
+        Task<OfficeEditDto> EditOffice(OfficeEditDto model);
         Task<bool> CanDeleteOffice(EntityDto input);
         Task DeleteOffice(EntityDto input);
         Task<int> GetOfficesNumber();

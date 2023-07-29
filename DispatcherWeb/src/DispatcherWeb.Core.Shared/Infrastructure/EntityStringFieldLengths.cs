@@ -228,5 +228,10 @@
             public const int TypeOfLicense = 50;
             public const int EmployeeId = 10;
         }
+
+        public static class Tenant
+        {
+            public const int MaxLogoMimeTypeLength = 64;
+        }
     }
 }
