@@ -9,8 +9,11 @@
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
+            _modal = _modalManager.getModal();
 
             $('#ChangeProfilePictureModalForm input[name=ProfilePicture]').change(function () {
+                var filename = $(this).val().split('\\').pop();
+                _modal.find("#FileNamePlaceholder").val(filename);
                 $('#ChangeProfilePictureModalForm').submit();
             });
 

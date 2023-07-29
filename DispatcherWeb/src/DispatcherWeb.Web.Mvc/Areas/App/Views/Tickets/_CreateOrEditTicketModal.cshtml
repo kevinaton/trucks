@@ -172,9 +172,13 @@
     </div>
     <div class="form-group" id="AddTicketPhotoBlock" style="display: none">
         <div id="SelectTicketPhotoBlock">
-            <form role="form" novalidate class="form-validation" method="POST" action="">
+            <form role="form" novalidate class="form-validation m-form" method="POST" action="">
                 <div class="form-group fileUpload">
-                    <input type="file" accept="image/jpeg,image/gif,image/png,application/pdf" capture class="upload" id="TicketPhoto" name="TicketPhoto">
+                    <div class="btn btn-primary browse_btn">
+                        <span>@L("Browse")</span>
+                        <input type="file" accept="image/jpeg,image/gif,image/png,application/pdf" capture class="upload" id="TicketPhoto" name="TicketPhoto">
+                    </div>
+                    <input id="FileNamePlaceholder" class="form-control file-upload" placeholder="No File Selected." disabled="disabled">
                 </div>
                 <input type="submit" style="display: none" />
                 <button type="button" id="AddTicketPhotoButton" class="btn btn-primary">Add Ticket Photo</button>
