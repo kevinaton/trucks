@@ -31,12 +31,12 @@ using DispatcherWeb.Notifications;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.SyncRequests;
+using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.TimeOffs;
 using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.Trucks.Exporting;
 using DispatcherWeb.VehicleCategories;
 using DispatcherWeb.VehicleMaintenance;
-using Geotab.Checkmate.ObjectModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -763,7 +763,6 @@ namespace DispatcherWeb.Trucks
                             t.VehicleCategory.AssetType,
                             t.IsActive,
                             t.IsOutOfService,
-                            Entity = t
                         })
                         .FirstOrDefaultAsync();
 
@@ -793,13 +792,10 @@ namespace DispatcherWeb.Trucks
                     {
                         if (entity.CurrentTrailerId != null)
                         {
-                            var oldTrailerEntity = await _truckRepository.GetAll()
-                                .WhereIf(model.Id != null, t => t.Id == entity.CurrentTrailerId)
-                                .FirstOrDefaultAsync();
-                            syncRequest.AddChange(EntityEnum.Truck, oldTrailerEntity.ToChangedEntity());
+                            syncRequest.AddChange(EntityEnum.Truck, GetChangedTruckById(entity.CurrentTrailerId.Value));
                         }
 
-                        syncRequest.AddChange(EntityEnum.Truck, trailer.Entity.ToChangedEntity());
+                        syncRequest.AddChange(EntityEnum.Truck, GetChangedTruckById(model.CurrentTrailerId.Value));
                     }
                 }
 
@@ -846,6 +842,18 @@ namespace DispatcherWeb.Trucks
                     }
                 }
             }
+        }
+
+        private ChangedTruck GetChangedTruckById(int id)
+        {
+            //as long as ChangedTruck only has a single id field, we can save the extra call to the SQL server and construct the new object here.
+            return new ChangedTruck
+            {
+                Id = id,
+            };
+            //update this to reuse ToChangedEntity if the logic becomes more complex.
+            //var truck = await _truckRepository.GetAll().FirstOrDefaultAsync(t => t.Id == id);
+            //return truck.ToChangedEntity();
         }
 
         private async Task SetDriverIdNullInDriverAssignments(int truckId, int? driverId)
