@@ -812,4 +812,10 @@ namespace DispatcherWeb
         Large = 3,
         Original = 4,
     }
+
+    public enum LogoType
+    {
+        ApplicationLogo,
+        ReportsLogo,
+    }
 }

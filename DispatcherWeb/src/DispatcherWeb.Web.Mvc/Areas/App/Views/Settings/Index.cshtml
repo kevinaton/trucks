@@ -276,7 +276,7 @@
                         </form>
                     </div>
                     <div class="tab-pane" id="SettingsAppearanceTab">
-                        <form id="SettingsLogoUploadForm" method="POST" class="m-form mb-5" action="@Url.Action("UploadLogo", "TenantCustomization", new {area = string.Empty, TenantCustomizationController.LogoType.ApplicationLogo})">
+                        <form id="SettingsLogoUploadForm" method="POST" class="m-form mb-5" action="@Url.Action("UploadTenantLogo", "TenantCustomization", new { area = string.Empty, LogoType.ApplicationLogo })">
                             <h5>@L("ApplicationLogo")</h5>
                             <div class="form-group fileUpload margin-top-20">
                                 <div class="btn btn-primary browse_btn">
@@ -291,7 +291,7 @@
                             <button class="btn btn-primary" type="submit"><i class="fa fa-upload"></i>@L("Upload")</button>
                             <button class="btn btn-default" type="reset"><i class="fa fa-times"></i>@L("Clear")</button>
                         </form>
-                        <form id="SettingsReportsLogoUploadForm" method="POST" class="m-form mb-5" action="@Url.Action("UploadLogo", "TenantCustomization", new {area = string.Empty, LogoType = TenantCustomizationController.LogoType.ReportsLogo})">
+                        <form id="SettingsReportsLogoUploadForm" method="POST" class="m-form mb-5" action="@Url.Action("UploadTenantLogo", "TenantCustomization", new { area = string.Empty, LogoType = LogoType.ReportsLogo })">
                             <h5>@L("ReportsLogo")</h5>
                             <div class="form-group fileUpload margin-top-20">
                                 <div class="btn btn-primary browse_btn">

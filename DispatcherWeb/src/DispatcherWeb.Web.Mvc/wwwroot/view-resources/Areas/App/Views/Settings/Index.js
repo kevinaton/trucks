@@ -327,14 +327,14 @@
                 var file = files[0];
 
                 //File type check
-                var type = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
-                if ('|jpg|jpeg|png|gif|'.indexOf(type) === -1) {
+                var type = file.type.slice(file.type.lastIndexOf('/') + 1);
+                if (!app.allowedLogoTypes.includes(type)) {
                     abp.message.warn(app.localize('File_Invalid_Type_Error'));
                     return false;
                 }
 
                 //File size check
-                if (file.size > 30720) //30KB
+                if (file.size > app.maxLogoSize)
                 {
                     abp.message.warn(app.localize('File_SizeLimit_Error'));
                     return false;
@@ -373,14 +373,14 @@
                 var file = files[0];
 
                 //File type check
-                var type = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
-                if ('|jpg|jpeg|png|gif|'.indexOf(type) === -1) {
+                var type = file.type.slice(file.type.lastIndexOf('/') + 1);
+                if (!app.allowedReportLogoTypes.includes(type)) {
                     abp.message.warn(app.localize('File_Invalid_Type_Error'));
                     return false;
                 }
 
                 //File size check
-                if (file.size > 300 * 1014) //300KB
+                if (file.size > app.maxReportLogoSize)
                 {
                     abp.message.warn(app.localize('File_SizeLimit_Error'));
                     return false;

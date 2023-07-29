@@ -11,6 +11,11 @@
         fuel: '#6aa0ca',
     };
 
+    app.maxLogoSize = 30720; //30KB
+    app.maxReportLogoSize = 307200; //300KB
+    app.allowedLogoTypes = ['jpg', 'jpeg', 'png', 'gif'];
+    app.allowedReportLogoTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
     abp.helperConfiguration = abp.helperConfiguration || {};
     abp.helperConfiguration.getCurrentLanguageLocale = function () {
         return abp.localization.currentLanguage.name

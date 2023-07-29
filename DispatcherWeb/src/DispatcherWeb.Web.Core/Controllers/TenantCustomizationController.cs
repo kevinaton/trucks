@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Abp.AspNetCore.Mvc.Authorization;
 using Abp.AspNetZeroCore.Net;
+using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.IO.Extensions;
 using Abp.Runtime.Session;
@@ -12,10 +13,12 @@ using Abp.UI;
 using Abp.Web.Models;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.MultiTenancy;
+using DispatcherWeb.Offices;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Web.Controllers
 {
@@ -24,24 +27,35 @@ namespace DispatcherWeb.Web.Controllers
     {
         private readonly TenantManager _tenantManager;
         private readonly IBinaryObjectManager _binaryObjectManager;
+        private readonly IRepository<Office> _officeRepository;
 
         public TenantCustomizationController(
             TenantManager tenantManager,
-            IBinaryObjectManager binaryObjectManager)
+            IBinaryObjectManager binaryObjectManager,
+            IRepository<Office> officeRepository)
         {
             _tenantManager = tenantManager;
             _binaryObjectManager = binaryObjectManager;
-        }
-
-        public enum LogoType
-        {
-            ApplicationLogo,
-            ReportsLogo,
+            _officeRepository = officeRepository;
         }
 
         [HttpPost]
         [AbpMvcAuthorize(AppPermissions.Pages_Administration_Tenant_Settings)]
-        public async Task<JsonResult> UploadLogo(LogoType logoType)
+        public async Task<JsonResult> UploadTenantLogo(LogoType logoType)
+        {
+            var tenant = await _tenantManager.GetByIdAsync(AbpSession.GetTenantId());
+            return await UploadLogo(tenant, logoType);
+        }
+
+        [HttpPost]
+        [AbpMvcAuthorize(AppPermissions.Pages_Offices)]
+        public async Task<JsonResult> UploadOfficeLogo(int id, LogoType logoType)
+        {
+            var office = await _officeRepository.GetAll().FirstAsync(x => x.Id == id);
+            return await UploadLogo(office, logoType);
+        }
+
+        private async Task<JsonResult> UploadLogo(ILogoStorageObject logoStorageObject, LogoType logoType)
         {
             try
             {
@@ -53,7 +67,7 @@ namespace DispatcherWeb.Web.Controllers
                     throw new UserFriendlyException(L("File_Empty_Error"));
                 }
 
-                if (logoFile.Length > LogoMaxSize())
+                if (logoFile.Length > GetLogoMaxSize(logoType))
                 {
                     throw new UserFriendlyException(L("File_SizeLimit_Error"));
                 }
@@ -73,40 +87,39 @@ namespace DispatcherWeb.Web.Controllers
                 var logoObject = new BinaryObject(AbpSession.GetTenantId(), fileBytes, $"Logo {DateTime.UtcNow}");
                 await _binaryObjectManager.SaveAsync(logoObject);
 
-                var tenant = await _tenantManager.GetByIdAsync(AbpSession.GetTenantId());
                 switch (logoType)
                 {
                     case LogoType.ApplicationLogo:
-                        tenant.LogoId = logoObject.Id;
-                        tenant.LogoFileType = logoFile.ContentType;
+                        logoStorageObject.LogoId = logoObject.Id;
+                        logoStorageObject.LogoFileType = logoFile.ContentType;
                         break;
                     case LogoType.ReportsLogo:
-                        tenant.ReportsLogoId = logoObject.Id;
-                        tenant.ReportsLogoFileType = logoFile.ContentType;
+                        logoStorageObject.ReportsLogoId = logoObject.Id;
+                        logoStorageObject.ReportsLogoFileType = logoFile.ContentType;
                         break;
                 }
 
-                return Json(new AjaxResponse(new { id = logoObject.Id, TenantId = tenant.Id, fileType = tenant.LogoFileType }));
+                return Json(new AjaxResponse(new { id = logoObject.Id }));
             }
             catch (UserFriendlyException ex)
             {
                 return Json(new AjaxResponse(new ErrorInfo(ex.Message)));
             }
+        }
 
-            // Local functions
-            int LogoMaxSize()
+        private static int GetLogoMaxSize(LogoType logoType)
+        {
+            switch (logoType)
             {
-                switch (logoType)
-                {
-                    case LogoType.ApplicationLogo:
-                        return 30270; // 30KB
-                    case LogoType.ReportsLogo:
-                        return 300 * 1014; // 300KB
-                    default:
-                        throw new ApplicationException("Not supported LogoType!");
-                }
+                case LogoType.ApplicationLogo:
+                    return 30270; // 30KB
+                case LogoType.ReportsLogo:
+                    return 300 * 1024; // 300KB
+                default:
+                    throw new ApplicationException("Not supported LogoType!");
             }
         }
+
 
         [HttpPost]
         [AbpMvcAuthorize(AppPermissions.Pages_Administration_Tenant_Settings)]
