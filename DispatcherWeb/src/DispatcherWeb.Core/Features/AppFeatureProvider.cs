@@ -86,12 +86,6 @@ namespace DispatcherWeb.Features
             );
 
             context.Create(
-                AppFeatures.AllowSharedOrdersFeature,
-                defaultValue: "true",
-                displayName: L("AllowSharedOrdersFeature"),
-                inputType: new CheckboxInputType()
-            );
-            context.Create(
                 AppFeatures.AllowPaymentProcessingFeature,
                 defaultValue: "false",
                 displayName: L("AllowPaymentProcessingFeature"),
@@ -124,6 +118,20 @@ namespace DispatcherWeb.Features
                 AppFeatures.AllowProjects,
                 defaultValue: "false",
                 displayName: L("AllowProjects"),
+                inputType: new CheckboxInputType()
+            );
+
+            context.Create(
+                AppFeatures.TruckSharing,
+                defaultValue: "false",
+                displayName: L("TruckSharing"),
+                inputType: new CheckboxInputType()
+            );
+
+            context.Create(
+                AppFeatures.JobSharing,
+                defaultValue: "false",
+                displayName: L("JobSharing"),
                 inputType: new CheckboxInputType()
             );
 

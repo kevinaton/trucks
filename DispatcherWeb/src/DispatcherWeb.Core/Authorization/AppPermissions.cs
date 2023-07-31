@@ -87,6 +87,8 @@
         public const string Pages_Orders_View = "Pages.Orders.View"; //read only
         public const string Pages_Orders_Edit = "Pages.Orders.Edit"; //create, edit, delete
         public const string Pages_Schedule = "Pages.Schedule"; //full
+        public const string Pages_Schedule_ShareTrucks = "Pages.Schedule.ShareTrucks";
+        public const string Pages_Schedule_ShareJobs = "Pages.Schedule.ShareJobs";
         public const string Pages_PrintOrders = "Pages.PrintOrders";
         public const string Pages_SendOrdersToDrivers = "Pages.SendOrdersToDrivers";
         public const string Pages_DriverAssignment = "Pages.DriverAssignment";

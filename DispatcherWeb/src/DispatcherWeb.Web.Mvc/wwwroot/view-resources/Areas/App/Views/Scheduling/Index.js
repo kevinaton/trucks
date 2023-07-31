@@ -14,10 +14,11 @@
             editTickets: abp.auth.hasPermission('Pages.Tickets.Edit'),
             editQuotes: abp.auth.hasPermission('Pages.Quotes.Edit'),
             driverMessages: abp.auth.hasPermission('Pages.DriverMessages'),
-            trucks: abp.auth.hasPermission('Pages.Trucks')
+            trucks: abp.auth.hasPermission('Pages.Trucks'),
+            shareTrucks: abp.auth.hasPermission('Pages.Schedule.ShareTrucks'),
+            shareJobs: abp.auth.hasPermission('Pages.Schedule.ShareJobs')
         };
         var _features = {
-            allowSharedOrders: abp.features.isEnabled('App.AllowSharedOrdersFeature'),
             allowMultiOffice: abp.features.isEnabled('App.AllowMultiOfficeFeature'),
             allowSendingOrdersToDifferentTenant: abp.features.isEnabled('App.AllowSendingOrdersToDifferentTenant'),
             leaseHaulers: abp.features.isEnabled('App.AllowLeaseHaulersFeature'),
@@ -942,7 +943,7 @@
         };
         menuFunctions.isVisible.share = function (rowData) {
             var today = new Date(moment().format("YYYY-MM-DD") + 'T00:00:00Z');
-            return _features.allowSharedOrders && _features.allowMultiOffice && hasOrderEditPermissions() && !rowData.isClosed && isAllowedToEditOrder(rowData) && (new Date(rowData.date)).getTime() >= today.getTime();
+            return _permissions.shareJobs && _features.allowMultiOffice && hasOrderEditPermissions() && !rowData.isClosed && isAllowedToEditOrder(rowData) && (new Date(rowData.date)).getTime() >= today.getTime();
         };
         menuFunctions.fn.share = function (element) {
             var orderLineId = _dtHelper.getRowData(element).id;
@@ -3053,6 +3054,7 @@
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && _permissions.shareTrucks
                             && (_features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService
                                 || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
                     }
@@ -3062,6 +3064,7 @@
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && _permissions.shareTrucks
                             && _features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService;
                     },
                     callback: function () {
@@ -3079,6 +3082,7 @@
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && _permissions.shareTrucks
                             && truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId;
                     },
                     disabled: function () {

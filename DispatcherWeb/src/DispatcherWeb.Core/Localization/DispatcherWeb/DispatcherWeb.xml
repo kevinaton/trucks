@@ -111,7 +111,6 @@
     <text name="AllowProjects">Allow Projects</text>
     <text name="AllowSchedulingTrucksWithoutDrivers">Allow scheduling trucks without drivers</text>
     <text name="AllowSendingOrdersToDifferentTenant">Allow sending orders to a different tenant</text>
-    <text name="AllowSharedOrdersFeature">Allow Shared Orders</text>
     <text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
     <text name="AllowSubcontractorsToDriveCompanyOwnedTrucks">Allow sub-contractors to drive company owned trucks</text>
     <text name="AllowTenantsToRegisterThemselves_Hint">If you disable this, tenants will only be added by admin using tenant management page.</text>
@@ -816,6 +815,7 @@ admin -> for your tenant's admin
     <text name="JobNbr">Job Nbr</text>
     <text name="JobNumber">Job Number</text>
     <text name="Jobs">Jobs</text>
+    <text name="JobSharing">Job Sharing</text>
     <text name="KeepTrucks">Keep truck assignments</text>
     <text name="Key">Key</text>
     <text name="LaborCost">Labor Cost</text>
@@ -1452,6 +1452,8 @@ admin -> for your tenant's admin
     <text name="Sevice">Sevice</text>
     <text name="ShareButton">Share</text>
     <text name="Shared">Shared</text>
+    <text name="ShareJobs">Share Jobs</text>
+    <text name="ShareTrucks">Share Trucks</text>
     <text name="Shift">Shift</text>
     <text name="ShouldChangePasswordOnNextLogin">Should change password on next login.</text>
     <text name="Show">Show</text>
@@ -1670,6 +1672,7 @@ admin -> for your tenant's admin
     <text name="TruckHasDispatch_YouMustCancelItFirstToRemoveTruck">Truck {0} has an acknowledged or loaded dispatch. You must first complete or cancel the dispatch to remove this truck.</text>
     <text name="TruckMaintenance">Truck Maintenance</text>
     <text name="Trucks">Trucks</text>
+    <text name="TruckSharing">Truck Sharing</text>
     <text name="TrucksHeader">Trucks</text>
     <text name="TrucksHeaderInfo">Manage your trucks</text>
     <text name="TrucksRequestedToday">Trucks requested today</text>
