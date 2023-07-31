@@ -18,6 +18,18 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .HasMany(e => e.Users)
                 .WithOne(e => e.Office)
                 .HasForeignKey(e => e.OfficeId);
+
+            builder
+                .HasMany(e => e.Orders)
+                .WithOne(e => e.Office)
+                .HasForeignKey(e => e.LocationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .HasMany(e => e.SharedOrderLines)
+                .WithOne(e => e.Office)
+                .HasForeignKey(e => e.OfficeId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

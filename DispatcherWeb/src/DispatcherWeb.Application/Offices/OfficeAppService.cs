@@ -25,19 +25,16 @@ namespace DispatcherWeb.Offices
     public class OfficeAppService : DispatcherWebAppServiceBase, IOfficeAppService
     {
         private readonly IRepository<Office> _officeRepository;
-        private readonly IRepository<Order> _orderRepository;
         private readonly ISingleOfficeAppService _singleOfficeService;
         private readonly IBinaryObjectManager _binaryObjectManager;
 
         public OfficeAppService(
             IRepository<Office> officeRepository,
-            IRepository<Order> orderRepository,
             ISingleOfficeAppService singleOfficeService,
             IBinaryObjectManager binaryObjectManager
             )
         {
             _officeRepository = officeRepository;
-            _orderRepository = orderRepository;
             _singleOfficeService = singleOfficeService;
             _binaryObjectManager = binaryObjectManager;
         }
@@ -226,17 +223,17 @@ namespace DispatcherWeb.Offices
                 .Select(x => new
                 {
                     HasTrucks = x.Trucks.Any(),
-                    HasUsers = x.Users.Any()
+                    HasUsers = x.Users.Any(),
+                    HasSharedOrderLines = x.SharedOrderLines.Any(),
+                    HasOrders = x.Orders.Any()
                 })
                 .SingleAsync();
 
-            if (record.HasTrucks || record.HasUsers)
-            {
-                return false;
-            }
-
-            var hasOrders = await _orderRepository.GetAll().Where(x => x.LocationId == input.Id || x.SharedOrders.Any(s => s.OfficeId == input.Id)).AnyAsync();
-            if (hasOrders)
+            if (record.HasTrucks 
+                || record.HasUsers
+                || record.HasSharedOrderLines
+                || record.HasOrders
+                )
             {
                 return false;
             }

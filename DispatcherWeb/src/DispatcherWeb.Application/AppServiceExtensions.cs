@@ -130,7 +130,7 @@ namespace DispatcherWeb
                     AuthorizationCaptureDateTime = o.Payment.AuthorizationCaptureDateTime,
                     AuthorizationCaptureSettlementAmount = o.Payment.AuthorizationCaptureAmount,
                     AuthorizationCaptureTransactionId = o.Payment.AuthorizationCaptureTransactionId,
-                    IsShared = o.Order.SharedOrders.Any(so => so.OfficeId != o.Order.LocationId) || o.Order.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
+                    IsShared = o.Order.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
                     AllTrucksNonDistinct = o.Order.OrderLines.SelectMany(ol => ol.OrderLineTrucks).Select(olt =>
                         new WorkOrderReportDto.TruckDriverDto
                         {
@@ -240,7 +240,7 @@ namespace DispatcherWeb
                     AuthorizationCaptureDateTime = o.Payment.AuthorizationCaptureDateTime,
                     AuthorizationCaptureSettlementAmount = o.Payment.AuthorizationCaptureAmount,
                     AuthorizationCaptureTransactionId = o.Payment.AuthorizationCaptureTransactionId,
-                    IsShared = o.Order.SharedOrders.Any(so => so.OfficeId != o.Order.LocationId) || o.Order.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
+                    IsShared = o.Order.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
                     AllTrucksNonDistinct = o.Order.OrderLines.SelectMany(ol => ol.OrderLineTrucks).Select(olt =>
                         new WorkOrderReportDto.TruckDriverDto
                         {

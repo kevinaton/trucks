@@ -34,7 +34,7 @@
             }).done(function () {
                 abp.notify.info('Shared successfully.');
                 _modalManager.close();
-                abp.event.trigger('app.orderModalShared');
+                abp.event.trigger('app.orderLineModalShared');
             }).always(function () {
                 _modalManager.setBusy(false);
             });

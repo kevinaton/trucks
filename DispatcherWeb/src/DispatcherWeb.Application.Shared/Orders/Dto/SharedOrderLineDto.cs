@@ -1,6 +1,6 @@
 ﻿namespace DispatcherWeb.Orders.Dto
 {
-    public class SharedOrderDto
+    public class SharedOrderLineDto
     {
         public int OfficeId { get; set; }
         public string OfficeName { get; set; }
