@@ -48,11 +48,6 @@ namespace DispatcherWeb.Orders
         [StringLength(EntityStringFieldLengths.Order.SpectrumNumber)]
         public string SpectrumNumber { get; set; }
 
-
-        [Obsolete]
-        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
-        public string JobNumber { get; set; }
-
         public int? ContactId { get; set; }
 
         [Column(TypeName = "money")]

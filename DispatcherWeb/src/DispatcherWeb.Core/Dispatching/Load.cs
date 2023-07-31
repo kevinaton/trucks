@@ -23,9 +23,6 @@ namespace DispatcherWeb.Dispatching
         public DateTime? SourceDateTime { get; set; }
         public DateTime? DestinationDateTime { get; set; }
 
-        [Obsolete]
-        public int? TicketId { get; set; }
-
         public double? SourceLatitude { get; set; }
         public double? SourceLongitude { get; set; }
 
