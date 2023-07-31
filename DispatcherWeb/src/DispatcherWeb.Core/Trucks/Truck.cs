@@ -42,10 +42,6 @@ namespace DispatcherWeb.Trucks
 
         public int? LocationId { get; set; }
 
-        [Obsolete]
-        [Range(1, 5, ErrorMessage = "Category is a required field")]
-        public TruckCategory Category { get; set; }
-
         public int VehicleCategoryId { get; set; }
 
         public virtual VehicleCategory VehicleCategory { get; set; }
@@ -57,9 +53,6 @@ namespace DispatcherWeb.Trucks
         public bool IsOutOfService { get; set; }
 
         public bool IsApportioned { get; set; }
-
-        [Obsolete("Use LeaseHaulerTruck.AlwaysShowOnSchedule instead")]
-        public bool IsEmbedded { get; set; }
 
         public bool CanPullTrailer { get; set; }
 

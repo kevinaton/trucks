@@ -52,10 +52,6 @@ namespace DispatcherWeb.Quotes
         [StringLength(20)]
         public string SpectrumNumber { get; set; }
 
-        [Obsolete]
-        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
-        public string JobNumber { get; set; }
-
         [Column(TypeName = "money")]
         public decimal? BaseFuelCost { get; set; }
 
