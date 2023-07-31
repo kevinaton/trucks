@@ -145,7 +145,9 @@ namespace DispatcherWeb.Scheduling
                 },
                 Settings = new SchedulePageSettings
                 {
-                    ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ValidateUtilization)
+                    ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ValidateUtilization),
+                    AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders),
+                    ShowTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ShowTrailersOnSchedule),
                 }
             };
 

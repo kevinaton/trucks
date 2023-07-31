@@ -11,7 +11,7 @@ import {
 import moment from 'moment';
 import AddEditJob from '../../components/common/modals/addEditJob';
 import SchedulingDataFilter from './scheduling-data-filter';
-import TruckMap from './truck-map';
+import TruckBlock from './truck-block';
 import ScheduleOrders from './schedule-orders';
 import { isEmpty } from 'lodash';
 import { getSchedulePageConfig } from '../../store/actions';
@@ -19,6 +19,7 @@ import { appLocalStorage } from '../../utils';
 
 const Schedule = props => {
     const pageName = 'Schedule';
+    const [isPageNameSet, setPageNameSet] = useState(false);
     const [pageConfig, setPageConfig] = useState(null);
     const [view, setView] = useState('all');
     const [isJob, setJob] = useState(false);
@@ -45,8 +46,11 @@ const Schedule = props => {
     }));
 
     useEffect(() => {
-        props.handleCurrentPageName(pageName);
-    }, [props]);
+        if (!isPageNameSet) {
+            props.handleCurrentPageName(pageName);
+            setPageNameSet(true);
+        }
+    }, [isPageNameSet, props]);
 
     useEffect(() => {
         dispatch(getSchedulePageConfig());
@@ -170,7 +174,7 @@ const Schedule = props => {
                     />
                     
                     {/* List of trucks */}
-                    <TruckMap 
+                    <TruckBlock 
                         pageConfig={pageConfig}
                         dataFilter={dataFilter} 
                         trucks={trucks} 

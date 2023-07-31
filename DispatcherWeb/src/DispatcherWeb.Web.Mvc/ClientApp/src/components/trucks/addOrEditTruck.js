@@ -868,7 +868,9 @@ const AddOrEditTruckForm = ({
     };
 
     // Handler to add a new option
-    const handleAddOption = () => {
+    const handleAddOption = (e) => {
+        e.preventDefault();
+        
         if (newOption.trim() !== '') {
             const newOptionValue = newOption.trim().toLowerCase();
 
@@ -1011,7 +1013,7 @@ const AddOrEditTruckForm = ({
                                             <React.Fragment>
                                                 {params.InputProps.endAdornment}
                                                 <IconButton
-                                                    onClick={handleAddOption}
+                                                    onClick={(e) => handleAddOption(e)}
                                                     disabled={newOption.trim() === ''}
                                                 >
                                                     <AddCircleOutlineIcon />

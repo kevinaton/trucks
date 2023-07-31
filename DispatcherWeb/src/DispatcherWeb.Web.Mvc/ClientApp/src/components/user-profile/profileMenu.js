@@ -161,7 +161,9 @@ export const ProfileMenu = ({ openModal, closeModal, openDialog, closeDialog }) 
         dispatch(onBackToImpersonator());
     };
 
-    const handleLinkedAccounts = () => {
+    const handleLinkedAccounts = (e) => {
+        e.preventDefault();
+        
         handleProfileClose();
         openModal(
             <LinkedAccounts
@@ -332,7 +334,7 @@ export const ProfileMenu = ({ openModal, closeModal, openDialog, closeDialog }) 
                                 <MenuItem
                                     component={Link}
                                     sx={{ py: 1 }}
-                                    onClick={handleLinkedAccounts}>
+                                    onClick={(e) => handleLinkedAccounts(e)}>
                                     <i
                                         className={`fa-regular fa-users-gear icon`}
                                         style={{ marginRight: 6 }}></i>

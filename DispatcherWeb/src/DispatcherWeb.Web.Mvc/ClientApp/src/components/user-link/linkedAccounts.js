@@ -100,7 +100,9 @@ export const LinkedAccounts = ({
         setHoveredRow(null);
     };
 
-    const handleLinkNewAccount = () => {
+    const handleLinkNewAccount = (e) => {
+        e.preventDefault();
+        
         openModal(
             (<LinkNewAccountForm closeModal={closeModal} />),
             400
@@ -164,7 +166,7 @@ export const LinkedAccounts = ({
                 <Typography variant='h6' component='h2'>
                     Linked Accounts
                 </Typography>
-                <Button onClick={handleLinkNewAccount}>
+                <Button onClick={(e) => handleLinkNewAccount(e)}>
                     <i className='fa-regular fa-plus' style={{ marginRight: '6px' }} />
                     <Typography>Link New Account</Typography>
                 </Button>
