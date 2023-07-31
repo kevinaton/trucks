@@ -72,7 +72,11 @@ namespace DispatcherWeb.Authorization
             var orders = pages.CreateChildPermission(AppPermissions.Pages_Orders_View, L("Orders"), multiTenancySides: MultiTenancySides.Tenant);
             orders.CreateChildPermission(AppPermissions.Pages_Orders_Edit, L("EditingOrder"), multiTenancySides: MultiTenancySides.Tenant);
             orders.CreateChildPermission(AppPermissions.Pages_PrintOrders, L("PrintOrders"), multiTenancySides: MultiTenancySides.Tenant);
-            pages.CreateChildPermission(AppPermissions.Pages_Schedule, L("Schedule"), multiTenancySides: MultiTenancySides.Tenant);
+            var schedule = pages.CreateChildPermission(AppPermissions.Pages_Schedule, L("Schedule"), multiTenancySides: MultiTenancySides.Tenant);
+            schedule.CreateChildPermission(AppPermissions.Pages_Schedule_ShareTrucks, L("ShareTrucks"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.TruckSharing));
+            schedule.CreateChildPermission(AppPermissions.Pages_Schedule_ShareJobs, L("ShareJobs"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.JobSharing));
             pages.CreateChildPermission(AppPermissions.Pages_DriverAssignment, L("DriverAssignment"), multiTenancySides: MultiTenancySides.Tenant);
             var leaseHauler = pages.CreateChildPermission(AppPermissions.Pages_LeaseHauler, L("LeaseHauler"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowLeaseHaulersFeature));

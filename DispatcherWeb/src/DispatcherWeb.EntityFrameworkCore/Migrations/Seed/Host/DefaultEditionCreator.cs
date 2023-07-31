@@ -71,7 +71,6 @@ namespace DispatcherWeb.Migrations.Seed.Host
                 CreateFeatureIfNotExists(premiumEditionId, AppFeatures.TenantToHostChatFeature, true);
                 CreateFeatureIfNotExists(premiumEditionId, AppFeatures.AllowMultiOfficeFeature, true);
                 CreateFeatureIfNotExists(premiumEditionId, AppFeatures.AllowPaymentProcessingFeature, false);
-                CreateFeatureIfNotExists(premiumEditionId, AppFeatures.AllowSharedOrdersFeature, false);
                 CreateFeatureIfNotExists(premiumEditionId, AppFeatures.NumberOfTrucksFeature, 200);
                 CreateFeatureIfNotExists(premiumEditionId, AppFeatures.GpsIntegrationFeature, true);
                 CreateFeatureIfNotExists(premiumEditionId, AppFeatures.DispatchingFeature, true);
@@ -89,7 +88,6 @@ namespace DispatcherWeb.Migrations.Seed.Host
                 CreateFeatureIfNotExists(freeEditionId, AppFeatures.TenantToTenantChatFeature, false);
                 CreateFeatureIfNotExists(freeEditionId, AppFeatures.TenantToHostChatFeature, false);
                 CreateFeatureIfNotExists(freeEditionId, AppFeatures.AllowMultiOfficeFeature, false);
-                CreateFeatureIfNotExists(freeEditionId, AppFeatures.AllowSharedOrdersFeature, false);
                 CreateFeatureIfNotExists(freeEditionId, AppFeatures.AllowPaymentProcessingFeature, false);
                 CreateFeatureIfNotExists(freeEditionId, AppFeatures.NumberOfTrucksFeature, 100);
                 CreateFeatureIfNotExists(freeEditionId, AppFeatures.GpsIntegrationFeature, false);

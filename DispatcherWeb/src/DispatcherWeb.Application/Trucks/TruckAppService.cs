@@ -1197,7 +1197,7 @@ namespace DispatcherWeb.Trucks
             };
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Schedule)]
+        [AbpAuthorize(AppPermissions.Pages_Schedule_ShareTrucks)]
         public async Task AddSharedTruck(AddSharedTruckInput input)
         {
             await CheckUseShiftSettingCorrespondsInput(input.Shifts);
@@ -1256,7 +1256,7 @@ namespace DispatcherWeb.Trucks
             }
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Schedule)]
+        [AbpAuthorize(AppPermissions.Pages_Schedule_ShareTrucks)]
         public async Task DeleteSharedTruck(DeleteSharedTruckInput input)
         {
             input.Date = input.Date.Date;

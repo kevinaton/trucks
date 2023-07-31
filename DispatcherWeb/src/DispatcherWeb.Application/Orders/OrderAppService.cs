@@ -1644,8 +1644,7 @@ namespace DispatcherWeb.Orders
                 .SingleAsync();
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
-        [RequiresFeature(AppFeatures.AllowSharedOrdersFeature)]
+        [AbpAuthorize(AppPermissions.Pages_Orders_Edit, AppPermissions.Pages_Schedule_ShareJobs, RequireAllPermissions = true)]
         public async Task SetSharedOrderLines(SetSharedOrderLineInput input)
         {
             await CheckOrderDateIsNotInPast(input.OrderLineId);
