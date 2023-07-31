@@ -2115,7 +2115,7 @@
             reloadTruckTiles();
         });
 
-        abp.event.on('app.orderModalShared', function () {
+        abp.event.on('app.orderLineModalShared', function () {
             reloadMainGrid(null, false);
             reloadTruckTiles();
         });

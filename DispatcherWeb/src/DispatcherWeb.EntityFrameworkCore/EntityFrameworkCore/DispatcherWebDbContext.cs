@@ -123,8 +123,6 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<Service> Services { get; set; }
 
-        public virtual DbSet<SharedOrder> SharedOrders { get; set; }
-
         public virtual DbSet<SharedOrderLine> SharedOrderLines { get; set; }
 
         public virtual DbSet<SharedTruck> SharedTrucks { get; set; }
@@ -387,7 +385,6 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new QuoteServiceConfiguration());
             modelBuilder.ApplyConfiguration(new QuoteServiceVehicleCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new ServiceConfiguration());
-            modelBuilder.ApplyConfiguration(new SharedOrderConfiguration());
             modelBuilder.ApplyConfiguration(new SharedTruckConfiguration());
             modelBuilder.ApplyConfiguration(new TicketConfiguration());
             modelBuilder.ApplyConfiguration(new TimeOffConfiguration());

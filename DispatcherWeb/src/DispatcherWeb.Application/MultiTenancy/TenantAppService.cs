@@ -71,7 +71,6 @@ namespace DispatcherWeb.MultiTenancy
         private readonly IRepository<DriverAssignment> _driverAssignmentRepository;
         private readonly IRepository<BilledOrder> _billedOrderRepository;
         private readonly IRepository<SharedOrderLine> _sharedOrderLineRepository;
-        private readonly IRepository<SharedOrder> _sharedOrderRepository;
 
         public TenantAppService(
             IRepository<Driver> driverRepository,
@@ -106,8 +105,7 @@ namespace DispatcherWeb.MultiTenancy
             IRepository<TimeOff> timeOffRepository,
             IRepository<DriverAssignment> driverAssignmentRepository,
             IRepository<BilledOrder> billedOrderRepository,
-            IRepository<SharedOrderLine> sharedOrderLineRepository,
-            IRepository<SharedOrder> sharedOrderRepository
+            IRepository<SharedOrderLine> sharedOrderLineRepository
         )
         {
             _driverRepository = driverRepository;
@@ -143,7 +141,6 @@ namespace DispatcherWeb.MultiTenancy
             _driverAssignmentRepository = driverAssignmentRepository;
             _billedOrderRepository = billedOrderRepository;
             _sharedOrderLineRepository = sharedOrderLineRepository;
-            _sharedOrderRepository = sharedOrderRepository;
             AppUrlService = NullAppUrlService.Instance;
             EventBus = NullEventBus.Instance;
         }
@@ -287,7 +284,6 @@ namespace DispatcherWeb.MultiTenancy
                     await _receiptRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _billedOrderRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _sharedOrderLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
-                    await _sharedOrderRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _orderLineRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);
                     await _orderEmailRepository.DeleteInBatchesAsync(x => x.Order.TenantId == input.Id, CurrentUnitOfWork, batchSize);
                     await _orderTruckRepository.HardDeleteInBatchesAsync(x => true, CurrentUnitOfWork, batchSize);

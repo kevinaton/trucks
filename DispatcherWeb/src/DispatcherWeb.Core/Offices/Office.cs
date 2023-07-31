@@ -60,6 +60,8 @@ namespace DispatcherWeb.Offices
 
         public virtual ICollection<User> Users { get; set; }
 
-        public virtual ICollection<SharedOrder> SharedOrders { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
+
+        public virtual ICollection<SharedOrderLine> SharedOrderLines { get; set; }
     }
 }

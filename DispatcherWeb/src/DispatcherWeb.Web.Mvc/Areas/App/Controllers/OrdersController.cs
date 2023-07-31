@@ -124,14 +124,6 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
 
         [Modal]
         [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
-        public async Task<PartialViewResult> ShareOrderModal(int id)
-        {
-            var model = await _orderAppService.GetSharedOrders(new EntityDto(id));
-            return PartialView("_ShareOrderModal", model);
-        }
-
-        [Modal]
-        [AbpMvcAuthorize(AppPermissions.Pages_Orders_Edit)]
         public async Task<PartialViewResult> ShareOrderLineModal(int id)
         {
             var model = await _orderAppService.GetSharedOrderLines(new EntityDto(id));

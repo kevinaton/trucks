@@ -17,8 +17,6 @@ namespace DispatcherWeb.Orders
         Task<int[]> CopyOrder(CopyOrderInput input);
         Task<OrderInternalNotesDto> GetOrderInternalNotes(EntityDto input);
         Task SetOrderInternalNotes(OrderInternalNotesDto input);
-        Task<SharedOrderListDto> GetSharedOrders(EntityDto input);
-        //Task SetSharedOrders(SetSharedOrdersInput input);
         Task<int> GetOrderDuplicateCount(GetOrderDuplicateCountInput input);
         Task DeleteOrder(EntityDto input);
 
