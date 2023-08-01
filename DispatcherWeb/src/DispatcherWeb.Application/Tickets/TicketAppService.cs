@@ -19,6 +19,7 @@ using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.FuelSurchargeCalculations;
+using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Invoices;
 using DispatcherWeb.LeaseHaulers;
@@ -61,6 +62,7 @@ namespace DispatcherWeb.Tickets
         private readonly IRepository<Invoice> _invoiceRepository;
         private readonly IFuelSurchargeCalculator _fuelSurchargeCalculator;
         private readonly TicketPrintOutGenerator _ticketPrintOutGenerator;
+        private readonly ILogoProvider _logoProvider;
 
         public TicketAppService(
             IRepository<Ticket> ticketRepository,
@@ -80,7 +82,8 @@ namespace DispatcherWeb.Tickets
             IRepository<TimeOff> timeOffRepository,
             IRepository<Invoice> invoiceRepository,
             IFuelSurchargeCalculator fuelSurchargeCalculator,
-            TicketPrintOutGenerator ticketPrintOutGenerator
+            TicketPrintOutGenerator ticketPrintOutGenerator,
+            ILogoProvider logoProvider
         )
         {
             _ticketRepository = ticketRepository;
@@ -101,6 +104,7 @@ namespace DispatcherWeb.Tickets
             _invoiceRepository = invoiceRepository;
             _fuelSurchargeCalculator = fuelSurchargeCalculator;
             _ticketPrintOutGenerator = ticketPrintOutGenerator;
+            _logoProvider = logoProvider;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Tickets_Edit)]
@@ -1817,6 +1821,7 @@ namespace DispatcherWeb.Tickets
                     TicketNumber = x.TicketNumber,
                     TicketDateTime = x.TicketDateTime,
                     CustomerName = x.Customer.Name,
+                    OfficeId = x.OfficeId,
                     ServiceName = x.Service.Service1,
                     MaterialQuantity = x.OrderLine.MaterialQuantity,
                     MaterialUomName = x.OrderLine.MaterialUom.Name,
@@ -1827,7 +1832,7 @@ namespace DispatcherWeb.Tickets
             item.LegalName = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingLegalName);
             item.LegalAddress = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingAddress);
             item.BillingPhoneNumber = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingPhoneNumber);
-            item.LogoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
+            item.LogoPath = await _logoProvider.GetReportLogoAsBase64StringAsync(item.OfficeId);
             item.TicketDateTime = item.TicketDateTime?.ConvertTimeZoneTo(await GetTimezone());
             item.DebugLayout = input.DebugLayout;
 

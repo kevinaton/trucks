@@ -35,6 +35,7 @@ using DispatcherWeb.Encryption;
 using DispatcherWeb.Exceptions;
 using DispatcherWeb.Features;
 using DispatcherWeb.FuelSurchargeCalculations;
+using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Templates;
 using DispatcherWeb.Locations;
@@ -95,6 +96,7 @@ namespace DispatcherWeb.Orders
         private readonly IOfficeSettingsManager _officeSettingsManager;
         private readonly IBinaryObjectManager _binaryObjectManager;
         private readonly IFuelSurchargeCalculator _fuelSurchargeCalculator;
+        private readonly ILogoProvider _logoProvider;
 
         public OrderAppService(
             IRepository<Order> orderRepository,
@@ -131,7 +133,8 @@ namespace DispatcherWeb.Orders
             IPaymentAppService paymentAppService,
             IOfficeSettingsManager officeSettingsManager,
             IBinaryObjectManager binaryObjectManager,
-            IFuelSurchargeCalculator fuelSurchargeCalculator
+            IFuelSurchargeCalculator fuelSurchargeCalculator,
+            ILogoProvider logoProvider
             )
         {
             _orderRepository = orderRepository;
@@ -169,6 +172,7 @@ namespace DispatcherWeb.Orders
             _officeSettingsManager = officeSettingsManager;
             _binaryObjectManager = binaryObjectManager;
             _fuelSurchargeCalculator = fuelSurchargeCalculator;
+            _logoProvider = logoProvider;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_View)]
@@ -2812,7 +2816,6 @@ namespace DispatcherWeb.Orders
                 throw new ArgumentNullException(nameof(input.Id), "At least one of (Id, Date) should be set");
             }
 
-            var logoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
             var paidImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "Common/Images/Paid.png");
             var staggeredTimeImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "Common/Images/far-clock.png");
             var timeZone = await GetTimezone();
@@ -2826,7 +2829,16 @@ namespace DispatcherWeb.Orders
             input.Date = input.Date?.Date;
 
             var data = await GetWorkOrderReportQuery(input).ToListAsync();
-
+            
+            foreach (var officeGroup in data.GroupBy(x => x.OfficeId))
+            {
+                var officeLogoPath = await _logoProvider.GetReportLogoAsBase64StringAsync(officeGroup.Key);
+                foreach (var item in officeGroup)
+                {
+                    item.LogoPath = officeLogoPath;
+                }
+            }
+            
             data.ForEach(x =>
             {
                 //TODO remove items with actual quantity of 0 when UseActualAmount is true
@@ -2836,7 +2848,6 @@ namespace DispatcherWeb.Orders
                 //        (s.MaterialQuantity ?? 0) == 0 && (s.FreightQuantity ?? 0) == 0 && s.NumberOfTrucks == 0 &&
                 //        (!input.UseActualAmount || (s.ActualQuantity ?? 0) == 0)
                 //    );
-                x.LogoPath = logoPath;
                 x.PaidImagePath = paidImagePath;
                 x.StaggeredTimeImagePath = staggeredTimeImagePath;
                 x.HidePrices = input.HidePrices;
