@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Infrastructure.AzureBlobs
 {
-    public class LogoProvider : DispatcherWebDomainServiceBase, ILogoProvider/*, ITransientDependency*/
+    public class LogoProvider : DispatcherWebDomainServiceBase, ILogoProvider
     {
         private readonly IBinaryObjectManager _binaryObjectManager;
         private readonly IRepository<Office> _officeRepository;
@@ -37,6 +37,7 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
                         x.ReportsLogoId
                     })
                     .FirstAsync();
+
                 reportsLogoId = office.ReportsLogoId;
             }
             
@@ -49,8 +50,10 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
                         x.ReportsLogoId
                     })
                     .FirstAsync();
+
                 reportsLogoId = tenant.ReportsLogoId;
             }
+            
             return await _binaryObjectManager.GetImageAsBase64StringAsync(reportsLogoId);
         }
     }
