@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { 
     Chip,
     Divider,
@@ -10,9 +11,25 @@ import {
 import { styled } from '@mui/material/styles';
 import { tooltipClasses } from '@mui/material/Tooltip';
 import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason';
+import TruckOrders from './truck-orders';
 import { assetType } from '../../common/enums/assetType';
 import { isPastDate } from '../../helpers/misc_helper';
 import { isEmpty } from 'lodash';
+
+const ContextMenuWrapper = styled(Menu)(({ theme }) => ({
+    '& .MuiPaper-root': {
+        borderRadius: '8px',
+        boxShadow: '0 0 6px 6px rgba(69, 65, 78, 0.08)',
+
+        '& .MuiList-root': {
+            padding: 0
+        }
+    },
+
+    '& .MuiBackdrop-root': {
+        backgroundColor: 'rgba(214, 234, 239, 0.41)', // Replace 'your-color-here' with your desired color
+    }
+}));
 
 const HtmlTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
@@ -33,13 +50,40 @@ const TruckBlockItem = ({
     dataFilter, 
     truckHasNoDriver, 
     truckCategoryNeedsDriver,
-    openModal
+    orders,
+    openModal,
+    closeModal
 }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [menuAnchorPoint, setMenuAnchorPoint] = useState(null);
+    const [sessionOfficeId, setSessionOfficeId] = useState(null);
+    const [canShowOrderLines, setCanShowOrderLines] = useState(null);
+
+    const { 
+        userProfileMenu
+    } = useSelector((state) => ({
+        userProfileMenu: state.UserReducer.userProfileMenu
+    }));
+
+    useEffect(() => {
+        if (sessionOfficeId === null && 
+            !isEmpty(userProfileMenu) && 
+            !isEmpty(userProfileMenu.result)
+        ) {
+            const { ...session } = userProfileMenu.result;
+            setSessionOfficeId(session.sessionOfficeId);
+        }
+    }, [sessionOfficeId, userProfileMenu]);
+
+    useEffect(() => {
+        if (truck !== null && canShowOrderLines === null) {
+            setCanShowOrderLines(truck.utilization > 0);
+        }
+    }, []);
 
     const getCombinedTruckCode = (truck) => {
-        if (pageConfig.settings.validateUtilization) {
+        const { showTrailersOnSchedule } = pageConfig.settings;
+        if (showTrailersOnSchedule) {
             if (truck.canPullTrailer && truck.trailer) {
                 return `${truck.truckCode} :: ${truck.trailer.truckCode}`;
             }
@@ -52,20 +96,15 @@ const TruckBlockItem = ({
         return truck.truckCode;
     };
 
-    // const truckHasNoDriver = truck => !truck.isExternal && 
-    //     (truck.hasNoDriver || (!truck.hasDefaultDriver && !truck.hasDriverAssignment));
-
-    // const truckCategoryNeedsDriver = truck => 
-    //     truck.vehicleCategory.isPowered && 
-    //     (leaseHaulers || (!truck.alwaysShowOnSchedule && !truck.isExternal));
-
     const truckHasOrderLineTrucks = truck => {
         // todo: implement this
+        console.log('orders: ', orders)
         return false;
     };
 
     const handleShowMenu = (e) => {
         e.preventDefault();
+
         setMenuAnchorPoint({ mouseX: e.clientX, mouseY: e.clientY });
         setShowMenu(true);
     };
@@ -138,6 +177,33 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
+    const handleShowOrderLines = (e) => {
+        e.preventDefault();
+
+        const data = {
+            truckId: truck.id,
+            truckCode: truck.truckCode,
+            scheduleDate: dataFilter.date,
+            shift: dataFilter.shift,
+        };
+
+        openModal(
+            <TruckOrders 
+                filter={data} 
+                closeModal={closeModal}
+            />,
+            680
+        );
+    };
+
+    const renderTextValue = (data) => {
+        if (data === null || data === undefined) {
+            return '';
+        }
+
+        return data;
+    }
+
     const renderTruckTitle = truck => {
         return (
             <React.Fragment>
@@ -145,8 +211,8 @@ const TruckBlockItem = ({
 
                 { truck.vehicleCategory.assetType === assetType.TRAILER && 
                     <React.Fragment>
-                        <Typography color="inherit" variant='caption' display='block'>{`${truck.vehicleCategory.name} ${truck.bedConstructionFormatted}`}</Typography>
-                        <Typography color="inherit" variant='caption' display='block'>{`${truck.year} ${truck.make} ${truck.model}`}</Typography>
+                        <Typography color="inherit" variant='caption' display='block'>{`${renderTextValue(truck.vehicleCategory.name)} ${renderTextValue(truck.bedConstructionFormatted)}`}</Typography>
+                        <Typography color="inherit" variant='caption' display='block'>{`${renderTextValue(truck.year)} ${renderTextValue(truck.make)} ${renderTextValue(truck.model)}`}</Typography>
                     </React.Fragment>
                 }
                 
@@ -157,17 +223,16 @@ const TruckBlockItem = ({
         );
     };
 
-    const renderMenu = () => {
+    const renderContextMenu = () => {
         const { features } = pageConfig;
         return (
-            <Menu
+            <ContextMenuWrapper
                 open={showMenu}
                 onClose={handleCloseMenu}
                 anchorReference="anchorPosition"
-                anchorPosition={
-                    menuAnchorPoint !== null
-                        ? { top: menuAnchorPoint.mouseY, left: menuAnchorPoint.mouseX }
-                        : undefined
+                anchorPosition={ menuAnchorPoint !== null
+                    ? { top: menuAnchorPoint.mouseY, left: menuAnchorPoint.mouseX }
+                    : undefined
                 }
             >
                 {/* Plase back in service */}
@@ -220,11 +285,11 @@ const TruckBlockItem = ({
                 }
 
                 {/* Add tractor */}
-                { truck.vehicleCategory.assetType === assetType.TRAILER && truck.tractor !== null && !truck.tractor && 
+                { truck.vehicleCategory.assetType === assetType.TRAILER && !truck.tractor && 
                     <MenuItem onClick={handleAddTractor}>Add tractor</MenuItem>
                 }
 
-                { truck.vehicleCategory.assetType === assetType.TRAILER && truck.tractor !== null && truck.tractor && 
+                { truck.vehicleCategory.assetType === assetType.TRAILER && truck.tractor && 
                     <React.Fragment>
                         {/* Change tractor */}
                         <MenuItem onClick={handleAddTractor}>Change tractor</MenuItem>
@@ -234,9 +299,9 @@ const TruckBlockItem = ({
                     
                 }
 
-                {/* TODO: add truck.sharedWithOfficeId !== session.officeId */}
+                {/* Separator */}
                 { !truck.isExternal && !truck.alwaysShowOnSchedule 
-                    && ((features.allowMultiOffice && truck.shareWithOfficeId === null && !truck.isOutOfService) || (truck.sharedWithOfficeId !== null)) && 
+                    && ((features.allowMultiOffice && truck.shareWithOfficeId === null && !truck.isOutOfService) || (truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== sessionOfficeId)) && 
                     <Divider />
                 }
                 
@@ -246,30 +311,42 @@ const TruckBlockItem = ({
                 }
                 
                 {/* Revoke share */}
-                {/* TODO: add truck.sharedWithOfficeId !== session.officeId */}
-                { !truck.isExternal && !truck.alwaysShowOnSchedule && truck.sharedWithOfficeId !== null && 
-                    <MenuItem onClick={handleRevokeShare}>Revoke Share</MenuItem>
+                { !truck.isExternal && !truck.alwaysShowOnSchedule && truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== sessionOfficeId && 
+                    <MenuItem 
+                        onClick={handleRevokeShare} 
+                        disabled={truck.officeId !== sessionOfficeId || truck.actualUtilization !== 0}
+                    >
+                        Revoke Share
+                    </MenuItem>
                 }
-            </Menu>
+            </ContextMenuWrapper>
         );
     };
-    //console.log('rendering...')
+    
     return (
-        <div onContextMenu={handleShowMenu}>
+        <div onContextMenu={(e) => !showMenu 
+            ? handleShowMenu(e) 
+            : e.preventDefault()
+        }>
             <HtmlTooltip
                 title={renderTruckTitle(truck)}
             >
                 <Chip
-                    label={truck.truckCode}
+                    label={getCombinedTruckCode(truck)} 
+                    onClick={(e) => canShowOrderLines 
+                        ? handleShowOrderLines(e) 
+                        : e.preventDefault() 
+                    }
                     sx={{
-                        minWidth: '81px',
+                        width: '80px',
                         borderRadius: 0,
-                        fontSize: 18,
+                        fontSize: 17,
                         fontWeight: 600,
                         py: 3,
                         backgroundColor: `${truckColors.backgroundColor}`,
                         color: `${truckColors.color}`,
                         border: `${truckColors.border}`,
+                        cursor: canShowOrderLines ? 'pointer' : 'default',
                         '&:hover': {
                             backgroundColor: `${truckColors.backgroundColor}`
                         }
@@ -277,7 +354,7 @@ const TruckBlockItem = ({
                 />
             </HtmlTooltip>
 
-            { truck !== null && !isEmpty(pageConfig) && renderMenu()}
+            { truck !== null && !isEmpty(pageConfig) && renderContextMenu()}
         </div>
     );
 };

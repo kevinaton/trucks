@@ -7,7 +7,8 @@ import {
     GET_SCHEDULE_TRUCKS_FAILURE,
     GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_SUCCESS,
     GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_FAILURE,
-    GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_RESET,
+    GET_SCHEDULE_TRUCK_BY_SYNC_REQUEST_RESET, 
+    GET_SCHEDULE_ORDERS,
     GET_SCHEDULE_ORDERS_SUCCESS,
     GET_SCHEDULE_ORDERS_FAILURE,
 } from './actionTypes';
@@ -17,6 +18,7 @@ const INIT_STATE = {
     isLoadingScheduleTrucks: false,
     scheduleTrucks: null,
     isModifiedScheduleTrucks: false,
+    isLoadingScheduleOrders: false,
     scheduleOrders: null,
 };
 
@@ -118,15 +120,22 @@ const SchedulingReducer = (state = INIT_STATE, action) => {
                 ...state,
                 isModifiedScheduleTrucks: false,
             };
+        case GET_SCHEDULE_ORDERS:
+            return {
+                ...state,
+                isLoadingScheduleOrders: true
+            };
         case GET_SCHEDULE_ORDERS_SUCCESS:
             return {
                 ...state,
                 scheduleOrders: action.payload,
+                isLoadingScheduleOrders: false
             };
         case GET_SCHEDULE_ORDERS_FAILURE:
             return {
                 ...state,
-                scheduleOrders: [],
+                scheduleOrders: null,
+                isLoadingScheduleOrders: false,
                 error: action.payload,
             };
         default:

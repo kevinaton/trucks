@@ -35,6 +35,7 @@ const Schedule = props => {
         sorting: 'Note'
     });
     const [trucks, setTrucks] = useState([]);
+    const [orders, setOrders] = useState([]);
 
     const dispatch = useDispatch();
     const { 
@@ -112,6 +113,8 @@ const Schedule = props => {
 
     const onSetTrucks = data => setTrucks(data);
 
+    const onSetOrders = data => setOrders(data);
+
     // Handle toggle button at the top right
     const handleView = (event, newView) => {
         if (newView !== null) {
@@ -178,6 +181,7 @@ const Schedule = props => {
                         pageConfig={pageConfig}
                         dataFilter={dataFilter} 
                         trucks={trucks} 
+                        orders={orders}
                         onSetTrucks={onSetTrucks} 
                         openModal={props.openModal}
                         closeModal={props.closeModal} 
@@ -188,7 +192,9 @@ const Schedule = props => {
                     <ScheduleOrders 
                         pageConfig={pageConfig}
                         dataFilter={dataFilter} 
-                        trucks={trucks}
+                        trucks={trucks} 
+                        orders={orders}
+                        onSetOrders={onSetOrders}
                     />
                 </Paper>
             </div>

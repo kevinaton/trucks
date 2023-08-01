@@ -59,22 +59,22 @@ const AddOutOfServiceReason = ({
             
             <Box sx={{ width: '100%' }}>
                 <TextField
-                        id="reason"
-                        label={
-                            <>
-                                Reason <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
-                            </>
-                        }
-                        value={reason} 
-                        defaultValue=''
-                        onChange={handleReasonInputChange} 
-                        multiline
-                        rows={2} 
-                        error={error} 
-                        helperText={error ? errorText : ''} 
-                        fullWidth 
-                        maxLength={500}
-                    />
+                    id="reason"
+                    label={
+                        <>
+                            Reason <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                        </>
+                    }
+                    value={reason} 
+                    defaultValue=''
+                    onChange={handleReasonInputChange} 
+                    multiline
+                    rows={2} 
+                    error={error} 
+                    helperText={error ? errorText : ''} 
+                    fullWidth 
+                    maxLength={500}
+                />
             </Box>
 
             <Box sx={{ p: 2 }}>

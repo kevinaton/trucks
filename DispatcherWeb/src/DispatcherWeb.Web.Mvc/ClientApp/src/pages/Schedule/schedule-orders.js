@@ -32,11 +32,12 @@ import App from '../../config/appConfig';
 const ScheduleOrders = ({
     pageConfig,
     dataFilter,
-    trucks
+    trucks,
+    orders,
+    onSetOrders
 }) => {
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
-    const [scheduleData, setScheduleData] = useState(null);
 
     const [actionAnchor, setActionAnchor] = useState(null);
     const actionOpen = Boolean(actionAnchor);
@@ -50,8 +51,10 @@ const ScheduleOrders = ({
 
     const dispatch = useDispatch();
     const {
+        isLoadingScheduleOrders,
         scheduleOrders
     } = useSelector((state) => ({
+        isLoadingScheduleOrders: state.SchedulingReducer.isLoadingScheduleOrders,
         scheduleOrders: state.SchedulingReducer.scheduleOrders
     }));
 
@@ -62,13 +65,14 @@ const ScheduleOrders = ({
         ) {
             const { items } = scheduleOrders.result;
             if (!isEmpty(items) && (
-                isEmpty(scheduleData) || (!isEmpty(scheduleData) && !_.isEqual(scheduleData, items))
+                isEmpty(orders) || (!isEmpty(orders) && !_.isEqual(orders, items))
             )) {
-                setScheduleData(items);
-                setLoading(false);
+                onSetOrders(items);
+                // setScheduleData(items);
+                // setLoading(false);
             }
         }
-    }, [isLoading, scheduleOrders, scheduleData, dataFilter]);
+    }, [isLoading, scheduleOrders, orders, onSetOrders]);
 
     useEffect(() => {
         // check if dataFilter has changed from its previous state
@@ -79,20 +83,12 @@ const ScheduleOrders = ({
             prevDataFilterRef.current.hideProgressBar !== dataFilter.hideProgressBar ||
             prevDataFilterRef.current.sorting !== dataFilter.sorting
         ) {
-            const fetchData = async () => {
-                const { officeId, date } = dataFilter;
-                if (officeId !== null && date !== null) {
-                    setLoading(true);
-                    dispatch(getScheduleOrders(dataFilter));
-                }
-            };
-
             fetchData();
 
             // update the previous dataFilter value
             prevDataFilterRef.current = dataFilter;
         }
-    }, [dispatch, dataFilter]);
+    }, [dataFilter]);
 
     useEffect(() => {
         // cleanup logic
@@ -101,6 +97,19 @@ const ScheduleOrders = ({
             prevDataFilterRef.current = null;
         };
     }, []);
+
+    useEffect(() => {
+        if (isLoading !== isLoadingScheduleOrders) {
+            setLoading(isLoadingScheduleOrders);
+        }
+    }, [isLoading, isLoadingScheduleOrders]);
+
+    const fetchData = () => {
+        const { officeId, date } = dataFilter;
+        if (officeId !== null && date !== null) {
+            dispatch(getScheduleOrders(dataFilter));
+        }
+    };
 
     // Handle action on table rows
     const handleActionClick = (e) => {
@@ -280,7 +289,7 @@ const ScheduleOrders = ({
                 {renderHeader()}
 
                 <TableBody>
-                    {!isEmpty(scheduleData) && scheduleData.map((data, index) => {
+                    { !isEmpty(orders) && orders.map((data, index) => {
                         return (
                             <React.Fragment key={index}>
                                 <TableRow 
@@ -619,7 +628,7 @@ const ScheduleOrders = ({
                 </TableBody>
             </Table>
 
-            {isEmpty(scheduleData) && 
+            { isEmpty(orders) && 
                 <Typography align='center' variant='subtitle2' sx={{ p: 2 }}>
                     No data available in table
                 </Typography>

@@ -20,11 +20,11 @@ import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
 import { entityType } from '../../common/enums/entityType';
 import { changeType } from '../../common/enums/changeType';
 
-
 const TruckBlock = ({
     pageConfig,
     dataFilter,
-    trucks,
+    trucks, 
+    orders,
     onSetTrucks,
     openModal,
     closeModal,
@@ -61,7 +61,8 @@ const TruckBlock = ({
     
     useEffect(() => {
         if (!isEmpty(pageConfig) && isLoading && 
-            !isEmpty(scheduleTrucks) && !isEmpty(scheduleTrucks.result)
+            !isEmpty(scheduleTrucks) && 
+            !isEmpty(scheduleTrucks.result)
         ) {
             const { items } = scheduleTrucks.result;
             if (!isEmpty(items) && (
@@ -205,7 +206,8 @@ const TruckBlock = ({
         if (truck.isOutOfService) {
             return {
                 ...defaultColor,
-                color: '#999'
+                backgroundColor: '#999999',
+                color: '#fff'
             };
         }
 
@@ -284,13 +286,13 @@ const TruckBlock = ({
                 pageConfig={pageConfig} 
                 dataFilter={dataFilter} 
                 truckHasNoDriver={truckHasNoDriver(truck)} 
-                truckCategoryNeedsDriver={truckCategoryNeedsDriver(truck)}
-                openModal={openModal}
+                truckCategoryNeedsDriver={truckCategoryNeedsDriver(truck)} 
+                orders={orders}
+                openModal={openModal} 
+                closeModal={closeModal} 
             />
         </Grid>
     );
-
-    //console.log('rendering...')
 
     return (
         <React.Fragment>
@@ -330,6 +332,7 @@ const TruckBlock = ({
                                     }
                                     onClick={(e) => handleCreateNewTruck(e)}
                                     sx={{
+                                        width: '80px',
                                         backgroundColor: '#fff',
                                         border: '1px solid #ebedf2',
                                         color: '#6f727d',
