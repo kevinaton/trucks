@@ -11,6 +11,8 @@ namespace DispatcherWeb.Orders.Dto
 
         public DateTime? Date { get; set; }
 
+        public int? OfficeId { get; set; }
+
         public bool HidePrices { get; set; }
 
         public bool SplitRateColumn { get; set; }

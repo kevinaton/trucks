@@ -2905,7 +2905,7 @@ namespace DispatcherWeb.Orders
                     .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
                     .WhereIf(input.Ids?.Any() == true, x => input.Ids.Contains(x.Id))
                     .WhereIf(input.Date.HasValue, x => x.Order.DeliveryDate == input.Date)
-                    //.Where(x => x.OfficeId == OfficeId)
+                    //.WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
                     .GetWorkOrderReportDtoQuery(input, OfficeId);
             }
             else
@@ -2913,8 +2913,9 @@ namespace DispatcherWeb.Orders
                 return _orderRepository.GetAll()
                     .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
                     .WhereIf(input.Ids?.Any() == true, x => input.Ids.Contains(x.Id))
-                    .WhereIf(input.Date.HasValue, x => x.DeliveryDate == input.Date && (x.LocationId == OfficeId || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(s => s.OfficeId == OfficeId))))
-                    .GetWorkOrderReportDtoQuery(input, OfficeId);
+                    .WhereIf(input.Date.HasValue, x => x.DeliveryDate == input.Date)
+                    .WhereIf(input.OfficeId.HasValue, x => x.LocationId == input.OfficeId || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(s => s.OfficeId == input.OfficeId)))
+                    .GetWorkOrderReportDtoQuery(input, OfficeId); //not input.OfficeId, this one is used for payments
             }
         }
 
@@ -2946,10 +2947,12 @@ namespace DispatcherWeb.Orders
         private IQueryable<OrderLine> GetOrderSummaryReportQuery(GetOrderSummaryReportInput input)
         {
             return _orderLineRepository.GetAll()
+                .WhereIf(input.OfficeId.HasValue, x => 
+                    x.Order.LocationId == input.OfficeId 
+                    || x.SharedOrderLines.Any(s => s.OfficeId == input.OfficeId))
                 .Where(x =>
-                    x.Order.DeliveryDate == input.Date &&
-                    !x.Order.IsPending &&
-                    (x.Order.LocationId == OfficeId || x.SharedOrderLines.Any(s => s.OfficeId == OfficeId))
+                    x.Order.DeliveryDate == input.Date
+                    && !x.Order.IsPending
                     && (x.MaterialQuantity > 0 || x.FreightQuantity > 0 || x.NumberOfTrucks > 0)
                 );
         }
