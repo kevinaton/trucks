@@ -13,7 +13,7 @@ namespace DispatcherWeb.Tickets.Dto
         public string TicketNumber { get; set; }
         public DateTime? TicketDateTime { get; set; }
         public string CustomerName { get; set; }
-        public int? OffceId { get; set; }
+        public int? OfficeId { get; set; }
         public string ServiceName { get; set; }
         public decimal? MaterialQuantity { get; set; }
         public string MaterialUomName { get; set; }

@@ -1821,7 +1821,7 @@ namespace DispatcherWeb.Tickets
                     TicketNumber = x.TicketNumber,
                     TicketDateTime = x.TicketDateTime,
                     CustomerName = x.Customer.Name,
-                    OffceId = x.OfficeId,
+                    OfficeId = x.OfficeId,
                     ServiceName = x.Service.Service1,
                     MaterialQuantity = x.OrderLine.MaterialQuantity,
                     MaterialUomName = x.OrderLine.MaterialUom.Name,
@@ -1832,7 +1832,7 @@ namespace DispatcherWeb.Tickets
             item.LegalName = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingLegalName);
             item.LegalAddress = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingAddress);
             item.BillingPhoneNumber = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingPhoneNumber);
-            item.LogoPath = await _logoProvider.GetReportLogoAsBase64StringAsync(item.OffceId);
+            item.LogoPath = await _logoProvider.GetReportLogoAsBase64StringAsync(item.OfficeId);
             item.TicketDateTime = item.TicketDateTime?.ConvertTimeZoneTo(await GetTimezone());
             item.DebugLayout = input.DebugLayout;
 

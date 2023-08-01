@@ -42,8 +42,6 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
             
             if (reportsLogoId == null)
             {
-                //using (CurrentUnitOfWork.SetTenantId(null))
-                //{
                 var tenant = await TenantManager.Tenants
                     .Where(x => x.Id == Session.GetTenantId())
                     .Select(x => new
@@ -51,7 +49,6 @@ namespace DispatcherWeb.Infrastructure.AzureBlobs
                         x.ReportsLogoId
                     })
                     .FirstAsync();
-                //}
                 reportsLogoId = tenant.ReportsLogoId;
             }
             return await _binaryObjectManager.GetImageAsBase64StringAsync(reportsLogoId);
