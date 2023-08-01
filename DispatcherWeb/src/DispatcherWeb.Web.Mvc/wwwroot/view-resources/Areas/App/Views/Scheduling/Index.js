@@ -2293,9 +2293,11 @@
                 return modalObject.getResultPromise();
             });
 
-            var date = _dtHelper.getFilterData().date;
-            var reportParams = {
+            let filterData = _dtHelper.getFilterData();
+            let date = filterData.date;
+            let reportParams = {
                 date: date,
+                officeId: filterData.officeId,
                 ...printOptions
             };
             _orderService.doesOrderSummaryReportHaveData(reportParams).done(function (result) {
@@ -2313,9 +2315,11 @@
                 return modalObject.getResultPromise();
             });
 
-            var date = _dtHelper.getFilterData().date;
-            var reportParams = {
+            let filterData = _dtHelper.getFilterData();
+            let date = filterData.date;
+            let reportParams = {
                 date: date,
+                officeId: filterData.officeId,
                 splitRateColumn: true,
                 ...printOptions
             };
