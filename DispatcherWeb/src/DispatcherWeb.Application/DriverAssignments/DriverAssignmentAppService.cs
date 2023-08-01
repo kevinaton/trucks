@@ -739,17 +739,17 @@ namespace DispatcherWeb.DriverAssignments
         public async Task<int> AddUnscheduledTrucks(AddUnscheduledTrucksInput input)
         {
             var unscheduledTrucks = await _truckRepository.GetAll()
-                .Where(t =>
-                    (t.LocationId == input.OfficeId && !t.SharedTrucks.Any(s => s.Date == input.Date && s.Shift == input.Shift)
-                        || t.SharedTrucks.Any(s => s.Date == input.Date && s.OfficeId == input.OfficeId && s.Shift == input.Shift)) &&
-                    t.VehicleCategory.IsPowered && t.LeaseHaulerTruck.AlwaysShowOnSchedule != true && t.LocationId != null &&
-                    !t.DriverAssignments.Any(da => da.Date == input.Date && da.Shift == input.Shift) &&
-                    t.IsActive &&
-                    !t.IsOutOfService
+                .WhereIf(input.OfficeId.HasValue, t => t.LocationId == input.OfficeId && !t.SharedTrucks.Any(s => s.Date == input.Date && s.Shift == input.Shift)
+                    || t.SharedTrucks.Any(s => s.Date == input.Date && s.OfficeId == input.OfficeId && s.Shift == input.Shift))
+                .Where(t => t.VehicleCategory.IsPowered && t.LeaseHaulerTruck.AlwaysShowOnSchedule != true && t.LocationId != null
+                    && !t.DriverAssignments.Any(da => da.Date == input.Date && da.Shift == input.Shift)
+                    && t.IsActive
+                    && !t.IsOutOfService
                 )
                 .Select(t => new
                 {
                     t.Id,
+                    t.LocationId,
                     t.DefaultDriverId,
                 })
                 .ToListAsync();
@@ -762,7 +762,7 @@ namespace DispatcherWeb.DriverAssignments
             {
                 DriverAssignment driverAssignment = new DriverAssignment()
                 {
-                    OfficeId = input.OfficeId,
+                    OfficeId = input.OfficeId ?? unscheduledTruck.LocationId,
                     Date = input.Date,
                     Shift = input.Shift,
                     TruckId = unscheduledTruck.Id,
@@ -793,11 +793,11 @@ namespace DispatcherWeb.DriverAssignments
         public async Task AddDefaultDriverAssignments(AddDefaultDriverAssignmentsInput input)
         {
             var unscheduledDrivers = await _driverRepository.GetAll()
-                .Where(d =>
-                    !d.IsExternal && d.OfficeId == input.OfficeId && !d.TimeOffs.Any(to => to.StartDate <= input.Date && to.EndDate >= input.Date) &&
-                    !d.DriverAssignments.Any(da => da.Date == input.Date && da.Shift == input.Shift) &&
-                    !d.IsInactive &&
-                    d.DefaultTrucks.Any(t => t.LocationId != null && t.LeaseHaulerTruck.AlwaysShowOnSchedule != true)
+                .WhereIf(input.OfficeId.HasValue, d => d.OfficeId == input.OfficeId)
+                .Where(d => !d.IsExternal && !d.TimeOffs.Any(to => to.StartDate <= input.Date && to.EndDate >= input.Date)
+                    && !d.DriverAssignments.Any(da => da.Date == input.Date && da.Shift == input.Shift)
+                    && !d.IsInactive
+                    && d.DefaultTrucks.Any(t => t.LocationId != null && t.LeaseHaulerTruck.AlwaysShowOnSchedule != true)
                 )
                 .Select(d => new
                 {
