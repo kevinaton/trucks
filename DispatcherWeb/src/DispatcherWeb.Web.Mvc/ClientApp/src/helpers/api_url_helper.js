@@ -57,6 +57,7 @@ export const GET_FUEL_TYPE_SELECT_LIST = '/Truck/GetFuelTypeSelectList';
 export const GET_TRUCK_FOR_EDIT = '/Truck/GetTruckForEdit';
 export const GET_WIALON_DEVICE_TYPES_SELECT_LIST = '/TruckTelematics/GetWialonDeviceTypesSelectList';
 export const EDIT_TRUCK = '/Truck/EditTruck';
+export const SET_TRUCK_IS_OUT_OF_SERVICE = '/Truck/SetTruckIsOutOfService';
 
 //Scheduling
 export const GET_PAGE_CONFIG = '/Scheduling/GetPageConfig';

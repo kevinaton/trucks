@@ -21,3 +21,6 @@ export const getWialonDeviceTypesSelectList = () => get(`${url.GET_WIALON_DEVICE
 
 // edit truck
 export const editTruck = (truck) => post(url.EDIT_TRUCK, truck);
+
+// set truck is out of service
+export const setTruckIsOutOfService = truck => post(url.SET_TRUCK_IS_OUT_OF_SERVICE, truck);

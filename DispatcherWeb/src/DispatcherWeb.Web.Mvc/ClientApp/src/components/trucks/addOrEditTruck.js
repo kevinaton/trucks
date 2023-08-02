@@ -794,6 +794,7 @@ const AddOrEditTruckForm = ({
                 ...truckCode,
                 error: true
             });
+            return;
         }
 
         // validate office id
@@ -802,6 +803,7 @@ const AddOrEditTruckForm = ({
                 ...officeId,
                 error: true
             });
+            return;
         }
 
         // validate vehicle category id
@@ -810,6 +812,7 @@ const AddOrEditTruckForm = ({
                 ...vehicleCategoryId,
                 error: true
             });
+            return;
         }
 
         var data = {

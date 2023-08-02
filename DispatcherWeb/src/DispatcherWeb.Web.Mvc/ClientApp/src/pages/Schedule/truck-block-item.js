@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
     Chip,
     Divider,
@@ -15,6 +15,10 @@ import TruckOrders from './truck-orders';
 import { assetType } from '../../common/enums/assetType';
 import { isPastDate } from '../../helpers/misc_helper';
 import { isEmpty } from 'lodash';
+import { 
+    setTruckIsOutOfService as onSetTruckIsOutOfService,
+    resetSetTruckIsOutOfService as onResetTruckIsOutOfService
+} from '../../store/actions';
 
 const ContextMenuWrapper = styled(Menu)(({ theme }) => ({
     '& .MuiPaper-root': {
@@ -59,10 +63,13 @@ const TruckBlockItem = ({
     const [sessionOfficeId, setSessionOfficeId] = useState(null);
     const [canShowOrderLines, setCanShowOrderLines] = useState(null);
 
+    const dispatch = useDispatch();
     const { 
-        userProfileMenu
+        userProfileMenu,
+        setTruckIsOutOfServiceSuccess
     } = useSelector((state) => ({
-        userProfileMenu: state.UserReducer.userProfileMenu
+        userProfileMenu: state.UserReducer.userProfileMenu,
+        setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess
     }));
 
     useEffect(() => {
@@ -81,6 +88,12 @@ const TruckBlockItem = ({
         }
     }, []);
 
+    useEffect(() => {
+        if (setTruckIsOutOfServiceSuccess) {
+            dispatch(onResetTruckIsOutOfService());
+        }
+    }, [dispatch, setTruckIsOutOfServiceSuccess]);
+
     const getCombinedTruckCode = (truck) => {
         const { showTrailersOnSchedule } = pageConfig.settings;
         if (showTrailersOnSchedule) {
@@ -95,11 +108,12 @@ const TruckBlockItem = ({
 
         return truck.truckCode;
     };
-
+    
     const truckHasOrderLineTrucks = truck => {
-        // todo: implement this
-        console.log('orders: ', orders)
-        return false;
+        const orderLines = orders !== null 
+            ? orders
+            : [];
+        return orderLines.some(o => o.trucks.some(olt => olt.truckId === truck.id));
     };
 
     const handleShowMenu = (e) => {
@@ -113,17 +127,30 @@ const TruckBlockItem = ({
         setShowMenu(false);
     };
 
-    const handlePlaceBackInService = (e, data) => {
+    const handlePlaceBackInService = (e) => {
         e.preventDefault();
-        // put back in service
+        dispatch(onSetTruckIsOutOfService({
+            isOutOfService: false,
+            truckId: truck.id
+        }));
         handleCloseMenu();
     };
 
-    const handlePlaceOutOfService = (e, data) => {
+    const handlePlaceOutOfService = (e) => {
         e.preventDefault();
 
+        const data = {
+            truckId: truck.id,
+            truckCode: truck.truckCode,
+            scheduleDate: dataFilter.date,
+            shift: dataFilter.shift,
+        };
+
         openModal(
-            <AddOutOfServiceReason data={data} />,
+            <AddOutOfServiceReason 
+                data={data} 
+                closeModal={closeModal}
+            />,
             400
         );
         handleCloseMenu();
@@ -237,12 +264,12 @@ const TruckBlockItem = ({
             >
                 {/* Plase back in service */}
                 { !truck.isExternal && !truck.alwaysShowOnSchedule && truck.isOutOfService && 
-                    <MenuItem onClick={(e) => handlePlaceBackInService(e, truck.id)}>Place back in service</MenuItem>
+                    <MenuItem onClick={(e) => handlePlaceBackInService(e)}>Place back in service</MenuItem>
                 }
                 
                 {/* Place out of service */}
                 { !truck.isExternal && !truck.alwaysShowOnSchedule && !truck.isOutOfService && 
-                    <MenuItem onClick={(e) => handlePlaceOutOfService(e, truck.id)}>Place out of service</MenuItem>
+                    <MenuItem onClick={(e) => handlePlaceOutOfService(e)}>Place out of service</MenuItem>
                 }
 
                 {/* No driver for truck */}

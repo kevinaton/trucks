@@ -7,6 +7,7 @@ import {
     GET_WIALON_DEVICE_TYPES_SELECT_LIST,
     GET_TRUCK_FOR_EDIT,
     EDIT_TRUCK,
+    SET_TRUCK_IS_OUT_OF_SERVICE
 } from './actionTypes';
 import { 
     getVehicleCategoriesSuccess, 
@@ -23,6 +24,8 @@ import {
     getTruckForEditFailure,
     editTruckSuccess,
     editTruckFailure,
+    setTruckIsOutOfServiceSuccess,
+    setTruckIsOutOfServiceFailure,
 } from './actions';
 import { 
     getVehicleCategories, 
@@ -32,6 +35,7 @@ import {
     getWialonDeviceTypesSelectList,
     getTruckForEdit,
     editTruck,
+    setTruckIsOutOfService
 } from './service';
 
 function* fetchVehicleCategories() {
@@ -97,6 +101,15 @@ function* onEditTruck({ payload: truck }) {
     }
 }
 
+function* onSetTruckIsOutOfService({ payload: truck }) {
+    try {
+        const response = yield call(setTruckIsOutOfService, truck);
+        yield put(setTruckIsOutOfServiceSuccess(response));
+    } catch (error) {
+        yield put(setTruckIsOutOfServiceFailure(error));
+    }
+}
+
 function* trucksSaga() {
     yield takeEvery(GET_VEHICLE_CATEGORIES, fetchVehicleCategories);
     yield takeEvery(GET_BED_CONSTRUCTION_SELECT_LIST, fetchBedConstructionSelectList);
@@ -105,6 +118,7 @@ function* trucksSaga() {
     yield takeEvery(GET_WIALON_DEVICE_TYPES_SELECT_LIST, fetchWialonDeviceTypesSelectList);
     yield takeEvery(GET_TRUCK_FOR_EDIT, fetchTruckForEdit);
     yield takeEvery(EDIT_TRUCK, onEditTruck);
+    yield takeEvery(SET_TRUCK_IS_OUT_OF_SERVICE, onSetTruckIsOutOfService);
 }
 
 export default trucksSaga;

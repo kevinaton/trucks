@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash';
 import {
     GET_VEHICLE_CATEGORIES_SUCCESS,
     GET_VEHICLE_CATEGORIES_FAILURE,
@@ -14,7 +13,10 @@ import {
     GET_TRUCK_FOR_EDIT_FAILURE,
     EDIT_TRUCK_SUCCESS,
     EDIT_TRUCK_FAILURE,
-    EDIT_TRUCK_RESET
+    EDIT_TRUCK_RESET,
+    SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS,
+    SET_TRUCK_IS_OUT_OF_SERVICE_FAILURE,
+    SET_TRUCK_IS_OUT_OF_SERVICE_RESET,
 } from './actionTypes';
 
 const INIT_STATE = {
@@ -24,7 +26,8 @@ const INIT_STATE = {
     activeTrailersSelectList: null,
     wialonDeviceTypesSelectList: null,
     truckForEdit: null,
-    editTruckSuccess: null
+    editTruckSuccess: null,
+    setTruckIsOutOfServiceSuccess: null,
 };
 
 const TruckReducer = (state = INIT_STATE, action) => {
@@ -89,23 +92,37 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 ...state,
                 error: action.payload,
             };
-        case EDIT_TRUCK_SUCCESS: {
+        case EDIT_TRUCK_SUCCESS: 
             return {
                 ...state,
                 editTruckSuccess: true
             };
-        }
         case EDIT_TRUCK_FAILURE:
             return {
                 ...state,
                 editTruckSuccess: false,
                 error: action.payload
-            }
+            };
         case EDIT_TRUCK_RESET: 
             return {
                 ...state,
                 editTruckSuccess: null
-            }
+            };
+        case SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS:
+            return {
+                ...state,
+                setTruckIsOutOfServiceSuccess: true
+            };
+        case SET_TRUCK_IS_OUT_OF_SERVICE_FAILURE:
+            return {
+                ...state,
+                setTruckIsOutOfServiceSuccess: false,
+            };
+        case SET_TRUCK_IS_OUT_OF_SERVICE_RESET:
+            return {
+                ...state,
+                setTruckIsOutOfServiceSuccess: null,
+            };
         default:
             return state;
     }

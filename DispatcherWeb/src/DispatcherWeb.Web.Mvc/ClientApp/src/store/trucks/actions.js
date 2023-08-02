@@ -20,7 +20,11 @@ import {
     EDIT_TRUCK,
     EDIT_TRUCK_SUCCESS,
     EDIT_TRUCK_FAILURE,
-    EDIT_TRUCK_RESET
+    EDIT_TRUCK_RESET,
+    SET_TRUCK_IS_OUT_OF_SERVICE,
+    SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS,
+    SET_TRUCK_IS_OUT_OF_SERVICE_FAILURE,
+    SET_TRUCK_IS_OUT_OF_SERVICE_RESET,
 } from './actionTypes';
 
 export const getVehicleCategories = () => ({
@@ -125,4 +129,23 @@ export const editTruckFailure = error => ({
 
 export const resetEditTruck = () => ({
     type: EDIT_TRUCK_RESET
+});
+
+export const setTruckIsOutOfService = truck => ({
+    type: SET_TRUCK_IS_OUT_OF_SERVICE,
+    payload: truck
+});
+
+export const setTruckIsOutOfServiceSuccess = response => ({
+    type: SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS,
+    payload: response
+});
+
+export const setTruckIsOutOfServiceFailure = error => ({
+    type: SET_TRUCK_IS_OUT_OF_SERVICE_FAILURE,
+    payload: error,
+});
+
+export const resetSetTruckIsOutOfService = () => ({
+    type: SET_TRUCK_IS_OUT_OF_SERVICE_RESET
 });

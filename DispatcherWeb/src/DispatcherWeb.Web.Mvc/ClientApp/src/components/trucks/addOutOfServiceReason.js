@@ -8,7 +8,11 @@ import {
     Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import moment from 'moment';
+import { useSnackbar } from 'notistack';
+import { 
+    setTruckIsOutOfService as onSetTruckIsOutOfService,
+    resetSetTruckIsOutOfService as onResetTruckIsOutOfService
+} from '../../store/actions';
 
 const AddOutOfServiceReason = ({
     data,
@@ -18,10 +22,29 @@ const AddOutOfServiceReason = ({
     const [error, setError] = useState(false);
     const [errorText, setErrorText] = useState('');
 
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
+    const {
+        setTruckIsOutOfServiceSuccess
+    } = useSelector(state => ({
+        setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess
+    }));
 
-    const handleReasonInputChange = () => {
+    useEffect(() => {
+        if (setTruckIsOutOfServiceSuccess) {
+            enqueueSnackbar('Saved successfully', { variant: 'success' });
+            dispatch(onResetTruckIsOutOfService());
+            closeModal();
+        }
+    }, [dispatch, enqueueSnackbar, setTruckIsOutOfServiceSuccess, closeModal]);
 
+    const handleReasonInputChange = (e) => {
+        const inputValue = e.target.value;
+        if (inputValue.length <= 500) {
+            setReason(inputValue);
+            setError(false);
+            setErrorText('');
+        }
     };
 
     const handleCancel = () => {
@@ -31,13 +54,20 @@ const AddOutOfServiceReason = ({
 
     const handleSave = (e) => {
         e.preventDefault();
+        
+        if (!reason) {
+            setError(true);
+            setErrorText('Please enter a reason.');
+            return;
+        }
+
         const payload = {
-            date: moment().format('MM/DD/YYYY'),
+            date: data.scheduleDate,
             isOutOfService: true,
             reason,
-            truckId: data
+            truckId: data.truckId
         };
-        console.log('payload: ', payload)
+        dispatch(onSetTruckIsOutOfService(payload));
     };
 
     return (
@@ -57,7 +87,10 @@ const AddOutOfServiceReason = ({
                 </Button>
             </Box>
             
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ 
+                p: 2, 
+                width: '100%' 
+            }}>
                 <TextField
                     id="reason"
                     label={
