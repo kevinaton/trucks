@@ -12,6 +12,9 @@ import {
     GET_SCHEDULE_ORDERS,
     GET_SCHEDULE_ORDERS_SUCCESS,
     GET_SCHEDULE_ORDERS_FAILURE,
+    REMOVE_TRUCK_FROM_SCHEDULE,
+    REMOVE_TRUCK_FROM_SCHEDULE_SUCCESS,
+    REMOVE_TRUCK_FROM_SCHEDULE_FAILURE,
 } from './actionTypes';
 
 export const getSchedulePageConfig = () => ({
@@ -75,4 +78,9 @@ export const getScheduleOrdersSuccess = scheduleOrders => ({
 export const getScheduleOrdersFailure = error => ({
     type: GET_SCHEDULE_ORDERS_FAILURE,
     payload: error,
+});
+
+export const removeTruckFromSchedule = truckIds => ({
+    type: REMOVE_TRUCK_FROM_SCHEDULE,
+    payload: truckIds,
 });

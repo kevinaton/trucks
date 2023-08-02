@@ -14,6 +14,7 @@ import * as signalR from '@microsoft/signalr';
 import { 
     getScheduleTrucks, 
     getScheduleTruckBySyncRequest, 
+    removeTruckFromSchedule as onRemoveTruckFromSchedule,
     getScheduleTruckBySyncRequestReset as onResetGetScheduleTruckBySyncRequest } from '../../store/actions';
 import TruckBlockItem from './truck-block-item';
 import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
@@ -137,9 +138,8 @@ const TruckBlock = ({
                             }));
                         }
 
-                        // todo: remove the entity from the list
                         if (removedTrucks.length > 0) {
-
+                            dispatch(onRemoveTruckFromSchedule(removedTrucks));
                         }
                     }
                 });

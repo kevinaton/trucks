@@ -11,6 +11,7 @@ import {
     GET_SCHEDULE_ORDERS,
     GET_SCHEDULE_ORDERS_SUCCESS,
     GET_SCHEDULE_ORDERS_FAILURE,
+    REMOVE_TRUCK_FROM_SCHEDULE,
 } from './actionTypes';
 
 const INIT_STATE = {
@@ -138,8 +139,57 @@ const SchedulingReducer = (state = INIT_STATE, action) => {
                 isLoadingScheduleOrders: false,
                 error: action.payload,
             };
-        default:
-            return state;
+        case REMOVE_TRUCK_FROM_SCHEDULE: {
+            const payload = action.payload;
+            if (payload === null) break;
+
+            let result = {
+                items: []
+            };
+
+            if (state.scheduleTrucks !== null && state.scheduleTrucks.result !== null) {
+                let { items } = state.scheduleTrucks.result;
+                if (items !== null) {
+                    _.forEach(payload, (newItem) => {
+                        console.log('newItem: ', newItem)
+                        const index = _.findIndex(items, { id: parseInt(newItem) });
+                        if (index !== -1) {
+                            items.splice(index, 1);
+                        }
+
+                        if (items.length > 1) {
+                            // order by isExternal in ascending order (true first)
+                            // then by isPowered in descending order (false first)
+                            // then by truckCode in ascending order
+                            items = _.orderBy(items, [
+                                'isExternal', 
+                                'vehicleCategory.isPowered',
+                                'truckCode'
+                            ], [
+                                'asc',
+                                'desc',
+                                'asc'
+                            ]);
+                        }
+                    });
+                }
+                    
+                result = {
+                    ...result,
+                    items
+                }
+            }
+
+            return {
+                ...state,
+                scheduleTrucks: {
+                    ...state.scheduleTrucks,
+                    result
+                },
+                isModifiedScheduleTrucks: true,
+            };
+        }
+        default: return state;
     }
 };
 
