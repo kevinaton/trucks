@@ -2,11 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Box,
-    Paper,
     Chip,
     Grid, 
+    Paper,
     Skeleton,
-    Tooltip 
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import _, { isEmpty } from 'lodash';
@@ -16,14 +15,16 @@ import {
     getScheduleTrucks, 
     getScheduleTruckBySyncRequest, 
     getScheduleTruckBySyncRequestReset as onResetGetScheduleTruckBySyncRequest } from '../../store/actions';
+import TruckBlockItem from './truck-block-item';
 import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
 import { entityType } from '../../common/enums/entityType';
 import { changeType } from '../../common/enums/changeType';
 
-const TruckMap = ({
+const TruckBlock = ({
     pageConfig,
     dataFilter,
-    trucks,
+    trucks, 
+    orders,
     onSetTrucks,
     openModal,
     closeModal,
@@ -39,13 +40,11 @@ const TruckMap = ({
     const { 
         isLoadingScheduleTrucks,
         scheduleTrucks,
-        isModifiedScheduleTrucks,
-        editTruckSuccess
+        isModifiedScheduleTrucks
     } = useSelector((state) => ({
         isLoadingScheduleTrucks: state.SchedulingReducer.isLoadingScheduleTrucks,
         scheduleTrucks: state.SchedulingReducer.scheduleTrucks,
-        isModifiedScheduleTrucks: state.SchedulingReducer.isModifiedScheduleTrucks,
-        editTruckSuccess: state.TruckReducer.editTruckSuccess
+        isModifiedScheduleTrucks: state.SchedulingReducer.isModifiedScheduleTrucks
     }));
 
     useEffect(() => {
@@ -62,7 +61,8 @@ const TruckMap = ({
     
     useEffect(() => {
         if (!isEmpty(pageConfig) && isLoading && 
-            !isEmpty(scheduleTrucks) && !isEmpty(scheduleTrucks.result)
+            !isEmpty(scheduleTrucks) && 
+            !isEmpty(scheduleTrucks.result)
         ) {
             const { items } = scheduleTrucks.result;
             if (!isEmpty(items) && (
@@ -161,12 +161,6 @@ const TruckMap = ({
         }
     }, [dispatch, isConnectedToSignalR, dataFilter]);
 
-    // useEffect(() => {
-    //     if (editTruckSuccess) {
-    //         fetchData();
-    //     }
-    // }, [editTruckSuccess]);
-
     useEffect(() => {
         if (isModifiedScheduleTrucks) {
             const { items } = scheduleTrucks.result;
@@ -212,7 +206,8 @@ const TruckMap = ({
         if (truck.isOutOfService) {
             return {
                 ...defaultColor,
-                color: '#999'
+                backgroundColor: '#999999',
+                color: '#fff'
             };
         }
 
@@ -269,14 +264,6 @@ const TruckMap = ({
         }
     };
 
-    const getTruckTileTitle = (truck) => {
-        let title = truck.truckCode;
-        if (truckCategoryNeedsDriver(truck)) {
-            title += ' - ' + truck.driverName;
-        }
-        return title;
-    };
-
     const handleCreateNewTruck = (e) => {
         e.preventDefault();
 
@@ -291,37 +278,20 @@ const TruckMap = ({
         );
     };
 
-    const renderTrucks = () => (
-        <>
-            { trucks.map((truck) => {
-                const truckColors = getTruckColor(truck);
-                const truckTitle = getTruckTileTitle(truck);
-
-                return (
-                    <Grid item key={truck.truckCode}>
-                        <Tooltip title={truckTitle}>
-                            <Chip
-                                label={truck.truckCode}
-                                onClick={() => {}}
-                                sx={{
-                                    minWidth: '81px',
-                                    borderRadius: 0,
-                                    fontSize: 18,
-                                    fontWeight: 600,
-                                    py: 3,
-                                    backgroundColor: `${truckColors.backgroundColor}`,
-                                    color: `${truckColors.color}`,
-                                    border: `${truckColors.border}`,
-                                    '&:hover': {
-                                        backgroundColor: `${truckColors.backgroundColor}`
-                                    }
-                                }}
-                            />
-                        </Tooltip>
-                    </Grid>
-                );
-            })}
-        </>
+    const renderTrucks = (index, truck, truckColors) => (
+        <Grid item key={index}>
+            <TruckBlockItem 
+                truck={truck} 
+                truckColors={truckColors}
+                pageConfig={pageConfig} 
+                dataFilter={dataFilter} 
+                truckHasNoDriver={truckHasNoDriver(truck)} 
+                truckCategoryNeedsDriver={truckCategoryNeedsDriver(truck)} 
+                orders={orders}
+                openModal={openModal} 
+                closeModal={closeModal} 
+            />
+        </Grid>
     );
 
     return (
@@ -350,7 +320,7 @@ const TruckMap = ({
                             </React.Fragment>
                         }
 
-                        {!isLoading && !isEmpty(trucks) && renderTrucks()}
+                        { trucks && trucks.map((truck, index) => renderTrucks(index, truck, getTruckColor(truck)))}
 
                         {!isLoading && 
                             <Grid item>
@@ -362,6 +332,7 @@ const TruckMap = ({
                                     }
                                     onClick={(e) => handleCreateNewTruck(e)}
                                     sx={{
+                                        width: '80px',
                                         backgroundColor: '#fff',
                                         border: '1px solid #ebedf2',
                                         color: '#6f727d',
@@ -381,4 +352,4 @@ const TruckMap = ({
     );
 }
 
-export default TruckMap;
+export default TruckBlock;

@@ -1084,6 +1084,8 @@ namespace DispatcherWeb.Trucks
                 result.ThereWereAssociatedTractors = await RemoveAssociatedTractors(truck.Id);
             }
             truck.IsOutOfService = input.IsOutOfService;
+            await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                .AddChange(EntityEnum.Truck, truck.ToChangedEntity()));
             return result;
         }
 

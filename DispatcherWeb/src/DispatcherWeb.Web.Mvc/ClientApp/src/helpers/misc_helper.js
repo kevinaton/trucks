@@ -19,6 +19,11 @@ export const isToday = (value) => {
     return isToday;
 }
 
+export const isPastDate = (value) => {
+    var isPastDate = moment(value, 'MM/DD/YYYY') < moment().startOf('day');
+    return isPastDate;
+};
+
 export const round = num => {
     num = Number(num);
     if (isNaN(num))
