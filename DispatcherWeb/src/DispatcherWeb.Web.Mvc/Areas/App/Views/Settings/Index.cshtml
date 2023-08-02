@@ -214,6 +214,13 @@
                                     <span></span>
                                 </label>
                             </div>
+                            <div class="form-group" @Html.StyleDisplayNone(!await FeatureChecker.IsEnabledAsync(AppFeatures.AllowMultiOfficeFeature))>
+                                <label for="ShowOfficeOnTicketsByDriver" class="m-checkbox col-lg-12">
+                                    <input id="ShowOfficeOnTicketsByDriver" type="checkbox" name="ShowOfficeOnTicketsByDriver" value="true" checked="@(Model.Settings.General.ShowOfficeOnTicketsByDriver ? "checked" : null)">
+                                    @L("ShowOfficeOnTicketsByDriver")
+                                    <span></span>
+                                </label>
+                            </div>
                             <div class="form-group">
                                 <label for="OrderEmailSubjectTemplate">@L("OrderEmailSubjectTemplate")</label>
                                 <input type="text" class="form-control" name="OrderEmailSubjectTemplate" value="@Model.Settings.General.OrderEmailSubjectTemplate">

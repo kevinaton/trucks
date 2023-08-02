@@ -32,6 +32,8 @@ namespace DispatcherWeb.Tickets.Dto
 
             public int CustomerId { get; set; }
             public string CustomerName { get; set; }
+            public int OfficeId { get; set; }
+            public string OfficeName { get; set; }
             public DateTime? OrderDate { get; set; }
             public int? LoadAtId { get; set; }
             public int? DeliverToId { get; set; }

@@ -171,6 +171,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.General.ValidateDriverAndTruckOnTickets, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.ShowDriverNamesOnPrintedOrder, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.SplitBillingByOffices, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.General.ShowOfficeOnTicketsByDriver, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.PaymentProcessor, "0", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
 

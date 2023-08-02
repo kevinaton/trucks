@@ -1131,6 +1131,8 @@ namespace DispatcherWeb.Tickets
                     JobNumber = x.JobNumber,
                     CustomerId = x.Order.CustomerId,
                     CustomerName = x.Order.Customer.Name,
+                    OfficeId = x.Order.Office.Id,
+                    OfficeName = x.Order.Office.Name,
                     OrderDate = x.Order.DeliveryDate,
                     LoadAtId = x.LoadAtId,
                     DeliverToId = x.DeliverToId,
@@ -1512,6 +1514,9 @@ namespace DispatcherWeb.Tickets
                 {
                     var orderLine = await _orderLineRepository.GetAll()
                         .Include(x => x.Tickets)
+                        .Include(x => x.Order)
+                            .ThenInclude(x => x.OrderLines)
+                                .ThenInclude(x => x.Tickets)
                         .FirstOrDefaultAsync(x => x.Id == orderLineModel.Id);
 
                     if (orderLine == null)
@@ -1519,7 +1524,9 @@ namespace DispatcherWeb.Tickets
                         throw new ApplicationException($"OrderLine with id {orderLineModel.Id} wasn't found");
                     }
 
+                    var orderTickets = orderLine.Order.OrderLines.SelectMany(ol => ol.Tickets).ToList();
                     var orderLineTickets = orderLine.Tickets.ToList();
+                    var orderHasChanged = false;
                     //if (orderLine.Order.CustomerId != orderLineModel.CustomerId)
                     // we disallowed to change CustomerId from tickets by driver view per #10977
                     //}
@@ -1537,6 +1544,12 @@ namespace DispatcherWeb.Tickets
                     {
                         orderLine.ServiceId = orderLineModel.ServiceId;
                         orderLineTickets.ForEach(t => t.ServiceId = orderLineModel.ServiceId);
+                    }
+                    if (orderLine.Order.LocationId != orderLineModel.OfficeId)
+                    {
+                        orderLine.Order.LocationId = orderLineModel.OfficeId;
+                        orderTickets.ForEach(t => t.OfficeId = orderLineModel.OfficeId);
+                        orderHasChanged = true;
                     }
 
                     orderLine.JobNumber = orderLineModel.JobNumber;
@@ -1674,7 +1687,7 @@ namespace DispatcherWeb.Tickets
                         orderLineModel.FuelSurchargeRate = orderLine.FuelSurchargeRate;
                     }
 
-                    changedTickets.AddRange(orderLineTickets);
+                    changedTickets.AddRange(orderHasChanged ? orderTickets : orderLineTickets);
                 }
                 await CurrentUnitOfWork.SaveChangesAsync();
             }

@@ -17,6 +17,7 @@ namespace DispatcherWeb.Configuration
             public const string ValidateDriverAndTruckOnTickets = "App.General.ValidateDriverAndTruckOnTickets";
             public const string ShowDriverNamesOnPrintedOrder = "App.General.ShowDriverNamesOnPrintedOrder";
             public const string SplitBillingByOffices = "App.General.SplitBillingByOffices";
+            public const string ShowOfficeOnTicketsByDriver = "App.General.ShowOfficeOnTicketsByDriver";
             public const string PaymentProcessor = "App.General.PaymentProcessor";
             public const string UseShifts = "App.General.UseShifts";
             public const string ShiftName1 = "App.General.ShiftName1";
