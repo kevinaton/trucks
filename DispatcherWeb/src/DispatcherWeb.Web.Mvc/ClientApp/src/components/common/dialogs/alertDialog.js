@@ -5,6 +5,7 @@ import {
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { theme } from '../../../Theme';
 
 export const AlertDialog = ({
@@ -48,6 +49,15 @@ export const AlertDialog = ({
                     <ErrorOutlineIcon 
                         sx={{ 
                             color: theme.palette.warning.main,
+                            fontSize: '88px !important'
+                        }} 
+                    />
+                }
+
+                { variant && variant === 'info' && 
+                    <InfoOutlinedIcon 
+                        sx={{ 
+                            color: theme.palette.info.main,
                             fontSize: '88px !important'
                         }} 
                     />

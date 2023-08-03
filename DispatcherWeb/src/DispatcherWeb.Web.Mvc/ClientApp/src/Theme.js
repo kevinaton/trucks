@@ -18,6 +18,9 @@ export const theme = createTheme({
         error: {
             main: '#DD4B39',
         },
+        info: {
+            main: '#c9dae1',
+        },
         text: {
             primary: '#303030',
             disabled: '#616161',

@@ -28,6 +28,7 @@ const INIT_STATE = {
     truckForEdit: null,
     editTruckSuccess: null,
     setTruckIsOutOfServiceSuccess: null,
+    setOutOfServiceResponse: null
 };
 
 const TruckReducer = (state = INIT_STATE, action) => {
@@ -108,20 +109,26 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 ...state,
                 editTruckSuccess: null
             };
-        case SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS:
+        case SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS: {
+            const payload = action.payload;
+
             return {
                 ...state,
-                setTruckIsOutOfServiceSuccess: true
+                setTruckIsOutOfServiceSuccess: true,
+                setOutOfServiceResponse: payload.isOutOfService ? payload.response : null
             };
+        }
         case SET_TRUCK_IS_OUT_OF_SERVICE_FAILURE:
             return {
                 ...state,
                 setTruckIsOutOfServiceSuccess: false,
+                error: action.payload
             };
         case SET_TRUCK_IS_OUT_OF_SERVICE_RESET:
             return {
                 ...state,
                 setTruckIsOutOfServiceSuccess: null,
+                setOutOfServiceResponse: null
             };
         default:
             return state;

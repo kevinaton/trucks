@@ -290,6 +290,7 @@ const TruckBlock = ({
                 orders={orders}
                 openModal={openModal} 
                 closeModal={closeModal} 
+                openDialog={openDialog}
             />
         </Grid>
     );

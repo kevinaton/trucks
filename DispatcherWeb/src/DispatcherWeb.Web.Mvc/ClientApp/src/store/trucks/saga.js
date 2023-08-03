@@ -104,7 +104,7 @@ function* onEditTruck({ payload: truck }) {
 function* onSetTruckIsOutOfService({ payload: truck }) {
     try {
         const response = yield call(setTruckIsOutOfService, truck);
-        yield put(setTruckIsOutOfServiceSuccess(response));
+        yield put(setTruckIsOutOfServiceSuccess(response, truck.isOutOfService));
     } catch (error) {
         yield put(setTruckIsOutOfServiceFailure(error));
     }

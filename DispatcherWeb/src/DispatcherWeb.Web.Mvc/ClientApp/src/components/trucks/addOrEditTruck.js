@@ -241,7 +241,7 @@ const AddOrEditTruckForm = ({
 
     useEffect(() => {
         dispatch(getVehicleCategories());
-        dispatch(getDriversSelectList());
+        dispatch(getDriversSelectList(false, 1000, 0));
         dispatch(getBedConstructionSelectList());
         dispatch(getFuelTypeSelectList());
         dispatch(getWialonDeviceTypesSelectList());

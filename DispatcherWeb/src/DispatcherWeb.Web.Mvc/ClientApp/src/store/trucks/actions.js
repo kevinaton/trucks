@@ -136,9 +136,12 @@ export const setTruckIsOutOfService = truck => ({
     payload: truck
 });
 
-export const setTruckIsOutOfServiceSuccess = response => ({
+export const setTruckIsOutOfServiceSuccess = (response, isOutOfService) => ({
     type: SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS,
-    payload: response
+    payload: {
+        response, 
+        isOutOfService
+    }
 });
 
 export const setTruckIsOutOfServiceFailure = error => ({

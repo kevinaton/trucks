@@ -11,6 +11,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { tooltipClasses } from '@mui/material/Tooltip';
 import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason';
+import AddDriverForTruck from '../../components/scheduling/addDriverForTruck';
 import TruckOrders from './truck-orders';
 import { assetType } from '../../common/enums/assetType';
 import { isPastDate } from '../../helpers/misc_helper';
@@ -56,7 +57,8 @@ const TruckBlockItem = ({
     truckCategoryNeedsDriver,
     orders,
     openModal,
-    closeModal
+    closeModal,
+    openDialog
 }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [menuAnchorPoint, setMenuAnchorPoint] = useState(null);
@@ -149,7 +151,8 @@ const TruckBlockItem = ({
         openModal(
             <AddOutOfServiceReason 
                 data={data} 
-                closeModal={closeModal}
+                closeModal={closeModal} 
+                openDialog={openDialog}
             />,
             400
         );
@@ -160,7 +163,25 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
-    const handleAssignDriver = () => {
+    const handleAssignDriver = (e) => {
+        e.preventDefault();
+
+        const data = {
+            truckId: truck.id,
+            truckCode: truck.truckCode,
+            leaseHaulerId: truck.leaseHaulerId,
+            date: dataFilter.date,
+            shift: dataFilter.shift,
+            officeId: dataFilter.officeId
+        };
+
+        openModal(
+            <AddDriverForTruck 
+                data={data} 
+                closeModal={closeModal} 
+            />,
+            400
+        );
         handleCloseMenu();
     };
 

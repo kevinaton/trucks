@@ -2,5 +2,9 @@
     "File_Empty_Error": "Please select a file!",
     "ProfilePicture_Warn_FileType": "You can only select JPG/JPEG/PNG/GIF file. Please select another file.",
     "ProfilePicture_Warn_SizeLimit": "Picture size must be smaller than {0}MB. Please select another file.",
-    "GdprDataPreparedNotificationMessage": "Your data is ready, click here to download."
+    "GdprDataPreparedNotificationMessage": "Your data is ready, click here to download.",
+    "ThereWereOrdersAssociatedWithThisTruck": "There were orders associated with this truck. The truck has been removed from those orders.",
+    "ThereWereCanceledDispatches": "There were unacknowledged dispatches assigned to this truck and they have been canceled.",
+    "ThereWereNotCanceledDispatches": "There were acknowledged or loaded dispatches assigned to this truck and they have not been canceled.",
+    "ThereWasTractorAssociatedWithThisTrailer": "There was a tractor associated with this trailer. This tractor has been removed from the trailer."
 }

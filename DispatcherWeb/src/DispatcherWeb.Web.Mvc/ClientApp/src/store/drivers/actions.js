@@ -7,8 +7,13 @@ import {
     GET_DRIVER_FOR_EDIT_FAILURE,
 } from './actionTypes';
 
-export const getDriversSelectList = () => ({
+export const getDriversSelectList = (includeLeaseHaulerDrivers, maxResultCount, skipCount) => ({
     type: GET_DRIVERS_SELECT_LIST,
+    payload: { 
+        includeLeaseHaulerDrivers, 
+        maxResultCount, 
+        skipCount 
+    },
 });
 
 export const getDriversSelectListSuccess = driversSelectList => ({

@@ -26,7 +26,7 @@ import { theme } from '../../Theme';
 import _, { isEmpty } from 'lodash';
 import { renderTime, isToday, round } from '../../helpers/misc_helper';
 import { getScheduleOrders } from '../../store/actions';
-import TruckAssignment from './truck-assignment';
+import ScheduleTruckAssignment from './schedule-truck-assignment';
 import App from '../../config/appConfig';
 
 const ScheduleOrders = ({
@@ -610,7 +610,7 @@ const ScheduleOrders = ({
 
                                                     <Grid item>
                                                         {!isEmpty(trucks) && 
-                                                            <TruckAssignment 
+                                                            <ScheduleTruckAssignment 
                                                                 trucks={trucks} 
                                                                 index={index}
                                                                 data={data} 

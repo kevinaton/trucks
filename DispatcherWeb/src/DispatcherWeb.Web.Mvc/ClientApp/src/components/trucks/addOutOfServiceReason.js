@@ -13,10 +13,13 @@ import {
     setTruckIsOutOfService as onSetTruckIsOutOfService,
     resetSetTruckIsOutOfService as onResetTruckIsOutOfService
 } from '../../store/actions';
+import { getText } from '../../helpers/localization_helper';
+import { AlertDialog } from '../../components/common/dialogs';
 
 const AddOutOfServiceReason = ({
     data,
-    closeModal
+    closeModal,
+    openDialog
 }) => {
     const [reason, setReason] = useState('');
     const [error, setError] = useState(false);
@@ -25,18 +28,57 @@ const AddOutOfServiceReason = ({
     const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
     const {
-        setTruckIsOutOfServiceSuccess
+        setTruckIsOutOfServiceSuccess,
+        setOutOfServiceResponse
     } = useSelector(state => ({
-        setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess
+        setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess,
+        setOutOfServiceResponse: state.TruckReducer.setOutOfServiceResponse
     }));
 
     useEffect(() => {
         if (setTruckIsOutOfServiceSuccess) {
-            enqueueSnackbar('Saved successfully', { variant: 'success' });
-            dispatch(onResetTruckIsOutOfService());
             closeModal();
+            enqueueSnackbar('Saved successfully', { variant: 'success' });
+
+            if (true) {
+                const { result } = setOutOfServiceResponse;
+
+                const infoMessages = [];
+                if (result.thereWereAssociatedOrders) {
+                    infoMessages.push(getText('ThereWereOrdersAssociatedWithThisTruck'));
+                }
+                if (result.thereWereCanceledDispatches) {
+                    infoMessages.push(getText('ThereWereCanceledDispatches'));
+                }
+                if (result.thereWereNotCanceledDispatches) {
+                    infoMessages.push(getText('ThereWereNotCanceledDispatches'));
+                }
+                if (result.thereWereAssociatedTractors) {
+                    infoMessages.push(getText('ThereWasTractorAssociatedWithThisTrailer'));
+                }
+                
+                if (infoMessages.length > 0) {
+                    const mappedMsg = infoMessages.map((message, index) => (
+                        <Typography key={index} display='block'>
+                            {message}
+                        </Typography>
+                    ));
+                    openDialog({
+                        type: 'alert', 
+                        content: (
+                            <AlertDialog 
+                                variant='info' 
+                                title='Message'
+                                message={mappedMsg} 
+                            />
+                        ),
+                    });
+                }
+            }
+
+            dispatch(onResetTruckIsOutOfService());
         }
-    }, [dispatch, enqueueSnackbar, setTruckIsOutOfServiceSuccess, closeModal]);
+    }, [dispatch, enqueueSnackbar, openDialog, setTruckIsOutOfServiceSuccess, setOutOfServiceResponse, closeModal]);
 
     const handleReasonInputChange = (e) => {
         const inputValue = e.target.value;
@@ -49,6 +91,9 @@ const AddOutOfServiceReason = ({
 
     const handleCancel = () => {
         // Reset the form
+        setReason('');
+        setError(false);
+        setErrorText('');
         closeModal();
     };
 
