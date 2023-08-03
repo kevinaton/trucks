@@ -408,19 +408,19 @@ const AddOrEditTruckForm = ({
     };
 
     const handleVehicleCategoryIdInputChange = (selectedOption) => {
-        const { isPowered, assetType } = selectedOption.item;
-        setVehicleCategoryIsPowered(isPowered);
-        setVehicleCategoryAssetType(assetType);
+        const { ...item } = selectedOption.item;
+        setVehicleCategoryIsPowered(item.isPowered);
+        setVehicleCategoryAssetType(item.assetType);
 
-        if ([assetType.DUMP_TRUCK, assetType.TRAILER].includes(assetType)) {
-            setBedConstruction(true);
+        if ([assetType.DUMP_TRUCK, assetType.TRAILER].includes(item.assetType)) {
+            setShowBedConstruction(true);
         }
         
-        if (isPowered) {
+        if (item.isPowered) {
             setCanPullTrailer(assetType === assetType.TRACTOR);
         }
         
-        const shouldDisableDefaultDriver = isPowered !== true;
+        const shouldDisableDefaultDriver = item.isPowered !== true;
         if (shouldDisableDefaultDriver) {
             setDefaultDriverId({
                 ...defaultDriverId,
