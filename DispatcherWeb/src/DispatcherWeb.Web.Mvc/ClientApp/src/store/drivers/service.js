@@ -2,8 +2,8 @@ import { get } from '../../helpers/api_helper';
 import * as url from '../../helpers/api_url_helper';
 
 // get drivers select list
-export const getDriversSelectList = (includeLeaseHaulerDrivers, maxResultCount, skipCount) => {
-    return get(`${url.GET_DRIVERS_SELECT_LIST}?includeLeaseHaulerDrivers=${includeLeaseHaulerDrivers}&maxResultCount=${maxResultCount}&skipCount=${skipCount}`);
+export const getDriversSelectList = filter => {
+    return get(`${url.GET_DRIVERS_SELECT_LIST}?includeLeaseHaulerDrivers=${filter.includeLeaseHaulerDrivers}&maxResultCount=${filter.maxResultCount}&skipCount=${filter.skipCount}`);
 };
 
 // get driver for edit

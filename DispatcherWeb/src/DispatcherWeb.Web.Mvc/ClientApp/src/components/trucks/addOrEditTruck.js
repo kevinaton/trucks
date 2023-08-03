@@ -83,7 +83,7 @@ const AddOrEditTruckForm = ({
     const [value, setValue] = useState(0);
     const [officeOptions, setOfficeOptions] = useState(null);
     const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState(null);
-    const [defaultDriverOptions, setDefaultDriverOptions] = useState(null);
+    const [defaultDriverOptions, setDefaultDriverOptions] = useState([]);
     const [activeTrailersOptions, setActiveTrailersOptions] = useState(null);
     const [bedConstructionOptions, setBedConstructionOptions] = useState(null);
     const [fuelTypeOptions, setFuelTypeOptions] = useState(null);
@@ -241,7 +241,11 @@ const AddOrEditTruckForm = ({
 
     useEffect(() => {
         dispatch(getVehicleCategories());
-        dispatch(getDriversSelectList(false, 1000, 0));
+        dispatch(getDriversSelectList({ 
+            includeLeaseHaulerDrivers: false, 
+            maxResultCount: 1000, 
+            skipCount: 0
+        }));
         dispatch(getBedConstructionSelectList());
         dispatch(getFuelTypeSelectList());
         dispatch(getWialonDeviceTypesSelectList());

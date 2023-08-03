@@ -12,7 +12,7 @@ const INIT_STATE = {
 
 const DriverReducer = (state = INIT_STATE, action) => {
     switch (action.type) {
-        case GET_DRIVERS_SELECT_LIST_SUCCESS:
+        case GET_DRIVERS_SELECT_LIST_SUCCESS: 
             return {
                 ...state,
                 driversSelectList: action.payload,

@@ -14,15 +14,9 @@ import {
     getDriverForEdit
 } from './service';
 
-function* fetchDriversSelectList({
-    payload: { 
-        includeLeaseHaulerDrivers, 
-        maxResultCount, 
-        skipCount                 
-    }
-}) {
+function* fetchDriversSelectList({ payload: filter }) {
     try {
-        const response = yield call(getDriversSelectList(includeLeaseHaulerDrivers, maxResultCount, skipCount));
+        const response = yield call(getDriversSelectList, filter);
         yield put(getDriversSelectListSuccess(response));
     } catch (error) {
         yield put(getDriversSelectListFailure(error));
