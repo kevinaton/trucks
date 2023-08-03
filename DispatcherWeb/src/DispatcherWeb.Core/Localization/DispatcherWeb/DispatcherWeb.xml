@@ -1464,6 +1464,7 @@ admin -> for your tenant's admin
     <text name="ShowInvoice">Show Invoice</text>
     <text name="ShowLeaseHaulerRateOnOrder">Show lease hauler rate on order</text>
     <text name="ShowLeaseHaulerRateOnQuote">Show lease hauler rate on quote</text>
+    <text name="ShowOfficeOnTicketsByDriver">Show office on tickets by driver</text>
     <text name="ShowTrailersOnSchedule">Show trailers on schedule</text>
     <text name="SignUp">Sign up</text>
     <text name="Sms">Sms</text>
