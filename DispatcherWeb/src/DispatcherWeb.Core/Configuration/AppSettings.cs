@@ -245,6 +245,7 @@ namespace DispatcherWeb.Configuration
             public const string Platform = "App.GpsIntegration.GpsPlatform";
             public static class DtdTracker
             {
+                public const string EnableDriverAppGps = "App.GpsIntegration.DtdTracker.EnableDriverAppGps";
                 public const string AccountName = "App.GpsIntegration.DtdTracker.AccountName";
                 public const string AccountId = "App.GpsIntegration.DtdTracker.AccountId";
                 public const string UserId = "App.GpsIntegration.DtdTracker.UserId";

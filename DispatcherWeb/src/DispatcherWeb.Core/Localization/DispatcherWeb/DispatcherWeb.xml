@@ -101,6 +101,7 @@
     <text name="AllowCopyingZeroQuantityOrderLineItemsFeature">Allow Copying Zero Quantity Order Line Items</text>
     <text name="AllowCounterSales">Allow counter sales</text>
     <text name="AllowDriverPayRateDifferentFromFreightRate">Allow specifying driver pay rate different from freight rate</text>
+    <text name="AllowGpsTracking">Allow GPS tracking</text>
     <text name="AllowImportingLuckStoneEarnings">Allow importing Luck Stone Earnings</text>
     <text name="AllowImportingTruxEarnings">Allow importing Trux Earnings</text>
     <text name="AllowInvoicingFeature">Allow Invoicing</text>
@@ -572,6 +573,8 @@ admin -> for your tenant's admin
     <text name="EmployeeId">Employee Id</text>
     <text name="EmptyOnes">Empty ones</text>
     <text name="Enable">Enable</text>
+    <text name="EnableDriverAppGps">Enable driver app GPS</text>
+    <text name="EnableDriverAppGpsHint">If this option is enabled, the driver app will be able to send GPS data to the separate DTD tracking platform. If it isn't enabled, only the GPS values needed in Dump Truck Dispatcher will be saved.</text>
     <text name="EnableForDriverApplicationQuestion">Enable for driver application?</text>
     <text name="EnableLdapAuthentication">Enable LDAP Authentication.</text>
     <text name="EnableTwoFactorLogin">Enable two factor user login.</text>
