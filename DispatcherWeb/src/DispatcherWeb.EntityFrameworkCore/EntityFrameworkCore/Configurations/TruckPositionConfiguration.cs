@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DispatcherWeb.EntityFrameworkCore.Configurations
 {
-    public class TruckPositionConfiguration : IEntityTypeConfiguration<TruckPosition>
+    public class TruckPositionObsoleteConfiguration : IEntityTypeConfiguration<TruckPositionObsolete>
     {
-        public void Configure(EntityTypeBuilder<TruckPosition> builder)
+        public void Configure(EntityTypeBuilder<TruckPositionObsolete> builder)
         {
             builder
                 .Property(e => e.Latitude)

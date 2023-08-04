@@ -33,7 +33,7 @@ using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.VehicleCategories;
 using Microsoft.EntityFrameworkCore;
 using NUglify.Helpers;
-using TruckPosition = DispatcherWeb.TruckPositions.TruckPosition;
+using TruckPositionObsolete = DispatcherWeb.TruckPositions.TruckPositionObsolete;
 
 namespace DispatcherWeb.Trucks
 {
@@ -50,7 +50,7 @@ namespace DispatcherWeb.Trucks
         private readonly IRepository<Tenant> _tenantRepository;
         private readonly IRepository<WialonDeviceType, long> _wialonDeviceTypeRepository;
         private readonly IRepository<VehicleCategory> _vehicleCategoryRepository;
-        private readonly IRepository<TruckPosition> _truckPositionRepository;
+        private readonly IRepository<TruckPositionObsolete> _truckPositionObsoleteRepository;
         private readonly ITruckAppService _truckAppService;
 
         public TruckTelematicsAppService(
@@ -65,7 +65,7 @@ namespace DispatcherWeb.Trucks
             IRepository<Tenant> tenantRepository,
             IRepository<WialonDeviceType, long> wialonDeviceTypeRepository,
             IRepository<VehicleCategory> vehicleCategoryRepository,
-            IRepository<TruckPosition> truckPositionRepository,
+            IRepository<TruckPositionObsolete> truckPositionObsoleteRepository,
             ITruckAppService truckAppService
         )
         {
@@ -80,7 +80,7 @@ namespace DispatcherWeb.Trucks
             _tenantRepository = tenantRepository;
             _wialonDeviceTypeRepository = wialonDeviceTypeRepository;
             _vehicleCategoryRepository = vehicleCategoryRepository;
-            _truckPositionRepository = truckPositionRepository;
+            _truckPositionObsoleteRepository = truckPositionObsoleteRepository;
             _truckAppService = truckAppService;
         }
 
@@ -829,7 +829,7 @@ namespace DispatcherWeb.Trucks
                 using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.MayHaveTenant))
                 {
                     var lastUploadedId = await SettingManager.GetSettingValueAsync<int>(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionId);
-                    var truckPositionsToUpload = _truckPositionRepository.GetAll()
+                    var truckPositionsToUpload = _truckPositionObsoleteRepository.GetAll()
                         .Where(x => x.Id > lastUploadedId && !string.IsNullOrEmpty(x.Truck.DtdTrackerUniqueId))
                         .Select(x => new
                         {

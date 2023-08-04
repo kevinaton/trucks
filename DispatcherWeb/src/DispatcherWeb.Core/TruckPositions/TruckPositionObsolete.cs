@@ -9,8 +9,9 @@ using DispatcherWeb.Trucks;
 
 namespace DispatcherWeb.TruckPositions
 {
+    [Obsolete]
     [Table("TruckPosition")]
-    public class TruckPosition : CreationAuditedEntity, IMustHaveTenant
+    public class TruckPositionObsolete : CreationAuditedEntity, IMustHaveTenant
     {
         public int TenantId { get; set; }
 

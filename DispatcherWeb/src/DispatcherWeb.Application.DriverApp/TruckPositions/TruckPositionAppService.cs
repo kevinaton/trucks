@@ -17,17 +17,17 @@ namespace DispatcherWeb.DriverApp.TruckPositions
     {
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<Driver> _driverRepository;
-        private readonly IRepository<TruckPosition> _truckPositionRepository;
+        private readonly IRepository<TruckPositionObsolete> _truckPositionObsoleteRepository;
 
         public TruckPositionAppService(
             IRepository<Truck> truckRepository,
             IRepository<Driver> driverRepository,
-            IRepository<TruckPosition> truckPositionRepository
+            IRepository<TruckPositionObsolete> truckPositionObsoleteRepository
             )
         {
             _truckRepository = truckRepository;
             _driverRepository = driverRepository;
-            _truckPositionRepository = truckPositionRepository;
+            _truckPositionObsoleteRepository = truckPositionObsoleteRepository;
         }
 
         [WrapResult(false)]
@@ -82,7 +82,7 @@ namespace DispatcherWeb.DriverApp.TruckPositions
                     Logger.Warn($"TruckPosition.Post: Unexpected Extras fields: " + JsonConvert.SerializeObject(location));
                 }
 
-                var truckPosition = new TruckPosition
+                var truckPosition = new TruckPositionObsolete
                 {
                     TruckId = input.TruckId,
                     DriverId = driver.Id,
@@ -108,7 +108,7 @@ namespace DispatcherWeb.DriverApp.TruckPositions
                     IsMoving = location.IsMoving,
                     Odometer = location.Odometer
                 };
-                await _truckPositionRepository.InsertAsync(truckPosition);
+                await _truckPositionObsoleteRepository.InsertAsync(truckPosition);
             }
         }
     }
