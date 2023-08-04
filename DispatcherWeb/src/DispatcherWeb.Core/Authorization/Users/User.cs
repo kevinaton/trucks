@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Abp.Authorization.Users;
 using Abp.Extensions;
 using Abp.Timing;
+using DispatcherWeb.Customers;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Offices;
 
@@ -48,6 +49,9 @@ namespace DispatcherWeb.Authorization.Users
         public string Title { get; set; }
 
         public virtual ICollection<Driver> Drivers { get; set; }
+
+        public int? CustomerContactId { get; set; }
+        public virtual CustomerContact CustomerContact { get; set; }
 
         public User()
         {

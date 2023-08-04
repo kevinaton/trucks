@@ -347,6 +347,9 @@ admin -> for your tenant's admin
     <text name="Customer">Customer</text>
     <text name="CustomerEmail">Customer Email</text>
     <text name="CustomerName"> Customer Name</text>
+    <text name="CustomerPortal">Customer Portal</text>
+    <text name="CustomerPortalTicketsList">Tickets List</text>
+    <text name="CustomerPortalUserWithCustomerIdMissing">Customer Portal feature is enabled but you are not using a customer user. Please contact support to resolve this issue.</text>
     <text name="Customers">Customers</text>
     <text name="CustomersHeaderInfo">Manage your customers</text>
     <text name="CustomRange">Custom range</text>
@@ -696,6 +699,7 @@ admin -> for your tenant's admin
     <text name="GridHeader_RecommendedMileageInterval">Recommended &lt;br&gt; mileage interval</text>
     <text name="GridHeader_RecommendedTimeInterval">Recommended &lt;br&gt; time interval</text>
     <text name="HangfireDashboard">Hangfire dashboard</text>
+    <text name="HasCustomerPortalAccess">Portal Access</text>
     <text name="HasError">Has error</text>
     <text name="HasOwnDatabase">Has own database</text>
     <text name="HeartlandPublicKey">Heartland Public Key</text>
@@ -1274,6 +1278,7 @@ admin -> for your tenant's admin
     <text name="RequestTimedOut">Your request timed out, please try again later.</text>
     <text name="Required">Required</text>
     <text name="RequiredField">{0} field is required.</text>
+    <text name="RequiredToAllowPortalAccess">Required to allow portal access</text>
     <text name="RequiresNotification">Requires Notification</text>
     <text name="Reset">Reset</text>
     <text name="ResetCode">Reset code</text>

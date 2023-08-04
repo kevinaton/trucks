@@ -224,6 +224,13 @@ namespace DispatcherWeb.Features
                 displayName: L("ReactNativeDriverApp"),
                 inputType: new CheckboxInputType()
             );
+            
+            context.Create(
+                AppFeatures.CustomerPortal,
+                defaultValue: "false",
+                displayName: L("CustomerPortal"),
+                inputType: new CheckboxInputType()
+            );
         }
 
         private static ILocalizableString L(string name)

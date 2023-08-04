@@ -1485,7 +1485,7 @@ namespace DispatcherWeb.Orders
 
                     var newId = await _orderRepository.InsertAndGetIdAsync(newOrder);
                     newOrder.Id = newId;
-                    
+
                     await _fuelSurchargeCalculator.RecalculateOrderLinesWithTicketsForOrder(newOrder.Id);
                     createdOrderIds.Add(newId);
                 }

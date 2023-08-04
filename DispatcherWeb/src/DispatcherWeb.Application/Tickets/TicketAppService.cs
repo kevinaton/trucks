@@ -18,6 +18,7 @@ using DispatcherWeb.DailyFuelCosts;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
+using DispatcherWeb.Features;
 using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
@@ -27,6 +28,7 @@ using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Services;
 using DispatcherWeb.Services.Dto;
+using DispatcherWeb.Sessions;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Tickets.Dto;
 using DispatcherWeb.Tickets.Exporting;
@@ -935,9 +937,28 @@ namespace DispatcherWeb.Tickets
             await _ticketRepository.UpdateAsync(ticket);
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
+        [AbpAuthorize(AppPermissions.Pages_Tickets_View, AppPermissions.CustomerPortal_TicketList)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
+            var permissions = new
+            {
+                ViewAnyTickets = await IsGrantedAsync(AppPermissions.Pages_Tickets_View),
+                ViewCustomerTicketsOnly = await IsGrantedAsync(AppPermissions.CustomerPortal_TicketList),
+            };
+
+            if (permissions.ViewAnyTickets)
+            {
+                //do not additionally filter the data
+            }
+            else if (permissions.ViewCustomerTicketsOnly)
+            {
+                input.CustomerId = Session.GetCustomerIdOrThrow(this);
+            }
+            else
+            {
+                throw new AbpAuthorizationException();
+            }
+
             var query = GetTicketListQuery(input, await GetTimezone());
 
             var totalCount = await query.CountAsync();
@@ -955,6 +976,14 @@ namespace DispatcherWeb.Tickets
             {
                 OrderTaxCalculator.CalculateSingleOrderLineTotals(taxCalculationType, x, x.SalesTaxRate ?? 0);
             });
+
+            if (!permissions.ViewAnyTickets && permissions.ViewCustomerTicketsOnly)
+            {
+                items.ForEach(x =>
+                {
+                    x.Revenue = 0; //revenue is hidden from customer portal users.
+                });
+            }
 
             return new PagedResultDto<TicketListViewDto>(
                 totalCount,

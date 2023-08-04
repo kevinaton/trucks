@@ -100,6 +100,13 @@ namespace DispatcherWeb.Authorization.Roles
                     MultiTenancySides.Tenant)
                 .SetDefaultPermissions()
                 );
+
+            roleManagementConfig.StaticRoles.Add(
+                new StaticRoleDefinition(
+                    StaticRoleNames.Tenants.Customer,
+                    MultiTenancySides.Tenant)
+                .SetDefaultPermissions()
+                );
         }
     }
 }

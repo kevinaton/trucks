@@ -4,6 +4,7 @@ using DispatcherWeb.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    partial class DispatcherWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230707141545_AddedCustomerPortal")]
+    partial class AddedCustomerPortal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2112,8 +2114,8 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(129)
-                        .HasColumnType("nvarchar(129)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)
@@ -2471,6 +2473,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TicketId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DeferredSignatureId");
@@ -2575,10 +2580,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<string>("LicenseNumber")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("LicenseState")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("NextMvrDueDate")
                         .HasColumnType("datetime2");
@@ -4867,8 +4868,7 @@ namespace DispatcherWeb.Migrations
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ReportsLogoFileType")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("ReportsLogoId")
                         .HasColumnType("uniqueidentifier");
@@ -4950,24 +4950,10 @@ namespace DispatcherWeb.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("LogoFileType")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<Guid?>("LogoId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("ReportsLogoFileType")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<Guid?>("ReportsLogoId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
@@ -5102,6 +5088,10 @@ namespace DispatcherWeb.Migrations
                     b.Property<bool>("IsPending")
                         .HasColumnType("bit");
 
+                    b.Property<string>("JobNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
 
@@ -5141,6 +5131,9 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<decimal>("SalesTaxRate")
                         .HasColumnType("money");
+
+                    b.Property<DateTime?>("SharedDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<byte?>("Shift")
                         .HasColumnType("tinyint");
@@ -5580,6 +5573,10 @@ namespace DispatcherWeb.Migrations
                     b.Property<bool>("IsMaterialTotalOverridden")
                         .HasColumnType("bit");
 
+                    b.Property<string>("JobNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
 
@@ -5743,6 +5740,53 @@ namespace DispatcherWeb.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("ReceiptLine");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.Orders.SharedOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("OfficeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OfficeId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("SharedOrder");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Orders.SharedOrderLine", b =>
@@ -6659,6 +6703,10 @@ namespace DispatcherWeb.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("JobNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
 
@@ -6675,9 +6723,6 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("OfficeId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PONumber")
                         .HasMaxLength(20)
@@ -6716,8 +6761,6 @@ namespace DispatcherWeb.Migrations
                     b.HasIndex("FuelSurchargeCalculationId");
 
                     b.HasIndex("LastQuoteEmailId");
-
-                    b.HasIndex("OfficeId");
 
                     b.HasIndex("ProjectId");
 
@@ -7591,6 +7634,9 @@ namespace DispatcherWeb.Migrations
                     b.Property<decimal?>("CargoCapacityCyds")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -7677,6 +7723,9 @@ namespace DispatcherWeb.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmbedded")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsOutOfService")
@@ -9841,7 +9890,7 @@ namespace DispatcherWeb.Migrations
                         .HasForeignKey("LastQuoteEmailId");
 
                     b.HasOne("DispatcherWeb.Offices.Office", "Office")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -10096,18 +10145,37 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.Orders.SharedOrder", b =>
+                {
+                    b.HasOne("DispatcherWeb.Offices.Office", "Office")
+                        .WithMany("SharedOrders")
+                        .HasForeignKey("OfficeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.Orders.Order", "Order")
+                        .WithMany("SharedOrders")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Office");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Orders.SharedOrderLine", b =>
                 {
                     b.HasOne("DispatcherWeb.Offices.Office", "Office")
-                        .WithMany("SharedOrderLines")
+                        .WithMany()
                         .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DispatcherWeb.Orders.OrderLine", "OrderLine")
                         .WithMany("SharedOrderLines")
                         .HasForeignKey("OrderLineId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Office");
@@ -10447,11 +10515,6 @@ namespace DispatcherWeb.Migrations
                         .WithMany()
                         .HasForeignKey("LastQuoteEmailId");
 
-                    b.HasOne("DispatcherWeb.Offices.Office", "Office")
-                        .WithMany("Quotes")
-                        .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("DispatcherWeb.Projects.Project", "Project")
                         .WithMany("Quotes")
                         .HasForeignKey("ProjectId")
@@ -10471,8 +10534,6 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("FuelSurchargeCalculation");
 
                     b.Navigation("LastQuoteEmail");
-
-                    b.Navigation("Office");
 
                     b.Navigation("Project");
 
@@ -11061,11 +11122,7 @@ namespace DispatcherWeb.Migrations
 
             modelBuilder.Entity("DispatcherWeb.Offices.Office", b =>
                 {
-                    b.Navigation("Orders");
-
-                    b.Navigation("Quotes");
-
-                    b.Navigation("SharedOrderLines");
+                    b.Navigation("SharedOrders");
 
                     b.Navigation("Trucks");
 
@@ -11083,6 +11140,8 @@ namespace DispatcherWeb.Migrations
                     b.Navigation("OrderPayments");
 
                     b.Navigation("Receipts");
+
+                    b.Navigation("SharedOrders");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Orders.OrderLine", b =>
