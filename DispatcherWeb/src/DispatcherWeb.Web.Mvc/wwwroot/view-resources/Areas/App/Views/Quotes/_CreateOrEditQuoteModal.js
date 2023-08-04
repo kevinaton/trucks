@@ -14,6 +14,7 @@
         let _$form = null;
         let _$quoteIdInput = null;
         let _$customerInput = null;
+        let _$officeInput = null;
         let _$proposalDateInput = null;
         let _$proposalExpiryDateInput = null;
         let _$inactivationDateInput = null;
@@ -88,6 +89,7 @@
             _$quoteIdInput = _$form.find('#Id');
             _$nameInput = _$form.find('#Name');
             _$customerInput = _$form.find('#QuoteCustomer');
+            _$officeInput = _$form.find('#QuoteOffice');
             _$proposalDateInput = _$form.find('#ProposalDate');
             _$proposalExpiryDateInput = _$form.find('#ProposalExpiryDate');
             _$inactivationDateInput = _$form.find('#InactivationDate');
@@ -176,6 +178,12 @@
                         name: result.name
                     };
                 }
+            });
+
+            _$officeInput.select2Init({
+                abpServiceMethod: abp.services.app.office.getOfficesSelectList,
+                showAll: true,
+                allowClear: false
             });
 
             _$quoteFuelSurchargeCalculationIdInput.select2Init({

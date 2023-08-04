@@ -30,6 +30,12 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
                 .WithOne(e => e.Office)
                 .HasForeignKey(e => e.OfficeId)
                 .OnDelete(DeleteBehavior.Restrict);
+            
+            builder
+                .HasMany(e => e.Quotes)
+                .WithOne(e => e.Office)
+                .HasForeignKey(e => e.OfficeId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

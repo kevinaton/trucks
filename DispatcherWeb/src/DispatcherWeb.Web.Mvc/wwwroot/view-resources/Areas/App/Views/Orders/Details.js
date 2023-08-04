@@ -617,6 +617,7 @@
             $("#ProjectId").val(option.data('projectId'));
             if (_quoteId !== '') {
                 $("#ContactId").val(option.data('contactId')).change();
+                 abp.helper.ui.addAndSetDropdownValue($("#LocationId"), option.data('officeId'), option.data('officeName'));
             }
             updateInputValue("#PONumber", option.data('poNumber'));
             updateInputValue("#SpectrumNumber", option.data('spectrumNumber'));

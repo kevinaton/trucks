@@ -10,6 +10,8 @@
         public int? ContactId { get; set; }
         public string Directions { get; set; }
         public int? CustomerId { get; set; }
+        public int? OfficeId { get; set; }
+        public string OfficeName { get; set; }
         public int? FuelSurchargeCalculationId { get; set; }
         public string FuelSurchargeCalculationName { get; set; }
         public decimal? BaseFuelCost { get; set; }
