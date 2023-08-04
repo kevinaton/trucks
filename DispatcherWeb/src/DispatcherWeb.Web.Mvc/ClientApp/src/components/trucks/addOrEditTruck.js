@@ -1084,6 +1084,7 @@ const AddOrEditTruckForm = ({
                                 Inactivation Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
                             </>
                         } 
+                        views={['year', 'month', 'day']}
                         value={inactivationDate.value !== null ? renderDate(inactivationDate.value) : moment()} 
                         emptyLabel='' 
                         onChange={handleInactivationDateChange} 
@@ -1196,6 +1197,7 @@ const AddOrEditTruckForm = ({
                             In Service Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
                         </>
                     } 
+                    views={['year', 'month', 'day']}
                     value={inServiceDate.value !== null ? renderDate(inServiceDate.value) : moment()} 
                     emptyLabel=''
                     onChange={handleInServiceDateChange} 
@@ -1231,7 +1233,8 @@ const AddOrEditTruckForm = ({
                     <DatePicker 
                         id='plateExpiration'
                         name='plateExpiration'
-                        label='Plate Expiration'
+                        label='Plate Expiration' 
+                        views={['year', 'month', 'day']}
                         value={plateExpiration !== null ? renderDate(plateExpiration) : null } 
                         emptyLabel=''
                         onChange={handlePlateExpirationChange} 
@@ -1282,7 +1285,8 @@ const AddOrEditTruckForm = ({
                 <DatePicker 
                     id='insuranceValidUntil'
                     name='insuranceValidUntil'
-                    label='Insurance Valid Until'
+                    label='Insurance Valid Until' 
+                    views={['year', 'month', 'day']}
                     value={insuranceValidUntil !== null ? renderDate(insuranceValidUntil) : null} 
                     emptyLabel=''
                     onChange={handleInsuranceValidUntilChange} 
@@ -1294,7 +1298,8 @@ const AddOrEditTruckForm = ({
                     <DatePicker 
                         id='purchaseDate'
                         name='purchaseDate'
-                        label='Purchase Date'
+                        label='Purchase Date' 
+                        views={['year', 'month', 'day']}
                         value={purchaseDate !== null ? renderDate(purchaseDate) : null} 
                         emptyLabel=''
                         onChange={handlePurchaseDateChange} 
@@ -1318,7 +1323,8 @@ const AddOrEditTruckForm = ({
                     <DatePicker 
                         id='soldDate'
                         name='soldDate'
-                        label='Sold Date'
+                        label='Sold Date' 
+                        views={['year', 'month', 'day']}
                         value={soldDate !== null ? renderDate(soldDate) : null} 
                         emptyLabel=''
                         onChange={handleSoldDateChange} 

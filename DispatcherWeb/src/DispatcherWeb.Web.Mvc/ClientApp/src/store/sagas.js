@@ -10,8 +10,9 @@ import userLinkSaga from './authorization/users/userLink/saga';
 import notificationSaga from './notifications/saga';
 import officeSaga from './offices/saga';
 import driverSaga from './drivers/saga';
+import driverAssignmentSaga from './driverAssignments/saga';
 import truckSaga from './trucks/saga';
-import leaseHaulerSaga from './leasehaulers/saga';
+import leaseHaulerSaga from './leaseHaulers/saga';
 import schedulingSaga from './scheduling/saga';
 
 export default function* rootSaga() {
@@ -25,6 +26,7 @@ export default function* rootSaga() {
         fork(notificationSaga),
         fork(officeSaga),
         fork(driverSaga),
+        fork(driverAssignmentSaga),
         fork(truckSaga),
         fork(leaseHaulerSaga),
         fork(schedulingSaga),

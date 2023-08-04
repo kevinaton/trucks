@@ -23,6 +23,7 @@ using DispatcherWeb.LeaseHaulerRequests;
 using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.SyncRequests;
+using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.TimeOffs;
 using DispatcherWeb.Trucks;
 using Microsoft.AspNetCore.Mvc;
@@ -348,6 +349,9 @@ namespace DispatcherWeb.DriverAssignments
                 TruckId = input.TruckId,
                 StartTime = !input.CreateNewDriverAssignment ? driverAssignment.StartTime : null
             });
+
+            await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                .AddChange(EntityEnum.Truck, new ChangedTruck { Id = input.TruckId }));
 
             //if (await OrderLineTruckExists(new OrderLineTruckExistsInput(input.TruckId, input.Date, input.Shift)))
             //{

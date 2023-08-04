@@ -20,7 +20,7 @@ export const getTruckForEdit = () => get(url.GET_TRUCK_FOR_EDIT);
 export const getWialonDeviceTypesSelectList = () => get(`${url.GET_WIALON_DEVICE_TYPES_SELECT_LIST}?maxResultCount=1000&skipCount=0`);
 
 // edit truck
-export const editTruck = (truck) => post(url.EDIT_TRUCK, truck);
+export const editTruck = truck => post(url.EDIT_TRUCK, truck);
 
 // set truck is out of service
 export const setTruckIsOutOfService = truck => post(url.SET_TRUCK_IS_OUT_OF_SERVICE, truck);

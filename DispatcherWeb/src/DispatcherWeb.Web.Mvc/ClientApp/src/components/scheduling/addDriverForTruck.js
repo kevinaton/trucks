@@ -4,7 +4,6 @@ import {
     Autocomplete,
     Box,
     Button,
-    FormControl,
     Stack,
     TextField,
     Typography
@@ -14,7 +13,9 @@ import { isEmpty } from 'lodash';
 import {
     getLeaseHaulerDriversSelectList,
     getDriversSelectList,
+    setDriverForTruck as onSetDriverForTruck
 } from '../../store/actions';
+import { isPastDate } from '../../helpers/misc_helper';
 
 const AddDriverForTruck = ({
     userAppConfiguration,
@@ -23,6 +24,7 @@ const AddDriverForTruck = ({
 }) => {
     const [driverOptions, setDriverOptions] = useState(null);
     const [driverId, setDriverId] = useState('');
+    const [leaseHaulerId, setLeaseHaulerId] = useState(null);
     const [allowSchedulingTrucksWithoutDrivers, setAllowSchedulingTrucksWithoutDrivers] = useState(null);
     const [allowSubcontractorsToDriveCompanyOwnedTrucks, setAllowSubcontractorsToDriveCompanyOwnedTrucks] = useState(null);
     const [error, setError] = useState(false);
@@ -52,6 +54,7 @@ const AddDriverForTruck = ({
     useEffect(() => {
         if (!isEmpty(data)) {
             if (data.leaseHaulerId !== null) {
+                setLeaseHaulerId(data.leaseHaulerId);
                 dispatch(getLeaseHaulerDriversSelectList({
                     leaseHaulerId: data.leaseHaulerId,
                 }));
@@ -65,12 +68,6 @@ const AddDriverForTruck = ({
                     }));
                 }
             }
-            // setTruckId(data.truckId);
-            // setTruckCode(data.truckCode);
-            // setLeaseHaulerId(data.leaseHaulerId);
-            // setDate(data.date);
-            // setShift(data.shift);
-            // setOfficeId(data.officeId);
         }
     }, [dispatch, data, allowSubcontractorsToDriveCompanyOwnedTrucks]);
 
@@ -103,24 +100,28 @@ const AddDriverForTruck = ({
 
     const handleSave = (e) => {
         e.preventDefault();
-
-        console.log('validating...')
-        console.log('driverId: ', driverId)
-        console.log('!driverId: ', !driverId)
         
         if (!driverId) {
             setError(true);
             setErrorText('Please select a driver.');
             return;
         }
+        
+        if (leaseHaulerId) {
+            console.log('leaseHaulerId: ', leaseHaulerId)
+        } else {
+            dispatch(onSetDriverForTruck({
+                date: data.date,
+                driverId,
+                leaseHaulerId: "",
+                officeId: data.officeId,
+                shift: data.shift,
+                truckCode: data.truckCode,
+                truckId: data.truckId
+            }));
+        }
 
-        // const payload = {
-        //     date: data.scheduleDate,
-        //     isOutOfService: true,
-        //     reason,
-        //     truckId: data.truckId
-        // };
-        //dispatch(onSetTruckIsOutOfService(payload));
+        closeModal();
     };
 
     return (
@@ -159,16 +160,18 @@ const AddDriverForTruck = ({
                             },
                         }}
                         renderInput={(params) => 
-                            <TextField {...params} label={
+                            <TextField 
+                                {...params} 
+                                label={
                                     <>
                                         Driver {!allowSchedulingTrucksWithoutDrivers && <span style={{ marginLeft: '5px', color: 'red' }}>*</span> } 
                                     </>
                                 } 
+                                error={error} 
+                                helperText={error ? errorText : ''} 
                             />
                         } 
                         onChange={(e, value) => handleDriverChange(e, value.id, value.name)} 
-                        error={error} 
-                        helperText={error ? errorText : ''} 
                         fullWidth
                     />
                 }

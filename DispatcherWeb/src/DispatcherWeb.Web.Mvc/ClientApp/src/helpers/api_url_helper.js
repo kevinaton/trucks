@@ -50,6 +50,9 @@ export const GET_OFFICES = '/Office/GetOfficesSelectList';
 export const GET_DRIVERS_SELECT_LIST = '/Driver/GetDriversSelectList';
 export const GET_DRIVER_FOR_EDIT = '/Driver/GetDriverForEdit';
 
+//DriverAssigments
+export const SET_DRIVER_FOR_TRUCK = '/DriverAssignment/SetDriverForTruck';
+
 //Trucks
 export const GET_VEHICLE_CATEGORIES = '/Truck/GetVehicleCategoriesSelectList';
 export const GET_ACTIVE_TRAILERs_SELECT_LIST = '/Truck/GetActiveTrailersSelectList';
@@ -62,6 +65,9 @@ export const SET_TRUCK_IS_OUT_OF_SERVICE = '/Truck/SetTruckIsOutOfService';
 
 //LeaseHaulers
 export const GET_LEASE_HAULER_DRIVERS_SELECT_LIST = '/LeaseHauler/GetLeaseHaulerDriversSelectList';
+
+//LeaseHaulerRequestEdit
+export const SET_DRIVER_FOR_LEASE_HAULER_TRUCK = '/LeaseHaulerRequestEdit/SetDriverForLeaseHaulerTruck';
 
 //Scheduling
 export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';
