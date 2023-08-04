@@ -167,6 +167,12 @@
             $("Name").val(projectName + ' for ' + customerName);
         });
 
+        $("#OfficeId").select2Init({
+            abpServiceMethod: abp.services.app.office.getOfficesSelectList,
+            showAll: true,
+            allowClear: false
+        });
+
         $("#FuelSurchargeCalculationId").select2Init({
             abpServiceMethod: abp.services.app.fuelSurchargeCalculation.getFuelSurchargeCalculationsSelectList,
             showAll: true,

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using DispatcherWeb.Offices.Dto;
 
 namespace DispatcherWeb.Quotes.Dto
 {
-    public class QuoteEditDto
+    public class QuoteEditDto : IOfficeIdNameDto
     {
         public int? Id { get; set; }
 
@@ -12,6 +13,14 @@ namespace DispatcherWeb.Quotes.Dto
         public int CustomerId { get; set; }
 
         public string CustomerName { get; set; }
+
+        public int? OfficeId { get; set; }
+
+        int IOfficeIdNameDto.OfficeId { get => OfficeId ?? 0; set => OfficeId = value; }
+
+        public string OfficeName { get; set; }
+
+        public bool IsSingleOffice { get; set; }
 
         public int? ContactId { get; set; }
 

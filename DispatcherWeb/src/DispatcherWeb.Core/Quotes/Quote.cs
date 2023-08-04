@@ -9,6 +9,7 @@ using DispatcherWeb.Customers;
 using DispatcherWeb.Emailing;
 using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Projects;
 
@@ -32,6 +33,8 @@ namespace DispatcherWeb.Quotes
         public int CustomerId { get; set; }
 
         public int? ContactId { get; set; }
+
+        public int? OfficeId { get; set; }
 
         [Required]
         [StringLength(MaxNameLength)]
@@ -81,6 +84,8 @@ namespace DispatcherWeb.Quotes
         public virtual Customer Customer { get; set; }
 
         public virtual CustomerContact Contact { get; set; }
+
+        public virtual Office Office { get; set; }
 
         public virtual User CreatorUser { get; set; }
 

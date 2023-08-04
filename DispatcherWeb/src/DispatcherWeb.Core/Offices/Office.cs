@@ -7,6 +7,7 @@ using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders;
+using DispatcherWeb.Quotes;
 using DispatcherWeb.Trucks;
 
 namespace DispatcherWeb.Offices
@@ -63,5 +64,7 @@ namespace DispatcherWeb.Offices
         public virtual ICollection<Order> Orders { get; set; }
 
         public virtual ICollection<SharedOrderLine> SharedOrderLines { get; set; }
+
+        public virtual ICollection<Quote> Quotes { get; set; }
     }
 }
