@@ -11,6 +11,7 @@ import notificationSaga from './notifications/saga';
 import officeSaga from './offices/saga';
 import driverSaga from './drivers/saga';
 import truckSaga from './trucks/saga';
+import leaseHaulerSaga from './leasehaulers/saga';
 import schedulingSaga from './scheduling/saga';
 
 export default function* rootSaga() {
@@ -25,6 +26,7 @@ export default function* rootSaga() {
         fork(officeSaga),
         fork(driverSaga),
         fork(truckSaga),
+        fork(leaseHaulerSaga),
         fork(schedulingSaga),
         fork(userProfileSaga),
         fork(userLinkSaga)

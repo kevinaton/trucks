@@ -12,7 +12,6 @@ namespace DispatcherWeb.Scheduling
 {
     public interface ISchedulingAppService : IApplicationService
     {
-        Task<SchedulePageConfig> GetPageConfig();
         Task<ListResultDto<ScheduleTruckDto>> GetScheduleTrucks(GetScheduleTrucksInput input);
         Task<ListResultDto<ScheduleOrderLineTruckDto>> GetTrucksForOrderLine(GetTrucksForOrderLineInput input);
         Task<PagedResultDto<ScheduleOrderLineDto>> GetScheduleOrders(GetScheduleOrdersInput input);

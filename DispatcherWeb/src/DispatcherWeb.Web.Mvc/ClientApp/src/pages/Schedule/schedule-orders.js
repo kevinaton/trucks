@@ -30,7 +30,7 @@ import ScheduleTruckAssignment from './schedule-truck-assignment';
 import App from '../../config/appConfig';
 
 const ScheduleOrders = ({
-    pageConfig,
+    userAppConfiguration,
     dataFilter,
     trucks,
     orders,

@@ -11,30 +11,59 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { isEmpty } from 'lodash';
+import {
+    getLeaseHaulerDriversSelectList,
+    getDriversSelectList,
+} from '../../store/actions';
 
 const AddDriverForTruck = ({
+    userAppConfiguration,
     data,
     closeModal
 }) => {
     const [driverOptions, setDriverOptions] = useState(null);
-    const [truckId, setTruckId] = useState(null);
-    const [truckCode, setTruckCode] = useState(null);
-    const [leaseHaulerId, setLeaseHaulerId] = useState(null);
-    const [date, setDate] = useState(null);
-    const [shift, setShift] = useState(null);
-    const [officeId, setOfficeId] = useState(null);
     const [driverId, setDriverId] = useState('');
+    const [allowSchedulingTrucksWithoutDrivers, setAllowSchedulingTrucksWithoutDrivers] = useState(null);
+    const [allowSubcontractorsToDriveCompanyOwnedTrucks, setAllowSubcontractorsToDriveCompanyOwnedTrucks] = useState(null);
     const [error, setError] = useState(false);
     const [errorText, setErrorText] = useState('');
 
     const dispatch = useDispatch();
+    const {
+        leaseHaulerDriversSelectList,
+        driversSelectList
+    } = useSelector(state => ({
+        leaseHaulerDriversSelectList: state.LeaseHaulerReducer.leaseHaulerDriversSelectList,
+        driversSelectList: state.DriverReducer.driversSelectList
+    }));
+
+    useEffect(() => {
+        if (!isEmpty(userAppConfiguration)) {
+            if (allowSchedulingTrucksWithoutDrivers === null) {
+                setAllowSchedulingTrucksWithoutDrivers(userAppConfiguration.settings.allowSchedulingTrucksWithoutDrivers);
+            }
+
+            if (allowSubcontractorsToDriveCompanyOwnedTrucks === null) {
+                setAllowSubcontractorsToDriveCompanyOwnedTrucks(userAppConfiguration.settings.allowSubcontractorsToDriveCompanyOwnedTrucks);
+            }
+        }
+    }, [])
 
     useEffect(() => {
         if (!isEmpty(data)) {
             if (data.leaseHaulerId !== null) {
-                
+                dispatch(getLeaseHaulerDriversSelectList({
+                    leaseHaulerId: data.leaseHaulerId,
+                }));
             } else {
-
+                if (allowSubcontractorsToDriveCompanyOwnedTrucks !== null) {
+                    dispatch(getDriversSelectList({
+                        officeId: allowSubcontractorsToDriveCompanyOwnedTrucks ? null : data.officeId,
+                        includeLeaseHaulerDrivers: allowSubcontractorsToDriveCompanyOwnedTrucks,
+                        maxResultCount: 1000,
+                        skipCount: 0
+                    }));
+                }
             }
             // setTruckId(data.truckId);
             // setTruckCode(data.truckCode);
@@ -43,7 +72,20 @@ const AddDriverForTruck = ({
             // setShift(data.shift);
             // setOfficeId(data.officeId);
         }
-    }, []);
+    }, [dispatch, data, allowSubcontractorsToDriveCompanyOwnedTrucks]);
+
+    useEffect(() => {
+        console.log('leaseHaulerDriversSelectList: ', leaseHaulerDriversSelectList)
+    }, [leaseHaulerDriversSelectList]);
+
+    useEffect(() => {
+        if (!isEmpty(driversSelectList) && !isEmpty(driversSelectList.result)) {
+            const { result } = driversSelectList;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setDriverOptions(result.items);
+            }
+        }
+    }, [driversSelectList]);
 
     const handleDriverChange = (e, newValue) => {
         e.preventDefault();
@@ -53,11 +95,18 @@ const AddDriverForTruck = ({
 
     const handleCancel = () => {
         // Reset the form
+        setDriverId('');
+        setError(false);
+        setErrorText('');
         closeModal();
     };
 
     const handleSave = (e) => {
         e.preventDefault();
+
+        console.log('validating...')
+        console.log('driverId: ', driverId)
+        console.log('!driverId: ', !driverId)
         
         if (!driverId) {
             setError(true);
@@ -95,18 +144,34 @@ const AddDriverForTruck = ({
                 p: 2, 
                 width: '100%' 
             }}>
-                <Autocomplete
-                    id='driverId'
-                    options={driverOptions} 
-                    getOptionLabel={(option) => option.name} 
-                    defaultValue={driverOptions[driverId]}
-                    sx={{ flex: 1, flexShrink: 0 }}
-                    renderInput={(params) => <TextField {...params} label='Driver' />} 
-                    onChange={(e, value) => handleDriverChange(e, value.id, value.name)} 
-                    error={error} 
-                    helperText={error ? errorText : ''} 
-                    fullWidth
-                />
+                {driverOptions && 
+                    <Autocomplete
+                        id='driverId'
+                        options={driverOptions} 
+                        getOptionLabel={(option) => option.name} 
+                        defaultValue={driverOptions[driverId]}
+                        sx={{ 
+                            flex: 1, 
+                            flexShrink: 0,
+                            "& .Mui-error": {
+                              // Define your error styles here, e.g., color, border, etc.
+                              borderColor: 'red',
+                            },
+                        }}
+                        renderInput={(params) => 
+                            <TextField {...params} label={
+                                    <>
+                                        Driver {!allowSchedulingTrucksWithoutDrivers && <span style={{ marginLeft: '5px', color: 'red' }}>*</span> } 
+                                    </>
+                                } 
+                            />
+                        } 
+                        onChange={(e, value) => handleDriverChange(e, value.id, value.name)} 
+                        error={error} 
+                        helperText={error ? errorText : ''} 
+                        fullWidth
+                    />
+                }
             </Box>
 
             <Box sx={{ p: 2 }}>

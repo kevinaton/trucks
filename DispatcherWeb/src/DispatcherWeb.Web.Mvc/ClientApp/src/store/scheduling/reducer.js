@@ -1,7 +1,5 @@
 import _ from 'lodash';
 import {
-    GET_PAGE_CONFIG_SUCCESS,
-    GET_PAGE_CONFIG_FAILURE,
     GET_SCHEDULE_TRUCKS,
     GET_SCHEDULE_TRUCKS_SUCCESS,
     GET_SCHEDULE_TRUCKS_FAILURE,
@@ -15,7 +13,6 @@ import {
 } from './actionTypes';
 
 const INIT_STATE = {
-    schedulePageConfig: null,
     isLoadingScheduleTrucks: false,
     scheduleTrucks: null,
     isModifiedScheduleTrucks: false,
@@ -25,16 +22,6 @@ const INIT_STATE = {
 
 const SchedulingReducer = (state = INIT_STATE, action) => {
     switch (action.type) {
-        case GET_PAGE_CONFIG_SUCCESS:
-            return {
-                ...state,
-                schedulePageConfig: action.payload,
-            };
-        case GET_PAGE_CONFIG_FAILURE:
-            return {
-                ...state,
-                error: action.payload,
-            };
         case GET_SCHEDULE_TRUCKS:
             return {
                 ...state,

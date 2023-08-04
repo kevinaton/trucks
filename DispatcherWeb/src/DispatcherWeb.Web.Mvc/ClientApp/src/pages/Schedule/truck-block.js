@@ -22,7 +22,7 @@ import { entityType } from '../../common/enums/entityType';
 import { changeType } from '../../common/enums/changeType';
 
 const TruckBlock = ({
-    pageConfig,
+    userAppConfiguration,
     dataFilter,
     trucks, 
     orders,
@@ -49,19 +49,19 @@ const TruckBlock = ({
     }));
 
     useEffect(() => {
-        if (!isEmpty(pageConfig)) {
+        if (!isEmpty(userAppConfiguration)) {
             if (validateUtilization === null) {
-                setValidateUtilization(pageConfig.settings.validateUtilization);
+                setValidateUtilization(userAppConfiguration.settings.validateUtilization);
             }
             
             if (leaseHaulers === null) {
-                setLeaseHaulers(pageConfig.features.leaseHaulers);
+                setLeaseHaulers(userAppConfiguration.features.leaseHaulers);
             }
         }
-    }, [pageConfig, validateUtilization, leaseHaulers]);
+    }, [userAppConfiguration, validateUtilization, leaseHaulers]);
     
     useEffect(() => {
-        if (!isEmpty(pageConfig) && isLoading && 
+        if (!isEmpty(userAppConfiguration) && isLoading && 
             !isEmpty(scheduleTrucks) && 
             !isEmpty(scheduleTrucks.result)
         ) {
@@ -72,7 +72,7 @@ const TruckBlock = ({
                 onSetTrucks(items);
             }
         }
-    }, [pageConfig, isLoading, scheduleTrucks, trucks, onSetTrucks]);
+    }, [userAppConfiguration, isLoading, scheduleTrucks, trucks, onSetTrucks]);
 
     useEffect(() => {
         // check if dataFilter has changed from its previous state
@@ -269,7 +269,7 @@ const TruckBlock = ({
 
         openModal(
             <AddOrEditTruckForm 
-                pageConfig={pageConfig} 
+                userAppConfiguration={userAppConfiguration} 
                 openModal={openModal}
                 closeModal={closeModal} 
                 openDialog={openDialog}
@@ -283,7 +283,7 @@ const TruckBlock = ({
             <TruckBlockItem 
                 truck={truck} 
                 truckColors={truckColors}
-                pageConfig={pageConfig} 
+                userAppConfiguration={userAppConfiguration} 
                 dataFilter={dataFilter} 
                 truckHasNoDriver={truckHasNoDriver(truck)} 
                 truckCategoryNeedsDriver={truckCategoryNeedsDriver(truck)} 

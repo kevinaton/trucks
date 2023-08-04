@@ -2,6 +2,9 @@ import {
     GET_USER_INFO,
     GET_USER_INFO_SUCCESS,
     GET_USER_INFO_FAILURE,
+    GET_USER_APP_CONFIG,
+    GET_USER_APP_CONFIG_SUCCESS,
+    GET_USER_APP_CONFIG_FAILURE,
     GET_USER_GENERAL_SETTINGS,
     GET_USER_GENERAL_SETTINGS_SUCCESS,
     GET_USER_GENERAL_SETTINGS_FAILURE,
@@ -24,6 +27,20 @@ export const getUserInfoSuccess = userInfo => ({
 
 export const getUserInfoFailure = error => ({
     type: GET_USER_INFO_FAILURE,
+    payload: error
+});
+
+export const getUserAppConfig = () => ({
+    type: GET_USER_APP_CONFIG,
+});
+
+export const getUserAppConfigSuccess = userAppConfig => ({
+    type: GET_USER_APP_CONFIG_SUCCESS,
+    payload: userAppConfig
+});
+
+export const getUserAppConfigFailure = error => ({
+    type: GET_USER_APP_CONFIG_FAILURE,
     payload: error
 });
 

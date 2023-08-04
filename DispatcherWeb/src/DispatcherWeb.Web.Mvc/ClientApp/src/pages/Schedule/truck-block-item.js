@@ -51,7 +51,7 @@ const HtmlTooltip = styled(({ className, ...props }) => (
 const TruckBlockItem = ({
     truck,
     truckColors,
-    pageConfig,
+    userAppConfiguration,
     dataFilter, 
     truckHasNoDriver, 
     truckCategoryNeedsDriver,
@@ -97,7 +97,7 @@ const TruckBlockItem = ({
     }, [dispatch, setTruckIsOutOfServiceSuccess]);
 
     const getCombinedTruckCode = (truck) => {
-        const { showTrailersOnSchedule } = pageConfig.settings;
+        const { showTrailersOnSchedule } = userAppConfiguration.settings;
         if (showTrailersOnSchedule) {
             if (truck.canPullTrailer && truck.trailer) {
                 return `${truck.truckCode} :: ${truck.trailer.truckCode}`;
@@ -177,6 +177,7 @@ const TruckBlockItem = ({
 
         openModal(
             <AddDriverForTruck 
+                userAppConfiguration={userAppConfiguration}
                 data={data} 
                 closeModal={closeModal} 
             />,
@@ -272,7 +273,7 @@ const TruckBlockItem = ({
     };
 
     const renderContextMenu = () => {
-        const { features } = pageConfig;
+        const { features } = userAppConfiguration;
         return (
             <ContextMenuWrapper
                 open={showMenu}
@@ -402,7 +403,7 @@ const TruckBlockItem = ({
                 />
             </HtmlTooltip>
 
-            { truck !== null && !isEmpty(pageConfig) && renderContextMenu()}
+            { truck !== null && !isEmpty(userAppConfiguration) && renderContextMenu()}
         </div>
     );
 };

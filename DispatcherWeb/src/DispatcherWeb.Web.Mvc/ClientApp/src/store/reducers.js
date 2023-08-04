@@ -12,6 +12,7 @@ import NotificationReducer from './notifications/reducer';
 import OfficeReducer from './offices/reducer';
 import DriverReducer from './drivers/reducer';
 import TruckReducer from './trucks/reducer';
+import LeaseHaulerReducer from './leasehaulers/reducer';
 import SchedulingReducer from './scheduling/reducer';
 
 const rootReducer = combineReducers({
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
     OfficeReducer,
     DriverReducer,
     TruckReducer,
+    LeaseHaulerReducer,
     SchedulingReducer,
     UserProfileReducer,
     UserLinkReducer

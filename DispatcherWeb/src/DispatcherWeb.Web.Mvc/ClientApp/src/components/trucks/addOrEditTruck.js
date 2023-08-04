@@ -75,7 +75,7 @@ const a11yProps = (index) => {
 };
 
 const AddOrEditTruckForm = ({
-    pageConfig, 
+    userAppConfiguration, 
     openModal,
     closeModal,
     openDialog
@@ -903,7 +903,7 @@ const AddOrEditTruckForm = ({
     };
 
     const renderGeneralForm = () => {
-        const { features } = pageConfig;
+        const { features } = userAppConfiguration;
         return (
             <Stack 
                 spacing={2} 
@@ -1617,7 +1617,7 @@ const AddOrEditTruckForm = ({
 
     return (
         <React.Fragment>
-            { !isEmpty(pageConfig) && !isEmpty(truckInfo) && 
+            { !isEmpty(userAppConfiguration) && !isEmpty(truckInfo) && 
                 <React.Fragment>
                     <Box
                         display='flex'

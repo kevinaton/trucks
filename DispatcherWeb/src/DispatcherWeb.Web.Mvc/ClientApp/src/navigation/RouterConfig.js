@@ -5,6 +5,7 @@ import { authProtectedRoutes } from './index';
   
 export const RouterConfig = ({
     isAuthenticated,
+    userAppConfiguration,
     handleCurrentPageName,
     openModal,
     closeModal,
@@ -33,6 +34,7 @@ export const RouterConfig = ({
                                 path={route.path}
                                 element={
                                     <route.component 
+                                        userAppConfiguration={userAppConfiguration}
                                         handleCurrentPageName={handleCurrentPageName} 
                                         openModal={openModal} 
                                         closeModal={closeModal} 

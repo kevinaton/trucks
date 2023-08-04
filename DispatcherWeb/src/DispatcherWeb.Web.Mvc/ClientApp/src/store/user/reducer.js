@@ -1,6 +1,8 @@
 import {
     GET_USER_INFO_SUCCESS,
     GET_USER_INFO_FAILURE,
+    GET_USER_APP_CONFIG_SUCCESS,
+    GET_USER_APP_CONFIG_FAILURE,
     GET_USER_GENERAL_SETTINGS_SUCCESS,
     GET_USER_GENERAL_SETTINGS_FAILURE,
     GET_USER_SETTING_SUCCESS,
@@ -11,6 +13,7 @@ import {
 
 const INIT_STATE = {
     userInfo: null,
+    userAppConfig: null,
     userGeneralSettings: null,
     userSettings: null,
     userProfileMenu : null
@@ -24,6 +27,16 @@ const UserReducer = (state = INIT_STATE, action) => {
                 userInfo: action.payload
             };
         case GET_USER_INFO_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            };
+        case GET_USER_APP_CONFIG_SUCCESS:
+            return {
+                ...state,
+                userAppConfig: action.payload
+            };
+        case GET_USER_APP_CONFIG_FAILURE:
             return {
                 ...state,
                 error: action.payload

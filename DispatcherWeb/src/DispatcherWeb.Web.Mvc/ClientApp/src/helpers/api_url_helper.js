@@ -14,6 +14,7 @@ export const GET_SCHEDULED_TRUCK_COUNT_PARTIAL_VIEW = '/DashboardView/GetSchedul
 
 //User
 export const GET_CURRENT_LOGIN_INFO = '/Session/GetCurrentLoginInformations';
+export const GET_USER_APP_SETTINGS = '/UserSettings/GetUserAppConfig';
 export const GET_USER_GENERAL_SETTINGS = '/UserSettings/GetGeneralSettings';
 export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 
@@ -59,8 +60,10 @@ export const GET_WIALON_DEVICE_TYPES_SELECT_LIST = '/TruckTelematics/GetWialonDe
 export const EDIT_TRUCK = '/Truck/EditTruck';
 export const SET_TRUCK_IS_OUT_OF_SERVICE = '/Truck/SetTruckIsOutOfService';
 
+//LeaseHaulers
+export const GET_LEASE_HAULER_DRIVERS_SELECT_LIST = '/LeaseHauler/GetLeaseHaulerDriversSelectList';
+
 //Scheduling
-export const GET_PAGE_CONFIG = '/Scheduling/GetPageConfig';
 export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';
 export const GET_SCHEDULE_TRUCK_BY_ID = '/Scheduling/GetScheduleTruckById';
 export const GET_SCHEDULE_ORDERS = '/Scheduling/GetScheduleOrders';

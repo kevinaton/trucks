@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import {
     Box,
@@ -14,13 +14,11 @@ import SchedulingDataFilter from './scheduling-data-filter';
 import TruckBlock from './truck-block';
 import ScheduleOrders from './schedule-orders';
 import { isEmpty } from 'lodash';
-import { getSchedulePageConfig } from '../../store/actions';
 import { appLocalStorage } from '../../utils';
 
 const Schedule = props => {
     const pageName = 'Schedule';
     const [isPageNameSet, setPageNameSet] = useState(false);
-    const [pageConfig, setPageConfig] = useState(null);
     const [view, setView] = useState('all');
     const [isJob, setJob] = useState(false);
     const [title, setTitle] = useState('Add Job');
@@ -37,13 +35,10 @@ const Schedule = props => {
     const [trucks, setTrucks] = useState([]);
     const [orders, setOrders] = useState([]);
 
-    const dispatch = useDispatch();
     const { 
         userProfileMenu,
-        schedulePageConfig
     } = useSelector((state) => ({
-        userProfileMenu: state.UserReducer.userProfileMenu,
-        schedulePageConfig: state.SchedulingReducer.schedulePageConfig
+        userProfileMenu: state.UserReducer.userProfileMenu
     }));
 
     useEffect(() => {
@@ -52,19 +47,6 @@ const Schedule = props => {
             setPageNameSet(true);
         }
     }, [isPageNameSet, props]);
-
-    useEffect(() => {
-        dispatch(getSchedulePageConfig());
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (pageConfig === null && !isEmpty(schedulePageConfig) && !isEmpty(schedulePageConfig.result)) {
-            const { result } = schedulePageConfig;
-            if (!isEmpty(result)) {
-                setPageConfig(result);
-            }
-        }
-    }, [schedulePageConfig, pageConfig]);
 
     useEffect(() => {
         if (dataFilter.officeId === null && 
@@ -178,7 +160,7 @@ const Schedule = props => {
                     
                     {/* List of trucks */}
                     <TruckBlock 
-                        pageConfig={pageConfig}
+                        userAppConfiguration={props.userAppConfiguration}
                         dataFilter={dataFilter} 
                         trucks={trucks} 
                         orders={orders}
@@ -190,7 +172,7 @@ const Schedule = props => {
 
                     {/* List of schedule orders */}
                     <ScheduleOrders 
-                        pageConfig={pageConfig}
+                        userAppConfiguration={props.userAppConfiguration}
                         dataFilter={dataFilter} 
                         trucks={trucks} 
                         orders={orders}

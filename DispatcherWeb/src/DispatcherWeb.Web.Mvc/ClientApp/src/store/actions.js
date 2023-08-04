@@ -10,4 +10,5 @@ export * from './notifications/actions';
 export * from './offices/actions';
 export * from './drivers/actions';
 export * from './trucks/actions';
+export * from './leasehaulers/actions';
 export * from './scheduling/actions';

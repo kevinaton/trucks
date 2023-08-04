@@ -9,7 +9,7 @@ import { RouterConfig } from './navigation/RouterConfig';
 import { DrawerHeader } from './components/DTComponents';
 import { sideMenuItems } from './common/data/menus';
 import { Appbar, SideMenu } from './components';
-import { getUserGeneralSettings, getUserInfo } from './store/actions';
+import { getUserAppConfig, getUserGeneralSettings, getUserInfo } from './store/actions';
 import { isEmpty } from 'lodash';
 import { baseUrl } from './helpers/api_helper';
 import * as signalR from '@microsoft/signalr';
@@ -34,6 +34,7 @@ const App = (props) => {
     );
     const [currentPageName, setCurrentPageName] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const [userAppConfiguration, setUserAppConfiguration] = useState(null);
     const [generalSettings, setGeneralSettings] = useState(null);
     const [connection, setConnection] = useState(null);
     const [modals, setModals] = useState([]);
@@ -43,9 +44,11 @@ const App = (props) => {
     const dispatch = useDispatch();
     const {
         userInfo,
+        userAppConfig,
         userGeneralSettings
     } = useSelector(state => ({
         userInfo: state.UserReducer.userInfo,
+        userAppConfig: state.UserReducer.userAppConfig,
         userGeneralSettings: state.UserReducer.userGeneralSettings
     }));
 
@@ -117,12 +120,28 @@ const App = (props) => {
 
     useEffect(() => {
         if (isAuthenticated) {
+            dispatch(getUserAppConfig());
             dispatch(getUserGeneralSettings());
         }
     }, [dispatch, isAuthenticated]);
 
     useEffect(() => {
-        if (generalSettings === null && !isEmpty(userGeneralSettings) && !isEmpty(userGeneralSettings.result)) {
+        if (userAppConfiguration === null && 
+            !isEmpty(userAppConfig) && 
+            !isEmpty(userAppConfig.result)
+        ) {
+            const { result } = userAppConfig;
+            if (!isEmpty(result)) {
+                setUserAppConfiguration(result);
+            }
+        }
+    }, [userAppConfig, userAppConfiguration]);
+
+    useEffect(() => {
+        if (generalSettings === null && 
+            !isEmpty(userGeneralSettings) && 
+            !isEmpty(userGeneralSettings.result)
+        ) {
             const { result } = userGeneralSettings;
             if (!isEmpty(result) && result.timezoneIana) {
                 setGeneralSettings(result);
@@ -255,6 +274,7 @@ const App = (props) => {
                                     {/* This is the route configuration */}
                                     <RouterConfig 
                                         isAuthenticated={isAuthenticated} 
+                                        userAppConfiguration={userAppConfiguration}
                                         handleCurrentPageName={handleCurrentPageName} 
                                         openModal={(content, size) => openModal(content, size)} 
                                         closeModal={closeModal} 

@@ -41,7 +41,6 @@ using DispatcherWeb.Trucks;
 using DispatcherWeb.Trucks.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using AppSettingsConfig = DispatcherWeb.Configuration.AppSettings;
 using static DispatcherWeb.Scheduling.Dto.OrderTrucksDto;
 
 namespace DispatcherWeb.Scheduling
@@ -120,38 +119,6 @@ namespace DispatcherWeb.Scheduling
             _driverApplicationPushSender = driverApplicationPushSender;
             _driverApplicationLogger = driverApplicationLogger;
             _telematics = telematics;
-        }
-
-        public async Task<SchedulePageConfig> GetPageConfig()
-        {
-            var config = new SchedulePageConfig
-            {
-                Permissions = new SchedulePagePermission
-                {
-                    Edit = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Orders_Edit),
-                    Print = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_PrintOrders),
-                    EditTickets = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Tickets_Edit),
-                    EditQuotes = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Quotes_Edit),
-                    DriverMessages = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_DriverMessages),
-                    Trucks = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Trucks)
-                },
-                Features = new SchedulePageFeatures
-                {
-                    AllowSharedOrders = await IsEnabledAsync(AppFeatures.AllowSharedOrdersFeature),
-                    AllowMultiOffice = await IsEnabledAsync(AppFeatures.AllowMultiOfficeFeature),
-                    AllowSendingOrdersToDifferentTenant = await IsEnabledAsync(AppFeatures.AllowSendingOrdersToDifferentTenant),
-                    AllowImportingTruxEarnings = await IsEnabledAsync(AppFeatures.AllowImportingTruxEarnings),
-                    LeaseHaulers = await IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature),
-                },
-                Settings = new SchedulePageSettings
-                {
-                    ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ValidateUtilization),
-                    AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders),
-                    ShowTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ShowTrailersOnSchedule),
-                }
-            };
-
-            return config;
         }
 
         //truck tiles
