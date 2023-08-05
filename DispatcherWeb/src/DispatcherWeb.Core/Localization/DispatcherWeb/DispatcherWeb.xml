@@ -105,6 +105,7 @@
     <text name="AllowImportingTruxEarnings">Allow importing Trux Earnings</text>
     <text name="AllowInvoicingFeature">Allow Invoicing</text>
     <text name="AllowLeaseHaulersFeature">Allow Lease Haulers</text>
+    <text name="AllowLoadBasedRates">Allow load-based rates</text>
     <text name="AllowMultiOfficeFeature">Allow MultiOffice</text>
     <text name="AllowPaymentProcessingFeature">Allow Payment Processing</text>
     <text name="AllowProductionPay">Allow Production Pay</text>

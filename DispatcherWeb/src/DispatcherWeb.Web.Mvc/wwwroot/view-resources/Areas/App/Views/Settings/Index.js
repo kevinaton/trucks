@@ -59,9 +59,9 @@
         refreshAllowProductionPayControls();
         function refreshAllowProductionPayControls() {
             if ($('#AllowProductionPay').is(':checked')) {
-                $('#DriverIsPaidForLoadBasedOn').closest('.form-group').show();
+                $('#AllowProductionPayControls').show();
             } else {
-                $('#DriverIsPaidForLoadBasedOn').closest('.form-group').hide();
+                $('#AllowProductionPayControls').hide();
             }
         }
 
