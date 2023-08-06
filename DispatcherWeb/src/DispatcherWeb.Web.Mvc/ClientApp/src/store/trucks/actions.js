@@ -5,6 +5,9 @@ import {
     GET_BED_CONSTRUCTION_SELECT_LIST,
     GET_BED_CONSTRUCTION_SELECT_LIST_SUCCESS,
     GET_BED_CONSTRUCTION_SELECT_LIST_FAILURE,
+    GET_BED_CONSTRUCTIONS,
+    GET_BED_CONSTRUCTIONS_SUCCESS,
+    GET_BED_CONSTRUCTIONS_FAILURE,
     GET_FUEL_TYPE_SELECT_LIST,
     GET_FUEL_TYPE_SELECT_LIST_SUCCESS,
     GET_FUEL_TYPE_SELECT_LIST_FAILURE,
@@ -27,8 +30,9 @@ import {
     SET_TRUCK_IS_OUT_OF_SERVICE_RESET,
 } from './actionTypes';
 
-export const getVehicleCategories = () => ({
+export const getVehicleCategories = filter => ({
     type: GET_VEHICLE_CATEGORIES,
+    payload: filter
 });
 
 export const getVehicleCategoriesSuccess = vehicleCategories => ({
@@ -53,6 +57,21 @@ export const getBedConstructionSelectListSuccess = bedConstructionSelectList => 
 export const getBedConstructionSelectListFailure = error => ({
     type: GET_BED_CONSTRUCTION_SELECT_LIST_FAILURE,
     payload: error,
+});
+
+export const getBedConstructions = filter => ({
+    type: GET_BED_CONSTRUCTIONS,
+    payload: filter
+});
+
+export const getBedConstructionsSuccess = bedConstructions => ({
+    type: GET_BED_CONSTRUCTIONS_SUCCESS,
+    payload: bedConstructions
+});
+
+export const getBedConstructionsFailure = error => ({
+    type: GET_BED_CONSTRUCTIONS_FAILURE,
+    payload: error
 });
 
 export const getFuelTypeSelectList = () => ({

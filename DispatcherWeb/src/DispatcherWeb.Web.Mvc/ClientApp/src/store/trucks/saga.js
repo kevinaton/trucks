@@ -2,6 +2,7 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import { 
     GET_VEHICLE_CATEGORIES, 
     GET_BED_CONSTRUCTION_SELECT_LIST, 
+    GET_BED_CONSTRUCTIONS,
     GET_FUEL_TYPE_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST,
     GET_WIALON_DEVICE_TYPES_SELECT_LIST,
@@ -14,6 +15,8 @@ import {
     getVehicleCategoriesFailure,
     getBedConstructionSelectListSuccess,
     getBedConstructionSelectListFailure,
+    getBedConstructionsSuccess,
+    getBedConstructionsFailure,
     getFuelTypeSelectListSuccess,
     getFuelTypeSelectListFailure,
     getActiveTrailersSelectListSuccess,
@@ -30,6 +33,7 @@ import {
 import { 
     getVehicleCategories, 
     getBedConstructionSelectList,
+    getBedConstructions,
     getFuelTypeSelectList,
     getActiveTrailersSelectList,
     getWialonDeviceTypesSelectList,
@@ -38,9 +42,9 @@ import {
     setTruckIsOutOfService
 } from './service';
 
-function* fetchVehicleCategories() {
+function* fetchVehicleCategories({ payload: filter }) {
     try {
-        const response = yield call(getVehicleCategories);
+        const response = yield call(getVehicleCategories, filter);
         yield put(getVehicleCategoriesSuccess(response));
     } catch (error) {
         yield put(getVehicleCategoriesFailure(error));
@@ -53,6 +57,15 @@ function* fetchBedConstructionSelectList() {
         yield put(getBedConstructionSelectListSuccess(response));
     } catch (error) {
         yield put(getBedConstructionSelectListFailure(error));
+    }
+}
+
+function* fetchBedConstructions({ payload: filter }) {
+    try {
+        const response = yield call(getBedConstructions, filter);
+        yield put(getBedConstructionSelectListSuccess(response));
+    } catch (error) {
+        yield put(getBedConstructionsFailure(error));
     }
 }
 
@@ -113,6 +126,7 @@ function* onSetTruckIsOutOfService({ payload: truck }) {
 function* trucksSaga() {
     yield takeEvery(GET_VEHICLE_CATEGORIES, fetchVehicleCategories);
     yield takeEvery(GET_BED_CONSTRUCTION_SELECT_LIST, fetchBedConstructionSelectList);
+    yield takeEvery(GET_BED_CONSTRUCTIONS, fetchBedConstructions);
     yield takeEvery(GET_FUEL_TYPE_SELECT_LIST, fetchFuelTypeSelectList);
     yield takeEvery(GET_ACTIVE_TRAILERS_SELECT_LIST, fetchActiveTrailersSelectList);
     yield takeEvery(GET_WIALON_DEVICE_TYPES_SELECT_LIST, fetchWialonDeviceTypesSelectList);

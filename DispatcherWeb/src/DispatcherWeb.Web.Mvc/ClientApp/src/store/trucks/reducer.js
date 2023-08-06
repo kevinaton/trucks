@@ -3,6 +3,8 @@ import {
     GET_VEHICLE_CATEGORIES_FAILURE,
     GET_BED_CONSTRUCTION_SELECT_LIST_SUCCESS,
     GET_BED_CONSTRUCTION_SELECT_LIST_FAILURE,
+    GET_BED_CONSTRUCTIONS_SUCCESS,
+    GET_BED_CONSTRUCTIONS_FAILURE,
     GET_FUEL_TYPE_SELECT_LIST_SUCCESS,
     GET_FUEL_TYPE_SELECT_LIST_FAILURE,
     GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
@@ -22,6 +24,7 @@ import {
 const INIT_STATE = {
     vehicleCategories: null,
     bedConstructionSelectList: null,
+    bedConstructions: null,
     fuelTypeSelectList: null,
     activeTrailersSelectList: null,
     wialonDeviceTypesSelectList: null,
@@ -52,7 +55,17 @@ const TruckReducer = (state = INIT_STATE, action) => {
             return {
                 ...state,
                 error: action.payload,
-            }
+            };
+        case GET_BED_CONSTRUCTIONS_SUCCESS:
+            return {
+                ...state,
+                bedConstructions: action.payload
+            };
+        case GET_BED_CONSTRUCTIONS_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            };
         case GET_FUEL_TYPE_SELECT_LIST_SUCCESS:
             return {
                 ...state,

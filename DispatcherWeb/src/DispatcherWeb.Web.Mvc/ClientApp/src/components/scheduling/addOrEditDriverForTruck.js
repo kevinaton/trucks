@@ -184,7 +184,7 @@ const AddOrEditDriverForTruck = ({
                                 helperText={error ? errorText : ''} 
                             />
                         } 
-                        onChange={(e, value) => handleDriverChange(e, value.id, value.name)} 
+                        onChange={(e, value) => handleDriverChange(e, value.id)} 
                         fullWidth
                     />
                 }

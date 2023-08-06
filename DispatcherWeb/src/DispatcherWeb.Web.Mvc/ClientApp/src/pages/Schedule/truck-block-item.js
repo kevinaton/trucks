@@ -12,6 +12,7 @@ import { styled } from '@mui/material/styles';
 import { tooltipClasses } from '@mui/material/Tooltip';
 import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason';
 import AddOrEditDriverForTruck from '../../components/scheduling/addOrEditDriverForTruck';
+import SelectTrailer from '../../components/scheduling/selectTrailer';
 import TruckOrders from './truck-orders';
 import { assetType } from '../../common/enums/assetType';
 import { isPastDate } from '../../helpers/misc_helper';
@@ -220,6 +221,17 @@ const TruckBlockItem = ({
     };
 
     const handleAddTrailer = () => {
+        const data = {
+
+        };
+
+        openModal(
+            <SelectTrailer
+                data={data} 
+                closeModal={closeModal} 
+            />,
+            400
+        );
         handleCloseMenu();
     };
 
