@@ -11,7 +11,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { tooltipClasses } from '@mui/material/Tooltip';
 import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason';
-import AddDriverForTruck from '../../components/scheduling/addDriverForTruck';
+import AddOrEditDriverForTruck from '../../components/scheduling/addOrEditDriverForTruck';
 import TruckOrders from './truck-orders';
 import { assetType } from '../../common/enums/assetType';
 import { isPastDate } from '../../helpers/misc_helper';
@@ -176,7 +176,7 @@ const TruckBlockItem = ({
         };
 
         openModal(
-            <AddDriverForTruck 
+            <AddOrEditDriverForTruck 
                 userAppConfiguration={userAppConfiguration}
                 data={data} 
                 closeModal={closeModal} 
@@ -186,7 +186,28 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
-    const handleChangeDriver = () => {
+    const handleChangeDriver = (e) => {
+        e.preventDefault();
+
+        const data = {
+            truckId: truck.id,
+            truckCode: truck.truckCode,
+            leaseHaulerId: truck.leaseHaulerId,
+            date: dataFilter.date,
+            shift: dataFilter.shift,
+            officeId: dataFilter.officeId,
+            driverId: truck.driverId,
+            driverName: truck.driverName
+        };
+
+        openModal(
+            <AddOrEditDriverForTruck 
+                userAppConfiguration={userAppConfiguration}
+                data={data} 
+                closeModal={closeModal} 
+            />,
+            400
+        );
         handleCloseMenu();
     };
 

@@ -9,7 +9,7 @@ import {
     Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { isEmpty } from 'lodash';
+import _, { isEmpty } from 'lodash';
 import {
     getLeaseHaulerDriversSelectList,
     getDriversSelectList,
@@ -17,13 +17,15 @@ import {
 } from '../../store/actions';
 import { isPastDate } from '../../helpers/misc_helper';
 
-const AddDriverForTruck = ({
+const AddOrEditDriverForTruck = ({
     userAppConfiguration,
     data,
     closeModal
 }) => {
+    const [isLoading, setIsLoading] = useState(false);
     const [driverOptions, setDriverOptions] = useState(null);
     const [driverId, setDriverId] = useState('');
+    const [defaultDriverId, setDefaultDriverId] = useState(null);
     const [leaseHaulerId, setLeaseHaulerId] = useState(null);
     const [allowSchedulingTrucksWithoutDrivers, setAllowSchedulingTrucksWithoutDrivers] = useState(null);
     const [allowSubcontractorsToDriveCompanyOwnedTrucks, setAllowSubcontractorsToDriveCompanyOwnedTrucks] = useState(null);
@@ -53,6 +55,8 @@ const AddDriverForTruck = ({
 
     useEffect(() => {
         if (!isEmpty(data)) {
+            setIsLoading(true);
+
             if (data.leaseHaulerId !== null) {
                 setLeaseHaulerId(data.leaseHaulerId);
                 dispatch(getLeaseHaulerDriversSelectList({
@@ -84,9 +88,19 @@ const AddDriverForTruck = ({
         }
     }, [driversSelectList]);
 
+    useEffect(() => {
+        if (!isEmpty(driverOptions)) {
+            if (data.driverId !== null && data.driverId !== undefined && driverId === '') {
+                setDefaultDriverId(_.findIndex(driverOptions, { id: data.driverId.toString() }));
+                setDriverId(data.driverId);
+            }
+
+            setIsLoading(false);
+        }
+    }, [driverOptions, data, driverId]);
+
     const handleDriverChange = (e, newValue) => {
         e.preventDefault();
-        
         setDriverId(newValue);
     };
 
@@ -145,18 +159,17 @@ const AddDriverForTruck = ({
                 p: 2, 
                 width: '100%' 
             }}>
-                {driverOptions && 
+                {!isLoading && driverOptions && 
                     <Autocomplete
                         id='driverId'
                         options={driverOptions} 
                         getOptionLabel={(option) => option.name} 
-                        defaultValue={driverOptions[driverId]}
+                        defaultValue={driverOptions[defaultDriverId]}
                         sx={{ 
                             flex: 1, 
                             flexShrink: 0,
                             "& .Mui-error": {
-                              // Define your error styles here, e.g., color, border, etc.
-                              borderColor: 'red',
+                                borderColor: 'red',
                             },
                         }}
                         renderInput={(params) => 
@@ -194,4 +207,4 @@ const AddDriverForTruck = ({
     );
 };
 
-export default AddDriverForTruck;
+export default AddOrEditDriverForTruck;
