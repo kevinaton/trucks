@@ -690,6 +690,7 @@ namespace DispatcherWeb
         MotionChange = 1,
         Geofence = 2,
         Heartbeat = 3,
+        ProviderChange = 4,
     }
 
     public enum HostEmailType
