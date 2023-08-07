@@ -249,6 +249,7 @@ namespace DispatcherWeb.Configuration
                 public const string AccountId = "App.GpsIntegration.DtdTracker.AccountId";
                 public const string UserId = "App.GpsIntegration.DtdTracker.UserId";
                 public const string LastUploadedTruckPositionId = "App.GpsIntegration.DtdTracker.LastUploadedTruckPositionId";
+                public const string LastUploadedTruckPositionTimestamp = "App.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp";
             }
             public static class Geotab
             {

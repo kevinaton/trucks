@@ -20,6 +20,7 @@ using DispatcherWeb.Authorization;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Features;
+using DispatcherWeb.Infrastructure.AzureTables;
 using DispatcherWeb.Infrastructure.BackgroundJobs;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Telematics;
@@ -29,11 +30,12 @@ using DispatcherWeb.Infrastructure.Telematics.Dto.IntelliShift;
 using DispatcherWeb.Infrastructure.Utilities;
 using DispatcherWeb.MultiTenancy;
 using DispatcherWeb.Notifications;
+using DispatcherWeb.TruckPositions;
 using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.VehicleCategories;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using NUglify.Helpers;
-using TruckPositionObsolete = DispatcherWeb.TruckPositions.TruckPositionObsolete;
 
 namespace DispatcherWeb.Trucks
 {
@@ -51,6 +53,7 @@ namespace DispatcherWeb.Trucks
         private readonly IRepository<WialonDeviceType, long> _wialonDeviceTypeRepository;
         private readonly IRepository<VehicleCategory> _vehicleCategoryRepository;
         private readonly IRepository<TruckPositionObsolete> _truckPositionObsoleteRepository;
+        private readonly IAzureTableManager _azureTableManager;
         private readonly ITruckAppService _truckAppService;
 
         public TruckTelematicsAppService(
@@ -66,6 +69,7 @@ namespace DispatcherWeb.Trucks
             IRepository<WialonDeviceType, long> wialonDeviceTypeRepository,
             IRepository<VehicleCategory> vehicleCategoryRepository,
             IRepository<TruckPositionObsolete> truckPositionObsoleteRepository,
+            IAzureTableManager azureTableManager,
             ITruckAppService truckAppService
         )
         {
@@ -81,6 +85,7 @@ namespace DispatcherWeb.Trucks
             _wialonDeviceTypeRepository = wialonDeviceTypeRepository;
             _vehicleCategoryRepository = vehicleCategoryRepository;
             _truckPositionObsoleteRepository = truckPositionObsoleteRepository;
+            _azureTableManager = azureTableManager;
             _truckAppService = truckAppService;
         }
 
@@ -794,6 +799,152 @@ namespace DispatcherWeb.Trucks
             }
         }
 
+        [Obsolete]
+        [AbpAuthorize(AppPermissions.Pages_Administration_Host_Dashboard)]
+        public async Task<string> TransferTruckPositionsToAzureTables()
+        {
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.MustHaveTenant))
+            {
+                Logger.Info("TransferTruckPositionsToAzureTables: querying data");
+                var truckPositions = await _truckPositionObsoleteRepository.GetAll()
+                    .Where(x => x.TruckId.HasValue)
+                    .Select(x => new
+                    {
+                        TenantId = x.TenantId,
+                        TruckId = x.TruckId.Value,
+                        DtdTrackerUniqueId = x.Truck.DtdTrackerUniqueId,
+                        DriverId = x.DriverId,
+                        Latitude = x.Latitude,
+                        Longitude = x.Longitude,
+                        Accuracy = x.Accuracy,
+                        Speed = x.Speed,
+                        Heading = x.Heading,
+                        Altitude = x.Altitude,
+                        ActivityType = x.ActivityType,
+                        ActivitiTypeRaw = x.ActivitiTypeRaw,
+                        ActivityConfidence = x.ActivityConfidence,
+                        GeofenceIdentifier = x.GeofenceIdentifier,
+                        GeofenceAction = x.GeofenceAction,
+                        GeofenceActionRaw = x.GeofenceActionRaw,
+                        BatteryLevel = x.BatteryLevel,
+                        BatteryIsCharging = x.BatteryIsCharging,
+                        GpsTimestamp = x.Timestamp,
+                        Uuid = x.Uuid, //should we upload this?
+                        Event = x.Event,
+                        EventRaw = x.EventRaw,
+                        IsMoving = x.IsMoving,
+                        Odometer = x.Odometer,
+                        CreationTime = x.CreationTime,
+                        CreatorUserId = x.CreatorUserId,
+                    })
+                    .ToListAsync();
+
+                Logger.Info($"TransferTruckPositionsToAzureTables: {truckPositions.Count} records to upload");
+
+                var truckPositionTableClient = await _azureTableManager.GetTruckPositionTableClient();
+
+                var i = 0;
+                foreach (var truckPosition in truckPositions)
+                {
+                    await truckPositionTableClient.UpsertEntityAsync(new TruckPosition
+                    {
+                        TenantId = truckPosition.TenantId,
+                        TruckId = truckPosition.TruckId,
+                        DtdTrackerUniqueId = truckPosition.DtdTrackerUniqueId,
+                        DriverId = truckPosition.DriverId,
+                        Latitude = Convert.ToDouble(truckPosition.Latitude),
+                        Longitude = Convert.ToDouble(truckPosition.Longitude),
+                        Accuracy = Convert.ToDouble(truckPosition.Accuracy),
+                        Speed = Convert.ToDouble(truckPosition.Speed),
+                        Heading = Convert.ToDouble(truckPosition.Heading),
+                        Altitude = Convert.ToDouble(truckPosition.Altitude),
+                        ActivityType = truckPosition.ActivityType,
+                        ActivitiTypeRaw = truckPosition.ActivitiTypeRaw,
+                        ActivityConfidence = truckPosition.ActivityConfidence,
+                        GeofenceIdentifier = truckPosition.GeofenceIdentifier,
+                        GeofenceAction = truckPosition.GeofenceAction,
+                        GeofenceActionRaw = truckPosition.GeofenceActionRaw,
+                        BatteryLevel = Convert.ToDouble(truckPosition.BatteryLevel),
+                        BatteryIsCharging = truckPosition.BatteryIsCharging,
+                        GpsTimestamp = truckPosition.GpsTimestamp,
+                        Uuid = truckPosition.Uuid,
+                        Event = truckPosition.Event,
+                        EventRaw = truckPosition.EventRaw,
+                        IsMoving = truckPosition.IsMoving,
+                        Odometer = Convert.ToDouble(truckPosition.Odometer),
+                        CreationTime = truckPosition.CreationTime,
+                        CreatorUserId = truckPosition.CreatorUserId,
+                    });
+                    i++;
+                    if (i == 1 || i % 100 == 0)
+                    {
+                        Logger.Info($"TransferTruckPositionsToAzureTables: uploaded {i} records to azure tables");
+                    }
+                }
+                Logger.Info($"TransferTruckPositionsToAzureTables: uploaded {i} records to azure tables. Finished successfully");
+            }
+            return "Done";
+        }
+
+        [Obsolete]
+        [AbpAuthorize(AppPermissions.Pages_Administration_Host_Dashboard)]
+        public async Task<string> UpdateLastUploadedTruckPositionId()
+        {
+            var lastUploadedId = await SettingManager.GetSettingValueAsync<int>(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionId);
+            if (lastUploadedId == 0)
+            {
+                return "lastUploadedId == 0";
+            }
+
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.MustHaveTenant))
+            {
+                var dbRecord = await _truckPositionObsoleteRepository.GetAll()
+                    .Where(x => x.Id == lastUploadedId)
+                    .Select(x => new
+                    {
+                        x.TenantId,
+                        x.TruckId,
+                        x.Timestamp
+                    }).FirstOrDefaultAsync();
+
+                if (dbRecord == null)
+                {
+                    return $"dbRecord == null";
+                }
+
+                if (dbRecord.TruckId == null)
+                {
+                    return "dbRecord.TruckId == null";
+                }
+
+                var truckPositionTableClient = await _azureTableManager.GetTruckPositionTableClient();
+                var azureRecord = await truckPositionTableClient.GetEntityAsync<TruckPosition>($"{dbRecord.TenantId}-{dbRecord.TruckId}", dbRecord.Timestamp.ToString("u"));
+                if (azureRecord?.Value == null)
+                {
+                    return $"azureRecord.Value == null ({Newtonsoft.Json.JsonConvert.SerializeObject(dbRecord)})";
+                }
+
+                if (azureRecord.Value.Timestamp == null)
+                {
+                    return "azureRecord.Value.Timestamp";
+                }
+
+                var oldValue = await SettingManager.GetSettingValueAsync<DateTime>(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp);
+                var newValue = azureRecord.Value.Timestamp?.ToString("u");
+                await SettingManager.ChangeSettingForApplicationAsync(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp, newValue);
+                return $"Done. Old value: {oldValue}; new value: {newValue}";
+            }
+        }
+
+        [Obsolete]
+        [AbpAuthorize(AppPermissions.Pages_Administration_Host_Dashboard)]
+        public async Task<string> SetLastUploadedTruckPositionTimestamp(string value)
+        {
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp, value);
+            return "Done. New value: " + value;
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_Administration_Host_Dashboard)]
         public async Task<string> TestUploadTruckPositionsToWialon()
         {
             await UploadTruckPositionsToWialonAsync();
@@ -803,6 +954,7 @@ namespace DispatcherWeb.Trucks
         [UnitOfWork(false)]
         [RemoteService(false)]
         [AbpAllowAnonymous]
+        [DisableConcurrentExecution(timeoutInSeconds: 5)]
         public void UploadTruckPositionsToWialon()
         {
             AsyncHelper.RunSync(() => UploadTruckPositionsToWialonAsync());
@@ -828,32 +980,24 @@ namespace DispatcherWeb.Trucks
                 using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.MustHaveTenant))
                 using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.MayHaveTenant))
                 {
-                    var lastUploadedId = await SettingManager.GetSettingValueAsync<int>(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionId);
-                    var truckPositionsToUpload = _truckPositionObsoleteRepository.GetAll()
-                        .Where(x => x.Id > lastUploadedId && !string.IsNullOrEmpty(x.Truck.DtdTrackerUniqueId))
-                        .Select(x => new
-                        {
-                            x.Id,
-                            x.Truck.DtdTrackerUniqueId,
-                            x.TruckId,
-                            x.Timestamp,
-                            x.Altitude,
-                            x.Latitude,
-                            x.Longitude,
-                            x.Speed,
-                            x.Heading
-                        })
-                        .ToList();
+                    var lastUploadedTimestamp = await SettingManager.GetSettingValueAsync<DateTime>(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp);
+                    var truckPositionTableClient = await _azureTableManager.GetTruckPositionTableClient();
+                    var truckPositionsQueryResult = truckPositionTableClient.QueryAsync<TruckPosition>(x => x.Timestamp >= lastUploadedTimestamp && x.DtdTrackerUniqueId != null);
+                    var truckPositionsToUpload = new List<TruckPosition>();
+                    await foreach (var truckPositionResultPage in truckPositionsQueryResult.AsPages())
+                    {
+                        truckPositionsToUpload.AddRange(truckPositionResultPage.Values);
+                    }
 
                     if (!truckPositionsToUpload.Any())
                     {
-                        Logger.Warn($"UploadTruckPositionsToWialon|{runId}| Nothing to upload after id {lastUploadedId}");
+                        Logger.Warn($"UploadTruckPositionsToWialon|{runId}| Nothing to upload after timestamp {lastUploadedTimestamp:u}");
                         unitOfWork.Complete();
                         return;
                     }
                     else
                     {
-                        Logger.Warn($"UploadTruckPositionsToWialon|{runId}| Found {truckPositionsToUpload.Count} records to process after id {lastUploadedId}");
+                        Logger.Warn($"UploadTruckPositionsToWialon|{runId}| Found {truckPositionsToUpload.Count} records to process after timestamp {lastUploadedTimestamp:u}");
                     }
 
                     try
@@ -880,11 +1024,11 @@ namespace DispatcherWeb.Trucks
 
                             var messages = group.Where(x => x.Latitude.HasValue && x.Longitude.HasValue).Select(x => new GpsMessageDto
                             {
-                                Timestamp = x.Timestamp,
+                                GpsTimestamp = x.GpsTimestamp,
                                 AltitudeInMeters = x.Altitude,
                                 Latitude = x.Latitude.Value,
                                 Longitude = x.Longitude.Value,
-                                SpeedInKMPH = (int)Math.Round((x.Speed ?? 0) * 3.6M, 0), //m/s to km/h,
+                                SpeedInKMPH = (int)Math.Round((x.Speed ?? 0) * 3.6, 0), //m/s to km/h,
                                 Heading = x.Heading > 0 ? (int)Math.Round(x.Heading.Value, 0) : 0
                             }).ToList();
 
@@ -894,16 +1038,16 @@ namespace DispatcherWeb.Trucks
 
                         }
 
-                        var newLastId = truckPositionsToUpload.Max(x => x.Id);
-                        var currentLastId = await SettingManager.GetSettingValueAsync<int>(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionId);
-                        if (currentLastId != lastUploadedId && currentLastId >= newLastId)
+                        var newLastTimestamp = truckPositionsToUpload.Where(x => x.Timestamp.HasValue).Max(x => x.Timestamp.Value);
+                        var currentLastTimestamp = await SettingManager.GetSettingValueAsync<DateTime>(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp);
+                        if (currentLastTimestamp != lastUploadedTimestamp && currentLastTimestamp >= newLastTimestamp)
                         {
-                            Logger.Warn($"UploadTruckPositionsToWialon|{runId}| Didn't update LastUploadedTruckPositionId to {newLastId} because the current value is already higher or equal ({currentLastId})");
+                            Logger.Warn($"UploadTruckPositionsToWialon|{runId}| Didn't update LastUploadedTruckPositionTimestamp to {newLastTimestamp:u} because the current value is already higher or equal ({currentLastTimestamp:u})");
                         }
                         else
                         {
-                            await SettingManager.ChangeSettingForApplicationAsync(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionId, newLastId.ToString());
-                            Logger.Info($"UploadTruckPositionsToWialon|{runId}| Changed LastUploadedTruckPositionId to {newLastId}");
+                            await SettingManager.ChangeSettingForApplicationAsync(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp, newLastTimestamp.ToString("u"));
+                            Logger.Info($"UploadTruckPositionsToWialon|{runId}| Changed LastUploadedTruckPositionTimestamp to {newLastTimestamp:u}");
                         }
 
                         unitOfWork.Complete();

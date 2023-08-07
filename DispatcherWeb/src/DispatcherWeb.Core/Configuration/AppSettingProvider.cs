@@ -199,6 +199,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.AccountId, "0", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.UserId, "0", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionId, "0", scopes: SettingScopes.Application),
+                new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp, "2023-01-01T00:00:00", scopes: SettingScopes.Application),
 
                 new SettingDefinition(AppSettings.Heartland.PublicKey, GetFromAppSettings(AppSettings.Heartland.PublicKey, ""), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Heartland.SecretKey, SimpleStringCipher.Instance.Encrypt(GetFromAppSettings(AppSettings.Heartland.SecretKey, "")), scopes: SettingScopes.Tenant),
