@@ -977,14 +977,6 @@ namespace DispatcherWeb.Tickets
                 OrderTaxCalculator.CalculateSingleOrderLineTotals(taxCalculationType, x, x.SalesTaxRate ?? 0);
             });
 
-            if (!permissions.ViewAnyTickets && permissions.ViewCustomerTicketsOnly)
-            {
-                items.ForEach(x =>
-                {
-                    x.Revenue = 0; //revenue is hidden from customer portal users.
-                });
-            }
-
             return new PagedResultDto<TicketListViewDto>(
                 totalCount,
                 items);

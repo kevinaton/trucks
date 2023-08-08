@@ -403,8 +403,7 @@
             },
             {
                 data: "revenue",
-                title: "Revenue",
-                visible: !_isCustomerPortalUser
+                title: _isCustomerPortalUser ? "Charges" : "Revenue",
             },
             {
                 data: "isBilled",
