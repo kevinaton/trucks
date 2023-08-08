@@ -21,8 +21,5 @@ namespace DispatcherWeb.Infrastructure.Telematics.Dto.IntelliShift
         public string Error { get; set; }
         [JsonProperty("error_description")]
         public string ErrorDescription { get; set; }
-
-        public static TokenLoginResult Parse(string jsonLoginResult) =>
-            JsonConvert.DeserializeObject<TokenLoginResult>(jsonLoginResult);
     }
 }

@@ -35,7 +35,6 @@ using DispatcherWeb.Trucks.Dto;
 using DispatcherWeb.VehicleCategories;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using NUglify.Helpers;
 
 namespace DispatcherWeb.Trucks
 {
@@ -662,7 +661,8 @@ namespace DispatcherWeb.Trucks
                                             .Where(apiTruck => !string.IsNullOrEmpty(apiTruck.Name) &&
                                                                 !localTruckCodes.Contains(apiTruck.Name) &&
                                                                 apiTruck.IsActive)
-                                            .Select(apiTruck => apiTruck.ParseToTruck());
+                                            .Select(apiTruck => apiTruck.ParseToTruck())
+                                            .ToList();
 
             apiTrucksToAddLocally.ForEach(truck =>
             {
