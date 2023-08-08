@@ -143,7 +143,9 @@ namespace DispatcherWeb
         FuelSurchargeCalculation = 35,
 
         [Display(Name = "Freight Rate to Pay Drivers")]
-        LineItemFreightRateToPayDrivers = 36
+        LineItemFreightRateToPayDrivers = 36,
+
+        Office = 37
     }
 
     public enum DesignationEnum
@@ -688,6 +690,7 @@ namespace DispatcherWeb
         MotionChange = 1,
         Geofence = 2,
         Heartbeat = 3,
+        ProviderChange = 4,
     }
 
     public enum HostEmailType

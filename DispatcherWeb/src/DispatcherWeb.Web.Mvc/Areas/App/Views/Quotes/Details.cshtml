@@ -1,6 +1,7 @@
 @using System.Threading.Tasks
 @using Abp.Configuration
 @using DispatcherWeb.Authorization
+@using DispatcherWeb.Infrastructure.Extensions;
 @using DispatcherWeb.Quotes.Dto
 @using DispatcherWeb.Web.Areas.App.Startup
 @using DispatcherWeb.Configuration
@@ -110,6 +111,18 @@
                         <label asp-for="InactivationDate" class="col-sm-12 col-md-2 col-form-label">@L("InactivationDate"):</label>
                         <div class="col-sm-12 col-md-2">
                             <input type="text" class="form-control m-input" asp-for="InactivationDate">
+                        </div>
+                    </div>
+                    <div class="form-group m-form__group row" @Html.StyleDisplayNone(!await FeatureChecker.AllowMultiOfficeFeature())>
+                        <label class="col-sm-12 col-md-2 col-form-label pg-add">@L("Office"):</label>
+                        <div class="col-sm-12 col-md-10">
+                            <select class="form-control" asp-for="OfficeId" disabled="@(Model.IsSingleOffice ? "disabled" : null)">
+                                <option value="">Select an office</option>
+                                @if (Model.OfficeId != 0)
+                                {
+                                    <option selected value="@Model.OfficeId">@Model.OfficeName</option>
+                                }
+                            </select>
                         </div>
                     </div>
                     <div class="form-group m-form__group row">

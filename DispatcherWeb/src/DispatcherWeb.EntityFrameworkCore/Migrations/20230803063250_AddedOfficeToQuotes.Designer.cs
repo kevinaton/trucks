@@ -4,6 +4,7 @@ using DispatcherWeb.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    partial class DispatcherWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230803063250_AddedOfficeToQuotes")]
+    partial class AddedOfficeToQuotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1665,9 +1667,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("CustomerContactId")
-                        .HasColumnType("int");
-
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
 
@@ -1786,8 +1785,6 @@ namespace DispatcherWeb.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorUserId");
-
-                    b.HasIndex("CustomerContactId");
 
                     b.HasIndex("DeleterUserId");
 
@@ -2095,9 +2092,6 @@ namespace DispatcherWeb.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<bool>("HasCustomerPortalAccess")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2112,8 +2106,8 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(129)
-                        .HasColumnType("nvarchar(129)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)
@@ -7364,6 +7358,102 @@ namespace DispatcherWeb.Migrations
                     b.ToTable("TimeOff");
                 });
 
+            modelBuilder.Entity("DispatcherWeb.TruckPositions.TruckPosition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal?>("Accuracy")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ActivitiTypeRaw")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("ActivityConfidence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActivityType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Altitude")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool?>("BatteryIsCharging")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("BatteryLevel")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Event")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EventRaw")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("GeofenceAction")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GeofenceActionRaw")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("GeofenceIdentifier")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal?>("Heading")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsMoving")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasColumnType("decimal(12,9)");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasColumnType("decimal(12,9)");
+
+                    b.Property<decimal?>("Odometer")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Speed")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("TruckId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("TruckId");
+
+                    b.ToTable("TruckPosition");
+                });
+
             modelBuilder.Entity("DispatcherWeb.Trucks.FuelPurchase", b =>
                 {
                     b.Property<int>("Id")
@@ -8920,10 +9010,6 @@ namespace DispatcherWeb.Migrations
                         .WithMany()
                         .HasForeignKey("CreatorUserId");
 
-                    b.HasOne("DispatcherWeb.Customers.CustomerContact", "CustomerContact")
-                        .WithMany()
-                        .HasForeignKey("CustomerContactId");
-
                     b.HasOne("DispatcherWeb.Authorization.Users.User", "DeleterUser")
                         .WithMany()
                         .HasForeignKey("DeleterUserId");
@@ -8937,8 +9023,6 @@ namespace DispatcherWeb.Migrations
                         .HasForeignKey("OfficeId");
 
                     b.Navigation("CreatorUser");
-
-                    b.Navigation("CustomerContact");
 
                     b.Navigation("DeleterUser");
 
@@ -10520,6 +10604,23 @@ namespace DispatcherWeb.Migrations
                         .IsRequired();
 
                     b.Navigation("Driver");
+                });
+
+            modelBuilder.Entity("DispatcherWeb.TruckPositions.TruckPosition", b =>
+                {
+                    b.HasOne("DispatcherWeb.Drivers.Driver", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DispatcherWeb.Trucks.Truck", "Truck")
+                        .WithMany()
+                        .HasForeignKey("TruckId");
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Truck");
                 });
 
             modelBuilder.Entity("DispatcherWeb.Trucks.FuelPurchase", b =>

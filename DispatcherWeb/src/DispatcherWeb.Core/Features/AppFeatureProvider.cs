@@ -231,6 +231,13 @@ namespace DispatcherWeb.Features
                 displayName: L("AllowGpsTracking"),
                 inputType: new CheckboxInputType()
             );
+            
+            context.Create(
+                AppFeatures.CustomerPortal,
+                defaultValue: "false",
+                displayName: L("CustomerPortal"),
+                inputType: new CheckboxInputType()
+            );
         }
 
         private static ILocalizableString L(string name)

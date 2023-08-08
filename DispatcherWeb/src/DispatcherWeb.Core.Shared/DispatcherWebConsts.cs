@@ -50,6 +50,8 @@ namespace DispatcherWeb
             public const string UserOfficeId = "Application_UserOfficeId";
             public const string UserOfficeName = "Application_UserOfficeName";
             public const string UserOfficeCopyChargeTo = "Application_UserOfficeCopyDeliverToLoadAtChargeTo";
+            public const string UserCustomerId = "Application_UserCustomerId";
+            public const string UserCustomerName = "Application_UserCustomerName";
         }
 
         public static class DefaultSettings

@@ -165,6 +165,10 @@ namespace DispatcherWeb.Web.Utils
 
         public static string EscapeJsString(string val)
         {
+            if (val == null)
+            {
+                return "null";
+            }
             return "'" + val.Replace(@"\", @"\\").Replace(@"'", @"\'") + "'";
         }
     }

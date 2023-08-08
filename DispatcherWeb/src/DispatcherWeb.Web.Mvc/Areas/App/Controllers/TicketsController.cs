@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace DispatcherWeb.Web.Areas.App.Controllers
 {
     [Area("app")]
-    [AbpMvcAuthorize(AppPermissions.Pages_Tickets_View)]
+    [AbpMvcAuthorize]
     public class TicketsController : DispatcherWebControllerBase
     {
         private readonly ITicketAppService _ticketService;
@@ -26,11 +26,13 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
             _ticketService = ticketService;
         }
 
+        [AbpMvcAuthorize(AppPermissions.Pages_Tickets_View, AppPermissions.CustomerPortal_TicketList)]
         public IActionResult Index()
         {
             return View();
         }
 
+        [AbpMvcAuthorize(AppPermissions.Pages_Tickets_View)]
         public IActionResult TicketsByDriver()
         {
             return View();
@@ -59,12 +61,14 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
         }
 
         [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Tickets_View)]
         public PartialViewResult SelectDriverModal()
         {
             return PartialView("_SelectDriverModal");
         }
 
         [Modal]
+        [AbpMvcAuthorize(AppPermissions.Pages_Tickets_View)]
         public PartialViewResult SelectDateModal()
         {
             return PartialView("_SelectDateModal");

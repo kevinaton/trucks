@@ -225,7 +225,8 @@ namespace DispatcherWeb.Offices
                     HasTrucks = x.Trucks.Any(),
                     HasUsers = x.Users.Any(),
                     HasSharedOrderLines = x.SharedOrderLines.Any(),
-                    HasOrders = x.Orders.Any()
+                    HasOrders = x.Orders.Any(),
+                    HasQuotes = x.Quotes.Any()
                 })
                 .SingleAsync();
 
@@ -233,6 +234,7 @@ namespace DispatcherWeb.Offices
                 || record.HasUsers
                 || record.HasSharedOrderLines
                 || record.HasOrders
+                || record.HasQuotes
                 )
             {
                 return false;

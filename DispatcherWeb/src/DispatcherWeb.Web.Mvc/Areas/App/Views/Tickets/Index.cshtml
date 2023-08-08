@@ -4,15 +4,15 @@
 @using Abp.Application.Features
 @using DispatcherWeb.Authorization
 @using DispatcherWeb.Configuration
-@using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Features
+@using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Web.Areas.App.Startup
+
 @{
     ViewBag.CurrentPageName = AppPageNames.Tenant.Tickets;
 }
 
-@section Scripts
-{
+@section Scripts {
     <environment names="Development">
         <script src="~/view-resources/Areas/app/Views/Tickets/Index.js" asp-append-version="true"></script>
         <script src="~/view-resources/Areas/App/Views/Tickets/_CreateOrEditTicketModal.js" asp-append-version="true"></script>
@@ -183,8 +183,7 @@
                             <label class="control-label" for="JobNumberFilter">@L("JobNumber")</label>
                             <input class="form-control m-input filter" id="JobNumberFilter" name="JobNumber" type="text" placeholder="@L("JobNumber")">
                         </div>
-                        @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.SplitBillingByOffices) &&
-                        (await FeatureChecker.GetValueAsync(AppFeatures.AllowMultiOfficeFeature)).To<bool>())
+                        @if ((await FeatureChecker.GetValueAsync(AppFeatures.AllowMultiOfficeFeature)).To<bool>())
                         {
                             <div class="form-group col-xl-3">
                                 <label class="control-label" for="OfficeIdFilter">@L("Office")</label>

@@ -53,6 +53,8 @@ namespace DispatcherWeb.Authorization.Users.Dto
 
         public bool IsSingleOffice { get; set; }
 
+        public int? CustomerContactId { get; set; }
+
         int IOfficeIdNameDto.OfficeId { get => OfficeId ?? 0; set => OfficeId = value; }
     }
 }
