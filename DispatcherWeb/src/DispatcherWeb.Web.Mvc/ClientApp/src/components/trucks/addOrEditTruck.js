@@ -506,7 +506,10 @@ const AddOrEditTruckForm = ({
 
     const handleCanPullTrailerChange = (e) => {
         if (e.target.checked && activeTrailersOptions === null) {
-            dispatch(getActiveTrailersSelectList());
+            dispatch(getActiveTrailersSelectList({
+                maxResultCount: 1000,
+                skipCount: 0
+            }));
         }
         setCanPullTrailer(e.target.checked);
     };
@@ -819,7 +822,7 @@ const AddOrEditTruckForm = ({
             return;
         }
 
-        var data = {
+        const data = {
             id: getDefaultVal(id, ''),
             vehicleCategoryIsPowered: vehicleCategoryIsPowered.toString(),
             vehicleCategoryAssetType: vehicleCategoryAssetType.toString(),
@@ -909,9 +912,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 <TextField 
@@ -1366,9 +1367,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 { showBedConstruction && 
@@ -1503,9 +1502,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 <TextField 
@@ -1538,9 +1535,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 
@@ -1554,9 +1549,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 <FormControl fullWidth>

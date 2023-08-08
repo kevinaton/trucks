@@ -59,7 +59,8 @@ const TruckBlockItem = ({
     orders,
     openModal,
     closeModal,
-    openDialog
+    openDialog,
+    setIsUIBusy
 }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [menuAnchorPoint, setMenuAnchorPoint] = useState(null);
@@ -222,13 +223,18 @@ const TruckBlockItem = ({
 
     const handleAddTrailer = () => {
         const data = {
-
+            truckId: truck.id,
+            truckCode: truck.truckCode,
+            date: dataFilter.date,
+            shift: dataFilter.shift,
+            officeId: dataFilter.officeId
         };
 
         openModal(
             <SelectTrailer
                 data={data} 
                 closeModal={closeModal} 
+                setIsUIBusy={setIsUIBusy}
             />,
             400
         );

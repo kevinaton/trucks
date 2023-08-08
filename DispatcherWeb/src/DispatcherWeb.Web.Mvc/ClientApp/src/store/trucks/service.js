@@ -24,7 +24,57 @@ export const getBedConstructions = filter => {
 export const getFuelTypeSelectList = () => get(url.GET_FUEL_TYPE_SELECT_LIST);
 
 // get active trailers select list
-export const getActiveTrailersSelectList = () => get(`${url.GET_ACTIVE_TRAILERS_SELECT_LIST}?maxResultCount=1000&skipCount=0`);
+export const getActiveTrailersSelectList = filter => {
+    let queryString = `maxResultCount=${filter.maxResultCount}&skipCount=${filter.skipCount}`;
+    
+    if (filter.id !== null && filter.id !== undefined) {
+        queryString = `id=${filter.id}&${queryString}`;
+    }
+
+    if (filter.model !== null && filter.model !== undefined) {
+        queryString = `model=${filter.model}&${queryString}`;
+    }
+
+    if (filter.make !== null && filter.make !== undefined) {
+        queryString = `make=${filter.make}&${queryString}`;
+    }
+
+    if (filter.bedConstruction !== null && filter.bedConstruction !== undefined) {
+        queryString = `bedConstruction=${filter.bedConstruction}&${queryString}`;
+    }
+
+    if (filter.vehicleCategoryId !== null && filter.vehicleCategoryId !== undefined) {
+        queryString = `vehicleCategoryId=${filter.vehicleCategoryId}&${queryString}`;
+    }
+
+    return get(`${url.GET_ACTIVE_TRAILERS_SELECT_LIST}?${queryString}`);
+};
+
+// get makes select list
+export const getMakesSelectList = filter => {
+    let queryString = `maxResultCount=${filter.maxResultCount}&skipCount=${filter.skipCount}`;
+
+    if (filter.vehicleCategoryId !== null && filter.vehicleCategoryId !== undefined) {
+        queryString = `vehicleCategoryId=${filter.vehicleCategoryId}&${queryString}`;
+    }
+
+    return get(`${url.GET_MAKES_SELECT_LIST}?${queryString}`);
+};
+
+// get models select list
+export const getModelsSelectList = filter => {
+    let queryString = `maxResultCount=${filter.maxResultCount}&skipCount=${filter.skipCount}`;
+
+    if (filter.make !== null && filter.make !== undefined) {
+        queryString = `make=${filter.make}&${queryString}`;
+    }
+
+    if (filter.vehicleCategoryId !== null && filter.vehicleCategoryId !== undefined) {
+        queryString = `vehicleCategoryId=${filter.vehicleCategoryId}&${queryString}`;
+    }
+
+    return get(`${url.GET_MODELS_SELECT_LIST}?${queryString}`);
+};
 
 // get truck for edit
 export const getTruckForEdit = () => get(url.GET_TRUCK_FOR_EDIT);

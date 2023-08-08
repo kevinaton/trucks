@@ -14,6 +14,12 @@ import {
     GET_ACTIVE_TRAILERS_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
     GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    GET_MAKES_SELECT_LIST,
+    GET_MAKES_SELECT_LIST_SUCCESS,
+    GET_MAKES_SELECT_LIST_FAILURE,
+    GET_MODELS_SELECT_LIST,
+    GET_MODELS_SELECT_LIST_SUCCESS,
+    GET_MODELS_SELECT_LIST_FAILURE,
     GET_TRUCK_FOR_EDIT,
     GET_TRUCK_FOR_EDIT_SUCCESS,
     GET_TRUCK_FOR_EDIT_FAILURE,
@@ -88,8 +94,9 @@ export const getFuelTypeSelectListFailure = error => ({
     payload: error,
 });
 
-export const getActiveTrailersSelectList = () => ({
+export const getActiveTrailersSelectList = filter => ({
     type: GET_ACTIVE_TRAILERS_SELECT_LIST,
+    payload: filter
 });
 
 export const getActiveTrailersSelectListSuccess = activeTrailersSelectList => ({
@@ -99,6 +106,36 @@ export const getActiveTrailersSelectListSuccess = activeTrailersSelectList => ({
 
 export const getActiveTrailersSelectListFailure = error => ({
     type: GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    payload: error,
+});
+
+export const getMakesSelectList = filter => ({
+    type: GET_MAKES_SELECT_LIST,
+    payload: filter
+});
+
+export const getMakesSelectListSuccess = makesSelectList => ({
+    type: GET_MAKES_SELECT_LIST_SUCCESS,
+    payload: makesSelectList,
+});
+
+export const getMakesSelectListFailure = error => ({
+    type: GET_MAKES_SELECT_LIST_FAILURE,
+    payload: error,
+});
+
+export const getModelsSelectList = filter => ({
+    type: GET_MODELS_SELECT_LIST,
+    payload: filter
+});
+
+export const getModelsSelectListSuccess = modelsSelectList => ({
+    type: GET_MODELS_SELECT_LIST_SUCCESS,
+    payload: modelsSelectList,
+});
+
+export const getModelsSelectListFailure = error => ({
+    type: GET_MODELS_SELECT_LIST_FAILURE,
     payload: error,
 });
 

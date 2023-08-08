@@ -8,7 +8,7 @@ import './fontawesome/css/all.css';
 import { RouterConfig } from './navigation/RouterConfig';
 import { DrawerHeader } from './components/DTComponents';
 import { sideMenuItems } from './common/data/menus';
-import { Appbar, SideMenu } from './components';
+import { Appbar, SideMenu, ProgressBar } from './components';
 import { getUserAppConfig, getUserGeneralSettings, getUserInfo } from './store/actions';
 import { isEmpty } from 'lodash';
 import { baseUrl } from './helpers/api_helper';
@@ -40,6 +40,7 @@ const App = (props) => {
     const [modals, setModals] = useState([]);
     const [nextModalZIndex, setNextModalZIndex] = useState(1);
     const [dialog, setDialog] = useState(null);
+    const [isUIBusy, setIsUIBusy] = useState(false);
 
     const dispatch = useDispatch();
     const {
@@ -224,6 +225,8 @@ const App = (props) => {
             }}
         >
             <SignalRContext.Provider value={connection}>
+                { isUIBusy && <ProgressBar /> }
+
                 <Box sx={{ display: 'flex' }}>
                     <CssBaseline />
                     {/* This is the appbar located at the top of the app. */}
@@ -279,7 +282,8 @@ const App = (props) => {
                                         openModal={(content, size) => openModal(content, size)} 
                                         closeModal={closeModal} 
                                         openDialog={(data) => openDialog(data)}
-                                        closeDialog={closeDialog}
+                                        closeDialog={closeDialog} 
+                                        setIsUIBusy={setIsUIBusy}
                                     />
                                 </Paper>
                             </Box>

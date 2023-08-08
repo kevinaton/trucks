@@ -153,8 +153,7 @@ const AddOrEditDriver = ({
         return (
             <Stack spacing={2} sx={{
                 paddingTop: '8px',
-                maxHeight: 'calc(100vh - 300px)',
-                overflowY: 'auto'
+                paddingBottom: '8px'
             }}>
                 <TextField 
                     id='firstName'

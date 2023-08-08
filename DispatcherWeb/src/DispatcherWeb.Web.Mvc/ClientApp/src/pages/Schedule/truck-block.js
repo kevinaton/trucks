@@ -29,7 +29,8 @@ const TruckBlock = ({
     onSetTrucks,
     openModal,
     closeModal,
-    openDialog
+    openDialog, 
+    setIsUIBusy
 }) => {
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
@@ -290,7 +291,8 @@ const TruckBlock = ({
                 orders={orders}
                 openModal={openModal} 
                 closeModal={closeModal} 
-                openDialog={openDialog}
+                openDialog={openDialog} 
+                setIsUIBusy={setIsUIBusy}
             />
         </Grid>
     );

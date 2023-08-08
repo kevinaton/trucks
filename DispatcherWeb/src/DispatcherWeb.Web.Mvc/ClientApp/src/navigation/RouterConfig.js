@@ -10,7 +10,8 @@ export const RouterConfig = ({
     openModal,
     closeModal,
     openDialog,
-    closeDialog
+    closeDialog,
+    setIsUIBusy
 }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -39,7 +40,8 @@ export const RouterConfig = ({
                                         openModal={openModal} 
                                         closeModal={closeModal} 
                                         openDialog={openDialog} 
-                                        closeDialog={closeDialog}
+                                        closeDialog={closeDialog} 
+                                        setIsUIBusy={setIsUIBusy}
                                     />
                                 }
                             />

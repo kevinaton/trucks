@@ -52,11 +52,14 @@ export const GET_DRIVER_FOR_EDIT = '/Driver/GetDriverForEdit';
 
 //DriverAssigments
 export const SET_DRIVER_FOR_TRUCK = '/DriverAssignment/SetDriverForTruck';
+export const HAS_ORDER_LINE_TRUCKS = '/DriverAssignment/HasOrderLineTrucks';
 
 //Trucks
 export const GET_VEHICLE_CATEGORIES = '/Truck/GetVehicleCategoriesSelectList';
 export const GET_ACTIVE_TRAILERS_SELECT_LIST = '/Truck/GetActiveTrailersSelectList';
 export const GET_BED_CONSTRUCTION_SELECT_LIST = '/Truck/GetBedConstructionSelectList';
+export const GET_MAKES_SELECT_LIST = '/Truck/GetMakesSelectList';
+export const GET_MODELS_SELECT_LIST = '/Truck/GetModelsSelectList';
 export const GET_BED_CONSTRUCTIONS = '/Truck/GetBedConstructions';
 export const GET_FUEL_TYPE_SELECT_LIST = '/Truck/GetFuelTypeSelectList';
 export const GET_TRUCK_FOR_EDIT = '/Truck/GetTruckForEdit';

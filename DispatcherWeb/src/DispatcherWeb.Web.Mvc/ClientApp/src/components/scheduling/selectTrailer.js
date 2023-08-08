@@ -11,15 +11,28 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import _, { isEmpty } from 'lodash';
 import { assetType } from '../../common/enums/assetType';
-import { getVehicleCategories, getBedConstructions } from '../../store/actions';
+import { 
+    getVehicleCategories, 
+    getBedConstructions,
+    getMakesSelectList,
+    getModelsSelectList,
+    getActiveTrailersSelectList,
+    hasOrderLineTrucks
+} from '../../store/actions';
+import { isPastDate } from '../../helpers/misc_helper';
 
 const SelectTrailer = ({
     data,
-    closeModal
+    closeModal,
+    setIsUIBusy
 }) => {
     const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState([]);
-    const [isLoadingBedConstruction, setIsLoadingBedConstruction] = useState(false);
+    const [isLoadingBedConstructions, setIsLoadingBedConstructions] = useState(false);
     const [bedConstructionOptions, setBedConstructionOptions] = useState([]);
+    const [isLoadingMakes, setIsLoadingMakes] = useState(false);
+    const [makeOptions, setMakeOptions] = useState([]);
+    const [isLoadingModels, setIsLoadingModels] = useState(false);
+    const [modelOptions, setModelOptions] = useState([]);
     const [trailerOptions, setTrailerOptions] = useState([]);
 
     const [vehicleCategoryId, setVehicleCategoryId] = useState('');
@@ -32,20 +45,39 @@ const SelectTrailer = ({
         error: false,
         errorText: ''
     });
+    const [trailer, setTrailer] = useState(null);
+    const [validationResult, setValidationResult] = useState(null);
 
     const dispatch = useDispatch();
 
     const {
         vehicleCategories,
         bedConstructions,
+        makesSelectList,
+        modelsSelectList,
+        activeTrailersSelectList,
+        hasOrderLineTrucksResponse,
     } = useSelector((state) => ({
         vehicleCategories: state.TruckReducer.vehicleCategories,
-        bedConstructions: state.TruckReducer.bedConstructions
+        bedConstructions: state.TruckReducer.bedConstructions,
+        makesSelectList: state.TruckReducer.makesSelectList,
+        modelsSelectList: state.TruckReducer.modelsSelectList,
+        activeTrailersSelectList: state.TruckReducer.activeTrailersSelectList,
+        hasOrderLineTrucksResponse: state.TruckReducer.hasOrderLineTrucksResponse,
     }));
 
     useEffect(() => {
         dispatch(getVehicleCategories({
             assetType: assetType.TRAILER
+        }));
+
+        dispatch(getActiveTrailersSelectList({
+            maxResultCount: 1000,
+            skipCount: 0,
+            vehicleCategoryId,
+            bedConstruction: bedConstructionId,
+            make,
+            model
         }));
     }, []);
 
@@ -61,11 +93,100 @@ const SelectTrailer = ({
     useEffect(() => {
         if (!isEmpty(bedConstructions) && !isEmpty(bedConstructions.result)) {
             const { result } = bedConstructions;
-            if (!isEmpty(result)) {
-                setBedConstructionOptions(result);
-            }
+            setBedConstructionOptions(result);
+            setIsLoadingBedConstructions(false);
         }
     }, [bedConstructions]);
+
+    useEffect(() => {
+        if (!isEmpty(makesSelectList) && !isEmpty(makesSelectList.result)) {
+            const { result } = makesSelectList;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setMakeOptions(result.items);
+                setIsLoadingMakes(false);
+            }
+        }
+    }, [makesSelectList]);
+
+    useEffect(() => {
+        if (!isEmpty(modelsSelectList) && !isEmpty(modelsSelectList.result)) {
+            const { result } = modelsSelectList;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setModelOptions(result.items);
+                setIsLoadingModels(false);
+            }
+        }
+    }, [modelsSelectList]);
+
+    useEffect(() => {
+        if (!isEmpty(activeTrailersSelectList) && !isEmpty(activeTrailersSelectList.result)) {
+            const { result } = activeTrailersSelectList;
+            if (!result.items.length) {
+                setTrailerId('');
+            }
+
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setTrailerOptions(result.items);
+            }
+        }
+    }, [activeTrailersSelectList]);
+
+    useEffect(() => {
+        if (!isEmpty(hasOrderLineTrucksResponse) && !isEmpty(hasOrderLineTrucksResponse.result)) {
+            const { hasOrderLineTrucks } = hasOrderLineTrucksResponse.result;
+            if (hasOrderLineTrucks) {
+                // todo
+            }
+        }
+    }, [hasOrderLineTrucksResponse]);
+
+    useEffect(() => {
+        if (validationResult !== null) {
+            // todo
+        }
+    }, [validationResult]);
+
+    const resetTrailerOptions = () => {
+        if (!trailerId.value) {
+            return;
+        }
+
+        dispatch(getActiveTrailersSelectList({
+            maxResultCount: 1000,
+            skipCount: 0,
+            vehicleCategoryId,
+            bedConstruction: bedConstructionId,
+            make,
+            model,
+            id: trailerId.value
+        }));
+    };
+
+    const getSelectedTrailerOption = () => {
+        return _.find(trailerOptions, (item) => item.id === trailerId.value);
+    };
+
+    const promptWhetherToReplaceTrailerOnExistingOrderLineTrucks = (options) => {
+        setIsUIBusy(true);
+
+        if (isPastDate(data.date)) {
+            setValidationResult({});
+            setIsUIBusy(false);
+            return;
+        }
+
+        if (options.truckId) {
+            dispatch(hasOrderLineTrucks({
+                trailerId: options.trailerId,
+                forceTrailerIdFilter: true,
+                truckId: options.truckId,
+                officeId: data.officeId,
+                date: data.date,
+                shift: data.shift
+            }));
+            setIsUIBusy(false);
+        }
+    };
     
     const handleVehicleCategoryChange = (e, newValue) => {
         e.preventDefault();
@@ -73,32 +194,60 @@ const SelectTrailer = ({
             dispatch(getBedConstructions({
                 vehicleCategoryId: newValue
             }));
+            setIsLoadingBedConstructions(true);
         } else {
             setBedConstructionId('');
             setMake('');
         }
+
+        if (!makeOptions.length) {
+            setIsLoadingMakes(true);
+            dispatch(getMakesSelectList({
+                vehicleCategoryId: newValue,
+                maxResultCount: 1000,
+                skipCount: 0
+            }));
+        }
         
         setVehicleCategoryId(newValue);
+        resetTrailerOptions();
     };
 
     const handleBedConstructionChange = (e, newValue) => {
         e.preventDefault();
         setBedConstructionId(newValue);
+        resetTrailerOptions();
     };
 
-    const handleMakeChange = (e) => {
+    const handleMakeChange = (e, newValue) => {
         e.preventDefault();
-        setMake(e.target.value);
+        
+        if (!modelOptions.length) {
+            setIsLoadingModels(true);
+            dispatch(getModelsSelectList({
+                vehicleCategoryId,
+                make: newValue,
+                maxResultCount: 1000,
+                skipCount: 0
+            }));
+        }
+
+        setMake(newValue);
+        resetTrailerOptions();
     };
 
-    const handleModelChange = (e) => {
+    const handleModelChange = (e, newValue) => {
         e.preventDefault();
         setModel(e.target.value);
+        resetTrailerOptions();
     };
 
     const handleTrailerChange = (e, newValue) => {
         e.preventDefault();
-        setTrailerId(newValue);
+        setTrailerId({
+            ...trailerId,
+            value: newValue
+        });
     };
 
     const handleCancel = () => {
@@ -109,9 +258,42 @@ const SelectTrailer = ({
 
     const handleSave = (e) => {
         e.preventDefault();
-        
 
-        closeModal();
+        if (trailerId.required && !trailerId.value) {
+            setTrailerId({
+                ...trailerId,
+                error: true,
+                errorText: 'Trailer is required'
+            });
+            return;
+        }
+        
+        const selectedTrailer = getSelectedTrailerOption();
+        
+        const result = trailerId.value ? {
+            id: Number(trailerId.value),
+            truckCode: selectedTrailer.name
+        } : null;
+
+        if (result) {
+            if (selectedTrailer) {
+                result.vehicleCategory = {
+                    id: selectedTrailer.item.vehicleCategoryId,
+                };
+            } else {
+                result.vehicleCategory = {
+                    id: data.vehicleCategoryId
+                };
+            }
+        }
+
+        setTrailer(result);
+        promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+            truckId: data.truckId,
+            truckCode: data.truckCode
+        });
+
+        //closeModal();
     };
 
     return (
@@ -140,8 +322,6 @@ const SelectTrailer = ({
                     sx={{
                         paddingTop: '8px',
                         paddingBottom: '8px',
-                        maxHeight: 'calc(100vh - 300px)',
-                        overflowY: 'auto'
                     }}
                 >
                     { vehicleCategoryOptions && 
@@ -166,10 +346,10 @@ const SelectTrailer = ({
 
                     { vehicleCategoryId && 
                         <React.Fragment>
-                            { bedConstructionOptions && 
+                            { !isLoadingBedConstructions && bedConstructionOptions && 
                                 <Autocomplete 
                                     id='bedConstruction' 
-                                    option={bedConstructions}
+                                    options={bedConstructionOptions}
                                     getOptionLabel={(option) => option.name}
                                     sx={{
                                         flex: 1,
@@ -178,7 +358,7 @@ const SelectTrailer = ({
                                     renderInput={(params) => 
                                         <TextField 
                                             {...params} 
-                                            label='Bed Construction'
+                                            label='Bed Construction' 
                                         />
                                     }
                                     onChange={(e, value) => handleBedConstructionChange(e, value.id)}
@@ -186,25 +366,45 @@ const SelectTrailer = ({
                                 />
                             }
 
-                            <TextField 
-                                id='make'
-                                name='make'
-                                type='text'
-                                label='Make'
-                                value={make} 
-                                onChange={handleMakeChange}
-                                fullWidth
-                            />
+                            { !isLoadingMakes && makeOptions && 
+                                <Autocomplete 
+                                    id='make' 
+                                    options={makeOptions}
+                                    getOptionLabel={(option) => option.name}
+                                    sx={{
+                                        flex: 1,
+                                        flexShrink: 0
+                                    }}
+                                    renderInput={(params) => 
+                                        <TextField 
+                                            {...params} 
+                                            label='Make' 
+                                        />
+                                    }
+                                    onChange={(e, value) => handleMakeChange(e, value.id)}
+                                    fullWidth
+                                />
+                            }
 
-                            <TextField
-                                id='model'
-                                name='model'
-                                type='text'
-                                label='Model'
-                                value={model} 
-                                onChange={handleModelChange}
-                                fullWidth
-                            />
+                            { make && !isLoadingModels && modelOptions && 
+                                <Autocomplete 
+                                    id='model' 
+                                    options={modelOptions}
+                                    getOptionLabel={(option) => option.name}
+                                    sx={{
+                                        flex: 1,
+                                        flexShrink: 0
+                                    }}
+                                    renderInput={(params) => 
+                                        <TextField 
+                                            {...params} 
+                                            label='Model' 
+                                        />
+                                    }
+                                    onChange={(e, value) => handleModelChange(e, value.id)}
+                                    fullWidth
+                                />
+                            }
                         </React.Fragment>
                     }
 

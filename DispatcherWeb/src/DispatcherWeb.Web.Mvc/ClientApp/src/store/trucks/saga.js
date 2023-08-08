@@ -5,6 +5,8 @@ import {
     GET_BED_CONSTRUCTIONS,
     GET_FUEL_TYPE_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST,
+    GET_MAKES_SELECT_LIST,
+    GET_MODELS_SELECT_LIST,
     GET_WIALON_DEVICE_TYPES_SELECT_LIST,
     GET_TRUCK_FOR_EDIT,
     EDIT_TRUCK,
@@ -21,6 +23,10 @@ import {
     getFuelTypeSelectListFailure,
     getActiveTrailersSelectListSuccess,
     getActiveTrailersSelectListFailure,
+    getMakesSelectListSuccess,
+    getMakesSelectListFailure,
+    getModelsSelectListSuccess,
+    getModelsSelectListFailure,
     getWialonDeviceTypesSelectListSuccess,
     getWialonDeviceTypesSelectListFailure,
     getTruckForEditSuccess,
@@ -36,6 +42,8 @@ import {
     getBedConstructions,
     getFuelTypeSelectList,
     getActiveTrailersSelectList,
+    getMakesSelectList,
+    getModelsSelectList,
     getWialonDeviceTypesSelectList,
     getTruckForEdit,
     editTruck,
@@ -63,7 +71,7 @@ function* fetchBedConstructionSelectList() {
 function* fetchBedConstructions({ payload: filter }) {
     try {
         const response = yield call(getBedConstructions, filter);
-        yield put(getBedConstructionSelectListSuccess(response));
+        yield put(getBedConstructionsSuccess(response));
     } catch (error) {
         yield put(getBedConstructionsFailure(error));
     }
@@ -78,12 +86,30 @@ function* fetchFuelTypeSelectList() {
     }
 }
 
-function* fetchActiveTrailersSelectList() {
+function* fetchActiveTrailersSelectList({ payload: filter }) {
     try {
-        const response = yield call(getActiveTrailersSelectList);
+        const response = yield call(getActiveTrailersSelectList, filter);
         yield put(getActiveTrailersSelectListSuccess(response));
     } catch (error) {
         yield put(getActiveTrailersSelectListFailure(error));
+    }
+}
+
+function* fetchMakesSelectList({ payload: filter }) {
+    try {
+        const response = yield call(getMakesSelectList, filter);
+        yield put(getMakesSelectListSuccess(response));
+    } catch (error) {
+        yield put(getMakesSelectListFailure(error));
+    }
+}
+
+function* fetchModelsSelectList({ payload: filter }) {
+    try {
+        const response = yield call(getModelsSelectList, filter);
+        yield put(getModelsSelectListSuccess(response));
+    } catch (error) {
+        yield put(getModelsSelectListFailure(error));
     }
 }
 
@@ -129,6 +155,8 @@ function* trucksSaga() {
     yield takeEvery(GET_BED_CONSTRUCTIONS, fetchBedConstructions);
     yield takeEvery(GET_FUEL_TYPE_SELECT_LIST, fetchFuelTypeSelectList);
     yield takeEvery(GET_ACTIVE_TRAILERS_SELECT_LIST, fetchActiveTrailersSelectList);
+    yield takeEvery(GET_MAKES_SELECT_LIST, fetchMakesSelectList);
+    yield takeEvery(GET_MODELS_SELECT_LIST, fetchModelsSelectList);
     yield takeEvery(GET_WIALON_DEVICE_TYPES_SELECT_LIST, fetchWialonDeviceTypesSelectList);
     yield takeEvery(GET_TRUCK_FOR_EDIT, fetchTruckForEdit);
     yield takeEvery(EDIT_TRUCK, onEditTruck);

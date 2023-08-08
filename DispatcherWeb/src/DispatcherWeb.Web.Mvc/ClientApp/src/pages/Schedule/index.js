@@ -167,7 +167,8 @@ const Schedule = props => {
                         onSetTrucks={onSetTrucks} 
                         openModal={props.openModal}
                         closeModal={props.closeModal} 
-                        openDialog={props.openDialog}
+                        openDialog={props.openDialog} 
+                        setIsUIBusy={props.setIsUIBusy}
                     />
 
                     {/* List of schedule orders */}
