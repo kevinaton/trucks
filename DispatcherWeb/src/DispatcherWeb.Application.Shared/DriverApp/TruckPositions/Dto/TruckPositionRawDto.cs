@@ -13,10 +13,6 @@ namespace DispatcherWeb.DriverApp.TruckPositions.Dto
 
         public int? TruckId { get; set; }
 
-        public int? DriverId { get; set; }
-
-        public long? UserId { get; set; }
-
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
         public string Json => JsonConvert.SerializeObject(AdditionalData);
