@@ -30,6 +30,27 @@ namespace DispatcherWeb.Authorization.Roles
                     {
                     }
                 },
+                // ActiveReports
+                {
+                    AppPermissions.Pages_ActiveReports, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Maintenance,
+                        StaticRoleNames.Tenants.MaintenanceSupervisor,
+                    }
+                },
+                // ActiveReports VehicleMaintenanceWorkOrderReport
+                {
+                    AppPermissions.Pages_ActiveReports_VehicleMaintenanceWorkOrderReport, new[]
+                    {
+
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Maintenance,
+                        StaticRoleNames.Tenants.MaintenanceSupervisor,
+                    }
+                },
                 // Pages_Administration
                 {
                     AppPermissions.Pages_Administration, new string[]
@@ -744,15 +765,6 @@ namespace DispatcherWeb.Authorization.Roles
                     {
                         StaticRoleNames.Tenants.Admin,
                         StaticRoleNames.Tenants.Administrative,
-                    }
-                },
-
-                // ActiveReports
-                {
-                    AppPermissions.Pages_ActiveReports, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                        //StaticRoleNames.Tenants.Administrative,
                     }
                 },
                 

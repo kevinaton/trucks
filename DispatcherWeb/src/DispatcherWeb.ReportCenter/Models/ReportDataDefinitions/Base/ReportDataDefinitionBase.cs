@@ -6,15 +6,21 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using DispatcherWeb.ReportCenter.Helpers;
+using DispatcherWeb.ReportCenter.Services;
 using GrapeCity.ActiveReports;
+using GrapeCity.ActiveReports.Export.Pdf.Page;
 using GrapeCity.ActiveReports.PageReportModel;
+using GrapeCity.ActiveReports.Rendering.IO;
 using GrapeCity.ActiveReports.Web.Viewer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using DataParameter = GrapeCity.Enterprise.Data.DataEngine.DataProcessing.DataParameter;
 using Query = GrapeCity.ActiveReports.PageReportModel.Query;
+using PdfSettings = GrapeCity.ActiveReports.Export.Pdf.Page.Settings;
+using System.Runtime.CompilerServices;
 
 namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 {
@@ -24,9 +30,11 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         public IConfiguration Configuration { get; internal set; }
 
-        public PageReport ThisPageReport { get; set; }
+        public IHttpClientFactory HttpClientFactory { get; internal set; }
 
-        public IServiceProvider ServiceProvider { get; internal set; }
+        public ReportAppService ReportAppService { get; internal set; }
+
+        public PageReport ThisPageReport { get; set; }
 
         public IHttpContextAccessor HttpContextAccessor { get; internal set; }
 
@@ -39,19 +47,30 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         #endregion
 
+        #region private variables
+
+        private readonly IHostEnvironment _environment;
+        private readonly string _httpClientName = "DispatcherWeb.ReportCenter";
+        #endregion
+
         protected const string _emptyArrayInResult = "{result:[]}";
         protected Dictionary<string, string> _masterDataSourcesRef = new()
         {
             { "TenantsDataSource", "TenantsDataSet" }
         };
 
-        public ReportDataDefinitionBase(IConfiguration configuration, IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
+        public ReportDataDefinitionBase(IConfiguration configuration, IHttpContextAccessor httpContextAccessor,
+                                            IHttpClientFactory httpClientFactory, ILoggerFactory loggerFactory,
+                                            ReportAppService reportAppService, IHostEnvironment environment)
         {
-            Configuration = configuration;
-            ServiceProvider = serviceProvider;
-            HttpContextAccessor = httpContextAccessor;
+            _environment = environment;
 
+            Configuration = configuration;
+            HttpContextAccessor = httpContextAccessor;
+            HttpClientFactory = httpClientFactory;
+            ReportAppService = reportAppService;
             Logger = loggerFactory.CreateLogger(ReportId);
+
         }
 
         public async Task<DataSource> TenantsListDataSource()
@@ -91,14 +110,8 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             return tenantsListDataSet;
         }
 
-        /// <summary>
-        /// Should be called after when PageReport has been instantiated and loaded with the report.
-        /// </summary>
-        public virtual async Task Initialize()
+        public virtual async Task PostInitialize()
         {
-            if (ThisPageReport == null)
-                return;
-
             // Need to remove first the existing datasource for Tenants setup in the report (in the MasterReport)
             ThisPageReport.Report.DataSources.Remove(d => d.Name.Equals("TenantsDataSource"));
             ThisPageReport.Document.PageReport.Report.DataSources.Remove(d => d.Name.Equals("TenantsDataSource"));
@@ -109,12 +122,13 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
                 ThisPageReport.Report.DataSets.Remove(d => d.Name.Equals("TenantsDataSet"));
                 ThisPageReport.Document.PageReport.Report.DataSets.Remove(d => d.Name.Equals("TenantsDataSet"));
 
-                // Remove/Hide the Tenant parameter
+                // Remove/Hide the Tenant parameter 
                 ThisPageReport.Report.ReportParameters.Remove(p => p.Name.Equals("TenantId"));
                 ThisPageReport.Document.PageReport.Report.ReportParameters.Remove(p => p.Name.Equals("TenantId"));
 
-                ThisPageReport.Report.Body.Components.HideTenantLabels();
-                ThisPageReport.Document.PageReport.Report.Body.Components.HideTenantLabels();
+                // and the labels located in the header component
+                var pageHeaderFooters = ThisPageReport.Document.PageReport.Report.Components.Where(c => c is PageHeaderFooter);
+                pageHeaderFooters.ToList().ForEach(c => ((PageHeaderFooter)c).Components.HideTenantLabels());
             }
             else
             {
@@ -126,7 +140,27 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
             }
         }
 
-        public virtual MemoryStream OpenReportAsPdf(int? entityId)
+        public async Task Initialize()
+        {
+            var getReportInfoResult = await ReportAppService.TryGetReport(ReportId);
+
+            if (!getReportInfoResult.Success)
+                throw new Exception("Report is not registered.");
+
+            if (!getReportInfoResult.ReportInfo.HasAccess)
+                throw new Exception("You do not have access to view this report.");
+
+            var reportsDirPath = new DirectoryInfo($"{_environment.ContentRootPath}\\Reports\\");
+            var reportPath = $"{Path.Combine(reportsDirPath.FullName, getReportInfoResult.ReportInfo.Path)}.rdlx";
+
+            ThisPageReport = new PageReport(new FileInfo(reportPath));
+            if (ThisPageReport != null)
+            {
+                await PostInitialize();
+            }
+        }
+
+        public MemoryStream OpenReportAsPdf(int? entityId)
         {
             ThisPageReport.Document.LocateDataSource += (sender, args) =>
             {
@@ -143,10 +177,20 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
                 }
                 var locateDataSourceArgs = new LocateDataSourceArgs(reportParams, dataParams, args.Report, args.DataSet);
                 var dataSource = ThisPageReport.Document.PageReport.Report.DataSources.FirstOrDefault(p => p.Name == args.DataSet.Query.DataSourceName);
-                args.Data = LocateDataSource(locateDataSourceArgs).Result;
+                var locateDataSourceResult = LocateDataSource(locateDataSourceArgs).Result;
+                args.Data = locateDataSourceResult.DataSourceJson;
             };
 
-            return null;
+            // Provide settings for the rendering output.
+            var pdfSetting = new PdfSettings();
+
+            //Set the rendering extension and render the report.
+            var pdfRenderingExtension = new PdfRenderingExtension();
+            var outputProvider = new MemoryStreamProvider();
+            ThisPageReport.Document.Render(pdfRenderingExtension, outputProvider, pdfSetting);
+
+            var memStream = (MemoryStream)outputProvider.GetPrimaryStream().OpenStream();
+            return memStream;
         }
 
         public virtual async Task<(bool IsMasterDataSource, object DataSourceJson)> LocateDataSource(LocateDataSourceArgs arg)
@@ -162,34 +206,40 @@ namespace DispatcherWeb.ReportCenter.Models.ReportDataDefinitions.Base
 
         #region private methods
 
+        protected HttpClient GetHttpClient()
+        {
+             return HttpClientFactory.CreateClient(_httpClientName);
+        }
+
         protected bool IsForTenantsDataSet(LocateDataSourceArgs arg)
         {
             return _masterDataSourcesRef.ContainsValue(arg.DataSet.Name);
         }
 
-        private async Task<string> GetTenantsJson()
+        protected async Task<string> ValidateResponse(HttpResponseMessage response, string callerMethodName, string alternativeJsonResult = "")
         {
-            var hostApiUrl = Configuration["IdentityServer:Authority"];
-            var url = $"{hostApiUrl}/api/services/activeReports/tenantStatisticsReport/GetTenants";
-            var accessToken = await HttpContextAccessor.HttpContext.GetTokenAsync("access_token");
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var response = await client.GetAsync(url);
-
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine(response.StatusCode);
-                Logger.Log(LogLevel.Error, $"Error: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
+                Logger.Log(LogLevel.Error, $"Error: {callerMethodName} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
+                return string.IsNullOrEmpty(alternativeJsonResult) ? _emptyArrayInResult : alternativeJsonResult;
             }
             else
             {
                 var contentJson = await response.Content.ReadAsStringAsync();
-                Logger.Log(LogLevel.Information, $"Success: {Extensions.GetMethodName()} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
+                Logger.Log(LogLevel.Information, $"Success: {callerMethodName} -> {response.ReasonPhrase}; {response.RequestMessage.Method.Method}; {response.RequestMessage.RequestUri.AbsoluteUri};");
                 return contentJson;
             }
+        }
 
-            return _emptyArrayInResult;
+        private async Task<string> GetTenantsJson()
+        {
+            var httpClient = GetHttpClient();
+            var url = $"/api/services/activeReports/tenantStatisticsReport/GetTenants";
+            var response = await httpClient.GetAsync(url);
+
+            var jsonContent = await ValidateResponse(response, Extensions.GetMethodName());
+            return jsonContent;
         }
 
         #endregion

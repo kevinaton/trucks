@@ -94,7 +94,5 @@ namespace DispatcherWeb.Web.Areas.app.Controllers
             byte[] fileContent = AttachmentHelper.GetFromAzureBlob($"{workOrderId}/{fileId}", AppConsts.WorkOrderPicturesContainerName).Content;
             return File(fileContent, "application/octet-stream", fileName);
         }
-
-
     }
 }

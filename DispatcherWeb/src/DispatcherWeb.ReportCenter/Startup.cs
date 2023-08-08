@@ -46,9 +46,18 @@ namespace DispatcherWeb.ReportCenter
 
             var connectionString = Configuration.GetConnectionString("Default");
 
+            services.AddTransient<AuthorizationHeaderHandler>();
+            services.AddHttpClient("DispatcherWeb.ReportCenter", (serviceProvider, httpClient) =>
+                {
+                    var hostApiUrl = Configuration["IdentityServer:Authority"];
+                    httpClient.BaseAddress = new Uri(hostApiUrl);
+                })
+                .AddHttpMessageHandler<AuthorizationHeaderHandler>();
+
             services.AddHttpContextAccessor();
             services.AddScoped<ReportAppService>();
             services.AddScoped<TenantStatisticsReportDataDefinitions>();
+            services.AddScoped<VehicleMaintenanceWorkOrderReportDataDefinitions>();
 
             services.AddAuthentication(options =>
             {

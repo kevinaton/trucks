@@ -144,6 +144,7 @@
 
         public const string Pages_ActiveReports = "Pages.ActiveReports";
         public const string Pages_ActiveReports_TenantStatisticsReport = "Pages.ActiveReports.TenantStatisticsReport";
+        public const string Pages_ActiveReports_VehicleMaintenanceWorkOrderReport = "Pages.ActiveReports.VehicleMaintenanceWorkOrderReport";
 
         public const string Pages_Imports = "Pages.Imports";
         public const string Pages_Imports_FuelUsage = "Pages.Imports.FuelUsage";

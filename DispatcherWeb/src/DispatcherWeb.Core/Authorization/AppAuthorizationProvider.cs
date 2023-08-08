@@ -161,7 +161,8 @@ namespace DispatcherWeb.Authorization
 
             var activeReports = pages.CreateChildPermission(AppPermissions.Pages_ActiveReports, L("ActiveReports"), multiTenancySides: MultiTenancySides.Host | MultiTenancySides.Tenant);
             activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_TenantStatisticsReport, L("TenantStatisticsReport"), multiTenancySides: MultiTenancySides.Host);
-            
+            activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_VehicleMaintenanceWorkOrderReport, L("VehicleMaintenanceWorkOrderReport"), multiTenancySides: MultiTenancySides.Tenant);
+
             var imports = pages.CreateChildPermission(AppPermissions.Pages_Imports, L("Imports"), multiTenancySides: MultiTenancySides.Tenant);
             imports.CreateChildPermission(AppPermissions.Pages_Imports_FuelUsage, L("ImportFuelUsagePermission"), multiTenancySides: MultiTenancySides.Tenant);
             imports.CreateChildPermission(AppPermissions.Pages_Imports_VehicleUsage, L("ImportVehicleUsagePermission"), multiTenancySides: MultiTenancySides.Tenant);
