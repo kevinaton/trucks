@@ -640,7 +640,9 @@
                 _$form.find("#ProjectId").val(option.data('projectId'));
                 if (_quoteId !== '') {
                     _$form.find("#OrderContactId").val(option.data('contactId')).change();
-                    abp.helper.ui.addAndSetDropdownValue(_$form.find("#OrderLocationId"), option.data('officeId'), option.data('officeName'));
+                    if (option.data('officeId')) {
+                        abp.helper.ui.addAndSetDropdownValue(_$form.find("#OrderLocationId"), option.data('officeId'), option.data('officeName'));
+                    }
                 }
                 updateInputValue("#PONumber", option.data('poNumber'));
                 updateInputValue("#SpectrumNumber", option.data('spectrumNumber'));
