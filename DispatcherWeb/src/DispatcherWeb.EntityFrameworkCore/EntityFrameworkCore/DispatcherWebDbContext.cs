@@ -182,9 +182,6 @@ namespace DispatcherWeb.EntityFrameworkCore
         public virtual DbSet<Truck> Trucks { get; set; }
         public virtual DbSet<TruckFile> TruckFiles { get; set; }
 
-        [Obsolete]
-        public virtual DbSet<TruckPositionObsolete> TruckPositionsObsolete { get; set; }
-
         public virtual DbSet<TruxEarnings> TruxEarnings { get; set; }
 
         public virtual DbSet<TruxEarningsBatch> TruxEarningsBatches { get; set; }
@@ -394,7 +391,6 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new TrackableEmailEventConfiguration());
             modelBuilder.ApplyConfiguration(new TrackableEmailReceiverConfiguration());
             modelBuilder.ApplyConfiguration(new TruckConfiguration());
-            modelBuilder.ApplyConfiguration(new TruckPositionObsoleteConfiguration());
             modelBuilder.ApplyConfiguration(new TruxEarningsConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleServiceTypeConfiguration());
