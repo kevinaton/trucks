@@ -355,7 +355,6 @@ admin -> for your tenant's admin
     <text name="CustomersHeaderInfo">Manage your customers</text>
     <text name="CustomRange">Custom range</text>
     <text name="Daily">Daily</text>
-    <text name="OrderIdDropdown">Order Id dropdown</text>
     <text name="Dashboard">Dashboard</text>
     <text name="DashboardDemo_Note_Info">
             In this demo, you can use the left menu to test the application.
@@ -1046,6 +1045,7 @@ admin -> for your tenant's admin
     <text name="OrderEmailSubjectTemplate">Order Email Subject Template</text>
     <text name="OrderHasReachedRequestedAmount">Order for {CustomerName} has reached the requested amount.</text>
     <text name="OrderId">Order Id</text>
+    <text name="OrderIdDropdown">Order Id dropdown</text>
     <text name="OrderItemHasOverriddenTotalValues">This order item has overridden total values</text>
     <text name="OrderItems">Order items</text>
     <text name="OrderLine_Edit_Error_HasTickets">Either tickets or dispatches are associated with this order line item, so the changes you requested can't be saved.</text>
