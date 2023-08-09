@@ -437,6 +437,7 @@ namespace DispatcherWeb.Orders
                 editOrderLineModel.MaterialPrice = model.MaterialPrice;
                 editOrderLineModel.LeaseHaulerRate = model.LeaseHaulerRate;
                 editOrderLineModel.FreightRateToPayDrivers = model.FreightRateToPayDrivers;
+                editOrderLineModel.LoadBased = model.LoadBased;
                 editOrderLineModel.NumberOfTrucks = model.NumberOfTrucks;
                 editOrderLineModel.IsMultipleLoads = model.IsMultipleLoads;
                 editOrderLineModel.TimeOnJob = model.TimeOnJob;
@@ -2261,6 +2262,7 @@ namespace DispatcherWeb.Orders
                 IsMultipleLoads = orderLine.IsMultipleLoads,
                 LeaseHaulerRate = orderLine.LeaseHaulerRate,
                 FreightRateToPayDrivers = orderLine.FreightRateToPayDrivers,
+                LoadBased = orderLine.LoadBased,
                 Note = orderLine.Note,
                 NumberOfTrucks = orderLine.NumberOfTrucks,
                 ProductionPay = orderLine.ProductionPay,
