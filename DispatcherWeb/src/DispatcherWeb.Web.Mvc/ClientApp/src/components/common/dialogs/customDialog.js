@@ -13,7 +13,9 @@ export const CustomDialog = ({
     handleClose,
     handleProceed,
     title,
-    content
+    content,
+    primaryButtonText,
+    secondaryButtonText
 }) => {
     const handleProceedClick = () => {
         // Perform custom actions based on the form data
@@ -41,9 +43,9 @@ export const CustomDialog = ({
                 { type && type === 'confirm' 
                     ? 
                         <>
-                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={handleClose}>{ !secondaryButtonText ? 'Cancel' : secondaryButtonText }</Button>
                             <Button onClick={handleProceedClick} autoFocus>
-                                Continue
+                                { !primaryButtonText ? 'Continue' : primaryButtonText }
                             </Button>
                         </>
                     : <Button onClick={handleClose}>Ok</Button>

@@ -67,6 +67,9 @@ export const GET_WIALON_DEVICE_TYPES_SELECT_LIST = '/TruckTelematics/GetWialonDe
 export const EDIT_TRUCK = '/Truck/EditTruck';
 export const SET_TRUCK_IS_OUT_OF_SERVICE = '/Truck/SetTruckIsOutOfService';
 
+//TrailerAssignments
+export const SET_TRAILER_FOR_TRACTOR = '/TrailerAssignment/SetTrailerForTractor';
+
 //LeaseHaulers
 export const GET_LEASE_HAULER_DRIVERS_SELECT_LIST = '/LeaseHauler/GetLeaseHaulerDriversSelectList';
 

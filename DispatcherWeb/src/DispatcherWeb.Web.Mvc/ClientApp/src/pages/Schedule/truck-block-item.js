@@ -234,6 +234,7 @@ const TruckBlockItem = ({
             <SelectTrailer
                 data={data} 
                 closeModal={closeModal} 
+                openDialog={openDialog}
                 setIsUIBusy={setIsUIBusy}
             />,
             400

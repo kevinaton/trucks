@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Box,
@@ -9,8 +9,6 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import _, { isEmpty } from 'lodash';
-import { baseUrl } from '../../helpers/api_helper';
-import * as signalR from '@microsoft/signalr';
 import { 
     getScheduleTrucks, 
     getScheduleTruckBySyncRequest, 
@@ -20,6 +18,7 @@ import TruckBlockItem from './truck-block-item';
 import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
 import { entityType } from '../../common/enums/entityType';
 import { changeType } from '../../common/enums/changeType';
+import SyncRequestContext from '../../components/common/signalr/syncRequestContext';
 
 const TruckBlock = ({
     userAppConfiguration,
@@ -38,6 +37,7 @@ const TruckBlock = ({
     const [leaseHaulers, setLeaseHaulers] = useState(null);
     const [isConnectedToSignalR, setIsConnectedToSignalR] = useState(false);
 
+    const syncRequestConnection = useContext(SyncRequestContext);
     const dispatch = useDispatch();
     const { 
         isLoadingScheduleTrucks,
@@ -97,70 +97,43 @@ const TruckBlock = ({
     }, []);
 
     useEffect(() => {
-        if (!isConnectedToSignalR && dataFilter.officeId !== null && dataFilter.date !== null) {
-            const startConnection = (transport) => {
-                const url = `${baseUrl}/signalr-dispatcher`;
-                const connection = new signalR.HubConnectionBuilder()
-                    .withUrl(url, transport)
-                    .withAutomaticReconnect()
-                    .build();
+        if (!isConnectedToSignalR && 
+            syncRequestConnection !== null &&
+            dataFilter.officeId !== null && 
+            dataFilter.date !== null
+        ) {
+            syncRequestConnection.on('syncRequest', payload => {
+                const { changes } = payload;
+                console.log('syncRequest: ', payload)
+                if (!isEmpty(changes)) {
+                    let changedTrucks = _.filter(changes, i => i.entityType === entityType.TRUCK);
+                    const modifiedTrucks = _.map(
+                        _.filter(changedTrucks, change => change.changeType === changeType.MODIFIED), 
+                        item => item.entity.id
+                    );
 
-                connection.onclose((err) => {
-                    if (err) {
-                        console.log('Connection closed with error: ', err);
-                    } else {
-                        console.log('Disconnected');
+                    const removedTrucks = _.map(
+                        _.filter(changedTrucks, change => change.changeType === changeType.REMOVED),
+                        item => item.entity.id
+                    );
+
+                    if (modifiedTrucks.length > 0) {
+                        dispatch(getScheduleTruckBySyncRequest({
+                            officeId: dataFilter.officeId,
+                            date: dataFilter.date,
+                            truckIds: modifiedTrucks
+                        }));
                     }
 
-                    setTimeout(() => {
-                        connection.start();
-                    }, 5000);
-                });
-
-                connection.on('syncRequest', payload => {
-                    const { changes } = payload;
-                    if (!isEmpty(changes)) {
-                        let changedTrucks = _.filter(changes, i => i.entityType === entityType.TRUCK);
-                        const modifiedTrucks = _.map(
-                            _.filter(changedTrucks, change => change.changeType === changeType.MODIFIED), 
-                            item => item.entity.id
-                        );
-
-                        const removedTrucks = _.map(
-                            _.filter(changedTrucks, change => change.changeType === changeType.REMOVED),
-                            item => item.entity.id
-                        );
-
-                        if (modifiedTrucks.length > 0) {
-                            dispatch(getScheduleTruckBySyncRequest({
-                                officeId: dataFilter.officeId,
-                                date: dataFilter.date,
-                                truckIds: modifiedTrucks
-                            }));
-                        }
-
-                        if (removedTrucks.length > 0) {
-                            dispatch(onRemoveTruckFromSchedule(removedTrucks));
-                        }
+                    if (removedTrucks.length > 0) {
+                        dispatch(onRemoveTruckFromSchedule(removedTrucks));
                     }
-                });
+                }
+            });
 
-                connection
-                    .start()
-                    .then(() => {
-                        setIsConnectedToSignalR(true);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        if (transport !== signalR.HttpTransportType.LongPolling) {
-                            return startConnection(transport + 1);
-                        }
-                    });
-            };
-            
-            startConnection(signalR.HttpTransportType.WebSockets);
+            setIsConnectedToSignalR(true);
         }
-    }, [dispatch, isConnectedToSignalR, dataFilter]);
+    }, [dispatch, isConnectedToSignalR, syncRequestConnection, dataFilter]);
 
     useEffect(() => {
         if (isModifiedScheduleTrucks) {

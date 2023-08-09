@@ -9,7 +9,9 @@ import {
     Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import _, { isEmpty } from 'lodash';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { theme } from '../../Theme';
+import _, { isEmpty, set } from 'lodash';
 import { assetType } from '../../common/enums/assetType';
 import { 
     getVehicleCategories, 
@@ -17,13 +19,20 @@ import {
     getMakesSelectList,
     getModelsSelectList,
     getActiveTrailersSelectList,
-    hasOrderLineTrucks
+    hasOrderLineTrucks,
+    hasOrderLineTrucksReset as onResetHasOrderLineTrucks,
+    setTrailerForTractor as onSetTrailerForTractor,
+    setTrailerForTractorReset as onResetSetTrailerForTractor
 } from '../../store/actions';
 import { isPastDate } from '../../helpers/misc_helper';
+import { getText } from '../../helpers/localization_helper';
+import { AlertDialog } from '../common/dialogs';
+import { useSnackbar } from 'notistack';
 
 const SelectTrailer = ({
     data,
     closeModal,
+    openDialog,
     setIsUIBusy
 }) => {
     const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState([]);
@@ -46,8 +55,11 @@ const SelectTrailer = ({
         errorText: ''
     });
     const [trailer, setTrailer] = useState(null);
+    const [promptOptions, setPromptOptions] = useState(null);
+    const [isToReplace, setIsToReplace] = useState(null);
     const [validationResult, setValidationResult] = useState(null);
 
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
 
     const {
@@ -57,13 +69,15 @@ const SelectTrailer = ({
         modelsSelectList,
         activeTrailersSelectList,
         hasOrderLineTrucksResponse,
+        setTrailerForTractorSuccess
     } = useSelector((state) => ({
         vehicleCategories: state.TruckReducer.vehicleCategories,
         bedConstructions: state.TruckReducer.bedConstructions,
         makesSelectList: state.TruckReducer.makesSelectList,
         modelsSelectList: state.TruckReducer.modelsSelectList,
         activeTrailersSelectList: state.TruckReducer.activeTrailersSelectList,
-        hasOrderLineTrucksResponse: state.TruckReducer.hasOrderLineTrucksResponse,
+        hasOrderLineTrucksResponse: state.DriverAssignmentReducer.hasOrderLineTrucksResponse,
+        setTrailerForTractorSuccess: state.TrailerAssignmentReducer.setTrailerForTractorSuccess
     }));
 
     useEffect(() => {
@@ -135,16 +149,80 @@ const SelectTrailer = ({
         if (!isEmpty(hasOrderLineTrucksResponse) && !isEmpty(hasOrderLineTrucksResponse.result)) {
             const { hasOrderLineTrucks } = hasOrderLineTrucksResponse.result;
             if (hasOrderLineTrucks) {
-                // todo
+                openDialog({
+                    type: 'confirm',
+                    content: (
+                        <Box
+                            display='flex'
+                            alignItems='center'
+                            flexDirection='column'
+                        >
+                            <Box 
+                                display='flex' 
+                                alignItems='center' 
+                                justifyContent='center'
+                                sx={{
+                                    marginBottom: '15px'
+                                }}
+                            >
+                                <ErrorOutlineIcon 
+                                    sx={{ 
+                                        color: theme.palette.warning.main,
+                                        fontSize: '88px !important'
+                                    }} 
+                                />
+                            </Box>
+                            <Typography variant='h6'>{getText('TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace', promptOptions.truckCode)}</Typography>
+                        </Box>
+                    ),
+                    action: () => handleIsToReplace(true),
+                    primaryBtnText: 'Yes',
+                    secondaryBtnText: 'No'
+                });
             }
         }
-    }, [hasOrderLineTrucksResponse]);
+    }, [hasOrderLineTrucksResponse, openDialog, promptOptions]);
+
+    useEffect(() => {
+        if (isToReplace !== null && isToReplace) {
+            const { hasOpenDispatches } = hasOrderLineTrucksResponse.result;
+            if (hasOpenDispatches) {
+                openDialog({
+                    type: 'alert',
+                    contenxt: (
+                        <AlertDialog variant='error' message={getText('CannotChangeTrailerBecauseOfDispatchesError')} />
+                    )
+                });
+            } else {
+                setValidationResult({
+                    updateExistingOrderLineTrucks: true
+                });
+            }
+        }
+    }, [isToReplace]);
 
     useEffect(() => {
         if (validationResult !== null) {
-            // todo
+            setTrailerTractor({
+                tractorId: data.truckId,
+                trailerId: trailer.id,
+            });
         }
-    }, [validationResult]);
+    }, [validationResult, data]);
+
+    useEffect(() => {
+        if (setTrailerForTractorSuccess) {
+            setTrailer(null);
+            setPromptOptions(null);
+            setIsToReplace(null);
+            setValidationResult(null);
+            resetForm();
+            closeModal();
+            enqueueSnackbar('Saved successfully', { variant: 'success' });
+            dispatch(onResetHasOrderLineTrucks());
+            dispatch(onResetSetTrailerForTractor());
+        }
+    }, [setTrailerForTractorSuccess]);
 
     const resetTrailerOptions = () => {
         if (!trailerId.value) {
@@ -166,8 +244,10 @@ const SelectTrailer = ({
         return _.find(trailerOptions, (item) => item.id === trailerId.value);
     };
 
-    const promptWhetherToReplaceTrailerOnExistingOrderLineTrucks = (options) => {
+    const promptWhetherToReplaceTrailerOnExistingOrderLineTrucks = options => {
         setIsUIBusy(true);
+        
+        setPromptOptions(options);
 
         if (isPastDate(data.date)) {
             setValidationResult({});
@@ -186,6 +266,23 @@ const SelectTrailer = ({
             }));
             setIsUIBusy(false);
         }
+    };
+
+    const setTrailerTractor = options => {
+        dispatch(onSetTrailerForTractor({
+            date: data.date,
+            shift: data.shift,
+            officeId: data.officeId,
+            ...options
+        }));
+    };
+
+    const resetForm = () => {
+        setVehicleCategoryId('');
+        setBedConstructionId('');
+        setMake('');
+        setModel('');
+        setTrailerId('');
     };
     
     const handleVehicleCategoryChange = (e, newValue) => {
@@ -250,6 +347,8 @@ const SelectTrailer = ({
         });
     };
 
+    const handleIsToReplace = val => setIsToReplace(val);
+
     const handleCancel = () => {
         // Reset the form
         
@@ -292,8 +391,6 @@ const SelectTrailer = ({
             truckId: data.truckId,
             truckCode: data.truckCode
         });
-
-        //closeModal();
     };
 
     return (

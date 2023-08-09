@@ -16,6 +16,7 @@ import * as signalR from '@microsoft/signalr';
 import moment from 'moment';
 import 'moment-timezone';
 import SignalRContext from './components/common/signalr/signalrContext';
+import SyncRequestContext from './components/common/signalr/syncRequestContext';
 import { CustomModal } from './components/common/modals/customModal';
 import { CustomDialog } from './components/common/dialogs/customDialog';
 
@@ -36,7 +37,10 @@ const App = (props) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [userAppConfiguration, setUserAppConfiguration] = useState(null);
     const [generalSettings, setGeneralSettings] = useState(null);
+    const [isConnecting, setIsConnecting] = useState(false);
     const [connection, setConnection] = useState(null);
+    const [isSyncRequestConnecting, setIsSyncRequestConnecting] = useState(false);
+    const [syncRequestConnection, setSyncRequestConnection] = useState(null);
     const [modals, setModals] = useState([]);
     const [nextModalZIndex, setNextModalZIndex] = useState(1);
     const [dialog, setDialog] = useState(null);
@@ -82,42 +86,45 @@ const App = (props) => {
     }, [dispatch, userInfo]);
 
     useEffect(() => {
-        if (isAuthenticated && connection == null) {
-            const startConnection = (transport) => {
-                const url = `${baseUrl}/signalr`;
-                const newConnection = new signalR.HubConnectionBuilder()
-                    .withUrl(url, transport)
-                    .withAutomaticReconnect()
-                    .build();
+        if (isAuthenticated) {
+            if (connection === null && !isConnecting) {
+                setIsConnecting(true);
+                const startConnection = (transport) => {
+                    const hubConnection = getHubConnection('signalr', transport);
+                    hubConnection.start()
+                        .then(() => {
+                            setConnection(hubConnection);
+                            setIsConnecting(false);
+                        })
+                        .catch((err) => {
+                            if (transport !== signalR.HttpTransportType.LongPolling) {
+                                return startConnection(transport + 1);
+                            }
+                        });
+                };
+                
+                startConnection(signalR.HttpTransportType.WebSockets);
+            }
 
-                newConnection.onclose((err) => {
-                    if (err) {
-                        console.log('Connection closed with error: ', err);
-                    } else {
-                        console.log('Disconnected');
-                    }
-
-                    setTimeout(() => {
-                        newConnection.start();
-                    }, 5000);
-                });
-
-                newConnection
-                    .start()
-                    .then(() => {
-                        setConnection(newConnection);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        if (transport !== signalR.HttpTransportType.LongPolling) {
-                            return startConnection(transport + 1);
-                        }
-                    });
-            };
-            
-            startConnection(signalR.HttpTransportType.WebSockets)
+            if (syncRequestConnection === null && !isSyncRequestConnecting) {
+                setIsSyncRequestConnecting(true);
+                const startSyncRequestConnection = (transport) => {
+                    const hubConnection = getHubConnection('signalr-dispatcher', transport);
+                    hubConnection.start()
+                        .then(() => {
+                            setSyncRequestConnection(hubConnection);
+                            setIsSyncRequestConnecting(false);
+                        })
+                        .catch((err) => {
+                            if (transport !== signalR.HttpTransportType.LongPolling) {
+                                return startSyncRequestConnection(transport + 1);
+                            }
+                        });
+                };
+                startSyncRequestConnection(signalR.HttpTransportType.WebSockets);
+            }
         }
-    }, [isAuthenticated, connection]);
+    }, [isAuthenticated, connection, syncRequestConnection]);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -151,6 +158,27 @@ const App = (props) => {
             }
         }
     }, [generalSettings, userGeneralSettings]);
+
+    const getHubConnection = (url, transport) => {
+        const connectionBuilder = new signalR.HubConnectionBuilder()
+            .withUrl(`${baseUrl}/${url}`, transport)
+            .withAutomaticReconnect()
+            .build();
+
+        connectionBuilder.onclose((err) => {
+            if (err) {
+                console.log('Connection closed with error: ', err);
+            } else {
+                console.log('Disconnected');
+            }
+
+            setTimeout(() => {
+                connectionBuilder.start();
+            }, 5000);
+        });
+
+        return connectionBuilder;
+    };
 
     const handleCurrentPageName = (name) => {
         document.title = name;
@@ -195,13 +223,22 @@ const App = (props) => {
     };
 
     const openDialog = (data) => {
-        const { type, title, content, action } = data;
+        const { 
+            type, 
+            title, 
+            content, 
+            action, 
+            primaryBtnText,
+            secondaryBtnText 
+        } = data;
         setDialog({
             open: true,
             type,
             title,
             content,
-            action
+            action,
+            primaryBtnText,
+            secondaryBtnText
         });
     };
 
@@ -275,16 +312,18 @@ const App = (props) => {
                                     <DrawerHeader />
 
                                     {/* This is the route configuration */}
-                                    <RouterConfig 
-                                        isAuthenticated={isAuthenticated} 
-                                        userAppConfiguration={userAppConfiguration}
-                                        handleCurrentPageName={handleCurrentPageName} 
-                                        openModal={(content, size) => openModal(content, size)} 
-                                        closeModal={closeModal} 
-                                        openDialog={(data) => openDialog(data)}
-                                        closeDialog={closeDialog} 
-                                        setIsUIBusy={setIsUIBusy}
-                                    />
+                                    <SyncRequestContext.Provider value={syncRequestConnection}>
+                                        <RouterConfig 
+                                            isAuthenticated={isAuthenticated} 
+                                            userAppConfiguration={userAppConfiguration}
+                                            handleCurrentPageName={handleCurrentPageName} 
+                                            openModal={(content, size) => openModal(content, size)} 
+                                            closeModal={closeModal} 
+                                            openDialog={(data) => openDialog(data)}
+                                            closeDialog={closeDialog} 
+                                            setIsUIBusy={setIsUIBusy}
+                                        />
+                                    </SyncRequestContext.Provider>
                                 </Paper>
                             </Box>
                         </React.Fragment>

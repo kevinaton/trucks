@@ -6,5 +6,7 @@
     "ThereWereOrdersAssociatedWithThisTruck": "There were orders associated with this truck. The truck has been removed from those orders.",
     "ThereWereCanceledDispatches": "There were unacknowledged dispatches assigned to this truck and they have been canceled.",
     "ThereWereNotCanceledDispatches": "There were acknowledged or loaded dispatches assigned to this truck and they have not been canceled.",
-    "ThereWasTractorAssociatedWithThisTrailer": "There was a tractor associated with this trailer. This tractor has been removed from the trailer."
+    "ThereWasTractorAssociatedWithThisTrailer": "There was a tractor associated with this trailer. This tractor has been removed from the trailer.",
+    "TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace": "This trailer is already scheduled with truck {0} for a job on this date. Do you want to change the trailer for this job? Select yes to change the trailer assignment for this job.",
+    "CannotChangeTrailerBecauseOfDispatchesError": "There are dispatches for this truck. Remove the dispatches if you want to change the trailer."
 }
