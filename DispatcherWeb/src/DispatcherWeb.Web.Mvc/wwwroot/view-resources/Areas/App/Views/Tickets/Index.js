@@ -24,7 +24,8 @@
     var useShifts = abp.setting.getBoolean('App.General.UseShifts');
 
     var _permissions = {
-        invoices: abp.auth.hasPermission('Pages.Invoices')
+        invoices: abp.auth.hasPermission('Pages.Invoices'),
+        editTickets: abp.auth.hasPermission('Pages.Tickets.Edit')
     };
 
     var rowSelectionClass = 'invoice-row-selection';
@@ -297,6 +298,9 @@
                 } catch {
                     reloadMainGrid();
                 }
+            },
+            isReadOnly: function (rowData) {
+                return !_permissions.editTickets;
             }
         },
         order: [[2, 'asc']],

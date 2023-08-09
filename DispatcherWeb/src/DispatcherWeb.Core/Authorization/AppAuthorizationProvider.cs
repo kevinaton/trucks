@@ -72,6 +72,7 @@ namespace DispatcherWeb.Authorization
             var orders = pages.CreateChildPermission(AppPermissions.Pages_Orders_View, L("Orders"), multiTenancySides: MultiTenancySides.Tenant);
             orders.CreateChildPermission(AppPermissions.Pages_Orders_Edit, L("EditingOrder"), multiTenancySides: MultiTenancySides.Tenant);
             orders.CreateChildPermission(AppPermissions.Pages_PrintOrders, L("PrintOrders"), multiTenancySides: MultiTenancySides.Tenant);
+            pages.CreateChildPermission(AppPermissions.Pages_Orders_IdDropdown, L("OrderIdDropdown"), multiTenancySides: MultiTenancySides.Tenant); //this is not a child of "orders" so that IdDropdown can be granted independently of View permission
             var schedule = pages.CreateChildPermission(AppPermissions.Pages_Schedule, L("Schedule"), multiTenancySides: MultiTenancySides.Tenant);
             schedule.CreateChildPermission(AppPermissions.Pages_Schedule_ShareTrucks, L("ShareTrucks"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.TruckSharing));
@@ -107,7 +108,8 @@ namespace DispatcherWeb.Authorization
             pages.CreateChildPermission(AppPermissions.Pages_Offices, L("Offices"), multiTenancySides: MultiTenancySides.Tenant);
             pages.CreateChildPermission(AppPermissions.Pages_TicketsByDriver, L("TicketsByDriver"), multiTenancySides: MultiTenancySides.Tenant);
             var tickets = pages.CreateChildPermission(AppPermissions.Pages_Tickets_View, L("Tickets"), multiTenancySides: MultiTenancySides.Tenant);
-            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Edit, L("EditingTicket"), multiTenancySides: MultiTenancySides.Tenant);
+            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Edit, L("EditTickets"), multiTenancySides: MultiTenancySides.Tenant);
+            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Export, L("ExportTickets"), multiTenancySides: MultiTenancySides.Tenant);
             pages.CreateChildPermission(AppPermissions.Pages_Invoices, L("Invoices"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature));
             pages.CreateChildPermission(AppPermissions.DriverProductionPay, L("DriverProductionPay"), multiTenancySides: MultiTenancySides.Tenant,
@@ -191,7 +193,9 @@ namespace DispatcherWeb.Authorization
 
             var customerPortal = pages.CreateChildPermission(AppPermissions.CustomerPortal, L("CustomerPortal"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.CustomerPortal));
-            customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_TicketList, L("CustomerPortalTicketsList"), multiTenancySides: MultiTenancySides.Tenant);
+            var ticketList = customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_TicketList, L("CustomerPortalTicketList"), multiTenancySides: MultiTenancySides.Tenant);
+            ticketList.CreateChildPermission(AppPermissions.CustomerPortal_TicketList_Export, L("CustomerPortalTicketListExport"), multiTenancySides: MultiTenancySides.Tenant);
+            customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_Orders_IdDropdown, L("OrderIdDropdown"), multiTenancySides: MultiTenancySides.Tenant);
 
             //HOST-SPECIFIC PERMISSIONS
 

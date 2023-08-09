@@ -95,7 +95,7 @@
                 }
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" @Html.StyleDisplayNone(!IsGranted(AppPermissions.Pages_LeaseHauler))>
             <label asp-for="CarrierId">@L("Carrier")</label>
             <select class="form-control" asp-for="CarrierId">
                 <option value="">Select a Carrier</option>
