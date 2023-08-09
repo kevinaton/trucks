@@ -1834,6 +1834,7 @@ namespace DispatcherWeb.Orders
                     }).SingleOrDefaultAsync();
 
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+                var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
 
                 var orderLines = await query
                     .Where(x => x.OrderId == input.OrderId)
@@ -1897,6 +1898,7 @@ namespace DispatcherWeb.Orders
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                        LoadBased = allowLoadBasedRates && x.LoadBased,
                         JobNumber = x.JobNumber,
                         Note = x.Note,
                         IsMultipleLoads = x.IsMultipleLoads,
@@ -2023,6 +2025,7 @@ namespace DispatcherWeb.Orders
             {
                 var canOverrideTotals = await _orderLineRepository.CanOverrideTotals(input.Id.Value, OfficeId);
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+                var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
 
                 orderLineEditDto = await _orderLineRepository.GetAll()
                     .Select(x => new OrderLineEditDto
@@ -2067,6 +2070,7 @@ namespace DispatcherWeb.Orders
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                        LoadBased = allowLoadBasedRates && x.LoadBased,
                         JobNumber = x.JobNumber,
                         Note = x.Note,
                         NumberOfTrucks = x.NumberOfTrucks,
@@ -2466,6 +2470,7 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.IsFreightPriceOverridden, model.IsFreightPriceOverridden);
             await orderLineUpdater.UpdateFieldAsync(o => o.LeaseHaulerRate, model.LeaseHaulerRate);
             await orderLineUpdater.UpdateFieldAsync(o => o.FreightRateToPayDrivers, model.FreightRateToPayDrivers);
+            await orderLineUpdater.UpdateFieldAsync(o => o.LoadBased, model.LoadBased);
             await orderLineUpdater.UpdateFieldAsync(o => o.JobNumber, model.JobNumber);
             await orderLineUpdater.UpdateFieldAsync(o => o.Note, model.Note);
 

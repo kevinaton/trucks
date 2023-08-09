@@ -640,7 +640,7 @@ admin -> for your tenant's admin
     <text name="FreeTrial">Free trial</text>
     <text name="FreightQuantity">Freight Quantity</text>
     <text name="FreightRate">Freight Rate</text>
-    <text name="FreightRateToPayDrivers">Freight Rate to Pay Drivers</text>
+    <text name="FreightRateToPayDrivers">Freight Rate for Driver Pay</text>
     <text name="FreightRateToPayDriversShort">Driver Pay Freight Rate</text>
     <text name="FreightTotal">Freight Total</text>
     <text name="FreightUom">Freight UOM</text>
@@ -880,6 +880,7 @@ admin -> for your tenant's admin
     <text name="LinkToCurrentPage">Link to current page</text>
     <text name="ListOfDriverTimeConflicts">Following is a list of drivers that have logged time for both production pay time classifications and hourly rates on the same date. Please verify that they are correct. If they are incorrect, you’ll need to delete this pay statement, fix the times, and regenerate the pay statement.</text>
     <text name="LoadAt">Load At</text>
+    <text name="LoadBased">Load-based</text>
     <text name="LoadCompleted">Loaded</text>
     <text name="Loaded">Loaded</text>
     <text name="LoadHistory">Loads</text>
