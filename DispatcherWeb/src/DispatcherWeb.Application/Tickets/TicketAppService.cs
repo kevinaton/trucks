@@ -984,14 +984,14 @@ namespace DispatcherWeb.Tickets
 
 
 
-        [AbpAuthorize(AppPermissions.Pages_Tickets_Export, AppPermissions.CustomerPortal_TicketListExport)]
+        [AbpAuthorize(AppPermissions.Pages_Tickets_Export, AppPermissions.CustomerPortal_TicketList_Export)]
         [HttpPost]
         public async Task<FileDto> GetTicketsToCsv(TicketListInput input)
         {
             var permissions = new
             {
                 ExportAnyTickets = await IsGrantedAsync(AppPermissions.Pages_Tickets_Export),
-                ExportCustomerTicketsOnly = await IsGrantedAsync(AppPermissions.CustomerPortal_TicketListExport),
+                ExportCustomerTicketsOnly = await IsGrantedAsync(AppPermissions.CustomerPortal_TicketList_Export),
             };
 
             if (permissions.ExportAnyTickets)

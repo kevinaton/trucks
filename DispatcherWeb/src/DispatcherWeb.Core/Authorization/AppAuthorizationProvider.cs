@@ -72,6 +72,7 @@ namespace DispatcherWeb.Authorization
             var orders = pages.CreateChildPermission(AppPermissions.Pages_Orders_View, L("Orders"), multiTenancySides: MultiTenancySides.Tenant);
             orders.CreateChildPermission(AppPermissions.Pages_Orders_Edit, L("EditingOrder"), multiTenancySides: MultiTenancySides.Tenant);
             orders.CreateChildPermission(AppPermissions.Pages_PrintOrders, L("PrintOrders"), multiTenancySides: MultiTenancySides.Tenant);
+            pages.CreateChildPermission(AppPermissions.Pages_Orders_IdDropdown, L("OrderIdDropdown"), multiTenancySides: MultiTenancySides.Tenant); //this is not a child of "orders" so that IdDropdown can be granted independently of View permission
             var schedule = pages.CreateChildPermission(AppPermissions.Pages_Schedule, L("Schedule"), multiTenancySides: MultiTenancySides.Tenant);
             schedule.CreateChildPermission(AppPermissions.Pages_Schedule_ShareTrucks, L("ShareTrucks"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.TruckSharing));
@@ -193,7 +194,8 @@ namespace DispatcherWeb.Authorization
             var customerPortal = pages.CreateChildPermission(AppPermissions.CustomerPortal, L("CustomerPortal"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.CustomerPortal));
             var ticketList = customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_TicketList, L("CustomerPortalTicketList"), multiTenancySides: MultiTenancySides.Tenant);
-            ticketList.CreateChildPermission(AppPermissions.CustomerPortal_TicketListExport, L("CustomerPortalTicketListExport"), multiTenancySides: MultiTenancySides.Tenant);
+            ticketList.CreateChildPermission(AppPermissions.CustomerPortal_TicketList_Export, L("CustomerPortalTicketListExport"), multiTenancySides: MultiTenancySides.Tenant);
+            customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_Orders_IdDropdown, L("OrderIdDropdown"), multiTenancySides: MultiTenancySides.Tenant);
 
             //HOST-SPECIFIC PERMISSIONS
 

@@ -355,6 +355,7 @@ admin -> for your tenant's admin
     <text name="CustomersHeaderInfo">Manage your customers</text>
     <text name="CustomRange">Custom range</text>
     <text name="Daily">Daily</text>
+    <text name="OrderIdDropdown">Order Id dropdown</text>
     <text name="Dashboard">Dashboard</text>
     <text name="DashboardDemo_Note_Info">
             In this demo, you can use the left menu to test the application.

@@ -47,7 +47,7 @@
                 <a asp-controller="Imports" asp-action="LuckStone" class="btn btn-primary" data-toggle="tooltip" data-html="true"
                    title="@L("ImportLuckStoneEarnings")"><i class="fas fa-upload"></i> @L("LuckStone")</a>
             }
-            @if (IsGranted(AppPermissions.Pages_Tickets_Export) || IsGranted(AppPermissions.CustomerPortal_TicketListExport))
+            @if (IsGranted(AppPermissions.Pages_Tickets_Export) || IsGranted(AppPermissions.CustomerPortal_TicketList_Export))
             {
                 <div class="btn-group dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

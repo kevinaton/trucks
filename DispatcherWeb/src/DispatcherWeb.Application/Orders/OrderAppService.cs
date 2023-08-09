@@ -7,7 +7,6 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Abp.Application.Features;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
@@ -49,6 +48,7 @@ using DispatcherWeb.Payments.Dto;
 using DispatcherWeb.Quotes;
 using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Services;
+using DispatcherWeb.Sessions;
 using DispatcherWeb.Storage;
 using DispatcherWeb.SyncRequests;
 using DispatcherWeb.UnitsOfMeasure;
@@ -226,15 +226,36 @@ namespace DispatcherWeb.Orders
                 items);
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Orders_View)]
+        [AbpAuthorize(AppPermissions.Pages_Orders_IdDropdown, AppPermissions.CustomerPortal_Orders_IdDropdown)]
         public async Task<ListResultDto<SelectListDto>> GetOrderIdsSelectList(GetSelectListInput input)
         {
+            int? customerId = null;
+            var permissions = new
+            {
+                AllOrderIdsDropdown = await IsGrantedAsync(AppPermissions.Pages_Orders_IdDropdown),
+                OnlyCustomerOrderIdsDropdown = await IsGrantedAsync(AppPermissions.CustomerPortal_Orders_IdDropdown),
+            };
+
+            if (permissions.AllOrderIdsDropdown)
+            {
+                //do not additionally filter the data
+            }
+            else if (permissions.OnlyCustomerOrderIdsDropdown)
+            {
+                customerId = Session.GetCustomerIdOrThrow(this);
+            }
+            else
+            {
+                throw new AbpAuthorizationException();
+            }
+
             var ordersQuery = _orderRepository.GetAll()
-                                    .Select(x => new SelectListDto
-                                    {
-                                        Id = x.Id.ToString(),
-                                        Name = x.Id.ToString()
-                                    });
+                .WhereIf(customerId.HasValue, x => x.CustomerId == customerId)
+                .Select(x => new SelectListDto
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Id.ToString()
+                });
 
             return await ordersQuery.GetSelectListResult(input);
         }

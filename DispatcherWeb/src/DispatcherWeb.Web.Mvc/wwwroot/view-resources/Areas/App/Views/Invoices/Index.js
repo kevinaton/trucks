@@ -9,7 +9,7 @@
         var _isFilterReady = false;
         var _isGridInitialized = false;
         var _permissions = {
-            exportTickets: abp.auth.hasPermission('Pages.Tickets.Export') || abp.auth.hasPermission('CustomerPortal.TicketListExport'),
+            exportTickets: abp.auth.hasPermission('Pages.Tickets.Export') || abp.auth.hasPermission('CustomerPortal.TicketList.Export'),
         };
 
         var _emailInvoicePrintOutModal = new app.ModalManager({

@@ -86,6 +86,7 @@
         public const string Pages_Dashboard_TruckUtilization = "Pages.Dashboard.TruckUtilization";
         public const string Pages_Orders_View = "Pages.Orders.View"; //read only
         public const string Pages_Orders_Edit = "Pages.Orders.Edit"; //create, edit, delete
+        public const string Pages_Orders_IdDropdown = "Pages.Orders.IdDropdown";
         public const string Pages_Schedule = "Pages.Schedule"; //full
         public const string Pages_Schedule_ShareTrucks = "Pages.Schedule.ShareTrucks";
         public const string Pages_Schedule_ShareJobs = "Pages.Schedule.ShareJobs";
@@ -188,7 +189,8 @@
 
         public const string CustomerPortal = "CustomerPortal";
         public const string CustomerPortal_TicketList = "CustomerPortal.TicketList";
-        public const string CustomerPortal_TicketListExport = "CustomerPortal.TicketListExport";
+        public const string CustomerPortal_TicketList_Export = "CustomerPortal.TicketList.Export";
+        public const string CustomerPortal_Orders_IdDropdown = "CustomerPortal.Orders.IdDropdown";
 
         //HOST-SPECIFIC PERMISSIONS
 

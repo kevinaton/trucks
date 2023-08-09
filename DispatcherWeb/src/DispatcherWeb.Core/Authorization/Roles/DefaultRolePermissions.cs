@@ -198,6 +198,14 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
                 
+                // Customer Portal - OrderId Dropdown
+                {
+                    AppPermissions.CustomerPortal_Orders_IdDropdown, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+                
                 // Customer Portal - Ticket List
                 {
                     AppPermissions.CustomerPortal_TicketList, new[]
@@ -208,7 +216,7 @@ namespace DispatcherWeb.Authorization.Roles
                 
                 // Customer Portal - Ticket List Export
                 {
-                    AppPermissions.CustomerPortal_TicketListExport, new[]
+                    AppPermissions.CustomerPortal_TicketList_Export, new[]
                     {
                         StaticRoleNames.Tenants.Customer
                     }
@@ -572,6 +580,18 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.MaintenanceSupervisor,
                         StaticRoleNames.Tenants.Managers,
                         StaticRoleNames.Tenants.Dispatching,
+                    }
+                },
+
+                // OrderId Dropdown
+                {
+                    AppPermissions.Pages_Orders_IdDropdown, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Dispatching,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Managers,
                     }
                 },
 
