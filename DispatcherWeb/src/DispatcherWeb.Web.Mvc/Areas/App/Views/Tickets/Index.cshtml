@@ -47,15 +47,18 @@
                 <a asp-controller="Imports" asp-action="LuckStone" class="btn btn-primary" data-toggle="tooltip" data-html="true"
                    title="@L("ImportLuckStoneEarnings")"><i class="fas fa-upload"></i> @L("LuckStone")</a>
             }
-            <div class="btn-group dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span>@L("Export")</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#" id="ExportAllTicketsToCsvButton">@L("ExportAll")</a>
-                    <a class="dropdown-item" href="#" id="ExportSelectedTicketsToCsvButton">@L("ExportSelected")</a>
+            @if (IsGranted(AppPermissions.Pages_Tickets_Export) || IsGranted(AppPermissions.CustomerPortal_TicketListExport))
+            {
+                <div class="btn-group dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span>@L("Export")</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="#" id="ExportAllTicketsToCsvButton">@L("ExportAll")</a>
+                        <a class="dropdown-item" href="#" id="ExportSelectedTicketsToCsvButton">@L("ExportSelected")</a>
+                    </div>
                 </div>
-            </div>
+            }
             @if (IsGranted(AppPermissions.Pages_Invoices))
             {
                 <button id="InvoiceSelectedTicketsButton" class="btn btn-primary" data-toggle="tooltip" data-html="true"

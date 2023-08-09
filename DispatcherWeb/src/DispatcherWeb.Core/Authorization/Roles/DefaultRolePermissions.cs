@@ -205,6 +205,14 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Customer
                     }
                 },
+                
+                // Customer Portal - Ticket List Export
+                {
+                    AppPermissions.CustomerPortal_TicketListExport, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
 
 
                 // Customers
@@ -841,6 +849,17 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Dispatching,
                         StaticRoleNames.Tenants.Backoffice,
                         StaticRoleNames.Tenants.Managers,
+                    }
+                },
+
+                // Tickets_Export
+                {
+                    AppPermissions.Pages_Tickets_Export, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Dispatching,
+                        StaticRoleNames.Tenants.Managers
                     }
                 },
                 

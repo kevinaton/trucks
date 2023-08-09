@@ -115,6 +115,7 @@
         public const string Pages_Offices = "Pages.Offices";
         public const string Pages_Tickets_View = "Pages.Tickets.View"; //read only
         public const string Pages_Tickets_Edit = "Pages.Tickets.Edit"; //create, edit, delete
+        public const string Pages_Tickets_Export = "Pages.Tickets.Export";
         public const string Pages_TicketsByDriver = "Pages.TicketsByDriver";
         public const string Pages_Invoices = "Pages.Invoices";
         public const string DriverProductionPay = "DriverProductionPay";
@@ -187,6 +188,7 @@
 
         public const string CustomerPortal = "CustomerPortal";
         public const string CustomerPortal_TicketList = "CustomerPortal.TicketList";
+        public const string CustomerPortal_TicketListExport = "CustomerPortal.TicketListExport";
 
         //HOST-SPECIFIC PERMISSIONS
 

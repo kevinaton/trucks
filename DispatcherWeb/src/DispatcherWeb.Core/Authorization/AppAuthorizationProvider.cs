@@ -107,7 +107,8 @@ namespace DispatcherWeb.Authorization
             pages.CreateChildPermission(AppPermissions.Pages_Offices, L("Offices"), multiTenancySides: MultiTenancySides.Tenant);
             pages.CreateChildPermission(AppPermissions.Pages_TicketsByDriver, L("TicketsByDriver"), multiTenancySides: MultiTenancySides.Tenant);
             var tickets = pages.CreateChildPermission(AppPermissions.Pages_Tickets_View, L("Tickets"), multiTenancySides: MultiTenancySides.Tenant);
-            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Edit, L("EditingTicket"), multiTenancySides: MultiTenancySides.Tenant);
+            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Edit, L("EditTickets"), multiTenancySides: MultiTenancySides.Tenant);
+            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Export, L("ExportTickets"), multiTenancySides: MultiTenancySides.Tenant);
             pages.CreateChildPermission(AppPermissions.Pages_Invoices, L("Invoices"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature));
             pages.CreateChildPermission(AppPermissions.DriverProductionPay, L("DriverProductionPay"), multiTenancySides: MultiTenancySides.Tenant,
@@ -191,7 +192,8 @@ namespace DispatcherWeb.Authorization
 
             var customerPortal = pages.CreateChildPermission(AppPermissions.CustomerPortal, L("CustomerPortal"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.CustomerPortal));
-            customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_TicketList, L("CustomerPortalTicketsList"), multiTenancySides: MultiTenancySides.Tenant);
+            var ticketList = customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_TicketList, L("CustomerPortalTicketList"), multiTenancySides: MultiTenancySides.Tenant);
+            ticketList.CreateChildPermission(AppPermissions.CustomerPortal_TicketListExport, L("CustomerPortalTicketListExport"), multiTenancySides: MultiTenancySides.Tenant);
 
             //HOST-SPECIFIC PERMISSIONS
 

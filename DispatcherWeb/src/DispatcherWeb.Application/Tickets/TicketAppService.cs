@@ -984,10 +984,29 @@ namespace DispatcherWeb.Tickets
 
 
 
-        [AbpAuthorize(AppPermissions.Pages_Dispatches)]
+        [AbpAuthorize(AppPermissions.Pages_Tickets_Export, AppPermissions.CustomerPortal_TicketListExport)]
         [HttpPost]
         public async Task<FileDto> GetTicketsToCsv(TicketListInput input)
         {
+            var permissions = new
+            {
+                ExportAnyTickets = await IsGrantedAsync(AppPermissions.Pages_Tickets_Export),
+                ExportCustomerTicketsOnly = await IsGrantedAsync(AppPermissions.CustomerPortal_TicketListExport),
+            };
+
+            if (permissions.ExportAnyTickets)
+            {
+                //do not additionally filter the data
+            }
+            else if (permissions.ExportCustomerTicketsOnly)
+            {
+                input.CustomerId = Session.GetCustomerIdOrThrow(this);
+            }
+            else
+            {
+                throw new AbpAuthorizationException();
+            }
+
             var timezone = await GetTimezone();
             var query = GetTicketListQuery(input, timezone);
 

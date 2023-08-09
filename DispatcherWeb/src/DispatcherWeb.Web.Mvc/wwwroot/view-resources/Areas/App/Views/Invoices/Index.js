@@ -8,6 +8,9 @@
         var _isQuickbooksIntegrationEnabled = _quickbooksIntegrationKind !== abp.enums.quickbooksIntegrationKind.none;
         var _isFilterReady = false;
         var _isGridInitialized = false;
+        var _permissions = {
+            exportTickets: abp.auth.hasPermission('Pages.Tickets.Export') || abp.auth.hasPermission('CustomerPortal.TicketListExport'),
+        };
 
         var _emailInvoicePrintOutModal = new app.ModalManager({
             viewUrl: abp.appPath + 'app/Invoices/EmailInvoicePrintOutModal',
@@ -212,7 +215,9 @@
                             + (full.customerHasMaterialCompany
                                 ? '<li><a class="btnSendInvoiceTicketsToCustomerTenantForRow dropdown-item"><i class="fa fa-share"></i> ' + app.localize('SendTicketsToCustomerTenant') + '</a></li>'
                                 : '')
-                            + '<li><a class="btnCreateTicketsFileForRow dropdown-item"><i class="fa fa-ticket-alt"></i> ' + app.localize('CreateTicketsFile') + '</a></li>'
+                            + (_permissions.exportTickets
+                                ? '<li><a class="btnCreateTicketsFileForRow dropdown-item"><i class="fa fa-ticket-alt"></i> ' + app.localize('CreateTicketsFile') + '</a></li>'
+                                : '')
                             + '<li><a class="btnDownloadTicketImagesForRow dropdown-item"><i class="la la-file-image-o"></i> ' + app.localize('DownloadTicketImages') + '</a></li>'
                             + '</ul>'
                             + '</div>';
