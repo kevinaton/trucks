@@ -145,7 +145,13 @@ namespace DispatcherWeb
         [Display(Name = "Freight Rate to Pay Drivers")]
         LineItemFreightRateToPayDrivers = 36,
 
-        Office = 37
+        Office = 37,
+
+        [Display(Name = "Production Pay")]
+        ProductionPay = 38,
+
+        [Display(Name = "Load Based")]
+        LoadBased = 39
     }
 
     public enum DesignationEnum

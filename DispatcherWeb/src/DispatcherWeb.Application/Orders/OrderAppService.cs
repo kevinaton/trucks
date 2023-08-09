@@ -1980,6 +1980,8 @@ namespace DispatcherWeb.Orders
                         FreightPricePerUnit = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                        ProductionPay = x.ProductionPay,
+                        LoadBased = x.LoadBased,
                         //Quantity = x.Quantity, //Do not default quantities. They will have to fill that in.
                         //MaterialQuantity = x.MaterialQuantity,
                         //FreightQuantity = x.FreightQuantity,
