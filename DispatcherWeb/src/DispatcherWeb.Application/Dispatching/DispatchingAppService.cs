@@ -2898,15 +2898,15 @@ namespace DispatcherWeb.Dispatching
                     CarrierName = x.LeaseHaulerDriver.LeaseHauler.Name
                 }).OrderBy(d => d.DriverName).ToListAsync();
 
-            var userId = input.DriverId.HasValue ? drivers.FirstOrDefault(x => x.DriverId == input.DriverId)?.UserId : null;
             var startDateConverted = input.DateBegin?.ConvertTimeZoneFrom(timezone);
             var endDateConverted = input.DateEnd?.AddDays(1).ConvertTimeZoneFrom(timezone);
             var employeeTimes = await _employeeTimeRepository.GetAll()
-                .WhereIf(input.DriverId.HasValue, x => x.UserId == userId)
+                .WhereIf(input.DriverId.HasValue, x => x.DriverId == input.DriverId)
                 .WhereIf(startDateConverted.HasValue, x => x.StartDateTime >= startDateConverted && x.StartDateTime < endDateConverted)
                 .Select(x => new
                 {
                     x.UserId,
+                    x.DriverId,
                     TruckId = x.EquipmentId,
                     x.Truck.TruckCode,
                     x.StartDateTime,
@@ -2984,7 +2984,7 @@ namespace DispatcherWeb.Dispatching
             foreach (var employeeTime in employeeTimes)
             {
                 var date = employeeTime.StartDateTime.ConvertTimeZoneTo(timezone).Date;
-                var driver = drivers.FirstOrDefault(x => x.UserId == employeeTime.UserId);
+                var driver = drivers.FirstOrDefault(x => x.DriverId == employeeTime.DriverId);
                 var page = pages.FirstOrDefault(x => x.Date == date && x.UserId == employeeTime.UserId);
                 if (page == null)
                 {
@@ -2994,6 +2994,7 @@ namespace DispatcherWeb.Dispatching
                         Date = date,
                         DriverId = driverId,
                         DriverName = driver?.DriverName,
+                        CarrierName = driver?.CarrierName,
                         UserId = employeeTime.UserId,
                         ScheduledStartTime = driverAssignments.FirstOrDefault(x => x.DriverId == driverId && x.Date == date)?.StartTimeUtc?.ConvertTimeZoneTo(timezone),
                         EmployeeTimes = new List<DriverActivityDetailReportEmployeeTimeDto>(),
