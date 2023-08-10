@@ -308,7 +308,7 @@ namespace DispatcherWeb.Customers
                             .Where(x => x.CustomerId == input.CustomerId);
 
             var totalCount = await query.CountAsync();
-            
+
             var items = await query
                 .Select(x => new CustomerContactDto
                 {

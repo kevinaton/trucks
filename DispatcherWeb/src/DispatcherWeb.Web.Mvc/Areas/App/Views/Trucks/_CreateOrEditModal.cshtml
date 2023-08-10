@@ -1,7 +1,9 @@
 ﻿@using System.Threading.Tasks
 @using Abp.Application.Features
+@using Abp.Configuration
 @using DispatcherWeb.Features
 @using DispatcherWeb.Authorization
+@using DispatcherWeb.Configuration
 @using DispatcherWeb.Infrastructure
 @using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Trucks
@@ -9,6 +11,11 @@
 @using DispatcherWeb.Web.Areas.App.Models.Common.Modals
 @model TruckEditDto
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Truck: " + Model.TruckCode : "Create new truck"))
+@{
+    var enableDriverAppGps = await FeatureChecker.IsEnabledAsync(AppFeatures.AllowGpsTracking)
+        && await SettingManager.GetSettingValueAsync<bool>(AppSettings.GpsIntegration.DtdTracker.EnableDriverAppGps)
+        && (GpsPlatform)await SettingManager.GetSettingValueAsync<int>(AppSettings.GpsIntegration.Platform) == GpsPlatform.DtdTracker;
+}
 
 <div class="modal-body">
 
@@ -310,6 +317,13 @@
                 @if (await FeatureChecker.IsEnabledAsync(AppFeatures.GpsIntegrationFeature))
                 {
                     <div class="tab-pane" id="GpsConfigurationTab" role="tabpanel">
+                        <div class="form-group" @Html.StyleDisplayNone(!enableDriverAppGps)>
+                            <label for="EnableDriverAppGps" class="m-checkbox col-lg-12" @Html.StyleDisplayNone(!IsFeatureEnabled(AppFeatures.AllowGpsTracking))>
+                                <input id="EnableDriverAppGps" type="checkbox" name="EnableDriverAppGps" value="true" checked=@(Model.EnableDriverAppGps ? "checked" : null)>
+                                @L("EnableDriverAppGps") <i class="fa fa-info-circle text-primary tooltip-icon" title="@L("EnableDriverAppGpsHint")"></i>
+                                <span></span>
+                            </label>
+                        </div>
                         <div class="form-group">
                             <label>@L("DeviceType")</label>
                             <select class="form-control" asp-for="DtdTrackerDeviceTypeId">

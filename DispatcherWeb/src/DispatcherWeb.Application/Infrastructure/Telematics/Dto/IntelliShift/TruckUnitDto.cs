@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
@@ -101,47 +100,4 @@ namespace DispatcherWeb.Infrastructure.Telematics.Dto.IntelliShift
             return jsonPropertyAttribute.PropertyName;
         }
     }
-
-    public class TruckUnitLink
-    {
-        [JsonProperty("targetUri")]
-        public string TargetUri { get; set; }
-
-        [JsonProperty("relationType")]
-        public string RelationType { get; set; }
-
-        [JsonProperty("method")]
-        public string Method { get; set; }
-    }
-
-    public class TruckUnitsPage
-    {
-        [JsonProperty("collection")]
-        public List<TruckUnitDto> TruckUnitsCollection { get; set; }
-
-        [JsonProperty("pageSize")]
-        public int PageSize { get; set; }
-
-        [JsonProperty("pageNumber")]
-        public int PageNumber { get; set; }
-
-        [JsonProperty("recordCount")]
-        public int RecordCount { get; set; }
-
-        [JsonProperty("totalPages")]
-        public int TotalPages { get; set; }
-
-        [JsonProperty("links")]
-        public List<TruckUnitLink> TruckUnitLinks { get; set; }
-
-        public static TruckUnitsPage Parse(string jsonSource)
-        {
-            var results = JsonConvert.DeserializeObject<TruckUnitsPage>(jsonSource);
-            return results;
-        }
-
-        public bool HasMorePages => PageNumber < TotalPages;
-    }
-
-
 }

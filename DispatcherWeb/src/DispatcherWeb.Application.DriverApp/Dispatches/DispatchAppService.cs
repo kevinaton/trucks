@@ -13,6 +13,7 @@ using DispatcherWeb.DriverApp.Dispatches.Dto;
 using DispatcherWeb.DriverApp.Loads.Dto;
 using DispatcherWeb.DriverApp.Locations.Dto;
 using DispatcherWeb.DriverApp.Tickets.Dto;
+using DispatcherWeb.Features;
 using DispatcherWeb.SyncRequests;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +40,9 @@ namespace DispatcherWeb.DriverApp.Dispatches
         public async Task<IPagedResult<DispatchDto>> Get(GetInput input)
         {
             var allowProductionPay = await SettingManager.GetSettingValueForTenantAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay, Session.GetTenantId());
+            var enableDriverAppGps = await FeatureChecker.IsEnabledAsync(AppFeatures.AllowGpsTracking) 
+                && await SettingManager.GetSettingValueAsync<bool>(AppSettings.GpsIntegration.DtdTracker.EnableDriverAppGps)
+                && (GpsPlatform)await SettingManager.GetSettingValueAsync<int>(AppSettings.GpsIntegration.Platform) == GpsPlatform.DtdTracker;
 
             var query = _dispatchRepository.GetAll()
                 .Where(x => x.Driver.UserId == Session.UserId)
@@ -141,6 +145,7 @@ namespace DispatcherWeb.DriverApp.Dispatches
                     TruckId = di.TruckId,
                     TruckCode = di.Truck.TruckCode,
                     TrailerTruckCode = di.OrderLineTruck.Trailer.TruckCode,
+                    EnableDriverAppGps = enableDriverAppGps && di.Truck.EnableDriverAppGps,
                     OrderLineTruckId = di.OrderLineTruckId,
                     //WasMultipleLoads = di.WasMultipleLoads,
                     //SignatureId = di.Loads.OrderByDescending(l => l.Id).Select(l => l.SignatureId).FirstOrDefault(), //.DefaultIfEmpty((Guid?)null)

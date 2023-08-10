@@ -504,6 +504,7 @@ namespace DispatcherWeb.Configuration.Tenants
         {
             return new DtdTrackerSettingsEditDto
             {
+                EnableDriverAppGps = await SettingManager.GetSettingValueAsync<bool>(AppSettings.GpsIntegration.DtdTracker.EnableDriverAppGps),
                 AccountName = await SettingManager.GetSettingValueAsync(AppSettings.GpsIntegration.DtdTracker.AccountName),
                 AccountId = await SettingManager.GetSettingValueAsync<int>(AppSettings.GpsIntegration.DtdTracker.AccountId),
             };
@@ -1165,6 +1166,7 @@ namespace DispatcherWeb.Configuration.Tenants
 
             if (input.Platform == GpsPlatform.DtdTracker)
             {
+                await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.GpsIntegration.DtdTracker.EnableDriverAppGps, input.DtdTracker.EnableDriverAppGps.ToLowerCaseString());
                 //await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.GpsIntegration.DtdTracker.AccountName, input.DtdTracker.AccountName);
             }
             else if (input.Platform == GpsPlatform.Geotab)

@@ -195,6 +195,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.GpsIntegration.IntelliShift.User, "", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.IntelliShift.Password, "", scopes: SettingScopes.Tenant),
 
+                new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.EnableDriverAppGps, "false", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.AccountName, "", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.AccountId, "0", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.UserId, "0", scopes: SettingScopes.Tenant),

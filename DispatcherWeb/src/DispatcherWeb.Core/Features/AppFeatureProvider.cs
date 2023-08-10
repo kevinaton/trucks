@@ -218,10 +218,17 @@ namespace DispatcherWeb.Features
                 inputType: new CheckboxInputType()
             );
 
-            context.Create(
+            var reactNativeDriverApp = context.Create(
                 AppFeatures.ReactNativeDriverApp,
                 defaultValue: "false",
                 displayName: L("ReactNativeDriverApp"),
+                inputType: new CheckboxInputType()
+            );
+
+            reactNativeDriverApp.CreateChildFeature(
+                AppFeatures.AllowGpsTracking,
+                defaultValue: "false",
+                displayName: L("AllowGpsTracking"),
                 inputType: new CheckboxInputType()
             );
             

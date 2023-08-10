@@ -39,6 +39,7 @@ namespace DispatcherWeb.DriverApp.Dispatches.Dto
         public int TruckId { get; set; }
         public string TruckCode { get; set; }
         public string TrailerTruckCode { get; set; }
+        public bool EnableDriverAppGps { get; set; }
         public DateTime? AcknowledgedDateTime { get; set; }
         public int? OrderLineTruckId { get; set; }
         public int SortOrder { get; set; }

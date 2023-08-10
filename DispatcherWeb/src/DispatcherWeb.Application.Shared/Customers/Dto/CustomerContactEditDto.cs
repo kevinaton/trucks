@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using DispatcherWeb.Dto;
-using System.Text.RegularExpressions;
 using DispatcherWeb.Infrastructure;
-using System.Linq;
 
 namespace DispatcherWeb.Customers.Dto
 {

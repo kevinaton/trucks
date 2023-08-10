@@ -1,6 +1,7 @@
 ﻿using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
+using Abp.Runtime.Session;
 using Abp.UI;
 using Abp.Web.Models;
 using DispatcherWeb.DriverApp.TruckPositions.Dto;
@@ -32,15 +33,8 @@ namespace DispatcherWeb.DriverApp.TruckPositions
         }
 
         [WrapResult(false)]
-        [AbpAllowAnonymous]
         public async Task Post(TruckPositionRawDto input)
         {
-            if (input.DriverId == null && input.UserId == null)
-            {
-                Logger.Error("TruckPosition.Post: DriverId and UserId values are missing: " + JsonConvert.SerializeObject(input));
-                throw new UserFriendlyException("DriverId or UserId value is missing. You should provide at least one of them.");
-            }
-
             if (input.Location == null)
             {
                 Logger.Error("TruckPosition.Post: Location value is missing: " + JsonConvert.SerializeObject(input));
@@ -53,22 +47,14 @@ namespace DispatcherWeb.DriverApp.TruckPositions
             }
 
             var driver = await _driverRepository.GetAll()
-                .WhereIf(input.UserId.HasValue, x => x.UserId == input.UserId)
-                .WhereIf(input.UserId == null, x => x.Id == input.DriverId)
+                .Where(x => x.UserId == Session.UserId)
                 .Select(x => new
                 {
                     x.Id,
-                    x.TenantId,
                     x.IsInactive
                 })
                 .OrderByDescending(x => !x.IsInactive)
                 .FirstOrDefaultAsync();
-
-            if (driver == null)
-            {
-                Logger.Error($"TruckPosition.Post: Driver with id '{input.DriverId}' or UserId '{input.UserId}' wasn't found: " + JsonConvert.SerializeObject(input));
-                throw new UserFriendlyException($"Driver with id '{input.DriverId}' (or UserId '{input.UserId}') wasn't found");
-            }
 
             if (input.TruckId == null)
             {
@@ -86,12 +72,12 @@ namespace DispatcherWeb.DriverApp.TruckPositions
             if (truck == null)
             {
                 Logger.Error($"TruckPosition.Post: Truck with id {input.TruckId} wasn't found: " + JsonConvert.SerializeObject(input));
-                throw new UserFriendlyException($"Truck with id {input.TruckId} wasn't found");
+                throw new UserFriendlyException($"Truck with id '{input.TruckId}' wasn't found");
             }
 
             if (string.IsNullOrEmpty(truck.DtdTrackerUniqueId))
             {
-                Logger.Error($"TruckPosition.Post: Truck with id {input.TruckId} doesn't have DtdTrackerUniqueId filled. Request: " + JsonConvert.SerializeObject(input));
+                Logger.Warn($"TruckPosition.Post: Truck with id {input.TruckId} doesn't have DtdTrackerUniqueId filled. Request: " + JsonConvert.SerializeObject(input));
                 return;
             }
 
@@ -107,8 +93,9 @@ namespace DispatcherWeb.DriverApp.TruckPositions
                 var truckPosition = new TruckPosition
                 {
                     TruckId = input.TruckId.Value,
-                    DriverId = driver.Id,
-                    TenantId = driver.TenantId,
+                    DriverId = driver?.Id,
+                    TenantId = Session.GetTenantId(),
+                    CreatorUserId = Session.UserId,
                     DtdTrackerUniqueId = truck.DtdTrackerUniqueId,
                     Latitude = location.Coordinates?.Latitude,
                     Longitude = location.Coordinates?.Longitude,

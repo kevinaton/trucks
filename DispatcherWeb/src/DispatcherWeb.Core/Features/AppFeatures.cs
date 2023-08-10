@@ -31,6 +31,7 @@
 
         public const string WebBasedDriverApp = "DriverApp.WebBasedDriverApp";
         public const string ReactNativeDriverApp = "DriverApp.ReactNativeDriverApp";
+        public const string AllowGpsTracking = "DriverApp.ReactNativeDriverApp.AllowGpsTracking";
 
         public const string AllowCopyingZeroQuantityOrderLineItemsFeature = "App.AllowCopyingZeroQuantityOrderLineItems";
 
