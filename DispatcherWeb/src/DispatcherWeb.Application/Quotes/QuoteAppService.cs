@@ -290,6 +290,8 @@ namespace DispatcherWeb.Quotes
                 {
                     quoteEditDto = new QuoteEditDto
                     {
+                        OfficeId = Session.OfficeId,
+                        OfficeName = Session.OfficeName,
                         Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                     };
                 }

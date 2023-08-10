@@ -349,7 +349,8 @@ admin -> for your tenant's admin
     <text name="CustomerEmail">Customer Email</text>
     <text name="CustomerName"> Customer Name</text>
     <text name="CustomerPortal">Customer Portal</text>
-    <text name="CustomerPortalTicketsList">Tickets List</text>
+    <text name="CustomerPortalTicketList">Ticket List</text>
+    <text name="CustomerPortalTicketListExport">Ticket List Export</text>
     <text name="CustomerPortalUserWithCustomerIdMissing">Customer Portal feature is enabled but you are not using a customer user. Please contact support to resolve this issue.</text>
     <text name="Customers">Customers</text>
     <text name="CustomersHeaderInfo">Manage your customers</text>
@@ -527,7 +528,6 @@ admin -> for your tenant's admin
     <text name="EditingQuotes">Editing Quotes</text>
     <text name="EditingRole">Editing role</text>
     <text name="EditingTenant">Editing tenant</text>
-    <text name="EditingTicket">Editing Ticket</text>
     <text name="EditingUser">Editing user</text>
     <text name="EditingVehicleService">Editing Vehicle Service</text>
     <text name="EditingVehicleServiceTypes">Editing Vehicle Service Types</text>
@@ -550,6 +550,7 @@ admin -> for your tenant's admin
     <text name="EditRole">Edit role</text>
     <text name="EditTenant">Edit tenant</text>
     <text name="EditText">Edit text</text>
+    <text name="EditTickets">Edit Tickets</text>
     <text name="EditTimeClassifications">Edit time classifications</text>
     <text name="EditUser">Edit user</text>
     <text name="ElapsedTimeHr">Elapsed Time (Hr)</text>
@@ -602,6 +603,7 @@ admin -> for your tenant's admin
     <text name="ExportedInBatch">Exported in batch</text>
     <text name="ExportedInvoiceDeletePrompt">You are about to delete invoice number {0} which has been exported. Are you sure you want to do this?</text>
     <text name="ExportSelected">Export selected</text>
+    <text name="ExportTickets">Export Tickets</text>
     <text name="ExportToCsv">Export to csv</text>
     <text name="ExportToExcel">Export to excel</text>
     <text name="Extend_Edition_Description">Extend {0} Edition</text>
@@ -1045,6 +1047,7 @@ admin -> for your tenant's admin
     <text name="OrderEmailSubjectTemplate">Order Email Subject Template</text>
     <text name="OrderHasReachedRequestedAmount">Order for {CustomerName} has reached the requested amount.</text>
     <text name="OrderId">Order Id</text>
+    <text name="OrderIdDropdown">Order Id dropdown</text>
     <text name="OrderItemHasOverriddenTotalValues">This order item has overridden total values</text>
     <text name="OrderItems">Order items</text>
     <text name="OrderLine_Edit_Error_HasTickets">Either tickets or dispatches are associated with this order line item, so the changes you requested can't be saved.</text>
@@ -1778,6 +1781,7 @@ admin -> for your tenant's admin
     <text name="VehicleCategoriesHeaderInfo">Manage your vehicle categories</text>
     <text name="VehicleMaintenance">Vehicle Maintenance</text>
     <text name="VehicleMaintenanceServices">Services</text>
+    <text name="VehicleMaintenanceWorkOrderReport">Vehicle Maintenance Work Order Report</text>
     <text name="VehicleService">Vehicle Service</text>
     <text name="VehicleServiceTypes">Vehicle Service Types</text>
     <text name="VehicleUsageMenuItem">Vehicle Usage</text>

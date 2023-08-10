@@ -256,8 +256,8 @@ namespace DispatcherWeb.Trucks
             }
             query = query
                 //.Where(x => x.LocationId.HasValue)
-                .WhereIf(!input.AllOffices && input.OfficeId == null,
-                    x => x.LocationId == OfficeId
+                .WhereIf(!input.AllOffices && input.OfficeId == null && Session.OfficeId.HasValue,
+                    x => x.LocationId == Session.OfficeId
                         || input.IncludeLeaseHaulerTrucks && x.LocationId == null)
                 .WhereIf(input.OfficeId != null,
                     x => x.LocationId == input.OfficeId

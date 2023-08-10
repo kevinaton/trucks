@@ -1,4 +1,5 @@
-﻿using Abp.IdentityServer4vNext;
+﻿using System;
+using Abp.IdentityServer4vNext;
 using Abp.Zero.EntityFrameworkCore;
 using DispatcherWeb.ActiveReports;
 using DispatcherWeb.Authorization.Delegation;
@@ -180,8 +181,6 @@ namespace DispatcherWeb.EntityFrameworkCore
 
         public virtual DbSet<Truck> Trucks { get; set; }
         public virtual DbSet<TruckFile> TruckFiles { get; set; }
-
-        public virtual DbSet<TruckPosition> TruckPositions { get; set; }
 
         public virtual DbSet<TruxEarnings> TruxEarnings { get; set; }
 
@@ -392,7 +391,6 @@ namespace DispatcherWeb.EntityFrameworkCore
             modelBuilder.ApplyConfiguration(new TrackableEmailEventConfiguration());
             modelBuilder.ApplyConfiguration(new TrackableEmailReceiverConfiguration());
             modelBuilder.ApplyConfiguration(new TruckConfiguration());
-            modelBuilder.ApplyConfiguration(new TruckPositionConfiguration());
             modelBuilder.ApplyConfiguration(new TruxEarningsConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new VehicleServiceTypeConfiguration());

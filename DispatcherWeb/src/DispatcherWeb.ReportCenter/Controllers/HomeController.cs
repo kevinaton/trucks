@@ -38,8 +38,8 @@ namespace DispatcherWeb.ReportCenter
             return View(model);
         }
 
-        [Route("/report/{reportPath}")]
-        public async Task<IActionResult> Report(string reportPath)
+        [Route("/report/{reportPath}/{entityId:int?}")]
+        public async Task<IActionResult> Report(string reportPath, int? entityId = null)
         {
             if (!await _reportAppService.CanAccessReport(reportPath))
             {
@@ -54,10 +54,31 @@ namespace DispatcherWeb.ReportCenter
             var vm = new ReportViewModel
             {
                 ReportPath = reportPath,
-                TenantId = tenantId
+                TenantId = tenantId,
+                EntityId = entityId
             };
 
             return View(vm);
+        }
+
+        [Route("/report/{reportPath}/{id:int?}/Pdf")]
+        public async Task<IActionResult> ReportPdf(string reportPath, int? id = null)
+        {
+            if (!await _reportAppService.CanAccessReport(reportPath))
+                return RedirectToAction("Error");
+
+            var reportId = reportPath.Replace(".rdlx", string.Empty);
+            var reportDataDefinition = await _reportAppService.GetReportDataDefinition(reportId);
+            await reportDataDefinition.Initialize();
+
+            var memoryPdfStream = reportDataDefinition.OpenReportAsPdf(id);
+            var memStream = new MemoryStream();
+            memoryPdfStream.WriteTo(memStream);
+
+            await memStream.FlushAsync();
+            memStream.Position = 0;
+
+            return new FileStreamResult(memStream, "application/pdf");
         }
 
         [HttpGet("reports")]

@@ -122,6 +122,16 @@
                                 window.location.href = abp.appPath + 'app/WorkOrders/Details/' + workOrderId;
                             }
                         }, {
+                            text: '<i class="fa fa-print"></i> ' + app.localize('Print'),
+                            visible: function (data) {
+                                return (abp.auth.isGranted('Pages.ActiveReports.VehicleMaintenanceWorkOrderReport')) && data.record.canEdit;
+                            },
+                            action: function (data) {
+                                var workOrderId = data.record.id;
+                                window.open(`${abp.reportCenterPath}/report/VehicleMaintenanceWorkOrderReport/${workOrderId}/pdf`);
+                            }
+                        },
+                        {
                             text: '<i class="fa fa-trash"></i> ' + app.localize('Delete'),
                             visible: function (data) {
                                 return data.record.canEdit;

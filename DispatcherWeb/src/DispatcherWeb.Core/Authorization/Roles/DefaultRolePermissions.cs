@@ -30,6 +30,27 @@ namespace DispatcherWeb.Authorization.Roles
                     {
                     }
                 },
+                // ActiveReports
+                {
+                    AppPermissions.Pages_ActiveReports, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Maintenance,
+                        StaticRoleNames.Tenants.MaintenanceSupervisor,
+                    }
+                },
+                // ActiveReports VehicleMaintenanceWorkOrderReport
+                {
+                    AppPermissions.Pages_ActiveReports_VehicleMaintenanceWorkOrderReport, new[]
+                    {
+
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Maintenance,
+                        StaticRoleNames.Tenants.MaintenanceSupervisor,
+                    }
+                },
                 // Pages_Administration
                 {
                     AppPermissions.Pages_Administration, new string[]
@@ -177,9 +198,25 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
                 
+                // Customer Portal - OrderId Dropdown
+                {
+                    AppPermissions.CustomerPortal_Orders_IdDropdown, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+                
                 // Customer Portal - Ticket List
                 {
                     AppPermissions.CustomerPortal_TicketList, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+                
+                // Customer Portal - Ticket List Export
+                {
+                    AppPermissions.CustomerPortal_TicketList_Export, new[]
                     {
                         StaticRoleNames.Tenants.Customer
                     }
@@ -546,6 +583,18 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
 
+                // OrderId Dropdown
+                {
+                    AppPermissions.Pages_Orders_IdDropdown, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Dispatching,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Managers,
+                    }
+                },
+
                 // Orders View
                 {
                     AppPermissions.Pages_Orders_View, new[]
@@ -746,15 +795,6 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Administrative,
                     }
                 },
-
-                // ActiveReports
-                {
-                    AppPermissions.Pages_ActiveReports, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                        //StaticRoleNames.Tenants.Administrative,
-                    }
-                },
                 
                 // Schedule
                 {
@@ -829,6 +869,17 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Dispatching,
                         StaticRoleNames.Tenants.Backoffice,
                         StaticRoleNames.Tenants.Managers,
+                    }
+                },
+
+                // Tickets_Export
+                {
+                    AppPermissions.Pages_Tickets_Export, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Dispatching,
+                        StaticRoleNames.Tenants.Managers
                     }
                 },
                 

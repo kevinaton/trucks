@@ -86,6 +86,7 @@
         public const string Pages_Dashboard_TruckUtilization = "Pages.Dashboard.TruckUtilization";
         public const string Pages_Orders_View = "Pages.Orders.View"; //read only
         public const string Pages_Orders_Edit = "Pages.Orders.Edit"; //create, edit, delete
+        public const string Pages_Orders_IdDropdown = "Pages.Orders.IdDropdown";
         public const string Pages_Schedule = "Pages.Schedule"; //full
         public const string Pages_Schedule_ShareTrucks = "Pages.Schedule.ShareTrucks";
         public const string Pages_Schedule_ShareJobs = "Pages.Schedule.ShareJobs";
@@ -115,6 +116,7 @@
         public const string Pages_Offices = "Pages.Offices";
         public const string Pages_Tickets_View = "Pages.Tickets.View"; //read only
         public const string Pages_Tickets_Edit = "Pages.Tickets.Edit"; //create, edit, delete
+        public const string Pages_Tickets_Export = "Pages.Tickets.Export";
         public const string Pages_TicketsByDriver = "Pages.TicketsByDriver";
         public const string Pages_Invoices = "Pages.Invoices";
         public const string DriverProductionPay = "DriverProductionPay";
@@ -144,6 +146,7 @@
 
         public const string Pages_ActiveReports = "Pages.ActiveReports";
         public const string Pages_ActiveReports_TenantStatisticsReport = "Pages.ActiveReports.TenantStatisticsReport";
+        public const string Pages_ActiveReports_VehicleMaintenanceWorkOrderReport = "Pages.ActiveReports.VehicleMaintenanceWorkOrderReport";
 
         public const string Pages_Imports = "Pages.Imports";
         public const string Pages_Imports_FuelUsage = "Pages.Imports.FuelUsage";
@@ -186,6 +189,8 @@
 
         public const string CustomerPortal = "CustomerPortal";
         public const string CustomerPortal_TicketList = "CustomerPortal.TicketList";
+        public const string CustomerPortal_TicketList_Export = "CustomerPortal.TicketList.Export";
+        public const string CustomerPortal_Orders_IdDropdown = "CustomerPortal.Orders.IdDropdown";
 
         //HOST-SPECIFIC PERMISSIONS
 

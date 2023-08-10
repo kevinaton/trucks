@@ -32,6 +32,12 @@ namespace DispatcherWeb.WorkOrders.Dto
         public decimal TotalCost { get; set; }
 
         public List<WorkOrderLineEditDto> WorkOrderLines { get; set; }
-        public List<WorkOrderPictureEditDto> Pictures { get; set; }
+        public List<WorkOrderPictureEditDto> Pictures { get; set; } = new List<WorkOrderPictureEditDto>();
+
+        /// <summary>
+        /// Provided for report purpose unable to parse from list of WorkOrderPictureEditDto
+        /// </summary>
+        public int PicturesCount =>
+            Pictures.Count;
     }
 }

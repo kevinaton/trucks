@@ -5,17 +5,17 @@ namespace DispatcherWeb.Infrastructure.Telematics.Dto.DtdTracker
 {
     public class GpsMessageDto
     {
-        public DateTime Timestamp { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
-        public decimal? AltitudeInMeters { get; set; }
+        public DateTime GpsTimestamp { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double? AltitudeInMeters { get; set; }
         public int SpeedInKMPH { get; set; }
         public int Heading { get; set; }
 
         public override string ToString()
         {
             var altitude = AltitudeInMeters.HasValue ? $"ALT:{AltitudeInMeters}" : "";
-            return $"REG;{Timestamp.ToUnixTimestamp()};{Longitude};{Latitude};{SpeedInKMPH};{Heading};{altitude};;;;;";
+            return $"REG;{GpsTimestamp.ToUnixTimestamp()};{Longitude};{Latitude};{SpeedInKMPH};{Heading};{altitude};;;;;";
         }
     }
 }

@@ -4,6 +4,7 @@ using DispatcherWeb.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DispatcherWeb.Migrations
 {
     [DbContext(typeof(DispatcherWebDbContext))]
-    partial class DispatcherWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230808062152_RemovedTruckPositionTable")]
+    partial class RemovedTruckPositionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1665,9 +1667,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("CustomerContactId")
-                        .HasColumnType("int");
-
                     b.Property<long?>("DeleterUserId")
                         .HasColumnType("bigint");
 
@@ -1786,8 +1785,6 @@ namespace DispatcherWeb.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorUserId");
-
-                    b.HasIndex("CustomerContactId");
 
                     b.HasIndex("DeleterUserId");
 
@@ -2095,9 +2092,6 @@ namespace DispatcherWeb.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<bool>("HasCustomerPortalAccess")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -2112,8 +2106,8 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(129)
-                        .HasColumnType("nvarchar(129)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)
@@ -5282,9 +5276,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<int?>("LoadAtId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("LoadBased")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("Loads")
                         .HasColumnType("int");
 
@@ -6893,9 +6884,6 @@ namespace DispatcherWeb.Migrations
                     b.Property<int?>("LoadAtId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("LoadBased")
-                        .HasColumnType("bit");
-
                     b.Property<decimal?>("MaterialQuantity")
                         .HasColumnType("decimal(18,2)");
 
@@ -6908,9 +6896,6 @@ namespace DispatcherWeb.Migrations
 
                     b.Property<decimal?>("PricePerUnit")
                         .HasColumnType("decimal(19,4)");
-
-                    b.Property<bool>("ProductionPay")
-                        .HasColumnType("bit");
 
                     b.Property<int>("QuoteId")
                         .HasColumnType("int");
@@ -8929,10 +8914,6 @@ namespace DispatcherWeb.Migrations
                         .WithMany()
                         .HasForeignKey("CreatorUserId");
 
-                    b.HasOne("DispatcherWeb.Customers.CustomerContact", "CustomerContact")
-                        .WithMany()
-                        .HasForeignKey("CustomerContactId");
-
                     b.HasOne("DispatcherWeb.Authorization.Users.User", "DeleterUser")
                         .WithMany()
                         .HasForeignKey("DeleterUserId");
@@ -8946,8 +8927,6 @@ namespace DispatcherWeb.Migrations
                         .HasForeignKey("OfficeId");
 
                     b.Navigation("CreatorUser");
-
-                    b.Navigation("CustomerContact");
 
                     b.Navigation("DeleterUser");
 
