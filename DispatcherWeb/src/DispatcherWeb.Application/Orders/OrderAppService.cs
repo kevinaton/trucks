@@ -1400,6 +1400,7 @@ namespace DispatcherWeb.Orders
 
             bool allowCopyZeroQuantity = await FeatureChecker.IsEnabledAsync(AppFeatures.AllowCopyingZeroQuantityOrderLineItemsFeature);
             var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+            var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
             var timezone = await GetTimezone();
 
             List<int> createdOrderIds = new List<int>();
@@ -1457,6 +1458,7 @@ namespace DispatcherWeb.Orders
                                 Note = x.Note,
                                 IsMultipleLoads = x.IsMultipleLoads,
                                 ProductionPay = allowProductionPay && x.ProductionPay,
+                                LoadBased = allowLoadBasedRates && x.LoadBased,
                                 Order = newOrder
                             };
                             foreach (var vehicleCategory in x.OrderLineVehicleCategories)
@@ -2000,7 +2002,6 @@ namespace DispatcherWeb.Orders
                     .OrderBy(input.Sorting)
                     .ToListAsync();
 
-                var defaultToProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.DefaultToProductionPay);
                 var preventProductionPayOnHourlyJobs = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs);
 
                 var i = 1;
@@ -2008,7 +2009,7 @@ namespace DispatcherWeb.Orders
                 {
                     orderLine.Id = null;
                     orderLine.LineNumber = i++;
-                    orderLine.ProductionPay = defaultToProductionPay && (!preventProductionPayOnHourlyJobs || orderLine.FreightUomName?.ToLower().TrimEnd('s') != "hour");
+                    orderLine.ProductionPay = !preventProductionPayOnHourlyJobs || orderLine.FreightUomName?.ToLower().TrimEnd('s') != "hour";
                 }
 
                 return new PagedResultDto<OrderLineEditDto>(orderLines.Count, orderLines);

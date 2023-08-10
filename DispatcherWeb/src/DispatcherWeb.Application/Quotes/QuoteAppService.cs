@@ -734,6 +734,9 @@ namespace DispatcherWeb.Quotes
         [AbpAuthorize(AppPermissions.Pages_Quotes_Edit)]
         public async Task<int> CopyQuote(EntityDto input)
         {
+            var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+            var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
+
             var quote = await _quoteRepository.GetAll()
                 .AsNoTracking()
                 .Include(x => x.QuoteServices)
@@ -782,8 +785,8 @@ namespace DispatcherWeb.Quotes
                     FreightRate = s.FreightRate,
                     LeaseHaulerRate = s.LeaseHaulerRate,
                     FreightRateToPayDrivers = s.FreightRateToPayDrivers,
-                    ProductionPay = s.ProductionPay,
-                    LoadBased = s.LoadBased,
+                    ProductionPay = allowProductionPay && s.ProductionPay,
+                    LoadBased = allowLoadBasedRates && s.LoadBased,
                     MaterialQuantity = s.MaterialQuantity,
                     FreightQuantity = s.FreightQuantity,
                     JobNumber = s.JobNumber,
@@ -994,6 +997,9 @@ namespace DispatcherWeb.Quotes
         [AbpAuthorize(AppPermissions.Pages_Quotes_View)]
         public async Task<PagedResultDto<QuoteServiceDto>> GetQuoteServices(GetQuoteServicesInput input)
         {
+            var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+            var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
+
             var query = _quoteServiceRepository.GetAll();
 
             var totalCount = await query.CountAsync();
@@ -1039,8 +1045,8 @@ namespace DispatcherWeb.Quotes
                     FreightRate = x.FreightRate,
                     LeaseHaulerRate = x.LeaseHaulerRate,
                     FreightRateToPayDrivers = x.FreightRateToPayDrivers,
-                    ProductionPay = x.ProductionPay,
-                    LoadBased = x.LoadBased,
+                    ProductionPay = allowProductionPay && x.ProductionPay,
+                    LoadBased = allowLoadBasedRates && x.LoadBased,
                     MaterialQuantity = x.MaterialQuantity,
                     FreightQuantity = x.FreightQuantity
                 })
@@ -1144,7 +1150,8 @@ namespace DispatcherWeb.Quotes
             {
                 quoteServiceEditDto = new QuoteServiceEditDto
                 {
-                    QuoteId = input.QuoteId.Value
+                    QuoteId = input.QuoteId.Value,
+                    ProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.DefaultToProductionPay)
                 };
             }
             else
