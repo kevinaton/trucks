@@ -127,7 +127,7 @@
                 updateFreightRateForDriverPayVisibility(false);
             });
 
-            _$form.find("#ProductionPay").change(() => updateFreightRateForDriverPayVisibility(false));
+            _$form.find("#ProductionPay").change(updateFreightRateForDriverPayVisibility);
 
             function disableMaterialFields() {
                 materialRateInput.attr('disabled', 'disabled').val('0');
@@ -228,15 +228,11 @@
                 productionPayInput.closest('label').attr('title', '').tooltip('dispose');
             }
 
-            function updateFreightRateForDriverPayVisibility(forceHiding) {
-                if (forceHiding) {
-                    freightRateToPayDriversInput.val('').change().closest('.form-group').hide();
+            function updateFreightRateForDriverPayVisibility() {
+                if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate') && _$form.find('#ProductionPay').is(':checked')) {
+                    freightRateToPayDriversInput.closest('.form-group').show();
                 } else {
-                    if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate') && _$form.find('#ProductionPay').is(':checked')) {
-                        freightRateToPayDriversInput.closest('.form-group').show();
-                    } else {
-                        freightRateToPayDriversInput.val('').change().closest('.form-group').hide();
-                    }
+                    freightRateToPayDriversInput.val(freightRateInput.val()).change().closest('.form-group').hide();
                 }
             
                 updateLoadBasedVisibility();
@@ -261,7 +257,7 @@
                     }
                     productionPay.prop('checked', false);
                     productionPayContainer.hide();
-                    updateFreightRateForDriverPayVisibility(true);
+                    updateFreightRateForDriverPayVisibility();
                 } else {
                     if (_wasProductionPay !== null) {
                         if (shouldDisableProductionPay()) {
@@ -277,7 +273,7 @@
             }
 
             disableProductionPayIfNeeded(false);
-            updateFreightRateForDriverPayVisibility(false);
+            updateFreightRateForDriverPayVisibility();
         };
 
         function designationHasMaterial() {

@@ -225,7 +225,7 @@
 
             _$form.find("#AutoGenerateTicketNumber").change(updateTicketNumberVisibility);
 
-            _$form.find("#ProductionPay").change(() => updateFreightRateForDriverPayVisibility(false));
+            _$form.find("#ProductionPay").change(updateFreightRateForDriverPayVisibility);
 
             _$form.find("#RequiresCustomerNotification").change(updateCustomerNotificationControlsVisibility);
 
@@ -522,7 +522,7 @@
                     recalculate(sender);
                 });
                 disableProductionPayIfNeeded(true);
-                updateFreightRateForDriverPayVisibility(false);
+                updateFreightRateForDriverPayVisibility();
             });
 
             abp.helper.ui.syncUomDropdowns(_materialUomDropdown, _freightUomDropdown, _designationDropdown, _materialQuantityInput, _freightQuantityInput);
@@ -598,8 +598,7 @@
             disableJobEditIfNeeded();
             disableTaxControls();
             updateCustomerNotificationControlsVisibility();
-            updateFreightRateForDriverPayVisibility(false);
-            updateLoadBasedVisibility();
+            updateFreightRateForDriverPayVisibility();
         };
 
         this.focusOnDefaultElement = function () {
@@ -672,6 +671,7 @@
             _$form.find("#FreightPricePerUnit").val(_orderLine.freightPricePerUnit);
             _ratesLastValue.freightPricePerUnit = Number(_orderLine.freightPricePerUnit) || 0;
             _$form.find("#FreightRateToPayDrivers").val(_orderLine.freightRateToPayDrivers);
+            _$form.find("#LoadBased").prop('checked', _orderLine.loadBased);
             _$form.find("#LeaseHaulerRate").val(_orderLine.leaseHaulerRate);
             _$form.find("#MaterialQuantity").val(_orderLine.materialQuantity);
             _$form.find("#FreightQuantity").val(_orderLine.freightQuantity);
@@ -1012,15 +1012,11 @@
             productionPayInput.closest('label').attr('title', '').tooltip('dispose');
         }
 
-        function updateFreightRateForDriverPayVisibility(forceHiding) {
-            if (forceHiding) {
-                _freightRateToPayDriversInput.val('').change().closest('.form-group').hide();
+        function updateFreightRateForDriverPayVisibility() {
+            if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate') && _$form.find('#ProductionPay').is(':checked')) {
+                _freightRateToPayDriversInput.closest('.form-group').show();
             } else {
-                if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate') && _$form.find('#ProductionPay').is(':checked')) {
-                    _freightRateToPayDriversInput.closest('.form-group').show();
-                } else {
-                    _freightRateToPayDriversInput.val('').change().closest('.form-group').hide();
-                }
+                _freightRateToPayDriversInput.val(_freightPricePerUnitInput.val()).change().closest('.form-group').hide();
             }
             
             updateLoadBasedVisibility();
@@ -1149,24 +1145,18 @@
         function disableFreightFields() {
             _$form.find("label[for=FreightUomId]").removeClass('required-label');
             _$form.find('#FreightPricePerUnit').val('').closest('.form-group').hide();
-            _$form.find('#FreightRateToPayDrivers').val('').closest('.form-group').hide();
+            updateFreightRateForDriverPayVisibility();
             _$form.find('#FreightPrice').val('0').closest('.form-group').hide();
             _$form.find('#FreightUomId').val('').change().closest('.form-group').hide();
             _$form.find('#FreightQuantity').val('').closest('.form-group').hide();
-            _$form.find('#LoadBased').prop('checked', false).closest('.form-group').hide();
         }
         function enableFreightFields() {
             _$form.find("label[for=FreightUomId]").addClass('required-label');
             _$form.find('#FreightPricePerUnit').closest('.form-group').show();
-            if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')) {
-                _$form.find('#FreightRateToPayDrivers').closest('.form-group').show();
-            }
+            updateFreightRateForDriverPayVisibility();
             _$form.find('#FreightPrice').closest('.form-group').show();
             _$form.find('#FreightUomId').closest('.form-group').show();
             _$form.find('#FreightQuantity').closest('.form-group').show();
-            if (abp.setting.getBoolean('App.TimeAndPay.AllowLoadBasedRates') && _$form.find('#ProductionPay').is(':checked')) {
-                _$form.find('#LoadBased').closest('.form-group').show();
-            }
         }
 
         function updateProductionPay() {
@@ -1178,7 +1168,7 @@
                 }
                 productionPay.prop('checked', false);
                 productionPayContainer.hide();
-                updateFreightRateForDriverPayVisibility(true);
+                updateFreightRateForDriverPayVisibility();
             } else {
                 if (_wasProductionPay !== null) {
                     if (shouldDisableProductionPay()) {
