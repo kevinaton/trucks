@@ -222,6 +222,7 @@ namespace DispatcherWeb.Trucks
                 DtdTrackerPassword = x.DtdTrackerPassword,
                 DtdTrackerServerAddress = x.DtdTrackerServerAddress,
                 DtdTrackerUniqueId = x.DtdTrackerUniqueId,
+                EnableDriverAppGps = x.EnableDriverAppGps,
                 IsApportioned = x.IsApportioned,
                 OfficeId = x.LocationId == null ? 0 : x.LocationId.Value,
                 VehicleCategoryAssetType = x.VehicleCategory.AssetType,
@@ -453,6 +454,7 @@ namespace DispatcherWeb.Trucks
                         DtdTrackerDeviceTypeName = t.DtdTrackerDeviceTypeName,
                         DtdTrackerPassword = t.DtdTrackerPassword,
                         DtdTrackerServerAddress = t.DtdTrackerServerAddress,
+                        EnableDriverAppGps = t.EnableDriverAppGps,
                         Reason = t.IsOutOfService ?
                         t.OutOfServiceHistories
                             .OrderByDescending(oosh => oosh.OutOfServiceDate)
@@ -648,6 +650,7 @@ namespace DispatcherWeb.Trucks
                 entity.DtdTrackerDeviceTypeName = model.DtdTrackerDeviceTypeName;
                 entity.DtdTrackerPassword = model.DtdTrackerPassword;
                 entity.DtdTrackerServerAddress = model.DtdTrackerServerAddress;
+                entity.EnableDriverAppGps = model.EnableDriverAppGps;
             }
 
             await UpdateCurrentTrailer();

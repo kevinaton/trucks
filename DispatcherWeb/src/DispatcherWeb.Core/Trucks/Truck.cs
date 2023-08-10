@@ -169,6 +169,8 @@ namespace DispatcherWeb.Trucks
         //[StringLength(EntityStringFieldLengths.Truck.DtdTrackerPassword)]
         public string DtdTrackerPassword { get; set; }
 
+        public bool EnableDriverAppGps { get; set; }
+
         //we can add this later if it is needed
         //public bool HasMaterialCompanyTrucks { get; set; }
 
