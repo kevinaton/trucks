@@ -161,7 +161,9 @@ namespace DispatcherWeb.PayStatements
                     DriverId = x.DriverId.Value,
                     UserId = x.Driver.UserId,
                     Quantity = x.Quantity,
-                    FreightRateToPayDrivers = x.OrderLine.FreightRateToPayDrivers
+                    FreightRateToPayDrivers = x.OrderLine.FreightRateToPayDrivers,
+                    FreightUomName = x.OrderLine.FreightUom.Name,
+                    LoadBased = x.OrderLine.LoadBased
                 }).ToListAsync();
 
             return tickets;
@@ -274,6 +276,7 @@ namespace DispatcherWeb.PayStatements
             var driverIsPaidForLoadBasedOn = (DriverIsPaidForLoadBasedOnEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn);
             var useTicketDate = driverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.TicketDate;
             var useOrderDate = driverIsPaidForLoadBasedOn == DriverIsPaidForLoadBasedOnEnum.OrderDate;
+            var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
 
             var drivers = await _driverRepository.GetAll()
                     .WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
@@ -361,7 +364,19 @@ namespace DispatcherWeb.PayStatements
                             FreightRate = ticket.FreightRateToPayDrivers ?? 0,
                             DriverPayRate = productionPay.PayRate,
                         };
-                        payStatementTicket.Total = Math.Round(payStatementTicket.Quantity * payStatementTicket.FreightRate * payStatementTicket.DriverPayRate / 100, 2);
+                        if (allowLoadBasedRates && ticket.LoadBased && !ticket.FreightUomName.ToLower().StartsWith("hour"))
+                        {
+                            if (!ticket.FreightUomName.ToLower().StartsWith("load"))
+                            {
+                                payStatementTicket.Quantity = 1;
+                            }
+
+                            payStatementTicket.Total = Math.Round(payStatementTicket.Quantity * payStatementTicket.FreightRate, 2);
+                        }
+                        else
+                        { 
+                            payStatementTicket.Total = Math.Round(payStatementTicket.Quantity * payStatementTicket.FreightRate * payStatementTicket.DriverPayRate / 100, 2);
+                        }
                         payStatementDetail.PayStatementTickets.Add(payStatementTicket);
                         payStatementDetail.ProductionBasedTotal += payStatementTicket.Total;
                         _payStatementTicketRepository.Insert(payStatementTicket);
