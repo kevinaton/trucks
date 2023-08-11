@@ -447,7 +447,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
             using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.MustHaveTenant))
             using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.MayHaveTenant))
             {
-                var dispatchingRoleIds = _roleManager.Roles
+                var dispatchingRoleIds = _roleManager.AvailableRoles
                     .Where(x => x.TenantId == leaseHaulerRequest.TenantId
                         && x.Name == StaticRoleNames.Tenants.Dispatching)
                     .Select(x => x.Id)
