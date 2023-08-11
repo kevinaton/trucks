@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
@@ -497,6 +498,7 @@ namespace DispatcherWeb.Dashboard
             var timezone = await GetTimezone();
             var periodBeginUtc = input.PeriodBegin.ConvertTimeZoneFrom(timezone);
             var periodEndUtc = input.PeriodEnd.AddDays(1).ConvertTimeZoneFrom(timezone);
+            var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
 
             var result = new RevenueChartsDataDto
             {
@@ -571,11 +573,17 @@ namespace DispatcherWeb.Dashboard
                 .Where(x => x.ProductionPay.TimeClassification.IsProductionBased)
                 .Select(x => new
                 {
-                    Quantity = x.Ticket.Quantity,
+                    Quantity = allowLoadBasedRates && x.Ticket.OrderLine.LoadBased && !x.Ticket.OrderLine.FreightUom.Name.ToLower().StartsWith("hour") && !x.Ticket.OrderLine.FreightUom.Name.ToLower().StartsWith("load") ? 1 : x.Ticket.Quantity,
                     FreightRate = x.Ticket.OrderLine.FreightRateToPayDrivers ?? 0,
                     DriverPayRate = x.ProductionPay.PayRate,
+                    LoadBased = x.Ticket.OrderLine.LoadBased,
+                    FreightUomName = x.Ticket.OrderLine.FreightUom.Name,
                 })
-                .SumAsync(x => Math.Round(x.Quantity * x.FreightRate * x.DriverPayRate / 100, 2));
+                .SumAsync(x => 
+                    allowLoadBasedRates && x.LoadBased && !x.FreightUomName.ToLower().StartsWith("hour")
+                        ? Math.Round(x.Quantity * x.FreightRate, 2)
+                        : Math.Round(x.Quantity * x.FreightRate * x.DriverPayRate / 100, 2)
+                );
 
             result.HourlyPayValue = await
                 (from employeeTime in _employeeTimeRepository.GetAll()

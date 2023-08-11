@@ -723,7 +723,7 @@ namespace DispatcherWeb.PayStatements
                 }
                 var oldTotal = item.Total;
                 item.Total = timeClassification.IsProductionBased
-                    ? Math.Round(item.Quantity * item.DriverPayRate * (item.Ticket.OrderLine.FreightRateToPayDrivers ?? 0) / 100, 2)
+                    ? Math.Round(item.Quantity * item.DriverPayRate * item.FreightRate / 100, 2)
                     : Math.Round(item.Quantity * item.DriverPayRate, 2);
                 var newTotal = item.Total;
 
