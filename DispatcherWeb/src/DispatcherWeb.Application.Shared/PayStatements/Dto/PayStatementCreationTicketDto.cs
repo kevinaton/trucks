@@ -12,5 +12,7 @@ namespace DispatcherWeb.PayStatements.Dto
         public decimal Quantity { get; set; }
         public decimal? FreightRateToPayDrivers { get; set; }
         public DateTime TicketCreationTime { get; set; }
+        public string FreightUomName { get; set; }
+        public bool LoadBased { get; set; }
     }
 }

@@ -247,6 +247,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn, DriverIsPaidForLoadBasedOnEnum.TicketDate.ToIntString(), scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.TimeAndPay.AllowLoadBasedRates, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.Trux.AllowImportingTruxEarnings, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.Trux.TruxCustomerId, "0", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.Trux.UseForProductionPay, "true", scopes: SettingScopes.Tenant),

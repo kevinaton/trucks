@@ -6,6 +6,7 @@
         var _$form = null;
         var _designationDropdown = null;
         var _ratesLastValue = {};
+        var _wasProductionPay = null;
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
@@ -118,7 +119,16 @@
                 } else {
                     enableFreightFields();
                 }
+                updateProductionPay();
+                updateFreightRateForDriverPayVisibility();
             }).change();
+
+            freightUomDropdown.change(function () {
+                disableProductionPayIfNeeded(true);
+                updateFreightRateForDriverPayVisibility(false);
+            });
+
+            _$form.find("#ProductionPay").change(updateFreightRateForDriverPayVisibility);
 
             function disableMaterialFields() {
                 materialRateInput.attr('disabled', 'disabled').val('0');
@@ -138,11 +148,9 @@
             }
             function disableFreightFields() {
                 freightRateInput.attr('disabled', 'disabled').val('0');
-                freightRateToPayDriversInput.attr('disabled', 'disabled').val('0');
                 freightUomDropdown.attr('disabled', 'disabled').val('').change();
                 freightQuantityInput.attr('disabled', 'disabled').val('');
                 freightRateInput.closest('.form-group').hide();
-                freightRateToPayDriversInput.closest('.form-group').hide();
                 freightUomDropdown.closest('.form-group').hide();
                 freightQuantityInput.closest('.form-group').hide();
             }
@@ -151,10 +159,6 @@
                 freightUomDropdown.removeAttr('disabled');
                 freightQuantityInput.removeAttr('disabled');
                 freightRateInput.closest('.form-group').show();
-                if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')) {
-                    freightRateToPayDriversInput.removeAttr('disabled');
-                    freightRateToPayDriversInput.closest('.form-group').show();
-                }
                 freightUomDropdown.closest('.form-group').show();
                 freightQuantityInput.closest('.form-group').show();
             }
@@ -179,6 +183,101 @@
                 recalculate($(this));
             });
 
+            function disableProductionPayIfNeeded(forceUncheck) {
+                if (!shouldDisableProductionPay()) {
+                    enableProductionPay();
+                } else {
+                    let productionPayInput = _$form.find('#ProductionPay')
+
+                    if (forceUncheck) {
+                        productionPayInput.prop('checked', false);
+                    } else {
+                        if (productionPayInput.is(':checked')) {
+                            return;
+                        }
+                    }
+
+                    disableProductionPay();
+                }
+            }
+
+            function shouldDisableProductionPay() {
+                if (abp.setting.getBoolean('App.TimeAndPay.PreventProductionPayOnHourlyJobs')) {
+                    let freightUom = freightUomDropdown.getSelectedDropdownOption().text();
+                    if (['hours', 'hour'].includes((freightUom || '').toLowerCase())) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function disableProductionPay() {
+                let productionPayInput = _$form.find('#ProductionPay');
+                productionPayInput.prop('disabled', true);
+                productionPayInput.closest('label').attr('title', app.localize('PreventProductionPayOnHourlyJobsHint')).tooltip();
+            }
+
+            function enableProductionPay() {
+                let productionPayInput = _$form.find('#ProductionPay');
+                productionPayInput.prop('disabled', false);
+                productionPayInput.closest('label').attr('title', '').tooltip('dispose');
+            }
+
+            function shouldFreightRateForDriverPayBeVisible() {
+                return !designationIsMaterialOnly()
+                    && abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')
+                    && _$form.find('#ProductionPay').is(':checked');
+            }
+
+            function updateFreightRateForDriverPayVisibility() {
+                if (shouldFreightRateForDriverPayBeVisible()) {
+                    freightRateToPayDriversInput.closest('.form-group').show();
+                } else {
+                    freightRateToPayDriversInput.val(freightRateInput.val()).change().closest('.form-group').hide();
+                }
+            
+                updateLoadBasedVisibility();
+            }
+
+            function updateLoadBasedVisibility() {
+                let freightUom = freightUomDropdown.getSelectedDropdownOption().text();
+                if (shouldFreightRateForDriverPayBeVisible()
+                    && abp.setting.getBoolean('App.TimeAndPay.AllowLoadBasedRates')
+                    && !(['hours', 'hour'].includes((freightUom || '').toLowerCase()))
+                    && _$form.find('#ProductionPay').is(':checked')
+                ) {
+                    _$form.find('#LoadBased').closest('.form-group').show();
+                } else {
+                    _$form.find('#LoadBased').prop('checked', false).closest('.form-group').hide();
+                }
+            }
+
+            function updateProductionPay() {
+                let productionPay = _$form.find('#ProductionPay');
+                let productionPayContainer = productionPay.closest('.form-group');
+                if (designationIsMaterialOnly()) {
+                    if (_wasProductionPay === null) {
+                        _wasProductionPay = productionPay.is(':checked');
+                    }
+                    productionPay.prop('checked', false);
+                    productionPayContainer.hide();
+                    updateFreightRateForDriverPayVisibility();
+                } else {
+                    if (_wasProductionPay !== null) {
+                        if (shouldDisableProductionPay()) {
+                            disableProductionPay();
+                        } else {
+                            productionPay.prop('checked', _wasProductionPay);
+                        }
+                        _wasProductionPay = null;
+                    }
+                    productionPayContainer.show();
+                    updateFreightRateForDriverPayVisibility();
+                }
+            }
+
+            disableProductionPayIfNeeded(false);
+            updateFreightRateForDriverPayVisibility();
         };
 
         function designationHasMaterial() {

@@ -55,12 +55,20 @@
             allowClear: false
         });
 
-        $('#AllowProductionPay').change(refreshAllowProductionPayControls);
-        refreshAllowProductionPayControls();
-        function refreshAllowProductionPayControls() {
+        $('#AllowProductionPay').change(refreshProductionPayControls);
+        refreshProductionPayControls();
+        function refreshProductionPayControls() {
             if ($('#AllowProductionPay').is(':checked')) {
+                $('#DefaultToProductionPay').closest('.form-group').show();
+                $('#PreventProductionPayOnHourlyJobs').closest('.form-group').show();
+                $('#AllowDriverPayRateDifferentFromFreightRate').closest('.form-group').show();
+                $('#AllowLoadBasedRates').closest('.form-group').show();
                 $('#DriverIsPaidForLoadBasedOn').closest('.form-group').show();
             } else {
+                $('#DefaultToProductionPay').prop('checked', false).closest('.form-group').hide();
+                $('#PreventProductionPayOnHourlyJobs').prop('checked', false).closest('.form-group').hide();
+                $('#AllowDriverPayRateDifferentFromFreightRate').prop('checked', false).closest('.form-group').hide();
+                $('#AllowLoadBasedRates').prop('checked', false).closest('.form-group').hide();
                 $('#DriverIsPaidForLoadBasedOn').closest('.form-group').hide();
             }
         }

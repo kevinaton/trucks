@@ -40,6 +40,10 @@ namespace DispatcherWeb.Quotes.Dto
         
         public decimal? FreightRateToPayDrivers { get; set; }
 
+        public bool ProductionPay { get; set; }
+
+        public bool LoadBased { get; set; }
+
         public decimal? MaterialQuantity { get; set; }
 
         public decimal? FreightQuantity { get; set; }
