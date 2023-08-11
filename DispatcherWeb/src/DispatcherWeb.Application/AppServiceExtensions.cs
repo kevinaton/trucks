@@ -11,6 +11,8 @@ using Abp.Domain.Uow;
 using Abp.Extensions;
 using Abp.Linq.Extensions;
 using Abp.UI;
+using DispatcherWeb.Authorization.Roles;
+using DispatcherWeb.Authorization.Users;
 using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Drivers;
@@ -811,6 +813,23 @@ namespace DispatcherWeb
             }
 
             return null;
+        }
+
+        public static async Task<IQueryable<User>> GetUsersWithGrantedPermission(this UserManager userManager, RoleManager roleManager, string permissionName)
+        {
+            var roleNamesWithDefaultPermission = DefaultRolePermissions.GetRoleNamesHavingDefaultPermission(permissionName);
+
+            var roleIdsWithGranedPermissions = await roleManager.AvailableRoles
+                .Where(x => !x.Permissions.Any(p => p.Name == permissionName && !p.IsGranted)
+                    && (roleNamesWithDefaultPermission.Contains(x.Name) || x.Permissions.Any(p => p.Name == permissionName && p.IsGranted)))
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            var query = userManager.Users
+                .Where(x => !x.Permissions.Any(p => p.Name == permissionName && !p.IsGranted)
+                    && (x.Roles.Any(r => roleIdsWithGranedPermissions.Contains(r.RoleId)) || x.Permissions.Any(p => p.Name == permissionName && p.IsGranted)));
+
+            return query;
         }
 
         public static async Task<bool> CanOverrideTotals(this IRepository<OrderLine> orderLineRepository, int orderLineId, int officeId)

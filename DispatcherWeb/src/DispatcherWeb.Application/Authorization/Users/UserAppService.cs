@@ -638,20 +638,16 @@ namespace DispatcherWeb.Authorization.Users
 
         public async Task<PagedResultDto<SelectListDto>> GetSalespersonsSelectList(GetSelectListInput input)
         {
-            var allowedRoles = await _roleManager.AvailableRoles
-                .Where(x => x.Name != StaticRoleNames.Tenants.Driver && x.Name != StaticRoleNames.Tenants.LeaseHaulerDriver)
-                .Select(x => x.Id)
-                .ToListAsync();
+            var query = await UserManager.GetUsersWithGrantedPermission(_roleManager, AppPermissions.CanBeSalesperson);
 
-            var query = UserManager.Users
-                .Where(x => x.IsActive && x.Roles.Any(r => allowedRoles.Contains(r.RoleId)))
+            return await query
+                .Where(x => x.IsActive)
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name + " " + x.Surname
-                });
-
-            return await query.GetSelectListResult(input);
+                })
+                .GetSelectListResult(input);
         }
 
     }

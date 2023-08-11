@@ -192,6 +192,7 @@
     <text name="Call">Call</text>
     <text name="CallCell">Call Cell</text>
     <text name="CallOffice">Call Office</text>
+    <text name="CanBeSalesperson">Can be salesperson</text>
     <text name="Cancel">Cancel</text>
     <text name="CancelAuthorization">Cancel Authorization</text>
     <text name="CannedTexts">Canned Texts</text>

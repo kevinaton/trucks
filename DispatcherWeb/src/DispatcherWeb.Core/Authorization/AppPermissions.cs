@@ -121,6 +121,7 @@
         public const string Pages_Invoices = "Pages.Invoices";
         public const string DriverProductionPay = "DriverProductionPay";
         public const string EditInvoicedOrdersAndTickets = "EditInvoicedOrdersAndTickets";
+        public const string CanBeSalesperson = "CanBeSalesperson";
 
         public const string Pages_VehicleService_View = "Pages.VehicleService.View";
         public const string Pages_VehicleService_Edit = "Pages.VehicleService.Edit";
