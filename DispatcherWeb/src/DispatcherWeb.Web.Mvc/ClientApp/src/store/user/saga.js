@@ -1,12 +1,15 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import { 
     GET_USER_INFO,
+    GET_USER_APP_CONFIG,
     GET_USER_GENERAL_SETTINGS,
     GET_USER_SETTING, 
     GET_USER_PROFILE_MENU } from './actionTypes';
 import { 
     getUserInfoSuccess, 
     getUserInfoFailure,
+    getUserAppConfigSuccess,
+    getUserAppConfigFailure,
     getUserGeneralSettingsSuccess,
     getUserGeneralSettingsFailure,
     getUserSettingByNameSuccess,
@@ -15,6 +18,7 @@ import {
     getUserProfileMenuFailure, } from './actions';
 import { 
     getUserInfo, 
+    getUserAppConfig,
     getUserGeneralSettings,
     getUserSetting, 
     getUserProfileMenu } from './service';
@@ -25,6 +29,15 @@ function* fetchUserInfo() {
         yield put(getUserInfoSuccess(response));
     } catch (error) {
         yield put(getUserInfoFailure(error));
+    }
+}
+
+function* fetchUserAppConfig() {
+    try {
+        const response = yield call(getUserAppConfig);
+        yield put(getUserAppConfigSuccess(response));
+    } catch (error) {
+        yield put(getUserAppConfigFailure(error));
     }
 }
 
@@ -61,6 +74,7 @@ function* fetchUserProfileMenu() {
 
 function* userSaga() {
     yield takeEvery(GET_USER_INFO, fetchUserInfo);
+    yield takeEvery(GET_USER_APP_CONFIG, fetchUserAppConfig);
     yield takeEvery(GET_USER_GENERAL_SETTINGS, fetchUserGeneralSettings);
     yield takeEvery(GET_USER_SETTING, fetchUserSetting);
     yield takeEvery(GET_USER_PROFILE_MENU, fetchUserProfileMenu);

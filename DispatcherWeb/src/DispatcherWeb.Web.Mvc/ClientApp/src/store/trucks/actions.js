@@ -5,12 +5,21 @@ import {
     GET_BED_CONSTRUCTION_SELECT_LIST,
     GET_BED_CONSTRUCTION_SELECT_LIST_SUCCESS,
     GET_BED_CONSTRUCTION_SELECT_LIST_FAILURE,
+    GET_BED_CONSTRUCTIONS,
+    GET_BED_CONSTRUCTIONS_SUCCESS,
+    GET_BED_CONSTRUCTIONS_FAILURE,
     GET_FUEL_TYPE_SELECT_LIST,
     GET_FUEL_TYPE_SELECT_LIST_SUCCESS,
     GET_FUEL_TYPE_SELECT_LIST_FAILURE,
     GET_ACTIVE_TRAILERS_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
     GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    GET_MAKES_SELECT_LIST,
+    GET_MAKES_SELECT_LIST_SUCCESS,
+    GET_MAKES_SELECT_LIST_FAILURE,
+    GET_MODELS_SELECT_LIST,
+    GET_MODELS_SELECT_LIST_SUCCESS,
+    GET_MODELS_SELECT_LIST_FAILURE,
     GET_TRUCK_FOR_EDIT,
     GET_TRUCK_FOR_EDIT_SUCCESS,
     GET_TRUCK_FOR_EDIT_FAILURE,
@@ -20,11 +29,16 @@ import {
     EDIT_TRUCK,
     EDIT_TRUCK_SUCCESS,
     EDIT_TRUCK_FAILURE,
-    EDIT_TRUCK_RESET
+    EDIT_TRUCK_RESET,
+    SET_TRUCK_IS_OUT_OF_SERVICE,
+    SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS,
+    SET_TRUCK_IS_OUT_OF_SERVICE_FAILURE,
+    SET_TRUCK_IS_OUT_OF_SERVICE_RESET,
 } from './actionTypes';
 
-export const getVehicleCategories = () => ({
+export const getVehicleCategories = filter => ({
     type: GET_VEHICLE_CATEGORIES,
+    payload: filter
 });
 
 export const getVehicleCategoriesSuccess = vehicleCategories => ({
@@ -51,6 +65,21 @@ export const getBedConstructionSelectListFailure = error => ({
     payload: error,
 });
 
+export const getBedConstructions = filter => ({
+    type: GET_BED_CONSTRUCTIONS,
+    payload: filter
+});
+
+export const getBedConstructionsSuccess = bedConstructions => ({
+    type: GET_BED_CONSTRUCTIONS_SUCCESS,
+    payload: bedConstructions
+});
+
+export const getBedConstructionsFailure = error => ({
+    type: GET_BED_CONSTRUCTIONS_FAILURE,
+    payload: error
+});
+
 export const getFuelTypeSelectList = () => ({
     type: GET_FUEL_TYPE_SELECT_LIST,
 });
@@ -65,8 +94,9 @@ export const getFuelTypeSelectListFailure = error => ({
     payload: error,
 });
 
-export const getActiveTrailersSelectList = () => ({
+export const getActiveTrailersSelectList = filter => ({
     type: GET_ACTIVE_TRAILERS_SELECT_LIST,
+    payload: filter
 });
 
 export const getActiveTrailersSelectListSuccess = activeTrailersSelectList => ({
@@ -76,6 +106,36 @@ export const getActiveTrailersSelectListSuccess = activeTrailersSelectList => ({
 
 export const getActiveTrailersSelectListFailure = error => ({
     type: GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    payload: error,
+});
+
+export const getMakesSelectList = filter => ({
+    type: GET_MAKES_SELECT_LIST,
+    payload: filter
+});
+
+export const getMakesSelectListSuccess = makesSelectList => ({
+    type: GET_MAKES_SELECT_LIST_SUCCESS,
+    payload: makesSelectList,
+});
+
+export const getMakesSelectListFailure = error => ({
+    type: GET_MAKES_SELECT_LIST_FAILURE,
+    payload: error,
+});
+
+export const getModelsSelectList = filter => ({
+    type: GET_MODELS_SELECT_LIST,
+    payload: filter
+});
+
+export const getModelsSelectListSuccess = modelsSelectList => ({
+    type: GET_MODELS_SELECT_LIST_SUCCESS,
+    payload: modelsSelectList,
+});
+
+export const getModelsSelectListFailure = error => ({
+    type: GET_MODELS_SELECT_LIST_FAILURE,
     payload: error,
 });
 
@@ -125,4 +185,26 @@ export const editTruckFailure = error => ({
 
 export const resetEditTruck = () => ({
     type: EDIT_TRUCK_RESET
+});
+
+export const setTruckIsOutOfService = truck => ({
+    type: SET_TRUCK_IS_OUT_OF_SERVICE,
+    payload: truck
+});
+
+export const setTruckIsOutOfServiceSuccess = (response, isOutOfService) => ({
+    type: SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS,
+    payload: {
+        response, 
+        isOutOfService
+    }
+});
+
+export const setTruckIsOutOfServiceFailure = error => ({
+    type: SET_TRUCK_IS_OUT_OF_SERVICE_FAILURE,
+    payload: error,
+});
+
+export const resetSetTruckIsOutOfService = () => ({
+    type: SET_TRUCK_IS_OUT_OF_SERVICE_RESET
 });

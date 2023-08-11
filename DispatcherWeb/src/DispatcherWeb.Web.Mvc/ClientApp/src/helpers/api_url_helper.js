@@ -14,6 +14,7 @@ export const GET_SCHEDULED_TRUCK_COUNT_PARTIAL_VIEW = '/DashboardView/GetSchedul
 
 //User
 export const GET_CURRENT_LOGIN_INFO = '/Session/GetCurrentLoginInformations';
+export const GET_USER_APP_SETTINGS = '/UserSettings/GetUserAppConfig';
 export const GET_USER_GENERAL_SETTINGS = '/UserSettings/GetGeneralSettings';
 export const GET_USER_SETTING = '/UserSettings/GetUserSettingByName';
 
@@ -49,17 +50,33 @@ export const GET_OFFICES = '/Office/GetOfficesSelectList';
 export const GET_DRIVERS_SELECT_LIST = '/Driver/GetDriversSelectList';
 export const GET_DRIVER_FOR_EDIT = '/Driver/GetDriverForEdit';
 
+//DriverAssigments
+export const SET_DRIVER_FOR_TRUCK = '/DriverAssignment/SetDriverForTruck';
+export const HAS_ORDER_LINE_TRUCKS = '/DriverAssignment/HasOrderLineTrucks';
+
 //Trucks
 export const GET_VEHICLE_CATEGORIES = '/Truck/GetVehicleCategoriesSelectList';
-export const GET_ACTIVE_TRAILERs_SELECT_LIST = '/Truck/GetActiveTrailersSelectList';
+export const GET_ACTIVE_TRAILERS_SELECT_LIST = '/Truck/GetActiveTrailersSelectList';
 export const GET_BED_CONSTRUCTION_SELECT_LIST = '/Truck/GetBedConstructionSelectList';
+export const GET_MAKES_SELECT_LIST = '/Truck/GetMakesSelectList';
+export const GET_MODELS_SELECT_LIST = '/Truck/GetModelsSelectList';
+export const GET_BED_CONSTRUCTIONS = '/Truck/GetBedConstructions';
 export const GET_FUEL_TYPE_SELECT_LIST = '/Truck/GetFuelTypeSelectList';
 export const GET_TRUCK_FOR_EDIT = '/Truck/GetTruckForEdit';
 export const GET_WIALON_DEVICE_TYPES_SELECT_LIST = '/TruckTelematics/GetWialonDeviceTypesSelectList';
 export const EDIT_TRUCK = '/Truck/EditTruck';
+export const SET_TRUCK_IS_OUT_OF_SERVICE = '/Truck/SetTruckIsOutOfService';
+
+//TrailerAssignments
+export const SET_TRAILER_FOR_TRACTOR = '/TrailerAssignment/SetTrailerForTractor';
+
+//LeaseHaulers
+export const GET_LEASE_HAULER_DRIVERS_SELECT_LIST = '/LeaseHauler/GetLeaseHaulerDriversSelectList';
+
+//LeaseHaulerRequestEdit
+export const SET_DRIVER_FOR_LEASE_HAULER_TRUCK = '/LeaseHaulerRequestEdit/SetDriverForLeaseHaulerTruck';
 
 //Scheduling
-export const GET_PAGE_CONFIG = '/Scheduling/GetPageConfig';
 export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';
 export const GET_SCHEDULE_TRUCK_BY_ID = '/Scheduling/GetScheduleTruckById';
 export const GET_SCHEDULE_ORDERS = '/Scheduling/GetScheduleOrders';

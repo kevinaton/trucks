@@ -14,9 +14,9 @@ import {
     getDriverForEdit
 } from './service';
 
-function* fetchDriversSelectList() {
+function* fetchDriversSelectList({ payload: filter }) {
     try {
-        const response = yield call(getDriversSelectList);
+        const response = yield call(getDriversSelectList, filter);
         yield put(getDriversSelectListSuccess(response));
     } catch (error) {
         yield put(getDriversSelectListFailure(error));

@@ -1230,6 +1230,8 @@ namespace DispatcherWeb.Trucks
                 throw new UserFriendlyException(L("UnableToDeleteTruckWithAssociatedData"));
             }
             await _truckRepository.DeleteAsync(input.Id);
+            await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                .AddChange(EntityEnum.Truck, GetChangedTruckById(input.Id), ChangeType.Removed));
         }
 
         [AbpAuthorize(AppPermissions.Pages_Schedule)]

@@ -3,4 +3,4 @@ export const assetType = {
     TRACTOR: 2,
     TRAILER: 3,
     OTHER: 4
-}
+};

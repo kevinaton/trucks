@@ -1,9 +1,6 @@
 import { get } from '../../helpers/api_helper';
 import * as url from '../../helpers/api_url_helper';
 
-// get page config
-export const getPageConfig = () => get(url.GET_PAGE_CONFIG);
-
 // get schedule trucks
 export const getScheduleTrucks = filter => {
     let queryString = `officeId=${filter.officeId}&date=${encodeURIComponent(filter.date)}`;

@@ -75,7 +75,7 @@ const a11yProps = (index) => {
 };
 
 const AddOrEditTruckForm = ({
-    pageConfig, 
+    userAppConfiguration, 
     openModal,
     closeModal,
     openDialog
@@ -83,7 +83,7 @@ const AddOrEditTruckForm = ({
     const [value, setValue] = useState(0);
     const [officeOptions, setOfficeOptions] = useState(null);
     const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState(null);
-    const [defaultDriverOptions, setDefaultDriverOptions] = useState(null);
+    const [defaultDriverOptions, setDefaultDriverOptions] = useState([]);
     const [activeTrailersOptions, setActiveTrailersOptions] = useState(null);
     const [bedConstructionOptions, setBedConstructionOptions] = useState(null);
     const [fuelTypeOptions, setFuelTypeOptions] = useState(null);
@@ -241,7 +241,11 @@ const AddOrEditTruckForm = ({
 
     useEffect(() => {
         dispatch(getVehicleCategories());
-        dispatch(getDriversSelectList());
+        dispatch(getDriversSelectList({ 
+            includeLeaseHaulerDrivers: false, 
+            maxResultCount: 1000, 
+            skipCount: 0
+        }));
         dispatch(getBedConstructionSelectList());
         dispatch(getFuelTypeSelectList());
         dispatch(getWialonDeviceTypesSelectList());
@@ -408,19 +412,19 @@ const AddOrEditTruckForm = ({
     };
 
     const handleVehicleCategoryIdInputChange = (selectedOption) => {
-        const { isPowered, assetType } = selectedOption.item;
-        setVehicleCategoryIsPowered(isPowered);
-        setVehicleCategoryAssetType(assetType);
+        const { ...item } = selectedOption.item;
+        setVehicleCategoryIsPowered(item.isPowered);
+        setVehicleCategoryAssetType(item.assetType);
 
-        if ([assetType.DUMP_TRUCK, assetType.TRAILER].includes(assetType)) {
-            setBedConstruction(true);
+        if ([assetType.DUMP_TRUCK, assetType.TRAILER].includes(item.assetType)) {
+            setShowBedConstruction(true);
         }
         
-        if (isPowered) {
+        if (item.isPowered) {
             setCanPullTrailer(assetType === assetType.TRACTOR);
         }
         
-        const shouldDisableDefaultDriver = isPowered !== true;
+        const shouldDisableDefaultDriver = item.isPowered !== true;
         if (shouldDisableDefaultDriver) {
             setDefaultDriverId({
                 ...defaultDriverId,
@@ -502,7 +506,10 @@ const AddOrEditTruckForm = ({
 
     const handleCanPullTrailerChange = (e) => {
         if (e.target.checked && activeTrailersOptions === null) {
-            dispatch(getActiveTrailersSelectList());
+            dispatch(getActiveTrailersSelectList({
+                maxResultCount: 1000,
+                skipCount: 0
+            }));
         }
         setCanPullTrailer(e.target.checked);
     };
@@ -794,6 +801,7 @@ const AddOrEditTruckForm = ({
                 ...truckCode,
                 error: true
             });
+            return;
         }
 
         // validate office id
@@ -802,6 +810,7 @@ const AddOrEditTruckForm = ({
                 ...officeId,
                 error: true
             });
+            return;
         }
 
         // validate vehicle category id
@@ -810,9 +819,10 @@ const AddOrEditTruckForm = ({
                 ...vehicleCategoryId,
                 error: true
             });
+            return;
         }
 
-        var data = {
+        const data = {
             id: getDefaultVal(id, ''),
             vehicleCategoryIsPowered: vehicleCategoryIsPowered.toString(),
             vehicleCategoryAssetType: vehicleCategoryAssetType.toString(),
@@ -896,15 +906,13 @@ const AddOrEditTruckForm = ({
     };
 
     const renderGeneralForm = () => {
-        const { features } = pageConfig;
+        const { features } = userAppConfiguration;
         return (
             <Stack 
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 <TextField 
@@ -1077,6 +1085,7 @@ const AddOrEditTruckForm = ({
                                 Inactivation Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
                             </>
                         } 
+                        views={['year', 'month', 'day']}
                         value={inactivationDate.value !== null ? renderDate(inactivationDate.value) : moment()} 
                         emptyLabel='' 
                         onChange={handleInactivationDateChange} 
@@ -1189,6 +1198,7 @@ const AddOrEditTruckForm = ({
                             In Service Date <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
                         </>
                     } 
+                    views={['year', 'month', 'day']}
                     value={inServiceDate.value !== null ? renderDate(inServiceDate.value) : moment()} 
                     emptyLabel=''
                     onChange={handleInServiceDateChange} 
@@ -1224,7 +1234,8 @@ const AddOrEditTruckForm = ({
                     <DatePicker 
                         id='plateExpiration'
                         name='plateExpiration'
-                        label='Plate Expiration'
+                        label='Plate Expiration' 
+                        views={['year', 'month', 'day']}
                         value={plateExpiration !== null ? renderDate(plateExpiration) : null } 
                         emptyLabel=''
                         onChange={handlePlateExpirationChange} 
@@ -1275,7 +1286,8 @@ const AddOrEditTruckForm = ({
                 <DatePicker 
                     id='insuranceValidUntil'
                     name='insuranceValidUntil'
-                    label='Insurance Valid Until'
+                    label='Insurance Valid Until' 
+                    views={['year', 'month', 'day']}
                     value={insuranceValidUntil !== null ? renderDate(insuranceValidUntil) : null} 
                     emptyLabel=''
                     onChange={handleInsuranceValidUntilChange} 
@@ -1287,7 +1299,8 @@ const AddOrEditTruckForm = ({
                     <DatePicker 
                         id='purchaseDate'
                         name='purchaseDate'
-                        label='Purchase Date'
+                        label='Purchase Date' 
+                        views={['year', 'month', 'day']}
                         value={purchaseDate !== null ? renderDate(purchaseDate) : null} 
                         emptyLabel=''
                         onChange={handlePurchaseDateChange} 
@@ -1311,7 +1324,8 @@ const AddOrEditTruckForm = ({
                     <DatePicker 
                         id='soldDate'
                         name='soldDate'
-                        label='Sold Date'
+                        label='Sold Date' 
+                        views={['year', 'month', 'day']}
                         value={soldDate !== null ? renderDate(soldDate) : null} 
                         emptyLabel=''
                         onChange={handleSoldDateChange} 
@@ -1353,9 +1367,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 { showBedConstruction && 
@@ -1490,9 +1502,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 <TextField 
@@ -1525,9 +1535,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 
@@ -1541,9 +1549,7 @@ const AddOrEditTruckForm = ({
                 spacing={2} 
                 sx={{
                     paddingTop: '8px',
-                    paddingBottom: '8px',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflowY: 'auto'
+                    paddingBottom: '8px'
                 }}
             >
                 <FormControl fullWidth>
@@ -1610,7 +1616,7 @@ const AddOrEditTruckForm = ({
 
     return (
         <React.Fragment>
-            { !isEmpty(pageConfig) && !isEmpty(truckInfo) && 
+            { !isEmpty(userAppConfiguration) && !isEmpty(truckInfo) && 
                 <React.Fragment>
                     <Box
                         display='flex'

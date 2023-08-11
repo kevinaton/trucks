@@ -5,11 +5,13 @@ import { authProtectedRoutes } from './index';
   
 export const RouterConfig = ({
     isAuthenticated,
+    userAppConfiguration,
     handleCurrentPageName,
     openModal,
     closeModal,
     openDialog,
-    closeDialog
+    closeDialog,
+    setIsUIBusy
 }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -33,11 +35,13 @@ export const RouterConfig = ({
                                 path={route.path}
                                 element={
                                     <route.component 
+                                        userAppConfiguration={userAppConfiguration}
                                         handleCurrentPageName={handleCurrentPageName} 
                                         openModal={openModal} 
                                         closeModal={closeModal} 
                                         openDialog={openDialog} 
-                                        closeDialog={closeDialog}
+                                        closeDialog={closeDialog} 
+                                        setIsUIBusy={setIsUIBusy}
                                     />
                                 }
                             />

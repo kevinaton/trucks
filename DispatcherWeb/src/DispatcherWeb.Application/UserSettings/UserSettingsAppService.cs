@@ -3,11 +3,14 @@ using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Dependency;
-using Abp.Runtime.Session;
 using Abp.Timing.Timezone;
 using Abp.Timing;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Configuration.Host.Dto;
+using DispatcherWeb.Authorization;
+using DispatcherWeb.Features;
+using AppSettingsConfig = DispatcherWeb.Configuration.AppSettings;
+using DispatcherWeb.UserSettings.Dto;
 
 namespace DispatcherWeb.UserSettings
 {
@@ -24,6 +27,40 @@ namespace DispatcherWeb.UserSettings
         {
             _settingDefinitionManager = settingDefinitionManager;
             _scopedIocResolver = scopedIocResolver;
+        }
+
+        public async Task<UserConfig> GetUserAppConfig()
+        {
+            var config = new UserConfig
+            {
+                Permissions = new UserPermission
+                {
+                    Edit = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Orders_Edit),
+                    Print = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_PrintOrders),
+                    EditTickets = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Tickets_Edit),
+                    EditQuotes = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Quotes_Edit),
+                    DriverMessages = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_DriverMessages),
+                    Trucks = await PermissionChecker.IsGrantedAsync(AppPermissions.Pages_Trucks)
+                },
+                Features = new UserFeatures
+                {
+                    AllowSharedOrders = await base.IsEnabledAsync(AppFeatures.AllowSharedOrdersFeature),
+                    AllowMultiOffice = await base.IsEnabledAsync(AppFeatures.AllowMultiOfficeFeature),
+                    AllowSendingOrdersToDifferentTenant = await base.IsEnabledAsync(AppFeatures.AllowSendingOrdersToDifferentTenant),
+                    AllowImportingTruxEarnings = await base.IsEnabledAsync(AppFeatures.AllowImportingTruxEarnings),
+                    LeaseHaulers = await base.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature),
+                },
+                Settings = new UserAppSettings
+                {
+                    ValidateUtilization = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ValidateUtilization),
+                    AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders),
+                    ShowTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ShowTrailersOnSchedule),
+                    AllowSubcontractorsToDriveCompanyOwnedTrucks = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.LeaseHaulers.AllowSubcontractorsToDriveCompanyOwnedTrucks),
+                    AllowSchedulingTrucksWithoutDrivers = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers)
+                }
+            };
+
+            return config;
         }
 
         public async Task<GeneralSettingsEditDto> GetGeneralSettings()

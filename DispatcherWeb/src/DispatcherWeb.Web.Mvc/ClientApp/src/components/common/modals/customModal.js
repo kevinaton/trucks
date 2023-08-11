@@ -4,8 +4,10 @@ import { Modal, Backdrop, Fade } from '@material-ui/core';
 
 const StyledModal = styled(Modal)(({ theme }) => ({
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
+    overflowY: 'auto',
+    paddingTop: '30px'
 }));
   
 const StyledBox = styled(Box)(({ theme, size }) => ({
@@ -14,7 +16,6 @@ const StyledBox = styled(Box)(({ theme, size }) => ({
     padding: 0,
     width: size,
     position: 'relative',
-    maxHeight: '96%'
 }));
 
 export const CustomModal = ({

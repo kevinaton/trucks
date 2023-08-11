@@ -129,7 +129,8 @@ const SchedulingDataFilter = ({
                 >
                     <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='en-us'>
                         <DatePicker
-                            label='date'
+                            label='date' 
+                            views={['year', 'month', 'day']}
                             value={date}
                             onChange={handleDateFilterChange}
                             sx={{ flexShrink: 0 }}

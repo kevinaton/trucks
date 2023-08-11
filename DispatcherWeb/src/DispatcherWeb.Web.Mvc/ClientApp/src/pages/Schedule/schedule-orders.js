@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
     Box,
@@ -26,11 +26,12 @@ import { theme } from '../../Theme';
 import _, { isEmpty } from 'lodash';
 import { renderTime, isToday, round } from '../../helpers/misc_helper';
 import { getScheduleOrders } from '../../store/actions';
-import TruckAssignment from './truck-assignment';
+import ScheduleTruckAssignment from './schedule-truck-assignment';
 import App from '../../config/appConfig';
+import SyncRequestContext from '../../components/common/signalr/syncRequestContext';
 
 const ScheduleOrders = ({
-    pageConfig,
+    userAppConfiguration,
     dataFilter,
     trucks,
     orders,
@@ -38,6 +39,7 @@ const ScheduleOrders = ({
 }) => {
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
+    const [isConnectedToSignalR, setIsConnectedToSignalR] = useState(false);
 
     const [actionAnchor, setActionAnchor] = useState(null);
     const actionOpen = Boolean(actionAnchor);
@@ -48,7 +50,8 @@ const ScheduleOrders = ({
     const [isJob, setJob] = useState(false);
     const [title, setTitle] = useState('Add Job');
     const [editData, setEditData] = useState({});
-
+    
+    const syncRequestConnection = useContext(SyncRequestContext);
     const dispatch = useDispatch();
     const {
         isLoadingScheduleOrders,
@@ -97,6 +100,15 @@ const ScheduleOrders = ({
             prevDataFilterRef.current = null;
         };
     }, []);
+
+    useEffect(() => {
+        if (!isConnectedToSignalR && syncRequestConnection !== null) {
+            syncRequestConnection.on('syncRequest', payload => {
+                console.log('orderline syncRequest: ', payload)
+            });
+            setIsConnectedToSignalR(true);
+        }
+    }, [isConnectedToSignalR, syncRequestConnection]);
 
     useEffect(() => {
         if (isLoading !== isLoadingScheduleOrders) {
@@ -610,7 +622,7 @@ const ScheduleOrders = ({
 
                                                     <Grid item>
                                                         {!isEmpty(trucks) && 
-                                                            <TruckAssignment 
+                                                            <ScheduleTruckAssignment 
                                                                 trucks={trucks} 
                                                                 index={index}
                                                                 data={data} 

@@ -9,5 +9,8 @@ export * from './authorization/users/userLink/actions';
 export * from './notifications/actions';
 export * from './offices/actions';
 export * from './drivers/actions';
+export * from './driverAssignments/actions';
+export * from './trailerAssignments/actions';
 export * from './trucks/actions';
+export * from './leaseHaulers/actions';
 export * from './scheduling/actions';

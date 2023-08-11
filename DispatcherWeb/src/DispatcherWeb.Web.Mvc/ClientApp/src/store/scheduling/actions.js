@@ -1,7 +1,4 @@
 import {
-    GET_PAGE_CONFIG,
-    GET_PAGE_CONFIG_SUCCESS,
-    GET_PAGE_CONFIG_FAILURE,
     GET_SCHEDULE_TRUCKS,
     GET_SCHEDULE_TRUCKS_SUCCESS,
     GET_SCHEDULE_TRUCKS_FAILURE,
@@ -12,21 +9,8 @@ import {
     GET_SCHEDULE_ORDERS,
     GET_SCHEDULE_ORDERS_SUCCESS,
     GET_SCHEDULE_ORDERS_FAILURE,
+    REMOVE_TRUCK_FROM_SCHEDULE
 } from './actionTypes';
-
-export const getSchedulePageConfig = () => ({
-    type: GET_PAGE_CONFIG,
-});
-
-export const getSchedulePageConfigSuccess = pageConfig => ({
-    type: GET_PAGE_CONFIG_SUCCESS,
-    payload: pageConfig,
-});
-
-export const getSchedulePageConfigFailure = error => ({
-    type: GET_PAGE_CONFIG_FAILURE,
-    payload: error,
-});
 
 export const getScheduleTrucks = filter => ({
     type: GET_SCHEDULE_TRUCKS,
@@ -75,4 +59,9 @@ export const getScheduleOrdersSuccess = scheduleOrders => ({
 export const getScheduleOrdersFailure = error => ({
     type: GET_SCHEDULE_ORDERS_FAILURE,
     payload: error,
+});
+
+export const removeTruckFromSchedule = truckIds => ({
+    type: REMOVE_TRUCK_FROM_SCHEDULE,
+    payload: truckIds,
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     Box,
@@ -9,26 +9,27 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import _, { isEmpty } from 'lodash';
-import { baseUrl } from '../../helpers/api_helper';
-import * as signalR from '@microsoft/signalr';
 import { 
     getScheduleTrucks, 
     getScheduleTruckBySyncRequest, 
+    removeTruckFromSchedule as onRemoveTruckFromSchedule,
     getScheduleTruckBySyncRequestReset as onResetGetScheduleTruckBySyncRequest } from '../../store/actions';
 import TruckBlockItem from './truck-block-item';
 import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
 import { entityType } from '../../common/enums/entityType';
 import { changeType } from '../../common/enums/changeType';
+import SyncRequestContext from '../../components/common/signalr/syncRequestContext';
 
 const TruckBlock = ({
-    pageConfig,
+    userAppConfiguration,
     dataFilter,
     trucks, 
     orders,
     onSetTrucks,
     openModal,
     closeModal,
-    openDialog
+    openDialog, 
+    setIsUIBusy
 }) => {
     const prevDataFilterRef = useRef(dataFilter);
     const [isLoading, setLoading] = useState(false);
@@ -36,6 +37,7 @@ const TruckBlock = ({
     const [leaseHaulers, setLeaseHaulers] = useState(null);
     const [isConnectedToSignalR, setIsConnectedToSignalR] = useState(false);
 
+    const syncRequestConnection = useContext(SyncRequestContext);
     const dispatch = useDispatch();
     const { 
         isLoadingScheduleTrucks,
@@ -48,19 +50,20 @@ const TruckBlock = ({
     }));
 
     useEffect(() => {
-        if (!isEmpty(pageConfig)) {
+        if (!isEmpty(userAppConfiguration)) {
             if (validateUtilization === null) {
-                setValidateUtilization(pageConfig.settings.validateUtilization);
+                setValidateUtilization(userAppConfiguration.settings.validateUtilization);
             }
             
             if (leaseHaulers === null) {
-                setLeaseHaulers(pageConfig.features.leaseHaulers);
+                setLeaseHaulers(userAppConfiguration.features.leaseHaulers);
             }
         }
-    }, [pageConfig, validateUtilization, leaseHaulers]);
+    }, [userAppConfiguration, validateUtilization, leaseHaulers]);
     
     useEffect(() => {
-        if (!isEmpty(pageConfig) && isLoading && 
+        if (isLoading && 
+            !isEmpty(userAppConfiguration) && 
             !isEmpty(scheduleTrucks) && 
             !isEmpty(scheduleTrucks.result)
         ) {
@@ -71,7 +74,7 @@ const TruckBlock = ({
                 onSetTrucks(items);
             }
         }
-    }, [pageConfig, isLoading, scheduleTrucks, trucks, onSetTrucks]);
+    }, [isLoading, scheduleTrucks]);
 
     useEffect(() => {
         // check if dataFilter has changed from its previous state
@@ -95,83 +98,53 @@ const TruckBlock = ({
     }, []);
 
     useEffect(() => {
-        if (!isConnectedToSignalR && dataFilter.officeId !== null && dataFilter.date !== null) {
-            const startConnection = (transport) => {
-                const url = `${baseUrl}/signalr-dispatcher`;
-                const connection = new signalR.HubConnectionBuilder()
-                    .withUrl(url, transport)
-                    .withAutomaticReconnect()
-                    .build();
+        if (!isConnectedToSignalR && 
+            syncRequestConnection !== null &&
+            dataFilter.officeId !== null && 
+            dataFilter.date !== null
+        ) {
+            syncRequestConnection.on('syncRequest', payload => {
+                const { changes } = payload;
+                console.log('syncRequest: ', payload)
+                if (!isEmpty(changes)) {
+                    let changedTrucks = _.filter(changes, i => i.entityType === entityType.TRUCK);
+                    const modifiedTrucks = _.map(
+                        _.filter(changedTrucks, change => change.changeType === changeType.MODIFIED), 
+                        item => item.entity.id
+                    );
 
-                connection.onclose((err) => {
-                    if (err) {
-                        console.log('Connection closed with error: ', err);
-                    } else {
-                        console.log('Disconnected');
+                    const removedTrucks = _.map(
+                        _.filter(changedTrucks, change => change.changeType === changeType.REMOVED),
+                        item => item.entity.id
+                    );
+
+                    if (modifiedTrucks.length > 0) {
+                        dispatch(getScheduleTruckBySyncRequest({
+                            officeId: dataFilter.officeId,
+                            date: dataFilter.date,
+                            truckIds: modifiedTrucks
+                        }));
                     }
 
-                    setTimeout(() => {
-                        connection.start();
-                    }, 5000);
-                });
-
-                connection.on('syncRequest', payload => {
-                    const { changes } = payload;
-                    if (!isEmpty(changes)) {
-                        let changedTrucks = _.filter(changes, i => i.entityType === entityType.TRUCK);
-                        const modifiedTrucks = _.map(
-                            _.filter(changedTrucks, change => change.changeType === changeType.MODIFIED), 
-                            item => item.entity.id
-                        );
-
-                        const removedTrucks = _.map(
-                            _.filter(changedTrucks, change => change.changeType === changeType.REMOVED),
-                            item => item.entity.id
-                        );
-
-                        if (modifiedTrucks.length > 0) {
-                            dispatch(getScheduleTruckBySyncRequest({
-                                officeId: dataFilter.officeId,
-                                date: dataFilter.date,
-                                truckIds: modifiedTrucks
-                            }));
-                        }
-
-                        // todo: remove the entity from the list
-                        if (removedTrucks.length > 0) {
-
-                        }
+                    if (removedTrucks.length > 0) {
+                        dispatch(onRemoveTruckFromSchedule(removedTrucks));
                     }
-                });
+                }
+            });
 
-                connection
-                    .start()
-                    .then(() => {
-                        setIsConnectedToSignalR(true);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        if (transport !== signalR.HttpTransportType.LongPolling) {
-                            return startConnection(transport + 1);
-                        }
-                    });
-            };
-            
-            startConnection(signalR.HttpTransportType.WebSockets);
+            setIsConnectedToSignalR(true);
         }
-    }, [dispatch, isConnectedToSignalR, dataFilter]);
+    }, [dispatch, isConnectedToSignalR, syncRequestConnection, dataFilter]);
 
     useEffect(() => {
         if (isModifiedScheduleTrucks) {
             const { items } = scheduleTrucks.result;
-            if (!isEmpty(items) && (
-                isEmpty(trucks) || (!isEmpty(trucks) && !_.isEqual(trucks, items))
-            )) {
+            if (!isEmpty(items)) {
                 onSetTrucks(items);
                 dispatch(onResetGetScheduleTruckBySyncRequest());
             }
         }
-    }, [dispatch, isModifiedScheduleTrucks, scheduleTrucks, trucks, onSetTrucks]);
+    }, [isModifiedScheduleTrucks]);
 
     useEffect(() => {
         if (isLoading !== isLoadingScheduleTrucks) {
@@ -269,7 +242,7 @@ const TruckBlock = ({
 
         openModal(
             <AddOrEditTruckForm 
-                pageConfig={pageConfig} 
+                userAppConfiguration={userAppConfiguration} 
                 openModal={openModal}
                 closeModal={closeModal} 
                 openDialog={openDialog}
@@ -283,13 +256,15 @@ const TruckBlock = ({
             <TruckBlockItem 
                 truck={truck} 
                 truckColors={truckColors}
-                pageConfig={pageConfig} 
+                userAppConfiguration={userAppConfiguration} 
                 dataFilter={dataFilter} 
                 truckHasNoDriver={truckHasNoDriver(truck)} 
                 truckCategoryNeedsDriver={truckCategoryNeedsDriver(truck)} 
                 orders={orders}
                 openModal={openModal} 
                 closeModal={closeModal} 
+                openDialog={openDialog} 
+                setIsUIBusy={setIsUIBusy}
             />
         </Grid>
     );
@@ -299,7 +274,12 @@ const TruckBlock = ({
             {/* Truck Map */}
             <Box sx={{ p: 3 }}>
                 <Paper variant='outlined' sx={{ p: 1 }}>
-                    <Grid id='TruckTiles' container rowSpacing={1} columnSpacing={1}>
+                    <Grid 
+                        id='TruckTiles' 
+                        container 
+                        rowSpacing={1} 
+                        columnSpacing={1}
+                    >
                         { isLoading && 
                             <React.Fragment>
                                 <Grid item>

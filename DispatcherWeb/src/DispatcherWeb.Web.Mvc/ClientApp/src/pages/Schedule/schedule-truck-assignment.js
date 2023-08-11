@@ -7,7 +7,7 @@ const sleep = (delay = 0) => {
     });
 }
 
-const TruckAssignment = ({
+const ScheduleTruckAssignment = ({
     trucks,
     index,
     data
@@ -88,4 +88,4 @@ const TruckAssignment = ({
     );
 };
 
-export default TruckAssignment;
+export default ScheduleTruckAssignment;

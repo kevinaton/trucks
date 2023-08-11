@@ -3,13 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
-using Abp.Linq.Extensions;
 using Abp.Timing;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.DriverApplication;
 using DispatcherWeb.DriverApplication.Dto;
 using DispatcherWeb.Orders;
 using DispatcherWeb.SyncRequests;
+using DispatcherWeb.SyncRequests.Entities;
 using DispatcherWeb.TrailerAssignments.Dto;
 using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;
@@ -42,12 +42,20 @@ namespace DispatcherWeb.TrailerAssignments
 
         public async Task SetTrailerForTractor(SetTrailerForTractorInput input)
         {
+            var syncRequest = new SyncRequest();
+
             var tractor = await _truckRepository.GetAll()
                 .Where(x => x.Id == input.TractorId)
                 .FirstAsync();
 
             var oldTrailerId = tractor.CurrentTrailerId;
+            if (oldTrailerId.HasValue)
+            {
+                syncRequest.AddChange(EntityEnum.Truck, GetChangedTruckById(oldTrailerId.Value));
+            }
+
             tractor.CurrentTrailerId = input.TrailerId;
+            syncRequest.AddChange(EntityEnum.Truck, tractor.ToChangedEntity());
 
             if (input.TrailerId.HasValue)
             {
@@ -55,7 +63,12 @@ namespace DispatcherWeb.TrailerAssignments
                     .Where(x => x.CurrentTrailerId == input.TrailerId.Value && x.Id != input.TractorId)
                     .ToListAsync();
 
-                otherTractors.ForEach(x => x.CurrentTrailerId = null);
+                otherTractors.ForEach(x => {
+                    x.CurrentTrailerId = null;
+                    syncRequest.AddChange(EntityEnum.Truck, x.ToChangedEntity());
+                });
+
+                syncRequest.AddChange(EntityEnum.Truck, GetChangedTruckById(input.TrailerId.Value));
             }
 
             if (input.UpdateExistingOrderLineTrucks)
@@ -69,6 +82,7 @@ namespace DispatcherWeb.TrailerAssignments
                 foreach (var orderLineTruck in orderLineTrucks)
                 {
                     orderLineTruck.TrailerId = input.TrailerId;
+                    syncRequest.AddChange(EntityEnum.OrderLine, GetChangedOrderLineById(orderLineTruck.OrderLineId));
                 }
 
                 var orderLineTruckIds = orderLineTrucks.Select(x => x.Id).ToList();
@@ -79,6 +93,9 @@ namespace DispatcherWeb.TrailerAssignments
 
                 await SendSyncRequestForAffectedDispatches(affectedDispatches, "Updated Trailer for dispatch(es)");
             }
+
+            // send sync requests for affected tractor, trailers and orderlines
+            await _syncRequestSender.SendSyncRequest(syncRequest);
         }
 
         public async Task SetTractorForTrailer(SetTractorForTrailerInput input)
@@ -133,6 +150,22 @@ namespace DispatcherWeb.TrailerAssignments
                     .AddChanges(EntityEnum.Dispatch, affectedDispatches.Select(x => x.ToChangedEntity()))
                     .AddLogMessage(logMessage));
             }
+        }
+
+        private ChangedTruck GetChangedTruckById(int id)
+        {
+            return new ChangedTruck
+            {
+                Id = id
+            };
+        }
+
+        private ChangedOrderLine GetChangedOrderLineById(int id)
+        {
+            return new ChangedOrderLine
+            {
+                Id = id
+            };
         }
     }
 }

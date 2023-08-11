@@ -4,6 +4,9 @@ import * as url from '../../helpers/api_url_helper';
 // get user info
 export const getUserInfo = () => get(url.GET_CURRENT_LOGIN_INFO);
 
+// get user app config
+export const getUserAppConfig = () => get(url.GET_USER_APP_SETTINGS);
+
 // get user general settings
 export const getUserGeneralSettings = () => get(url.GET_USER_GENERAL_SETTINGS);
 
