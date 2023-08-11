@@ -1399,7 +1399,7 @@ namespace DispatcherWeb.Dispatching
             //await CurrentUnitOfWork.SaveChangesAsync();
 
             //var hasMoreDispatches = _dispatches
-            //        .Where(d => d.DriverId == dispatch.DriverId && (Dispatch.ActiveStatuses.Contains(d.Status) || d.Status == DispatchStatus.Created) && d.Id != dispatch.Id)
+            //        .Where(d => d.DriverId == dispatch.DriverId && Dispatch.OpenStatuses.Contains(d.Status) && d.Id != dispatch.Id)
             //        .Any();
 
             //if (!hasMoreDispatches && !await ShouldSendOrdersToDriversImmediately())
