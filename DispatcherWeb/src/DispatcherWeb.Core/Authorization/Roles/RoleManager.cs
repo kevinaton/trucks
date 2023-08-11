@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abp.Application.Features;
 using Abp.Authorization;
 using Abp.Authorization.Roles;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.Linq.Extensions;
 using Abp.Localization;
+using Abp.MultiTenancy;
 using Abp.Organizations;
 using Abp.Runtime.Caching;
 using Abp.UI;
 using Abp.Zero.Configuration;
 using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
@@ -25,6 +29,7 @@ namespace DispatcherWeb.Authorization.Roles
     {
         private readonly IPermissionManager _permissionManager;
         private readonly ILocalizationManager _localizationManager;
+        private readonly IFeatureChecker _featureChecker;
 
         public RoleManager(
             RoleStore store,
@@ -38,7 +43,8 @@ namespace DispatcherWeb.Authorization.Roles
             IUnitOfWorkManager unitOfWorkManager,
             ILocalizationManager localizationManager,
             IRepository<OrganizationUnit, long> organizationUnitRepository,
-            IRepository<OrganizationUnitRole, long> organizationUnitRoleRepository)
+            IRepository<OrganizationUnitRole, long> organizationUnitRoleRepository,
+            IFeatureChecker featureChecker)
             : base(
                 store,
                 roleValidators,
@@ -54,6 +60,7 @@ namespace DispatcherWeb.Authorization.Roles
         {
             _localizationManager = localizationManager;
             _permissionManager = permissionManager;
+            _featureChecker = featureChecker;
         }
 
         public override Task SetGrantedPermissionsAsync(Role role, IEnumerable<Permission> permissions)
@@ -115,5 +122,17 @@ namespace DispatcherWeb.Authorization.Roles
             await ProhibitPermissionAsync(role, permission);
         }
 
+        public IQueryable<Role> AvailableRoles
+        {
+            get
+            {
+                if (AbpSession.MultiTenancySide == MultiTenancySides.Tenant && AbpSession.UserId.HasValue)
+                {
+                    return Roles
+                        .WhereIf(!_featureChecker.IsEnabled(AppFeatures.CustomerPortal), x => x.Name != StaticRoleNames.Tenants.Customer);
+                }
+                return Roles;
+            }
+        }
     }
 }

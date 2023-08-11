@@ -172,7 +172,7 @@ namespace DispatcherWeb.Authorization.Users
         public async Task<GetUserForEditOutput> GetUserForEdit(NullableIdDto<long> input)
         {
             //Getting all available roles
-            var userRoleDtos = await _roleManager.Roles
+            var userRoleDtos = await _roleManager.AvailableRoles
                 .OrderBy(r => r.DisplayName)
                 .Select(r => new UserRoleDto
                 {
@@ -206,7 +206,7 @@ namespace DispatcherWeb.Authorization.Users
                             .IsEnabled)
                 };
 
-                foreach (var defaultRole in await _roleManager.Roles.Where(r => r.IsDefault).ToListAsync())
+                foreach (var defaultRole in await _roleManager.AvailableRoles.Where(r => r.IsDefault).ToListAsync())
                 {
                     var defaultUserRole = userRoleDtos.FirstOrDefault(ur => ur.RoleName == defaultRole.Name);
                     if (defaultUserRole != null)
@@ -607,7 +607,7 @@ namespace DispatcherWeb.Authorization.Users
         }
         public async Task<PagedResultDto<SelectListDto>> GetMaintenanceUsersSelectList(GetSelectListInput input)
         {
-            int[] maintenanceRolesIdArray = await _roleManager.Roles
+            int[] maintenanceRolesIdArray = await _roleManager.AvailableRoles
                 .Where(r => r.Name == StaticRoleNames.Tenants.Maintenance || r.Name == StaticRoleNames.Tenants.MaintenanceSupervisor)
                 .Select(r => r.Id)
                 .ToArrayAsync();
@@ -638,7 +638,7 @@ namespace DispatcherWeb.Authorization.Users
 
         public async Task<PagedResultDto<SelectListDto>> GetSalespersonsSelectList(GetSelectListInput input)
         {
-            var allowedRoles = await _roleManager.Roles
+            var allowedRoles = await _roleManager.AvailableRoles
                 .Where(x => x.Name != StaticRoleNames.Tenants.Driver && x.Name != StaticRoleNames.Tenants.LeaseHaulerDriver)
                 .Select(x => x.Id)
                 .ToListAsync();

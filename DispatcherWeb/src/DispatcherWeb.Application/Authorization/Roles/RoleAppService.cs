@@ -54,7 +54,7 @@ namespace DispatcherWeb.Authorization.Roles
         [HttpPost]
         public async Task<ListResultDto<RoleListDto>> GetRolesForDropdown()
         {
-            var query = _roleManager.Roles;
+            var query = _roleManager.AvailableRoles;
 
             var rolesListDtos = await GetRoleListDtoList(query);
 
@@ -115,16 +115,13 @@ namespace DispatcherWeb.Authorization.Roles
         }
 
         [AbpAuthorize(AppPermissions.Pages_Administration_Roles_Delete)]
-        public async Task<bool> IsRoleHaveUsers(EntityDto input)
+        public async Task<bool> IsRoleAssignedToUsers(EntityDto input)
         {
-            bool _retVal = false;
             var role = await _roleManager.GetRoleByIdAsync(input.Id);
 
             var users = await UserManager.GetUsersInRoleAsync(role.Name);
-            if (users.Count() > 0)
-                _retVal = true;
 
-            return _retVal;
+            return users.Any();
         }
 
         [AbpAuthorize(AppPermissions.Pages_Administration_Roles_Delete)]
@@ -194,19 +191,19 @@ namespace DispatcherWeb.Authorization.Roles
 
         private IQueryable<Role> GetRolesFilteredQuery(IGetRolesInput input)
         {
-            var query = _roleManager.Roles;
+            var query = _roleManager.AvailableRoles;
 
             if (!string.IsNullOrEmpty(input.Permission))
             {
-                var staticRoleNames = _roleManagementConfig.StaticRoles.Where(
-                    r => r.GrantAllPermissionsByDefault &&
-                         r.Side == AbpSession.MultiTenancySide
+                var roleNamesWithPermissionGrantedByDefault = _roleManagementConfig.StaticRoles.Where(
+                    r => (r.GrantAllPermissionsByDefault || DefaultRolePermissions.IsPermissionsGrantedToRole(r.RoleName, input.Permission)) 
+                        && r.Side == AbpSession.MultiTenancySide
                 ).Select(r => r.RoleName).ToList();
 
                 query = query.Where(r =>
                     r.Permissions.Any(rp => rp.Name == input.Permission)
                         ? r.Permissions.Any(rp => rp.Name == input.Permission && rp.IsGranted)
-                        : staticRoleNames.Contains(r.Name)
+                        : roleNamesWithPermissionGrantedByDefault.Contains(r.Name)
                 );
             }
 

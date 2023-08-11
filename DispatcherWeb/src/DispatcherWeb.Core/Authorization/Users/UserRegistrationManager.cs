@@ -79,7 +79,7 @@ namespace DispatcherWeb.Authorization.Users
 
             user.SetNormalizedNames();
 
-            var defaultRoles = await AsyncQueryableExecuter.ToListAsync(_roleManager.Roles.Where(r => r.IsDefault));
+            var defaultRoles = await AsyncQueryableExecuter.ToListAsync(_roleManager.AvailableRoles.Where(r => r.IsDefault));
             foreach (var defaultRole in defaultRoles)
             {
                 user.Roles.Add(new UserRole(tenant.Id, user.Id, defaultRole.Id));

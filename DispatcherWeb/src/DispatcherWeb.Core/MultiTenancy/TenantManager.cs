@@ -174,29 +174,11 @@ namespace DispatcherWeb.MultiTenancy
                     CheckErrors(await _roleManager.CreateStaticRoles(tenant.Id));
                     await _unitOfWorkManager.Current.SaveChangesAsync(); //To get static role ids
 
-                    //grant all permissions to admin role
-                    var adminRole = _roleManager.Roles.Single(r => r.Name == StaticRoleNames.Tenants.Admin);
-                    await _roleManager.GrantAllPermissionsAsync(adminRole);
-                    foreach (var permissionName in AppPermissions.ManualPermissionsList)
-                    {
-                        await _roleManager.ProhibitPermissionAsync(adminRole, _permissionManager.GetPermission(permissionName));
-                    }
-
                     //User role should be default
                     var userRole = _roleManager.Roles.Single(r => r.Name == StaticRoleNames.Tenants.User);
                     userRole.IsDefault = true;
                     CheckErrors(await _roleManager.UpdateAsync(userRole));
 
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.Administrative);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.Backoffice);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.Driver);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.LeaseHaulerDriver);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.Dispatching);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.Quoting);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.LimitedQuoting);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.Maintenance);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.MaintenanceSupervisor);
-                    await GrantDefaultPermissionsToStaticRole(StaticRoleNames.Tenants.Managers);
                     //Create admin user for the tenant
                     var adminUser = User.CreateTenantAdminUser(tenant.Id, adminFirstName, adminLastName, adminEmailAddress);
                     adminUser.ShouldChangePasswordOnNextLogin = shouldChangePasswordOnNextLogin;
@@ -221,7 +203,8 @@ namespace DispatcherWeb.MultiTenancy
                     await _unitOfWorkManager.Current.SaveChangesAsync(); //To get admin user's id
 
                     await CreateDefaultOffice(adminUser);
-                    //Assign admin user to admin role!
+                    //Assign admin user to admin role
+                    var adminRole = _roleManager.Roles.Single(r => r.Name == StaticRoleNames.Tenants.Admin);
                     CheckErrors(await _userManager.AddToRoleAsync(adminUser, adminRole.Name));
 
                     //Notifications
@@ -449,12 +432,6 @@ namespace DispatcherWeb.MultiTenancy
             }
 
             return base.UpdateAsync(tenant);
-        }
-
-        private async Task GrantDefaultPermissionsToStaticRole(string roleName)
-        {
-            var role = _roleManager.Roles.Single(r => r.Name == roleName);
-            await _roleManager.RestoreDefaultPermissionsAsync(role);
         }
     }
 }
