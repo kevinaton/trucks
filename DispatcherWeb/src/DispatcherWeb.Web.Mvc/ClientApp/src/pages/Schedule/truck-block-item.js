@@ -16,6 +16,7 @@ import { theme } from '../../Theme';
 import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason';
 import AddOrEditDriverForTruck from '../../components/scheduling/addOrEditDriverForTruck';
 import AddOrEditTrailer from '../../components/scheduling/addOrEditTrailer';
+import AddOrEditTractor from '../../components/scheduling/addOrEditTractor';
 import TruckOrders from './truck-orders';
 import { AlertDialog } from '../../components/common/dialogs';
 import { assetType } from '../../common/enums/assetType';
@@ -433,7 +434,16 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
-    const handleAddTractor = () => {
+    const handleAddTractor = (e) => {
+        e.preventDefault();
+        
+        openModal(
+            <AddOrEditTractor 
+                closeModal={closeModal} 
+            />,
+            400
+        );
+
         handleCloseMenu();
     };
 
@@ -558,7 +568,7 @@ const TruckBlockItem = ({
 
                 {/* Add tractor */}
                 { truck.vehicleCategory.assetType === assetType.TRAILER && !truck.tractor && 
-                    <MenuItem onClick={handleAddTractor}>Add tractor</MenuItem>
+                    <MenuItem onClick={(e) => handleAddTractor(e)}>Add tractor</MenuItem>
                 }
 
                 { truck.vehicleCategory.assetType === assetType.TRAILER && truck.tractor && 
