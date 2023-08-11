@@ -2030,7 +2030,7 @@ namespace DispatcherWeb.Orders
                 {
                     orderLine.Id = null;
                     orderLine.LineNumber = i++;
-                    orderLine.ProductionPay = !preventProductionPayOnHourlyJobs || orderLine.FreightUomName?.ToLower().TrimEnd('s') != "hour";
+                    orderLine.ProductionPay = orderLine.ProductionPay && (!preventProductionPayOnHourlyJobs || orderLine.FreightUomName?.ToLower().TrimEnd('s') != "hour");
                 }
 
                 return new PagedResultDto<OrderLineEditDto>(orderLines.Count, orderLines);
