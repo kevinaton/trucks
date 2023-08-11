@@ -122,9 +122,9 @@ function* fetchWialonDeviceTypesSelectList() {
     }
 }
 
-function* fetchTruckForEdit(action) {
+function* fetchTruckForEdit({ payload: input }) {
     try {
-        const response = yield call(getTruckForEdit, action.payload);
+        const response = yield call(getTruckForEdit, input);
         yield put(getTruckForEditSuccess(response));
     } catch (error) {
         yield put(getTruckForEditFailure(error));

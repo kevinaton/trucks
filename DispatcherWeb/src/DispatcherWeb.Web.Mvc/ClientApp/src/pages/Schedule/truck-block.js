@@ -62,7 +62,8 @@ const TruckBlock = ({
     }, [userAppConfiguration, validateUtilization, leaseHaulers]);
     
     useEffect(() => {
-        if (!isEmpty(userAppConfiguration) && isLoading && 
+        if (isLoading && 
+            !isEmpty(userAppConfiguration) && 
             !isEmpty(scheduleTrucks) && 
             !isEmpty(scheduleTrucks.result)
         ) {
@@ -73,7 +74,7 @@ const TruckBlock = ({
                 onSetTrucks(items);
             }
         }
-    }, [userAppConfiguration, isLoading, scheduleTrucks, trucks, onSetTrucks]);
+    }, [isLoading, scheduleTrucks]);
 
     useEffect(() => {
         // check if dataFilter has changed from its previous state
@@ -138,14 +139,12 @@ const TruckBlock = ({
     useEffect(() => {
         if (isModifiedScheduleTrucks) {
             const { items } = scheduleTrucks.result;
-            if (!isEmpty(items) && (
-                isEmpty(trucks) || (!isEmpty(trucks) && !_.isEqual(trucks, items))
-            )) {
+            if (!isEmpty(items)) {
                 onSetTrucks(items);
                 dispatch(onResetGetScheduleTruckBySyncRequest());
             }
         }
-    }, [dispatch, isModifiedScheduleTrucks, scheduleTrucks, trucks, onSetTrucks]);
+    }, [isModifiedScheduleTrucks]);
 
     useEffect(() => {
         if (isLoading !== isLoadingScheduleTrucks) {
@@ -275,7 +274,12 @@ const TruckBlock = ({
             {/* Truck Map */}
             <Box sx={{ p: 3 }}>
                 <Paper variant='outlined' sx={{ p: 1 }}>
-                    <Grid id='TruckTiles' container rowSpacing={1} columnSpacing={1}>
+                    <Grid 
+                        id='TruckTiles' 
+                        container 
+                        rowSpacing={1} 
+                        columnSpacing={1}
+                    >
                         { isLoading && 
                             <React.Fragment>
                                 <Grid item>

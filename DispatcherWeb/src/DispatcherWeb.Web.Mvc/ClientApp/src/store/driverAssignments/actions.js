@@ -28,12 +28,15 @@ export const setDriverForTruckReset = () => ({
     type: SET_DRIVER_FOR_TRUCK_RESET
 });
 
-export const hasOrderLineTrucks = filter => ({
+export const hasOrderLineTrucks = (truckId, filter) => ({
     type: HAS_ORDER_LINE_TRUCKS,
-    payload: filter,
+    payload: {
+        truckId,
+        filter
+    }
 });
 
-export const hasOrderLineTrucksSuccess = response => ({
+export const hasOrderLineTrucksSuccess = (response) => ({
     type: HAS_ORDER_LINE_TRUCKS_SUCCESS,
     payload: response
 });

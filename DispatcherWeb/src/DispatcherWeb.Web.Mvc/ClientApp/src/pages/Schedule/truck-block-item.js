@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { 
+    Box,
     Chip,
     Divider,
     Menu, 
@@ -10,17 +11,26 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { tooltipClasses } from '@mui/material/Tooltip';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { theme } from '../../Theme';
 import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason';
 import AddOrEditDriverForTruck from '../../components/scheduling/addOrEditDriverForTruck';
 import SelectTrailer from '../../components/scheduling/selectTrailer';
 import TruckOrders from './truck-orders';
+import { AlertDialog } from '../../components/common/dialogs';
 import { assetType } from '../../common/enums/assetType';
 import { isPastDate } from '../../helpers/misc_helper';
+import { getText } from '../../helpers/localization_helper';
 import { isEmpty } from 'lodash';
 import { 
     setTruckIsOutOfService as onSetTruckIsOutOfService,
-    resetSetTruckIsOutOfService as onResetTruckIsOutOfService
+    resetSetTruckIsOutOfService as onResetTruckIsOutOfService,
+    hasOrderLineTrucks,
+    hasOrderLineTrucksReset as onResetHasOrderLineTrucks,
+    setTrailerForTractor as onSetTrailerForTractor,
+    setTrailerForTractorReset as onResetSetTrailerForTractor
 } from '../../store/actions';
+import { useSnackbar } from 'notistack';
 
 const ContextMenuWrapper = styled(Menu)(({ theme }) => ({
     '& .MuiPaper-root': {
@@ -66,14 +76,23 @@ const TruckBlockItem = ({
     const [menuAnchorPoint, setMenuAnchorPoint] = useState(null);
     const [sessionOfficeId, setSessionOfficeId] = useState(null);
     const [canShowOrderLines, setCanShowOrderLines] = useState(null);
+    const [selectedTrailer, setSelectedTrailer] = useState(null);
+    const [promptOptions, setPromptOptions] = useState(null);
+    const [isToReplace, setIsToReplace] = useState(null);
+    const [validationResult, setValidationResult] = useState(null);
 
+    const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
     const { 
         userProfileMenu,
-        setTruckIsOutOfServiceSuccess
+        setTruckIsOutOfServiceSuccess,
+        hasOrderLineTrucksResponse,
+        setTrailerForTractorResponse
     } = useSelector((state) => ({
         userProfileMenu: state.UserReducer.userProfileMenu,
-        setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess
+        setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess,
+        hasOrderLineTrucksResponse: state.DriverAssignmentReducer.hasOrderLineTrucksResponse,
+        setTrailerForTractorResponse: state.TrailerAssignmentReducer.setTrailerForTractorResponse
     }));
 
     useEffect(() => {
@@ -96,7 +115,105 @@ const TruckBlockItem = ({
         if (setTruckIsOutOfServiceSuccess) {
             dispatch(onResetTruckIsOutOfService());
         }
-    }, [dispatch, setTruckIsOutOfServiceSuccess]);
+    }, [setTruckIsOutOfServiceSuccess]);
+
+    useEffect(() => {
+        if (!isEmpty(hasOrderLineTrucksResponse)) {
+            const { truckId, response } = hasOrderLineTrucksResponse;
+            if (truckId !== null && 
+                truckId === truck.id && 
+                !isEmpty(response.result)
+            ) {
+                const { hasOrderLineTrucks } = response.result;
+                if (isPastDate(dataFilter.date)) {
+                    setValidationResult({});
+                    setIsUIBusy(false);
+                } else if (hasOrderLineTrucks && !isEmpty(promptOptions)) {
+                    openDialog({
+                        type: 'confirm',
+                        content: (
+                            <Box
+                                display='flex'
+                                alignItems='center'
+                                flexDirection='column'
+                            >
+                                <Box 
+                                    display='flex' 
+                                    alignItems='center' 
+                                    justifyContent='center'
+                                    sx={{
+                                        marginBottom: '15px'
+                                    }}
+                                >
+                                    <ErrorOutlineIcon 
+                                        sx={{ 
+                                            color: theme.palette.warning.main,
+                                            fontSize: '88px !important'
+                                        }} 
+                                    />
+                                </Box>
+                                <Typography variant='h6'>{getText('TrailerAlreadyScheduledForTruck{0}Prompt_YesToReplace', promptOptions.truckCode)}</Typography>
+                            </Box>
+                        ),
+                        action: () => handleIsToReplace(true),
+                        primaryBtnText: 'Yes',
+                        secondaryBtnText: 'No'
+                    });
+                }
+            }
+        }
+    }, [hasOrderLineTrucksResponse]);
+
+    useEffect(() => {
+        if (isToReplace !== null) {
+            if (isToReplace) {
+                const { hasOpenDispatches } = hasOrderLineTrucksResponse.result;
+                if (hasOpenDispatches) {
+                    openDialog({
+                        type: 'alert',
+                        contenxt: (
+                            <AlertDialog variant='error' message={getText('CannotChangeTrailerBecauseOfDispatchesError')} />
+                        )
+                    });
+                } else {
+                    setValidationResult({
+                        updateExistingOrderLineTrucks: true
+                    });
+                }
+
+                setIsUIBusy(false);
+            }
+
+            dispatch(onResetHasOrderLineTrucks());
+        }
+    }, [isToReplace]);
+
+    useEffect(() => {
+        if (validationResult !== null) {
+            setTrailerTractor({
+                tractorId: truck.id,
+                trailerId: selectedTrailer !== null ? selectedTrailer.id : null,
+            });
+
+            if (selectedTrailer !== null) {
+                setSelectedTrailer(null);
+            }
+
+            setValidationResult(null);
+            setPromptOptions(null);
+            setIsToReplace(null);
+        }
+    }, [validationResult]);
+    
+    useEffect(() => {
+        if (!isEmpty(setTrailerForTractorResponse) && setTrailerForTractorResponse.success) {
+            const { truckId } = setTrailerForTractorResponse;
+            if (truckId === truck.id) {
+                dispatch(onResetSetTrailerForTractor());
+                enqueueSnackbar('Saved successfully', { variant: 'success' });
+            }
+        }
+    }, [setTrailerForTractorResponse]);
 
     const getCombinedTruckCode = (truck) => {
         const { showTrailersOnSchedule } = userAppConfiguration.settings;
@@ -119,6 +236,43 @@ const TruckBlockItem = ({
             : [];
         return orderLines.some(o => o.trucks.some(olt => olt.truckId === truck.id));
     };
+
+    const setTrailerTractor = options => {
+        dispatch(onSetTrailerForTractor(truck.id, {
+            date: dataFilter.date,
+            shift: dataFilter.shift,
+            officeId: dataFilter.officeId,
+            ...options
+        }));
+    };
+
+    const promptWhetherToReplaceTrailerOnExistingOrderLineTrucks = options => {
+        setIsUIBusy(true);
+        setPromptOptions(options);
+
+        if (options.truckId) {
+            dispatch(hasOrderLineTrucks(truck.id, {
+                trailerId: options.trailerId,
+                forceTrailerIdFilter: true,
+                truckId: options.truckId,
+                officeId: dataFilter.officeId,
+                date: dataFilter.date,
+                shift: dataFilter.shift
+            }));
+        }
+    };
+
+    const handleSelectTrailer = trailerSelection => {
+        if (selectedTrailer === null) {
+            setSelectedTrailer(trailerSelection);
+            promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+                truckId: truck.id,
+                truckCode: truck.truckCode
+            });
+        }
+    };
+
+    const handleIsToReplace = val => setIsToReplace(val);
 
     const handleShowMenu = (e) => {
         e.preventDefault();
@@ -221,7 +375,9 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
-    const handleAddTrailer = () => {
+    const handleAddTrailer = (e) => {
+        e.preventDefault();
+
         const data = {
             truckId: truck.id,
             truckCode: truck.truckCode,
@@ -234,8 +390,7 @@ const TruckBlockItem = ({
             <SelectTrailer
                 data={data} 
                 closeModal={closeModal} 
-                openDialog={openDialog}
-                setIsUIBusy={setIsUIBusy}
+                handleSelectTrailer={(trailerSelection) => handleSelectTrailer(trailerSelection)}
             />,
             400
         );
@@ -246,8 +401,15 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
-    const handleRemoveTrailer = () => {
+    const handleRemoveTrailer = (e) => {
+        e.preventDefault();
         handleCloseMenu();
+        
+        promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
+            trailerId: truck.trailer.id,
+            truckId: truck.id,
+            truckCode: truck.truckCode
+        });
     };
 
     const handleAddTractor = () => {
@@ -361,7 +523,7 @@ const TruckBlockItem = ({
 
                 {/* Add trailer */}
                 { truck.canPullTrailer && !truck.trailer &&
-                    <MenuItem onClick={handleAddTrailer}>Add trailer</MenuItem>
+                    <MenuItem onClick={(e) => handleAddTrailer(e)}>Add trailer</MenuItem>
                 }
 
                 { truck.canPullTrailer && truck.trailer &&
@@ -369,7 +531,7 @@ const TruckBlockItem = ({
                         {/* Change trailer */}
                         <MenuItem onClick={handleChangeTrailer}>Change trailer</MenuItem>
                         {/* Remove trailer */}
-                        <MenuItem onClick={handleRemoveTrailer}>Remove trailer</MenuItem>
+                        <MenuItem onClick={(e) => handleRemoveTrailer(e)}>Remove trailer</MenuItem>
                     </React.Fragment>
                 }
 

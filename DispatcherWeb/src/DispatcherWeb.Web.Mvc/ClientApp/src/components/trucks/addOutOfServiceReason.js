@@ -15,6 +15,7 @@ import {
 } from '../../store/actions';
 import { getText } from '../../helpers/localization_helper';
 import { AlertDialog } from '../../components/common/dialogs';
+import { isEmpty } from 'lodash';
 
 const AddOutOfServiceReason = ({
     data,
@@ -40,7 +41,7 @@ const AddOutOfServiceReason = ({
             closeModal();
             enqueueSnackbar('Saved successfully', { variant: 'success' });
 
-            if (true) {
+            if (!isEmpty(setOutOfServiceResponse)) {
                 const { result } = setOutOfServiceResponse;
 
                 const infoMessages = [];

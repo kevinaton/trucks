@@ -30,10 +30,16 @@ const DriverAssignmentReducer = (state = INIT_STATE, action) => {
                 setDriverForTruckSuccess: null,
             };
         case HAS_ORDER_LINE_TRUCKS_SUCCESS:
-            return {
-                ...state,
-                hasOrderLineTrucksResponse: action.payload,
-            };
+            {
+                const { truckId, response } = action.payload;
+                return {
+                    ...state,
+                    hasOrderLineTrucksResponse: {
+                        truckId,
+                        response
+                    },
+                };
+            }
         case HAS_ORDER_LINE_TRUCKS_FAILURE:
             return {
                 ...state,

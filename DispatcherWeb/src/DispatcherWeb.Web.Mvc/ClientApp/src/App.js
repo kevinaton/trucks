@@ -242,14 +242,18 @@ const App = (props) => {
         });
     };
 
-    const closeDialog = () => {
+    const closeDialog = (e) => {
+        e.preventDefault();
+        
         setDialog({
             ...dialog,
             open: false,
             type: '',
             title: '',
             content: null,
-            action: null
+            action: null,
+            primaryBtnText: null,
+            secondaryBtnText: null
         })
     };
 
@@ -343,14 +347,16 @@ const App = (props) => {
                 ))}
 
                 {/* Render the dialog */}
-                { !isEmpty(dialog) && 
+                { !isEmpty(dialog) && dialog.open && 
                     <CustomDialog 
                         open={dialog.open} 
                         type={dialog.type}
                         title={dialog.title} 
                         content={dialog.content} 
                         handleClose={closeDialog} 
-                        handleProceed={dialog.action}
+                        handleProceed={dialog.action} 
+                        primaryButtonText={dialog.primaryBtnText} 
+                        secondaryButtonText={dialog.secondaryBtnText}
                     />
                 }
             </SignalRContext.Provider>

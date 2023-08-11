@@ -17,7 +17,9 @@ export const CustomDialog = ({
     primaryButtonText,
     secondaryButtonText
 }) => {
-    const handleProceedClick = () => {
+    const handleProceedClick = (e) => {
+        e.preventDefault();
+
         // Perform custom actions based on the form data
         handleProceed();
     };

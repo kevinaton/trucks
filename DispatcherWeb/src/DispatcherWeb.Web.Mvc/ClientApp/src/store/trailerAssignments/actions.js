@@ -5,9 +5,12 @@ import {
     SET_TRAILER_FOR_TRACTOR_RESET
 } from './actionTypes';
 
-export const setTrailerForTractor = trailerAssignment => ({
+export const setTrailerForTractor = (truckId, trailerAssignment) => ({
     type: SET_TRAILER_FOR_TRACTOR,
-    payload: trailerAssignment
+    payload: {
+        truckId,
+        trailerAssignment
+    }
 });
 
 export const setTrailerForTractorSuccess = response => ({

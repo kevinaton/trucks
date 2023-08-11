@@ -23,10 +23,13 @@ function* onSetDriverForTruck({ payload: driverAssignment }) {
     }
 }
 
-function* onHasOrderLineTrucks({ payload: filter }) {
+function* onHasOrderLineTrucks({ payload: { truckId, filter} }) {
     try {
         const response = yield call(hasOrderLineTrucks, filter);
-        yield put(hasOrderLineTrucksSuccess(response));
+        yield put(hasOrderLineTrucksSuccess({
+            truckId,
+            response
+        }));
     } catch (error) {
         yield put(hasOrderLineTrucksFailure(error));
     }

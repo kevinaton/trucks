@@ -67,6 +67,8 @@ namespace DispatcherWeb.TrailerAssignments
                     x.CurrentTrailerId = null;
                     syncRequest.AddChange(EntityEnum.Truck, x.ToChangedEntity());
                 });
+
+                syncRequest.AddChange(EntityEnum.Truck, GetChangedTruckById(input.TrailerId.Value));
             }
 
             if (input.UpdateExistingOrderLineTrucks)

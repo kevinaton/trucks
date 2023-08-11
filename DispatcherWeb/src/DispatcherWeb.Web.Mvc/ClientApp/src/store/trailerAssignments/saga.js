@@ -10,10 +10,17 @@ import {
     setTrailerForTractor
 } from './service';
 
-function* onSetTrailerForTractor({ payload: trailerAssignment }) {
+function* onSetTrailerForTractor({ payload: {
+    truckId,
+    trailerAssignment
+} }) {
     try {
+
         const response = yield call(setTrailerForTractor, trailerAssignment);
-        yield put(setTrailerForTractorSuccess(response));
+        yield put(setTrailerForTractorSuccess({
+            truckId, 
+            response
+        }));
     } catch (error) {
         yield put(setTrailerForTractorFailure(error));
     }
