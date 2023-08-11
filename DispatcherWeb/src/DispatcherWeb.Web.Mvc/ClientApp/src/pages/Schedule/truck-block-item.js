@@ -15,7 +15,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { theme } from '../../Theme';
 import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason';
 import AddOrEditDriverForTruck from '../../components/scheduling/addOrEditDriverForTruck';
-import SelectTrailer from '../../components/scheduling/selectTrailer';
+import AddOrEditTrailer from '../../components/scheduling/addOrEditTrailer';
 import TruckOrders from './truck-orders';
 import { AlertDialog } from '../../components/common/dialogs';
 import { assetType } from '../../common/enums/assetType';
@@ -378,7 +378,7 @@ const TruckBlockItem = ({
     const handleAddTrailer = (e) => {
         e.preventDefault();
         openModal(
-            <SelectTrailer
+            <AddOrEditTrailer
                 data={{
                     truckId: truck.id,
                     truckCode: truck.truckCode,
@@ -398,7 +398,7 @@ const TruckBlockItem = ({
     const handleChangeTrailer = (e) => {
         e.preventDefault();
         openModal(
-            <SelectTrailer
+            <AddOrEditTrailer
                 data={{
                     truckId: truck.id,
                     truckCode: truck.truckCode,

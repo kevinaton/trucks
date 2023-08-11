@@ -19,7 +19,7 @@ import {
     getActiveTrailersSelectList
 } from '../../store/actions';
 
-const SelectTrailer = ({
+const AddOrEditTrailer = ({
     data,
     closeModal,
     handleSelectTrailer,
@@ -533,4 +533,4 @@ const SelectTrailer = ({
     );
 };
 
-export default SelectTrailer;
+export default AddOrEditTrailer;
