@@ -1,16 +1,20 @@
 import {
     GET_VEHICLE_CATEGORIES_SUCCESS,
     GET_VEHICLE_CATEGORIES_FAILURE,
+    GET_BED_CONSTRUCTIONS,
     GET_BED_CONSTRUCTION_SELECT_LIST_SUCCESS,
     GET_BED_CONSTRUCTION_SELECT_LIST_FAILURE,
     GET_BED_CONSTRUCTIONS_SUCCESS,
     GET_BED_CONSTRUCTIONS_FAILURE,
     GET_FUEL_TYPE_SELECT_LIST_SUCCESS,
     GET_FUEL_TYPE_SELECT_LIST_FAILURE,
+    GET_ACTIVE_TRAILERS_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
     GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    GET_MAKES_SELECT_LIST,
     GET_MAKES_SELECT_LIST_SUCCESS,
     GET_MAKES_SELECT_LIST_FAILURE,
+    GET_MODELS_SELECT_LIST,
     GET_MODELS_SELECT_LIST_SUCCESS,
     GET_MODELS_SELECT_LIST_FAILURE,
     GET_WIALON_DEVICE_TYPES_SELECT_LIST_SUCCESS,
@@ -28,10 +32,14 @@ import {
 const INIT_STATE = {
     vehicleCategories: null,
     bedConstructionSelectList: null,
+    isLoadingBedConstructionsOpts: false,
     bedConstructions: null,
     fuelTypeSelectList: null,
+    isLoadingActiveTrailersOpts: false,
     activeTrailersSelectList: null,
+    isLoadingMakesOpts: false,
     makesSelectList: null,
+    isLoadingModelsOpts: false,
     modelsSelectList: null,
     wialonDeviceTypesSelectList: null,
     truckForEdit: null,
@@ -62,14 +70,21 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 ...state,
                 error: action.payload,
             };
+        case GET_BED_CONSTRUCTIONS:
+            return {
+                ...state,
+                isLoadingBedConstructionsOpts: true
+            };
         case GET_BED_CONSTRUCTIONS_SUCCESS:
             return {
                 ...state,
+                isLoadingBedConstructionsOpts: false,
                 bedConstructions: action.payload
             };
         case GET_BED_CONSTRUCTIONS_FAILURE:
             return {
                 ...state,
+                isLoadingBedConstructionsOpts: false,
                 error: action.payload
             };
         case GET_FUEL_TYPE_SELECT_LIST_SUCCESS:
@@ -82,34 +97,55 @@ const TruckReducer = (state = INIT_STATE, action) => {
                 ...state,
                 error: action.payload,
             };
+        case GET_ACTIVE_TRAILERS_SELECT_LIST:
+            return {
+                ...state,
+                isLoadingActiveTrailersOpts: true
+            };
         case GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS:
             return {
                 ...state,
+                isLoadingActiveTrailersOpts: false,
                 activeTrailersSelectList: action.payload,  
             };
         case GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE:
             return {
                 ...state,
+                isLoadingActiveTrailersOpts: false,
                 error: action.payload,
+            };
+        case GET_MAKES_SELECT_LIST:
+            return {
+                ...state,
+                isLoadingMakesOpts: true
             };
         case GET_MAKES_SELECT_LIST_SUCCESS:
             return {
                 ...state,
+                isLoadingMakesOpts: false,
                 makesSelectList: action.payload,
             };
         case GET_MAKES_SELECT_LIST_FAILURE:
             return {
                 ...state,
+                isLoadingMakesOpts: false,
                 error: action.payload,
+            };
+        case GET_MODELS_SELECT_LIST:
+            return {
+                ...state,
+                isLoadingModelsOpts: true
             };
         case GET_MODELS_SELECT_LIST_SUCCESS:
             return {
                 ...state,
+                isLoadingModelsOpts: false,
                 modelsSelectList: action.payload,
             };
         case GET_MODELS_SELECT_LIST_FAILURE:
             return {
                 ...state,
+                isLoadingModelsOpts: false,
                 error: action.payload,
             };
         case GET_WIALON_DEVICE_TYPES_SELECT_LIST_SUCCESS:

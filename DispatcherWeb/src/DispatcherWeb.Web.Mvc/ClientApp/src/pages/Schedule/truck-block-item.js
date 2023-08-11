@@ -377,39 +377,60 @@ const TruckBlockItem = ({
 
     const handleAddTrailer = (e) => {
         e.preventDefault();
-
-        const data = {
-            truckId: truck.id,
-            truckCode: truck.truckCode,
-            date: dataFilter.date,
-            shift: dataFilter.shift,
-            officeId: dataFilter.officeId
-        };
-
         openModal(
             <SelectTrailer
-                data={data} 
+                data={{
+                    truckId: truck.id,
+                    truckCode: truck.truckCode,
+                    date: dataFilter.date,
+                    shift: dataFilter.shift,
+                    officeId: dataFilter.officeId
+                }} 
                 closeModal={closeModal} 
                 handleSelectTrailer={(trailerSelection) => handleSelectTrailer(trailerSelection)}
             />,
             400
         );
+
         handleCloseMenu();
     };
 
-    const handleChangeTrailer = () => {
+    const handleChangeTrailer = (e) => {
+        e.preventDefault();
+        openModal(
+            <SelectTrailer
+                data={{
+                    truckId: truck.id,
+                    truckCode: truck.truckCode,
+                    date: dataFilter.date,
+                    shift: dataFilter.shift,
+                    officeId: dataFilter.officeId
+                }} 
+                closeModal={closeModal} 
+                handleSelectTrailer={(trailerSelection) => handleSelectTrailer(trailerSelection)} 
+                editTrailer={{
+                    trailerId: truck.trailer.id,
+                    trailerTruckCode: truck.trailer.truckCode,
+                    trailerVehicleCategoryId: truck.trailer.vehicleCategoryId,
+                    subTitle: `${truck.truckCode} is currently coupled to 
+                        ${truck.trailer.truckCode} - ${truck.trailer.vehicleCategory.name} 
+                        ${truck.trailer.make} ${truck.trailer.model} ${truck.trailer.bedConstructionFormatted} bed`
+                }}
+            />,
+            400
+        );
+        
         handleCloseMenu();
     };
 
     const handleRemoveTrailer = (e) => {
         e.preventDefault();
-        handleCloseMenu();
-        
         promptWhetherToReplaceTrailerOnExistingOrderLineTrucks({
             trailerId: truck.trailer.id,
             truckId: truck.id,
             truckCode: truck.truckCode
         });
+        handleCloseMenu();
     };
 
     const handleAddTractor = () => {
@@ -529,7 +550,7 @@ const TruckBlockItem = ({
                 { truck.canPullTrailer && truck.trailer &&
                     <React.Fragment>
                         {/* Change trailer */}
-                        <MenuItem onClick={handleChangeTrailer}>Change trailer</MenuItem>
+                        <MenuItem onClick={(e) => handleChangeTrailer(e)}>Change trailer</MenuItem>
                         {/* Remove trailer */}
                         <MenuItem onClick={(e) => handleRemoveTrailer(e)}>Remove trailer</MenuItem>
                     </React.Fragment>
