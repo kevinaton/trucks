@@ -19,7 +19,6 @@ namespace DispatcherWeb.Dispatching
         public static DispatchStatus[] OutstandingDispatchStatuses = new[] { DispatchStatus.Created, DispatchStatus.Sent, /*DispatchStatus.Received, */DispatchStatus.Acknowledged };
         public static DispatchStatus[] UnacknowledgedStatuses = new[] { DispatchStatus.Created, DispatchStatus.Sent, };
         public static DispatchStatus[] AcknowledgedOrLoadedStatuses = new[] { DispatchStatus.Acknowledged, DispatchStatus.Loaded, };
-        public static DispatchStatus[] ActiveStatuses = new[] { DispatchStatus.Sent, DispatchStatus.Acknowledged, DispatchStatus.Loaded, };
         public static DispatchStatus[] OpenStatuses = new[] { DispatchStatus.Created, DispatchStatus.Sent, DispatchStatus.Acknowledged, DispatchStatus.Loaded, };
 
         public int TenantId { get; set; }

@@ -24,12 +24,4 @@
             public const string Customer = "Customer";
         }
     }
-
-    public static class StaticRoleDisplayNames
-    {
-        public static class Tenants
-        {
-            public const string LeaseHaulerDriver = "LH Driver";
-        }
-    }
 }
