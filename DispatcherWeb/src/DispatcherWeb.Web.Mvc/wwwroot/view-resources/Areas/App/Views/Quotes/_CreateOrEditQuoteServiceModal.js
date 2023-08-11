@@ -120,6 +120,7 @@
                     enableFreightFields();
                 }
                 updateProductionPay();
+                updateFreightRateForDriverPayVisibility();
             }).change();
 
             freightUomDropdown.change(function () {
@@ -147,11 +148,9 @@
             }
             function disableFreightFields() {
                 freightRateInput.attr('disabled', 'disabled').val('0');
-                freightRateToPayDriversInput.attr('disabled', 'disabled').val('0');
                 freightUomDropdown.attr('disabled', 'disabled').val('').change();
                 freightQuantityInput.attr('disabled', 'disabled').val('');
                 freightRateInput.closest('.form-group').hide();
-                freightRateToPayDriversInput.closest('.form-group').hide();
                 freightUomDropdown.closest('.form-group').hide();
                 freightQuantityInput.closest('.form-group').hide();
             }
@@ -160,10 +159,6 @@
                 freightUomDropdown.removeAttr('disabled');
                 freightQuantityInput.removeAttr('disabled');
                 freightRateInput.closest('.form-group').show();
-                if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')) {
-                    freightRateToPayDriversInput.removeAttr('disabled');
-                    freightRateToPayDriversInput.closest('.form-group').show();
-                }
                 freightUomDropdown.closest('.form-group').show();
                 freightQuantityInput.closest('.form-group').show();
             }
@@ -228,8 +223,14 @@
                 productionPayInput.closest('label').attr('title', '').tooltip('dispose');
             }
 
+            function shouldFreightRateForDriverPayBeVisible() {
+                return !designationIsMaterialOnly()
+                    && abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')
+                    && _$form.find('#ProductionPay').is(':checked');
+            }
+
             function updateFreightRateForDriverPayVisibility() {
-                if (abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate') && _$form.find('#ProductionPay').is(':checked')) {
+                if (shouldFreightRateForDriverPayBeVisible()) {
                     freightRateToPayDriversInput.closest('.form-group').show();
                 } else {
                     freightRateToPayDriversInput.val(freightRateInput.val()).change().closest('.form-group').hide();
@@ -240,8 +241,11 @@
 
             function updateLoadBasedVisibility() {
                 let freightUom = freightUomDropdown.getSelectedDropdownOption().text();
-                if (abp.setting.getBoolean('App.TimeAndPay.AllowLoadBasedRates') && !(['hours', 'hour'].includes((freightUom || '').toLowerCase()))
-                        && _$form.find('#ProductionPay').is(':checked')) {
+                if (shouldFreightRateForDriverPayBeVisible()
+                    && abp.setting.getBoolean('App.TimeAndPay.AllowLoadBasedRates')
+                    && !(['hours', 'hour'].includes((freightUom || '').toLowerCase()))
+                    && _$form.find('#ProductionPay').is(':checked')
+                ) {
                     _$form.find('#LoadBased').closest('.form-group').show();
                 } else {
                     _$form.find('#LoadBased').prop('checked', false).closest('.form-group').hide();
