@@ -114,6 +114,7 @@ namespace DispatcherWeb.Authorization
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature));
             pages.CreateChildPermission(AppPermissions.DriverProductionPay, L("DriverProductionPay"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.DriverProductionPayFeature));
+            pages.CreateChildPermission(AppPermissions.CanBeSalesperson, L("CanBeSalesperson"), multiTenancySides: MultiTenancySides.Tenant);
 
             var vehicleService = pages.CreateChildPermission(AppPermissions.Pages_VehicleService_View, L("VehicleService"), multiTenancySides: MultiTenancySides.Tenant);
             vehicleService.CreateChildPermission(AppPermissions.Pages_VehicleService_Edit, L("EditingVehicleService"), multiTenancySides: MultiTenancySides.Tenant);

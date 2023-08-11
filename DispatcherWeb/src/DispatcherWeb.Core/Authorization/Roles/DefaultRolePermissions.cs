@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DispatcherWeb.Authorization.Roles
@@ -180,6 +181,18 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
 
+                // Can be salesperson
+                {
+                    AppPermissions.CanBeSalesperson, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Quoting,
+                        StaticRoleNames.Tenants.Managers,
+                    }
+                },
+                
                 // CannedText
                 {
                     AppPermissions.Pages_CannedText, new[]
@@ -1058,5 +1071,13 @@ namespace DispatcherWeb.Authorization.Roles
             }
         }
 
+        public static string[] GetRoleNamesHavingDefaultPermission(string permissionName)
+        {
+            if (_defaultRolePermissions.TryGetValue(permissionName, out var result))
+            {
+                return result;
+            }
+            return Array.Empty<string>();
+        }
     }
 }
