@@ -1199,6 +1199,7 @@ namespace DispatcherWeb.Tickets
                     FreightUomName = x.FreightUom.Name,
                     FreightRate = x.FreightPricePerUnit,
                     FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                    ProductionPay = x.ProductionPay,
                     MaterialRate = x.MaterialPricePerUnit,
                     FuelSurchargeRate = x.FuelSurchargeRate,
                     MaterialTotal = x.MaterialPrice,
