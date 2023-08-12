@@ -413,6 +413,10 @@
         setInputOrDropdownValue(block.ui.uom, block.orderLine.uomId, block.orderLine.uomName);
         block.ui.freightRate.val(block.orderLine.freightRate);
         block.ui.freightRateToPayDrivers.val(block.orderLine.freightRateToPayDrivers);
+        block.ui.freightRateToPayDrivers.closest('.form-group').toggle(
+            !abp.enums.designations.materialOnly.includes(block.orderLine.designation)
+            && abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')
+            && block.orderLine.productionPay);
         block.ui.materialRate.val(block.orderLine.materialRate);
         block.ui.fuelSurchargeRate.val(block.orderLine.fuelSurchargeRate);
         setInputOrDropdownValue(block.ui.office, block.orderLine.officeId, block.orderLine.officeName);
