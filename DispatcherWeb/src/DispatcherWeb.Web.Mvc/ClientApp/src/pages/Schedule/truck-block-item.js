@@ -29,7 +29,9 @@ import {
     hasOrderLineTrucks,
     hasOrderLineTrucksReset as onResetHasOrderLineTrucks,
     setTrailerForTractor as onSetTrailerForTractor,
-    setTrailerForTractorReset as onResetSetTrailerForTractor
+    setTrailerForTractorReset as onResetSetTrailerForTractor,
+    setTractorForTrailer as onSetTractorForTrailer,
+    setTractorForTrailerReset as onResetSetTractorForTrailer
 } from '../../store/actions';
 import { useSnackbar } from 'notistack';
 
@@ -88,12 +90,14 @@ const TruckBlockItem = ({
         userProfileMenu,
         setTruckIsOutOfServiceSuccess,
         hasOrderLineTrucksResponse,
-        setTrailerForTractorResponse
+        setTrailerForTractorResponse,
+        setTractorForTrailerResponse
     } = useSelector((state) => ({
         userProfileMenu: state.UserReducer.userProfileMenu,
         setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess,
         hasOrderLineTrucksResponse: state.DriverAssignmentReducer.hasOrderLineTrucksResponse,
-        setTrailerForTractorResponse: state.TrailerAssignmentReducer.setTrailerForTractorResponse
+        setTrailerForTractorResponse: state.TrailerAssignmentReducer.setTrailerForTractorResponse,
+        setTractorForTrailerResponse: state.TrailerAssignmentReducer.setTractorForTrailerResponse
     }));
 
     useEffect(() => {
@@ -215,6 +219,16 @@ const TruckBlockItem = ({
             }
         }
     }, [setTrailerForTractorResponse]);
+
+    useEffect(() => {
+        if (!isEmpty(setTractorForTrailerResponse) && setTractorForTrailerResponse.success) {
+            const { trailerId } = setTractorForTrailerResponse;
+            if (trailerId === truck.id) {
+                dispatch(onResetSetTractorForTrailer());
+                enqueueSnackbar('Saved successfully', { variant: 'success' });
+            }
+        }
+    }, [setTractorForTrailerResponse]);
 
     const getCombinedTruckCode = (truck) => {
         const { showTrailersOnSchedule } = userAppConfiguration.settings;
@@ -475,6 +489,14 @@ const TruckBlockItem = ({
     };
 
     const handleRemoveTractor = () => {
+        dispatch(onSetTractorForTrailer(truck.id, {
+            date: dataFilter.date,
+            shift: dataFilter.shift,
+            officeId: dataFilter.officeId,
+            trailerId: truck.id,
+            tractorId: null
+        }));
+
         handleCloseMenu();
     };
 
