@@ -57,6 +57,7 @@ export const HAS_ORDER_LINE_TRUCKS = '/DriverAssignment/HasOrderLineTrucks';
 //Trucks
 export const GET_VEHICLE_CATEGORIES = '/Truck/GetVehicleCategoriesSelectList';
 export const GET_ACTIVE_TRAILERS_SELECT_LIST = '/Truck/GetActiveTrailersSelectList';
+export const GET_ACTIVE_TRACTORS_SELECT_LIST = '/Truck/GetActiveTractorsSelectList';
 export const GET_BED_CONSTRUCTION_SELECT_LIST = '/Truck/GetBedConstructionSelectList';
 export const GET_MAKES_SELECT_LIST = '/Truck/GetMakesSelectList';
 export const GET_MODELS_SELECT_LIST = '/Truck/GetModelsSelectList';
@@ -69,6 +70,7 @@ export const SET_TRUCK_IS_OUT_OF_SERVICE = '/Truck/SetTruckIsOutOfService';
 
 //TrailerAssignments
 export const SET_TRAILER_FOR_TRACTOR = '/TrailerAssignment/SetTrailerForTractor';
+export const SET_TRACTOR_FOR_TRAILER = '/TrailerAssignment/SetTractorForTrailer';
 
 //LeaseHaulers
 export const GET_LEASE_HAULER_DRIVERS_SELECT_LIST = '/LeaseHauler/GetLeaseHaulerDriversSelectList';

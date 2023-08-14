@@ -14,6 +14,9 @@ import {
     GET_ACTIVE_TRAILERS_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
     GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    GET_ACTIVE_TRACTORS_SELECT_LIST,
+    GET_ACTIVE_TRACTORS_SELECT_LIST_SUCCESS,
+    GET_ACTIVE_TRACTORS_SELECT_LIST_FAILURE,
     GET_MAKES_SELECT_LIST,
     GET_MAKES_SELECT_LIST_SUCCESS,
     GET_MAKES_SELECT_LIST_FAILURE,
@@ -106,6 +109,21 @@ export const getActiveTrailersSelectListSuccess = activeTrailersSelectList => ({
 
 export const getActiveTrailersSelectListFailure = error => ({
     type: GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    payload: error,
+});
+
+export const getActiveTractorsSelectList = filter => ({
+    type: GET_ACTIVE_TRACTORS_SELECT_LIST,
+    payload: filter
+});
+
+export const getActiveTractorsSelectListSuccess = activeTractorsSelectList => ({
+    type: GET_ACTIVE_TRACTORS_SELECT_LIST_SUCCESS,
+    payload: activeTractorsSelectList,
+});
+
+export const getActiveTractorsSelectListFailure = error => ({
+    type: GET_ACTIVE_TRACTORS_SELECT_LIST_FAILURE,
     payload: error,
 });
 

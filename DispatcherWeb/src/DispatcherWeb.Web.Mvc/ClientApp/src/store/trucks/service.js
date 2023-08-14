@@ -50,6 +50,12 @@ export const getActiveTrailersSelectList = filter => {
     return get(`${url.GET_ACTIVE_TRAILERS_SELECT_LIST}?${queryString}`);
 };
 
+// get active tractors select list
+export const getActiveTractorsSelectList = filter => {
+    let queryString = `maxResultCount=${filter.maxResultCount}&skipCount=${filter.skipCount}`;
+    return get(`${url.GET_ACTIVE_TRACTORS_SELECT_LIST}?${queryString}`);
+};
+
 // get makes select list
 export const getMakesSelectList = filter => {
     let queryString = `maxResultCount=${filter.maxResultCount}&skipCount=${filter.skipCount}`;

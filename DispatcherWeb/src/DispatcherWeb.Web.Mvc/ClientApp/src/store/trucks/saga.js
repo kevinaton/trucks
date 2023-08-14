@@ -5,6 +5,7 @@ import {
     GET_BED_CONSTRUCTIONS,
     GET_FUEL_TYPE_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST,
+    GET_ACTIVE_TRACTORS_SELECT_LIST,
     GET_MAKES_SELECT_LIST,
     GET_MODELS_SELECT_LIST,
     GET_WIALON_DEVICE_TYPES_SELECT_LIST,
@@ -23,6 +24,8 @@ import {
     getFuelTypeSelectListFailure,
     getActiveTrailersSelectListSuccess,
     getActiveTrailersSelectListFailure,
+    getActiveTractorsSelectListSuccess,
+    getActiveTractorsSelectListFailure,
     getMakesSelectListSuccess,
     getMakesSelectListFailure,
     getModelsSelectListSuccess,
@@ -42,6 +45,7 @@ import {
     getBedConstructions,
     getFuelTypeSelectList,
     getActiveTrailersSelectList,
+    getActiveTractorsSelectList,
     getMakesSelectList,
     getModelsSelectList,
     getWialonDeviceTypesSelectList,
@@ -92,6 +96,15 @@ function* fetchActiveTrailersSelectList({ payload: filter }) {
         yield put(getActiveTrailersSelectListSuccess(response));
     } catch (error) {
         yield put(getActiveTrailersSelectListFailure(error));
+    }
+}
+
+function* fetchActiveTractorsSelectList({ payload: filter }) {
+    try {
+        const response = yield call(getActiveTractorsSelectList, filter);
+        yield put(getActiveTractorsSelectListSuccess(response));
+    } catch (error) {
+        yield put(getActiveTractorsSelectListFailure(error));
     }
 }
 
@@ -155,6 +168,7 @@ function* trucksSaga() {
     yield takeEvery(GET_BED_CONSTRUCTIONS, fetchBedConstructions);
     yield takeEvery(GET_FUEL_TYPE_SELECT_LIST, fetchFuelTypeSelectList);
     yield takeEvery(GET_ACTIVE_TRAILERS_SELECT_LIST, fetchActiveTrailersSelectList);
+    yield takeEvery(GET_ACTIVE_TRACTORS_SELECT_LIST, fetchActiveTractorsSelectList);
     yield takeEvery(GET_MAKES_SELECT_LIST, fetchMakesSelectList);
     yield takeEvery(GET_MODELS_SELECT_LIST, fetchModelsSelectList);
     yield takeEvery(GET_WIALON_DEVICE_TYPES_SELECT_LIST, fetchWialonDeviceTypesSelectList);
