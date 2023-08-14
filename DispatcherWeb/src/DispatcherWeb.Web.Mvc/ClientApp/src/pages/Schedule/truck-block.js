@@ -16,6 +16,7 @@ import {
     getScheduleTruckBySyncRequestReset as onResetGetScheduleTruckBySyncRequest } from '../../store/actions';
 import TruckBlockItem from './truck-block-item';
 import AddOrEditTruckForm from '../../components/trucks/addOrEditTruck';
+import { assetType } from '../../common/enums/assetType';
 import { entityType } from '../../common/enums/entityType';
 import { changeType } from '../../common/enums/changeType';
 import SyncRequestContext from '../../components/common/signalr/syncRequestContext';
@@ -176,6 +177,13 @@ const TruckBlock = ({
             border: '1px solid transparent'
         };
 
+        if (truck.vehicleCategory.assetType === assetType.TRAILER && truck.tractor) {
+            const tractor = _.find(trucks, t => t.id === truck.tractor.id);
+            if (tractor) {
+                return getTruckColor(tractor);
+            }
+        }
+
         if (truck.isOutOfService) {
             return {
                 ...defaultColor,
@@ -251,11 +259,11 @@ const TruckBlock = ({
         );
     };
 
-    const renderTrucks = (index, truck, truckColors) => (
+    const renderTrucks = (index, truck) => (
         <Grid item key={index}>
             <TruckBlockItem 
                 truck={truck} 
-                truckColors={truckColors}
+                truckColors={getTruckColor(truck)}
                 userAppConfiguration={userAppConfiguration} 
                 dataFilter={dataFilter} 
                 truckHasNoDriver={truckHasNoDriver(truck)} 
@@ -300,7 +308,7 @@ const TruckBlock = ({
                             </React.Fragment>
                         }
 
-                        { trucks && trucks.map((truck, index) => renderTrucks(index, truck, getTruckColor(truck)))}
+                        { trucks && trucks.map((truck, index) => renderTrucks(index, truck))}
 
                         {!isLoading && 
                             <Grid item>

@@ -3,3 +3,6 @@ import * as url from '../../helpers/api_url_helper';
 
 // set trailer for tractor
 export const setTrailerForTractor = trailerAssignment => post(url.SET_TRAILER_FOR_TRACTOR, trailerAssignment);
+
+// set tractor for trailer
+export const setTractorForTrailer = tractorAssignment => post(url.SET_TRACTOR_FOR_TRAILER, tractorAssignment);

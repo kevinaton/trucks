@@ -439,6 +439,12 @@ const TruckBlockItem = ({
         
         openModal(
             <AddOrEditTractor 
+                data={{
+                    date: dataFilter.date,
+                    shift: dataFilter.shift,
+                    officeId: dataFilter.officeId,
+                    trailerId: truck.id
+                }}
                 closeModal={closeModal} 
             />,
             400
@@ -620,7 +626,7 @@ const TruckBlockItem = ({
                         : e.preventDefault() 
                     }
                     sx={{
-                        width: '80px',
+                        width: '85px',
                         borderRadius: 0,
                         fontSize: 17,
                         fontWeight: 600,

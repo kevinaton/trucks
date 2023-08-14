@@ -11,6 +11,9 @@ import {
     GET_ACTIVE_TRAILERS_SELECT_LIST,
     GET_ACTIVE_TRAILERS_SELECT_LIST_SUCCESS,
     GET_ACTIVE_TRAILERS_SELECT_LIST_FAILURE,
+    GET_ACTIVE_TRACTORS_SELECT_LIST,
+    GET_ACTIVE_TRACTORS_SELECT_LIST_SUCCESS,
+    GET_ACTIVE_TRACTORS_SELECT_LIST_FAILURE,
     GET_MAKES_SELECT_LIST,
     GET_MAKES_SELECT_LIST_SUCCESS,
     GET_MAKES_SELECT_LIST_FAILURE,
@@ -37,6 +40,8 @@ const INIT_STATE = {
     fuelTypeSelectList: null,
     isLoadingActiveTrailersOpts: false,
     activeTrailersSelectList: null,
+    isLoadingActiveTractorsOpts: false,
+    activeTractorsSelectList: null,
     isLoadingMakesOpts: false,
     makesSelectList: null,
     isLoadingModelsOpts: false,
@@ -112,6 +117,23 @@ const TruckReducer = (state = INIT_STATE, action) => {
             return {
                 ...state,
                 isLoadingActiveTrailersOpts: false,
+                error: action.payload,
+            };
+        case GET_ACTIVE_TRACTORS_SELECT_LIST:
+            return {
+                ...state,
+                isLoadingActiveTractorsOpts: true
+            };
+        case GET_ACTIVE_TRACTORS_SELECT_LIST_SUCCESS:
+            return {
+                ...state,
+                isLoadingActiveTractorsOpts: false,
+                activeTractorsSelectList: action.payload,
+            };
+        case GET_ACTIVE_TRACTORS_SELECT_LIST_FAILURE:
+            return {
+                ...state,
+                isLoadingActiveTractorsOpts: false,
                 error: action.payload,
             };
         case GET_MAKES_SELECT_LIST:

@@ -100,11 +100,16 @@ namespace DispatcherWeb.TrailerAssignments
 
         public async Task SetTractorForTrailer(SetTractorForTrailerInput input)
         {
+            var syncRequest = new SyncRequest();
+
             var otherTractors = await _truckRepository.GetAll()
                 .Where(x => x.CurrentTrailerId == input.TrailerId && x.Id != input.TractorId)
                 .ToListAsync();
 
-            otherTractors.ForEach(x => x.CurrentTrailerId = null);
+            otherTractors.ForEach(x => {
+                x.CurrentTrailerId = null;
+                syncRequest.AddChange(EntityEnum.Truck, x.ToChangedEntity());
+            });
 
             if (input.TractorId.HasValue)
             {
@@ -113,7 +118,13 @@ namespace DispatcherWeb.TrailerAssignments
                     .FirstAsync();
 
                 tractor.CurrentTrailerId = input.TrailerId;
+                syncRequest.AddChange(EntityEnum.Truck, tractor.ToChangedEntity());
             }
+
+            syncRequest.AddChange(EntityEnum.Truck, GetChangedTruckById(input.TrailerId));
+
+            // send sync requests for affected tractor and trailer
+            await _syncRequestSender.SendSyncRequest(syncRequest);
         }
 
         public async Task SetTrailerForOrderLineTruck(SetTrailerForOrderLineTruckInput input)
