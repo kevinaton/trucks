@@ -453,6 +453,27 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
+    const handleChangeTractor = (e) => {
+        e.preventDefault();
+        
+        openModal(
+            <AddOrEditTractor 
+                data={{
+                    date: dataFilter.date,
+                    shift: dataFilter.shift,
+                    officeId: dataFilter.officeId,
+                    trailerId: truck.id,
+                    tractorId: truck.tractor.id,
+                    tractorTruckCode: truck.tractor.truckCode,
+                }}
+                closeModal={closeModal} 
+            />,
+            400
+        );
+
+        handleCloseMenu();
+    };
+
     const handleRemoveTractor = () => {
         handleCloseMenu();
     };
@@ -580,9 +601,9 @@ const TruckBlockItem = ({
                 { truck.vehicleCategory.assetType === assetType.TRAILER && truck.tractor && 
                     <React.Fragment>
                         {/* Change tractor */}
-                        <MenuItem onClick={handleAddTractor}>Change tractor</MenuItem>
+                        <MenuItem onClick={(e) => handleChangeTractor(e)}>Change tractor</MenuItem>
                         {/* Remove tractor */}
-                        <MenuItem onClick={handleRemoveTractor}>Remove tractor</MenuItem>
+                        <MenuItem onClick={(e) => handleRemoveTractor(e)}>Remove tractor</MenuItem>
                     </React.Fragment>
                     
                 }

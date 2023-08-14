@@ -19,7 +19,6 @@ function* onSetTrailerForTractor({ payload: {
     trailerAssignment
 }}) {
     try {
-
         const response = yield call(setTrailerForTractor, trailerAssignment);
         yield put(setTrailerForTractorSuccess({
             truckId, 
@@ -35,7 +34,6 @@ function* onSetTractorForTrailer({ payload: {
     tractorAssignment
 }}) {
     try {
-
         const response = yield call(setTractorForTrailer, tractorAssignment);
         yield put(setTractorForTrailerSuccess({
             trailerId, 

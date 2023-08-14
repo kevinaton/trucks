@@ -75,6 +75,8 @@ const AddOrEditTrailer = ({
 
     useEffect(() => {
         dispatch(getVehicleCategories({
+            maxResultCount: 1000,
+            skipCount: 0,
             assetType: assetType.TRAILER
         }));
 
