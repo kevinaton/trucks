@@ -81,7 +81,7 @@ namespace DispatcherWeb.DriverApp.TruckPositions
                 return;
             }
 
-            var truckPositionTableClient = await _azureTableManager.GetTruckPositionTableClient();
+            var truckPositionTableClient = _azureTableManager.GetTableClient(AzureTableNames.TruckPosition);
 
             foreach (var location in input.Location)
             {

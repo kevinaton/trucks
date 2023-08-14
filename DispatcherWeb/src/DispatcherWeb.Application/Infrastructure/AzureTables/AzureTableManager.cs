@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Azure.Data.Tables;
+﻿using Azure.Data.Tables;
 using DispatcherWeb.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace DispatcherWeb.Infrastructure.AzureTables
 {
@@ -13,39 +13,45 @@ namespace DispatcherWeb.Infrastructure.AzureTables
             _configurationAccessor = configurationAccessor;
         }
 
-        private string GetConnectionString()
+        private static string GetConnectionString(IConfigurationRoot configuration)
         {
-            var connectionString = _configurationAccessor.Configuration["Abp:AzureTableConnectionString"];
+            var connectionString = configuration["Abp:AzureTableConnectionString"];
             if (!string.IsNullOrEmpty(connectionString))
             {
                 return connectionString;
             }
-            return _configurationAccessor.Configuration["Abp:StorageConnectionString"];
+            return configuration["Abp:StorageConnectionString"];
         }
 
-        private TableServiceClient GetTableServiceClient()
+        private static TableServiceClient GetTableServiceClient(IConfigurationRoot configuration)
         {
             return new TableServiceClient(
-                connectionString: GetConnectionString()
+                connectionString: GetConnectionString(configuration)
             );
         }
 
-        private TableClient _truckLocationTableClient = null;
-        public async Task<TableClient> GetTruckPositionTableClient()
+        public TableClient GetTableClient(string tableName)
         {
-            if (_truckLocationTableClient != null)
-            {
-                return _truckLocationTableClient;
-            }
+            return GetTableClient(tableName, _configurationAccessor.Configuration);
+        }
 
-            var tableServiceClient = GetTableServiceClient();
-            TableClient tableClient = tableServiceClient.GetTableClient(
-                tableName: "TruckPosition"
+        private static TableClient GetTableClient(string tableName, IConfigurationRoot configuration)
+        {
+            var tableServiceClient = GetTableServiceClient(configuration);
+            var tableClient = tableServiceClient.GetTableClient(
+                tableName: tableName
             );
 
-            await tableClient.CreateIfNotExistsAsync(); //todo move to startup or module postinitialize so that it doesn't needlessly run on each request
+            return tableClient;
+        }
 
-            return _truckLocationTableClient = tableClient;
+        public static void CreateAllTables(IConfigurationRoot configuration)
+        {
+            foreach (var tableName in AzureTableNames.All)
+            {
+                var tableClient = GetTableClient(tableName, configuration);
+                tableClient.CreateIfNotExists();
+            }
         }
     }
 }

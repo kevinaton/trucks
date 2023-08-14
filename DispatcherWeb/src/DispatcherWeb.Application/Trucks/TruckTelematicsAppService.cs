@@ -833,7 +833,7 @@ namespace DispatcherWeb.Trucks
                 using (UnitOfWorkManager.Current.DisableFilter(AbpDataFilters.MayHaveTenant))
                 {
                     var lastUploadedTimestamp = await SettingManager.GetSettingValueAsync<DateTime>(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp);
-                    var truckPositionTableClient = await _azureTableManager.GetTruckPositionTableClient();
+                    var truckPositionTableClient = _azureTableManager.GetTableClient(AzureTableNames.TruckPosition);
                     var truckPositionsQueryResult = truckPositionTableClient.QueryAsync<TruckPosition>(x => x.Timestamp >= lastUploadedTimestamp); //(&& x.DtdTrackerUniqueId != null) or (" and DtdTrackerUniqueId ne null") throws an exception, so we'll filter the data locally for now
                     var truckPositionsToUpload = new List<TruckPosition>();
                     await foreach (var truckPositionResultPage in truckPositionsQueryResult.AsPages())
