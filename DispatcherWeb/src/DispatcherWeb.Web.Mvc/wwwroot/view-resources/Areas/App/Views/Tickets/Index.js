@@ -25,8 +25,7 @@
 
     var _permissions = {
         invoices: abp.auth.hasPermission('Pages.Invoices'),
-        editTickets: abp.auth.hasPermission('Pages.Tickets.Edit'),
-        exports: abp.auth.hasPermission('Pages.Tickets.Export') || abp.auth.hasPermission('CustomerPortal.TicketList.Export')
+        editTickets: abp.auth.hasPermission('Pages.Tickets.Edit')
     };
 
     var rowSelectionClass = 'invoice-row-selection';
@@ -306,7 +305,7 @@
         },
         order: [[2, 'asc']],
         headerCallback: function (thead, data, start, end, display) {
-            if (_permissions.invoices || _permissions.exports) {
+            if (_permissions.invoices) {
                 var headerCell = $(thead).find('th').eq(1).html('');
                 headerCell.append($('<label class="m-checkbox cell-centered-checkbox checkbox-only-header-label"><input type="checkbox" class="minimal ' + rowSelectAllClass + '"><span></span></label>'));
             }
@@ -323,7 +322,7 @@
             {
                 data: null,
                 orderable: false,
-                visible: _permissions.invoices || _permissions.exports,
+                visible: _permissions.invoices,
                 render: function (data, type, full, meta) {
                     return renderSelectionCheckbox(full);
                 },
@@ -484,10 +483,9 @@
     }
 
     function renderSelectionCheckbox(rowData) {
-        // this was commented out to allow selecting any row for export
-        //if (rowData.isBilled || !rowData.revenue || rowData.invoiceLineId || !rowData.isVerified /*|| full.hasPayStatements*/) {
-        //    return "";
-        //}
+        if (rowData.isBilled || !rowData.revenue || rowData.invoiceLineId || !rowData.isVerified /*|| full.hasPayStatements*/) {
+            return "";
+        }
         return `<label class="m-checkbox cell-centered-checkbox"><input type="checkbox" class="minimal ${rowSelectionClass}" ${(_selectedRowIds.includes(rowData.id) ? 'checked' : '')}><span></span></label>`;
     }
 
