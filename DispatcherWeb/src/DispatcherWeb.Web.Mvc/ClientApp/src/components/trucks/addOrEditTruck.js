@@ -240,7 +240,10 @@ const AddOrEditTruckForm = ({
     }, [officeOptions, offices]);
 
     useEffect(() => {
-        dispatch(getVehicleCategories());
+        dispatch(getVehicleCategories({
+            maxResultCount: 1000,
+            skipCount: 0
+        }));
         dispatch(getDriversSelectList({ 
             includeLeaseHaulerDrivers: false, 
             maxResultCount: 1000, 
@@ -375,6 +378,8 @@ const AddOrEditTruckForm = ({
                             <AlertDialog variant='error' message={message} />
                         )
                     });
+
+                    dispatch(onResetEditTruck());
                 }
             }
         }

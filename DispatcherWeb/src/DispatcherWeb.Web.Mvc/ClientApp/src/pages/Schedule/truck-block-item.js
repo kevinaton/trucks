@@ -29,7 +29,9 @@ import {
     hasOrderLineTrucks,
     hasOrderLineTrucksReset as onResetHasOrderLineTrucks,
     setTrailerForTractor as onSetTrailerForTractor,
-    setTrailerForTractorReset as onResetSetTrailerForTractor
+    setTrailerForTractorReset as onResetSetTrailerForTractor,
+    setTractorForTrailer as onSetTractorForTrailer,
+    setTractorForTrailerReset as onResetSetTractorForTrailer
 } from '../../store/actions';
 import { useSnackbar } from 'notistack';
 
@@ -88,12 +90,14 @@ const TruckBlockItem = ({
         userProfileMenu,
         setTruckIsOutOfServiceSuccess,
         hasOrderLineTrucksResponse,
-        setTrailerForTractorResponse
+        setTrailerForTractorResponse,
+        setTractorForTrailerResponse
     } = useSelector((state) => ({
         userProfileMenu: state.UserReducer.userProfileMenu,
         setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess,
         hasOrderLineTrucksResponse: state.DriverAssignmentReducer.hasOrderLineTrucksResponse,
-        setTrailerForTractorResponse: state.TrailerAssignmentReducer.setTrailerForTractorResponse
+        setTrailerForTractorResponse: state.TrailerAssignmentReducer.setTrailerForTractorResponse,
+        setTractorForTrailerResponse: state.TrailerAssignmentReducer.setTractorForTrailerResponse
     }));
 
     useEffect(() => {
@@ -215,6 +219,16 @@ const TruckBlockItem = ({
             }
         }
     }, [setTrailerForTractorResponse]);
+
+    useEffect(() => {
+        if (!isEmpty(setTractorForTrailerResponse) && setTractorForTrailerResponse.success) {
+            const { trailerId } = setTractorForTrailerResponse;
+            if (trailerId === truck.id) {
+                dispatch(onResetSetTractorForTrailer());
+                enqueueSnackbar('Saved successfully', { variant: 'success' });
+            }
+        }
+    }, [setTractorForTrailerResponse]);
 
     const getCombinedTruckCode = (truck) => {
         const { showTrailersOnSchedule } = userAppConfiguration.settings;
@@ -453,7 +467,36 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
+    const handleChangeTractor = (e) => {
+        e.preventDefault();
+        
+        openModal(
+            <AddOrEditTractor 
+                data={{
+                    date: dataFilter.date,
+                    shift: dataFilter.shift,
+                    officeId: dataFilter.officeId,
+                    trailerId: truck.id,
+                    tractorId: truck.tractor.id,
+                    tractorTruckCode: truck.tractor.truckCode,
+                }}
+                closeModal={closeModal} 
+            />,
+            400
+        );
+
+        handleCloseMenu();
+    };
+
     const handleRemoveTractor = () => {
+        dispatch(onSetTractorForTrailer(truck.id, {
+            date: dataFilter.date,
+            shift: dataFilter.shift,
+            officeId: dataFilter.officeId,
+            trailerId: truck.id,
+            tractorId: null
+        }));
+
         handleCloseMenu();
     };
 
@@ -580,9 +623,9 @@ const TruckBlockItem = ({
                 { truck.vehicleCategory.assetType === assetType.TRAILER && truck.tractor && 
                     <React.Fragment>
                         {/* Change tractor */}
-                        <MenuItem onClick={handleAddTractor}>Change tractor</MenuItem>
+                        <MenuItem onClick={(e) => handleChangeTractor(e)}>Change tractor</MenuItem>
                         {/* Remove tractor */}
-                        <MenuItem onClick={handleRemoveTractor}>Remove tractor</MenuItem>
+                        <MenuItem onClick={(e) => handleRemoveTractor(e)}>Remove tractor</MenuItem>
                     </React.Fragment>
                     
                 }

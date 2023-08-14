@@ -3,7 +3,7 @@ import * as url from '../../helpers/api_url_helper';
 
 // get vehicle categories
 export const getVehicleCategories = filter => {
-    let queryString = `maxResultCount=1000&skipCount=0`;
+    let queryString = `maxResultCount=${filter.maxResultCount}&skipCount=${filter.skipCount}`;
 
     if (filter.assetType !== null && filter.assetType !== undefined) {
         queryString = `assetType=${filter.assetType}&${queryString}`;

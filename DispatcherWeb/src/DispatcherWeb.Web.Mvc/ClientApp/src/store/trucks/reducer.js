@@ -204,7 +204,8 @@ const TruckReducer = (state = INIT_STATE, action) => {
         case EDIT_TRUCK_RESET: 
             return {
                 ...state,
-                editTruckSuccess: null
+                editTruckSuccess: null,
+                error: null
             };
         case SET_TRUCK_IS_OUT_OF_SERVICE_SUCCESS: {
             const payload = action.payload;
