@@ -20,6 +20,7 @@ using DispatcherWeb.Configuration;
 using DispatcherWeb.EntityFrameworkCore;
 using DispatcherWeb.Identity;
 using DispatcherWeb.Infrastructure.AzureBlobs;
+using DispatcherWeb.Infrastructure.AzureTables;
 using DispatcherWeb.Infrastructure.RecurringJobs;
 using DispatcherWeb.Web.Chat.SignalR;
 using DispatcherWeb.Web.Common;
@@ -364,6 +365,7 @@ namespace DispatcherWeb.Web.Startup
                 });
             }
 
+            AzureTableManager.CreateAllTables(_appConfiguration);
             StaticReccuringJobs.CreateAll(_appConfiguration);
 
             ConfigureSemaphores();
