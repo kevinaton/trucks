@@ -358,7 +358,7 @@
         $("#PrintWorkOrderButton").click(function (e) {
             e.preventDefault();
             var workOrderId = getWorkOrderId();
-            window.open(`${abp.reportCenterPath}/report/VehicleMaintenanceWorkOrderReport/${workOrderId}/pdf`);
+            window.open(`${abp.reportCenterPath}report/VehicleMaintenanceWorkOrderReport/${workOrderId}/pdf`);
         });
 
     });
