@@ -17,6 +17,7 @@ import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason
 import AddOrEditDriverForTruck from '../../components/scheduling/addOrEditDriverForTruck';
 import AddOrEditTrailer from '../../components/scheduling/addOrEditTrailer';
 import AddOrEditTractor from '../../components/scheduling/addOrEditTractor';
+import ShareTruck from '../../components/trucks/shareTruck';
 import TruckOrders from './truck-orders';
 import { AlertDialog } from '../../components/common/dialogs';
 import { assetType } from '../../common/enums/assetType';
@@ -31,7 +32,9 @@ import {
     setTrailerForTractor as onSetTrailerForTractor,
     setTrailerForTractorReset as onResetSetTrailerForTractor,
     setTractorForTrailer as onSetTractorForTrailer,
-    setTractorForTrailerReset as onResetSetTractorForTrailer
+    setTractorForTrailerReset as onResetSetTractorForTrailer,
+    removeAvailableLeaseHaulerTruckFromSchedule as onRemoveAvailableLeaseHaulerTruckFromSchedule,
+    removeAvailableLeaseHaulerTruckFromScheduleReset as onResetRemoveAvailableLeaseHaulerTruckFromSchedule
 } from '../../store/actions';
 import { useSnackbar } from 'notistack';
 
@@ -91,13 +94,15 @@ const TruckBlockItem = ({
         setTruckIsOutOfServiceSuccess,
         hasOrderLineTrucksResponse,
         setTrailerForTractorResponse,
-        setTractorForTrailerResponse
+        setTractorForTrailerResponse,
+        removeAvailableLeaseHaulerTruckFromScheduleResponse
     } = useSelector((state) => ({
         userProfileMenu: state.UserReducer.userProfileMenu,
         setTruckIsOutOfServiceSuccess: state.TruckReducer.setTruckIsOutOfServiceSuccess,
         hasOrderLineTrucksResponse: state.DriverAssignmentReducer.hasOrderLineTrucksResponse,
         setTrailerForTractorResponse: state.TrailerAssignmentReducer.setTrailerForTractorResponse,
-        setTractorForTrailerResponse: state.TrailerAssignmentReducer.setTractorForTrailerResponse
+        setTractorForTrailerResponse: state.TrailerAssignmentReducer.setTractorForTrailerResponse,
+        removeAvailableLeaseHaulerTruckFromScheduleResponse: state.LeaseHaulerRequestEditReducer.removeAvailableLeaseHaulerTruckFromScheduleResponse,
     }));
 
     useEffect(() => {
@@ -229,6 +234,16 @@ const TruckBlockItem = ({
             }
         }
     }, [setTractorForTrailerResponse]);
+
+    useEffect(() => {
+        if (!isEmpty(removeAvailableLeaseHaulerTruckFromScheduleResponse) && removeAvailableLeaseHaulerTruckFromScheduleResponse.success) {
+            const { truckId } = removeAvailableLeaseHaulerTruckFromScheduleResponse;
+            if (truckId === truck.id) {
+                dispatch(onResetRemoveAvailableLeaseHaulerTruckFromSchedule());
+                enqueueSnackbar('Saved successfully', { variant: 'success' });
+            }
+        }
+    }, [removeAvailableLeaseHaulerTruckFromScheduleResponse]);
 
     const getCombinedTruckCode = (truck) => {
         const { showTrailersOnSchedule } = userAppConfiguration.settings;
@@ -386,7 +401,14 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
-    const handleRemoveFromSchedule = () => {
+    const handleRemoveFromSchedule = (e) => {
+        e.preventDefault();
+        dispatch(onRemoveAvailableLeaseHaulerTruckFromSchedule(truck.id, {
+            truckId: truck.id,
+            date: dataFilter.date,
+            shift: dataFilter.shift,
+            officeId: dataFilter.officeId
+        }));
         handleCloseMenu();
     };
 
@@ -500,7 +522,17 @@ const TruckBlockItem = ({
         handleCloseMenu();
     };
 
-    const handleShare = () => {
+    const handleShare = (e) => {
+        e.preventDefault();
+
+        openModal(
+            <ShareTruck 
+                closeModal={closeModal}
+                userAppConfiguration={userAppConfiguration}
+            />,
+            500
+        )
+
         handleCloseMenu();
     };
 
@@ -638,7 +670,7 @@ const TruckBlockItem = ({
                 
                 {/* Share */}
                 { !truck.isExternal && !truck.alwaysShowOnSchedule && features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService && 
-                    <MenuItem onClick={handleShare}>Share</MenuItem>
+                    <MenuItem onClick={(e) => handleShare(e)}>Share</MenuItem>
                 }
                 
                 {/* Revoke share */}

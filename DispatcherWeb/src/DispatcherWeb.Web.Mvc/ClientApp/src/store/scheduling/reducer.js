@@ -138,7 +138,6 @@ const SchedulingReducer = (state = INIT_STATE, action) => {
                 let { items } = state.scheduleTrucks.result;
                 if (items !== null) {
                     _.forEach(payload, (newItem) => {
-                        console.log('newItem: ', newItem)
                         const index = _.findIndex(items, { id: parseInt(newItem) });
                         if (index !== -1) {
                             items.splice(index, 1);

@@ -77,6 +77,7 @@ export const GET_LEASE_HAULER_DRIVERS_SELECT_LIST = '/LeaseHauler/GetLeaseHauler
 
 //LeaseHaulerRequestEdit
 export const SET_DRIVER_FOR_LEASE_HAULER_TRUCK = '/LeaseHaulerRequestEdit/SetDriverForLeaseHaulerTruck';
+export const REMOVE_AVAILABLE_LEASE_HAULER_TRUCK_FROM_SCHEDULE = '/LeaseHaulerRequestEdit/RemoveAvailableLeaseHaulerTruckFromSchedule';
 
 //Scheduling
 export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';

@@ -13,4 +13,5 @@ export * from './driverAssignments/actions';
 export * from './trailerAssignments/actions';
 export * from './trucks/actions';
 export * from './leaseHaulers/actions';
+export * from './leaseHaulerRequestEdit/actions';
 export * from './scheduling/actions';

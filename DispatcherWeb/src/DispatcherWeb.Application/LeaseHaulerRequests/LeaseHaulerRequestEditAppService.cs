@@ -22,6 +22,8 @@ using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.LeaseHaulerRequests.Dto;
 using DispatcherWeb.Notifications;
 using DispatcherWeb.Orders;
+using DispatcherWeb.SyncRequests;
+using DispatcherWeb.SyncRequests.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.LeaseHaulerRequests
@@ -37,6 +39,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
         private readonly INotificationPublisher _notificationPublisher;
         private readonly RoleManager _roleManager;
         private readonly IDriverAssignmentAppService _driverAssignmentAppService;
+        private readonly ISyncRequestSender _syncRequestSender;
 
         public LeaseHaulerRequestEditAppService(
             IRepository<LeaseHaulerRequest> leaseHaulerRequestRepository,
@@ -46,7 +49,8 @@ namespace DispatcherWeb.LeaseHaulerRequests
             IRepository<Ticket> ticketRepository,
             INotificationPublisher notificationPublisher,
             RoleManager roleManager,
-            IDriverAssignmentAppService driverAssignmentAppService
+            IDriverAssignmentAppService driverAssignmentAppService,
+            ISyncRequestSender syncRequestSender
         )
         {
             _leaseHaulerRequestRepository = leaseHaulerRequestRepository;
@@ -57,6 +61,7 @@ namespace DispatcherWeb.LeaseHaulerRequests
             _notificationPublisher = notificationPublisher;
             _roleManager = roleManager;
             _driverAssignmentAppService = driverAssignmentAppService;
+            _syncRequestSender = syncRequestSender;
         }
 
         public async Task<LeaseHaulerRequestEditDto> GetLeaseHaulerRequestForEdit(GetLeaseHaulerRequestForEditInput input)
@@ -570,6 +575,17 @@ namespace DispatcherWeb.LeaseHaulerRequests
                     && x.OfficeId == input.OfficeId
                     && x.Shift == input.Shift
                     && x.TruckId == input.TruckId);
+
+            await _syncRequestSender.SendSyncRequest(new SyncRequest()
+                .AddChange(EntityEnum.Truck, GetChangedTruckById(input.TruckId), ChangeType.Removed));
+        }
+
+        private ChangedTruck GetChangedTruckById(int id)
+        {
+            return new ChangedTruck
+            {
+                Id = id,
+            };
         }
     }
 }

@@ -106,7 +106,6 @@ const TruckBlock = ({
         ) {
             syncRequestConnection.on('syncRequest', payload => {
                 const { changes } = payload;
-                console.log('syncRequest: ', payload)
                 if (!isEmpty(changes)) {
                     let changedTrucks = _.filter(changes, i => i.entityType === entityType.TRUCK);
                     const modifiedTrucks = _.map(
