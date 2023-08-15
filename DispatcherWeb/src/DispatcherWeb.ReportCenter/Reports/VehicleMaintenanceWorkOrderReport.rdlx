@@ -88,12 +88,12 @@
 				<dd:Container xmlns:dd="http://schemas.datadynamics.com/reporting/2005/02/reportdefinition">
 					<ReportItems>
 						<Textbox Name="TextBox1">
-							<Top>0.002662cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>0.077986cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -102,12 +102,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<CanGrow>true</CanGrow>
@@ -116,17 +116,17 @@
 						</Textbox>
 						<CustomReportItem Name="InputField1">
 							<Type>InputField</Type>
-							<Top>0cm</Top>
+							<Top>0.077986cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -153,17 +153,17 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField2">
 							<Type>InputField</Type>
-							<Top>0.565324cm</Top>
+							<Top>0.617986cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -172,6 +172,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>2</ZIndex>
 							<CustomProperties>
@@ -186,12 +189,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox2">
-							<Top>0.565324cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>0.617986cm</Top>
+							<Left>4cm</Left>
+							<Width>6cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -200,12 +203,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Left</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>3</ZIndex>
@@ -214,12 +217,12 @@
 							<Value>=First(Fields!vehicleServiceTypeName.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox3">
-							<Top>1.695949cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>1.697986cm</Top>
+							<Left>4cm</Left>
+							<Width>6cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -229,12 +232,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Left</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>4</ZIndex>
@@ -244,17 +247,17 @@
 						</Textbox>
 						<CustomReportItem Name="InputField3">
 							<Type>InputField</Type>
-							<Top>1.695949cm</Top>
+							<Top>1.697986cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -263,6 +266,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>5</ZIndex>
 							<CustomProperties>
@@ -278,17 +284,17 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField4">
 							<Type>InputField</Type>
-							<Top>1.127986cm</Top>
+							<Top>1.157986cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -297,6 +303,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>6</ZIndex>
 							<CustomProperties>
@@ -311,12 +320,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox4">
-							<Top>1.127986cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>1.157986cm</Top>
+							<Left>4cm</Left>
+							<Width>6cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -326,12 +335,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Left</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>7</ZIndex>
@@ -340,12 +349,12 @@
 							<Value>=First(Fields!issueDate.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox5">
-							<Top>3.383935cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>3.317985cm</Top>
+							<Left>4cm</Left>
+							<Width>6cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -354,12 +363,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Left</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>8</ZIndex>
@@ -369,17 +378,17 @@
 						</Textbox>
 						<CustomReportItem Name="InputField5">
 							<Type>InputField</Type>
-							<Top>3.383935cm</Top>
+							<Top>3.317986cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -388,6 +397,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>9</ZIndex>
 							<CustomProperties>
@@ -403,17 +415,17 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField6">
 							<Type>InputField</Type>
-							<Top>3.946596cm</Top>
+							<Top>8.687984cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -422,6 +434,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>10</ZIndex>
 							<CustomProperties>
@@ -431,17 +446,17 @@
 								</CustomProperty>
 								<CustomProperty>
 									<Name>Value</Name>
-									<Value>Note</Value>
+									<Value>Notes</Value>
 								</CustomProperty>
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox6">
-							<Top>3.946597cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>8.687984cm</Top>
+							<Left>4cm</Left>
+							<Width>5.9843in</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -450,12 +465,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Left</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>11</ZIndex>
@@ -464,12 +479,12 @@
 							<Value>=First(Fields!note.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox7">
-							<Top>2.821273cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>2.777986cm</Top>
+							<Left>4cm</Left>
+							<Width>6cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -478,32 +493,32 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Left</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>12</ZIndex>
 							<CanGrow>true</CanGrow>
-							<DataElementName>status</DataElementName>
-							<Value>=Sum(Fields!status.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
+							<DataElementName>status Text</DataElementName>
+							<Value>=First(Fields!statusText.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<CustomReportItem Name="InputField7">
 							<Type>InputField</Type>
-							<Top>2.821273cm</Top>
+							<Top>2.777986cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -512,6 +527,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>13</ZIndex>
 							<CustomProperties>
@@ -527,17 +545,17 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField8">
 							<Type>InputField</Type>
-							<Top>2.258611cm</Top>
+							<Top>2.237986cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -546,6 +564,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>14</ZIndex>
 							<CustomProperties>
@@ -560,12 +581,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox8">
-							<Top>2.258611cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>2.237986cm</Top>
+							<Left>4cm</Left>
+							<Width>6cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -575,12 +596,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Left</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>15</ZIndex>
@@ -588,12 +609,12 @@
 							<Value>=First(Fields!completionDate.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox9">
-							<Top>5.077222cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>4.397985cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -602,12 +623,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>16</ZIndex>
@@ -617,17 +638,17 @@
 						</Textbox>
 						<CustomReportItem Name="InputField9">
 							<Type>InputField</Type>
-							<Top>5.077221cm</Top>
+							<Top>4.397985cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -636,6 +657,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>17</ZIndex>
 							<CustomProperties>
@@ -651,17 +675,17 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField10">
 							<Type>InputField</Type>
-							<Top>4.509258cm</Top>
+							<Top>3.857985cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -670,6 +694,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>18</ZIndex>
 							<CustomProperties>
@@ -684,12 +711,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox10">
-							<Top>4.509259cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>3.857985cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -698,12 +725,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>19</ZIndex>
@@ -711,13 +738,15 @@
 							<DataElementName>odometer</DataElementName>
 							<Value>=Sum(Fields!odometer.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
-						<Textbox Name="TextBox13">
-							<Top>7.895833cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+						<CustomReportItem Name="InputField14">
+							<Type>InputField</Type>
+							<Top>6.557984cm</Top>
+							<Left>0.199999cm</Left>
+							<Width>3.600001cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -726,74 +755,13 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
-									<Default>CadetBlue</Default>
+									<Default>LightGray</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
-							</Style>
-							<ZIndex>24</ZIndex>
-							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox16</DataElementName>
-							<Value>=IIF(Fields!isTotalPartsCostOverridden.Value="True", "Yes", "No")</Value>
-						</Textbox>
-						<CustomReportItem Name="InputField13">
-							<Type>InputField</Type>
-							<Top>7.88787cm</Top>
-							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
-							<Height>0.54cm</Height>
-							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
-								<FontFamily>Arial</FontFamily>
-								<FontSize>10pt</FontSize>
-								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
-								<PaddingBottom>2pt</PaddingBottom>
-								<PaddingLeft>2pt</PaddingLeft>
-								<PaddingRight>2pt</PaddingRight>
-								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Right</TextAlign>
-								<BorderColor>
-									<Default>LightGray</Default>
-								</BorderColor>
-							</Style>
-							<ZIndex>25</ZIndex>
-							<CustomProperties>
-								<CustomProperty>
-									<Name>DisplayName</Name>
-									<Value>InputField</Value>
-								</CustomProperty>
-								<CustomProperty>
-									<Name>Value</Name>
-									<Value>Is Total Parts Cost Overridden</Value>
-								</CustomProperty>
-							</CustomProperties>
-						</CustomReportItem>
-						<CustomReportItem Name="InputField14">
-							<Type>InputField</Type>
-							<Top>8.455834cm</Top>
-							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
-							<Height>0.54cm</Height>
-							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
-								<FontFamily>Arial</FontFamily>
-								<FontSize>10pt</FontSize>
-								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
-								<PaddingBottom>2pt</PaddingBottom>
-								<PaddingLeft>2pt</PaddingLeft>
-								<PaddingRight>2pt</PaddingRight>
-								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Right</TextAlign>
-								<BorderColor>
-									<Default>LightGray</Default>
-								</BorderColor>
 							</Style>
 							<ZIndex>26</ZIndex>
 							<CustomProperties>
@@ -808,12 +776,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox14">
-							<Top>8.458495cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>6.557984cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -822,12 +790,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>27</ZIndex>
@@ -836,12 +804,12 @@
 							<Value>=Sum(Fields!tax.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox15">
-							<Top>9.58382cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>7.607985cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -850,12 +818,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>28</ZIndex>
@@ -865,17 +833,17 @@
 						</Textbox>
 						<CustomReportItem Name="InputField15">
 							<Type>InputField</Type>
-							<Top>9.581159cm</Top>
+							<Top>7.607985cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -884,6 +852,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>29</ZIndex>
 							<CustomProperties>
@@ -899,17 +870,17 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField16">
 							<Type>InputField</Type>
-							<Top>9.018495cm</Top>
+							<Top>7.087984cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -918,6 +889,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>30</ZIndex>
 							<CustomProperties>
@@ -932,12 +906,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox16">
-							<Top>9.021158cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>7.087984cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -946,12 +920,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>31</ZIndex>
@@ -959,13 +933,15 @@
 							<DataElementName>discount</DataElementName>
 							<Value>=Sum(Fields!discount.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
-						<Textbox Name="TextBox17">
-							<Top>6.765208cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+						<CustomReportItem Name="InputField18">
+							<Type>InputField</Type>
+							<Top>6.017984cm</Top>
+							<Left>0.199999cm</Left>
+							<Width>3.600001cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -974,74 +950,13 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
-									<Default>CadetBlue</Default>
+									<Default>LightGray</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
-							</Style>
-							<ZIndex>32</ZIndex>
-							<CanGrow>true</CanGrow>
-							<DataElementName>TextBox20</DataElementName>
-							<Value>=IIF(Fields!isTotalLaborCostOverridden.Value, "Yes", "No")</Value>
-						</Textbox>
-						<CustomReportItem Name="InputField17">
-							<Type>InputField</Type>
-							<Top>6.765208cm</Top>
-							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
-							<Height>0.54cm</Height>
-							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
-								<FontFamily>Arial</FontFamily>
-								<FontSize>10pt</FontSize>
-								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
-								<PaddingBottom>2pt</PaddingBottom>
-								<PaddingLeft>2pt</PaddingLeft>
-								<PaddingRight>2pt</PaddingRight>
-								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Right</TextAlign>
-								<BorderColor>
-									<Default>LightGray</Default>
-								</BorderColor>
-							</Style>
-							<ZIndex>33</ZIndex>
-							<CustomProperties>
-								<CustomProperty>
-									<Name>DisplayName</Name>
-									<Value>InputField</Value>
-								</CustomProperty>
-								<CustomProperty>
-									<Name>Value</Name>
-									<Value>Is TotalLabor Cost Overridden</Value>
-								</CustomProperty>
-							</CustomProperties>
-						</CustomReportItem>
-						<CustomReportItem Name="InputField18">
-							<Type>InputField</Type>
-							<Top>7.32787cm</Top>
-							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
-							<Height>0.54cm</Height>
-							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
-								<FontFamily>Arial</FontFamily>
-								<FontSize>10pt</FontSize>
-								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
-								<PaddingBottom>2pt</PaddingBottom>
-								<PaddingLeft>2pt</PaddingLeft>
-								<PaddingRight>2pt</PaddingRight>
-								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Right</TextAlign>
-								<BorderColor>
-									<Default>LightGray</Default>
-								</BorderColor>
 							</Style>
 							<ZIndex>34</ZIndex>
 							<CustomProperties>
@@ -1056,12 +971,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox18">
-							<Top>7.32787cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>6.017984cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -1070,12 +985,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>35</ZIndex>
@@ -1084,12 +999,12 @@
 							<Value>=Sum(Fields!totalPartsCost.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Textbox Name="TextBox19">
-							<Top>6.202546cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>5.477984cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -1098,12 +1013,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>36</ZIndex>
@@ -1113,17 +1028,17 @@
 						</Textbox>
 						<CustomReportItem Name="InputField19">
 							<Type>InputField</Type>
-							<Top>6.202547cm</Top>
+							<Top>5.477984cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -1132,6 +1047,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>37</ZIndex>
 							<CustomProperties>
@@ -1147,17 +1065,17 @@
 						</CustomReportItem>
 						<CustomReportItem Name="InputField20">
 							<Type>InputField</Type>
-							<Top>5.639884cm</Top>
+							<Top>4.937985cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -1166,6 +1084,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>38</ZIndex>
 							<CustomProperties>
@@ -1180,12 +1101,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox20">
-							<Top>5.639884cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>4.937985cm</Top>
+							<Left>4cm</Left>
+							<Width>6cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -1194,12 +1115,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Left</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>39</ZIndex>
@@ -1209,17 +1130,17 @@
 						</Textbox>
 						<CustomReportItem Name="InputField11">
 							<Type>InputField</Type>
-							<Top>10.14382cm</Top>
+							<Top>8.147984cm</Top>
 							<Left>0.199999cm</Left>
-							<Width>5.3501cm</Width>
+							<Width>3.600001cm</Width>
 							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
-								<FontWeight>700</FontWeight>
+								<FontWeight>400</FontWeight>
 								<PaddingBottom>2pt</PaddingBottom>
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
@@ -1228,6 +1149,9 @@
 								<BorderColor>
 									<Default>LightGray</Default>
 								</BorderColor>
+								<BorderStyle>
+									<Default>None</Default>
+								</BorderStyle>
 							</Style>
 							<ZIndex>40</ZIndex>
 							<CustomProperties>
@@ -1242,12 +1166,12 @@
 							</CustomProperties>
 						</CustomReportItem>
 						<Textbox Name="TextBox11">
-							<Top>10.14648cm</Top>
-							<Left>5.553071cm</Left>
-							<Width>4.8947cm</Width>
-							<Height>0.56cm</Height>
+							<Top>8.147984cm</Top>
+							<Left>4cm</Left>
+							<Width>3.2cm</Width>
+							<Height>0.54cm</Height>
 							<Style>
-								<BackgroundColor>WhiteSmoke</BackgroundColor>
+								<BackgroundColor>White</BackgroundColor>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>10pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -1256,12 +1180,12 @@
 								<PaddingLeft>2pt</PaddingLeft>
 								<PaddingRight>2pt</PaddingRight>
 								<PaddingTop>2pt</PaddingTop>
-								<TextAlign>Center</TextAlign>
+								<TextAlign>Right</TextAlign>
 								<BorderColor>
 									<Default>CadetBlue</Default>
 								</BorderColor>
 								<BorderStyle>
-									<Default>Solid</Default>
+									<Default>None</Default>
 								</BorderStyle>
 							</Style>
 							<ZIndex>41</ZIndex>
@@ -1270,7 +1194,7 @@
 							<Value>=Sum(Fields!picturesCount.Value, "VehicleMaintenanceWorkOrderDataSet")</Value>
 						</Textbox>
 						<Table Name="Table1">
-							<Top>11.62627cm</Top>
+							<Top>10.4cm</Top>
 							<Left>0.247771cm</Left>
 							<Width>19cm</Width>
 							<Height>1.2cm</Height>
@@ -1288,14 +1212,15 @@
 												<ReportItems>
 													<Textbox Name="TextBox12">
 														<Style>
-															<BackgroundColor>CadetBlue</BackgroundColor>
-															<Color>White</Color>
+															<BackgroundColor>LightGray</BackgroundColor>
+															<Color>Black</Color>
 															<FontWeight>700</FontWeight>
 															<PaddingBottom>2pt</PaddingBottom>
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
 															<TextAlign>Center</TextAlign>
+															<VerticalAlign>Middle</VerticalAlign>
 														</Style>
 														<CanGrow>true</CanGrow>
 														<Value>Service</Value>
@@ -1306,14 +1231,15 @@
 												<ReportItems>
 													<Textbox Name="TextBox21">
 														<Style>
-															<BackgroundColor>CadetBlue</BackgroundColor>
-															<Color>White</Color>
+															<BackgroundColor>LightGray</BackgroundColor>
+															<Color>Black</Color>
 															<FontWeight>700</FontWeight>
 															<PaddingBottom>2pt</PaddingBottom>
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
 															<TextAlign>Center</TextAlign>
+															<VerticalAlign>Middle</VerticalAlign>
 														</Style>
 														<CanGrow>true</CanGrow>
 														<Value>Note</Value>
@@ -1324,14 +1250,15 @@
 												<ReportItems>
 													<Textbox Name="TextBox22">
 														<Style>
-															<BackgroundColor>CadetBlue</BackgroundColor>
-															<Color>White</Color>
+															<BackgroundColor>LightGray</BackgroundColor>
+															<Color>Black</Color>
 															<FontWeight>700</FontWeight>
 															<PaddingBottom>2pt</PaddingBottom>
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
 															<TextAlign>Center</TextAlign>
+															<VerticalAlign>Middle</VerticalAlign>
 														</Style>
 														<CanGrow>true</CanGrow>
 														<Value>Labor Time</Value>
@@ -1342,14 +1269,15 @@
 												<ReportItems>
 													<Textbox Name="TextBox29">
 														<Style>
-															<BackgroundColor>CadetBlue</BackgroundColor>
-															<Color>White</Color>
+															<BackgroundColor>LightGray</BackgroundColor>
+															<Color>Black</Color>
 															<FontWeight>700</FontWeight>
 															<PaddingBottom>2pt</PaddingBottom>
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
 															<TextAlign>Center</TextAlign>
+															<VerticalAlign>Middle</VerticalAlign>
 														</Style>
 														<CanGrow>true</CanGrow>
 														<Value>Labor Rate</Value>
@@ -1360,14 +1288,15 @@
 												<ReportItems>
 													<Textbox Name="TextBox32">
 														<Style>
-															<BackgroundColor>CadetBlue</BackgroundColor>
-															<Color>White</Color>
+															<BackgroundColor>LightGray</BackgroundColor>
+															<Color>Black</Color>
 															<FontWeight>700</FontWeight>
 															<PaddingBottom>2pt</PaddingBottom>
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
 															<TextAlign>Center</TextAlign>
+															<VerticalAlign>Middle</VerticalAlign>
 														</Style>
 														<CanGrow>true</CanGrow>
 														<Value>Labor Cost</Value>
@@ -1378,14 +1307,15 @@
 												<ReportItems>
 													<Textbox Name="TextBox35">
 														<Style>
-															<BackgroundColor>CadetBlue</BackgroundColor>
-															<Color>White</Color>
+															<BackgroundColor>LightGray</BackgroundColor>
+															<Color>Black</Color>
 															<FontWeight>700</FontWeight>
 															<PaddingBottom>2pt</PaddingBottom>
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
 															<TextAlign>Center</TextAlign>
+															<VerticalAlign>Middle</VerticalAlign>
 														</Style>
 														<CanGrow>true</CanGrow>
 														<Value>Parts Cost</Value>
@@ -1409,6 +1339,7 @@
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
+															<VerticalAlign>Middle</VerticalAlign>
 															<BorderStyle>
 																<Default>Solid</Default>
 															</BorderStyle>
@@ -1430,6 +1361,7 @@
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
+															<VerticalAlign>Middle</VerticalAlign>
 															<BorderStyle>
 																<Default>Solid</Default>
 															</BorderStyle>
@@ -1451,6 +1383,7 @@
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
+															<VerticalAlign>Middle</VerticalAlign>
 															<BorderStyle>
 																<Default>Solid</Default>
 															</BorderStyle>
@@ -1472,6 +1405,7 @@
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
+															<VerticalAlign>Middle</VerticalAlign>
 															<BorderStyle>
 																<Default>Solid</Default>
 															</BorderStyle>
@@ -1493,6 +1427,7 @@
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
+															<VerticalAlign>Middle</VerticalAlign>
 															<BorderStyle>
 																<Default>Solid</Default>
 															</BorderStyle>
@@ -1514,6 +1449,7 @@
 															<PaddingLeft>2pt</PaddingLeft>
 															<PaddingRight>2pt</PaddingRight>
 															<PaddingTop>2pt</PaddingTop>
+															<VerticalAlign>Middle</VerticalAlign>
 															<BorderStyle>
 																<Default>Solid</Default>
 															</BorderStyle>
@@ -1554,13 +1490,13 @@
 						</Table>
 						<CustomReportItem Name="InputField12">
 							<Type>InputField</Type>
-							<Top>11.02627cm</Top>
+							<Top>9.8cm</Top>
 							<Left>0.247771cm</Left>
 							<Width>18.9971cm</Width>
 							<Height>0.5798cm</Height>
 							<Style>
-								<BackgroundColor>CadetBlue</BackgroundColor>
-								<Color>White</Color>
+								<BackgroundColor>LightGray</BackgroundColor>
+								<Color>Black</Color>
 								<FontFamily>Arial</FontFamily>
 								<FontSize>11pt</FontSize>
 								<FontStyle>Normal</FontStyle>
@@ -1589,12 +1525,12 @@
 			</CustomReportItem>
 		</ReportItems>
 	</Body>
+	<Width>21.6cm</Width>
 	<Description>VehicleMaintenanceWorkOrderReport</Description>
-	<Width>0in</Width>
 	<DataSources>
 		<DataSource Name="VehicleMaintenanceWorkOrderDataSource">
 			<ConnectionProperties>
-				<ConnectString>jsondoc=_VehicleMaintenanceWorkOrder.json</ConnectString>
+				<ConnectString>jsondoc=F:\TruckDispatcher\_Projects\DispatcherWeb\_Codes.GIT5\DispatcherWeb\src\DispatcherWeb.ReportCenter\Reports\_VehicleMaintenanceWorkOrder.json</ConnectString>
 				<DataProvider>JSON</DataProvider>
 			</ConnectionProperties>
 		</DataSource>
@@ -1726,6 +1662,9 @@
 				</Field>
 				<Field Name="['__abp']">
 					<DataField>['__abp']</DataField>
+				</Field>
+				<Field Name="statusText">
+					<DataField>result.statusText</DataField>
 				</Field>
 			</Fields>
 			<Query>

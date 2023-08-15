@@ -14,6 +14,7 @@ namespace DispatcherWeb.WorkOrders.Dto
         public DateTime? StartDate { get; set; }
         public DateTime? CompletionDate { get; set; }
         public WorkOrderStatus Status { get; set; }
+        public string StatusText => Status.GetDisplayName();
         public int TruckId { get; set; }
         public string TruckCode { get; set; }
 

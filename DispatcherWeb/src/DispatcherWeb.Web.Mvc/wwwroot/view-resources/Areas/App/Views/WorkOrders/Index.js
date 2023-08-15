@@ -128,7 +128,7 @@
                             },
                             action: function (data) {
                                 var workOrderId = data.record.id;
-                                window.open(`${abp.reportCenterPath}/report/VehicleMaintenanceWorkOrderReport/${workOrderId}/pdf`);
+                                window.open(`${abp.reportCenterPath}report/VehicleMaintenanceWorkOrderReport/${workOrderId}/pdf`);
                             }
                         },
                         {
