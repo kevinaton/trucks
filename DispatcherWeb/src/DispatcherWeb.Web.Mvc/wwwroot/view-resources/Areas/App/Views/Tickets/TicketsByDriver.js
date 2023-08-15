@@ -422,7 +422,7 @@
         block.ui.materialRate.val(block.orderLine.materialRate);
         block.ui.leaseHaulerRate.val(block.orderLine.leaseHaulerRate);
         block.ui.leaseHaulerRate.closest('.form-group').toggle(
-            leaseHaulerId
+            !!leaseHaulerId
             && abp.setting.getBoolean('App.LeaseHaulers.ShowLeaseHaulerRateOnOrder'));
         block.ui.fuelSurchargeRate.val(block.orderLine.fuelSurchargeRate);
         setInputOrDropdownValue(block.ui.office, block.orderLine.officeId, block.orderLine.officeName);
@@ -1433,7 +1433,16 @@
                 return;
             }
 
-            var result = await handleBlockNumberChangeAsync(block, $(this));
+            var field = $(this).attr('name');
+
+            var additionalValidationCallback = async (newValue) => {
+                if (newValue === block.orderLine[field]) {
+                    return false;
+                }
+                return true;
+            };
+
+            var result = await handleBlockNumberChangeAsync(block, $(this), additionalValidationCallback);
             if (!result) {
                 return;
             }
