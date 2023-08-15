@@ -7,6 +7,7 @@
     "startDate": "2021-01-16T00:00:00Z",
     "completionDate": "2021-01-16T00:00:00Z",
     "status": 2,
+	"statusText": "Complete",
     "truckId": 49,
     "truckCode": "112",
     "note": "Replaced brakes",
