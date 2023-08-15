@@ -402,6 +402,7 @@
         if (!block.ui) {
             return;
         }
+        let leaseHaulerId = (block.driver && block.driver.leaseHaulerId) || null;
         _initializing++;
         setInputOrDropdownValue(block.ui.driver, block.driver && block.driver.id, block.driver && block.driver.name);
         setInputOrDropdownValue(block.ui.customer, block.orderLine.customerId, block.orderLine.customerName);
@@ -414,10 +415,15 @@
         block.ui.freightRate.val(block.orderLine.freightRate);
         block.ui.freightRateToPayDrivers.val(block.orderLine.freightRateToPayDrivers);
         block.ui.freightRateToPayDrivers.closest('.form-group').toggle(
-            !abp.enums.designations.materialOnly.includes(block.orderLine.designation)
+            !leaseHaulerId
+            && !abp.enums.designations.materialOnly.includes(block.orderLine.designation)
             && abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')
             && block.orderLine.productionPay);
         block.ui.materialRate.val(block.orderLine.materialRate);
+        block.ui.leaseHaulerRate.val(block.orderLine.leaseHaulerRate);
+        block.ui.leaseHaulerRate.closest('.form-group').toggle(
+            leaseHaulerId
+            && abp.setting.getBoolean('App.LeaseHaulers.ShowLeaseHaulerRateOnOrder'));
         block.ui.fuelSurchargeRate.val(block.orderLine.fuelSurchargeRate);
         setInputOrDropdownValue(block.ui.office, block.orderLine.officeId, block.orderLine.officeName);
 
@@ -748,6 +754,7 @@
             block.ui.freightRate,
             block.ui.freightRateToPayDrivers,
             block.ui.materialRate,
+            block.ui.leaseHaulerRate,
             //block.ui.fuelSurchargeRate //always readonly
             block.ui.office
         ];
@@ -1201,6 +1208,9 @@
             ).append(
                 renderRateInput(ui, 'materialRate', app.localize('MaterialRate'), 'materialRate')
             ).append(
+                renderRateInput(ui, 'leaseHaulerRate', app.localize('LHRate'), 'leaseHaulerRate')
+                    .toggle(abp.setting.getBoolean('App.LeaseHaulers.ShowLeaseHaulerRateOnOrder'))
+            ).append(
                 renderDisabledInput(ui, 'fuelSurchargeRate', app.localize('FuelSurchargeRate'), 'fuelSurchargeRate', '')
                     .toggle(abp.setting.getBoolean('App.Fuel.ShowFuelSurcharge'))
             ).append(
@@ -1412,6 +1422,18 @@
             };
 
             var result = await handleBlockNumberChangeAsync(block, input, additionalValidationCallback);
+            if (!result) {
+                return;
+            }
+            saveOrderLine(block.orderLine);
+        });
+
+        block.ui.leaseHaulerRate.focusout(async function () {
+            if (_initializing) {
+                return;
+            }
+
+            var result = await handleBlockNumberChangeAsync(block, $(this));
             if (!result) {
                 return;
             }
