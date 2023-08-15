@@ -1199,6 +1199,7 @@ namespace DispatcherWeb.Tickets
                     FreightUomName = x.FreightUom.Name,
                     FreightRate = x.FreightPricePerUnit,
                     FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                    LeaseHaulerRate = x.LeaseHaulerRate,
                     ProductionPay = x.ProductionPay,
                     MaterialRate = x.MaterialPricePerUnit,
                     FuelSurchargeRate = x.FuelSurchargeRate,
@@ -1594,6 +1595,7 @@ namespace DispatcherWeb.Tickets
                     }
 
                     orderLine.JobNumber = orderLineModel.JobNumber;
+                    orderLine.LeaseHaulerRate = orderLineModel.LeaseHaulerRate;
 
                     var rateWasChanged = false;
                     if (orderLine.Designation != orderLineModel.Designation)

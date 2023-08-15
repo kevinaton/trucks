@@ -60,6 +60,7 @@ namespace DispatcherWeb.Tickets.Dto
             public decimal? FreightRateToPayDrivers { get; set; }
             public bool ProductionPay { get; set; }
             public decimal? MaterialRate { get; set; }
+            public decimal? LeaseHaulerRate { get; set; }
             public decimal? FuelSurchargeRate { get; set; }
             public decimal MaterialTotal { get; set; }
             public decimal FreightTotal { get; set; }
