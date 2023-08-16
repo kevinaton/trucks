@@ -226,7 +226,7 @@ namespace DispatcherWeb.Offices
                     HasUsers = x.Users.Any(),
                     HasSharedOrderLines = x.SharedOrderLines.Any(),
                     HasOrders = x.Orders.Any(),
-                    HasQuotes = x.Quotes.Any()
+                    HasQuotes = x.Quotes.Any(),
                 })
                 .SingleAsync();
 
