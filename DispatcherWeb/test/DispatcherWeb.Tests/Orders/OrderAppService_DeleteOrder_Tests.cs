@@ -68,23 +68,6 @@ namespace DispatcherWeb.Tests.Orders
         }
 
         [Fact]
-        public async Task Test_DeleteOrder_should_throw_UserFriendlyException_when_there_is_SharedOrder()
-        {
-            // Assign
-            await UpdateOrder(order =>
-            {
-                order.SharedOrders.Add(new SharedOrder()
-                {
-                    TenantId = 1,
-                    Office = new Office() { TenantId = 1, Name = "Office2", TruckColor = "aaa" },
-                });
-            });
-
-            // Act & Assert
-            await DeleteOrderShouldThrowUserFriendlyException();
-        }
-
-        [Fact]
         public async Task Test_DeleteOrder_should_throw_UserFriendlyException_when_there_is_BilledOrder()
         {
             // Assign

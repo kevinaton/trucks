@@ -220,7 +220,7 @@
                 $.extend(abpData, {
                     startDate: _selectedDateRange.startDate.format("YYYY-MM-DDT00:00:00"),
                     endDate: _selectedDateRange.endDate.format("YYYY-MM-DDT23:59:59.999"),
-                    editionId: $('#EditionIdFilter').val(),
+                    editionIds: $('#EditionIdFilter').val(),
                     status: $('#StatusFilter').val()
                 });
                 _hostDashboardService.getTenantStatistics(abpData).done(function (abpResult) {

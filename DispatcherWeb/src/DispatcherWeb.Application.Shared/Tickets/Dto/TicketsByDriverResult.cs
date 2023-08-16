@@ -32,6 +32,8 @@ namespace DispatcherWeb.Tickets.Dto
 
             public int CustomerId { get; set; }
             public string CustomerName { get; set; }
+            public int OfficeId { get; set; }
+            public string OfficeName { get; set; }
             public DateTime? OrderDate { get; set; }
             public int? LoadAtId { get; set; }
             public int? DeliverToId { get; set; }
@@ -56,7 +58,9 @@ namespace DispatcherWeb.Tickets.Dto
             public int? UomId { get; set; }
             public decimal? FreightRate { get; set; }
             public decimal? FreightRateToPayDrivers { get; set; }
+            public bool ProductionPay { get; set; }
             public decimal? MaterialRate { get; set; }
+            public decimal? LeaseHaulerRate { get; set; }
             public decimal? FuelSurchargeRate { get; set; }
             public decimal MaterialTotal { get; set; }
             public decimal FreightTotal { get; set; }

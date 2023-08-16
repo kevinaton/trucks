@@ -21,7 +21,7 @@ namespace DispatcherWeb.Scheduling.Dto
         public BedConstructionEnum? TrailersBedConstruction { get; set; }
         public bool UseAndForTrailerCondition { get; set; }
 
-        public int OfficeId { get; set; }
+        public int? OfficeId { get; set; }
         public DateTime Date { get; set; }
         public Shift? Shift { get; set; }
 

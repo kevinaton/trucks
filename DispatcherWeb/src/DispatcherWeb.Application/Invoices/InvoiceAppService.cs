@@ -20,6 +20,7 @@ using DispatcherWeb.Customers;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Emailing;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Invoices.Dto;
 using DispatcherWeb.Invoices.Reports;
@@ -27,7 +28,6 @@ using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Services;
-using DispatcherWeb.Storage;
 using Microsoft.EntityFrameworkCore;
 using MigraDoc.DocumentObjectModel;
 
@@ -44,7 +44,6 @@ namespace DispatcherWeb.Invoices
         private readonly IRepository<InvoiceEmail> _invoiceEmailRepository;
         private readonly IRepository<Service> _serviceRepository;
         private readonly OrderTaxCalculator _orderTaxCalculator;
-        private readonly IBinaryObjectManager _binaryObjectManager;
         private readonly InvoicePrintOutGenerator1 _invoicePrintOutGenerator1;
         private readonly InvoicePrintOutGenerator2 _invoicePrintOutGenerator2;
         private readonly InvoicePrintOutGenerator3 _invoicePrintOutGenerator3;
@@ -52,6 +51,7 @@ namespace DispatcherWeb.Invoices
         private readonly InvoicePrintOutGenerator5 _invoicePrintOutGenerator5;
         private readonly ITrackableEmailSender _trackableEmailSender;
         private readonly ICrossTenantOrderSender _crossTenantOrderSender;
+        private readonly ILogoProvider _logoProvider;
 
         public InvoiceAppService(
             IRepository<Invoice> invoiceRepository,
@@ -62,14 +62,14 @@ namespace DispatcherWeb.Invoices
             IRepository<InvoiceEmail> invoiceEmailRepository,
             IRepository<Service> serviceRepository,
             OrderTaxCalculator orderTaxCalculator,
-            IBinaryObjectManager binaryObjectManager,
             InvoicePrintOutGenerator1 invoicePrintOutGenerator1,
             InvoicePrintOutGenerator2 invoicePrintOutGenerator2,
             InvoicePrintOutGenerator3 invoicePrintOutGenerator3,
             InvoicePrintOutGenerator4 invoicePrintOutGenerator4,
             InvoicePrintOutGenerator5 invoicePrintOutGenerator5,
             ITrackableEmailSender trackableEmailSender,
-            ICrossTenantOrderSender crossTenantOrderSender
+            ICrossTenantOrderSender crossTenantOrderSender,
+            ILogoProvider logoProvider
             )
         {
             _invoiceRepository = invoiceRepository;
@@ -80,7 +80,6 @@ namespace DispatcherWeb.Invoices
             _invoiceEmailRepository = invoiceEmailRepository;
             _serviceRepository = serviceRepository;
             _orderTaxCalculator = orderTaxCalculator;
-            _binaryObjectManager = binaryObjectManager;
             _invoicePrintOutGenerator1 = invoicePrintOutGenerator1;
             _invoicePrintOutGenerator2 = invoicePrintOutGenerator2;
             _invoicePrintOutGenerator3 = invoicePrintOutGenerator3;
@@ -88,6 +87,7 @@ namespace DispatcherWeb.Invoices
             _invoicePrintOutGenerator5 = invoicePrintOutGenerator5;
             _trackableEmailSender = trackableEmailSender;
             _crossTenantOrderSender = crossTenantOrderSender;
+            _logoProvider = logoProvider;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Invoices)]
@@ -943,6 +943,7 @@ namespace DispatcherWeb.Invoices
                     InvoiceId = x.Id,
                     BillingAddress = x.BillingAddress,
                     CustomerName = x.Customer.Name,
+                    OfficeId = x.OfficeId,
                     JobNumber = x.JobNumber,
                     PoNumber = x.PoNumber,
                     DueDate = x.DueDate,
@@ -986,7 +987,7 @@ namespace DispatcherWeb.Invoices
             item.LegalAddress = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingAddress);
             item.RemitToInformation = await SettingManager.GetSettingValueAsync(AppSettings.Invoice.RemitToInformation);
 
-            item.LogoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
+            item.LogoPath = await _logoProvider.GetReportLogoAsBase64StringAsync(item.OfficeId);
             item.TimeZone = await GetTimezone();
             item.CurrencyCulture = await SettingManager.GetCurrencyCultureAsync();
 

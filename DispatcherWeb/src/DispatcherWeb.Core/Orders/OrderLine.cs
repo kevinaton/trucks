@@ -159,6 +159,8 @@ namespace DispatcherWeb.Orders
 
         public bool ProductionPay { get; set; }
 
+        public bool LoadBased { get; set; }
+
         public virtual ICollection<OrderLineTruck> OrderLineTrucks { get; set; }
 
         public virtual ICollection<SharedOrderLine> SharedOrderLines { get; set; }

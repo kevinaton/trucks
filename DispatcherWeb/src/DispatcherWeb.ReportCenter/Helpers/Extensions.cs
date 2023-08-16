@@ -19,6 +19,9 @@ namespace DispatcherWeb.ReportCenter.Helpers
             if (reportId.Equals("TenantStatisticsReport", StringComparison.InvariantCulture))
                 return serviceProvider.GetRequiredService<TenantStatisticsReportDataDefinitions>();
 
+            else if (reportId.Equals("VehicleMaintenanceWorkOrderReport", StringComparison.InvariantCulture))
+                return serviceProvider.GetService<VehicleMaintenanceWorkOrderReportDataDefinitions>();
+
             throw new Exception("Report is not registered.");
         }
 
@@ -84,6 +87,18 @@ namespace DispatcherWeb.ReportCenter.Helpers
             var txtTenantInMaster = (TextBox)components.FirstOrDefault(c => c is TextBox box && box.Name.Equals("txtTenantInMaster"));
             if (txtTenantInMaster != null) txtTenantInMaster.Visibility = hiddenVisibility;
             var lblTenantInMaster = (TextBox)components.FirstOrDefault(c => c is TextBox box && box.Name.Equals("lblTenantInMaster"));
+            if (lblTenantInMaster != null) lblTenantInMaster.Visibility = hiddenVisibility;
+        }
+
+        public static void HideTenantLabels(this ReportItemCollection items)
+        {
+            var hiddenVisibility = new Visibility()
+            {
+                Hidden = ExpressionInfo.Parse("true", ExpressionResultType.Boolean)
+            };
+            var txtTenantInMaster = (TextBox)items.FirstOrDefault(c => c is TextBox box && box.Name.Equals("txtTenantInMaster"));
+            if (txtTenantInMaster != null) txtTenantInMaster.Visibility = hiddenVisibility;
+            var lblTenantInMaster = (TextBox)items.FirstOrDefault(c => c is TextBox box && box.Name.Equals("lblTenantInMaster"));
             if (lblTenantInMaster != null) lblTenantInMaster.Visibility = hiddenVisibility;
         }
 

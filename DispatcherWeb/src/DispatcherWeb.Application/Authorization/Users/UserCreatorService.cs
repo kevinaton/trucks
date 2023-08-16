@@ -71,6 +71,7 @@ namespace DispatcherWeb.Authorization.Users
                 ShouldChangePasswordOnNextLogin = input.User.ShouldChangePasswordOnNextLogin,
                 IsTwoFactorEnabled = input.User.IsTwoFactorEnabled,
                 IsLockoutEnabled = input.User.IsLockoutEnabled,
+                CustomerContactId = input.User.CustomerContactId,
             };
 
             //Set password

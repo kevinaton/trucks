@@ -8,8 +8,11 @@
 
         this.init = function (modalManager) {
             _modalManager = modalManager;
+            _modal = _modalManager.getModal();
 
             $('#UploadSignaturePictureModalForm input[name=SignaturePicture]').change(function () {
+                var filename = $(this).val().split('\\').pop();
+                _modal.find("#FileNamePlaceholder").val(filename);
                 $('#UploadSignaturePictureModalForm').submit();
             });
 

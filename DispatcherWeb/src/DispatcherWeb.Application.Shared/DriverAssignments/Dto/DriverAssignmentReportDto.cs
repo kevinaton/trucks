@@ -6,7 +6,6 @@ namespace DispatcherWeb.DriverAssignments.Dto
     public class DriverAssignmentReportDto
     {
         public DateTime Date { get; set; }
-        public string OfficeName { get; set; }
         public List<DriverAssignmentReportItemDto> Items { get; set; }
         public Shift? Shift { get; set; }
         public string ShiftName { get; set; }

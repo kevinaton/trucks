@@ -24,5 +24,9 @@ namespace DispatcherWeb.Offices.Dto
         public string FuelIds { get; set; }
 
         public DateTime? DefaultStartTime { get; set; }
+
+        public Guid? LogoId { get; set; }
+
+        public Guid? ReportsLogoId { get; set; }
     }
 }

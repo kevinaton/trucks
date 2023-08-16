@@ -402,6 +402,7 @@
         if (!block.ui) {
             return;
         }
+        let leaseHaulerId = (block.driver && block.driver.leaseHaulerId) || null;
         _initializing++;
         setInputOrDropdownValue(block.ui.driver, block.driver && block.driver.id, block.driver && block.driver.name);
         setInputOrDropdownValue(block.ui.customer, block.orderLine.customerId, block.orderLine.customerName);
@@ -413,8 +414,18 @@
         setInputOrDropdownValue(block.ui.uom, block.orderLine.uomId, block.orderLine.uomName);
         block.ui.freightRate.val(block.orderLine.freightRate);
         block.ui.freightRateToPayDrivers.val(block.orderLine.freightRateToPayDrivers);
+        block.ui.freightRateToPayDrivers.closest('.form-group').toggle(
+            !leaseHaulerId
+            && !abp.enums.designations.materialOnly.includes(block.orderLine.designation)
+            && abp.setting.getBoolean('App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate')
+            && block.orderLine.productionPay);
         block.ui.materialRate.val(block.orderLine.materialRate);
+        block.ui.leaseHaulerRate.val(block.orderLine.leaseHaulerRate);
+        block.ui.leaseHaulerRate.closest('.form-group').toggle(
+            !!leaseHaulerId
+            && abp.setting.getBoolean('App.LeaseHaulers.ShowLeaseHaulerRateOnOrder'));
         block.ui.fuelSurchargeRate.val(block.orderLine.fuelSurchargeRate);
+        setInputOrDropdownValue(block.ui.office, block.orderLine.officeId, block.orderLine.officeName);
 
         if (block.orderLine.isMaterialTotalOverridden || block.orderLine.isFreightTotalOverridden) {
             block.ui.clickableWarningIcon
@@ -742,8 +753,10 @@
             block.ui.uom,
             block.ui.freightRate,
             block.ui.freightRateToPayDrivers,
-            block.ui.materialRate
+            block.ui.materialRate,
+            block.ui.leaseHaulerRate,
             //block.ui.fuelSurchargeRate //always readonly
+            block.ui.office
         ];
         controls.forEach(c => c.prop('disabled', isReadOnly));
 
@@ -1195,8 +1208,15 @@
             ).append(
                 renderRateInput(ui, 'materialRate', app.localize('MaterialRate'), 'materialRate')
             ).append(
+                renderRateInput(ui, 'leaseHaulerRate', app.localize('LHRate'), 'leaseHaulerRate')
+                    .toggle(abp.setting.getBoolean('App.LeaseHaulers.ShowLeaseHaulerRateOnOrder'))
+            ).append(
                 renderDisabledInput(ui, 'fuelSurchargeRate', app.localize('FuelSurchargeRate'), 'fuelSurchargeRate', '')
                     .toggle(abp.setting.getBoolean('App.Fuel.ShowFuelSurcharge'))
+            ).append(
+                renderDropdownPlaceholder(ui, 'office', app.localize('Office'), 'officeId', 'officeName')
+                    .toggle(!abp.setting.getBoolean('App.General.SplitBillingByOffices')
+                        && abp.setting.getBoolean('App.General.ShowOfficeOnTicketsByDriver'))
             ).append(
                 $('<div class="form-group col-lg-2 col-md-4 col-sm-1 d-sm-none-">').append(
                     renderClickableWarningIcon(ui)
@@ -1341,6 +1361,31 @@
             });
         });
 
+        replaceDropdownPlaceholderWithDropdownOnFocus(block, 'office', dropdown => {
+            block.ui.office.select2Init({
+                abpServiceMethod: abp.services.app.office.getAllOfficesSelectList,
+                showAll: true,
+                allowClear: false
+            }).change(function () {
+                if (_initializing) {
+                    return;
+                }
+                var { newId, newName } = handleBlockDropdownChange(block, $(this));
+                var orderId = block.orderLine.orderId;
+                var affectedBlocks = _orderLineBlocks.filter(o => o.orderLine.orderId === orderId);
+                affectedBlocks.forEach(function (affectedBlock) {
+                    if (affectedBlock !== block && affectedBlock.orderLineId !== block.orderLineId) {
+                        affectedBlock.orderLine.officeId = newId;
+                        affectedBlock.orderLine.officeName = newName;
+                        updateCardFromModel(affectedBlock);
+                    }
+                });
+                saveChanges({
+                    orderLines: [block.orderLine]
+                });
+            });
+        });
+
         //should work for all orderline text fields
         block.ui.jobNumber.focusout(function () {
             if (_initializing) {
@@ -1377,6 +1422,27 @@
             };
 
             var result = await handleBlockNumberChangeAsync(block, input, additionalValidationCallback);
+            if (!result) {
+                return;
+            }
+            saveOrderLine(block.orderLine);
+        });
+
+        block.ui.leaseHaulerRate.focusout(async function () {
+            if (_initializing) {
+                return;
+            }
+
+            var field = $(this).attr('name');
+
+            var additionalValidationCallback = async (newValue) => {
+                if (newValue === block.orderLine[field]) {
+                    return false;
+                }
+                return true;
+            };
+
+            var result = await handleBlockNumberChangeAsync(block, $(this), additionalValidationCallback);
             if (!result) {
                 return;
             }
@@ -1904,7 +1970,8 @@
                 block.ui.loadAt,
                 block.ui.deliverTo,
                 block.ui.item,
-                block.ui.uom
+                block.ui.uom,
+                block.ui.office
             ];
             controls.forEach(control => {
                 if (control.is('select')) {

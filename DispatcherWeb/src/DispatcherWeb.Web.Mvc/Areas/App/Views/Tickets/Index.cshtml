@@ -4,15 +4,15 @@
 @using Abp.Application.Features
 @using DispatcherWeb.Authorization
 @using DispatcherWeb.Configuration
-@using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Features
+@using DispatcherWeb.Infrastructure.Extensions
 @using DispatcherWeb.Web.Areas.App.Startup
+
 @{
     ViewBag.CurrentPageName = AppPageNames.Tenant.Tickets;
 }
 
-@section Scripts
-{
+@section Scripts {
     <environment names="Development">
         <script src="~/view-resources/Areas/app/Views/Tickets/Index.js" asp-append-version="true"></script>
         <script src="~/view-resources/Areas/App/Views/Tickets/_CreateOrEditTicketModal.js" asp-append-version="true"></script>
@@ -47,15 +47,18 @@
                 <a asp-controller="Imports" asp-action="LuckStone" class="btn btn-primary" data-toggle="tooltip" data-html="true"
                    title="@L("ImportLuckStoneEarnings")"><i class="fas fa-upload"></i> @L("LuckStone")</a>
             }
-            <div class="btn-group dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span>@L("Export")</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#" id="ExportAllTicketsToCsvButton">@L("ExportAll")</a>
-                    <a class="dropdown-item" href="#" id="ExportSelectedTicketsToCsvButton">@L("ExportSelected")</a>
+            @if (IsGranted(AppPermissions.Pages_Tickets_Export) || IsGranted(AppPermissions.CustomerPortal_TicketList_Export))
+            {
+                <div class="btn-group dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span>@L("Export")</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="#" id="ExportAllTicketsToCsvButton">@L("ExportAll")</a>
+                        <a class="dropdown-item" href="#" id="ExportSelectedTicketsToCsvButton">@L("ExportSelected")</a>
+                    </div>
                 </div>
-            </div>
+            }
             @if (IsGranted(AppPermissions.Pages_Invoices))
             {
                 <button id="InvoiceSelectedTicketsButton" class="btn btn-primary" data-toggle="tooltip" data-html="true"
@@ -102,12 +105,15 @@
                                 <select class="form-control filter" id="Shifts" name="Shifts" asp-items="@((await SettingManager.GetShiftSelectList()).Select(x => new SelectListItem(x.Name, x.Id, false)).Union(new List<SelectListItem> { new SelectListItem("[No Shift]", ((int)Shift.NoShift).ToString(), false) }))" multiple="multiple" required></select>
                             </div>
                         }
-                        <div class="form-group col-xl-3">
-                            <label class="control-label" for="CarrierFilter">@L("Carrier")</label>
-                            <select class="form-control m-input filter" id="CarrierFilter" name="CarrierId" data-display-name="CarrierName">
-                                <option value="">Select a Carrier</option>
-                            </select>
-                        </div>
+                        @if (IsGranted(AppPermissions.Pages_LeaseHauler))
+                        {
+                            <div class="form-group col-xl-3">
+                                <label class="control-label" for="CarrierFilter">@L("Carrier")</label>
+                                <select class="form-control m-input filter" id="CarrierFilter" name="CarrierId" data-display-name="CarrierName">
+                                    <option value="">Select a Carrier</option>
+                                </select>
+                            </div>
+                        }
                         <div class="form-group col-xl-3">
                             <label class="control-label" for="ServiceFilter">@L("Product")</label>
                             <select class="form-control m-input filter" id="ServiceFilter" name="ServiceId" data-display-name="ServiceName">
@@ -183,8 +189,7 @@
                             <label class="control-label" for="JobNumberFilter">@L("JobNumber")</label>
                             <input class="form-control m-input filter" id="JobNumberFilter" name="JobNumber" type="text" placeholder="@L("JobNumber")">
                         </div>
-                        @if (await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.SplitBillingByOffices) &&
-                        (await FeatureChecker.GetValueAsync(AppFeatures.AllowMultiOfficeFeature)).To<bool>())
+                        @if ((await FeatureChecker.GetValueAsync(AppFeatures.AllowMultiOfficeFeature)).To<bool>())
                         {
                             <div class="form-group col-xl-3">
                                 <label class="control-label" for="OfficeIdFilter">@L("Office")</label>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -9,17 +10,14 @@ using System.Threading.Tasks;
 using Abp.Configuration;
 using Abp.Dependency;
 using Abp.Localization;
-using Abp.Runtime.Session;
 using Abp.UI;
-using Castle.Core.Internal;
+using Castle.Core.Logging;
 using DispatcherWeb.Configuration;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Telematics.Dto;
 using DispatcherWeb.Infrastructure.Telematics.Dto.IntelliShift;
 using DispatcherWeb.Infrastructure.Utilities;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using NUglify.Helpers;
 
 namespace DispatcherWeb.Infrastructure.Telematics
 {
@@ -27,28 +25,16 @@ namespace DispatcherWeb.Infrastructure.Telematics
     {
         private readonly ISettingManager _settingManager;
         private readonly ILocalizationManager _localizationManager;
-        private readonly IAbpSession _abpSession;
-        private readonly ISettingDefinitionManager _settingDefinitionManager;
 
         public ILogger Logger { get; set; }
 
-        private readonly string _apiAuthUrl = string.Empty;
-        private readonly string _apiBaseUrl = string.Empty;
-
         public IntelliShiftTelematics(
             ISettingManager settingManager,
-            ILocalizationManager localizationManager,
-            IAbpSession abpSession,
-            ISettingDefinitionManager settingDefinitionManager
+            ILocalizationManager localizationManager
         )
         {
             _settingManager = settingManager;
             _localizationManager = localizationManager;
-            _abpSession = abpSession;
-
-            _settingDefinitionManager = settingDefinitionManager;
-            _apiAuthUrl = _settingDefinitionManager.GetSettingDefinition(AppSettings.GpsIntegration.IntelliShift.ApiAuthUrl).DefaultValue;
-            _apiBaseUrl = _settingDefinitionManager.GetSettingDefinition(AppSettings.GpsIntegration.IntelliShift.BaseUrl).DefaultValue;
         }
 
         public async Task<TokenLoginResult> LoginToApiAsync()
@@ -60,8 +46,10 @@ namespace DispatcherWeb.Infrastructure.Telematics
                 throw new ApplicationException("IntelliShift host credential settings are missing");
             }
 
+            var apiAuthUrl = await _settingManager.GetSettingValueAsync(AppSettings.GpsIntegration.IntelliShift.ApiAuthUrl);
+
             using var httpClient = new HttpClient();
-            var apiResponse = await httpClient.PostAsJsonAsync(_apiAuthUrl, new
+            var apiResponse = await httpClient.PostAsJsonAsync(apiAuthUrl, new
             {
                 email = settings.User,
                 password = settings.Password
@@ -74,13 +62,13 @@ namespace DispatcherWeb.Infrastructure.Telematics
 
             apiResponse.EnsureSuccessStatusCode();
             var jsonApiResult = await apiResponse.Content.ReadAsStringAsync();
-            var apiAuthResult = TokenLoginResult.Parse(jsonApiResult);
+            var apiAuthResult = JsonConvert.DeserializeObject<TokenLoginResult>(jsonApiResult);
 
             if (!string.IsNullOrEmpty(apiAuthResult.Error) ||
                 !string.IsNullOrEmpty(apiAuthResult.ErrorDescription))
             {
                 var innerException = new Exception($"{apiAuthResult.Error}: {apiAuthResult.ErrorDescription}");
-                Logger.LogError(innerException, innerException.ToString());
+                Logger.Error(innerException.ToString(), innerException);
                 throw new UserFriendlyException(L("IntelliShiftAuthError"), innerException);
             }
             return apiAuthResult;
@@ -104,6 +92,8 @@ namespace DispatcherWeb.Infrastructure.Telematics
             var pageSize = 250;
             TruckUnitsPage truckUnitsPage;
 
+            var apiBaseUrl = await _settingManager.GetSettingValueAsync(AppSettings.GpsIntegration.IntelliShift.BaseUrl);
+
             using var httpClient = new HttpClient();
             do
             {
@@ -111,7 +101,7 @@ namespace DispatcherWeb.Infrastructure.Telematics
                 {
                     Thread.Sleep(10); //API has a limit of max 150 requests per second (one per 7ms)
 
-                    var requestUrl = $"{_apiBaseUrl}/assets/vehicles?ShowInactive=true&PageNumber={currentPage}&PageSize={pageSize}&SortBy=Id&SortDirection=ASC&Filter=";
+                    var requestUrl = $"{apiBaseUrl}/assets/vehicles?ShowInactive=true&PageNumber={currentPage}&PageSize={pageSize}&SortBy=Id&SortDirection=ASC&Filter=";
                     using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(requestUrl));
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenLoginResult.AccessToken);
                     var rawApiResult = await httpClient.SendAsync(request);
@@ -122,13 +112,13 @@ namespace DispatcherWeb.Infrastructure.Telematics
                     rawApiResult.EnsureSuccessStatusCode();
                     var jsonApiResult = await rawApiResult.Content.ReadAsStringAsync();
 
-                    truckUnitsPage = TruckUnitsPage.Parse(jsonApiResult);
+                    truckUnitsPage = JsonConvert.DeserializeObject<TruckUnitsPage>(jsonApiResult);
                     truckUnits.AddRange(truckUnitsPage.TruckUnitsCollection);
                     currentPage++;
                 }
                 catch (HttpRequestException e)
                 {
-                    Logger.LogError(e, e.ToString());
+                    Logger.Error(e.ToString(), e);
                     throw new UserFriendlyException(L("IntelliShiftError"));
                 }
             }
@@ -164,14 +154,15 @@ namespace DispatcherWeb.Infrastructure.Telematics
             }
 
             var fieldsDic = new Dictionary<string, object>();
-            fieldsToUpdate.ForEach(selector =>
+            Array.ForEach(fieldsToUpdate, field =>
             {
-                var jsonAttribute = TruckUnitDto.GetJsonPropertyAttribute(selector.PropertyName);
-                fieldsDic.Add(jsonAttribute, selector.PropertyValue);
+                var jsonAttribute = TruckUnitDto.GetJsonPropertyAttribute(field.PropertyName);
+                fieldsDic.Add(jsonAttribute, field.PropertyValue);
             });
             var fieldsJson = JsonConvert.SerializeObject(fieldsDic);
+            var apiBaseUrl = await _settingManager.GetSettingValueAsync(AppSettings.GpsIntegration.IntelliShift.BaseUrl);
 
-            var requestUrl = $"{_apiBaseUrl}/assets/vehicles/{remoteVehicleId}";
+            var requestUrl = $"{apiBaseUrl}/assets/vehicles/{remoteVehicleId}";
             using var httpClient = new HttpClient();
             using var request = new HttpRequestMessage(HttpMethod.Patch, new Uri(requestUrl))
             {
@@ -179,7 +170,7 @@ namespace DispatcherWeb.Infrastructure.Telematics
             };
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenLoginResult.AccessToken);
             var rawApiResult = await httpClient.SendAsync(request);
-            if (rawApiResult.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            if (rawApiResult.StatusCode == HttpStatusCode.Unauthorized)
             {
                 throw new UserFriendlyException(L("IntelliShiftAuthError"));
             }
@@ -187,13 +178,9 @@ namespace DispatcherWeb.Infrastructure.Telematics
             return rawApiResult.IsSuccessStatusCode;
         }
 
-        #region private members
-
         private string L(string name)
         {
             return _localizationManager.GetString(DispatcherWebConsts.LocalizationSourceName, name);
         }
-
-        #endregion
     }
 }

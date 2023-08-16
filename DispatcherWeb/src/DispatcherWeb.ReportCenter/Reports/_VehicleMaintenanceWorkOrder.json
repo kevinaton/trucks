@@ -1,0 +1,36 @@
+{
+  "result": {
+    "id": 1390,
+    "vehicleServiceTypeId": 1,
+    "vehicleServiceTypeName": "Preventive Maintenance",
+    "issueDate": "2021-01-16T00:00:00Z",
+    "startDate": "2021-01-16T00:00:00Z",
+    "completionDate": "2021-01-16T00:00:00Z",
+    "status": 2,
+	"statusText": "Complete",
+    "truckId": 49,
+    "truckCode": "112",
+    "note": "Replaced brakes",
+    "odometer": 61234.0,
+    "hours": 0.00,
+    "assignedToId": 94,
+    "assignedToName": "Sergiy Oliynyk",
+    "totalLaborCost": 160.00,
+    "isTotalLaborCostOverridden": false,
+    "totalPartsCost": 222.00,
+    "isTotalPartsCostOverridden": false,
+    "tax": 0.00,
+    "discount": 0.00,
+    "totalCost": 382.00,
+    "workOrderLines": null,
+    "pictures": [
+      
+    ],
+    "picturesCount": 0
+  },
+  "targetUrl": null,
+  "success": true,
+  "error": null,
+  "unAuthorizedRequest": false,
+  "__abp": true
+}

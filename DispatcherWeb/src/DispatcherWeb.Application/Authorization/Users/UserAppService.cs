@@ -24,6 +24,7 @@ using DispatcherWeb.Authorization.Roles;
 using DispatcherWeb.Authorization.Users.Dto;
 using DispatcherWeb.Authorization.Users.Exporting;
 using DispatcherWeb.Chat;
+using DispatcherWeb.Customers;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
@@ -68,6 +69,7 @@ namespace DispatcherWeb.Authorization.Users
         private readonly IRepository<Friendship, long> _friendshipRepository;
         private readonly IRepository<ChatMessage, long> _chatMessageRepository;
         private readonly IDriverUserLinkService _driverUserLinkService;
+        private readonly ICustomerContactUserLinkService _customerContactUserLinkService;
         private readonly IUserListCsvExporter _userListCsvExporter;
         private readonly ISingleOfficeAppService _singleOfficeService;
         private readonly IUserCreatorService _userCreatorService;
@@ -96,6 +98,7 @@ namespace DispatcherWeb.Authorization.Users
             IRepository<Friendship, long> friendshipRepository,
             IRepository<ChatMessage, long> chatMessageRepository,
             IDriverUserLinkService driverUserLinkService,
+            ICustomerContactUserLinkService customerContactUserLinkService,
             IUserListCsvExporter userListCsvExporter,
             ISingleOfficeAppService singleOfficeService,
             IUserCreatorService userCreatorService
@@ -125,6 +128,7 @@ namespace DispatcherWeb.Authorization.Users
             _friendshipRepository = friendshipRepository;
             _chatMessageRepository = chatMessageRepository;
             _driverUserLinkService = driverUserLinkService;
+            _customerContactUserLinkService = customerContactUserLinkService;
             _userListCsvExporter = userListCsvExporter;
             _singleOfficeService = singleOfficeService;
             _userCreatorService = userCreatorService;
@@ -168,7 +172,7 @@ namespace DispatcherWeb.Authorization.Users
         public async Task<GetUserForEditOutput> GetUserForEdit(NullableIdDto<long> input)
         {
             //Getting all available roles
-            var userRoleDtos = await _roleManager.Roles
+            var userRoleDtos = await _roleManager.AvailableRoles
                 .OrderBy(r => r.DisplayName)
                 .Select(r => new UserRoleDto
                 {
@@ -202,7 +206,7 @@ namespace DispatcherWeb.Authorization.Users
                             .IsEnabled)
                 };
 
-                foreach (var defaultRole in await _roleManager.Roles.Where(r => r.IsDefault).ToListAsync())
+                foreach (var defaultRole in await _roleManager.AvailableRoles.Where(r => r.IsDefault).ToListAsync())
                 {
                     var defaultUserRole = userRoleDtos.FirstOrDefault(ur => ur.RoleName == defaultRole.Name);
                     if (defaultUserRole != null)
@@ -341,6 +345,7 @@ namespace DispatcherWeb.Authorization.Users
             }
 
             await _driverUserLinkService.EnsureCanDeleteUser(user);
+            await _customerContactUserLinkService.EnsureCanDeleteUser(user);
             CheckErrors(await UserManager.DeleteAsync(user));
         }
 
@@ -420,6 +425,7 @@ namespace DispatcherWeb.Authorization.Users
             CheckErrors(await UserManager.SetRolesAsync(user, input.AssignedRoleNames));
 
             await _driverUserLinkService.UpdateDriver(user);
+            await _customerContactUserLinkService.UpdateCustomerContact(user);
 
             //update organization units
             await UserManager.SetOrganizationUnitsAsync(user, input.OrganizationUnits.ToArray());
@@ -601,7 +607,7 @@ namespace DispatcherWeb.Authorization.Users
         }
         public async Task<PagedResultDto<SelectListDto>> GetMaintenanceUsersSelectList(GetSelectListInput input)
         {
-            int[] maintenanceRolesIdArray = await _roleManager.Roles
+            int[] maintenanceRolesIdArray = await _roleManager.AvailableRoles
                 .Where(r => r.Name == StaticRoleNames.Tenants.Maintenance || r.Name == StaticRoleNames.Tenants.MaintenanceSupervisor)
                 .Select(r => r.Id)
                 .ToArrayAsync();
@@ -632,20 +638,16 @@ namespace DispatcherWeb.Authorization.Users
 
         public async Task<PagedResultDto<SelectListDto>> GetSalespersonsSelectList(GetSelectListInput input)
         {
-            var allowedRoles = await _roleManager.Roles
-                .Where(x => x.Name != StaticRoleNames.Tenants.Driver && x.Name != StaticRoleNames.Tenants.LeaseHaulerDriver)
-                .Select(x => x.Id)
-                .ToListAsync();
+            var query = await UserManager.GetUsersWithGrantedPermission(_roleManager, AppPermissions.CanBeSalesperson);
 
-            var query = UserManager.Users
-                .Where(x => x.IsActive && x.Roles.Any(r => allowedRoles.Contains(r.RoleId)))
+            return await query
+                .Where(x => x.IsActive)
                 .Select(x => new SelectListDto
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name + " " + x.Surname
-                });
-
-            return await query.GetSelectListResult(input);
+                })
+                .GetSelectListResult(input);
         }
 
     }

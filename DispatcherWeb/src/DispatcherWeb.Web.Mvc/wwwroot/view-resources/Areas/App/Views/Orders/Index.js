@@ -264,12 +264,7 @@
                     }
                 }
 
-            ],
-            createdRow: function (row, data, index) {
-                if (data.isShared) {
-                    $(row).addClass('order-shared');
-                }
-            }
+            ]
         });
 
         function reloadMainGrid(callback, resetPaging) {
@@ -329,10 +324,6 @@
         });
 
         abp.event.on('app.quoteCreatedFromOrderModal', function () {
-            reloadMainGrid(null, false);
-        });
-
-        abp.event.on('app.orderModalShared', function () {
             reloadMainGrid(null, false);
         });
 

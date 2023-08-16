@@ -33,8 +33,6 @@ namespace DispatcherWeb.Orders.Dto
 
         public bool IsPending { get; set; }
 
-        public DateTime? SharedDateTime { get; set; }
-
         public int CustomerId { get; set; }
 
         public string CustomerName { get; set; }
@@ -103,8 +101,6 @@ namespace DispatcherWeb.Orders.Dto
         public DateTime? AuthorizationCaptureDateTime { get; set; }
 
         public bool IsClosed { get; set; }
-
-        public bool IsShared { get; set; }
 
         public OrderPriority Priority { get; set; }
         public bool HasSharedOrderLines { get; set; }

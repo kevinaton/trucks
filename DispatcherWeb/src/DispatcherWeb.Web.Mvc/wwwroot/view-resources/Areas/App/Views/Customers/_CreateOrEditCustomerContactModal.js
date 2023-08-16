@@ -19,6 +19,11 @@
                 "Please check your input."
             );
             _$form.find('#Email').rules('add', { regex: app.regex.email });
+            _$form.find('#Email').change(e => {
+                var email = $(e.target).val();
+                var customerPortalCheckboxIsVisible = _$form.valid() && email.length > 0;
+                _$form.find('#HasCustomerPortalAccessContainer').toggle(customerPortalCheckboxIsVisible);
+            });
 
             abp.helper.ui.initControls();
 

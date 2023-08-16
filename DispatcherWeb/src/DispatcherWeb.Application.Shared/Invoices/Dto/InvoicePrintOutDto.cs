@@ -7,6 +7,7 @@ namespace DispatcherWeb.Invoices.Dto
     public class InvoicePrintOutDto
     {
         public string CustomerName { get; set; }
+        public int? OfficeId { get; set; }
         public string BillingAddress { get; set; }
         //public string CustomerBillingAddress1 { get; set; }
         //public string CustomerBillingAddress2 { get; set; }

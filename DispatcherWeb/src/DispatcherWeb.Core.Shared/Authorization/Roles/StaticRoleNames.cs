@@ -21,14 +21,7 @@
             public const string User = "User";
             public const string Driver = "Driver";
             public const string LeaseHaulerDriver = "LeaseHaulerDriver";
-        }
-    }
-
-    public static class StaticRoleDisplayNames
-    {
-        public static class Tenants
-        {
-            public const string LeaseHaulerDriver = "LH Driver";
+            public const string Customer = "Customer";
         }
     }
 }

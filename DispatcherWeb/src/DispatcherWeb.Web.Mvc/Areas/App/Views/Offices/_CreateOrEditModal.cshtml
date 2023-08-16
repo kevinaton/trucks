@@ -10,7 +10,7 @@
 @await Html.PartialAsync("~/Areas/app/Views/Common/Modals/_ModalHeader.cshtml", new ModalHeaderViewModel(Model.Id > 0 ? "Edit Office: " + Model.Name : "Create new office"))
 
 <div class="modal-body">
-    <form role="form" novalidate class="form-validation" name="OfficeInformationsForm">
+    <form role="form" novalidate class="form-validation" id="OfficeForm">
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label><span class="required-label">@L("Name")</span></label>
@@ -51,6 +51,42 @@
                 <input type="password" asp-for="HeartlandSecretKey" value="@Model.HeartlandSecretKey" class="form-control">
             </div>
         </div>
+    </form>
+    <form id="OfficeLogoUploadForm" method="POST" class="m-form mb-5" action="@Url.Action("UploadOfficeLogo", "TenantCustomization", new { area = string.Empty, LogoType = LogoType.ApplicationLogo })" style="display: none">
+        <input type="hidden" asp-for="Id" id="OfficeLogoUploadForm_Id" />
+        <h5>@L("ApplicationLogo")</h5>
+        <div class="form-group fileUpload margin-top-20">
+            <div class="btn btn-primary browse_btn">
+                <span>@L("Browse")</span>
+                <input id="ApplicationLogoImage" name="ApplicationLogoImage" type="file" class="upload">
+            </div>
+            <input id="uploadApplicationLogoFile" class="form-control file-upload" placeholder="No File Selected." disabled="disabled">
+        </div>
+        <div class="col-xs-12 margin-bottom-10">
+            <span class="m-form__help">@L("UploadLogo_Info")</span>
+        </div>
+        <button class="btn btn-primary" type="submit" disabled="disabled"><i class="fa fa-upload"></i>@L("Upload")</button>
+        <button class="btn btn-default" type="reset" @Html.StyleDisplayNone(Model.LogoId == null)>
+            <i class="fa fa-times"></i>@L("Clear")
+        </button>
+    </form>
+    <form id="OfficeReportsLogoUploadForm" method="POST" class="m-form mb-5" action="@Url.Action("UploadOfficeLogo", "TenantCustomization", new { area = string.Empty, LogoType = LogoType.ReportsLogo })">
+        <input type="hidden" asp-for="Id" id="OfficeReportsLogoUploadForm_Id" />
+        <h5>@L("ReportsLogo")</h5>
+        <div class="form-group fileUpload margin-top-20">
+            <div class="btn btn-primary browse_btn">
+                <span>@L("Browse")</span>
+                <input id="ReportsLogoImage" name="ReportsLogoImage" type="file" class="upload">
+            </div>
+            <input id="uploadReportsLogoFile" class="form-control file-upload" placeholder="No File Selected." disabled="disabled">
+        </div>
+        <div class="col-xs-12 margin-bottom-10">
+            <span class="m-form__help">@L("UploadReportsLogo_Info")</span>
+        </div>
+        <button class="btn btn-primary" type="submit" disabled="disabled"><i class="fa fa-upload"></i>@L("Upload")</button>
+        <button class="btn btn-default" type="reset" @Html.StyleDisplayNone(Model.ReportsLogoId == null)>
+            <i class="fa fa-times"></i>@L("Clear")
+        </button>
     </form>
 </div>
 

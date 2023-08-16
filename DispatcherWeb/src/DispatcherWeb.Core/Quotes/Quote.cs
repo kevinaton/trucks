@@ -9,6 +9,7 @@ using DispatcherWeb.Customers;
 using DispatcherWeb.Emailing;
 using DispatcherWeb.FuelSurchargeCalculations;
 using DispatcherWeb.Infrastructure;
+using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Projects;
 
@@ -33,6 +34,8 @@ namespace DispatcherWeb.Quotes
 
         public int? ContactId { get; set; }
 
+        public int? OfficeId { get; set; }
+
         [Required]
         [StringLength(MaxNameLength)]
         public string Name { get; set; }
@@ -51,10 +54,6 @@ namespace DispatcherWeb.Quotes
 
         [StringLength(20)]
         public string SpectrumNumber { get; set; }
-
-        [Obsolete]
-        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
-        public string JobNumber { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? BaseFuelCost { get; set; }
@@ -85,6 +84,8 @@ namespace DispatcherWeb.Quotes
         public virtual Customer Customer { get; set; }
 
         public virtual CustomerContact Contact { get; set; }
+
+        public virtual Office Office { get; set; }
 
         public virtual User CreatorUser { get; set; }
 

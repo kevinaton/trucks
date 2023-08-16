@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Abp.EntityFrameworkCore.EFPlus" Version="7.0.1" />
+    <PackageReference Include="Azure.Data.Tables" Version="12.8.0" />
     <PackageReference Include="CsvHelper" Version="27.2.1" />
     <PackageReference Include="Geotab.Checkmate.ObjectModel" Version="7.0.0-preview1" />
     <PackageReference Include="GlobalPayments.Api" Version="2.0.1" />

@@ -1,10 +1,12 @@
 ﻿using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
+using Abp.Runtime.Session;
 using Abp.UI;
 using Abp.Web.Models;
 using DispatcherWeb.DriverApp.TruckPositions.Dto;
 using DispatcherWeb.Drivers;
+using DispatcherWeb.Infrastructure.AzureTables;
 using DispatcherWeb.TruckPositions;
 using DispatcherWeb.Trucks;
 using Microsoft.EntityFrameworkCore;
@@ -17,29 +19,22 @@ namespace DispatcherWeb.DriverApp.TruckPositions
     {
         private readonly IRepository<Truck> _truckRepository;
         private readonly IRepository<Driver> _driverRepository;
-        private readonly IRepository<TruckPosition> _truckPositionRepository;
+        private readonly IAzureTableManager _azureTableManager;
 
         public TruckPositionAppService(
             IRepository<Truck> truckRepository,
             IRepository<Driver> driverRepository,
-            IRepository<TruckPosition> truckPositionRepository
+            IAzureTableManager azureTableManager
             )
         {
             _truckRepository = truckRepository;
             _driverRepository = driverRepository;
-            _truckPositionRepository = truckPositionRepository;
+            _azureTableManager = azureTableManager;
         }
 
         [WrapResult(false)]
-        [AbpAllowAnonymous]
         public async Task Post(TruckPositionRawDto input)
         {
-            if (input.DriverId == null && input.UserId == null)
-            {
-                Logger.Error("TruckPosition.Post: DriverId and UserId values are missing: " + JsonConvert.SerializeObject(input));
-                throw new UserFriendlyException("DriverId or UserId value is missing. You should provide at least one of them.");
-            }
-
             if (input.Location == null)
             {
                 Logger.Error("TruckPosition.Post: Location value is missing: " + JsonConvert.SerializeObject(input));
@@ -52,28 +47,41 @@ namespace DispatcherWeb.DriverApp.TruckPositions
             }
 
             var driver = await _driverRepository.GetAll()
-                .WhereIf(input.UserId.HasValue, x => x.UserId == input.UserId)
-                .WhereIf(input.UserId == null, x => x.Id == input.DriverId)
+                .Where(x => x.UserId == Session.UserId)
                 .Select(x => new
                 {
                     x.Id,
-                    x.TenantId,
                     x.IsInactive
                 })
                 .OrderByDescending(x => !x.IsInactive)
                 .FirstOrDefaultAsync();
 
-            if (driver == null)
+            if (input.TruckId == null)
             {
-                Logger.Error($"TruckPosition.Post: Driver with id '{input.DriverId}' or UserId '{input.UserId}' wasn't found: " + JsonConvert.SerializeObject(input));
-                throw new UserFriendlyException($"Driver with id '{input.DriverId}' (or UserId '{input.UserId}') wasn't found");
+                Logger.Warn("TruckPosition.Post: No TruckId was provided: " + JsonConvert.SerializeObject(input));
+                return;
             }
 
-            if (input.TruckId != null && !await _truckRepository.GetAll().AnyAsync(x => x.Id == input.TruckId))
+            var truck = await _truckRepository.GetAll()
+                .Where(x => x.Id == input.TruckId)
+                .Select(x => new
+                {
+                    x.DtdTrackerUniqueId
+                }).FirstOrDefaultAsync();
+
+            if (truck == null)
             {
                 Logger.Error($"TruckPosition.Post: Truck with id {input.TruckId} wasn't found: " + JsonConvert.SerializeObject(input));
-                throw new UserFriendlyException($"Truck with id {input.TruckId} wasn't found");
+                throw new UserFriendlyException($"Truck with id '{input.TruckId}' wasn't found");
             }
+
+            if (string.IsNullOrEmpty(truck.DtdTrackerUniqueId))
+            {
+                Logger.Warn($"TruckPosition.Post: Truck with id {input.TruckId} doesn't have DtdTrackerUniqueId filled. Request: " + JsonConvert.SerializeObject(input));
+                return;
+            }
+
+            var truckPositionTableClient = _azureTableManager.GetTableClient(AzureTableNames.TruckPosition);
 
             foreach (var location in input.Location)
             {
@@ -84,9 +92,11 @@ namespace DispatcherWeb.DriverApp.TruckPositions
 
                 var truckPosition = new TruckPosition
                 {
-                    TruckId = input.TruckId,
-                    DriverId = driver.Id,
-                    TenantId = driver.TenantId,
+                    TruckId = input.TruckId.Value,
+                    DriverId = driver?.Id,
+                    TenantId = Session.GetTenantId(),
+                    CreatorUserId = Session.UserId,
+                    DtdTrackerUniqueId = truck.DtdTrackerUniqueId,
                     Latitude = location.Coordinates?.Latitude,
                     Longitude = location.Coordinates?.Longitude,
                     Accuracy = location.Coordinates?.Accuracy,
@@ -101,14 +111,14 @@ namespace DispatcherWeb.DriverApp.TruckPositions
                     GeofenceActionRaw = location.Geofence?.ActionRaw,
                     BatteryLevel = location.Battery?.Level,
                     BatteryIsCharging = location.Battery?.IsCharging,
-                    Timestamp = location.TimeStamp,
+                    GpsTimestamp = location.TimeStamp,
                     Uuid = location.Uuid,
                     Event = location.Event,
                     EventRaw = location.EventRaw,
                     IsMoving = location.IsMoving,
-                    Odometer = location.Odometer
+                    Odometer = location.Odometer,
                 };
-                await _truckPositionRepository.InsertAsync(truckPosition);
+                await truckPositionTableClient.UpsertEntityAsync(truckPosition);
             }
         }
     }

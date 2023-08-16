@@ -108,7 +108,7 @@
         public static class CustomerContact
         {
             public const int Title = 40;
-            public const int Name = 100;
+            public const int Name = 129;
         }
 
         public static class Order
@@ -227,6 +227,11 @@
             public const int LicenseNumber = 20;
             public const int TypeOfLicense = 50;
             public const int EmployeeId = 10;
+        }
+
+        public static class Tenant
+        {
+            public const int MaxLogoMimeTypeLength = 64;
         }
     }
 }

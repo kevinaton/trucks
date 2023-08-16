@@ -22,7 +22,9 @@ using DispatcherWeb.Configuration;
 using DispatcherWeb.Dto;
 using DispatcherWeb.Emailing;
 using DispatcherWeb.FuelSurchargeCalculations;
+using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
+using DispatcherWeb.Offices;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Projects;
 using DispatcherWeb.Quotes.Dto;
@@ -54,6 +56,8 @@ namespace DispatcherWeb.Quotes
         private readonly IEmailSender _emailSender;
         private readonly ITrackableEmailSender _trackableEmailSender;
         private readonly IWebUrlService _webUrlService;
+        private readonly ISingleOfficeAppService _singleOfficeService;
+        private readonly ILogoProvider _logoProvider;
 
         public QuoteAppService(
             IRepository<Quote> quoteRepository,
@@ -72,7 +76,9 @@ namespace DispatcherWeb.Quotes
             IAppFolders appFolders,
             IEmailSender emailSender,
             ITrackableEmailSender trackableEmailSender,
-            IWebUrlService webUrlService
+            IWebUrlService webUrlService,
+            ISingleOfficeAppService singleOfficeService,
+            ILogoProvider logoProvider
             )
         {
             _quoteRepository = quoteRepository;
@@ -92,6 +98,8 @@ namespace DispatcherWeb.Quotes
             _emailSender = emailSender;
             _trackableEmailSender = trackableEmailSender;
             _webUrlService = webUrlService;
+            _singleOfficeService = singleOfficeService;
+            _logoProvider = logoProvider;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Quotes_View)]
@@ -185,6 +193,8 @@ namespace DispatcherWeb.Quotes
                         SpectrumNumber = x.SpectrumNumber,
                         Status = x.Status,
                         CustomerId = x.CustomerId,
+                        OfficeId = x.OfficeId,
+                        OfficeName = x.Office.Name,
                         ChargeTo = x.ChargeTo,
                         FuelSurchargeCalculationId = x.FuelSurchargeCalculationId,
                         FuelSurchargeCalculationName = x.FuelSurchargeCalculation.Name,
@@ -226,6 +236,8 @@ namespace DispatcherWeb.Quotes
                         Name = quote.Name,
                         CustomerId = quote.CustomerId,
                         CustomerName = quote.Customer.Name,
+                        OfficeId = quote.OfficeId,
+                        OfficeName = quote.Office.Name,
                         ContactId = quote.ContactId,
                         ContactName = quote.Contact.Name,
                         Description = quote.Description,
@@ -278,6 +290,8 @@ namespace DispatcherWeb.Quotes
                 {
                     quoteEditDto = new QuoteEditDto
                     {
+                        OfficeId = Session.OfficeId,
+                        OfficeName = Session.OfficeName,
                         Notes = await SettingManager.GetSettingValueAsync(AppSettings.Quote.DefaultNotes)
                     };
                 }
@@ -304,6 +318,7 @@ namespace DispatcherWeb.Quotes
                     quoteEditDto.BaseFuelCost = fuelSurchargeCalculation.BaseFuelCost;
                 }
             }
+            await _singleOfficeService.FillSingleOffice(quoteEditDto);
 
             if (!quoteEditDto.SalesPersonId.HasValue)
             {
@@ -356,6 +371,15 @@ namespace DispatcherWeb.Quotes
                     fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.Contact, quote.ContactId, model.ContactId));
                 }
                 quote.ContactId = model.ContactId;
+            }
+
+            if (quote.OfficeId != model.OfficeId)
+            {
+                if (quote.CaptureHistory)
+                {
+                    fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.Office, quote.OfficeId, model.OfficeId));
+                }
+                quote.OfficeId = model.OfficeId;
             }
 
             if (quote.Description != model.Description)
@@ -712,6 +736,9 @@ namespace DispatcherWeb.Quotes
         [AbpAuthorize(AppPermissions.Pages_Quotes_Edit)]
         public async Task<int> CopyQuote(EntityDto input)
         {
+            var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+            var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
+
             var quote = await _quoteRepository.GetAll()
                 .AsNoTracking()
                 .Include(x => x.QuoteServices)
@@ -725,6 +752,7 @@ namespace DispatcherWeb.Quotes
                 ProjectId = quote.ProjectId,
                 CustomerId = quote.CustomerId,
                 ContactId = quote.ContactId,
+                OfficeId = quote.OfficeId,
                 Name = quote.Name,
                 Description = quote.Description,
                 ProposalDate = today,
@@ -759,6 +787,8 @@ namespace DispatcherWeb.Quotes
                     FreightRate = s.FreightRate,
                     LeaseHaulerRate = s.LeaseHaulerRate,
                     FreightRateToPayDrivers = s.FreightRateToPayDrivers,
+                    ProductionPay = allowProductionPay && s.ProductionPay,
+                    LoadBased = allowLoadBasedRates && s.LoadBased,
                     MaterialQuantity = s.MaterialQuantity,
                     FreightQuantity = s.FreightQuantity,
                     JobNumber = s.JobNumber,
@@ -819,6 +849,8 @@ namespace DispatcherWeb.Quotes
                     x.IsMaterialPricePerUnitOverridden,
                     x.LeaseHaulerRate,
                     x.FreightRateToPayDrivers,
+                    x.ProductionPay,
+                    x.LoadBased,
                     x.LineNumber,
                     x.MaterialPrice,
                     x.MaterialPricePerUnit,
@@ -845,6 +877,7 @@ namespace DispatcherWeb.Quotes
             {
                 ContactId = order.ContactId,
                 CustomerId = order.CustomerId,
+                OfficeId = order.LocationId,
                 Directions = order.Directions,
                 Name = input.QuoteName,
                 PONumber = order.PONumber,
@@ -873,6 +906,8 @@ namespace DispatcherWeb.Quotes
                     PricePerUnit = x.MaterialPricePerUnit,
                     LeaseHaulerRate = x.LeaseHaulerRate,
                     FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                    ProductionPay = x.ProductionPay,
+                    LoadBased = x.LoadBased,
                     MaterialQuantity = x.MaterialQuantity,
                     FreightQuantity = x.FreightQuantity,
                     ServiceId = x.ServiceId,
@@ -964,6 +999,9 @@ namespace DispatcherWeb.Quotes
         [AbpAuthorize(AppPermissions.Pages_Quotes_View)]
         public async Task<PagedResultDto<QuoteServiceDto>> GetQuoteServices(GetQuoteServicesInput input)
         {
+            var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+            var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
+
             var query = _quoteServiceRepository.GetAll();
 
             var totalCount = await query.CountAsync();
@@ -1009,6 +1047,8 @@ namespace DispatcherWeb.Quotes
                     FreightRate = x.FreightRate,
                     LeaseHaulerRate = x.LeaseHaulerRate,
                     FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                    ProductionPay = allowProductionPay && x.ProductionPay,
+                    LoadBased = allowLoadBasedRates && x.LoadBased,
                     MaterialQuantity = x.MaterialQuantity,
                     FreightQuantity = x.FreightQuantity
                 })
@@ -1094,6 +1134,8 @@ namespace DispatcherWeb.Quotes
                         FreightRate = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                        ProductionPay = x.ProductionPay,
+                        LoadBased = x.LoadBased,
                         MaterialQuantity = x.MaterialQuantity,
                         FreightQuantity = x.FreightQuantity,
                         JobNumber = x.JobNumber,
@@ -1110,7 +1152,8 @@ namespace DispatcherWeb.Quotes
             {
                 quoteServiceEditDto = new QuoteServiceEditDto
                 {
-                    QuoteId = input.QuoteId.Value
+                    QuoteId = input.QuoteId.Value,
+                    ProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.DefaultToProductionPay)
                 };
             }
             else
@@ -1292,6 +1335,24 @@ namespace DispatcherWeb.Quotes
                 quoteService.FreightRateToPayDrivers = model.FreightRateToPayDrivers;
             }
 
+            if (quoteService.ProductionPay != model.ProductionPay)
+            {
+                if (captureHistory)
+                {
+                    fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.ProductionPay, quoteService.ProductionPay.ToString(), model.ProductionPay.ToString()));
+                }
+                quoteService.ProductionPay = model.ProductionPay;
+            }
+
+            if (quoteService.LoadBased != model.LoadBased)
+            {
+                if (captureHistory)
+                {
+                    fieldDiffs.Add(new QuoteFieldDiff(QuoteFieldEnum.LoadBased, quoteService.LoadBased.ToString(), model.LoadBased.ToString()));
+                }
+                quoteService.LoadBased = model.LoadBased;
+            }
+
             if (quoteService.MaterialQuantity != model.MaterialQuantity)
             {
                 if (captureHistory)
@@ -1347,6 +1408,7 @@ namespace DispatcherWeb.Quotes
                     CustomerState = x.Customer.State,
                     CustomerZipCode = x.Customer.ZipCode,
                     CustomerCountryCode = x.Customer.CountryCode,
+                    OfficeId = x.OfficeId,
                     ProjectName = x.Project.Name,
                     QuotePoNumber = x.PONumber,
                     QuoteId = x.Id,
@@ -1406,8 +1468,7 @@ namespace DispatcherWeb.Quotes
 
             data.UserEmail = user.Email;
             data.UserFullName = user.FullName;
-            data.LogoPath = await GetLogoBase64String();
-            //data.LogoPath = (await GetCurrentTenantAsync()).LogoPath();
+            data.LogoPath = await _logoProvider.GetReportLogoAsBase64StringAsync(data.OfficeId);
             data.SignaturePath = await GetSignaturePictureTempPath(user.SignaturePictureId);
             data.Today = await GetToday();
             data.CompanyName = await SettingManager.GetSettingValueAsync(AppSettings.General.CompanyName);
@@ -1434,21 +1495,6 @@ namespace DispatcherWeb.Quotes
             }
 
             return result;
-        }
-        private async Task<string> GetLogoBase64String()
-        {
-            var tenant = await TenantManager.GetByIdAsync(AbpSession.GetTenantId());
-            if (tenant.ReportsLogoId == null || tenant.ReportsLogoFileType == null)
-            {
-                return null;
-            }
-
-            var logoObject = await _binaryObjectManager.GetOrNullAsync(tenant.ReportsLogoId.Value);
-            if (logoObject == null)
-            {
-                return null;
-            }
-            return "base64:" + Convert.ToBase64String(logoObject.Bytes);
         }
 
         private async Task<string> GetSignaturePictureTempPath(Guid? signaturePictureId)

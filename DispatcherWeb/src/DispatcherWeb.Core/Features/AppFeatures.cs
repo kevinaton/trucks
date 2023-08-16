@@ -11,7 +11,6 @@
 
         public const string AllowMultiOfficeFeature = "App.AllowMultiOfficeFeature";
         public const string NumberOfTrucksFeature = "App.NumberOfTrucksFeature";
-        public const string AllowSharedOrdersFeature = "App.AllowSharedOrdersFeature";
         public const string AllowPaymentProcessingFeature = "App.AllowPaymentProcessingFeature";
         public const string AllowLeaseHaulersFeature = "App.AllowLeaseHaulersFeature";
         public const string AllowInvoicingFeature = "App.AllowInvoicingFeature";
@@ -20,6 +19,8 @@
         public const string AllowSendingOrdersToDifferentTenant = "App.AllowSendingOrdersToDifferentTenant";
         public const string DriverProductionPayFeature = "App.DriverProductionPayFeature";
         public const string AllowProjects = "App.AllowProjects";
+        public const string TruckSharing = "App.TruckSharing";
+        public const string JobSharing = "App.JobSharing";
 
         public const string GpsIntegrationFeature = "App.GpsIntegrationFeature";
 
@@ -30,10 +31,13 @@
 
         public const string WebBasedDriverApp = "DriverApp.WebBasedDriverApp";
         public const string ReactNativeDriverApp = "DriverApp.ReactNativeDriverApp";
+        public const string AllowGpsTracking = "DriverApp.ReactNativeDriverApp.AllowGpsTracking";
 
         public const string AllowCopyingZeroQuantityOrderLineItemsFeature = "App.AllowCopyingZeroQuantityOrderLineItems";
 
         public const string FreeFunctionality = "App.FreeFunctionalityFeature";
         public const string PaidFunctionality = "App.PaidFunctionalityFeature";
+        
+        public const string CustomerPortal = "App.CustomerPortalFeature";
     }
 }

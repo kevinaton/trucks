@@ -8,6 +8,7 @@ using Abp.Reflection.Extensions;
 using Castle.MicroKernel.Registration;
 using DispatcherWeb.Authorization;
 using DispatcherWeb.Debugging;
+using DispatcherWeb.Infrastructure.AzureTables;
 using DispatcherWeb.Infrastructure.EntityReadonlyCheckers;
 using DispatcherWeb.Infrastructure.EntityUpdaters;
 using DispatcherWeb.Infrastructure.Sms;

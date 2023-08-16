@@ -127,7 +127,7 @@ namespace DispatcherWeb.Trucks
                     OfficeName = x.Office.Name,
                     VehicleCategoryName = x.VehicleCategory.Name,
                     DefaultDriverName = x.DefaultDriver != null ? x.DefaultDriver.LastName + ", " + x.DefaultDriver.FirstName : "",
-                    YearMakeModel = $"{x.Year} {x.Make} {x.Model}",
+                    YearMakeModel = x.Year + " " + x.Make + " " + x.Model,
                     IsActive = x.IsActive,
                     IsOutOfService = x.IsOutOfService,
                     CurrentMileage = x.CurrentMileage,
@@ -223,6 +223,7 @@ namespace DispatcherWeb.Trucks
                 DtdTrackerPassword = x.DtdTrackerPassword,
                 DtdTrackerServerAddress = x.DtdTrackerServerAddress,
                 DtdTrackerUniqueId = x.DtdTrackerUniqueId,
+                EnableDriverAppGps = x.EnableDriverAppGps,
                 IsApportioned = x.IsApportioned,
                 OfficeId = x.LocationId == null ? 0 : x.LocationId.Value,
                 VehicleCategoryAssetType = x.VehicleCategory.AssetType,
@@ -257,8 +258,8 @@ namespace DispatcherWeb.Trucks
             }
             query = query
                 //.Where(x => x.LocationId.HasValue)
-                .WhereIf(!input.AllOffices && input.OfficeId == null,
-                    x => x.LocationId == OfficeId
+                .WhereIf(!input.AllOffices && input.OfficeId == null && Session.OfficeId.HasValue,
+                    x => x.LocationId == Session.OfficeId
                         || input.IncludeLeaseHaulerTrucks && x.LocationId == null)
                 .WhereIf(input.OfficeId != null,
                     x => x.LocationId == input.OfficeId
@@ -469,6 +470,7 @@ namespace DispatcherWeb.Trucks
                         DtdTrackerDeviceTypeName = t.DtdTrackerDeviceTypeName,
                         DtdTrackerPassword = t.DtdTrackerPassword,
                         DtdTrackerServerAddress = t.DtdTrackerServerAddress,
+                        EnableDriverAppGps = t.EnableDriverAppGps,
                         Reason = t.IsOutOfService ?
                         t.OutOfServiceHistories
                             .OrderByDescending(oosh => oosh.OutOfServiceDate)
@@ -675,6 +677,7 @@ namespace DispatcherWeb.Trucks
                 entity.DtdTrackerDeviceTypeName = model.DtdTrackerDeviceTypeName;
                 entity.DtdTrackerPassword = model.DtdTrackerPassword;
                 entity.DtdTrackerServerAddress = model.DtdTrackerServerAddress;
+                entity.EnableDriverAppGps = model.EnableDriverAppGps;
             }
 
             await UpdateCurrentTrailer();
@@ -1262,7 +1265,7 @@ namespace DispatcherWeb.Trucks
             };
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Schedule)]
+        [AbpAuthorize(AppPermissions.Pages_Schedule_ShareTrucks)]
         public async Task AddSharedTruck(AddSharedTruckInput input)
         {
             await CheckUseShiftSettingCorrespondsInput(input.Shifts);
@@ -1321,7 +1324,7 @@ namespace DispatcherWeb.Trucks
             }
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Schedule)]
+        [AbpAuthorize(AppPermissions.Pages_Schedule_ShareTrucks)]
         public async Task DeleteSharedTruck(DeleteSharedTruckInput input)
         {
             input.Date = input.Date.Date;

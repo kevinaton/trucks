@@ -18,7 +18,9 @@ using DispatcherWeb.DailyFuelCosts;
 using DispatcherWeb.Dispatching;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.Dto;
+using DispatcherWeb.Features;
 using DispatcherWeb.FuelSurchargeCalculations;
+using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Invoices;
 using DispatcherWeb.LeaseHaulers;
@@ -26,6 +28,7 @@ using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Services;
 using DispatcherWeb.Services.Dto;
+using DispatcherWeb.Sessions;
 using DispatcherWeb.Storage;
 using DispatcherWeb.Tickets.Dto;
 using DispatcherWeb.Tickets.Exporting;
@@ -61,6 +64,7 @@ namespace DispatcherWeb.Tickets
         private readonly IRepository<Invoice> _invoiceRepository;
         private readonly IFuelSurchargeCalculator _fuelSurchargeCalculator;
         private readonly TicketPrintOutGenerator _ticketPrintOutGenerator;
+        private readonly ILogoProvider _logoProvider;
 
         public TicketAppService(
             IRepository<Ticket> ticketRepository,
@@ -80,7 +84,8 @@ namespace DispatcherWeb.Tickets
             IRepository<TimeOff> timeOffRepository,
             IRepository<Invoice> invoiceRepository,
             IFuelSurchargeCalculator fuelSurchargeCalculator,
-            TicketPrintOutGenerator ticketPrintOutGenerator
+            TicketPrintOutGenerator ticketPrintOutGenerator,
+            ILogoProvider logoProvider
         )
         {
             _ticketRepository = ticketRepository;
@@ -101,6 +106,7 @@ namespace DispatcherWeb.Tickets
             _invoiceRepository = invoiceRepository;
             _fuelSurchargeCalculator = fuelSurchargeCalculator;
             _ticketPrintOutGenerator = ticketPrintOutGenerator;
+            _logoProvider = logoProvider;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Tickets_Edit)]
@@ -931,9 +937,28 @@ namespace DispatcherWeb.Tickets
             await _ticketRepository.UpdateAsync(ticket);
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Tickets_View)]
+        [AbpAuthorize(AppPermissions.Pages_Tickets_View, AppPermissions.CustomerPortal_TicketList)]
         public async Task<PagedResultDto<TicketListViewDto>> TicketListView(TicketListInput input)
         {
+            var permissions = new
+            {
+                ViewAnyTickets = await IsGrantedAsync(AppPermissions.Pages_Tickets_View),
+                ViewCustomerTicketsOnly = await IsGrantedAsync(AppPermissions.CustomerPortal_TicketList),
+            };
+
+            if (permissions.ViewAnyTickets)
+            {
+                //do not additionally filter the data
+            }
+            else if (permissions.ViewCustomerTicketsOnly)
+            {
+                input.CustomerId = Session.GetCustomerIdOrThrow(this);
+            }
+            else
+            {
+                throw new AbpAuthorizationException();
+            }
+
             var query = GetTicketListQuery(input, await GetTimezone());
 
             var totalCount = await query.CountAsync();
@@ -959,10 +984,29 @@ namespace DispatcherWeb.Tickets
 
 
 
-        [AbpAuthorize(AppPermissions.Pages_Dispatches)]
+        [AbpAuthorize(AppPermissions.Pages_Tickets_Export, AppPermissions.CustomerPortal_TicketList_Export)]
         [HttpPost]
         public async Task<FileDto> GetTicketsToCsv(TicketListInput input)
         {
+            var permissions = new
+            {
+                ExportAnyTickets = await IsGrantedAsync(AppPermissions.Pages_Tickets_Export),
+                ExportCustomerTicketsOnly = await IsGrantedAsync(AppPermissions.CustomerPortal_TicketList_Export),
+            };
+
+            if (permissions.ExportAnyTickets)
+            {
+                //do not additionally filter the data
+            }
+            else if (permissions.ExportCustomerTicketsOnly)
+            {
+                input.CustomerId = Session.GetCustomerIdOrThrow(this);
+            }
+            else
+            {
+                throw new AbpAuthorizationException();
+            }
+
             var timezone = await GetTimezone();
             var query = GetTicketListQuery(input, timezone);
 
@@ -1127,6 +1171,8 @@ namespace DispatcherWeb.Tickets
                     JobNumber = x.JobNumber,
                     CustomerId = x.Order.CustomerId,
                     CustomerName = x.Order.Customer.Name,
+                    OfficeId = x.Order.Office.Id,
+                    OfficeName = x.Order.Office.Name,
                     OrderDate = x.Order.DeliveryDate,
                     LoadAtId = x.LoadAtId,
                     DeliverToId = x.DeliverToId,
@@ -1153,6 +1199,8 @@ namespace DispatcherWeb.Tickets
                     FreightUomName = x.FreightUom.Name,
                     FreightRate = x.FreightPricePerUnit,
                     FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                    LeaseHaulerRate = x.LeaseHaulerRate,
+                    ProductionPay = x.ProductionPay,
                     MaterialRate = x.MaterialPricePerUnit,
                     FuelSurchargeRate = x.FuelSurchargeRate,
                     MaterialTotal = x.MaterialPrice,
@@ -1508,6 +1556,9 @@ namespace DispatcherWeb.Tickets
                 {
                     var orderLine = await _orderLineRepository.GetAll()
                         .Include(x => x.Tickets)
+                        .Include(x => x.Order)
+                            .ThenInclude(x => x.OrderLines)
+                                .ThenInclude(x => x.Tickets)
                         .FirstOrDefaultAsync(x => x.Id == orderLineModel.Id);
 
                     if (orderLine == null)
@@ -1515,7 +1566,9 @@ namespace DispatcherWeb.Tickets
                         throw new ApplicationException($"OrderLine with id {orderLineModel.Id} wasn't found");
                     }
 
+                    var orderTickets = orderLine.Order.OrderLines.SelectMany(ol => ol.Tickets).ToList();
                     var orderLineTickets = orderLine.Tickets.ToList();
+                    var orderHasChanged = false;
                     //if (orderLine.Order.CustomerId != orderLineModel.CustomerId)
                     // we disallowed to change CustomerId from tickets by driver view per #10977
                     //}
@@ -1534,8 +1587,15 @@ namespace DispatcherWeb.Tickets
                         orderLine.ServiceId = orderLineModel.ServiceId;
                         orderLineTickets.ForEach(t => t.ServiceId = orderLineModel.ServiceId);
                     }
+                    if (orderLine.Order.LocationId != orderLineModel.OfficeId)
+                    {
+                        orderLine.Order.LocationId = orderLineModel.OfficeId;
+                        orderTickets.ForEach(t => t.OfficeId = orderLineModel.OfficeId);
+                        orderHasChanged = true;
+                    }
 
                     orderLine.JobNumber = orderLineModel.JobNumber;
+                    orderLine.LeaseHaulerRate = orderLineModel.LeaseHaulerRate;
 
                     var rateWasChanged = false;
                     if (orderLine.Designation != orderLineModel.Designation)
@@ -1670,7 +1730,7 @@ namespace DispatcherWeb.Tickets
                         orderLineModel.FuelSurchargeRate = orderLine.FuelSurchargeRate;
                     }
 
-                    changedTickets.AddRange(orderLineTickets);
+                    changedTickets.AddRange(orderHasChanged ? orderTickets : orderLineTickets);
                 }
                 await CurrentUnitOfWork.SaveChangesAsync();
             }
@@ -1817,6 +1877,7 @@ namespace DispatcherWeb.Tickets
                     TicketNumber = x.TicketNumber,
                     TicketDateTime = x.TicketDateTime,
                     CustomerName = x.Customer.Name,
+                    OfficeId = x.OfficeId,
                     ServiceName = x.Service.Service1,
                     MaterialQuantity = x.OrderLine.MaterialQuantity,
                     MaterialUomName = x.OrderLine.MaterialUom.Name,
@@ -1827,7 +1888,7 @@ namespace DispatcherWeb.Tickets
             item.LegalName = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingLegalName);
             item.LegalAddress = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingAddress);
             item.BillingPhoneNumber = await SettingManager.GetSettingValueAsync(AppSettings.TenantManagement.BillingPhoneNumber);
-            item.LogoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
+            item.LogoPath = await _logoProvider.GetReportLogoAsBase64StringAsync(item.OfficeId);
             item.TicketDateTime = item.TicketDateTime?.ConvertTimeZoneTo(await GetTimezone());
             item.DebugLayout = input.DebugLayout;
 

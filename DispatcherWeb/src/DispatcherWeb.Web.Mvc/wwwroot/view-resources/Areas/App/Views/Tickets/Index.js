@@ -10,6 +10,10 @@
     var _isFilterReady = false;
     var _isGridInitialized = false;
 
+    var _isCustomerPortalUser = !abp.auth.hasPermission('Pages.Tickets.View')
+        && abp.auth.hasPermission('CustomerPortal.TicketList')
+        && abp.session.customerId;
+
     $('[data-toggle="tooltip"]').tooltip();
 
     var _createOrEditTicketModal = new app.ModalManager({
@@ -20,7 +24,8 @@
     var useShifts = abp.setting.getBoolean('App.General.UseShifts');
 
     var _permissions = {
-        invoices: abp.auth.hasPermission('Pages.Invoices')
+        invoices: abp.auth.hasPermission('Pages.Invoices'),
+        editTickets: abp.auth.hasPermission('Pages.Tickets.Edit')
     };
 
     var rowSelectionClass = 'invoice-row-selection';
@@ -36,6 +41,12 @@
                 officeId: abp.session.officeId,
                 officeName: abp.session.officeName
             };
+        }
+
+        if (_isCustomerPortalUser) {
+            cachedFilter.customerId = abp.session.customerId;
+            cachedFilter.customerName = abp.session.customerName;
+            $("#CustomerFilter").prop("disabled", true);
         }
 
         var ticketDateFilterIsEmpty = false;
@@ -102,8 +113,8 @@
             autoUpdateInput: false
         }).on('apply.daterangepicker', function (ev, picker) {
             $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-             $("#OrderDateRangeBeginInput").val(picker.startDate.format('MM/DD/YYYY'));
-             $("#OrderDateRangeEndInput").val(picker.endDate.format('MM/DD/YYYY'));
+            $("#OrderDateRangeBeginInput").val(picker.startDate.format('MM/DD/YYYY'));
+            $("#OrderDateRangeEndInput").val(picker.endDate.format('MM/DD/YYYY'));
         }).on('cancel.daterangepicker', function (ev, picker) {
             $(this).val('');
             $("#OrderDateRangeBeginInput").val('');
@@ -154,7 +165,7 @@
         if (cachedFilter.shifts) {
             cachedFilter.shifts.forEach(function (shift) {
                 abp.helper.ui.addAndSetDropdownValue($("#Shifts"), shift);
-            });   
+            });
         }
 
         $('#BillingStatusFilter').select2Init({
@@ -270,9 +281,10 @@
             var filterData = _dtHelper.getFilterData();
             app.localStorage.setItem('tickets_filter', filterData);
             $.extend(abpData, filterData);
-
             _ticketService.ticketListView(abpData).done(function (abpResult) {
                 callback(_dtHelper.fromAbpResult(abpResult));
+            }).fail(function () {
+                callback(null);
             });
         },
         editable: {
@@ -286,6 +298,9 @@
                 } catch {
                     reloadMainGrid();
                 }
+            },
+            isReadOnly: function (rowData) {
+                return !_permissions.editTickets;
             }
         },
         order: [[2, 'asc']],
@@ -392,7 +407,7 @@
             },
             {
                 data: "revenue",
-                title: "Revenue"
+                title: _isCustomerPortalUser ? "Charges" : "Revenue",
             },
             {
                 data: "isBilled",
@@ -640,6 +655,9 @@
         $("#OrderDateRangeBeginInput").val('');
         $("#OrderDateRangeEndInput").val('');
         $('#OfficeIdFilter').val('').trigger("change");
+        if (_isCustomerPortalUser) {
+            abp.helper.ui.addAndSetDropdownValue($("#CustomerFilter"), abp.session.customerId, abp.session.customerName);
+        }
         _selectedRowIds = [];
         reloadMainGrid();
     });

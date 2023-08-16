@@ -14,6 +14,7 @@ namespace DispatcherWeb.WorkOrders.Dto
         public DateTime? StartDate { get; set; }
         public DateTime? CompletionDate { get; set; }
         public WorkOrderStatus Status { get; set; }
+        public string StatusText => Status.GetDisplayName();
         public int TruckId { get; set; }
         public string TruckCode { get; set; }
 
@@ -32,6 +33,12 @@ namespace DispatcherWeb.WorkOrders.Dto
         public decimal TotalCost { get; set; }
 
         public List<WorkOrderLineEditDto> WorkOrderLines { get; set; }
-        public List<WorkOrderPictureEditDto> Pictures { get; set; }
+        public List<WorkOrderPictureEditDto> Pictures { get; set; } = new List<WorkOrderPictureEditDto>();
+
+        /// <summary>
+        /// Provided for report purpose unable to parse from list of WorkOrderPictureEditDto
+        /// </summary>
+        public int PicturesCount =>
+            Pictures.Count;
     }
 }

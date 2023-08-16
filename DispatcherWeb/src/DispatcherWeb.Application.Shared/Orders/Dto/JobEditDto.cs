@@ -151,6 +151,8 @@ namespace DispatcherWeb.Orders.Dto
 
         public bool ProductionPay { get; set; }
 
+        public bool LoadBased { get; set; }
+
         public bool AutoGenerateTicketNumber { get; set; }
 
         public int? TicketId { get; set; }

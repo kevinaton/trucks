@@ -46,6 +46,10 @@ namespace DispatcherWeb.Quotes
 
         public decimal? FreightRateToPayDrivers { get; set; }
 
+        public bool ProductionPay { get; set; }
+
+        public bool LoadBased { get; set; }
+
         public decimal? MaterialQuantity { get; set; }
 
         public decimal? FreightQuantity { get; set; }
@@ -85,6 +89,8 @@ namespace DispatcherWeb.Quotes
                 FreightQuantity = FreightQuantity,
                 FreightRate = FreightRate,
                 FreightRateToPayDrivers = FreightRateToPayDrivers,
+                ProductionPay = ProductionPay,
+                LoadBased = LoadBased,
                 FreightUomId = FreightUomId,
                 Id = Id,
                 IsDeleted = IsDeleted,

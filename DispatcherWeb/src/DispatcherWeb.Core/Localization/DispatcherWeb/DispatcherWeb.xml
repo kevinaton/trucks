@@ -101,17 +101,18 @@
     <text name="AllowCopyingZeroQuantityOrderLineItemsFeature">Allow Copying Zero Quantity Order Line Items</text>
     <text name="AllowCounterSales">Allow counter sales</text>
     <text name="AllowDriverPayRateDifferentFromFreightRate">Allow specifying driver pay rate different from freight rate</text>
+    <text name="AllowGpsTracking">Allow GPS tracking</text>
     <text name="AllowImportingLuckStoneEarnings">Allow importing Luck Stone Earnings</text>
     <text name="AllowImportingTruxEarnings">Allow importing Trux Earnings</text>
     <text name="AllowInvoicingFeature">Allow Invoicing</text>
     <text name="AllowLeaseHaulersFeature">Allow Lease Haulers</text>
+    <text name="AllowLoadBasedRates">Allow load-based rates</text>
     <text name="AllowMultiOfficeFeature">Allow MultiOffice</text>
     <text name="AllowPaymentProcessingFeature">Allow Payment Processing</text>
     <text name="AllowProductionPay">Allow Production Pay</text>
     <text name="AllowProjects">Allow Projects</text>
     <text name="AllowSchedulingTrucksWithoutDrivers">Allow scheduling trucks without drivers</text>
     <text name="AllowSendingOrdersToDifferentTenant">Allow sending orders to a different tenant</text>
-    <text name="AllowSharedOrdersFeature">Allow Shared Orders</text>
     <text name="AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders">Allow specifying truck/trailer categories on quotes and orders</text>
     <text name="AllowSubcontractorsToDriveCompanyOwnedTrucks">Allow sub-contractors to drive company owned trucks</text>
     <text name="AllowTenantsToRegisterThemselves_Hint">If you disable this, tenants will only be added by admin using tenant management page.</text>
@@ -192,6 +193,7 @@
     <text name="Call">Call</text>
     <text name="CallCell">Call Cell</text>
     <text name="CallOffice">Call Office</text>
+    <text name="CanBeSalesperson">Can be salesperson</text>
     <text name="Cancel">Cancel</text>
     <text name="CancelAuthorization">Cancel Authorization</text>
     <text name="CannedTexts">Canned Texts</text>
@@ -348,6 +350,10 @@ admin -> for your tenant's admin
     <text name="Customer">Customer</text>
     <text name="CustomerEmail">Customer Email</text>
     <text name="CustomerName"> Customer Name</text>
+    <text name="CustomerPortal">Customer Portal</text>
+    <text name="CustomerPortalTicketList">Ticket List</text>
+    <text name="CustomerPortalTicketListExport">Ticket List Export</text>
+    <text name="CustomerPortalUserWithCustomerIdMissing">Customer Portal feature is enabled but you are not using a customer user. Please contact support to resolve this issue.</text>
     <text name="Customers">Customers</text>
     <text name="CustomersHeaderInfo">Manage your customers</text>
     <text name="CustomRange">Custom range</text>
@@ -524,7 +530,6 @@ admin -> for your tenant's admin
     <text name="EditingQuotes">Editing Quotes</text>
     <text name="EditingRole">Editing role</text>
     <text name="EditingTenant">Editing tenant</text>
-    <text name="EditingTicket">Editing Ticket</text>
     <text name="EditingUser">Editing user</text>
     <text name="EditingVehicleService">Editing Vehicle Service</text>
     <text name="EditingVehicleServiceTypes">Editing Vehicle Service Types</text>
@@ -547,6 +552,7 @@ admin -> for your tenant's admin
     <text name="EditRole">Edit role</text>
     <text name="EditTenant">Edit tenant</text>
     <text name="EditText">Edit text</text>
+    <text name="EditTickets">Edit Tickets</text>
     <text name="EditTimeClassifications">Edit time classifications</text>
     <text name="EditUser">Edit user</text>
     <text name="ElapsedTimeHr">Elapsed Time (Hr)</text>
@@ -573,6 +579,8 @@ admin -> for your tenant's admin
     <text name="EmployeeId">Employee Id</text>
     <text name="EmptyOnes">Empty ones</text>
     <text name="Enable">Enable</text>
+    <text name="EnableDriverAppGps">Enable driver app GPS</text>
+    <text name="EnableDriverAppGpsHint">If this option is enabled, the driver app will be able to send GPS data to the separate DTD tracking platform. If it isn't enabled, only the GPS values needed in Dump Truck Dispatcher will be saved.</text>
     <text name="EnableForDriverApplicationQuestion">Enable for driver application?</text>
     <text name="EnableLdapAuthentication">Enable LDAP Authentication.</text>
     <text name="EnableTwoFactorLogin">Enable two factor user login.</text>
@@ -599,6 +607,7 @@ admin -> for your tenant's admin
     <text name="ExportedInBatch">Exported in batch</text>
     <text name="ExportedInvoiceDeletePrompt">You are about to delete invoice number {0} which has been exported. Are you sure you want to do this?</text>
     <text name="ExportSelected">Export selected</text>
+    <text name="ExportTickets">Export Tickets</text>
     <text name="ExportToCsv">Export to csv</text>
     <text name="ExportToExcel">Export to excel</text>
     <text name="Extend_Edition_Description">Extend {0} Edition</text>
@@ -637,7 +646,7 @@ admin -> for your tenant's admin
     <text name="FreeTrial">Free trial</text>
     <text name="FreightQuantity">Freight Quantity</text>
     <text name="FreightRate">Freight Rate</text>
-    <text name="FreightRateToPayDrivers">Freight Rate to Pay Drivers</text>
+    <text name="FreightRateToPayDrivers">Freight Rate for Driver Pay</text>
     <text name="FreightRateToPayDriversShort">Driver Pay Freight Rate</text>
     <text name="FreightTotal">Freight Total</text>
     <text name="FreightUom">Freight UOM</text>
@@ -697,6 +706,7 @@ admin -> for your tenant's admin
     <text name="GridHeader_RecommendedMileageInterval">Recommended &lt;br&gt; mileage interval</text>
     <text name="GridHeader_RecommendedTimeInterval">Recommended &lt;br&gt; time interval</text>
     <text name="HangfireDashboard">Hangfire dashboard</text>
+    <text name="HasCustomerPortalAccess">Portal Access</text>
     <text name="HasError">Has error</text>
     <text name="HasOwnDatabase">Has own database</text>
     <text name="HeartlandPublicKey">Heartland Public Key</text>
@@ -816,6 +826,7 @@ admin -> for your tenant's admin
     <text name="JobNbr">Job Nbr</text>
     <text name="JobNumber">Job Number</text>
     <text name="Jobs">Jobs</text>
+    <text name="JobSharing">Job Sharing</text>
     <text name="KeepTrucks">Keep truck assignments</text>
     <text name="Key">Key</text>
     <text name="LaborCost">Labor Cost</text>
@@ -863,6 +874,7 @@ admin -> for your tenant's admin
     <text name="LHRate">LH Rate</text>
     <text name="LicenseExpirationDate">License Expiration Date</text>
     <text name="LicenseNumber">License Number</text>
+    <text name="LicensePlate">License Plate</text>
     <text name="LicensePlateStatus">License Plate Status</text>
     <text name="LicensePlateStatusChart">License Plate Status Chart</text>
     <text name="LicenseState">License State</text>
@@ -874,6 +886,7 @@ admin -> for your tenant's admin
     <text name="LinkToCurrentPage">Link to current page</text>
     <text name="ListOfDriverTimeConflicts">Following is a list of drivers that have logged time for both production pay time classifications and hourly rates on the same date. Please verify that they are correct. If they are incorrect, you’ll need to delete this pay statement, fix the times, and regenerate the pay statement.</text>
     <text name="LoadAt">Load At</text>
+    <text name="LoadBased">Load-based</text>
     <text name="LoadCompleted">Loaded</text>
     <text name="Loaded">Loaded</text>
     <text name="LoadHistory">Loads</text>
@@ -1038,6 +1051,7 @@ admin -> for your tenant's admin
     <text name="OrderEmailSubjectTemplate">Order Email Subject Template</text>
     <text name="OrderHasReachedRequestedAmount">Order for {CustomerName} has reached the requested amount.</text>
     <text name="OrderId">Order Id</text>
+    <text name="OrderIdDropdown">Order Id dropdown</text>
     <text name="OrderItemHasOverriddenTotalValues">This order item has overridden total values</text>
     <text name="OrderItems">Order items</text>
     <text name="OrderLine_Edit_Error_HasTickets">Either tickets or dispatches are associated with this order line item, so the changes you requested can't be saved.</text>
@@ -1273,6 +1287,7 @@ admin -> for your tenant's admin
     <text name="RequestTimedOut">Your request timed out, please try again later.</text>
     <text name="Required">Required</text>
     <text name="RequiredField">{0} field is required.</text>
+    <text name="RequiredToAllowPortalAccess">Required to allow portal access</text>
     <text name="RequiresNotification">Requires Notification</text>
     <text name="Reset">Reset</text>
     <text name="ResetCode">Reset code</text>
@@ -1451,6 +1466,8 @@ admin -> for your tenant's admin
     <text name="Sevice">Sevice</text>
     <text name="ShareButton">Share</text>
     <text name="Shared">Shared</text>
+    <text name="ShareJobs">Share Jobs</text>
+    <text name="ShareTrucks">Share Trucks</text>
     <text name="Shift">Shift</text>
     <text name="ShouldChangePasswordOnNextLogin">Should change password on next login.</text>
     <text name="Show">Show</text>
@@ -1461,6 +1478,7 @@ admin -> for your tenant's admin
     <text name="ShowInvoice">Show Invoice</text>
     <text name="ShowLeaseHaulerRateOnOrder">Show lease hauler rate on order</text>
     <text name="ShowLeaseHaulerRateOnQuote">Show lease hauler rate on quote</text>
+    <text name="ShowOfficeOnTicketsByDriver">Show office on tickets by driver</text>
     <text name="ShowTrailersOnSchedule">Show trailers on schedule</text>
     <text name="SignUp">Sign up</text>
     <text name="Sms">Sms</text>
@@ -1669,6 +1687,7 @@ admin -> for your tenant's admin
     <text name="TruckHasDispatch_YouMustCancelItFirstToRemoveTruck">Truck {0} has an acknowledged or loaded dispatch. You must first complete or cancel the dispatch to remove this truck.</text>
     <text name="TruckMaintenance">Truck Maintenance</text>
     <text name="Trucks">Trucks</text>
+    <text name="TruckSharing">Truck Sharing</text>
     <text name="TrucksHeader">Trucks</text>
     <text name="TrucksHeaderInfo">Manage your trucks</text>
     <text name="TrucksRequestedToday">Trucks requested today</text>
@@ -1766,6 +1785,7 @@ admin -> for your tenant's admin
     <text name="VehicleCategoriesHeaderInfo">Manage your vehicle categories</text>
     <text name="VehicleMaintenance">Vehicle Maintenance</text>
     <text name="VehicleMaintenanceServices">Services</text>
+    <text name="VehicleMaintenanceWorkOrderReport">Vehicle Maintenance Work Order Report</text>
     <text name="VehicleService">Vehicle Service</text>
     <text name="VehicleServiceTypes">Vehicle Service Types</text>
     <text name="VehicleUsageMenuItem">Vehicle Usage</text>

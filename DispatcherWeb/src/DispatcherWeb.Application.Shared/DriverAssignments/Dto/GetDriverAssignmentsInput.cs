@@ -11,7 +11,7 @@ namespace DispatcherWeb.DriverAssignments.Dto
 
         public Shift? Shift { get; set; }
 
-        public int OfficeId { get; set; }
+        public int? OfficeId { get; set; }
 
         public int? TruckId { get; set; }
 

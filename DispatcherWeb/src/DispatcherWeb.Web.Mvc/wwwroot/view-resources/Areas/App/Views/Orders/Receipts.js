@@ -153,12 +153,7 @@
                         + '</ul>'
                         + '</div>'
                 }
-            ],
-            createdRow: function (row, data, index) {
-                //if (data.isShared) {
-                //    $(row).addClass('order-shared');
-                //}
-            }
+            ]
         });
 
         function reloadMainGrid(callback, resetPaging) {

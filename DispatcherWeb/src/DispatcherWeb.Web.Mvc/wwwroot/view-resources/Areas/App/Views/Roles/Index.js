@@ -47,11 +47,9 @@
                     orderable: false,
                     render: function () {
                         return '';
-                    },
-                    targets: 0
+                    }
                 },
                 {
-                    targets: 1,
                     data: "displayName",
                     render: function (displayName, type, row, meta) {
                         var $span = $('<span/>');
@@ -135,23 +133,14 @@
             ]
         });
 
-        function deleteRole(role) {
-            _roleService.isRoleHaveUsers({
+        async function deleteRole(role) {
+            let hasUsers = await _roleService.isRoleAssignedToUsers({
                 id: role.id
-            }).done(function (responce) {
-                if (responce) {
-                    deleteFinellyRole(true, role.id, role.displayName);
-                } else {
-                    deleteFinellyRole(false, role.id, role.displayName);
-                }
             });
-        }
 
-
-        async function deleteFinellyRole(hasUsers, roleId, displayName) {
             if (hasUsers) {
                 if (!await abp.message.confirm(
-                    app.localize('RoleDeleteWarningMessageforHasUsers', displayName),
+                    app.localize('RoleDeleteWarningMessageforHasUsers', role.displayName),
                     app.localize('AreYouSure')
                 )) {
                     return;
@@ -166,15 +155,12 @@
             }
 
             _roleService.deleteRole({
-                id: roleId
+                id: role.id
             }).done(function () {
                 getRoles();
                 abp.notify.success(app.localize('SuccessfullyDeleted'));
             });
         }
-
-
-
 
         $('#CreateNewRoleButton').click(function () {
             _createOrEditModal.open();

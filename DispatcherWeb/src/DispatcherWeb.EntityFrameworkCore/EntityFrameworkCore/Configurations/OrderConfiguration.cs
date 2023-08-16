@@ -22,7 +22,7 @@ namespace DispatcherWeb.EntityFrameworkCore.Configurations
 
             builder
                 .HasOne(e => e.Office)
-                .WithMany()
+                .WithMany(e => e.Orders)
                 .HasForeignKey(e => e.LocationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
