@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Abp.Runtime.Validation;
 using DispatcherWeb.Dto;
 
@@ -9,7 +10,7 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard.Dto
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ChartDateInterval IncomeStatisticsDateInterval { get; set; }
-        public int? EditionId { get; set; }
+        public List<int?> EditionIds { get; set; }
         public FilterActiveStatus? Status { get; set; }
 
         public void Normalize()
