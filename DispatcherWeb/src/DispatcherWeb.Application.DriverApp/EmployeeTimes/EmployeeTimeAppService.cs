@@ -103,11 +103,6 @@ namespace DispatcherWeb.DriverApp.EmployeeTimes
                 .OrderByDescending(x => !x.IsInactive)
                 .FirstOrDefaultAsync();
 
-            if (!await _timeClassificationRepository.GetAll().AnyAsync(x => x.Id == model.TimeClassificationId))
-            {
-                throw new UserFriendlyException($"Time Classification with id {model.TimeClassificationId} wasn't found");
-            }
-
             //should we limit them to editing only their own records?
             //if (model.Id != 0 && employeeTime.UserId != Session.UserId || model.UserId != Session.UserId)
             //{
