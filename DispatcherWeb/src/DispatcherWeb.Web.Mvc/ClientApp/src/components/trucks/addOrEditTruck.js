@@ -1016,9 +1016,7 @@ const AddOrEditTruckForm = ({
                                     label="Default Driver"
                                     variant="outlined"
                                     value={newOption}
-                                    onChange={(e) => {
-                                        setNewOption(e.target.value)
-                                    }} 
+                                    onChange={(e) => setNewOption(e.target.value)} 
                                     emptyLabel='' 
                                     InputProps={{
                                         ...params.InputProps,

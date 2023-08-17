@@ -15,18 +15,19 @@ import moment from 'moment';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import _, { isEmpty } from 'lodash';
 import { getOffices } from '../../store/actions';
+import AddOrEditJob from '../../components/orders/addOrEditJob';
 
 const SchedulingDataFilter = ({
+    userAppConfiguration,
     dataFilter,
-    handleFilterChange
+    handleFilterChange,
+    openModal,
+    closeModal
 }) => {
     const [date, setDate] = useState(null);
     const [officeOptions, setOfficeOptions] = useState([]);
     const [officeId, setOfficeId] = useState(null);
     const [defaultSelection, setDefaultSelection] = useState(-1);
-
-    const [isJob, setJob] = useState(false);
-    const [title, setTitle] = useState('Add Job');
 
     const [settingsAnchor, setSettingsAnchor] = useState(null);
     const settingsOpen = Boolean(settingsAnchor);
@@ -109,9 +110,16 @@ const SchedulingDataFilter = ({
     // Handle Add jobs
     const handleAddJob = (e) => {
         e.preventDefault();
+        
+        openModal(
+            <AddOrEditJob 
+                userAppConfiguration={userAppConfiguration} 
+                openModal={openModal}
+                closeModal={closeModal}
+            />,
+            800
+        );
         setSettingsAnchor(null);
-        setTitle('Add Job');
-        setJob(true);
     };
 
     return (
@@ -200,7 +208,7 @@ const SchedulingDataFilter = ({
                             <i className='fa-regular fa-check secondary-icon pr-2'></i> Mark
                             all jobs complete
                         </MenuItem>
-                        <MenuItem onClick={handleAddJob}>
+                        <MenuItem onClick={(e) => handleAddJob(e)}>
                             <i className='fa-regular fa-plus secondary-icon pr-2'></i> Add
                             job
                         </MenuItem>

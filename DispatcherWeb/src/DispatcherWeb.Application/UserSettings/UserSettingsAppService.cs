@@ -44,7 +44,6 @@ namespace DispatcherWeb.UserSettings
                 },
                 Features = new UserFeatures
                 {
-                    AllowSharedOrders = await base.IsEnabledAsync(AppFeatures.AllowSharedOrdersFeature),
                     AllowMultiOffice = await base.IsEnabledAsync(AppFeatures.AllowMultiOfficeFeature),
                     AllowSendingOrdersToDifferentTenant = await base.IsEnabledAsync(AppFeatures.AllowSendingOrdersToDifferentTenant),
                     AllowImportingTruxEarnings = await base.IsEnabledAsync(AppFeatures.AllowImportingTruxEarnings),
@@ -56,7 +55,13 @@ namespace DispatcherWeb.UserSettings
                     AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders),
                     ShowTrailersOnSchedule = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.ShowTrailersOnSchedule),
                     AllowSubcontractorsToDriveCompanyOwnedTrucks = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.LeaseHaulers.AllowSubcontractorsToDriveCompanyOwnedTrucks),
-                    AllowSchedulingTrucksWithoutDrivers = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers)
+                    AllowSchedulingTrucksWithoutDrivers = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.AllowSchedulingTrucksWithoutDrivers),
+                    DefaultDesignationToMaterialOnly = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.DefaultDesignationToMaterialOnly),
+                    AllowCounterSales =
+                        await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.AllowCounterSalesForUser) &&
+                        await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.AllowCounterSalesForTenant),
+                    ShowLeaseHaulerRateOnOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.LeaseHaulers.ShowLeaseHaulerRateOnOrder),
+                    UseShifts = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.General.UseShifts)
                 }
             };
 

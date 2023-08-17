@@ -1,42 +1,46 @@
 import { combineReducers } from 'redux';
-
-import AppSettingsReducer from './app-settings/reducer';
-import LayoutReducer from './layout/reducer';
-import FeatureReducer from './features/reducer';
-import DashboardReducer from './dashboard/reducer';
 import AccountReducer from './account/reducer';
-import UserReducer from './user/reducer';
-import UserProfileReducer from './authorization/users/profile/reducer';
-import UserLinkReducer from './authorization/users/userLink/reducer';
-import NotificationReducer from './notifications/reducer';
-import OfficeReducer from './offices/reducer';
+import AppSettingsReducer from './app-settings/reducer';
+import CustomerReducer from './customers/reducer';
+import DashboardReducer from './dashboard/reducer';
+import DesignationReducer from './designations/reducer';
 import DriverReducer from './drivers/reducer';
 import DriverAssignmentReducer from './driverAssignments/reducer';
-import TrailerAssignmentReducer from './trailerAssignments/reducer';
-import TruckReducer from './trucks/reducer';
+import FeatureReducer from './features/reducer';
+import LayoutReducer from './layout/reducer';
 import LeaseHaulerReducer from './leaseHaulers/reducer';
 import LeaseHaulerRequestEditReducer from './leaseHaulerRequestEdit/reducer';
+import NotificationReducer from './notifications/reducer';
+import OfficeReducer from './offices/reducer';
+import OrderReducer from './orders/reducer';
 import SchedulingReducer from './scheduling/reducer';
+import TrailerAssignmentReducer from './trailerAssignments/reducer';
+import TruckReducer from './trucks/reducer';
+import UserLinkReducer from './authorization/users/userLink/reducer';
+import UserProfileReducer from './authorization/users/profile/reducer';
+import UserReducer from './user/reducer';
 
 const rootReducer = combineReducers({
-    // public
-    AppSettingsReducer,
-    LayoutReducer,
-    FeatureReducer,
-    DashboardReducer,
     AccountReducer,
-    UserReducer,
-    NotificationReducer,
-    OfficeReducer,
+    AppSettingsReducer,
+    CustomerReducer,
+    DashboardReducer,
+    DesignationReducer,
     DriverReducer,
     DriverAssignmentReducer,
-    TrailerAssignmentReducer,
-    TruckReducer,
+    FeatureReducer,
+    LayoutReducer,
     LeaseHaulerReducer,
     LeaseHaulerRequestEditReducer,
+    NotificationReducer,
+    OfficeReducer,
+    OrderReducer,
     SchedulingReducer,
+    TrailerAssignmentReducer,
+    TruckReducer,
+    UserLinkReducer,
     UserProfileReducer,
-    UserLinkReducer
+    UserReducer
 });
 
 export default rootReducer;
