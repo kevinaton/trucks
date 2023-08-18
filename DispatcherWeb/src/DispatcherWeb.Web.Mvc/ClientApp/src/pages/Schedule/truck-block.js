@@ -22,7 +22,7 @@ import { assetType } from '../../common/enums/assetType';
 import { entityType } from '../../common/enums/entityType';
 import { changeType } from '../../common/enums/changeType';
 import SyncRequestContext from '../../components/common/signalr/syncRequestContext';
-import NoDriverForTruck from '../../components/common/modals/noDriverForTruck'
+import NoDriverForTruck from '../../components/common/modals/noDriverForTruck';
 
 const TruckBlock = ({
     userAppConfiguration,
@@ -40,8 +40,8 @@ const TruckBlock = ({
     const [validateUtilization, setValidateUtilization] = useState(null);
     const [leaseHaulers, setLeaseHaulers] = useState(null);
     const [isConnectedToSignalR, setIsConnectedToSignalR] = useState(false);
-    const [truckMenuAnchor, setTruckMenuAnchor] = useState(null)
-    const isTruckMenu = Boolean(truckMenuAnchor)
+    const [truckMenuAnchor, setTruckMenuAnchor] = useState(null);
+    const isTruckMenu = Boolean(truckMenuAnchor);
     const [isNoDriverForTruck, setIsNoDriverForTruck] = useState(false);
 
     const syncRequestConnection = useContext(SyncRequestContext);
@@ -265,12 +265,12 @@ const TruckBlock = ({
     };
 
     const handleTruckMenuClose = () => {
-        setTruckMenuAnchor(null)
+        setTruckMenuAnchor(null);
     }
 
     const handleNoDriverForTruck = () => {
-        setIsNoDriverForTruck(true)
-        setTruckMenuAnchor(null)
+        setIsNoDriverForTruck(true);
+        setTruckMenuAnchor(null);
     }
 
     const renderTrucks = (index, truck) => (
