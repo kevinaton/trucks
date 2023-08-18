@@ -163,7 +163,7 @@ const ChangePasswordForm = ({
                 }} 
             >
                 <Typography variant='h6' component='h2'>
-                    Change password
+                    Change Password
                 </Typography>
                 <Button 
                     onClick={closeModal} 

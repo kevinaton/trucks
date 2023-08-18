@@ -308,7 +308,7 @@ const AddOrEditDriver = ({
                         sx={{ p: 2 }}
                     >
                         <Typography variant='h6' component='h2'>
-                            { driverInfo.id > 0 ? <>Edit driver</> : <>Create new driver</> }
+                            { driverInfo.id > 0 ? <>Edit Driver</> : <>Create New Driver</> }
                         </Typography>
                         <Button
                             onClick={closeModal} 

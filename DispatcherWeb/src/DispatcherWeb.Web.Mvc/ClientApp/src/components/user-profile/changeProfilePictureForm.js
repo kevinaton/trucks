@@ -227,7 +227,7 @@ const ChangeProfilePictureForm = ({
                 }} 
             >
                 <Typography variant='h6' component='h2'>
-                    Change profile picture
+                    Change Profile Picture
                 </Typography>
                 <Button 
                     onClick={closeModal} 

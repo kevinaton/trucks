@@ -144,7 +144,7 @@ const UploadSignaturePictureForm = ({
                 }} 
             >
                 <Typography variant='h6' component='h2'>
-                    Upload signature picture
+                    Upload Signature Picture
                 </Typography>
                 <Button 
                     onClick={closeModal} 

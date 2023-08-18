@@ -37,6 +37,9 @@ export const GET_LEASE_HAULER_DRIVERS_SELECT_LIST = '/LeaseHauler/GetLeaseHauler
 export const SET_DRIVER_FOR_LEASE_HAULER_TRUCK = '/LeaseHaulerRequestEdit/SetDriverForLeaseHaulerTruck';
 export const REMOVE_AVAILABLE_LEASE_HAULER_TRUCK_FROM_SCHEDULE = '/LeaseHaulerRequestEdit/RemoveAvailableLeaseHaulerTruckFromSchedule';
 
+//Locations
+export const GET_LOCATIONS_SELECT_LIST = '/Location/GetLocationsSelectList';
+
 //Notifications
 export const GET_USER_NOTIFICATIONS = '/Notification/GetUserNotifications?maxResultCount=3';
 export const GET_USER_PRIORITY_NOTIFICATIONS = '/Notification/GetUnreadPriorityNotifications';
@@ -55,6 +58,9 @@ export const GET_ORDER_FOR_EDIT = '/Order/GetOrderForEdit';
 export const GET_SCHEDULE_TRUCKS = '/Scheduling/GetScheduleTrucks';
 export const GET_SCHEDULE_TRUCK_BY_ID = '/Scheduling/GetScheduleTruckById';
 export const GET_SCHEDULE_ORDERS = '/Scheduling/GetScheduleOrders';
+
+//Services
+export const GET_SERVICES_WITH_TAX_INFO_SELECT_LIST = '/Service/GetServicesWithTaxInfoSelectList';
 
 //TrailerAssignments
 export const SET_TRAILER_FOR_TRACTOR = '/TrailerAssignment/SetTrailerForTractor';

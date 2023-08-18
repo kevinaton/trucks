@@ -576,7 +576,7 @@ export const MyProfileSettings = ({
                 }} 
             >
                 <Typography variant='h6' component='h2'>
-                    My settings
+                    My Settings
                 </Typography>
                 <Button 
                     onClick={closeModal} 

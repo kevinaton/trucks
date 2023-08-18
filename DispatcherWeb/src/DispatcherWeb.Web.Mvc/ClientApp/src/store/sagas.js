@@ -10,10 +10,12 @@ import featuresSaga from './features/saga';
 import layoutSaga from './layout/saga';
 import leaseHaulerSaga from './leaseHaulers/saga';
 import leaseHaulerRequestEditSaga from './leaseHaulerRequestEdit/saga';
+import locationSaga from './locations/saga';
 import notificationSaga from './notifications/saga';
 import officeSaga from './offices/saga';
 import ordersSaga from './orders/saga';
 import schedulingSaga from './scheduling/saga';
+import serviceSaga from './services/saga';
 import trailerAssignmentSaga from './trailerAssignments/saga';
 import truckSaga from './trucks/saga';
 import userSaga from './user/saga';
@@ -33,10 +35,12 @@ export default function* rootSaga() {
         fork(layoutSaga),
         fork(leaseHaulerSaga),
         fork(leaseHaulerRequestEditSaga),
+        fork(locationSaga),
         fork(notificationSaga),
         fork(officeSaga),
         fork(ordersSaga),
         fork(schedulingSaga),
+        fork(serviceSaga),
         fork(trailerAssignmentSaga),
         fork(truckSaga),
         fork(userSaga),

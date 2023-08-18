@@ -160,7 +160,7 @@ const LinkNewAccountForm = ({
                 }} 
             >
                 <Typography variant='h6' component='h2'>
-                    Link new account
+                    Link New Account
                 </Typography>
                 <Button 
                     onClick={closeModal} 

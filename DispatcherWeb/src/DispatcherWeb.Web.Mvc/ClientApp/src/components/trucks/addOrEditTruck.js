@@ -1628,7 +1628,7 @@ const AddOrEditTruckForm = ({
                         sx={{ p: 2 }} 
                     >
                         <Typography variant='h6' component='h2'>
-                            { truckInfo.id > 0 ? <>Edit truck</> : <>Create new truck</> }
+                            { truckInfo.id > 0 ? <>Edit Truck</> : <>Create New Truck</> }
                         </Typography>
                         <Button 
                             onClick={closeModal} 

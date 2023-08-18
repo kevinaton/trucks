@@ -10,10 +10,12 @@ import FeatureReducer from './features/reducer';
 import LayoutReducer from './layout/reducer';
 import LeaseHaulerReducer from './leaseHaulers/reducer';
 import LeaseHaulerRequestEditReducer from './leaseHaulerRequestEdit/reducer';
+import LocationReducer from './locations/reducer';
 import NotificationReducer from './notifications/reducer';
 import OfficeReducer from './offices/reducer';
 import OrderReducer from './orders/reducer';
 import SchedulingReducer from './scheduling/reducer';
+import ServiceReducer from './services/reducer';
 import TrailerAssignmentReducer from './trailerAssignments/reducer';
 import TruckReducer from './trucks/reducer';
 import UserLinkReducer from './authorization/users/userLink/reducer';
@@ -32,10 +34,12 @@ const rootReducer = combineReducers({
     LayoutReducer,
     LeaseHaulerReducer,
     LeaseHaulerRequestEditReducer,
+    LocationReducer,
     NotificationReducer,
     OfficeReducer,
     OrderReducer,
     SchedulingReducer,
+    ServiceReducer,
     TrailerAssignmentReducer,
     TruckReducer,
     UserLinkReducer,
