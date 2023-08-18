@@ -138,6 +138,7 @@
     <text name="AreYouSure">Are you sure?</text>
     <text name="AssetType">Asset Type</text>
     <text name="AssignedTo">Assigned To</text>
+    <text name="AssigningCustomerRoleManuallyIsNotSupported">Assigning the Customer role to users manually is not supported. Please check the 'Portal Access' checkbox on a customer contact instead.</text>
     <text name="AssignToAnotherEdition">Assign to another edition</text>
     <text name="AssignTrucks">Assign Trucks</text>
     <text name="AtLeastOneOfThesePermissionsMustBeGranted">Required permissions are not granted. At least one of these permissions must be granted: {0}</text>

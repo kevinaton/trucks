@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Authorization.Users;
@@ -96,6 +97,12 @@ namespace DispatcherWeb.Authorization.Users
             }
 
             user.ShouldChangePasswordOnNextLogin = input.User.ShouldChangePasswordOnNextLogin;
+
+            if (input.AssignedRoleNames.Contains(StaticRoleNames.Tenants.Customer)
+                && user.CustomerContactId == null)
+            {
+                throw new UserFriendlyException(L("AssigningCustomerRoleManuallyIsNotSupported"));
+            }
 
             //Assign roles
             user.Roles = new Collection<UserRole>();

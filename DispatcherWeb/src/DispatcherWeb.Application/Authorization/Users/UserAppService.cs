@@ -426,7 +426,7 @@ namespace DispatcherWeb.Authorization.Users
                 && !await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Customer)
                 && user.CustomerContactId == null)
             {
-                throw new UserFriendlyException("Assigning the Customer role to users manually is not supported. Please check the 'Portal Access' checkbox on a customer contact instead.");
+                throw new UserFriendlyException(L("AssigningCustomerRoleManuallyIsNotSupported"));
             }
             CheckErrors(await UserManager.SetRolesAsync(user, input.AssignedRoleNames));
 
