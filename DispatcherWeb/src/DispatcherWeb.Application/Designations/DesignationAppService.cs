@@ -44,5 +44,10 @@ namespace DispatcherWeb.Designations
                 Name = designation.GetDisplayName()
             };
         }
+
+        public async Task<IList<KeyValuePair<int, string>>> GetDesignationSelectList()
+        {
+            return AppServiceExtensions.EnumToIntList<DesignationEnum>();
+        }
     }
 }

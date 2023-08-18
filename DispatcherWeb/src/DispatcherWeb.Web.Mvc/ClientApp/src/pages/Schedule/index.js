@@ -9,7 +9,7 @@ import {
     ToggleButton
 } from '@mui/material';
 import moment from 'moment';
-import AddEditJob from '../../components/common/modals/addEditJob';
+import AddEditJob from '../../components/orders/addOrEditJob';
 import SchedulingDataFilter from './scheduling-data-filter';
 import TruckBlock from './truck-block';
 import ScheduleOrders from './schedule-orders';
@@ -124,14 +124,6 @@ const Schedule = props => {
                     />
                 </Helmet>
 
-                {/* Modals */}
-                <AddEditJob 
-                    state={isJob} 
-                    setJob={setJob} 
-                    title={title} 
-                    data={editData} 
-                />
-
                 <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
                     <Typography variant='h6' component='h2' sx={{ mb: 1 }}>
                         {pageName}
@@ -154,8 +146,11 @@ const Schedule = props => {
                 <Paper>
                     {/* Filter settings */}
                     <SchedulingDataFilter 
+                        userAppConfiguration={props.userAppConfiguration}
                         dataFilter={dataFilter} 
                         handleFilterChange={handleFilterChange}
+                        openModal={props.openModal}
+                        closeModal={props.closeModal}
                     />
                     
                     {/* List of trucks */}

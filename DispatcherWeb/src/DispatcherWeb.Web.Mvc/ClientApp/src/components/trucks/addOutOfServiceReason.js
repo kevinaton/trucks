@@ -124,7 +124,7 @@ const AddOutOfServiceReason = ({
                 alignItems='center'
                 sx={{ p: 2 }} 
             >
-                <Typography variant='h6' component='h2'>Take out of service</Typography>
+                <Typography variant='h6' component='h2'>Take Out of Service</Typography>
                 <Button 
                     onClick={closeModal} 
                     sx={{ minWidth: '32px' }}

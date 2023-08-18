@@ -146,7 +146,7 @@ const AddOrEditDriverForTruck = ({
                 alignItems='center'
                 sx={{ p: 2 }} 
             >
-                <Typography variant='h6' component='h2'>Assign driver</Typography>
+                <Typography variant='h6' component='h2'>Assign Driver</Typography>
                 <Button 
                     onClick={closeModal} 
                     sx={{ minWidth: '32px' }}

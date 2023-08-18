@@ -371,7 +371,7 @@ const AddOrEditTrailer = ({
                 alignItems='center'
                 sx={{ p: 2 }} 
             >
-                <Typography variant='h6' component='h2'>Select trailer</Typography>
+                <Typography variant='h6' component='h2'>Select Trailer</Typography>
                 <Button 
                     onClick={closeModal} 
                     sx={{ minWidth: '32px' }}

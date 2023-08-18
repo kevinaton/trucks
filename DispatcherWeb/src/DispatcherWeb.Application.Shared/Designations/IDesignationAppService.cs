@@ -7,5 +7,6 @@ namespace DispatcherWeb.Designations
     public interface IDesignationAppService
     {
         Task<List<SelectListDto>> GetDesignationSelectListItemsAsync(DesignationEnum? selectedDesignation = null);
+        Task<IList<KeyValuePair<int, string>>> GetDesignationSelectList();
     }
 }

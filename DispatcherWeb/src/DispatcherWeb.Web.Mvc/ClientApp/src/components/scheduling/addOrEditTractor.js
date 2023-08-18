@@ -155,7 +155,7 @@ const AddOrEditTractor = ({
                 alignItems='center'
                 sx={{ p: 2 }} 
             >
-                <Typography variant='h6' component='h2'>Change tractor</Typography>
+                <Typography variant='h6' component='h2'>Change Tractor</Typography>
                 <Button 
                     onClick={closeModal} 
                     sx={{ minWidth: '32px' }}
