@@ -28,6 +28,7 @@ using DispatcherWeb.LeaseHaulers;
 using DispatcherWeb.Orders;
 using DispatcherWeb.Orders.TaxDetails;
 using DispatcherWeb.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MigraDoc.DocumentObjectModel;
 
@@ -234,11 +235,13 @@ namespace DispatcherWeb.Invoices
             return new PagedResultDto<InvoiceLineEditDto>(items.Count, items);
         }
 
+        [HttpPost]
         public async Task<bool> GetCustomerHasTickets(GetCustomerTicketsInput input)
         {
             return (await GetCustomerTickets(input)).Items.Any();
         }
 
+        [HttpPost]
         public async Task<GetCustomerTicketsResult> GetCustomerTickets(GetCustomerTicketsInput input)
         {
             input.Normalize();
