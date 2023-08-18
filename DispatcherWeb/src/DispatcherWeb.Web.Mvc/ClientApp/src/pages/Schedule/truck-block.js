@@ -4,6 +4,8 @@ import {
     Box,
     Chip,
     Grid, 
+    Menu, 
+    MenuItem, 
     Paper,
     Skeleton,
 } from '@mui/material';
@@ -20,6 +22,7 @@ import { assetType } from '../../common/enums/assetType';
 import { entityType } from '../../common/enums/entityType';
 import { changeType } from '../../common/enums/changeType';
 import SyncRequestContext from '../../components/common/signalr/syncRequestContext';
+import NoDriverForTruck from '../../components/common/modals/noDriverForTruck';
 
 const TruckBlock = ({
     userAppConfiguration,
@@ -37,6 +40,9 @@ const TruckBlock = ({
     const [validateUtilization, setValidateUtilization] = useState(null);
     const [leaseHaulers, setLeaseHaulers] = useState(null);
     const [isConnectedToSignalR, setIsConnectedToSignalR] = useState(false);
+    const [truckMenuAnchor, setTruckMenuAnchor] = useState(null);
+    const isTruckMenu = Boolean(truckMenuAnchor);
+    const [isNoDriverForTruck, setIsNoDriverForTruck] = useState(false);
 
     const syncRequestConnection = useContext(SyncRequestContext);
     const dispatch = useDispatch();
@@ -258,8 +264,18 @@ const TruckBlock = ({
         );
     };
 
+    const handleTruckMenuClose = () => {
+        setTruckMenuAnchor(null);
+    }
+
+    const handleNoDriverForTruck = () => {
+        setIsNoDriverForTruck(true);
+        setTruckMenuAnchor(null);
+    }
+
     const renderTrucks = (index, truck) => (
-        <Grid item key={index}>
+        <div>
+            <Grid item key={index}>
             <TruckBlockItem 
                 truck={truck} 
                 truckColors={getTruckColor(truck)}
@@ -273,11 +289,25 @@ const TruckBlock = ({
                 openDialog={openDialog} 
                 setIsUIBusy={setIsUIBusy}
             />
-        </Grid>
+            </Grid>
+            <Menu
+                id="truck-menu"
+                anchorEl={truckMenuAnchor}
+                open={isTruckMenu}
+                onClose={handleTruckMenuClose}
+            >
+                <MenuItem onClick={handleTruckMenuClose}>Place out of service</MenuItem>
+                <MenuItem onClick={handleNoDriverForTruck}>No Driver for truck</MenuItem>
+                <MenuItem onClick={handleTruckMenuClose}>Change driver</MenuItem>
+            </Menu>
+        </div>
     );
 
     return (
         <React.Fragment>
+            {/* Modal */}
+            <NoDriverForTruck isOpen={isNoDriverForTruck} setIsOpen={setIsNoDriverForTruck} />
+
             {/* Truck Map */}
             <Box sx={{ p: 3 }}>
                 <Paper variant='outlined' sx={{ p: 1 }}>
