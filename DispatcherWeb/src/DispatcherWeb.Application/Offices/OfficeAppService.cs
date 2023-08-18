@@ -16,6 +16,7 @@ using DispatcherWeb.Dto;
 using DispatcherWeb.Features;
 using DispatcherWeb.Offices.Dto;
 using DispatcherWeb.Orders;
+using DispatcherWeb.Storage;
 using Microsoft.EntityFrameworkCore;
 
 namespace DispatcherWeb.Offices
@@ -24,18 +25,18 @@ namespace DispatcherWeb.Offices
     public class OfficeAppService : DispatcherWebAppServiceBase, IOfficeAppService
     {
         private readonly IRepository<Office> _officeRepository;
-        private readonly IRepository<Order> _orderRepository;
         private readonly ISingleOfficeAppService _singleOfficeService;
+        private readonly IBinaryObjectManager _binaryObjectManager;
 
         public OfficeAppService(
             IRepository<Office> officeRepository,
-            IRepository<Order> orderRepository,
-            ISingleOfficeAppService singleOfficeService
+            ISingleOfficeAppService singleOfficeService,
+            IBinaryObjectManager binaryObjectManager
             )
         {
             _officeRepository = officeRepository;
-            _orderRepository = orderRepository;
             _singleOfficeService = singleOfficeService;
+            _binaryObjectManager = binaryObjectManager;
         }
 
         public async Task<ListResultDto<OfficeDto>> GetAllOffices()
@@ -116,7 +117,9 @@ namespace DispatcherWeb.Offices
                     HeartlandPublicKey = office.HeartlandPublicKey,
                     HeartlandSecretKey = SimpleStringCipher.Instance.Decrypt(office.HeartlandSecretKey),
                     FuelIds = office.FuelIds,
-                    DefaultStartTime = office.DefaultStartTime
+                    DefaultStartTime = office.DefaultStartTime,
+                    LogoId = office.LogoId,
+                    ReportsLogoId = office.ReportsLogoId
                 };
 
                 if (string.IsNullOrEmpty(officeEditDto.HeartlandPublicKey))
@@ -144,7 +147,7 @@ namespace DispatcherWeb.Offices
             return officeEditDto;
         }
 
-        public async Task EditOffice(OfficeEditDto model)
+        public async Task<OfficeEditDto> EditOffice(OfficeEditDto model)
         {
             if (!model.Id.HasValue)
             {
@@ -190,7 +193,8 @@ namespace DispatcherWeb.Offices
                 throw new UserFriendlyException($"Office with name '{model.Name}' already exists!");
             }
 
-            await _officeRepository.InsertOrUpdateAndGetIdAsync(entity);
+            model.Id = await _officeRepository.InsertOrUpdateAndGetIdAsync(entity);
+            return model;
         }
 
         private async Task CheckAllowMultiOffice()
@@ -219,17 +223,19 @@ namespace DispatcherWeb.Offices
                 .Select(x => new
                 {
                     HasTrucks = x.Trucks.Any(),
-                    HasUsers = x.Users.Any()
+                    HasUsers = x.Users.Any(),
+                    HasSharedOrderLines = x.SharedOrderLines.Any(),
+                    HasOrders = x.Orders.Any(),
+                    HasQuotes = x.Quotes.Any(),
                 })
                 .SingleAsync();
 
-            if (record.HasTrucks || record.HasUsers)
-            {
-                return false;
-            }
-
-            var hasOrders = await _orderRepository.GetAll().Where(x => x.LocationId == input.Id || x.SharedOrders.Any(s => s.OfficeId == input.Id)).AnyAsync();
-            if (hasOrders)
+            if (record.HasTrucks 
+                || record.HasUsers
+                || record.HasSharedOrderLines
+                || record.HasOrders
+                || record.HasQuotes
+                )
             {
                 return false;
             }
@@ -245,6 +251,44 @@ namespace DispatcherWeb.Offices
                 throw new UserFriendlyException("You can't delete selected row because it has data associated with it.");
             }
             await _officeRepository.DeleteAsync(input.Id);
+        }
+
+        public async Task ClearLogo(int id)
+        {
+            var office = await _officeRepository.GetAsync(id);
+
+            if (office.LogoId == null)
+            {
+                return;
+            }
+
+            var logoObject = await _binaryObjectManager.GetOrNullAsync(office.LogoId.Value);
+            if (logoObject != null)
+            {
+                await _binaryObjectManager.DeleteAsync(office.LogoId.Value);
+            }
+
+            office.LogoId = null;
+            office.LogoFileType = null;
+        }
+
+        public async Task ClearReportsLogo(int id)
+        {
+            var office = await _officeRepository.GetAsync(id);
+
+            if (office.ReportsLogoId == null)
+            {
+                return;
+            }
+
+            var logoObject = await _binaryObjectManager.GetOrNullAsync(office.ReportsLogoId.Value);
+            if (logoObject != null)
+            {
+                await _binaryObjectManager.DeleteAsync(office.ReportsLogoId.Value);
+            }
+
+            office.ReportsLogoId = null;
+            office.ReportsLogoFileType = null;
         }
     }
 }

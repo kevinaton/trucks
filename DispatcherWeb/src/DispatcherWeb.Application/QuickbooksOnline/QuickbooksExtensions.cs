@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Extensions;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.QuickbooksOnline.Dto;
 using Microsoft.EntityFrameworkCore;
 
@@ -91,6 +92,20 @@ namespace DispatcherWeb.QuickbooksOnline
                             OrderLineMaterialTotal = l.Ticket.OrderLine.MaterialPrice,
                             OrderLineFreightTotal = l.Ticket.OrderLine.FreightPrice,
                             Designation = l.Ticket.OrderLine.Designation,
+                            LoadAt = l.Ticket.OrderLine.LoadAt == null ? null : new LocationNameDto
+                            {
+                                Name = l.Ticket.OrderLine.LoadAt.Name,
+                                StreetAddress = l.Ticket.OrderLine.LoadAt.StreetAddress,
+                                City = l.Ticket.OrderLine.LoadAt.City,
+                                State = l.Ticket.OrderLine.LoadAt.State
+                            },
+                            DeliverTo = l.Ticket.OrderLine.DeliverTo == null ? null : new LocationNameDto
+                            {
+                                Name = l.Ticket.OrderLine.DeliverTo.Name,
+                                StreetAddress = l.Ticket.OrderLine.DeliverTo.StreetAddress,
+                                City = l.Ticket.OrderLine.DeliverTo.City,
+                                State = l.Ticket.OrderLine.DeliverTo.State
+                            },
                             Quantity = l.Ticket.Quantity,
                             HasOrderLine = l.Ticket.OrderLine != null,
                             //OrderMaterialPrice = l.Ticket.OrderLine.MaterialPricePerUnit,

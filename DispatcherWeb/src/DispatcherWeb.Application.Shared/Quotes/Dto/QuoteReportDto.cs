@@ -17,6 +17,7 @@ namespace DispatcherWeb.Quotes.Dto
         public string CustomerCountryCode { get; set; }
         public string ContactAttn { get; set; }
         public string ContactPhoneNumber { get; set; }
+        public int? OfficeId { get; set; }
         public string ProjectName { get; set; }
         public int QuoteId { get; set; }
         public string QuoteName { get; set; }

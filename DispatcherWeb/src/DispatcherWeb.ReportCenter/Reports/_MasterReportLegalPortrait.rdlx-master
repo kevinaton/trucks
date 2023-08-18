@@ -53,7 +53,6 @@
 				</Style>
 				<ZIndex>6</ZIndex>
 				<CanGrow>true</CanGrow>
-				<DataElementName>TextBox3</DataElementName>
 				<Value>Tenant</Value>
 			</Textbox>
 			<Textbox Name="PrintedOnCaptionTextBox">
@@ -91,7 +90,6 @@
 				</Style>
 				<ZIndex>8</ZIndex>
 				<CanGrow>true</CanGrow>
-				<DataElementName>TextBox4</DataElementName>
 				<Value>=IIF(Parameters!TenantId.Value=NULL, "ALL", "(" &amp; Parameters!TenantId.Value &amp; ") " &amp; Parameters!TenantId.Label)</Value>
 			</Textbox>
 			<CustomReportItem Name="ContentPlaceHolder1">

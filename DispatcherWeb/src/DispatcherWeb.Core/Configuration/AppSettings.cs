@@ -17,6 +17,7 @@ namespace DispatcherWeb.Configuration
             public const string ValidateDriverAndTruckOnTickets = "App.General.ValidateDriverAndTruckOnTickets";
             public const string ShowDriverNamesOnPrintedOrder = "App.General.ShowDriverNamesOnPrintedOrder";
             public const string SplitBillingByOffices = "App.General.SplitBillingByOffices";
+            public const string ShowOfficeOnTicketsByDriver = "App.General.ShowOfficeOnTicketsByDriver";
             public const string PaymentProcessor = "App.General.PaymentProcessor";
             public const string UseShifts = "App.General.UseShifts";
             public const string ShiftName1 = "App.General.ShiftName1";
@@ -135,6 +136,7 @@ namespace DispatcherWeb.Configuration
             public const string PreventProductionPayOnHourlyJobs = "App.TimeAndPay.PreventProductionPayOnHourlyJobs";
             public const string AllowDriverPayRateDifferentFromFreightRate = "App.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate";
             public const string DriverIsPaidForLoadBasedOn = "App.TimeAndPay.DriverIsPaidForLoadBasedOn";
+            public const string AllowLoadBasedRates = "App.TimeAndPay.AllowLoadBasedRates";
         }
 
         public static class Fuel
@@ -244,10 +246,12 @@ namespace DispatcherWeb.Configuration
             public const string Platform = "App.GpsIntegration.GpsPlatform";
             public static class DtdTracker
             {
+                public const string EnableDriverAppGps = "App.GpsIntegration.DtdTracker.EnableDriverAppGps";
                 public const string AccountName = "App.GpsIntegration.DtdTracker.AccountName";
                 public const string AccountId = "App.GpsIntegration.DtdTracker.AccountId";
                 public const string UserId = "App.GpsIntegration.DtdTracker.UserId";
                 public const string LastUploadedTruckPositionId = "App.GpsIntegration.DtdTracker.LastUploadedTruckPositionId";
+                public const string LastUploadedTruckPositionTimestamp = "App.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp";
             }
             public static class Geotab
             {

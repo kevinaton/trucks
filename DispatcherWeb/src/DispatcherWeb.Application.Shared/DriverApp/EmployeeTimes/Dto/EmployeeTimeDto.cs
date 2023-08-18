@@ -14,7 +14,7 @@ namespace DispatcherWeb.DriverApp.EmployeeTimes.Dto
         public int? TruckId { get; set; }
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
-        public int TimeClassificationId { get; set; }
+        public int? TimeClassificationId { get; set; }
         public DateTime LastModifiedDateTime { get; set; }
         public bool IsEditable { get; set; }
         public bool IsImported { get; set; }

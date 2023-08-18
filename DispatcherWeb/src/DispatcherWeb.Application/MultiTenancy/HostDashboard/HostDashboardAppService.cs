@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Abp.Auditing;
 using Abp.Authorization;
+using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Extensions;
@@ -83,6 +84,7 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard
             };
         }
 
+        [HttpPost]
         public async Task<GetTenantStatisticsResult> GetTenantStatistics(GetDashboardDataInput input)
         {
             var startDate = input.StartDate;
@@ -90,7 +92,7 @@ namespace DispatcherWeb.MultiTenancy.HostDashboard
             DateTime yesterday = (await GetToday()).AddDays(-1);
 
             var tenants = _tenantRepository.GetAll()
-                .WhereIf(input.EditionId.HasValue, t => t.EditionId == input.EditionId)
+                .WhereIf(input.EditionIds?.Any() == true, t => input.EditionIds.Contains(t.EditionId))
                 .WhereIf(input.Status == FilterActiveStatus.Active, x => x.IsActive)
                 .WhereIf(input.Status == FilterActiveStatus.Inactive, x => !x.IsActive)
                 .Select(t => new { t.Id, t.TenancyName });

@@ -43,10 +43,6 @@ namespace DispatcherWeb.Orders
         public int? QuoteId { get; set; }
         public Quote Quote { get; set; }
 
-        [Obsolete]
-        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
-        public string JobNumber { get; set; }
-
         [StringLength(EntityStringFieldLengths.Order.PoNumber)]
         public string PoNumber { get; set; }
 

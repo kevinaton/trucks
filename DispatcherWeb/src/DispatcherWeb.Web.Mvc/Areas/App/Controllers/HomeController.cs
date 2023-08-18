@@ -86,7 +86,7 @@ namespace DispatcherWeb.Web.Areas.App.Controllers
                         return RedirectToAction("PWA", "DriverApplication");
                     }
                 }
-                else if (redirectRelatedPermissionList.Any())
+                else if (redirectRelatedPermissionList.Any(x => x == true))
                 {
                     return RedirectToAction("ChooseRedirectTarget", "Welcome");
                 }

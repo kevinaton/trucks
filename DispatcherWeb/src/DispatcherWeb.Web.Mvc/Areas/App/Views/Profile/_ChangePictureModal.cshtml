@@ -3,10 +3,16 @@
 <partial name="~/Areas/App/Views/Common/Modals/_ModalHeader.cshtml" model="@(new ModalHeaderViewModel(L("ChangeProfilePicture")))" />
 
 <div class="modal-body">
-    <form id="ChangeProfilePictureModalForm" method="POST" action="@(ApplicationPath + "Profile/UploadProfilePicture")">
-        <div class="form-group row">
-            <input class="col-12" type="file" name="ProfilePicture" />
-            <span class="col-12 help-block m-b-none">@L("ProfilePicture_Change_Info", AppConsts.MaxProfilePictureBytesUserFriendlyValue)</span>
+    <form id="ChangeProfilePictureModalForm" class="m-form" method="POST" action="@(ApplicationPath + "Profile/UploadProfilePicture")">
+        <div class="form-group fileUpload">
+            <div class="btn btn-primary browse_btn">
+                <span>@L("Browse")</span>
+                <input class="upload" type="file" name="ProfilePicture" />
+            </div>
+            <input id="FileNamePlaceholder" class="form-control file-upload" placeholder="No File Selected." disabled="disabled">
+        </div>
+        <div class="col-xs-12 mt-1 mb-4">
+            <span class="m-form__help">@L("ProfilePicture_Change_Info", AppConsts.MaxProfilePictureBytesUserFriendlyValue)</span>
         </div>
     </form>
     <img class="col-12" id="ProfilePictureResize" src="" style="max-width: 100%;"/>

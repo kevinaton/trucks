@@ -18,7 +18,6 @@ namespace DispatcherWeb.Scheduling.Dto
         public decimal ActualUtilization { get; set; }
         public IList<decimal> UtilizationList { get; set; }
         public bool HasDefaultDriver => DefaultDriverId.HasValue;
-        public int? SharedFromOfficeId { get; set; }
         public int? DriverId { get; set; }
         public string DriverName { get; set; }
         public bool IsExternal { get; set; }
@@ -46,7 +45,6 @@ namespace DispatcherWeb.Scheduling.Dto
             TruckCode = other.TruckCode;
             OfficeId = other.OfficeId;
             SharedWithOfficeId = other.SharedWithOfficeId;
-            SharedFromOfficeId = other.SharedFromOfficeId;
             VehicleCategory = VehicleCategory ?? new VehicleCategoryDto();
             VehicleCategory.Id = other.VehicleCategory.Id;
             VehicleCategory.Name = other.VehicleCategory.Name;

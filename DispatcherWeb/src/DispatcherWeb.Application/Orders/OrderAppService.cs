@@ -7,7 +7,6 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Abp.Application.Features;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
@@ -35,6 +34,7 @@ using DispatcherWeb.Encryption;
 using DispatcherWeb.Exceptions;
 using DispatcherWeb.Features;
 using DispatcherWeb.FuelSurchargeCalculations;
+using DispatcherWeb.Infrastructure.AzureBlobs;
 using DispatcherWeb.Infrastructure.Extensions;
 using DispatcherWeb.Infrastructure.Templates;
 using DispatcherWeb.Locations;
@@ -48,6 +48,7 @@ using DispatcherWeb.Payments.Dto;
 using DispatcherWeb.Quotes;
 using DispatcherWeb.Scheduling.Dto;
 using DispatcherWeb.Services;
+using DispatcherWeb.Sessions;
 using DispatcherWeb.Storage;
 using DispatcherWeb.SyncRequests;
 using DispatcherWeb.UnitsOfMeasure;
@@ -64,7 +65,6 @@ namespace DispatcherWeb.Orders
         private readonly IRepository<OrderLine> _orderLineRepository;
         private readonly IRepository<OrderLineTruck> _orderLineTruckRepository;
         private readonly IRepository<OrderLineVehicleCategory> _orderLineVehicleCategoryRepository;
-        private readonly IRepository<SharedOrder> _sharedOrderRepository;
         private readonly IRepository<SharedOrderLine> _sharedOrderLineRepository;
         private readonly IRepository<BilledOrder> _billedOrderRepository;
         private readonly IRepository<QuoteService> _quoteServiceRepository;
@@ -96,13 +96,13 @@ namespace DispatcherWeb.Orders
         private readonly IOfficeSettingsManager _officeSettingsManager;
         private readonly IBinaryObjectManager _binaryObjectManager;
         private readonly IFuelSurchargeCalculator _fuelSurchargeCalculator;
+        private readonly ILogoProvider _logoProvider;
 
         public OrderAppService(
             IRepository<Order> orderRepository,
             IRepository<OrderLine> orderLineRepository,
             IRepository<OrderLineTruck> orderLineTruckRepository,
             IRepository<OrderLineVehicleCategory> orderLineVehicleCategoryRepository,
-            IRepository<SharedOrder> sharedOrderRepository,
             IRepository<SharedOrderLine> sharedOrderLineRepository,
             IRepository<BilledOrder> billedOrderRepository,
             IRepository<QuoteService> quoteServiceRepository,
@@ -133,14 +133,14 @@ namespace DispatcherWeb.Orders
             IPaymentAppService paymentAppService,
             IOfficeSettingsManager officeSettingsManager,
             IBinaryObjectManager binaryObjectManager,
-            IFuelSurchargeCalculator fuelSurchargeCalculator
+            IFuelSurchargeCalculator fuelSurchargeCalculator,
+            ILogoProvider logoProvider
             )
         {
             _orderRepository = orderRepository;
             _orderLineRepository = orderLineRepository;
             _orderLineTruckRepository = orderLineTruckRepository;
             _orderLineVehicleCategoryRepository = orderLineVehicleCategoryRepository;
-            _sharedOrderRepository = sharedOrderRepository;
             _sharedOrderLineRepository = sharedOrderLineRepository;
             _billedOrderRepository = billedOrderRepository;
             _quoteServiceRepository = quoteServiceRepository;
@@ -172,6 +172,7 @@ namespace DispatcherWeb.Orders
             _officeSettingsManager = officeSettingsManager;
             _binaryObjectManager = binaryObjectManager;
             _fuelSurchargeCalculator = fuelSurchargeCalculator;
+            _logoProvider = logoProvider;
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_View)]
@@ -183,7 +184,7 @@ namespace DispatcherWeb.Orders
                 .WhereIf(input.EndDate.HasValue,
                          x => x.DeliveryDate <= input.EndDate)
                 .WhereIf(input.OfficeId.HasValue,
-                         x => x.LocationId == input.OfficeId /*|| x.SharedOrders.Any(s => s.OfficeId == input.OfficeId)*/)
+                         x => x.LocationId == input.OfficeId)
                 .WhereIf(input.CustomerId.HasValue,
                          x => x.CustomerId == input.CustomerId)
                 .WhereIf(input.ServiceId.HasValue,
@@ -214,7 +215,6 @@ namespace DispatcherWeb.Orders
                     ChargeTo = x.ChargeTo,
                     CODTotal = x.CODTotal,
                     NumberOfTrucks = x.OrderLines.Sum(ol => ol.NumberOfTrucks),
-                    IsShared = false /*x.SharedOrders.Any(o => o.OfficeId != x.LocationId)*/,
                     EmailDeliveryStatuses = x.OrderEmails.Select(y => y.Email.CalculatedDeliveryStatus).ToList(),
                 })
                 .OrderBy(input.Sorting)
@@ -226,15 +226,36 @@ namespace DispatcherWeb.Orders
                 items);
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Orders_View)]
+        [AbpAuthorize(AppPermissions.Pages_Orders_IdDropdown, AppPermissions.CustomerPortal_Orders_IdDropdown)]
         public async Task<ListResultDto<SelectListDto>> GetOrderIdsSelectList(GetSelectListInput input)
         {
+            int? customerId = null;
+            var permissions = new
+            {
+                AllOrderIdsDropdown = await IsGrantedAsync(AppPermissions.Pages_Orders_IdDropdown),
+                OnlyCustomerOrderIdsDropdown = await IsGrantedAsync(AppPermissions.CustomerPortal_Orders_IdDropdown),
+            };
+
+            if (permissions.AllOrderIdsDropdown)
+            {
+                //do not additionally filter the data
+            }
+            else if (permissions.OnlyCustomerOrderIdsDropdown)
+            {
+                customerId = Session.GetCustomerIdOrThrow(this);
+            }
+            else
+            {
+                throw new AbpAuthorizationException();
+            }
+
             var ordersQuery = _orderRepository.GetAll()
-                                    .Select(x => new SelectListDto
-                                    {
-                                        Id = x.Id.ToString(),
-                                        Name = x.Id.ToString()
-                                    });
+                .WhereIf(customerId.HasValue, x => x.CustomerId == customerId)
+                .Select(x => new SelectListDto
+                {
+                    Id = x.Id.ToString(),
+                    Name = x.Id.ToString()
+                });
 
             return await ordersQuery.GetSelectListResult(input);
         }
@@ -271,7 +292,6 @@ namespace DispatcherWeb.Orders
                         Directions = order.Directions,
                         FreightTotal = order.FreightTotal,
                         IsClosed = order.IsClosed,
-                        IsShared = order.SharedOrders.Any(o => o.OfficeId != order.LocationId),
                         //IsFreightTotalOverridden = order.IsFreightTotalOverridden,
                         //IsMaterialTotalOverridden = order.IsMaterialTotalOverridden,
                         LocationId = order.LocationId,
@@ -284,7 +304,6 @@ namespace DispatcherWeb.Orders
                         QuoteName = order.Quote.Name,
                         SalesTax = order.SalesTax,
                         SalesTaxRate = order.SalesTaxRate,
-                        SharedDateTime = order.SharedDateTime,
                         Priority = order.Priority,
                         BaseFuelCost = order.BaseFuelCost,
                         FuelSurchargeCalculationId = order.FuelSurchargeCalculationId,
@@ -325,7 +344,6 @@ namespace DispatcherWeb.Orders
                 var timeZone = await GetTimezone();
                 orderEditDto.CreationTime = orderEditDto.CreationTime?.ConvertTimeZoneTo(timeZone);
                 orderEditDto.LastModificationTime = orderEditDto.LastModificationTime?.ConvertTimeZoneTo(timeZone);
-                orderEditDto.SharedDateTime = orderEditDto.SharedDateTime?.ConvertTimeZoneTo(timeZone);
             }
             else
             {
@@ -440,6 +458,7 @@ namespace DispatcherWeb.Orders
                 editOrderLineModel.MaterialPrice = model.MaterialPrice;
                 editOrderLineModel.LeaseHaulerRate = model.LeaseHaulerRate;
                 editOrderLineModel.FreightRateToPayDrivers = model.FreightRateToPayDrivers;
+                editOrderLineModel.LoadBased = model.LoadBased;
                 editOrderLineModel.NumberOfTrucks = model.NumberOfTrucks;
                 editOrderLineModel.IsMultipleLoads = model.IsMultipleLoads;
                 editOrderLineModel.TimeOnJob = model.TimeOnJob;
@@ -1389,7 +1408,6 @@ namespace DispatcherWeb.Orders
                 .AsNoTracking()
                 .Include(x => x.OrderLines)
                     .ThenInclude(x => x.OrderLineVehicleCategories)
-                .Include(x => x.SharedOrders)
                 .FirstAsync(x => x.Id == input.OrderId);
 
             var serviceIds = order.OrderLines.Select(x => x.ServiceId).ToList();
@@ -1403,6 +1421,7 @@ namespace DispatcherWeb.Orders
 
             bool allowCopyZeroQuantity = await FeatureChecker.IsEnabledAsync(AppFeatures.AllowCopyingZeroQuantityOrderLineItemsFeature);
             var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+            var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
             var timezone = await GetTimezone();
 
             List<int> createdOrderIds = new List<int>();
@@ -1460,6 +1479,7 @@ namespace DispatcherWeb.Orders
                                 Note = x.Note,
                                 IsMultipleLoads = x.IsMultipleLoads,
                                 ProductionPay = allowProductionPay && x.ProductionPay,
+                                LoadBased = allowLoadBasedRates && x.LoadBased,
                                 Order = newOrder
                             };
                             foreach (var vehicleCategory in x.OrderLineVehicleCategories)
@@ -1489,7 +1509,7 @@ namespace DispatcherWeb.Orders
 
                     var newId = await _orderRepository.InsertAndGetIdAsync(newOrder);
                     newOrder.Id = newId;
-                    
+
                     await _fuelSurchargeCalculator.RecalculateOrderLinesWithTicketsForOrder(newOrder.Id);
                     createdOrderIds.Add(newId);
                 }
@@ -1572,45 +1592,6 @@ namespace DispatcherWeb.Orders
         }
 
         [AbpAuthorize(AppPermissions.Pages_Orders_View)]
-        public async Task<SharedOrderListDto> GetSharedOrders(EntityDto input)
-        {
-            var order = await _orderRepository.GetAll()
-                .Where(x => x.Id == input.Id)
-                .Select(x => new
-                {
-                    OfficeId = x.LocationId
-                })
-                .FirstOrDefaultAsync();
-
-            if (order == null)
-            {
-                throw await GetOrderNotFoundException(input);
-            }
-
-            var shares = await _sharedOrderRepository.GetAll()
-                .Where(x => x.OrderId == input.Id)
-                .Select(x => x.OfficeId)
-                .ToListAsync();
-
-            var offices = await _officeRepository.GetAll()
-                .Where(x => x.Id != order.OfficeId)
-                .OrderBy(x => x.Name)
-                .Select(x => new SharedOrderDto
-                {
-                    OfficeId = x.Id,
-                    OfficeName = x.Name,
-                    Checked = shares.Contains(x.Id)
-                })
-                .ToListAsync();
-
-            return new SharedOrderListDto
-            {
-                OrderId = input.Id,
-                SharedOrders = offices
-            };
-        }
-
-        [AbpAuthorize(AppPermissions.Pages_Orders_View)]
         public async Task<SharedOrderLineListDto> GetSharedOrderLines(EntityDto input)
         {
             int officeId = await GetOrderLineOfficeId(input.Id);
@@ -1622,7 +1603,7 @@ namespace DispatcherWeb.Orders
             var offices = await _officeRepository.GetAll()
                 .Where(x => x.Id != officeId)
                 .OrderBy(x => x.Name)
-                .Select(x => new SharedOrderDto
+                .Select(x => new SharedOrderLineDto
                 {
                     OfficeId = x.Id,
                     OfficeName = x.Name,
@@ -1633,7 +1614,7 @@ namespace DispatcherWeb.Orders
             return new SharedOrderLineListDto
             {
                 OrderLineId = input.Id,
-                SharedOrders = offices
+                SharedOrderLines = offices
             };
         }
         private async Task<int> GetOrderLineOfficeId(int orderLineId)
@@ -1644,8 +1625,7 @@ namespace DispatcherWeb.Orders
                 .SingleAsync();
         }
 
-        [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
-        [RequiresFeature(AppFeatures.AllowSharedOrdersFeature)]
+        [AbpAuthorize(AppPermissions.Pages_Orders_Edit, AppPermissions.Pages_Schedule_ShareJobs, RequireAllPermissions = true)]
         public async Task SetSharedOrderLines(SetSharedOrderLineInput input)
         {
             await CheckOrderDateIsNotInPast(input.OrderLineId);
@@ -1684,11 +1664,11 @@ namespace DispatcherWeb.Orders
         }
         private async Task DeletePreviousSharedOrderLinesNotSharedNowAsync(List<SharedOrderLine> sharedOrderLines, int[] sharedOffices)
         {
-            var sharedOrdersToDelete = sharedOrderLines
+            var sharedOrderLinesToDelete = sharedOrderLines
                 .Where(sol => !sharedOffices.Contains(sol.OfficeId))
                 .ToList();
 
-            if (!sharedOrdersToDelete.Any())
+            if (!sharedOrderLinesToDelete.Any())
             {
                 return;
             }
@@ -1716,7 +1696,7 @@ namespace DispatcherWeb.Orders
                 }
             }
 
-            sharedOrdersToDelete.ForEach(async sol => await _sharedOrderLineRepository.DeleteAsync(sol));
+            sharedOrderLinesToDelete.ForEach(async sol => await _sharedOrderLineRepository.DeleteAsync(sol));
         }
         private void CreateSharedOrderLineForEachOffice(int orderLineId, int[] officeIdsToShare)
         {
@@ -1777,7 +1757,6 @@ namespace DispatcherWeb.Orders
                     IsClosed = o.IsClosed,
                     HasCompletedOrderLines = o.OrderLines.Any(ol => ol.IsComplete),
                     HasRelatedData =
-                        o.SharedOrders.Any() ||
                         o.BilledOrders.Any() ||
                         o.OrderEmails.Any() ||
                         o.OrderLines.Any(ol => ol.Tickets.Any()) ||
@@ -1879,6 +1858,7 @@ namespace DispatcherWeb.Orders
                     }).SingleOrDefaultAsync();
 
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+                var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
 
                 var orderLines = await query
                     .Where(x => x.OrderId == input.OrderId)
@@ -1942,6 +1922,7 @@ namespace DispatcherWeb.Orders
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                        LoadBased = allowLoadBasedRates && x.LoadBased,
                         JobNumber = x.JobNumber,
                         Note = x.Note,
                         IsMultipleLoads = x.IsMultipleLoads,
@@ -2022,6 +2003,8 @@ namespace DispatcherWeb.Orders
                         FreightPricePerUnit = x.FreightRate,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                        ProductionPay = x.ProductionPay,
+                        LoadBased = x.LoadBased,
                         //Quantity = x.Quantity, //Do not default quantities. They will have to fill that in.
                         //MaterialQuantity = x.MaterialQuantity,
                         //FreightQuantity = x.FreightQuantity,
@@ -2040,7 +2023,6 @@ namespace DispatcherWeb.Orders
                     .OrderBy(input.Sorting)
                     .ToListAsync();
 
-                var defaultToProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.DefaultToProductionPay);
                 var preventProductionPayOnHourlyJobs = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs);
 
                 var i = 1;
@@ -2048,7 +2030,7 @@ namespace DispatcherWeb.Orders
                 {
                     orderLine.Id = null;
                     orderLine.LineNumber = i++;
-                    orderLine.ProductionPay = defaultToProductionPay && (!preventProductionPayOnHourlyJobs || orderLine.FreightUomName?.ToLower().TrimEnd('s') != "hour");
+                    orderLine.ProductionPay = orderLine.ProductionPay && (!preventProductionPayOnHourlyJobs || orderLine.FreightUomName?.ToLower().TrimEnd('s') != "hour");
                 }
 
                 return new PagedResultDto<OrderLineEditDto>(orderLines.Count, orderLines);
@@ -2068,6 +2050,7 @@ namespace DispatcherWeb.Orders
             {
                 var canOverrideTotals = await _orderLineRepository.CanOverrideTotals(input.Id.Value, OfficeId);
                 var allowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowProductionPay);
+                var allowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates);
 
                 orderLineEditDto = await _orderLineRepository.GetAll()
                     .Select(x => new OrderLineEditDto
@@ -2112,6 +2095,7 @@ namespace DispatcherWeb.Orders
                         IsFreightPriceOverridden = x.IsFreightPriceOverridden,
                         LeaseHaulerRate = x.LeaseHaulerRate,
                         FreightRateToPayDrivers = x.FreightRateToPayDrivers,
+                        LoadBased = allowLoadBasedRates && x.LoadBased,
                         JobNumber = x.JobNumber,
                         Note = x.Note,
                         NumberOfTrucks = x.NumberOfTrucks,
@@ -2302,6 +2286,7 @@ namespace DispatcherWeb.Orders
                 IsMultipleLoads = orderLine.IsMultipleLoads,
                 LeaseHaulerRate = orderLine.LeaseHaulerRate,
                 FreightRateToPayDrivers = orderLine.FreightRateToPayDrivers,
+                LoadBased = orderLine.LoadBased,
                 Note = orderLine.Note,
                 NumberOfTrucks = orderLine.NumberOfTrucks,
                 ProductionPay = orderLine.ProductionPay,
@@ -2511,6 +2496,7 @@ namespace DispatcherWeb.Orders
             await orderLineUpdater.UpdateFieldAsync(o => o.IsFreightPriceOverridden, model.IsFreightPriceOverridden);
             await orderLineUpdater.UpdateFieldAsync(o => o.LeaseHaulerRate, model.LeaseHaulerRate);
             await orderLineUpdater.UpdateFieldAsync(o => o.FreightRateToPayDrivers, model.FreightRateToPayDrivers);
+            await orderLineUpdater.UpdateFieldAsync(o => o.LoadBased, model.LoadBased);
             await orderLineUpdater.UpdateFieldAsync(o => o.JobNumber, model.JobNumber);
             await orderLineUpdater.UpdateFieldAsync(o => o.Note, model.Note);
 
@@ -2733,7 +2719,7 @@ namespace DispatcherWeb.Orders
                     FreightTotal = x.FreightTotal,
                     MaterialTotal = x.MaterialTotal,
                     SalesTax = x.SalesTax,
-                    IsShared = x.Order.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)) || x.Order.SharedOrders.Any(so => so.OfficeId != x.Order.LocationId),
+                    IsShared = x.Order.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
                     Items = x.ReceiptLines.Select(l => new ReceiptReportItemDto
                     {
                         IsTaxable = l.Service.IsTaxable,
@@ -2777,7 +2763,7 @@ namespace DispatcherWeb.Orders
                     FreightTotal = x.FreightTotal,
                     MaterialTotal = x.MaterialTotal,
                     SalesTax = x.SalesTax,
-                    IsShared = x.Order.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)) || x.Order.SharedOrders.Any(so => so.OfficeId != x.Order.LocationId),
+                    IsShared = x.Order.OrderLines.Any(ol => ol.SharedOrderLines.Any(sol => sol.OfficeId != ol.Order.LocationId)),
                     Items = x.ReceiptLines.Select(l => new ReceiptExcelReportItemDto
                     {
                         IsTaxable = l.Service.IsTaxable,
@@ -2861,7 +2847,6 @@ namespace DispatcherWeb.Orders
                 throw new ArgumentNullException(nameof(input.Id), "At least one of (Id, Date) should be set");
             }
 
-            var logoPath = await _binaryObjectManager.GetLogoAsBase64StringAsync(await GetCurrentTenantAsync());
             var paidImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "Common/Images/Paid.png");
             var staggeredTimeImagePath = Path.Combine(_hostingEnvironment.WebRootPath, "Common/Images/far-clock.png");
             var timeZone = await GetTimezone();
@@ -2875,7 +2860,16 @@ namespace DispatcherWeb.Orders
             input.Date = input.Date?.Date;
 
             var data = await GetWorkOrderReportQuery(input).ToListAsync();
-
+            
+            foreach (var officeGroup in data.GroupBy(x => x.OfficeId))
+            {
+                var officeLogoPath = await _logoProvider.GetReportLogoAsBase64StringAsync(officeGroup.Key);
+                foreach (var item in officeGroup)
+                {
+                    item.LogoPath = officeLogoPath;
+                }
+            }
+            
             data.ForEach(x =>
             {
                 //TODO remove items with actual quantity of 0 when UseActualAmount is true
@@ -2885,7 +2879,6 @@ namespace DispatcherWeb.Orders
                 //        (s.MaterialQuantity ?? 0) == 0 && (s.FreightQuantity ?? 0) == 0 && s.NumberOfTrucks == 0 &&
                 //        (!input.UseActualAmount || (s.ActualQuantity ?? 0) == 0)
                 //    );
-                x.LogoPath = logoPath;
                 x.PaidImagePath = paidImagePath;
                 x.StaggeredTimeImagePath = staggeredTimeImagePath;
                 x.HidePrices = input.HidePrices;
@@ -2954,7 +2947,7 @@ namespace DispatcherWeb.Orders
                     .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
                     .WhereIf(input.Ids?.Any() == true, x => input.Ids.Contains(x.Id))
                     .WhereIf(input.Date.HasValue, x => x.Order.DeliveryDate == input.Date)
-                    //.Where(x => x.OfficeId == OfficeId)
+                    //.WhereIf(input.OfficeId.HasValue, x => x.OfficeId == input.OfficeId)
                     .GetWorkOrderReportDtoQuery(input, OfficeId);
             }
             else
@@ -2962,8 +2955,9 @@ namespace DispatcherWeb.Orders
                 return _orderRepository.GetAll()
                     .WhereIf(input.Id.HasValue, x => x.Id == input.Id)
                     .WhereIf(input.Ids?.Any() == true, x => input.Ids.Contains(x.Id))
-                    .WhereIf(input.Date.HasValue, x => x.DeliveryDate == input.Date && (x.LocationId == OfficeId || x.SharedOrders.Any(s => s.OfficeId == OfficeId) || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(s => s.OfficeId == OfficeId))))
-                    .GetWorkOrderReportDtoQuery(input, OfficeId);
+                    .WhereIf(input.Date.HasValue, x => x.DeliveryDate == input.Date)
+                    .WhereIf(input.OfficeId.HasValue, x => x.LocationId == input.OfficeId || x.OrderLines.Any(ol => ol.SharedOrderLines.Any(s => s.OfficeId == input.OfficeId)))
+                    .GetWorkOrderReportDtoQuery(input, OfficeId); //not input.OfficeId, this one is used for payments
             }
         }
 
@@ -2995,10 +2989,12 @@ namespace DispatcherWeb.Orders
         private IQueryable<OrderLine> GetOrderSummaryReportQuery(GetOrderSummaryReportInput input)
         {
             return _orderLineRepository.GetAll()
+                .WhereIf(input.OfficeId.HasValue, x => 
+                    x.Order.LocationId == input.OfficeId 
+                    || x.SharedOrderLines.Any(s => s.OfficeId == input.OfficeId))
                 .Where(x =>
-                    x.Order.DeliveryDate == input.Date &&
-                    !x.Order.IsPending &&
-                    (x.Order.LocationId == OfficeId || x.SharedOrderLines.Any(s => s.OfficeId == OfficeId))
+                    x.Order.DeliveryDate == input.Date
+                    && !x.Order.IsPending
                     && (x.MaterialQuantity > 0 || x.FreightQuantity > 0 || x.NumberOfTrucks > 0)
                 );
         }
@@ -3030,7 +3026,6 @@ namespace DispatcherWeb.Orders
             var items = await _paymentRepository.GetAll()
                 .WhereIf(!input.AllOffices,
                     x => x.PaymentHeartlandKeyId == heartlandPublicKeyId
-                        //|| x.OrderPayments.Any(o => o.Order.LocationId == OfficeId || o.Order.SharedOrders.Any(s => s.OfficeId == OfficeId)))
                         || x.OrderPayments.Any(o => o.OfficeId == OfficeId))
                 .Where(x => x.AuthorizationCaptureDateTime >= startDateFilter && x.AuthorizationCaptureDateTime < endDateFilter.AddDays(1))
                 .Where(x => !x.IsCancelledOrRefunded)

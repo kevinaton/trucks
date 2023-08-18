@@ -69,7 +69,6 @@ namespace DispatcherWeb.OrderPayments
                     x.SalesTaxRate,
                     //x.CODTotal,
                     OfficeId = x.LocationId,
-                    SharedOffices = x.SharedOrders.Select(o => o.OfficeId).ToList(),
                     OrderLines = x.OrderLines.Select(o => new OrderLineTaxDetailsDto
                     {
                         FreightPrice = o.FreightPrice,
@@ -78,9 +77,9 @@ namespace DispatcherWeb.OrderPayments
                     }).ToList()
                 }).FirstAsync();
 
-            if (order.OfficeId != OfficeId && !order.SharedOffices.Contains(OfficeId))
+            if (order.OfficeId != OfficeId)
             {
-                throw new UserFriendlyException("You can't authorize a payment for an order which is not shared with your office", "");
+                throw new UserFriendlyException("You can't authorize a payment for an order from another office", "");
             }
 
             var orderTaxDetails = new OrderTaxDetailsDto
@@ -115,8 +114,7 @@ namespace DispatcherWeb.OrderPayments
                 .Select(x => new
                 {
                     Id = x.OrderId,
-                    OfficeId = x.Order.LocationId,
-                    SharedOffices = x.Order.SharedOrders.Select(o => o.OfficeId).ToList()
+                    OfficeId = x.Order.LocationId
                 }).FirstOrDefaultAsync();
 
             if (order == null)
@@ -124,9 +122,9 @@ namespace DispatcherWeb.OrderPayments
                 throw await GetOrderNotFoundException(input);
             }
 
-            if (order.OfficeId != OfficeId && !order.SharedOffices.Contains(OfficeId))
+            if (order.OfficeId != OfficeId)
             {
-                throw new UserFriendlyException("You can't capture payment authorization for an order which is not shared with your office", "");
+                throw new UserFriendlyException("You can't capture payment authorization for an order from another office", "");
             }
 
             var authorizationPayment = await _orderPaymentRepository.GetAll()
@@ -153,13 +151,12 @@ namespace DispatcherWeb.OrderPayments
             var order = await _orderRepository.GetAll()
                 .Include(x => x.Customer)
                 .Include(x => x.Office)
-                .Include(x => x.SharedOrders)
                 .Where(x => x.Id == input.OrderId)
                 .FirstAsync();
 
-            if (order.LocationId != OfficeId && !order.SharedOrders.Any(s => s.OfficeId == OfficeId))
+            if (order.LocationId != OfficeId)
             {
-                throw new UserFriendlyException("You can't authorize a payment for an order which is not shared with your office", "");
+                throw new UserFriendlyException("You can't authorize a payment for an order from another office", "");
             }
 
             var orderHasPreviousAuthorization = await _orderPaymentRepository.GetAll()
@@ -200,14 +197,12 @@ namespace DispatcherWeb.OrderPayments
         {
             var order = await _orderRepository.GetAll()
                 .Include(x => x.Customer)
-                .Include(x => x.Office)
-                .Include(x => x.SharedOrders)
                 .Where(x => x.Id == input.Id)
                 .FirstAsync();
 
-            if (order.LocationId != OfficeId && !order.SharedOrders.Any(s => s.OfficeId == OfficeId))
+            if (order.LocationId != OfficeId)
             {
-                throw new UserFriendlyException("You can't cancel payment authorization for an order which is not shared with your office", "");
+                throw new UserFriendlyException("You can't cancel payment authorization for an order from another office", "");
             }
 
             var orderPayment = await _orderPaymentRepository.GetAll()
@@ -236,8 +231,6 @@ namespace DispatcherWeb.OrderPayments
 
             var order = await _orderRepository.GetAll()
                 .Include(x => x.Customer)
-                .Include(x => x.Office)
-                .Include(x => x.SharedOrders)
                 .Where(x => x.Id == receipt.OrderId)
                 .FirstAsync();
 
@@ -246,9 +239,9 @@ namespace DispatcherWeb.OrderPayments
                 throw new UserFriendlyException("You can't capture payment authorization for a receipt which is not assigned to your office", "");
             }
 
-            if (order.LocationId != OfficeId && !order.SharedOrders.Any(s => s.OfficeId == OfficeId))
+            if (order.LocationId != OfficeId)
             {
-                throw new UserFriendlyException("You can't capture payment authorization for an order which is not shared with your office", "");
+                throw new UserFriendlyException("You can't capture payment authorization for an order from another office", "");
             }
 
             var orderPayment = await _orderPaymentRepository.GetAll()
@@ -276,14 +269,12 @@ namespace DispatcherWeb.OrderPayments
         {
             var order = await _orderRepository.GetAll()
                 .Include(x => x.Customer)
-                .Include(x => x.Office)
-                .Include(x => x.SharedOrders)
                 .Where(x => x.Id == input.Id)
                 .FirstAsync();
 
-            if (order.LocationId != OfficeId && !order.SharedOrders.Any(s => s.OfficeId == OfficeId))
+            if (order.LocationId != OfficeId)
             {
-                throw new UserFriendlyException("You can't refund a payment for an order which is not shared with your office", "");
+                throw new UserFriendlyException("You can't refund a payment for an order from another office", "");
             }
 
             var orderPayment = await _orderPaymentRepository.GetAll()

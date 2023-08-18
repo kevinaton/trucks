@@ -7,6 +7,6 @@ namespace DispatcherWeb.LeaseHaulerRequests.Dto
         public int TruckId { get; set; }
         public DateTime Date { get; set; }
         public Shift? Shift { get; set; }
-        public int OfficeId { get; set; }
+        public int? OfficeId { get; set; }
     }
 }

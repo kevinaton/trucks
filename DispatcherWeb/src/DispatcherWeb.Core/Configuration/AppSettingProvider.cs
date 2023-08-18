@@ -171,6 +171,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.General.ValidateDriverAndTruckOnTickets, "true", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.ShowDriverNamesOnPrintedOrder, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.SplitBillingByOffices, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.General.ShowOfficeOnTicketsByDriver, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.General.PaymentProcessor, "0", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
 
@@ -194,10 +195,12 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.GpsIntegration.IntelliShift.User, "", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.IntelliShift.Password, "", scopes: SettingScopes.Tenant),
 
+                new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.EnableDriverAppGps, "false", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.AccountName, "", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.AccountId, "0", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.UserId, "0", scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionId, "0", scopes: SettingScopes.Application),
+                new SettingDefinition(AppSettings.GpsIntegration.DtdTracker.LastUploadedTruckPositionTimestamp, "2023-01-01T00:00:00", scopes: SettingScopes.Application),
 
                 new SettingDefinition(AppSettings.Heartland.PublicKey, GetFromAppSettings(AppSettings.Heartland.PublicKey, ""), scopes: SettingScopes.Tenant),
                 new SettingDefinition(AppSettings.Heartland.SecretKey, SimpleStringCipher.Instance.Encrypt(GetFromAppSettings(AppSettings.Heartland.SecretKey, "")), scopes: SettingScopes.Tenant),
@@ -244,6 +247,7 @@ namespace DispatcherWeb.Configuration
                 new SettingDefinition(AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn, DriverIsPaidForLoadBasedOnEnum.TicketDate.ToIntString(), scopes: SettingScopes.Tenant, isVisibleToClients: true),
+                new SettingDefinition(AppSettings.TimeAndPay.AllowLoadBasedRates, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.Trux.AllowImportingTruxEarnings, "false", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.Trux.TruxCustomerId, "0", scopes: SettingScopes.Tenant, isVisibleToClients: true),
                 new SettingDefinition(AppSettings.Trux.UseForProductionPay, "true", scopes: SettingScopes.Tenant),

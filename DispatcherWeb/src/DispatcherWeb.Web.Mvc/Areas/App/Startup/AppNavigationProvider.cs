@@ -201,7 +201,7 @@ namespace DispatcherWeb.Web.Areas.App.Startup
                             customData: new MenuItemCustomData { Id = "TicketsNavbarItem" },
                             url: "app/tickets",
                             icon: "fa-regular fa-ticket-simple",
-                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Tickets_View)
+                            permissionDependency: new SimplePermissionDependency(AppPermissions.Pages_Tickets_View, AppPermissions.CustomerPortal_TicketList)
                         )
                      ).AddItem(
                         new MenuItemDefinition(

@@ -5,6 +5,6 @@ namespace DispatcherWeb.Orders.Dto
     public class SharedOrderLineListDto
     {
         public int OrderLineId { get; set; }
-        public List<SharedOrderDto> SharedOrders { get; set; }
+        public List<SharedOrderLineDto> SharedOrderLines { get; set; }
     }
 }

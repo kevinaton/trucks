@@ -252,6 +252,7 @@ namespace DispatcherWeb.Configuration.Tenants
             settings.DontValidateDriverAndTruckOnTickets = !await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ValidateDriverAndTruckOnTickets);
             settings.ShowDriverNamesOnPrintedOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ShowDriverNamesOnPrintedOrder);
             settings.SplitBillingByOffices = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.SplitBillingByOffices);
+            settings.ShowOfficeOnTicketsByDriver = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.ShowOfficeOnTicketsByDriver);
             settings.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders);
 
             settings.UseShifts = await SettingManager.GetSettingValueAsync<bool>(AppSettings.General.UseShifts);
@@ -291,7 +292,8 @@ namespace DispatcherWeb.Configuration.Tenants
                 PreventProductionPayOnHourlyJobs = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs),
                 AllowDriverPayRateDifferentFromFreightRate = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate),
                 TimeTrackingDefaultTimeClassificationId = await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.TimeTrackingDefaultTimeClassificationId),
-                DriverIsPaidForLoadBasedOn = (DriverIsPaidForLoadBasedOnEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn)
+                DriverIsPaidForLoadBasedOn = (DriverIsPaidForLoadBasedOnEnum)await SettingManager.GetSettingValueAsync<int>(AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn),
+                AllowLoadBasedRates = await SettingManager.GetSettingValueAsync<bool>(AppSettings.TimeAndPay.AllowLoadBasedRates)
             };
 
             if (settings.TimeTrackingDefaultTimeClassificationId > 0)
@@ -505,6 +507,7 @@ namespace DispatcherWeb.Configuration.Tenants
         {
             return new DtdTrackerSettingsEditDto
             {
+                EnableDriverAppGps = await SettingManager.GetSettingValueAsync<bool>(AppSettings.GpsIntegration.DtdTracker.EnableDriverAppGps),
                 AccountName = await SettingManager.GetSettingValueAsync(AppSettings.GpsIntegration.DtdTracker.AccountName),
                 AccountId = await SettingManager.GetSettingValueAsync<int>(AppSettings.GpsIntegration.DtdTracker.AccountId),
             };
@@ -838,6 +841,7 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ValidateDriverAndTruckOnTickets, (!input.General.DontValidateDriverAndTruckOnTickets).ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ShowDriverNamesOnPrintedOrder, input.General.ShowDriverNamesOnPrintedOrder.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.SplitBillingByOffices, input.General.SplitBillingByOffices.ToLowerCaseString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.ShowOfficeOnTicketsByDriver, input.General.ShowOfficeOnTicketsByDriver.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders, input.General.AllowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DriverOrderNotification.EmailTitle, input.General.DriverOrderEmailTitle);
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.DriverOrderNotification.EmailBody, input.General.DriverOrderEmailBody);
@@ -914,6 +918,7 @@ namespace DispatcherWeb.Configuration.Tenants
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate, input.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.PreventProductionPayOnHourlyJobs, input.TimeAndPay.PreventProductionPayOnHourlyJobs.ToLowerCaseString());
             await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.DriverIsPaidForLoadBasedOn, input.TimeAndPay.DriverIsPaidForLoadBasedOn.ToIntString());
+            await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.TimeAndPay.AllowLoadBasedRates, input.TimeAndPay.AllowLoadBasedRates.ToLowerCaseString());
 
             await UpdateFuelSettingsAsync(input.Fuel);
         }
@@ -1165,6 +1170,7 @@ namespace DispatcherWeb.Configuration.Tenants
 
             if (input.Platform == GpsPlatform.DtdTracker)
             {
+                await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.GpsIntegration.DtdTracker.EnableDriverAppGps, input.DtdTracker.EnableDriverAppGps.ToLowerCaseString());
                 //await SettingManager.ChangeSettingForTenantAsync(AbpSession.GetTenantId(), AppSettings.GpsIntegration.DtdTracker.AccountName, input.DtdTracker.AccountName);
             }
             else if (input.Platform == GpsPlatform.Geotab)

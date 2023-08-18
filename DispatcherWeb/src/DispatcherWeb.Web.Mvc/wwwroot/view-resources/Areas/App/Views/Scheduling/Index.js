@@ -14,10 +14,11 @@
             editTickets: abp.auth.hasPermission('Pages.Tickets.Edit'),
             editQuotes: abp.auth.hasPermission('Pages.Quotes.Edit'),
             driverMessages: abp.auth.hasPermission('Pages.DriverMessages'),
-            trucks: abp.auth.hasPermission('Pages.Trucks')
+            trucks: abp.auth.hasPermission('Pages.Trucks'),
+            shareTrucks: abp.auth.hasPermission('Pages.Schedule.ShareTrucks'),
+            shareJobs: abp.auth.hasPermission('Pages.Schedule.ShareJobs')
         };
         var _features = {
-            allowSharedOrders: abp.features.isEnabled('App.AllowSharedOrdersFeature'),
             allowMultiOffice: abp.features.isEnabled('App.AllowMultiOfficeFeature'),
             allowSendingOrdersToDifferentTenant: abp.features.isEnabled('App.AllowSendingOrdersToDifferentTenant'),
             leaseHaulers: abp.features.isEnabled('App.AllowLeaseHaulersFeature'),
@@ -240,7 +241,7 @@
         $("#OfficeIdFilter").select2Init({
             abpServiceMethod: abp.services.app.office.getOfficesSelectList,
             showAll: true,
-            allowClear: false
+            allowClear: true
         });
         abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), abp.session.officeId, abp.session.officeName);
         $('#ShiftFilter').select2Init({ allowClear: false });
@@ -503,7 +504,6 @@
                     officeId: truck.officeId,
                     isExternal: truck.isExternal,
                     leaseHaulerId: truck.leaseHaulerId,
-                    sharedOfficeId: truck.sharedFromOfficeId,
                     vehicleCategory: {
                         id: truck.vehicleCategory.id,
                         name: truck.vehicleCategory.name,
@@ -549,7 +549,6 @@
                             officeId: truck.officeId,
                             isExternal: truck.isExternal,
                             leaseHaulerId: truck.leaseHaulerId,
-                            sharedOfficeId: truck.sharedFromOfficeId,
                             vehicleCategory: {
                                 id: truck.vehicleCategory.id,
                                 name: truck.vehicleCategory.name,
@@ -944,7 +943,7 @@
         };
         menuFunctions.isVisible.share = function (rowData) {
             var today = new Date(moment().format("YYYY-MM-DD") + 'T00:00:00Z');
-            return _features.allowSharedOrders && _features.allowMultiOffice && hasOrderEditPermissions() && !rowData.isClosed && isAllowedToEditOrder(rowData) && (new Date(rowData.date)).getTime() >= today.getTime();
+            return _permissions.shareJobs && _features.allowMultiOffice && hasOrderEditPermissions() && !rowData.isClosed && isAllowedToEditOrder(rowData) && (new Date(rowData.date)).getTime() >= today.getTime();
         };
         menuFunctions.fn.share = function (element) {
             var orderLineId = _dtHelper.getRowData(element).id;
@@ -1193,7 +1192,7 @@
                     if (filter.shift) {
                         $('#ShiftFilter').val(filter.shift).trigger("change");
                     }
-                    if (filter.officeId) {
+                    if (filter.officeId !== undefined) { //allow null
                         abp.helper.ui.addAndSetDropdownValue($("#OfficeIdFilter"), filter.officeId, filter.officeName);
                         $('#OfficeIdFilter').val(filter.officeId).trigger("change");
                     }
@@ -1957,7 +1956,7 @@
         });
 
         function isTruckFromOfficeOrSharedOffice(truck) {
-            return true; //truck.officeId === abp.session.officeId || truck.sharedOfficeId === abp.session.officeId;
+            return true;
         }
 
         function handlePopupException(failResult) {
@@ -2116,7 +2115,7 @@
             reloadTruckTiles();
         });
 
-        abp.event.on('app.orderModalShared', function () {
+        abp.event.on('app.orderLineModalShared', function () {
             reloadMainGrid(null, false);
             reloadTruckTiles();
         });
@@ -2259,15 +2258,17 @@
         $('#SendOrdersToDriversButton').click(function (e) {
             e.preventDefault();
             var filterData = _dtHelper.getFilterData();
+            let selectedOffices = [];
+            if (filterData.officeId) {
+                selectedOffices.push({
+                    id: filterData.officeId,
+                    name: filterData.officeName
+                });
+            }
             _sendOrdersToDriversModal.open({
                 deliveryDate: filterData.date,
                 shift: filterData.shift,
-                selectedOffices: [
-                    {
-                        id: filterData.officeId,
-                        name: filterData.officeName
-                    }
-                ]
+                selectedOffices
             });
         });
 
@@ -2292,9 +2293,11 @@
                 return modalObject.getResultPromise();
             });
 
-            var date = _dtHelper.getFilterData().date;
-            var reportParams = {
+            let filterData = _dtHelper.getFilterData();
+            let date = filterData.date;
+            let reportParams = {
                 date: date,
+                officeId: filterData.officeId,
                 ...printOptions
             };
             _orderService.doesOrderSummaryReportHaveData(reportParams).done(function (result) {
@@ -2312,9 +2315,11 @@
                 return modalObject.getResultPromise();
             });
 
-            var date = _dtHelper.getFilterData().date;
-            var reportParams = {
+            let filterData = _dtHelper.getFilterData();
+            let date = filterData.date;
+            let reportParams = {
                 date: date,
+                officeId: filterData.officeId,
                 splitRateColumn: true,
                 ...printOptions
             };
@@ -2740,7 +2745,7 @@
                                 trailerVehicleCategoryId: item.trailer && item.trailer.vehicleCategory.id || null
                             })
                         );
-                        
+
                         if (order.vehicleCategoryIds.length && !order.vehicleCategoryIds.includes(trailer.vehicleCategory.id)) {
                             abp.message.error(app.localize("CannotChangeTrailerBecauseOfOrderLineVehicleCategoryError"));
                             return;
@@ -2984,7 +2989,7 @@
                             truckId: truck.id,
                             truckCode: truck.truckCode
                         });
-                        
+
                         await setTrailerForTractorAsync({
                             tractorId: truck.id,
                             trailerId: null,
@@ -3053,8 +3058,9 @@
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && _permissions.shareTrucks
                             && (_features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService
-                            || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
+                                || truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId);
                     }
                 },
                 addSharedTruck: {
@@ -3062,6 +3068,7 @@
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && _permissions.shareTrucks
                             && _features.allowMultiOffice && truck.sharedWithOfficeId === null && !truck.isOutOfService;
                     },
                     callback: function () {
@@ -3079,6 +3086,7 @@
                     visible: function () {
                         var truck = $(this).data('truck');
                         return !truck.isExternal && !truck.alwaysShowOnSchedule
+                            && _permissions.shareTrucks
                             && truck.sharedWithOfficeId !== null && truck.sharedWithOfficeId !== abp.session.officeId;
                     },
                     disabled: function () {

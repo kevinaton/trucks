@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DispatcherWeb.Authorization.Roles
@@ -28,6 +29,27 @@ namespace DispatcherWeb.Authorization.Roles
                 {
                     AppPermissions.EditInvoicedOrdersAndTickets, new string[]
                     {
+                    }
+                },
+                // ActiveReports
+                {
+                    AppPermissions.Pages_ActiveReports, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Maintenance,
+                        StaticRoleNames.Tenants.MaintenanceSupervisor,
+                    }
+                },
+                // ActiveReports VehicleMaintenanceWorkOrderReport
+                {
+                    AppPermissions.Pages_ActiveReports_VehicleMaintenanceWorkOrderReport, new[]
+                    {
+
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Maintenance,
+                        StaticRoleNames.Tenants.MaintenanceSupervisor,
                     }
                 },
                 // Pages_Administration
@@ -159,6 +181,18 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
 
+                // Can be salesperson
+                {
+                    AppPermissions.CanBeSalesperson, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Quoting,
+                        StaticRoleNames.Tenants.Managers,
+                    }
+                },
+                
                 // CannedText
                 {
                     AppPermissions.Pages_CannedText, new[]
@@ -168,6 +202,39 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Managers,
                     }
                 },
+
+                // Customer Portal
+                {
+                    AppPermissions.CustomerPortal, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+                
+                // Customer Portal - OrderId Dropdown
+                {
+                    AppPermissions.CustomerPortal_Orders_IdDropdown, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+                
+                // Customer Portal - Ticket List
+                {
+                    AppPermissions.CustomerPortal_TicketList, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+                
+                // Customer Portal - Ticket List Export
+                {
+                    AppPermissions.CustomerPortal_TicketList_Export, new[]
+                    {
+                        StaticRoleNames.Tenants.Customer
+                    }
+                },
+
 
                 // Customers
                 {
@@ -529,6 +596,18 @@ namespace DispatcherWeb.Authorization.Roles
                     }
                 },
 
+                // OrderId Dropdown
+                {
+                    AppPermissions.Pages_Orders_IdDropdown, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Dispatching,
+                        StaticRoleNames.Tenants.Backoffice,
+                        StaticRoleNames.Tenants.Managers,
+                    }
+                },
+
                 // Orders View
                 {
                     AppPermissions.Pages_Orders_View, new[]
@@ -729,15 +808,6 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Administrative,
                     }
                 },
-
-                // ActiveReports
-                {
-                    AppPermissions.Pages_ActiveReports, new[]
-                    {
-                        StaticRoleNames.Tenants.Admin,
-                        //StaticRoleNames.Tenants.Administrative,
-                    }
-                },
                 
                 // Schedule
                 {
@@ -812,6 +882,17 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.Dispatching,
                         StaticRoleNames.Tenants.Backoffice,
                         StaticRoleNames.Tenants.Managers,
+                    }
+                },
+
+                // Tickets_Export
+                {
+                    AppPermissions.Pages_Tickets_Export, new[]
+                    {
+                        StaticRoleNames.Tenants.Admin,
+                        StaticRoleNames.Tenants.Administrative,
+                        StaticRoleNames.Tenants.Dispatching,
+                        StaticRoleNames.Tenants.Managers
                     }
                 },
                 
@@ -967,7 +1048,6 @@ namespace DispatcherWeb.Authorization.Roles
                         StaticRoleNames.Tenants.MaintenanceSupervisor,
                     }
                 },
-
             };
 
         public static string[] DefaultPermissions => _defaultRolePermissions.Keys.ToArray();
@@ -991,5 +1071,13 @@ namespace DispatcherWeb.Authorization.Roles
             }
         }
 
+        public static string[] GetRoleNamesHavingDefaultPermission(string permissionName)
+        {
+            if (_defaultRolePermissions.TryGetValue(permissionName, out var result))
+            {
+                return result;
+            }
+            return Array.Empty<string>();
+        }
     }
 }

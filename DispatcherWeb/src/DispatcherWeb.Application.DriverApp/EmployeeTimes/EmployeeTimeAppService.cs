@@ -1,10 +1,12 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
+using Abp.Configuration;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.Runtime.Session;
 using Abp.UI;
+using DispatcherWeb.Configuration;
 using DispatcherWeb.DriverApp.EmployeeTimes.Dto;
 using DispatcherWeb.Drivers;
 using DispatcherWeb.TimeClassifications;
@@ -101,11 +103,6 @@ namespace DispatcherWeb.DriverApp.EmployeeTimes
                 .OrderByDescending(x => !x.IsInactive)
                 .FirstOrDefaultAsync();
 
-            if (!await _timeClassificationRepository.GetAll().AnyAsync(x => x.Id == model.TimeClassificationId))
-            {
-                throw new UserFriendlyException($"Time Classification with id {model.TimeClassificationId} wasn't found");
-            }
-
             //should we limit them to editing only their own records?
             //if (model.Id != 0 && employeeTime.UserId != Session.UserId || model.UserId != Session.UserId)
             //{
@@ -118,6 +115,9 @@ namespace DispatcherWeb.DriverApp.EmployeeTimes
                 throw new UserFriendlyException(L("DateShouldBeAfter2000"));
             }
 
+            var timeClassificationId = await GetValidatedTimeClassificationIdOrNullAsync(model.TimeClassificationId)
+                ?? await SettingManager.GetSettingValueForTenantAsync<int>(AppSettings.TimeAndPay.TimeTrackingDefaultTimeClassificationId, Session.GetTenantId());
+
             employeeTime.StartDateTime = model.StartDateTime;
             employeeTime.EndDateTime = model.EndDateTime;
             employeeTime.UserId = Session.GetUserId();
@@ -126,7 +126,7 @@ namespace DispatcherWeb.DriverApp.EmployeeTimes
             employeeTime.EquipmentId = model.TruckId;
             employeeTime.Latitude = model.Latitude;
             employeeTime.Longitude = model.Longitude;
-            employeeTime.TimeClassificationId = model.TimeClassificationId;
+            employeeTime.TimeClassificationId = timeClassificationId;
 
             if (model.Id == 0)
             {
@@ -137,6 +137,22 @@ namespace DispatcherWeb.DriverApp.EmployeeTimes
             model.Id = employeeTime.Id;
 
             return (await Get(new GetInput { Id = model.Id })).Items.FirstOrDefault();
+        }
+
+        private async Task<int?> GetValidatedTimeClassificationIdOrNullAsync(int? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+            var timeClassification = await _timeClassificationRepository.GetAll()
+                .Where(x => x.Id == id)
+                .Select(x => new
+                {
+                    x.Id
+                }).FirstOrDefaultAsync();
+
+            return timeClassification?.Id;
         }
 
         public async Task Delete(int id)

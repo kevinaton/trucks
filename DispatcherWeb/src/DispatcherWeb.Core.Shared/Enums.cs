@@ -15,88 +15,6 @@ namespace DispatcherWeb
         Website = 4
     }
 
-    [Obsolete]
-    public enum TruckCategory
-    {
-        //[Display(Name = "Dump Trucks")]
-        //DumpTrucks = 1,
-        //[Display(Name = "Trailers")]
-        //Trailers = 2,
-        //[Display(Name = "Tractors")]
-        //Tractors = 3,
-        //[Display(Name = "Leased Dump Trucks")]
-        //LeasedDumpTrucks = 4,
-        //[Display(Name = "Leased Tractors")]
-        //LeasedTractors = 5,
-        //[Display(Name = "Other")]
-        //Other = 6,
-
-        //[Display(Name = "Triaxle Dump Truck")]
-        //TriaxleDumpTruck = 7,
-        //[Display(Name = "Quad Dump Truck")]
-        //QuadDumpTruck = 8,
-        //[Display(Name = "Quint Dump Truck")]
-        //QuintDumpTruck = 9,
-        //[Display(Name = "Water Truck")]
-        //WaterTruck = 10,
-        //[Display(Name = "Cement Truck")]
-        //CementTruck = 11,
-        //[Display(Name = "Concrete Mixer")]
-        //ConcreteMixer = 12,
-
-        //[Display(Name = "Belly Dump Trailer")]
-        //BellyDumpTrailer = 13,
-        //[Display(Name = "End Dump Trailer")]
-        //EndDumpTrailer = 14,
-        //[Display(Name = "Walking bed Trailer")]
-        //WalkingBedTrailer = 15,
-        //[Display(Name = "Low Boy Trailer")]
-        //LowBoyTrailer = 16,
-        //[Display(Name = "Flat Bed Trailer")]
-        //FlatBedTrailer = 17,
-
-        //[Display(Name = "Stone slinger")]
-        //StoneSlinger = 18,
-        //[Display(Name = "Flowboy")]
-        //Flowboy = 19,
-        //[Display(Name = "Live Bottom truck")]
-        //LiveBottomTruck = 20,
-        //[Display(Name = "Centipede Dump Truck")]
-        //CentipedeDumpTruck = 21,
-        //[Display(Name = "Tandem Dump Truck")]
-        //TandemDumpTruck = 22
-    }
-
-    //public static class TruckCategoryGroup
-    //{
-    //    [Obsolete]
-    //    public static TruckCategory[] DumpTrucks = new[]
-    //    {
-    //        TruckCategory.DumpTrucks,
-    //        TruckCategory.TriaxleDumpTruck,
-    //        TruckCategory.QuadDumpTruck,
-    //        TruckCategory.QuintDumpTruck,
-    //        TruckCategory.WaterTruck,
-    //        TruckCategory.CementTruck,
-    //        TruckCategory.ConcreteMixer,
-    //        TruckCategory.StoneSlinger,
-    //        TruckCategory.Flowboy,
-    //        TruckCategory.LiveBottomTruck,
-    //        TruckCategory.CentipedeDumpTruck,
-    //        TruckCategory.TandemDumpTruck
-    //    };
-    //    [Obsolete]
-    //    public static TruckCategory[] Trailers = new[]
-    //    {
-    //        TruckCategory.Trailers,
-    //        TruckCategory.BellyDumpTrailer,
-    //        TruckCategory.EndDumpTrailer,
-    //        TruckCategory.WalkingBedTrailer,
-    //        TruckCategory.LowBoyTrailer,
-    //        TruckCategory.FlatBedTrailer
-    //    };
-    //}
-
     public enum AssetType
     {
         DumpTruck = 1,
@@ -225,7 +143,15 @@ namespace DispatcherWeb
         FuelSurchargeCalculation = 35,
 
         [Display(Name = "Freight Rate to Pay Drivers")]
-        LineItemFreightRateToPayDrivers = 36
+        LineItemFreightRateToPayDrivers = 36,
+
+        Office = 37,
+
+        [Display(Name = "Production Pay")]
+        ProductionPay = 38,
+
+        [Display(Name = "Load Based")]
+        LoadBased = 39
     }
 
     public enum DesignationEnum
@@ -772,6 +698,7 @@ namespace DispatcherWeb
         MotionChange = 1,
         Geofence = 2,
         Heartbeat = 3,
+        ProviderChange = 4,
     }
 
     public enum HostEmailType
@@ -813,5 +740,11 @@ namespace DispatcherWeb
         Medium = 2,
         Large = 3,
         Original = 4,
+    }
+
+    public enum LogoType
+    {
+        ApplicationLogo,
+        ReportsLogo,
     }
 }

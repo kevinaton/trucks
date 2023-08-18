@@ -5,13 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using DispatcherWeb.Authorization.Users;
+using DispatcherWeb.Infrastructure;
 using DispatcherWeb.Orders;
+using DispatcherWeb.Quotes;
 using DispatcherWeb.Trucks;
 
 namespace DispatcherWeb.Offices
 {
     [Table("Office")]
-    public class Office : FullAuditedEntity, IMustHaveTenant
+    public class Office : FullAuditedEntity, IMustHaveTenant, ILogoStorageObject
     {
         public const int MaxNameLength = 150;
         public const int MaxFuelIdsLength = 1000;
@@ -45,10 +47,24 @@ namespace DispatcherWeb.Offices
 
         public DateTime? DefaultStartTime { get; set; }
 
+        public Guid? LogoId { get; set; }
+
+        [MaxLength(EntityStringFieldLengths.Tenant.MaxLogoMimeTypeLength)]
+        public string LogoFileType { get; set; }
+
+        public Guid? ReportsLogoId { get; set; }
+        
+        [MaxLength(EntityStringFieldLengths.Tenant.MaxLogoMimeTypeLength)]
+        public string ReportsLogoFileType { get; set; }
+
         public virtual ICollection<Truck> Trucks { get; set; }
 
         public virtual ICollection<User> Users { get; set; }
 
-        public virtual ICollection<SharedOrder> SharedOrders { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
+
+        public virtual ICollection<SharedOrderLine> SharedOrderLines { get; set; }
+
+        public virtual ICollection<Quote> Quotes { get; set; }
     }
 }

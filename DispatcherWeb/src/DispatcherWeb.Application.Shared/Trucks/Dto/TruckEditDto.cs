@@ -117,5 +117,7 @@ namespace DispatcherWeb.Trucks.Dto
 
         //[StringLength(EntityStringFieldLengths.Truck.DtdTrackerPassword)]
         public string DtdTrackerPassword { get; set; }
+
+        public bool EnableDriverAppGps { get; set; }
     }
 }

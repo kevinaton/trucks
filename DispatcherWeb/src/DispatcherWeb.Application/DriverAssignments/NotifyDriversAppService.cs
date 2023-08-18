@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
+using Abp.Linq.Extensions;
 using Abp.Net.Mail;
 using Abp.Notifications;
 using Abp.Runtime.Session;
@@ -213,12 +214,12 @@ namespace DispatcherWeb.DriverAssignments
 
         private IQueryable<DriverAssignment> GetDriverAssignmentQuery(NotifyDriversInput input) =>
             _driverAssignmentRepository.GetAll()
-                .Where(da => da.DriverId.HasValue &&
-                             da.Date == input.Date &&
-                             da.Shift == input.Shift &&
-                             da.OfficeId == input.OfficeId &&
-                             da.StartTime.HasValue &&
-                             da.Driver.OrderNotifyPreferredFormat != OrderNotifyPreferredFormat.Neither
+                .WhereIf(input.OfficeId.HasValue, da => da.OfficeId == input.OfficeId)
+                .Where(da => da.DriverId.HasValue
+                    && da.Date == input.Date
+                    && da.Shift == input.Shift
+                    && da.StartTime.HasValue
+                    && da.Driver.OrderNotifyPreferredFormat != OrderNotifyPreferredFormat.Neither
                 );
 
         public async Task<bool> ThereAreDriversToNotify(NotifyDriversInput input) =>

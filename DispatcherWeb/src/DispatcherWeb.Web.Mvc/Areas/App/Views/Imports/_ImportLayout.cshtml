@@ -43,15 +43,16 @@
             <form class="m-form m-form--label-align-right" id="ImportForm" asp-action="UploadFile">
                 <input type="hidden" id="ImportType" value="@ViewBag.ImportType" />
                 @RenderSection("AboveUpload", false)
-                <div class="row m--margin-bottom-10">
+                <div class="m--margin-bottom-10">
                     <div class="form-group fileUpload margin-top-20">
-                        <div class="col-12 btn btn-primary browse_btn">
+                        <div class="btn btn-primary browse_btn">
                             <span>@L("Browse")</span>
                             <input id="ImportFile" type="file" accept=".csv" class="upload">
                         </div>
-                        <div class="col-xs-12 margin-bottom-10">
-                            <span class="m-form__help">This should be a CSV file.</span>
-                        </div>
+                        <input class="form-control file-upload" placeholder="No File Selected." disabled="disabled">
+                    </div>
+                    <div class="col-xs-12 margin-bottom-10">
+                        <span class="m-form__help">This should be a CSV file.</span>
                     </div>
                 </div>
             </form>

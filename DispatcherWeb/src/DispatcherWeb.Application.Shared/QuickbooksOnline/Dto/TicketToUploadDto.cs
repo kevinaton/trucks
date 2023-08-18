@@ -1,4 +1,5 @@
 ﻿using System;
+using DispatcherWeb.Common.Dto;
 using DispatcherWeb.Tickets;
 
 namespace DispatcherWeb.QuickbooksOnline.Dto
@@ -16,6 +17,9 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
         public decimal? OrderLineFreightTotal { get; set; }
         public DesignationEnum? Designation { get; set; }
         DesignationEnum ITicketQuantity.Designation => Designation ?? DesignationEnum.MaterialOnly;
+        public LocationNameDto LoadAt { get; set; }
+        public LocationNameDto DeliverTo { get; set; }
+
         public bool HasOrderLine { get; set; }
 
         public decimal Quantity { get; set; }
@@ -34,6 +38,8 @@ namespace DispatcherWeb.QuickbooksOnline.Dto
                 OrderLineMaterialTotal = OrderLineMaterialTotal,
                 OrderLineFreightTotal = OrderLineFreightTotal,
                 Designation = Designation,
+                LoadAt = LoadAt,
+                DeliverTo = DeliverTo,
                 HasOrderLine = HasOrderLine,
                 Quantity = Quantity,
             };

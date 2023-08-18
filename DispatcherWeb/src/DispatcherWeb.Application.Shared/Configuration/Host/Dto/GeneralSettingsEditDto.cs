@@ -39,6 +39,7 @@ namespace DispatcherWeb.Configuration.Host.Dto
         public bool DontValidateDriverAndTruckOnTickets { get; set; }
         public bool ShowDriverNamesOnPrintedOrder { get; set; }
         public bool SplitBillingByOffices { get; set; }
+        public bool ShowOfficeOnTicketsByDriver { get; set; }
         public bool UseShifts { get; set; }
         public string ShiftName1 { get; set; }
         public string ShiftName2 { get; set; }

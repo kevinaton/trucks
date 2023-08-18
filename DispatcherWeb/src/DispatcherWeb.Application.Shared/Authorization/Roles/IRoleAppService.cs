@@ -16,7 +16,7 @@ namespace DispatcherWeb.Authorization.Roles
         Task<ListResultDto<RoleListDto>> GetRolesForDropdown();
         Task<GetRoleForEditOutput> GetRoleForEdit(NullableIdDto input);
         Task CreateOrUpdateRole(CreateOrUpdateRoleInput input);
-        Task<bool> IsRoleHaveUsers(EntityDto input);
+        Task<bool> IsRoleAssignedToUsers(EntityDto input);
         Task DeleteRole(EntityDto input);
         Task RestoreDefaultPermissionsAsync(int roleId);
         List<SelectListDto> GetStaticRoleNamesSelectList(GetStaticRoleNamesSelectListInput input);

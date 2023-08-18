@@ -35,7 +35,6 @@ namespace DispatcherWeb.Dispatching
         Task<PagedResultDto<DispatchListDto>> GetDispatchPagedList(GetDispatchPagedListInput input);
         Task<int?> GetTenantIdFromDispatch(Guid dispatchGuid);
         Task<Document> GetDriverActivityDetailReport(GetDriverActivityDetailReportInput input);
-        Task SendCompletedDispatchNotificationIfNeeded(int dispatchId);
         Task<GetOrderTotalsResult> GetOrderTotalsAsync(int orderLineId);
         Task NotifyDispatchersAfterTicketUpdateIfNeeded(int orderLineId, GetOrderTotalsResult orderTotalsBeforeUpdate);
         Task RunPostDispatchCompletionLogic(int dispatchId);

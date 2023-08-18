@@ -342,6 +342,11 @@
                 //    window.open(url);
                 //}).appendTo(modal.find("#TicketPhotoBlock"));
             });
+
+            $ticketPhoto.on("change", function () {
+                var filename = $(this).val().split('\\').pop();
+                modal.find("#FileNamePlaceholder").val(filename);
+            });
         };
 
         this.save = async function () {

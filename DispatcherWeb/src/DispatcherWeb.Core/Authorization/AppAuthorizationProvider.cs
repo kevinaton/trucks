@@ -72,7 +72,12 @@ namespace DispatcherWeb.Authorization
             var orders = pages.CreateChildPermission(AppPermissions.Pages_Orders_View, L("Orders"), multiTenancySides: MultiTenancySides.Tenant);
             orders.CreateChildPermission(AppPermissions.Pages_Orders_Edit, L("EditingOrder"), multiTenancySides: MultiTenancySides.Tenant);
             orders.CreateChildPermission(AppPermissions.Pages_PrintOrders, L("PrintOrders"), multiTenancySides: MultiTenancySides.Tenant);
-            pages.CreateChildPermission(AppPermissions.Pages_Schedule, L("Schedule"), multiTenancySides: MultiTenancySides.Tenant);
+            pages.CreateChildPermission(AppPermissions.Pages_Orders_IdDropdown, L("OrderIdDropdown"), multiTenancySides: MultiTenancySides.Tenant); //this is not a child of "orders" so that IdDropdown can be granted independently of View permission
+            var schedule = pages.CreateChildPermission(AppPermissions.Pages_Schedule, L("Schedule"), multiTenancySides: MultiTenancySides.Tenant);
+            schedule.CreateChildPermission(AppPermissions.Pages_Schedule_ShareTrucks, L("ShareTrucks"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.TruckSharing));
+            schedule.CreateChildPermission(AppPermissions.Pages_Schedule_ShareJobs, L("ShareJobs"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.JobSharing));
             pages.CreateChildPermission(AppPermissions.Pages_DriverAssignment, L("DriverAssignment"), multiTenancySides: MultiTenancySides.Tenant);
             var leaseHauler = pages.CreateChildPermission(AppPermissions.Pages_LeaseHauler, L("LeaseHauler"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowLeaseHaulersFeature));
@@ -103,11 +108,13 @@ namespace DispatcherWeb.Authorization
             pages.CreateChildPermission(AppPermissions.Pages_Offices, L("Offices"), multiTenancySides: MultiTenancySides.Tenant);
             pages.CreateChildPermission(AppPermissions.Pages_TicketsByDriver, L("TicketsByDriver"), multiTenancySides: MultiTenancySides.Tenant);
             var tickets = pages.CreateChildPermission(AppPermissions.Pages_Tickets_View, L("Tickets"), multiTenancySides: MultiTenancySides.Tenant);
-            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Edit, L("EditingTicket"), multiTenancySides: MultiTenancySides.Tenant);
+            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Edit, L("EditTickets"), multiTenancySides: MultiTenancySides.Tenant);
+            tickets.CreateChildPermission(AppPermissions.Pages_Tickets_Export, L("ExportTickets"), multiTenancySides: MultiTenancySides.Tenant);
             pages.CreateChildPermission(AppPermissions.Pages_Invoices, L("Invoices"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.AllowInvoicingFeature));
             pages.CreateChildPermission(AppPermissions.DriverProductionPay, L("DriverProductionPay"), multiTenancySides: MultiTenancySides.Tenant,
                 featureDependency: new SimpleFeatureDependency(AppFeatures.DriverProductionPayFeature));
+            pages.CreateChildPermission(AppPermissions.CanBeSalesperson, L("CanBeSalesperson"), multiTenancySides: MultiTenancySides.Tenant);
 
             var vehicleService = pages.CreateChildPermission(AppPermissions.Pages_VehicleService_View, L("VehicleService"), multiTenancySides: MultiTenancySides.Tenant);
             vehicleService.CreateChildPermission(AppPermissions.Pages_VehicleService_Edit, L("EditingVehicleService"), multiTenancySides: MultiTenancySides.Tenant);
@@ -157,7 +164,8 @@ namespace DispatcherWeb.Authorization
 
             var activeReports = pages.CreateChildPermission(AppPermissions.Pages_ActiveReports, L("ActiveReports"), multiTenancySides: MultiTenancySides.Host | MultiTenancySides.Tenant);
             activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_TenantStatisticsReport, L("TenantStatisticsReport"), multiTenancySides: MultiTenancySides.Host);
-            
+            activeReports.CreateChildPermission(AppPermissions.Pages_ActiveReports_VehicleMaintenanceWorkOrderReport, L("VehicleMaintenanceWorkOrderReport"), multiTenancySides: MultiTenancySides.Tenant);
+
             var imports = pages.CreateChildPermission(AppPermissions.Pages_Imports, L("Imports"), multiTenancySides: MultiTenancySides.Tenant);
             imports.CreateChildPermission(AppPermissions.Pages_Imports_FuelUsage, L("ImportFuelUsagePermission"), multiTenancySides: MultiTenancySides.Tenant);
             imports.CreateChildPermission(AppPermissions.Pages_Imports_VehicleUsage, L("ImportVehicleUsagePermission"), multiTenancySides: MultiTenancySides.Tenant);
@@ -183,6 +191,12 @@ namespace DispatcherWeb.Authorization
 
             administration.CreateChildPermission(AppPermissions.Pages_Administration_Tenant_Settings, L("Settings"), multiTenancySides: MultiTenancySides.Tenant);
             administration.CreateChildPermission(AppPermissions.Pages_Administration_Tenant_SubscriptionManagement, L("Subscription"), multiTenancySides: MultiTenancySides.Tenant);
+
+            var customerPortal = pages.CreateChildPermission(AppPermissions.CustomerPortal, L("CustomerPortal"), multiTenancySides: MultiTenancySides.Tenant,
+                featureDependency: new SimpleFeatureDependency(AppFeatures.CustomerPortal));
+            var ticketList = customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_TicketList, L("CustomerPortalTicketList"), multiTenancySides: MultiTenancySides.Tenant);
+            ticketList.CreateChildPermission(AppPermissions.CustomerPortal_TicketList_Export, L("CustomerPortalTicketListExport"), multiTenancySides: MultiTenancySides.Tenant);
+            customerPortal.CreateChildPermission(AppPermissions.CustomerPortal_Orders_IdDropdown, L("OrderIdDropdown"), multiTenancySides: MultiTenancySides.Tenant);
 
             //HOST-SPECIFIC PERMISSIONS
 

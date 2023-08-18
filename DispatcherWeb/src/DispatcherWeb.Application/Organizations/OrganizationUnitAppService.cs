@@ -97,7 +97,7 @@ namespace DispatcherWeb.Organizations
         {
             var query = from ouRole in _organizationUnitRoleRepository.GetAll()
                         join ou in _organizationUnitRepository.GetAll() on ouRole.OrganizationUnitId equals ou.Id
-                        join role in _roleManager.Roles on ouRole.RoleId equals role.Id
+                        join role in _roleManager.AvailableRoles on ouRole.RoleId equals role.Id
                         where ouRole.OrganizationUnitId == input.Id
                         select new
                         {
@@ -233,7 +233,7 @@ namespace DispatcherWeb.Organizations
                 .Where(uou => uou.OrganizationUnitId == input.OrganizationUnitId)
                 .Select(uou => uou.RoleId);
 
-            var query = _roleManager.Roles
+            var query = _roleManager.AvailableRoles
                 .Where(u => !roleIdsInOrganizationUnit.Contains(u.Id))
                 .WhereIf(
                     !input.Filter.IsNullOrWhiteSpace(),

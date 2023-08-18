@@ -2,5 +2,6 @@
 {
     public class DriverAssignmentReportItemDto : DriverAssignmentDto
     {
+        public string OfficeName { get; set; }
     }
 }

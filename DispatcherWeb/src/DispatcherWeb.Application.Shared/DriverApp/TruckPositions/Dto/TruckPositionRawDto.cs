@@ -13,10 +13,6 @@ namespace DispatcherWeb.DriverApp.TruckPositions.Dto
 
         public int? TruckId { get; set; }
 
-        public int? DriverId { get; set; }
-
-        public long? UserId { get; set; }
-
         [JsonExtensionData]
         public IDictionary<string, JToken> AdditionalData { get; set; }
         public string Json => JsonConvert.SerializeObject(AdditionalData);
@@ -58,6 +54,7 @@ namespace DispatcherWeb.DriverApp.TruckPositions.Dto
                         case "motionchange": Event = TruckPositionEvent.MotionChange; break;
                         case "geofence": Event = TruckPositionEvent.Geofence; break;
                         case "heartbeat": Event = TruckPositionEvent.Heartbeat; break;
+                        case "providerchange": Event = TruckPositionEvent.ProviderChange; break;
                         default: Event = 0; break;
                     }
                 }
@@ -65,16 +62,16 @@ namespace DispatcherWeb.DriverApp.TruckPositions.Dto
 
             public bool IsMoving { get; set; }
 
-            public decimal? Odometer { get; set; }
+            public double? Odometer { get; set; }
 
             public class CoordinatesDto
             {
-                public decimal? Latitude { get; set; }
-                public decimal? Longitude { get; set; }
-                public decimal? Accuracy { get; set; }
-                public decimal? Speed { get; set; }
-                public decimal? Heading { get; set; }
-                public decimal? Altitude { get; set; }
+                public double? Latitude { get; set; }
+                public double? Longitude { get; set; }
+                public double? Accuracy { get; set; }
+                public double? Speed { get; set; }
+                public double? Heading { get; set; }
+                public double? Altitude { get; set; }
             }
 
             public class ExtrasDto
@@ -151,7 +148,7 @@ namespace DispatcherWeb.DriverApp.TruckPositions.Dto
 
             public class BatteryDto
             {
-                public decimal? Level { get; set; }
+                public double? Level { get; set; }
 
                 [JsonProperty(PropertyName = "is_charging")]
                 public bool? IsCharging { get; set; }

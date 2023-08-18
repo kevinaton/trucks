@@ -82,6 +82,19 @@
                 </div>
             </div>
 
+            <div class="form-group m-form__group row" @Html.StyleDisplayNone(!await FeatureChecker.AllowMultiOfficeFeature())>
+                <label class="col-sm-12 col-md-2 col-form-label required-label pg-add">@L("Office"):</label>
+                <div class="col-sm-12 col-md-10">
+                    <select class="form-control" asp-for="OfficeId" id="QuoteOffice" disabled="@(Model.IsSingleOffice ? "disabled" : null)" required>
+                        <option value="">Select an office</option>
+                        @if (Model.OfficeId != 0)
+                        {
+                            <option selected value="@Model.OfficeId">@Model.OfficeName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            
             <div class="form-group m-form__group row">
                 <label class="col-sm-12 col-md-2 col-form-label required-label pg-add">@L("Customer"):</label>
                 <div class="col-sm-12 col-md-10">

@@ -17,13 +17,15 @@
 	<ItemGroup>
 	  <Content Remove="Reports\_TenantsDS.json" />
 	  <Content Remove="Reports\_TenantStatisticsReportDS.json" />
+	  <Content Remove="Reports\_VehicleMaintenanceWorkOrder.json" />
+	  <Content Remove="Reports\_VehicleMaintenanceWorkOrderLines.json" />
 	</ItemGroup>
 	<ItemGroup>
-		<EmbeddedResource Include="Properties\.gclicx">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
 		<None Update="Reports\TenantStatisticsReport.rdlx">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Reports\VehicleMaintenanceWorkOrderReport.rdlx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Reports\_MasterReportLegalPortrait.rdlx-master">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -31,11 +33,26 @@
 		<None Update="Reports\_MasterReportLetterPortrait.rdlx-master">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Properties\.gclicx" />
 		<EmbeddedResource Include="wwwroot\favicon.ico" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="ClientApp\package.json" />
 		<None Include="Properties\launchSettings.json" />
+		<None Include="Reports\_TenantsDS.json">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Include="Reports\_TenantStatisticsReportDS.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Include="Reports\_VehicleMaintenanceWorkOrder.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+		<None Include="Reports\_VehicleMaintenanceWorkOrderLines.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
 		<None Include="wwwroot\lib\grapecity\jsViewer.min.js" />
 		<Resource Include="Properties\licenses.licx">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -61,6 +78,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="Controllers\HomeController.cs" />
+		<Compile Include="Helpers\AuthorizationHeaderHandler.cs" />
 		<Compile Include="Models\ActiveReportItemDto.cs" />
 		<Compile Include="Models\UserFriendlyException.cs" />
 		<Compile Include="Helpers\Extensions.cs" />
@@ -68,6 +86,7 @@
 		<Compile Include="Models\ViewModels\ErrorViewModel.cs" />
 		<Compile Include="Models\ReportDataDefinitions\Base\IReportDataDefinition.cs" />
 		<Compile Include="Models\ReportDataDefinitions\Base\ReportDataDefinitionBase.cs" />
+		<Compile Include="Models\ReportDataDefinitions\VehicleMaintenanceWorkOrderReportDataDefinitions.cs" />
 		<Compile Include="Models\ReportDataDefinitions\TenantStatisticsReportDataDefinitions.cs" />
 		<Compile Include="Models\ViewModels\ReportListViewModel.cs" />
 		<Compile Include="Models\ViewModels\ReportViewModel.cs" />

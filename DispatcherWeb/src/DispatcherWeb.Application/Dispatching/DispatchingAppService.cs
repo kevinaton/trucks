@@ -532,7 +532,7 @@ namespace DispatcherWeb.Dispatching
             async Task<Dispatch> GetNextDispatchInAnyActiveStatus(int truckId, int driverId)
             {
                 return await _dispatchRepository.GetAll()
-                    .Where(d => d.TruckId == truckId && d.DriverId == driverId && (d.Status == DispatchStatus.Created || Dispatch.ActiveStatuses.Contains(d.Status)))
+                    .Where(d => d.TruckId == truckId && d.DriverId == driverId && Dispatch.OpenStatuses.Contains(d.Status))
                     .OrderByDescending(d => d.Status == DispatchStatus.Loaded)
                     .ThenByDescending(d => d.Status == DispatchStatus.Acknowledged)
                     .ThenBy(d => d.SortOrder)
@@ -568,7 +568,6 @@ namespace DispatcherWeb.Dispatching
         {
             return await _dispatchRepository.GetAll()
                 .Where(d => d.DriverId == driverId && Dispatch.OpenStatuses.Contains(d.Status))
-                //.OrderBy(d => !Dispatch.ActiveStatuses.Contains(d.Status)) //active statuses first
                 .OrderByDescending(d => d.Status == DispatchStatus.Loaded)
                 .ThenByDescending(d => d.Status == DispatchStatus.Acknowledged)
                 .ThenByDescending(d => d.Status == DispatchStatus.Sent)
@@ -1344,8 +1343,7 @@ namespace DispatcherWeb.Dispatching
             var items = await _dispatchRepository.GetAll()
                     .WhereIf(input.UpdatedAfterDateTime.HasValue, d => d.CreationTime > input.UpdatedAfterDateTime.Value || (d.LastModificationTime != null && d.LastModificationTime > input.UpdatedAfterDateTime.Value))
                     .WhereIf(input.UpdatedAfterDateTime == null, d => d.Status != DispatchStatus.Canceled && d.Status != DispatchStatus.Completed)
-                    .Where(d => d.DriverId == authInfo.DriverId && (Dispatch.ActiveStatuses.Contains(d.Status) || d.Status == DispatchStatus.Created || d.Status == DispatchStatus.Canceled || d.Status == DispatchStatus.Completed))
-                    //.OrderBy(d => !Dispatch.ActiveStatuses.Contains(d.Status)) //active statuses first
+                    .Where(d => d.DriverId == authInfo.DriverId && (Dispatch.OpenStatuses.Contains(d.Status) || d.Status == DispatchStatus.Canceled || d.Status == DispatchStatus.Completed))
                     .OrderByDescending(d => d.Status == DispatchStatus.Loaded)
                     .ThenByDescending(d => d.Status == DispatchStatus.Acknowledged)
                     .ThenByDescending(d => d.Status == DispatchStatus.Sent)
@@ -2257,20 +2255,12 @@ namespace DispatcherWeb.Dispatching
             await SendCompletedDispatchNotificationIfNeeded(dispatch);
         }
 
-        [RemoteService(false)]
-        public async Task SendCompletedDispatchNotificationIfNeeded(int dispatchId)
-        {
-            await CurrentUnitOfWork.SaveChangesAsync();
-            var dispatch = await _dispatchRepository.GetAsync(dispatchId);
-            await SendCompletedDispatchNotificationIfNeeded(dispatch);
-        }
-
         private async Task SendCompletedDispatchNotificationIfNeeded(Dispatch dispatch)
         {
             await CurrentUnitOfWork.SaveChangesAsync();
 
             var hasMoreDispatches = await _dispatchRepository.GetAll()
-                    .Where(d => d.DriverId == dispatch.DriverId && (Dispatch.ActiveStatuses.Contains(d.Status) || d.Status == DispatchStatus.Created) && d.Id != dispatch.Id)
+                    .Where(d => d.DriverId == dispatch.DriverId && Dispatch.OpenStatuses.Contains(d.Status) && d.Id != dispatch.Id)
                     .AnyAsync();
 
             if (!hasMoreDispatches && !await ShouldSendOrdersToDriversImmediately())
@@ -2317,6 +2307,11 @@ namespace DispatcherWeb.Dispatching
                     {
                         t.Id,
                         t.IsDone,
+                    }).ToList(),
+                    RelatedDispatches = x.OrderLineTruck.Dispatches.Select(d => new
+                    {
+                        d.Id,
+                        d.Status
                     }).ToList()
                 }).FirstAsync();
 
@@ -2328,14 +2323,17 @@ namespace DispatcherWeb.Dispatching
                 return;
             }
 
-            var orderLineTruck = await _orderLineTruckRepository.GetAsync(dispatch.OrderLineTruckId.Value);
-            orderLineTruck.IsDone = true;
-            orderLineTruck.Utilization = 0;
-
-            if (dispatchData.OrderLineTrucks.Where(x => x.Id != orderLineTruck.Id).All(x => x.IsDone))
+            if (!dispatchData.RelatedDispatches.Where(x => x.Id != dispatch.Id).Any(x => Dispatch.OpenStatuses.Contains(x.Status)))
             {
-                var orderLine = await _orderLineRepository.GetAsync(dispatch.OrderLineId);
-                orderLine.IsComplete = true;
+                var orderLineTruck = await _orderLineTruckRepository.GetAsync(dispatch.OrderLineTruckId.Value);
+                orderLineTruck.IsDone = true;
+                orderLineTruck.Utilization = 0;
+
+                if (dispatchData.OrderLineTrucks.Where(x => x.Id != orderLineTruck.Id).All(x => x.IsDone))
+                {
+                    var orderLine = await _orderLineRepository.GetAsync(dispatch.OrderLineId);
+                    orderLine.IsComplete = true;
+                }
             }
         }
 
@@ -2890,15 +2888,15 @@ namespace DispatcherWeb.Dispatching
                     CarrierName = x.LeaseHaulerDriver.LeaseHauler.Name
                 }).OrderBy(d => d.DriverName).ToListAsync();
 
-            var userId = input.DriverId.HasValue ? drivers.FirstOrDefault(x => x.DriverId == input.DriverId)?.UserId : null;
             var startDateConverted = input.DateBegin?.ConvertTimeZoneFrom(timezone);
             var endDateConverted = input.DateEnd?.AddDays(1).ConvertTimeZoneFrom(timezone);
             var employeeTimes = await _employeeTimeRepository.GetAll()
-                .WhereIf(input.DriverId.HasValue, x => x.UserId == userId)
+                .WhereIf(input.DriverId.HasValue, x => x.DriverId == input.DriverId)
                 .WhereIf(startDateConverted.HasValue, x => x.StartDateTime >= startDateConverted && x.StartDateTime < endDateConverted)
                 .Select(x => new
                 {
                     x.UserId,
+                    x.DriverId,
                     TruckId = x.EquipmentId,
                     x.Truck.TruckCode,
                     x.StartDateTime,
@@ -2976,7 +2974,7 @@ namespace DispatcherWeb.Dispatching
             foreach (var employeeTime in employeeTimes)
             {
                 var date = employeeTime.StartDateTime.ConvertTimeZoneTo(timezone).Date;
-                var driver = drivers.FirstOrDefault(x => x.UserId == employeeTime.UserId);
+                var driver = drivers.FirstOrDefault(x => x.DriverId == employeeTime.DriverId);
                 var page = pages.FirstOrDefault(x => x.Date == date && x.UserId == employeeTime.UserId);
                 if (page == null)
                 {
@@ -2986,6 +2984,7 @@ namespace DispatcherWeb.Dispatching
                         Date = date,
                         DriverId = driverId,
                         DriverName = driver?.DriverName,
+                        CarrierName = driver?.CarrierName,
                         UserId = employeeTime.UserId,
                         ScheduledStartTime = driverAssignments.FirstOrDefault(x => x.DriverId == driverId && x.Date == date)?.StartTimeUtc?.ConvertTimeZoneTo(timezone),
                         EmployeeTimes = new List<DriverActivityDetailReportEmployeeTimeDto>(),

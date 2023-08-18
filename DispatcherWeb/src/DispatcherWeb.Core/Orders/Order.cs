@@ -23,7 +23,6 @@ namespace DispatcherWeb.Orders
         public Order()
         {
             OrderLines = new List<OrderLine>();
-            SharedOrders = new HashSet<SharedOrder>();
             BilledOrders = new HashSet<BilledOrder>();
             OrderEmails = new HashSet<OrderEmail>();
             Receipts = new HashSet<Receipt>();
@@ -37,8 +36,6 @@ namespace DispatcherWeb.Orders
 
         public bool IsPending { get; set; }
 
-        public DateTime? SharedDateTime { get; set; }
-
         [Required(ErrorMessage = "Customer is a required field")]
         public int CustomerId { get; set; }
 
@@ -47,11 +44,6 @@ namespace DispatcherWeb.Orders
 
         [StringLength(EntityStringFieldLengths.Order.SpectrumNumber)]
         public string SpectrumNumber { get; set; }
-
-
-        [Obsolete]
-        [StringLength(EntityStringFieldLengths.OrderLine.JobNumber)]
-        public string JobNumber { get; set; }
 
         public int? ContactId { get; set; }
 
@@ -139,8 +131,6 @@ namespace DispatcherWeb.Orders
         public virtual User LastModifierUser { get; set; }
 
         public virtual ICollection<OrderLine> OrderLines { get; set; }
-
-        public virtual ICollection<SharedOrder> SharedOrders { get; set; }
 
         public virtual ICollection<BilledOrder> BilledOrders { get; set; }
 
