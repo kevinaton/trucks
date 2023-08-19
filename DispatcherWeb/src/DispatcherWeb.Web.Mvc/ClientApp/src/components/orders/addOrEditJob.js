@@ -34,7 +34,8 @@ import {
     getDesignationsSelectList, 
     getOrderForEdit, 
     getLocationsSelectList,
-    getServicesWithTaxInfoSelectList
+    getServicesWithTaxInfoSelectList,
+    getUnitOfMeasuresSelectList
 } from '../../store/actions';
 
 const { Customers, offices, Designation, Addresses, Items, FreightUom } = data;
@@ -55,6 +56,8 @@ const AddOrEditJob = ({
     const [deliverToOptions, setDeliverToOptions] = useState(null);
     const [isLoadingServices, setIsLoadingServices] = useState(false);
     const [serviceOptions, setServiceOptions] = useState(null);
+    const [isLoadingUnitOfMeasures, setIsLoadingUnitOfMeasures] = useState(false);
+    const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState(null);
     const [orderInfo, setOrderInfo] = useState(null);
 
     const [id, setId] = useState(null);
@@ -109,8 +112,18 @@ const AddOrEditJob = ({
     });
     const [loadAtId, setLoadAtId] = useState('');
     const [deliverToId, setDeliverToId] = useState('');
-    const [serviceId, setServiceId] = useState('');
-    const [freightUomId, setFreightUomId] = useState('');
+    const [serviceId, setServiceId] = useState({
+        value: '',
+        required: true,
+        error: false,
+        errorText: ''
+    });
+    const [freightUomId, setFreightUomId] = useState({
+        value: '',
+        required: true,
+        error: false,
+        errorText: ''
+    });
     const [materialUomId, setMaterialUomId] = useState('');
     const [freightPricePerUnit, setFreightPricePerUnit] = useState('');
     const [materialPricePerUnit, setMaterialPricePerUnit] = useState('');
@@ -168,6 +181,8 @@ const AddOrEditJob = ({
         locationsSelectList,
         isLoadingServicesWithTaxInfoOpts,
         servicesWithTaxInfoSelectList,
+        isLoadingUnitOfMeasuresOpts,
+        unitOfMeasuresSelectList,
         orderForEdit
     } = useSelector((state) => ({
         isLoadingActiveCustomersOpts: state.CustomerReducer.isLoadingActiveCustomersOpts,
@@ -179,6 +194,8 @@ const AddOrEditJob = ({
         locationsSelectList: state.LocationReducer.locationsSelectList,
         isLoadingServicesWithTaxInfoOpts: state.ServiceReducer.isLoadingServicesWithTaxInfoOpts,
         servicesWithTaxInfoSelectList: state.ServiceReducer.servicesWithTaxInfoSelectList,
+        isLoadingUnitOfMeasuresOpts: state.UnitOfMeasureReducer.isLoadingUnitOfMeasuresOpts,
+        unitOfMeasuresSelectList: state.UnitOfMeasureReducer.unitOfMeasuresSelectList,
         orderForEdit: state.OrderReducer.orderForEdit
     }));
 
@@ -274,6 +291,21 @@ const AddOrEditJob = ({
     }, [isLoadingServicesWithTaxInfoOpts]);
 
     useEffect(() => {
+        if (!isLoadingUnitOfMeasuresOpts && !isEmpty(unitOfMeasuresSelectList)) {
+            const { result } = unitOfMeasuresSelectList;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setUnitOfMeasureOptions(result.items);
+            }
+        }
+    }, [unitOfMeasuresSelectList]);
+
+    useEffect(() => {
+        if (isLoadingUnitOfMeasuresOpts !== isLoadingUnitOfMeasures) {
+            setIsLoadingUnitOfMeasures(isLoadingUnitOfMeasuresOpts);
+        }
+    }, [isLoadingUnitOfMeasuresOpts]);
+
+    useEffect(() => {
         if (orderInfo === null && !isEmpty(orderForEdit)) {
             console.log('orderForEdit: ', orderForEdit)
             setOrderInfo(orderForEdit);
@@ -353,6 +385,13 @@ const AddOrEditJob = ({
                     skipCount: 0,
                 }));
             }
+
+            if (isEmpty(unitOfMeasuresSelectList)) {
+                dispatch(getUnitOfMeasuresSelectList({
+                    maxResultCount: 1000,
+                    skipCount: 0,
+                }));
+            }
         }
 
         setDesignation({
@@ -403,6 +442,13 @@ const AddOrEditJob = ({
 
     const handleServiceIdChange = (e, newValue) => {
         e.preventDefault();
+
+        setServiceId({
+            ...serviceId,
+            value: newValue,
+            error: false,
+            errorText: ''
+        });
     };
 
     const handleAddServiceOption = (e) => {
@@ -418,6 +464,17 @@ const AddOrEditJob = ({
                 500
             );
         }
+    };
+
+    const handleFreightUomIdChange = (e, newValue) => {
+        e.preventDefault();
+        
+        setFreightUomId({
+            ...freightUomId,
+            value: newValue,
+            error: false,
+            errorText: ''
+        });
     };
 
     const handleFreightLock = (e) => {
@@ -436,6 +493,8 @@ const AddOrEditJob = ({
 
         };
     };
+
+    console.log('userAppConfiguration: ', userAppConfiguration)
 
     return (
         <React.Fragment>
@@ -542,7 +601,7 @@ const AddOrEditJob = ({
                                             direction={{ xs: 'column', sm: 'row' }} 
                                             spacing={2}
                                         >
-                                            { userAppConfiguration.useShifts && shiftOptions && 
+                                            { userAppConfiguration.settings.useShifts && shiftOptions && 
                                                 <Autocomplete 
                                                     id='jobShift' 
                                                     options={shiftOptions} 
@@ -555,14 +614,18 @@ const AddOrEditJob = ({
                                                 />
                                             }
 
-                                            { locationId.initialized && 
+                                            { locationId.initialized && userAppConfiguration.features.allowMultiOffice &&
                                                 <Autocomplete
                                                     id='locationId' 
                                                     options={locationOptions} 
                                                     getOptionLabel={(option) => option.name} 
                                                     defaultValue={locationOptions[locationId.defaultValue]} 
                                                     renderInput={(params) => (
-                                                        <TextField {...params} label='Office' />
+                                                        <TextField 
+                                                            {...params} 
+                                                            label='Office' 
+                                                            disabled={orderInfo.isSingleOffice}
+                                                        />
                                                     )}
                                                     onChange={(e, value) => handleLocationChange(e, value.id)}
                                                     sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
@@ -599,7 +662,7 @@ const AddOrEditJob = ({
                                                                 </>
                                                             } 
                                                             error={designation.error}
-                                                            helperText={designation.errorText}
+                                                            helperText={designation.error ? designation.errorText : ''}
                                                         />
                                                     )} 
                                                     onChange={(e, value) => handleDesignationChange(e, value.key)}
@@ -717,7 +780,9 @@ const AddOrEditJob = ({
                                                                         variant='outlined' 
                                                                         value={newServiceOption} 
                                                                         onChange={(e) => setNewServiceOption(e.target.value)} 
-                                                                        emptyLabel=''
+                                                                        emptyLabel='' 
+                                                                        error={serviceId.error}
+                                                                        helperText={serviceId.error ? serviceId.errorText : ''}
                                                                         InputProps={{
                                                                             ...params.InputProps,
                                                                             endAdornment: (
@@ -742,21 +807,27 @@ const AddOrEditJob = ({
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                                    <Autocomplete
-                                                        id='freightUom' 
-                                                        options={FreightUom}
-                                                        renderInput={(params) => (
-                                                            <TextField
-                                                                {...params} 
-                                                                label={
-                                                                    <>
-                                                                        Freight UOM <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
-                                                                    </>
-                                                                }
-                                                            />
-                                                        )}
-                                                        sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
-                                                    />
+                                                    { !isLoadingUnitOfMeasures && 
+                                                        <Autocomplete
+                                                            id='freightUomId' 
+                                                            options={unitOfMeasureOptions} 
+                                                            getOptionLabel={(option) => option.name}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params} 
+                                                                    label={
+                                                                        <>
+                                                                            Freight UOM <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                                                                        </>
+                                                                    } 
+                                                                    error={freightUomId.error} 
+                                                                    helperText={freightUomId.error ? freightUomId.errorText : ''}
+                                                                />
+                                                            )} 
+                                                            onChange={(e, value) => handleFreightUomIdChange(e, value)}
+                                                            sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
+                                                        />
+                                                    }
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -780,7 +851,8 @@ const AddOrEditJob = ({
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                                     <FormControl
                                                         sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
-                                                        variant='outlined'>
+                                                        variant='outlined'
+                                                    >
                                                         <InputLabel htmlFor='freightInput'>Freight</InputLabel>
                                                         <OutlinedInput
                                                             id='freightInput'
@@ -810,6 +882,9 @@ const AddOrEditJob = ({
                                                             }}
                                                         />
                                                     </FormControl>
+                                                </Stack>
+
+                                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                                     <TextField
                                                         id='subContractorRate'
                                                         type='number'
@@ -817,8 +892,6 @@ const AddOrEditJob = ({
                                                         label='Sub-contractor Rate'
                                                         sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                     />
-                                                </Stack>
-                                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                                     <TextField
                                                         id='salesTaxRate'
                                                         type='number'
@@ -827,6 +900,7 @@ const AddOrEditJob = ({
                                                         sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
                                                     />
                                                 </Stack>
+
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                                     <TextField
                                                         id='requestedNumberOfTrucks'
@@ -840,6 +914,7 @@ const AddOrEditJob = ({
                                                         control={<Checkbox />}
                                                     />
                                                 </Stack>
+
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                                     <DemoContainer
                                                         sx={{ p: 0, flexBasis: { xs: '100%', sm: '50%' } }}
@@ -856,6 +931,7 @@ const AddOrEditJob = ({
                                                         sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                     />
                                                 </Stack>
+
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                                     <Autocomplete
                                                         id='priority'
@@ -866,6 +942,7 @@ const AddOrEditJob = ({
                                                         sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
                                                     />
                                                 </Stack>
+
                                                 <Stack direction='column' spacing={1}>
                                                     <TextField
                                                         id='note'
