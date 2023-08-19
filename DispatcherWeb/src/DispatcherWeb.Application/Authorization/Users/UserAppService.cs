@@ -422,6 +422,12 @@ namespace DispatcherWeb.Authorization.Users
                     throw new UserFriendlyException(L("CantRemoveDriverRoleBecauseOfDispatches"));
                 }
             }
+            if (input.AssignedRoleNames.Contains(StaticRoleNames.Tenants.Customer)
+                && !await UserManager.IsInRoleAsync(user, StaticRoleNames.Tenants.Customer)
+                && user.CustomerContactId == null)
+            {
+                throw new UserFriendlyException(L("AssigningCustomerRoleManuallyIsNotSupported"));
+            }
             CheckErrors(await UserManager.SetRolesAsync(user, input.AssignedRoleNames));
 
             await _driverUserLinkService.UpdateDriver(user);

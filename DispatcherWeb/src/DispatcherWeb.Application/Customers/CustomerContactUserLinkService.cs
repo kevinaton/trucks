@@ -92,6 +92,10 @@ namespace DispatcherWeb.CustomerContacts
             var user = await UserManager.FindByEmailAsync(customerContact.Email);
             if (user != null)
             {
+                if (user.CustomerContactId != null && user.CustomerContactId != customerContact.Id)
+                {
+                    throw new UserFriendlyException("A user with this email address is already associated with another customer contact. Please use a different email address.");
+                }
                 if (!await IsUserInCustomerRole(user))
                 {
                     await UserManager.AddToRoleAsync(user, StaticRoleNames.Tenants.Customer);
