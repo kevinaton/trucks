@@ -19,4 +19,5 @@ export * from './scheduling/actions';
 export * from './services/actions';
 export * from './trucks/actions';
 export * from './trailerAssignments/actions';
+export * from './unitsOfMeasure/actions';
 export * from './user/actions';

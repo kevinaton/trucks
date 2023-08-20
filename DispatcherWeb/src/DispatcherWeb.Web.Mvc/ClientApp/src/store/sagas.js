@@ -18,6 +18,7 @@ import schedulingSaga from './scheduling/saga';
 import serviceSaga from './services/saga';
 import trailerAssignmentSaga from './trailerAssignments/saga';
 import truckSaga from './trucks/saga';
+import unitOfMeasureSaga from './unitsOfMeasure/saga';
 import userSaga from './user/saga';
 import userLinkSaga from './authorization/users/userLink/saga';
 import userProfileSaga from './authorization/users/profile/saga';
@@ -43,6 +44,7 @@ export default function* rootSaga() {
         fork(serviceSaga),
         fork(trailerAssignmentSaga),
         fork(truckSaga),
+        fork(unitOfMeasureSaga),
         fork(userSaga),
         fork(userLinkSaga),
         fork(userProfileSaga)

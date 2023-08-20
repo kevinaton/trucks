@@ -14,6 +14,7 @@ import { tooltipClasses } from '@mui/material/Tooltip';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { theme } from '../../Theme';
 import AddOutOfServiceReason from '../../components/trucks/addOutOfServiceReason';
+import NoDriverForTruck from '../../components/orders/noDriverForTruck';
 import AddOrEditDriverForTruck from '../../components/scheduling/addOrEditDriverForTruck';
 import AddOrEditTrailer from '../../components/scheduling/addOrEditTrailer';
 import AddOrEditTractor from '../../components/scheduling/addOrEditTractor';
@@ -346,6 +347,12 @@ const TruckBlockItem = ({
     };
 
     const handleNoDriverForTruck = () => {
+        openModal(
+            <NoDriverForTruck 
+                closeModal={closeModal}
+            />,
+            400
+        );
         handleCloseMenu();
     };
 
@@ -610,7 +617,7 @@ const TruckBlockItem = ({
 
                 {/* No driver for truck */}
                 { !truck.isExternal && !truckHasNoDriver && truck.vehicleCategory.isPowered && !isPastDate(dataFilter.date) && 
-                    <MenuItem onClick={handleNoDriverForTruck}>No driver for truck</MenuItem>
+                    <MenuItem onClick={(e) => handleNoDriverForTruck(e)}>No driver for truck</MenuItem>
                 }
 
                 {/* Assign driver */}

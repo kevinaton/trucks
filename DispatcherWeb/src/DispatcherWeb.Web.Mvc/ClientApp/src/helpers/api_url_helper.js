@@ -80,6 +80,9 @@ export const GET_WIALON_DEVICE_TYPES_SELECT_LIST = '/TruckTelematics/GetWialonDe
 export const EDIT_TRUCK = '/Truck/EditTruck';
 export const SET_TRUCK_IS_OUT_OF_SERVICE = '/Truck/SetTruckIsOutOfService';
 
+//Units of Measure
+export const GET_UNITS_OF_MEASURE_SELECT_LIST = '/UnitOfMeasure/GetUnitsOfMeasureSelectList';
+
 //User
 export const GET_CURRENT_LOGIN_INFO = '/Session/GetCurrentLoginInformations';
 export const GET_USER_APP_SETTINGS = '/UserSettings/GetUserAppConfig';
