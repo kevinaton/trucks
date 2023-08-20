@@ -18,7 +18,7 @@ import SchedulingReducer from './scheduling/reducer';
 import ServiceReducer from './services/reducer';
 import TrailerAssignmentReducer from './trailerAssignments/reducer';
 import TruckReducer from './trucks/reducer';
-import UnitOfMeasureReducer from './unitOfMeasures/reducer';
+import UnitOfMeasureReducer from './unitsOfMeasure/reducer';
 import UserLinkReducer from './authorization/users/userLink/reducer';
 import UserProfileReducer from './authorization/users/profile/reducer';
 import UserReducer from './user/reducer';

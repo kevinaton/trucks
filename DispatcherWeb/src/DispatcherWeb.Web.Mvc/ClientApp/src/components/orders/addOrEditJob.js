@@ -35,7 +35,7 @@ import {
     getOrderForEdit, 
     getLocationsSelectList,
     getServicesWithTaxInfoSelectList,
-    getUnitOfMeasuresSelectList
+    getUnitsOfMeasureSelectList
 } from '../../store/actions';
 
 const { Customers, offices, Designation, Addresses, Items, FreightUom } = data;
@@ -56,7 +56,7 @@ const AddOrEditJob = ({
     const [deliverToOptions, setDeliverToOptions] = useState(null);
     const [isLoadingServices, setIsLoadingServices] = useState(false);
     const [serviceOptions, setServiceOptions] = useState(null);
-    const [isLoadingUnitOfMeasures, setIsLoadingUnitOfMeasures] = useState(false);
+    const [isLoadingUnitsOfMeasure, setIsLoadingUnitsOfMeasure] = useState(false);
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState(null);
     const [orderInfo, setOrderInfo] = useState(null);
 
@@ -182,7 +182,7 @@ const AddOrEditJob = ({
         isLoadingServicesWithTaxInfoOpts,
         servicesWithTaxInfoSelectList,
         isLoadingUnitOfMeasuresOpts,
-        unitOfMeasuresSelectList,
+        unitsOfMeasureSelectList,
         orderForEdit
     } = useSelector((state) => ({
         isLoadingActiveCustomersOpts: state.CustomerReducer.isLoadingActiveCustomersOpts,
@@ -195,7 +195,7 @@ const AddOrEditJob = ({
         isLoadingServicesWithTaxInfoOpts: state.ServiceReducer.isLoadingServicesWithTaxInfoOpts,
         servicesWithTaxInfoSelectList: state.ServiceReducer.servicesWithTaxInfoSelectList,
         isLoadingUnitOfMeasuresOpts: state.UnitOfMeasureReducer.isLoadingUnitOfMeasuresOpts,
-        unitOfMeasuresSelectList: state.UnitOfMeasureReducer.unitOfMeasuresSelectList,
+        unitsOfMeasureSelectList: state.UnitOfMeasureReducer.unitsOfMeasureSelectList,
         orderForEdit: state.OrderReducer.orderForEdit
     }));
 
@@ -291,17 +291,17 @@ const AddOrEditJob = ({
     }, [isLoadingServicesWithTaxInfoOpts]);
 
     useEffect(() => {
-        if (!isLoadingUnitOfMeasuresOpts && !isEmpty(unitOfMeasuresSelectList)) {
-            const { result } = unitOfMeasuresSelectList;
+        if (!isLoadingUnitOfMeasuresOpts && !isEmpty(unitsOfMeasureSelectList)) {
+            const { result } = unitsOfMeasureSelectList;
             if (!isEmpty(result) && !isEmpty(result.items)) {
                 setUnitOfMeasureOptions(result.items);
             }
         }
-    }, [unitOfMeasuresSelectList]);
+    }, [unitsOfMeasureSelectList]);
 
     useEffect(() => {
-        if (isLoadingUnitOfMeasuresOpts !== isLoadingUnitOfMeasures) {
-            setIsLoadingUnitOfMeasures(isLoadingUnitOfMeasuresOpts);
+        if (isLoadingUnitOfMeasuresOpts !== isLoadingUnitsOfMeasure) {
+            setIsLoadingUnitsOfMeasure(isLoadingUnitOfMeasuresOpts);
         }
     }, [isLoadingUnitOfMeasuresOpts]);
 
@@ -386,8 +386,8 @@ const AddOrEditJob = ({
                 }));
             }
 
-            if (isEmpty(unitOfMeasuresSelectList)) {
-                dispatch(getUnitOfMeasuresSelectList({
+            if (isEmpty(unitsOfMeasureSelectList)) {
+                dispatch(getUnitsOfMeasureSelectList({
                     maxResultCount: 1000,
                     skipCount: 0,
                 }));
@@ -807,7 +807,7 @@ const AddOrEditJob = ({
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                                    { !isLoadingUnitOfMeasures && 
+                                                    { !isLoadingUnitsOfMeasure && 
                                                         <Autocomplete
                                                             id='freightUomId' 
                                                             options={unitOfMeasureOptions} 

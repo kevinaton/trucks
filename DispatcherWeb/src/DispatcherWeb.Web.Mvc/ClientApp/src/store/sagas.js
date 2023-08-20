@@ -18,7 +18,7 @@ import schedulingSaga from './scheduling/saga';
 import serviceSaga from './services/saga';
 import trailerAssignmentSaga from './trailerAssignments/saga';
 import truckSaga from './trucks/saga';
-import unitOfMeasureSaga from './unitOfMeasures/saga';
+import unitOfMeasureSaga from './unitsOfMeasure/saga';
 import userSaga from './user/saga';
 import userLinkSaga from './authorization/users/userLink/saga';
 import userProfileSaga from './authorization/users/profile/saga';
