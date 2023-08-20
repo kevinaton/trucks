@@ -32,10 +32,11 @@ import { theme } from '../../Theme';
 import {
     getActiveCustomersSelectList, 
     getDesignationsSelectList, 
-    getOrderForEdit, 
     getLocationsSelectList,
     getServicesWithTaxInfoSelectList,
-    getUnitsOfMeasureSelectList
+    getUnitsOfMeasureSelectList,
+    getOrderPrioritySelectList,
+    getOrderForEdit, 
 } from '../../store/actions';
 
 const { Customers, offices, Designation, Addresses, Items, FreightUom } = data;
@@ -58,6 +59,8 @@ const AddOrEditJob = ({
     const [serviceOptions, setServiceOptions] = useState(null);
     const [isLoadingUnitsOfMeasure, setIsLoadingUnitsOfMeasure] = useState(false);
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState(null);
+    const [isLoadingOrderPriority, setIsLoadingOrderPriority] = useState(false);
+    const [orderPriorityOptions, setOrderPriorityOptions] = useState(null);
     const [orderInfo, setOrderInfo] = useState(null);
 
     const [id, setId] = useState(null);
@@ -183,6 +186,8 @@ const AddOrEditJob = ({
         servicesWithTaxInfoSelectList,
         isLoadingUnitOfMeasuresOpts,
         unitsOfMeasureSelectList,
+        isLoadingOrderPriorityOpts,
+        orderPrioritySelectList,
         orderForEdit
     } = useSelector((state) => ({
         isLoadingActiveCustomersOpts: state.CustomerReducer.isLoadingActiveCustomersOpts,
@@ -196,6 +201,8 @@ const AddOrEditJob = ({
         servicesWithTaxInfoSelectList: state.ServiceReducer.servicesWithTaxInfoSelectList,
         isLoadingUnitOfMeasuresOpts: state.UnitOfMeasureReducer.isLoadingUnitOfMeasuresOpts,
         unitsOfMeasureSelectList: state.UnitOfMeasureReducer.unitsOfMeasureSelectList,
+        isLoadingOrderPriorityOpts: state.OrderReducer.isLoadingOrderPriorityOpts,
+        orderPrioritySelectList: state.OrderReducer.orderPrioritySelectList,
         orderForEdit: state.OrderReducer.orderForEdit
     }));
 
@@ -306,6 +313,21 @@ const AddOrEditJob = ({
     }, [isLoadingUnitOfMeasuresOpts]);
 
     useEffect(() => {
+        if (!isLoadingOrderPriorityOpts && !isEmpty(orderPrioritySelectList)) {
+            const { result } = orderPrioritySelectList;
+            if (!isEmpty(result)) {
+                setOrderPriorityOptions(result);
+            }
+        }
+    }, [orderPrioritySelectList]);
+
+    useEffect(() => {
+        if (!isLoadingOrderPriorityOpts !== isLoadingOrderPriority) {
+            setIsLoadingOrderPriority(isLoadingOrderPriorityOpts);
+        }
+    }, [isLoadingOrderPriorityOpts]);
+
+    useEffect(() => {
         if (orderInfo === null && !isEmpty(orderForEdit)) {
             console.log('orderForEdit: ', orderForEdit)
             setOrderInfo(orderForEdit);
@@ -391,6 +413,10 @@ const AddOrEditJob = ({
                     maxResultCount: 1000,
                     skipCount: 0,
                 }));
+            }
+
+            if (isEmpty(orderPrioritySelectList)) {
+                dispatch(getOrderPrioritySelectList());
             }
         }
 
@@ -933,14 +959,17 @@ const AddOrEditJob = ({
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                                    <Autocomplete
-                                                        id='priority'
-                                                        options={priorityTypes}
-                                                        renderInput={(params) => (
-                                                            <TextField {...params} label='Priority' />
-                                                        )}
-                                                        sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
-                                                    />
+                                                    { !isLoadingOrderPriority && 
+                                                        <Autocomplete
+                                                            id='priority'
+                                                            options={orderPriorityOptions} 
+                                                            getOptionLabel={(option) => option.value}
+                                                            renderInput={(params) => (
+                                                                <TextField {...params} label='Priority' />
+                                                            )}
+                                                            sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
+                                                        />
+                                                    }
                                                 </Stack>
 
                                                 <Stack direction='column' spacing={1}>
