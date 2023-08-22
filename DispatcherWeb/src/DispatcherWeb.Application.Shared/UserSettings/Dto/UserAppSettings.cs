@@ -11,5 +11,6 @@
         public bool AllowCounterSales { get; set; }
         public bool ShowLeaseHaulerRateOnOrder { get; set; }
         public bool UseShifts { get; set; }
+        public bool AllowProductionPay { get; set; }
     }
 }

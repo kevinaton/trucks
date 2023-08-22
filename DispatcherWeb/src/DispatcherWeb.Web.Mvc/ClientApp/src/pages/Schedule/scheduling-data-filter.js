@@ -114,6 +114,7 @@ const SchedulingDataFilter = ({
         openModal(
             <AddOrEditJob 
                 userAppConfiguration={userAppConfiguration} 
+                dataFilter={dataFilter}
                 openModal={openModal}
                 closeModal={closeModal}
             />,
