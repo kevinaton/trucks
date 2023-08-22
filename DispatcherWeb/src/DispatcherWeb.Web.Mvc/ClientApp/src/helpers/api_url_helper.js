@@ -52,6 +52,7 @@ export const UPDATE_USER_NOTIFICATION_SETTINGS = '/Notification/UpdateNotificati
 export const GET_OFFICES = '/Office/GetOfficesSelectList';
 
 //Orders
+export const GET_ORDER_PRIORITY_SELECT_LIST = '/Order/GetOrderPrioritySelectList';
 export const GET_ORDER_FOR_EDIT = '/Order/GetOrderForEdit';
 
 //Scheduling

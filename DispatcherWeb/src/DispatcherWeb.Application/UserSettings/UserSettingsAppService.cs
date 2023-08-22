@@ -48,6 +48,7 @@ namespace DispatcherWeb.UserSettings
                     AllowSendingOrdersToDifferentTenant = await base.IsEnabledAsync(AppFeatures.AllowSendingOrdersToDifferentTenant),
                     AllowImportingTruxEarnings = await base.IsEnabledAsync(AppFeatures.AllowImportingTruxEarnings),
                     LeaseHaulers = await base.IsEnabledAsync(AppFeatures.AllowLeaseHaulersFeature),
+                    DriverProductionPayFeature = await base.IsEnabledAsync(AppFeatures.DriverProductionPayFeature)
                 },
                 Settings = new UserAppSettings
                 {
@@ -61,7 +62,8 @@ namespace DispatcherWeb.UserSettings
                         await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.AllowCounterSalesForUser) &&
                         await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.AllowCounterSalesForTenant),
                     ShowLeaseHaulerRateOnOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.LeaseHaulers.ShowLeaseHaulerRateOnOrder),
-                    UseShifts = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.General.UseShifts)
+                    UseShifts = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.General.UseShifts),
+                    AllowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.TimeAndPay.AllowProductionPay)
                 }
             };
 

@@ -1,4 +1,5 @@
-﻿INSERT INTO dbo.AbpRoles
+﻿INSERT INTO dbo.AbpRoles 
+(DisplayName, IsStatic, IsDefault, TenantId, Name, IsDeleted, DeleterUserId, DeletionTime, LastModificationTime, LastModifierUserId, CreationTime, CreatorUserId, ConcurrencyStamp, NormalizedName)
 SELECT 'Customer'[DisplayName]
 		, 1[IsStatic]
 		, 0[IsDefault]

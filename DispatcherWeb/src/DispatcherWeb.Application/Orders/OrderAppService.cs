@@ -175,6 +175,12 @@ namespace DispatcherWeb.Orders
             _logoProvider = logoProvider;
         }
 
+        [AbpAuthorize(AppPermissions.Pages_Orders_Edit)]
+        public async Task<IList<KeyValuePair<int, string>>> GetOrderPrioritySelectList()
+        {
+            return AppServiceExtensions.EnumToIntList<OrderPriority>();
+        }
+
         [AbpAuthorize(AppPermissions.Pages_Orders_View)]
         public async Task<PagedResultDto<OrderDto>> GetOrders(GetOrdersInput input)
         {

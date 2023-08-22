@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using DispatcherWeb.Dispatching.Dto;
@@ -11,6 +12,7 @@ namespace DispatcherWeb.Orders
 {
     public interface IOrderAppService : IApplicationService
     {
+        Task<IList<KeyValuePair<int, string>>> GetOrderPrioritySelectList();
         Task<PagedResultDto<OrderDto>> GetOrders(GetOrdersInput input);
         Task<OrderEditDto> GetOrderForEdit(NullableIdDto input);
         Task<EditOrderResult> EditOrder(OrderEditDto model);

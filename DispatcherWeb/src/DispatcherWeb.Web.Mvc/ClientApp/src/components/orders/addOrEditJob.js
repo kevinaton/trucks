@@ -25,6 +25,7 @@ import _, { isEmpty } from 'lodash';
 import AddOrEditCustomer from '../customers/addOrEditCustomer';
 import AddOrEditLocation from '../locations/addOrEditLocation';
 import AddOrEditService from '../services/addOrEditService';
+import App from '../../config/appConfig';
 import data from '../../common/data/data.json';
 import { renderDate } from '../../helpers/misc_helper';
 import { grey } from '@mui/material/colors';
@@ -32,16 +33,19 @@ import { theme } from '../../Theme';
 import {
     getActiveCustomersSelectList, 
     getDesignationsSelectList, 
-    getOrderForEdit, 
     getLocationsSelectList,
     getServicesWithTaxInfoSelectList,
-    getUnitsOfMeasureSelectList
+    getVehicleCategories,
+    getUnitsOfMeasureSelectList,
+    getOrderPrioritySelectList,
+    getOrderForEdit, 
 } from '../../store/actions';
 
 const { Customers, offices, Designation, Addresses, Items, FreightUom } = data;
 
 const AddOrEditJob = ({ 
     userAppConfiguration, 
+    dataFilter,
     openModal,
     closeModal
 }) => {
@@ -56,9 +60,14 @@ const AddOrEditJob = ({
     const [deliverToOptions, setDeliverToOptions] = useState(null);
     const [isLoadingServices, setIsLoadingServices] = useState(false);
     const [serviceOptions, setServiceOptions] = useState(null);
+    const [vehicleCategoryOptions, setVehicleCategoryOptions] = useState(null);
     const [isLoadingUnitsOfMeasure, setIsLoadingUnitsOfMeasure] = useState(false);
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState(null);
+    const [isLoadingOrderPriority, setIsLoadingOrderPriority] = useState(false);
+    const [orderPriorityOptions, setOrderPriorityOptions] = useState(null);
     const [orderInfo, setOrderInfo] = useState(null);
+    const [enableMaterialFields, setEnableMaterialFields] = useState(false);
+    const [enableFreightFields, setEnableFreightFields] = useState(false);
 
     const [id, setId] = useState(null);
     const [orderId, setOrderId] = useState(null);
@@ -124,9 +133,22 @@ const AddOrEditJob = ({
         error: false,
         errorText: ''
     });
-    const [materialUomId, setMaterialUomId] = useState('');
-    const [freightPricePerUnit, setFreightPricePerUnit] = useState('');
-    const [materialPricePerUnit, setMaterialPricePerUnit] = useState('');
+    const [materialUomId, setMaterialUomId] = useState({
+        value: '',
+        required: true,
+        error: false,
+        errorText: ''
+    });
+    const [freightPricePerUnit, setFreightPricePerUnit] = useState({
+        value: '',
+        error: false,
+        errorText: ''
+    });
+    const [materialPricePerUnit, setMaterialPricePerUnit] = useState({
+        value: '',
+        error: false,
+        errorText: ''
+    });
     const [productionPay, setProductionPay] = useState('');
     const [freightRateToPayDrivers, setFreightRateToPayDrivers] = useState(false);
     const [loadBased, setLoadBased] = useState(false);
@@ -152,7 +174,8 @@ const AddOrEditJob = ({
     const [baseFuelCost, setBaseFuelCost] = useState('');
     const [autoGenerateTicketNumber, setAutoGenerateTicketNumber] = useState(false);
     const [ticketNumber, setTicketNumber] = useState('');
-    
+    const [selectedVehicleCategories, setSelectedVehicleCategories] = useState([]);
+
     const [item, setItem] = useState('');
     const [materialUom, setMaterialUom] = useState('');
     const [materialRate, setMaterialRate] = useState('');
@@ -181,8 +204,11 @@ const AddOrEditJob = ({
         locationsSelectList,
         isLoadingServicesWithTaxInfoOpts,
         servicesWithTaxInfoSelectList,
+        vehicleCategories,
         isLoadingUnitOfMeasuresOpts,
         unitsOfMeasureSelectList,
+        isLoadingOrderPriorityOpts,
+        orderPrioritySelectList,
         orderForEdit
     } = useSelector((state) => ({
         isLoadingActiveCustomersOpts: state.CustomerReducer.isLoadingActiveCustomersOpts,
@@ -194,8 +220,11 @@ const AddOrEditJob = ({
         locationsSelectList: state.LocationReducer.locationsSelectList,
         isLoadingServicesWithTaxInfoOpts: state.ServiceReducer.isLoadingServicesWithTaxInfoOpts,
         servicesWithTaxInfoSelectList: state.ServiceReducer.servicesWithTaxInfoSelectList,
+        vehicleCategories: state.TruckReducer.vehicleCategories,
         isLoadingUnitOfMeasuresOpts: state.UnitOfMeasureReducer.isLoadingUnitOfMeasuresOpts,
         unitsOfMeasureSelectList: state.UnitOfMeasureReducer.unitsOfMeasureSelectList,
+        isLoadingOrderPriorityOpts: state.OrderReducer.isLoadingOrderPriorityOpts,
+        orderPrioritySelectList: state.OrderReducer.orderPrioritySelectList,
         orderForEdit: state.OrderReducer.orderForEdit
     }));
 
@@ -291,6 +320,15 @@ const AddOrEditJob = ({
     }, [isLoadingServicesWithTaxInfoOpts]);
 
     useEffect(() => {
+        if (!isEmpty(vehicleCategories) && !isEmpty(vehicleCategories.result)) {
+            const { result } = vehicleCategories;
+            if (!isEmpty(result) && !isEmpty(result.items)) {
+                setVehicleCategoryOptions(result.items);
+            }
+        }
+    }, [vehicleCategories]);
+
+    useEffect(() => {
         if (!isLoadingUnitOfMeasuresOpts && !isEmpty(unitsOfMeasureSelectList)) {
             const { result } = unitsOfMeasureSelectList;
             if (!isEmpty(result) && !isEmpty(result.items)) {
@@ -306,12 +344,43 @@ const AddOrEditJob = ({
     }, [isLoadingUnitOfMeasuresOpts]);
 
     useEffect(() => {
+        if (!isLoadingOrderPriorityOpts && !isEmpty(orderPrioritySelectList)) {
+            const { result } = orderPrioritySelectList;
+            if (!isEmpty(result)) {
+                setOrderPriorityOptions(result);
+            }
+        }
+    }, [orderPrioritySelectList]);
+
+    useEffect(() => {
+        if (!isLoadingOrderPriorityOpts !== isLoadingOrderPriority) {
+            setIsLoadingOrderPriority(isLoadingOrderPriorityOpts);
+        }
+    }, [isLoadingOrderPriorityOpts]);
+
+    useEffect(() => {
         if (orderInfo === null && !isEmpty(orderForEdit)) {
             console.log('orderForEdit: ', orderForEdit)
             setOrderInfo(orderForEdit);
             setId(orderForEdit.id);
+
+            if (!isEmpty(dataFilter)) {
+                setDeliveryDate({
+                    ...deliveryDate,
+                    value: moment(dataFilter.date)
+                });
+            }
         }
     }, [orderInfo, orderForEdit]);
+
+    const designationHasMaterial = (selectedDesignation) => {
+        console.log('designation: ', selectedDesignation)
+        return App.Enums.Designations.hasMaterial.includes(selectedDesignation);
+    };
+
+    const designationIsMaterialOnly = (selectedDesignation) => {
+        return App.Enums.Designations.materialOnly.includes(selectedDesignation);
+    };
 
     const handleDeliveryDateChange = (newDate) => {
         setDeliveryDate({
@@ -365,7 +434,11 @@ const AddOrEditJob = ({
 
     const handleJobNumberChange = (e) => {
         e.preventDefault();
-        setJobNumber(e.target.value);
+        
+        const inputValue = e.target.value;
+        if (inputValue.length <= 20) {
+            setJobNumber(inputValue);
+        }
     };
 
     const handleDesignationChange = (e, newValue) => {
@@ -386,11 +459,34 @@ const AddOrEditJob = ({
                 }));
             }
 
+            if (isEmpty(vehicleCategories)) {
+                dispatch(getVehicleCategories({
+                    maxResultCount: 1000,
+                    skipCount: 0
+                }));
+            }
+
             if (isEmpty(unitsOfMeasureSelectList)) {
                 dispatch(getUnitsOfMeasureSelectList({
                     maxResultCount: 1000,
                     skipCount: 0,
                 }));
+            }
+
+            if (isEmpty(orderPrioritySelectList)) {
+                dispatch(getOrderPrioritySelectList());
+            }
+
+            if (designationHasMaterial(newValue)) {
+                setEnableMaterialFields(true);
+            } else {
+                setEnableMaterialFields(false);
+            }
+    
+            if (designationIsMaterialOnly(newValue)) {
+                setEnableFreightFields(false);
+            } else {
+                setEnableFreightFields(true);
             }
         }
 
@@ -404,6 +500,7 @@ const AddOrEditJob = ({
 
     const handleLoadAtIdChange = (e, newValue) => {
         e.preventDefault();
+        setLoadAtId(newValue);
     };
 
     const handleAddLoadAtOption = (e) => {
@@ -423,6 +520,7 @@ const AddOrEditJob = ({
 
     const handleDeliverToIdChange = (e, newValue) => {
         e.preventDefault();
+        setDeliverToId(newValue);
     };
 
     const handleAddDeliverToOption = (e) => {
@@ -466,6 +564,11 @@ const AddOrEditJob = ({
         }
     };
 
+    const handleSelectVehicleCategory = (e, newValue) => {
+        e.preventDefault();
+        setSelectedVehicleCategories(newValue);
+    };
+
     const handleFreightUomIdChange = (e, newValue) => {
         e.preventDefault();
         
@@ -477,8 +580,71 @@ const AddOrEditJob = ({
         });
     };
 
+    const handleFreightPricePerUnitChange = (e) => {
+        e.preventDefault();
+
+        const inputValue = parseFloat(e.target.value);
+        const minValue = 0;
+        const maxValue = 999999999999999;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Value must be greater than or equal to ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Value must be less than or equal to ${maxValue}`;
+        }
+
+        setFreightPricePerUnit({
+            ...freightPricePerUnit,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        });
+    };
+
     const handleFreightLock = (e) => {
         setIsLock(!isLock);
+    };
+
+    const handleMaterialUomIdChange = (e, newValue) => { 
+        e.preventDefault();
+        
+        setMaterialUomId({
+            ...materialUomId,
+            value: newValue,
+            error: false,
+            errorText: ''
+        });
+    };
+
+    const handleMaterialPricePerUnitChange = (e) => {
+        e.preventDefault();
+
+        const inputValue = parseFloat(e.target.value);
+        const minValue = 0;
+        const maxValue = 999999999999999;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Value must be greater than or equal to ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Value must be less than or equal to ${maxValue}`;
+        }
+
+        setMaterialPricePerUnit({
+            ...materialPricePerUnit,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        })
     };
 
     const handleCancel = () => {
@@ -489,8 +655,40 @@ const AddOrEditJob = ({
     const handleSave = (e) => {
         e.preventDefault();
 
-        const data = {
+        if (deliveryDate.required && !deliveryDate.value) {
+            setDeliveryDate({
+                ...deliveryDate,
+                error: true
+            });
+            return;
+        }
 
+        if (customerId.required && !customerId.value) {
+            setCustomerId({
+                ...customerId,
+                error: true
+            });
+            return;
+        }
+
+        if (designation.required && !designation.value) {
+            setDesignation({
+                ...designation,
+                error: true
+            });
+            return;
+        }
+
+        if (serviceId.required && !serviceId.value) {
+            setServiceId({
+                ...serviceId,
+                error: true
+            });
+            return;
+        }
+
+        const data = {
+            
         };
     };
 
@@ -801,87 +999,199 @@ const AddOrEditJob = ({
                                                                 </div>
                                                             )} 
                                                             onChange={(e, value) => handleServiceIdChange(e, value)}
-                                                            sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
+                                                        />
+                                                    }
+                                                    
+                                                    { userAppConfiguration.settings.allowSpecifyingTruckAndTrailerCategoriesOnQuotesAndOrders && vehicleCategoryOptions &&
+                                                        <Autocomplete 
+                                                            multiple 
+                                                            id='vehicleCategories' 
+                                                            options={vehicleCategoryOptions} 
+                                                            getOptionLabel={(option) => option.name} 
+                                                            filterSelectedOptions 
+                                                            renderInput={(params) => (
+                                                                <TextField 
+                                                                    {...params} 
+                                                                    label='Truck/Trailer Category' 
+                                                                />
+                                                            )} 
+                                                            onChange={(e, value) => handleSelectVehicleCategory(e, value)}
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                         />
                                                     }
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                                     { !isLoadingUnitsOfMeasure && 
-                                                        <Autocomplete
-                                                            id='freightUomId' 
-                                                            options={unitOfMeasureOptions} 
-                                                            getOptionLabel={(option) => option.name}
-                                                            renderInput={(params) => (
-                                                                <TextField
-                                                                    {...params} 
-                                                                    label={
-                                                                        <>
-                                                                            Freight UOM <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
-                                                                        </>
-                                                                    } 
-                                                                    error={freightUomId.error} 
-                                                                    helperText={freightUomId.error ? freightUomId.errorText : ''}
+                                                        <React.Fragment>
+                                                            { enableFreightFields && 
+                                                                <Autocomplete
+                                                                    id='freightUomId' 
+                                                                    options={unitOfMeasureOptions} 
+                                                                    getOptionLabel={(option) => option.name}
+                                                                    renderInput={(params) => (
+                                                                        <TextField {...params} 
+                                                                            label={
+                                                                                <>
+                                                                                    Freight UOM <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                                                                                </>
+                                                                            } 
+                                                                            error={freightUomId.error} 
+                                                                            helperText={freightUomId.error ? freightUomId.errorText : ''}
+                                                                        />
+                                                                    )} 
+                                                                    onChange={(e, value) => handleFreightUomIdChange(e, value)}
+                                                                    sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                                 />
-                                                            )} 
-                                                            onChange={(e, value) => handleFreightUomIdChange(e, value)}
-                                                            sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
+                                                            }
+
+                                                            { enableMaterialFields && 
+                                                                <Autocomplete 
+                                                                    id='materialUomId'
+                                                                    options={unitOfMeasureOptions} 
+                                                                    getOptionLabel={(option) => option.name} 
+                                                                    renderInput={(params) => (
+                                                                        <TextField {...params} 
+                                                                            label={
+                                                                                <>
+                                                                                    Material UOM <span style={{ marginLeft: '5px', color: 'red' }}>*</span>
+                                                                                </>
+                                                                            } 
+                                                                            error={materialUomId.error}
+                                                                            helperText={materialUomId.error ? materialUomId.errorText : ''}
+                                                                        />
+                                                                    )}
+                                                                    onChange={(e, value) => handleMaterialUomIdChange(e, value)}
+                                                                    sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
+                                                                />
+                                                            }
+                                                        </React.Fragment>
+                                                    }
+                                                </Stack>
+
+                                                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                                                    { enableFreightFields &&
+                                                        <TextField
+                                                            id='freightPricePerUnit'
+                                                            type='number'
+                                                            variant='outlined'
+                                                            label='Freight Rate' 
+                                                            onChange={(e) => handleFreightPricePerUnitChange(e)} 
+                                                            error={freightPricePerUnit.error} 
+                                                            helperText={freightPricePerUnit.error ? freightPricePerUnit.errorText : ''}
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
+                                                        />
+                                                    }
+
+                                                    { enableMaterialFields && 
+                                                        <TextField
+                                                            id='materialPricePerUnit'
+                                                            type='number'
+                                                            variant='outlined'
+                                                            label='Material Rate' 
+                                                            onChange={(e) => handleMaterialPricePerUnitChange(e)} 
+                                                            error={materialPricePerUnit.error} 
+                                                            helperText={materialPricePerUnit.error ? materialPricePerUnit.errorText : ''}
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                         />
                                                     }
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                                    <TextField
-                                                        id='freightRate'
-                                                        type='number'
-                                                        variant='outlined'
-                                                        label='Freight Rate'
-                                                        sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
-                                                    />
+                                                    { enableFreightFields && 
+                                                        <TextField
+                                                            id='freightQty'
+                                                            type='number'
+                                                            variant='outlined'
+                                                            label='Freight Qty'
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
+                                                        />
+                                                    }
 
-                                                    <TextField
-                                                        id='freightQty'
-                                                        type='number'
-                                                        variant='outlined'
-                                                        label='Freight Qty'
-                                                        sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
-                                                    />
+                                                    { enableMaterialFields && 
+                                                        <TextField
+                                                            id='materialQty'
+                                                            type='number'
+                                                            variant='outlined'
+                                                            label='Material Qty'
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
+                                                        />
+                                                    }
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                                    <FormControl
-                                                        sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
-                                                        variant='outlined'
-                                                    >
-                                                        <InputLabel htmlFor='freightInput'>Freight</InputLabel>
-                                                        <OutlinedInput
-                                                            id='freightInput'
-                                                            disabled={isLock}
-                                                            type='number'
+                                                    { enableFreightFields && 
+                                                        <FormControl
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                             variant='outlined'
-                                                            label='Freight'
-                                                            endAdornment={
-                                                                <InputAdornment position='end'>
-                                                                    <IconButton
-                                                                        aria-label='toggle-lock-freight'
-                                                                        onClick={handleFreightLock}
-                                                                        edge='end'>
-                                                                        {isLock ? (
-                                                                            <i className='fa-regular fa-lock'></i>
-                                                                        ) : (
-                                                                            <i className='fa-regular fa-lock-open'></i>
-                                                                        )}
-                                                                    </IconButton>
-                                                                </InputAdornment>
-                                                            }
-                                                            sx={{
-                                                                backgroundColor:
-                                                                    isLock === true
-                                                                        ? theme.palette.secondary.main
-                                                                        : '#ffffff',
-                                                            }}
-                                                        />
-                                                    </FormControl>
+                                                        >
+                                                            <InputLabel htmlFor='freightInput'>Freight</InputLabel>
+                                                            <OutlinedInput
+                                                                id='freightInput'
+                                                                disabled={isLock}
+                                                                type='number'
+                                                                variant='outlined'
+                                                                label='Freight'
+                                                                endAdornment={
+                                                                    <InputAdornment position='end'>
+                                                                        <IconButton
+                                                                            aria-label='toggle-lock-freight'
+                                                                            onClick={handleFreightLock}
+                                                                            edge='end'>
+                                                                            {isLock ? (
+                                                                                <i className='fa-regular fa-lock'></i>
+                                                                            ) : (
+                                                                                <i className='fa-regular fa-lock-open'></i>
+                                                                            )}
+                                                                        </IconButton>
+                                                                    </InputAdornment>
+                                                                }
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        isLock === true
+                                                                            ? theme.palette.secondary.main
+                                                                            : '#ffffff',
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                    }
+
+                                                    { enableMaterialFields && 
+                                                        <FormControl
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
+                                                            variant='outlined'
+                                                        >
+                                                            <InputLabel htmlFor='materialInput'>Material</InputLabel>
+                                                            <OutlinedInput
+                                                                id='materialInput'
+                                                                disabled={isLock}
+                                                                type='number'
+                                                                variant='outlined'
+                                                                label='Material'
+                                                                endAdornment={
+                                                                    <InputAdornment position='end'>
+                                                                        <IconButton
+                                                                            aria-label='toggle-lock-material'
+                                                                            onClick={handleFreightLock}
+                                                                            edge='end'>
+                                                                            {isLock ? (
+                                                                                <i className='fa-regular fa-lock'></i>
+                                                                            ) : (
+                                                                                <i className='fa-regular fa-lock-open'></i>
+                                                                            )}
+                                                                        </IconButton>
+                                                                    </InputAdornment>
+                                                                }
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        isLock === true
+                                                                            ? theme.palette.secondary.main
+                                                                            : '#ffffff',
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                    }
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -933,14 +1243,17 @@ const AddOrEditJob = ({
                                                 </Stack>
 
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                                                    <Autocomplete
-                                                        id='priority'
-                                                        options={priorityTypes}
-                                                        renderInput={(params) => (
-                                                            <TextField {...params} label='Priority' />
-                                                        )}
-                                                        sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
-                                                    />
+                                                    { !isLoadingOrderPriority && 
+                                                        <Autocomplete
+                                                            id='priority'
+                                                            options={orderPriorityOptions} 
+                                                            getOptionLabel={(option) => option.value}
+                                                            renderInput={(params) => (
+                                                                <TextField {...params} label='Priority' />
+                                                            )}
+                                                            sx={{ flexBasis: { xs: '100%', sm: '49%' } }}
+                                                        />
+                                                    }
                                                 </Stack>
 
                                                 <Stack direction='column' spacing={1}>
