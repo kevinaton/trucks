@@ -150,12 +150,26 @@ const AddOrEditJob = ({
         errorText: ''
     });
     const [productionPay, setProductionPay] = useState('');
-    const [freightRateToPayDrivers, setFreightRateToPayDrivers] = useState(false);
+    const [freightRateToPayDrivers, setFreightRateToPayDrivers] = useState({
+        value: '',
+        error: false,
+        errorText: ''
+    });
     const [loadBased, setLoadBased] = useState(false);
-    const [freightQuantity, setFreightQuantity] = useState('');
-    const [materialQuantity, setMaterialQuantity] = useState('');
+    const [freightQuantity, setFreightQuantity] = useState({
+        value: '',
+        error: false,
+        errorText: ''
+    });
+    const [materialQuantity, setMaterialQuantity] = useState({
+        value: '',
+        error: false,
+        errorText: ''
+    });
     const [freightPrice, setFreightPrice] = useState('');
+    const [isFreightPriceLock, setIsFreightPriceLock] = useState(false);
     const [materialPrice, setMaterialPrice] = useState('');
+    const [isMaterialPriceLock, setIsMaterialPriceLock] = useState(false);
     const [leaseHaulerRate, setLeaseHaulerRate] = useState('');
     const [salesTaxRate, setSalesTaxRate] = useState('');
     const [numberOfTrucks, setNumberOfTrucks] = useState('');
@@ -186,7 +200,6 @@ const AddOrEditJob = ({
     const [isRequireNotification, setIsRequireNotification] = useState(false);
 
     const priorityTypes = ['High', 'Medium', 'Low'];
-    const [isLock, setIsLock] = useState(false);
 
     const [newCustomerOption, setNewCustomerOption] = useState('');
     const [newLoadAtOption, setNewLoadAtOption] = useState('');
@@ -606,8 +619,14 @@ const AddOrEditJob = ({
         });
     };
 
-    const handleFreightLock = (e) => {
-        setIsLock(!isLock);
+    const handleFreightPriceLock = (e) => {
+        setIsFreightPriceLock(!isFreightPriceLock);
+        setIsFreightPricePerUnitOverridden(!isFreightPriceOverridden)
+    };
+
+    const handleMaterialPriceLock = (e) => {
+        setIsMaterialPriceLock(!isMaterialPriceLock);
+        setIsMaterialPricePerUnitOverridden(!isMaterialPriceOverridden)
     };
 
     const handleMaterialUomIdChange = (e, newValue) => { 
@@ -645,6 +664,84 @@ const AddOrEditJob = ({
             error: isNotValid,
             errorText: errMsg
         })
+    };
+
+    const handleFreightRateToPayDriversChange = (e) => {
+        e.preventDefault();
+        
+        const inputValue = parseFloat(e.target.value);
+        const minValue = 0;
+        const maxValue = 999999999999999;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Value must be greater than or equal to ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Value must be less than or equal to ${maxValue}`;
+        }
+
+        setFreightRateToPayDrivers({
+            ...freightRateToPayDrivers,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        });
+    };
+
+    const handleFreightQtyChange = (e) => {
+        e.preventDefault();
+        
+        const inputValue = parseInt(e.target.value);
+        const minValue = 0;
+        const maxValue = 1000000;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Value must be greater than or equal to ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Value must be less than or equal to ${maxValue}`;
+        }
+
+        setFreightQuantity({
+            ...freightQuantity,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        });
+    };
+
+    const handleMaterialQtyChange = (e) => {
+        e.preventDefault();
+
+        const inputValue = parseInt(e.target.value);
+        const minValue = 0;
+        const maxValue = 1000000;
+
+        let isNotValid = false;
+        let errMsg = '';
+
+        if (inputValue < minValue) {
+            isNotValid = true;
+            errMsg = `Value must be greater than or equal to ${minValue}`;
+        } else if (inputValue > maxValue) {
+            isNotValid = true;
+            errMsg = `Value must be less than or equal to ${maxValue}`;
+        }
+
+        setMaterialQuantity({
+            ...materialQuantity,
+            value: !isNaN(inputValue) ? inputValue : '',
+            error: isNotValid,
+            errorText: errMsg
+        });
     };
 
     const handleCancel = () => {
@@ -1098,13 +1195,39 @@ const AddOrEditJob = ({
                                                     }
                                                 </Stack>
 
+                                                { userAppConfiguration.settings.allowProductionPay && userAppConfiguration.features.driverProductionPayFeature && 
+                                                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                                                        <TextField 
+                                                            id='freightRateToPayDrivers' 
+                                                            type='number' 
+                                                            variant='outlined' 
+                                                            label='Freight Rate for Driver Pay' 
+                                                            onChange={(e) => handleFreightRateToPayDriversChange(e)} 
+                                                            error={freightRateToPayDrivers.error}
+                                                            helperText={freightRateToPayDrivers.error ? freightRateToPayDrivers.errorText : ''}
+                                                            sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
+                                                        />
+                                                        
+                                                        <FormControlLabel
+                                                            label='Load-based'
+                                                            control={
+                                                                <Checkbox 
+                                                                    checked 
+                                                                    onChange={(e) => setLoadBased(e.target.checked)} 
+                                                                />
+                                                            }
+                                                        />
+                                                    </Stack>
+                                                }
+
                                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                                                     { enableFreightFields && 
                                                         <TextField
                                                             id='freightQty'
                                                             type='number'
                                                             variant='outlined'
-                                                            label='Freight Qty'
+                                                            label='Freight Qty' 
+                                                            onChange={(e) => handleFreightQtyChange(e)}
                                                             sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                         />
                                                     }
@@ -1114,7 +1237,8 @@ const AddOrEditJob = ({
                                                             id='materialQty'
                                                             type='number'
                                                             variant='outlined'
-                                                            label='Material Qty'
+                                                            label='Material Qty' 
+                                                            onChange={(e) => handleMaterialQtyChange(e)}
                                                             sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                         />
                                                     }
@@ -1129,29 +1253,29 @@ const AddOrEditJob = ({
                                                             <InputLabel htmlFor='freightInput'>Freight</InputLabel>
                                                             <OutlinedInput
                                                                 id='freightInput'
-                                                                disabled={isLock}
+                                                                disabled={orderForEdit.canOverrideTotals && isFreightPriceOverridden ? null : 'disabled'}
                                                                 type='number'
                                                                 variant='outlined'
                                                                 label='Freight'
                                                                 endAdornment={
-                                                                    <InputAdornment position='end'>
-                                                                        <IconButton
-                                                                            aria-label='toggle-lock-freight'
-                                                                            onClick={handleFreightLock}
-                                                                            edge='end'>
-                                                                            {isLock ? (
-                                                                                <i className='fa-regular fa-lock'></i>
-                                                                            ) : (
-                                                                                <i className='fa-regular fa-lock-open'></i>
-                                                                            )}
-                                                                        </IconButton>
-                                                                    </InputAdornment>
+                                                                    orderForEdit.canOverrideTotals ?  
+                                                                        <InputAdornment position='end'>
+                                                                            <IconButton
+                                                                                aria-label='toggle-lock-freight'
+                                                                                onClick={handleFreightPriceLock}
+                                                                                edge='end'>
+                                                                                { isFreightPriceLock ? (
+                                                                                    <i className='fa-regular fa-lock'></i>
+                                                                                ) : (
+                                                                                    <i className='fa-regular fa-lock-open'></i>
+                                                                                )}
+                                                                            </IconButton>
+                                                                        </InputAdornment>
+                                                                    : null
                                                                 }
-                                                                sx={{
-                                                                    backgroundColor:
-                                                                        isLock === true
-                                                                            ? theme.palette.secondary.main
-                                                                            : '#ffffff',
+                                                                sx={{ backgroundColor: isFreightPriceLock === true
+                                                                    ? theme.palette.secondary.main
+                                                                    : '#ffffff',
                                                                 }}
                                                             />
                                                         </FormControl>
@@ -1165,27 +1289,29 @@ const AddOrEditJob = ({
                                                             <InputLabel htmlFor='materialInput'>Material</InputLabel>
                                                             <OutlinedInput
                                                                 id='materialInput'
-                                                                disabled={isLock}
+                                                                disabled={orderForEdit.canOverrideTotals && isMaterialPriceOverridden ? null : 'disabled'}
                                                                 type='number'
                                                                 variant='outlined'
                                                                 label='Material'
                                                                 endAdornment={
-                                                                    <InputAdornment position='end'>
-                                                                        <IconButton
-                                                                            aria-label='toggle-lock-material'
-                                                                            onClick={handleFreightLock}
-                                                                            edge='end'>
-                                                                            {isLock ? (
-                                                                                <i className='fa-regular fa-lock'></i>
-                                                                            ) : (
-                                                                                <i className='fa-regular fa-lock-open'></i>
-                                                                            )}
-                                                                        </IconButton>
-                                                                    </InputAdornment>
+                                                                    orderForEdit.canOverrideTotals ? 
+                                                                        <InputAdornment position='end'>
+                                                                            <IconButton
+                                                                                aria-label='toggle-lock-material'
+                                                                                onClick={handleMaterialPriceLock}
+                                                                                edge='end'>
+                                                                                { isMaterialPriceLock ? (
+                                                                                    <i className='fa-regular fa-lock'></i>
+                                                                                ) : (
+                                                                                    <i className='fa-regular fa-lock-open'></i>
+                                                                                )}
+                                                                            </IconButton>
+                                                                        </InputAdornment>
+                                                                    : null
                                                                 }
                                                                 sx={{
                                                                     backgroundColor:
-                                                                        isLock === true
+                                                                        isMaterialPriceLock === true
                                                                             ? theme.palette.secondary.main
                                                                             : '#ffffff',
                                                                 }}
