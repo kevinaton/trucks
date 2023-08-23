@@ -63,7 +63,8 @@ namespace DispatcherWeb.UserSettings
                         await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.DispatchingAndMessaging.AllowCounterSalesForTenant),
                     ShowLeaseHaulerRateOnOrder = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.LeaseHaulers.ShowLeaseHaulerRateOnOrder),
                     UseShifts = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.General.UseShifts),
-                    AllowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.TimeAndPay.AllowProductionPay)
+                    AllowProductionPay = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.TimeAndPay.AllowProductionPay),
+                    AllowDriverPayRateDifferentFromFreightRate = await SettingManager.GetSettingValueAsync<bool>(AppSettingsConfig.TimeAndPay.AllowDriverPayRateDifferentFromFreightRate)
                 }
             };
 

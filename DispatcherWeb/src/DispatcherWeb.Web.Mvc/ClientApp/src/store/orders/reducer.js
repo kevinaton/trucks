@@ -2,6 +2,8 @@ import {
     GET_ORDER_PRIORITY_SELECT_LIST,
     GET_ORDER_PRIORITY_SELECT_LIST_SUCCESS,
     GET_ORDER_PRIORITY_SELECT_LIST_FAILURE,
+    GET_JOB_FOR_EDIT_SUCCESS,
+    GET_JOB_FOR_EDIT_FAILURE,
     GET_ORDER_FOR_EDIT_SUCCESS,
     GET_ORDER_FOR_EDIT_FAILURE,
 } from './actionTypes';
@@ -9,6 +11,7 @@ import {
 const INIT_STATE = {
     isLoadingOrderPriorityOpts: false,
     orderPrioritySelectList: null,
+    jobForEdit: null,
     orderForEdit: null
 };
 
@@ -31,16 +34,26 @@ const OrderReducer = (state = INIT_STATE, action) => {
                 isLoadingOrderPriorityOpts: false,
                 error: action.payload
             };
+        case GET_JOB_FOR_EDIT_SUCCESS: 
+            return {
+                ...state,
+                jobForEdit: action.payload
+            };
+        case GET_JOB_FOR_EDIT_FAILURE:
+            return {
+                ...state,
+                error: action.payload
+            };
         case GET_ORDER_FOR_EDIT_SUCCESS:
             return {
                 ...state,
                 orderForEdit: action.payload
-            }
+            };
         case GET_ORDER_FOR_EDIT_FAILURE:
             return {
                 ...state,
                 error: action.payload
-            }
+            };
         default:
             return state;
     }

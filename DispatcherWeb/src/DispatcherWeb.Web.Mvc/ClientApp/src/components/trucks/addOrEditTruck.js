@@ -314,42 +314,40 @@ const AddOrEditTruckForm = ({
     useEffect(() => {
         if (truckInfo === null && !isEmpty(truckForEdit) && !isEmpty(truckForEdit.result)) {
             const { result } = truckForEdit;
-            if (!isEmpty(result)) {
-                setTruckInfo(result);
-                setId(result.id);
-                setVehicleCategoryAssetType(result.vehicleCategoryAssetType);
+            setTruckInfo(result);
+            setId(result.id);
+            setVehicleCategoryAssetType(result.vehicleCategoryAssetType);
 
-                if (result.defaultDriverId !== null) {
-                    setDefaultDriverId({
-                        ...defaultDriverId,
-                        value: result.defaultDriverId
-                    });
-                }
-
-                if (result.vehicleCategoryAssetType === assetType.DUMP_TRUCK || result.vehicleCategoryAssetType === assetType.TRAILER) {
-                    setShowBedConstruction(true);
-                }
-                
-                let shouldDisableDefaultDriver;
-                if (result.vehicleCategoryIsPowered !== null) {
-                    const isPowered = Boolean(result.vehicleCategoryIsPowered.toLowerCase());
-                    setVehicleCategoryIsPowered(isPowered);
-                    shouldDisableDefaultDriver = !isPowered;
-                } else {
-                    shouldDisableDefaultDriver = true;
-                }
-
+            if (result.defaultDriverId !== null) {
                 setDefaultDriverId({
                     ...defaultDriverId,
-                    disabled: shouldDisableDefaultDriver
+                    value: result.defaultDriverId
                 });
+            }
 
-                if (result.inServiceDate !== null) {
-                    setInServiceDate({
-                        ...inServiceDate,
-                        value: result.inServiceDate
-                    });
-                }
+            if (result.vehicleCategoryAssetType === assetType.DUMP_TRUCK || result.vehicleCategoryAssetType === assetType.TRAILER) {
+                setShowBedConstruction(true);
+            }
+            
+            let shouldDisableDefaultDriver;
+            if (result.vehicleCategoryIsPowered !== null) {
+                const isPowered = Boolean(result.vehicleCategoryIsPowered.toLowerCase());
+                setVehicleCategoryIsPowered(isPowered);
+                shouldDisableDefaultDriver = !isPowered;
+            } else {
+                shouldDisableDefaultDriver = true;
+            }
+
+            setDefaultDriverId({
+                ...defaultDriverId,
+                disabled: shouldDisableDefaultDriver
+            });
+
+            if (result.inServiceDate !== null) {
+                setInServiceDate({
+                    ...inServiceDate,
+                    value: result.inServiceDate
+                });
             }
         }
     }, [truckInfo, truckForEdit, defaultDriverId, inServiceDate, showBedConstruction]);
