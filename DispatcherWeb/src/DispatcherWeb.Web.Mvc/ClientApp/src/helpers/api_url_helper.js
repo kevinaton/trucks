@@ -53,6 +53,7 @@ export const GET_OFFICES = '/Office/GetOfficesSelectList';
 
 //Orders
 export const GET_ORDER_PRIORITY_SELECT_LIST = '/Order/GetOrderPrioritySelectList';
+export const GET_JOB_FOR_EDIT = '/Order/GetJobForEdit';
 export const GET_ORDER_FOR_EDIT = '/Order/GetOrderForEdit';
 
 //Scheduling

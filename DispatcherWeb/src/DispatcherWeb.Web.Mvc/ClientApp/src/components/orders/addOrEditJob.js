@@ -26,7 +26,6 @@ import AddOrEditCustomer from '../customers/addOrEditCustomer';
 import AddOrEditLocation from '../locations/addOrEditLocation';
 import AddOrEditService from '../services/addOrEditService';
 import App from '../../config/appConfig';
-import data from '../../common/data/data.json';
 import { renderDate } from '../../helpers/misc_helper';
 import { grey } from '@mui/material/colors';
 import { theme } from '../../Theme';
@@ -38,10 +37,8 @@ import {
     getVehicleCategories,
     getUnitsOfMeasureSelectList,
     getOrderPrioritySelectList,
-    getOrderForEdit, 
+    getJobForEdit, 
 } from '../../store/actions';
-
-const { Customers, offices, Designation, Addresses, Items, FreightUom } = data;
 
 const AddOrEditJob = ({ 
     userAppConfiguration, 
@@ -65,7 +62,7 @@ const AddOrEditJob = ({
     const [unitOfMeasureOptions, setUnitOfMeasureOptions] = useState(null);
     const [isLoadingOrderPriority, setIsLoadingOrderPriority] = useState(false);
     const [orderPriorityOptions, setOrderPriorityOptions] = useState(null);
-    const [orderInfo, setOrderInfo] = useState(null);
+    const [jobInfo, setJobInfo] = useState(null);
     const [enableMaterialFields, setEnableMaterialFields] = useState(false);
     const [enableFreightFields, setEnableFreightFields] = useState(false);
 
@@ -222,7 +219,7 @@ const AddOrEditJob = ({
         unitsOfMeasureSelectList,
         isLoadingOrderPriorityOpts,
         orderPrioritySelectList,
-        orderForEdit
+        jobForEdit
     } = useSelector((state) => ({
         isLoadingActiveCustomersOpts: state.CustomerReducer.isLoadingActiveCustomersOpts,
         activeCustomersSelectList: state.CustomerReducer.activeCustomersSelectList,
@@ -238,7 +235,7 @@ const AddOrEditJob = ({
         unitsOfMeasureSelectList: state.UnitOfMeasureReducer.unitsOfMeasureSelectList,
         isLoadingOrderPriorityOpts: state.OrderReducer.isLoadingOrderPriorityOpts,
         orderPrioritySelectList: state.OrderReducer.orderPrioritySelectList,
-        orderForEdit: state.OrderReducer.orderForEdit
+        jobForEdit: state.OrderReducer.jobForEdit
     }));
 
     useEffect(() => {
@@ -247,7 +244,11 @@ const AddOrEditJob = ({
             skipCount: 0
         }));
         dispatch(getDesignationsSelectList());
-        dispatch(getOrderForEdit());
+        dispatch(getJobForEdit({
+            deliveryDate: dataFilter.date,
+            officeId: dataFilter.officeId,
+            officeName: dataFilter.officeName
+        }));
     }, []);
 
     useEffect(() => {
@@ -275,8 +276,8 @@ const AddOrEditJob = ({
     }, [offices]);
 
     useEffect(() => {
-        if (!isEmpty(locationOptions) && !isEmpty(orderInfo) && locationId.defaultValue === null) {
-            const { officeId } = orderInfo;
+        if (!isEmpty(locationOptions) && !isEmpty(jobInfo) && locationId.defaultValue === null) {
+            const { officeId } = jobInfo;
             const defaultIndex = _.findIndex(locationOptions, { id: officeId.toString() });
             setLocationId({
                 ...locationId,
@@ -284,7 +285,7 @@ const AddOrEditJob = ({
                 initialized: true
             });
         }
-    }, [locationOptions, orderInfo]);
+    }, [locationOptions, jobInfo]);
 
     useEffect(() => {
         if (!isLoadingDesignationsOpts && !isEmpty(designationsSelectList)) {
@@ -372,10 +373,14 @@ const AddOrEditJob = ({
     }, [isLoadingOrderPriorityOpts]);
 
     useEffect(() => {
-        if (orderInfo === null && !isEmpty(orderForEdit)) {
-            console.log('orderForEdit: ', orderForEdit)
-            setOrderInfo(orderForEdit);
-            setId(orderForEdit.id);
+        if (jobInfo === null && !isEmpty(jobForEdit) && !isEmpty(jobForEdit.result)) {
+            const { result } = jobForEdit;
+            setJobInfo(result);
+            setId(result.id);
+            setIsFreightPriceOverridden(result.isFreightPriceOverridden);
+            setIsFreightPricePerUnitOverridden(result.isFreightPricePerUnitOverridden);
+            setIsMaterialPriceOverridden(result.isMaterialPriceOverridden);
+            setIsMaterialPricePerUnitOverridden(result.isMaterialPricePerUnitOverridden);
 
             if (!isEmpty(dataFilter)) {
                 setDeliveryDate({
@@ -384,10 +389,9 @@ const AddOrEditJob = ({
                 });
             }
         }
-    }, [orderInfo, orderForEdit]);
+    }, [jobInfo, jobForEdit]);
 
     const designationHasMaterial = (selectedDesignation) => {
-        console.log('designation: ', selectedDesignation)
         return App.Enums.Designations.hasMaterial.includes(selectedDesignation);
     };
 
@@ -406,9 +410,6 @@ const AddOrEditJob = ({
 
     const handleCustomerChange = (e, newValue) => {
         e.preventDefault();
-
-        console.log('newValue: ', newValue)
-
         setCustomerId({
             ...customerId,
             value: newValue.id,
@@ -793,7 +794,7 @@ const AddOrEditJob = ({
 
     return (
         <React.Fragment>
-            { !isEmpty(userAppConfiguration) && !isEmpty(orderInfo) && 
+            { !isEmpty(userAppConfiguration) && !isEmpty(jobInfo) && 
                 <React.Fragment>
                     <Box
                         display='flex'
@@ -919,7 +920,7 @@ const AddOrEditJob = ({
                                                         <TextField 
                                                             {...params} 
                                                             label='Office' 
-                                                            disabled={orderInfo.isSingleOffice}
+                                                            disabled={jobForEdit.isSingleOffice}
                                                         />
                                                     )}
                                                     onChange={(e, value) => handleLocationChange(e, value.id)}
@@ -938,7 +939,7 @@ const AddOrEditJob = ({
                                                 variant='outlined'
                                                 label='Job Number' 
                                                 value={jobNumber} 
-                                                defaultValue={orderInfo.jobNumber} 
+                                                defaultValue={jobForEdit.jobNumber} 
                                                 onChange={handleJobNumberChange}
                                                 sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                             />
@@ -1226,7 +1227,7 @@ const AddOrEditJob = ({
                                                             id='freightQty'
                                                             type='number'
                                                             variant='outlined'
-                                                            label='Freight Qty' 
+                                                            label='Freight Quantity' 
                                                             onChange={(e) => handleFreightQtyChange(e)}
                                                             sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                         />
@@ -1237,7 +1238,7 @@ const AddOrEditJob = ({
                                                             id='materialQty'
                                                             type='number'
                                                             variant='outlined'
-                                                            label='Material Qty' 
+                                                            label='Material Quantity' 
                                                             onChange={(e) => handleMaterialQtyChange(e)}
                                                             sx={{ flexBasis: { xs: '100%', sm: '50%' } }}
                                                         />
@@ -1253,24 +1254,25 @@ const AddOrEditJob = ({
                                                             <InputLabel htmlFor='freightInput'>Freight</InputLabel>
                                                             <OutlinedInput
                                                                 id='freightInput'
-                                                                disabled={orderForEdit.canOverrideTotals && isFreightPriceOverridden ? null : 'disabled'}
+                                                                disabled={jobInfo.canOverrideTotals && isFreightPriceOverridden ? null : 'disabled'}
                                                                 type='number'
                                                                 variant='outlined'
                                                                 label='Freight'
-                                                                endAdornment={
-                                                                    orderForEdit.canOverrideTotals ?  
-                                                                        <InputAdornment position='end'>
+                                                                endAdornment={ jobInfo.canOverrideTotals ? 
+                                                                    <InputAdornment position='end'>
+                                                                        { jobInfo.canOverrideTotals && 
                                                                             <IconButton
                                                                                 aria-label='toggle-lock-freight'
                                                                                 onClick={handleFreightPriceLock}
                                                                                 edge='end'>
-                                                                                { isFreightPriceLock ? (
+                                                                                { !isFreightPriceLock ? (
                                                                                     <i className='fa-regular fa-lock'></i>
                                                                                 ) : (
                                                                                     <i className='fa-regular fa-lock-open'></i>
                                                                                 )}
                                                                             </IconButton>
-                                                                        </InputAdornment>
+                                                                        }
+                                                                    </InputAdornment>
                                                                     : null
                                                                 }
                                                                 sx={{ backgroundColor: isFreightPriceLock === true
@@ -1289,25 +1291,25 @@ const AddOrEditJob = ({
                                                             <InputLabel htmlFor='materialInput'>Material</InputLabel>
                                                             <OutlinedInput
                                                                 id='materialInput'
-                                                                disabled={orderForEdit.canOverrideTotals && isMaterialPriceOverridden ? null : 'disabled'}
+                                                                disabled={jobInfo.canOverrideTotals && isMaterialPriceOverridden ? null : 'disabled'}
                                                                 type='number'
                                                                 variant='outlined'
                                                                 label='Material'
                                                                 endAdornment={
-                                                                    orderForEdit.canOverrideTotals ? 
-                                                                        <InputAdornment position='end'>
+                                                                    <InputAdornment position='end'>
+                                                                        { jobInfo.canOverrideTotals && 
                                                                             <IconButton
                                                                                 aria-label='toggle-lock-material'
                                                                                 onClick={handleMaterialPriceLock}
                                                                                 edge='end'>
-                                                                                { isMaterialPriceLock ? (
+                                                                                { !isMaterialPriceLock ? (
                                                                                     <i className='fa-regular fa-lock'></i>
                                                                                 ) : (
                                                                                     <i className='fa-regular fa-lock-open'></i>
                                                                                 )}
                                                                             </IconButton>
-                                                                        </InputAdornment>
-                                                                    : null
+                                                                        }
+                                                                    </InputAdornment>
                                                                 }
                                                                 sx={{
                                                                     backgroundColor:
