@@ -94,7 +94,7 @@ const Schedule = props => {
     }, [userProfileMenu, dataFilter]);
 
     const onSetTrucks = data => setTrucks(data);
-
+    
     const onSetOrders = data => setOrders(data);
 
     // Handle toggle button at the top right
