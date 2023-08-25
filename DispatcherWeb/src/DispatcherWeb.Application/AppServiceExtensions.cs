@@ -891,7 +891,7 @@ namespace DispatcherWeb
             return (IList<KeyValuePair<int, string>>)
                 Enum.GetValues(type)
                     .OfType<Enum>()
-                    .Select(e => new KeyValuePair<int, string>(Convert.ToInt32(e), e.EnumDescription()))
+                    .Select(e => new KeyValuePair<int, string>(Convert.ToInt32(e), e.GetDisplayName()))
                     .ToArray();
         }
 

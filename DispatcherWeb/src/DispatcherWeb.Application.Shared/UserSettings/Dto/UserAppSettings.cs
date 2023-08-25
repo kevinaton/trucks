@@ -12,5 +12,6 @@
         public bool ShowLeaseHaulerRateOnOrder { get; set; }
         public bool UseShifts { get; set; }
         public bool AllowProductionPay { get; set; }
+        public bool AllowDriverPayRateDifferentFromFreightRate { get; set; }
     }
 }
